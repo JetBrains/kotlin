@@ -182,7 +182,7 @@ KtBlockExpression(271,374): '{'
   NO_CANDIDATES
 
 KtCallExpression(277,297): 'overload(EnumValue1)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -213,7 +213,8 @@ KtCallExpression(277,297): 'overload(EnumValue1)'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = true
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /overload>
+    isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -249,7 +250,7 @@ KtCallExpression(277,297): 'overload(EnumValue1)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(277,285): 'overload'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -280,7 +281,8 @@ KtNameReferenceExpression(277,285): 'overload'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = true
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /overload>
+    isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -322,7 +324,25 @@ KtValueArgument(286,296): 'EnumValue1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(286,296): 'EnumValue1'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtProperty(303,340): 'var v1: MyEnum = overload(EnumValue1)'
   NO_CANDIDATES
@@ -337,7 +357,7 @@ KtNameReferenceExpression(311,317): 'MyEnum'
   NO_CANDIDATES
 
 KtCallExpression(320,340): 'overload(EnumValue1)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -368,7 +388,8 @@ KtCallExpression(320,340): 'overload(EnumValue1)'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = true
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /overload>
+    isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -404,7 +425,7 @@ KtCallExpression(320,340): 'overload(EnumValue1)'
     isInBestCandidates = true
 
 KtNameReferenceExpression(320,328): 'overload'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -435,7 +456,8 @@ KtNameReferenceExpression(320,328): 'overload'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = true
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /overload>
+    isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -477,7 +499,25 @@ KtValueArgument(329,339): 'EnumValue1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(329,339): 'EnumValue1'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtCallExpression(346,371): 'overload(InheritorObject)'
   KaApplicableCallCandidate:
@@ -513,7 +553,7 @@ KtCallExpression(346,371): 'overload(InheritorObject)'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -544,7 +584,8 @@ KtCallExpression(346,371): 'overload(InheritorObject)'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = true
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /overload>
+    isInBestCandidates = false
 
 KtNameReferenceExpression(346,354): 'overload'
   KaApplicableCallCandidate:
@@ -580,7 +621,7 @@ KtNameReferenceExpression(346,354): 'overload'
       }
     isInBestCandidates = true
 
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -611,7 +652,8 @@ KtNameReferenceExpression(346,354): 'overload'
           contextParameters = []
           callableId = null)
       }
-    isInBestCandidates = true
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /overload>
+    isInBestCandidates = false
 
 KtValueArgumentList(354,371): '(InheritorObject)'
   NO_CANDIDATES
@@ -620,7 +662,23 @@ KtValueArgument(355,370): 'InheritorObject'
   NO_CANDIDATES
 
 KtNameReferenceExpression(355,370): 'InheritorObject'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = MyClass.InheritorObject
+        symbol = <constructor>(): MyClass.InheritorObject
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
 
 KtNamedFunction(375,429): 'fun overload2(arg: MyEnum) { println("Enum version") }'
   NO_CANDIDATES

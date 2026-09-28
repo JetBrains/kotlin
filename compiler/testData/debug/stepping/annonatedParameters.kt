@@ -15,7 +15,7 @@ fun <@Anno T>
 fun box(): String =
     foo(42)
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:16 box
 // test.kt:12 foo
 // test.kt:16 box

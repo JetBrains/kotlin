@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 public fun foo(xx: Any): Int {
     var x = xx
     do {

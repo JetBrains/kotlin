@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 enum class ProtocolState {
   WAITING {
     override fun signal() = ProtocolState.TALKING

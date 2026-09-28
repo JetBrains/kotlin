@@ -193,19 +193,21 @@ KtNameReferenceExpression(302,306): 'arg2'
     ]
 
 KtCallExpression(312,329): 'receiveEnum(arg3)'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /receiveEnum(arg: MyEnum): kotlin.Unit
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiveEnum>
 
 KtNameReferenceExpression(312,323): 'receiveEnum'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /receiveEnum(arg: MyEnum): kotlin.Unit
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /receiveEnum>
 
 KtValueArgumentList(323,329): '(arg3)'
   null

@@ -157,3 +157,7 @@ open class SelfReferencing<T : SelfReferencing<T>>: MyComparable<T> {
 }
 
 class ConcreteSelfReferencing() : SelfReferencing<ConcreteSelfReferencing>()
+
+fun <T : MyComparable<T>> testFun(a: T): T = a
+
+class BaseClass<T : MyComparable<T>>(var v: T)

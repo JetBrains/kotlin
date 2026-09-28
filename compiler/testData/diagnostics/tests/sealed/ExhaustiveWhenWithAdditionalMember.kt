@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 sealed class Sealed(val x: Int) {
     data class Tuple(val x: Int, val y: Int)
     object First: Sealed(12)

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: VarHandle.java
 public class VarHandle {
     public void set(Object... args) {}

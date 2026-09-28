@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.psi.KtElement
  * ```
  */
 @KaSpi
-@Deprecated("Use `KaAdditionalKDocResolutionProvider` instead")
+@Deprecated("Use `KaAdditionalKDocResolutionProvider` instead", level = DeprecationLevel.ERROR)
 public interface AdditionalKDocResolutionProvider {
     /**
      * Returns additional symbols for the given [contextElement] in KDoc.
@@ -50,7 +50,7 @@ public interface AdditionalKDocResolutionProvider {
     public fun resolveKdocFqName(analysisSession: KaSession, fqName: FqName, contextElement: KtElement): Collection<KaSymbol>
 
     public companion object {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         public val EP_NAME: ExtensionPointName<AdditionalKDocResolutionProvider> =
             ExtensionPointName("org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider")
 

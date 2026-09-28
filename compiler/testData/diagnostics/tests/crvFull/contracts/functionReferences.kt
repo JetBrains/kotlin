@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // KT-85408 returnsResultOf loses ignorable-result analysis for function reference stored in local variable

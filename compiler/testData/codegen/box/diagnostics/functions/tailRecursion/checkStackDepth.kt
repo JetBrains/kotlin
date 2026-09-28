@@ -3,7 +3,7 @@
 //   then investigations of failed tests due to big stack depth would be simpler:
 //   - should NO_TAIL_CALLS_FOUND also appear, then it's an issue in either test source or frontend or FIR checker.
 //   - otherwise, it would be a problem in FIR2IR, or IR lowerings including TailrecLowering
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 //   Only K/JVM has standard stable way to determine the size of current VM call stack
 
 private val getStackTraceMethod = Thread::class.java.getMethod("getStackTrace")

@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.wasm.ir.WasmAnyRef
-import org.jetbrains.kotlin.wasm.ir.WasmContRefType
 import org.jetbrains.kotlin.wasm.ir.WasmExport
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilder
 import org.jetbrains.kotlin.wasm.ir.WasmExpressionBuilderWithOptimizer
@@ -98,7 +97,6 @@ class DeclarationGenerator(
     private val skipCommentInstructions: Boolean,
     skipLocations: Boolean,
     private val enableMultimoduleExports: Boolean,
-    private val moduleName: String,
 ) {
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
@@ -248,11 +246,10 @@ class DeclarationGenerator(
         // and we want all calls to resolve to a single canonical set of functions.
         val parentClass = declaration.parentClassOrNull
         if (parentClass != null) {
-            if (parentClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL) {
+            if (parentClass.origin == WebCallableReferenceLowering.FUNCTION_REFERENCE_IMPL
+                || parentClass.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS
+            ) {
                 val equivalenceKey = "${parentClass.name.asString()}.${declaration.name.asString()}"
-                linkerDataContext.addEquivalentFunction(equivalenceKey, declaration.symbol)
-            } else if (parentClass.origin == WasmSuspendLambdaMergingLowering.SUSPEND_LAMBDA_MERGING_CLASS) {
-                val equivalenceKey = "${moduleName}_${parentClass.name.asString()}.${declaration.name.asString()}"
                 linkerDataContext.addEquivalentFunction(equivalenceKey, declaration.symbol)
             }
         }
@@ -601,7 +598,6 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
             is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
-            is WasmContRefType -> g.buildRefNull(WasmHeapType.Simple.Cont, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
             else -> error("Unknown value type ${type.name}")
         }

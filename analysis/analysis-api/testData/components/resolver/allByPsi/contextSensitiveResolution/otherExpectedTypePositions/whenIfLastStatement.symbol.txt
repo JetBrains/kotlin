@@ -581,19 +581,21 @@ KtNameReferenceExpression(772,788): 'ClassMemberAlias'
     ]
 
 KtCallExpression(794,1278): 'receive<MyClass>('
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
 
 KtNameReferenceExpression(794,801): 'receive'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /receive(e: T): kotlin.Unit
     ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
 
 KtTypeArgumentList(801,810): '<MyClass>'
   null
@@ -677,11 +679,12 @@ KtNameReferenceExpression(846,861): 'NestedInheritor'
 
 KtNameReferenceExpression(874,889): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtContainerNodeForControlStructureBody(937,1272): 'if (i == 1) {'
   null
@@ -735,11 +738,12 @@ KtNameReferenceExpression(963,974): 'myClassProp'
 
 KtNameReferenceExpression(987,998): 'myClassProp'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val myClassProp: MyClass
+    ]
 
 KtContainerNodeForControlStructureBody(1046,1272): 'if (i == 2) {'
   null
@@ -867,11 +871,12 @@ KtNameReferenceExpression(1175,1185): 'stringProp'
 
 KtNameReferenceExpression(1198,1208): 'stringProp'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'stringProp'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val stringProp: kotlin.String
+    ]
 
 KtContainerNodeForControlStructureBody(1256,1272): 'ClassMemberAlias'
   null
@@ -988,11 +993,12 @@ KtNameReferenceExpression(1333,1348): 'NestedInheritor'
 
 KtNameReferenceExpression(1361,1376): 'NestedInheritor'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'NestedInheritor'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /MyClass.NestedInheritor
+    ]
 
 KtContainerNodeForControlStructureBody(1424,1549): 'if (i == 1) {'
   null
@@ -1046,11 +1052,12 @@ KtNameReferenceExpression(1450,1461): 'myClassProp'
 
 KtNameReferenceExpression(1474,1485): 'myClassProp'
   isImplicitReferenceToCompanion: false
-  contextSensitiveResolutionStatus: NotAvailable
+  contextSensitiveResolutionStatus: Used
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = []
-    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'myClassProp'.>
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      val myClassProp: MyClass
+    ]
 
 KtContainerNodeForControlStructureBody(1533,1549): 'ClassMemberAlias'
   null

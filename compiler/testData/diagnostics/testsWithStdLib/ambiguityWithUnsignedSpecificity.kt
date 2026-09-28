@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-57568
 
 fun <T, K> T.convert(): K = null!!

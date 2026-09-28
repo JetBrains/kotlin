@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Inv<X>(val x: X)
 
 fun test_0(list: List<Int>, b: Boolean) {

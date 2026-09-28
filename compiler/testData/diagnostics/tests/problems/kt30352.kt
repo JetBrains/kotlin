@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-30352
 
 // KT-30352: Lambda type inference should not be necessary when only a single overload accepts a lambda

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-87253
 
 fun foo(vararg ts: String, a: Any?) {

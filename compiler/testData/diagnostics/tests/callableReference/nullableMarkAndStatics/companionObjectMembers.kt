@@ -1,5 +1,5 @@
 // LANGUAGE_FEATURE_TOGGLED_IDENTICAL
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE_FEATURE_TOGGLED: CompanionBlocks
 // LANGUAGE_FEATURE_TOGGLED: CompanionExtensions
 // LANGUAGE: -ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-5455 Need warning about redundant type cast
 fun foo(o: Any): Int {
     if (o is String) {

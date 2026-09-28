@@ -1,5 +1,5 @@
 --- a/catchParameterAccess.ir.txt
-+++ b/catchParameterAccess.ir.jvm_ir.txt
++++ b/catchParameterAccess.ir.jvm.txt
 @@ -7,9 +7,9 @@
            try: BLOCK type=kotlin.Unit origin=null
              CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=INVOKE

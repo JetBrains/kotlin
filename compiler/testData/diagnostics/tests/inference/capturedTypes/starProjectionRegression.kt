@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See KT-14453 and KT-35703
 val <T : Any> KClass1<T>.primaryConstructor: KFunction1<T>? get() = null!!
 

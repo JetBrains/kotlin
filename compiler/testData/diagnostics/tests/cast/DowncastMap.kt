@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Map<K, out V>
 interface MutableMap<K, V>: Map<K, V> {
   operator fun set(k: K, v: V)

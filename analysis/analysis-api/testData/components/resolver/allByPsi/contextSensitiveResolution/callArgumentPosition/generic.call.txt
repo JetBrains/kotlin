@@ -755,13 +755,13 @@ KtCallExpression(753,774): 'test(InheritorObject)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -769,13 +769,13 @@ KtCallExpression(753,774): 'test(InheritorObject)'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -790,13 +790,13 @@ KtNameReferenceExpression(753,757): 'test'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -804,13 +804,13 @@ KtNameReferenceExpression(753,757): 'test'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         InheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1074,13 +1074,13 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorClass
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorClass
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1088,13 +1088,13 @@ KtCallExpression(834,858): 'test(propInheritorClass)'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorClass)
       }
       valueArgumentMapping = {
         propInheritorClass -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorClass
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1109,13 +1109,13 @@ KtNameReferenceExpression(834,838): 'test'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorClass
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorClass
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1123,13 +1123,13 @@ KtNameReferenceExpression(834,838): 'test'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorClass)
       }
       valueArgumentMapping = {
         propInheritorClass -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorClass
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1242,13 +1242,13 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1256,13 +1256,13 @@ KtCallExpression(879,904): 'test(propInheritorObject)'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         propInheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = arg: T
           contextParameters = []
           callableId = null)
@@ -1277,13 +1277,13 @@ KtNameReferenceExpression(879,883): 'test'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.InheritorObject
         symbol = /test(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.InheritorObject
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -1291,13 +1291,13 @@ KtNameReferenceExpression(879,883): 'test'
         contextParameters = []
         callableId = /test
       typeArgumentsMapping = {
-        T -> (MyClass)
+        T -> (MyClass.InheritorObject)
       }
       valueArgumentMapping = {
         propInheritorObject -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.InheritorObject
           symbol = arg: T
           contextParameters = []
           callableId = null)

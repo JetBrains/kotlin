@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface My {
     <!REDUNDANT_OPEN_IN_INTERFACE!>open<!> fun foo()
     open fun bar() {}

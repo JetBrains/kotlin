@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirGetClassCallImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
@@ -45,4 +46,17 @@ inline fun buildGetClassCall(init: FirGetClassCallBuilder.() -> Unit): FirGetCla
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirGetClassCallBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class, UnresolvedExpressionTypeAccess::class)
+inline fun buildGetClassCallCopy(original: FirGetClassCall, init: FirGetClassCallBuilder.() -> Unit): FirGetClassCall {
+    contract {
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirGetClassCallBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.coneTypeOrNull = original.coneTypeOrNull
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.argumentList = original.argumentList
+    return copyBuilder.apply(init).build()
 }

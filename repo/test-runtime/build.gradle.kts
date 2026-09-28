@@ -60,17 +60,21 @@ tasks.withType<Test>().configureEach {
     }
 
     testLogging {
+        // Required by 'TestFederationFunctionalTest': events are asserted
         events("passed", "skipped", "failed")
+
+        // Required by 'TestFederationFunctionalTest': fixture output is asserted via 'runTestEvents'
+        showStandardStreams = true
     }
 }
 
 dependencies {
     compileOnly(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     implementation(libs.junit.jupiter.api)
+    implementation(libs.junit.platform.launcher)
 
     testImplementation(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     testImplementation(kotlin("test-junit", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     testImplementation(libs.junit.jupiter.engine)
-    testImplementation(libs.junit.platform.launcher)
-    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
 }

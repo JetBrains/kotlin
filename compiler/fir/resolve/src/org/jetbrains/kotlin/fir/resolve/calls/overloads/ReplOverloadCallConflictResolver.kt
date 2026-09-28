@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.overloads
 
-import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.extensions.replHistoryProvider
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 
 /**
  * REPL snippets are allowed to redefine functions or properties from previous snippets, and only
@@ -27,15 +29,23 @@ import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
  * foo(0) // returns `2`
  * ```
  */
-object ReplOverloadCallConflictResolver : ConeCallConflictResolver() {
+class ReplOverloadCallConflictResolver(private val session: FirSession) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
     ): Set<Candidate> {
-        // Candidates are (somehow?) naturally sorted from the most recent snippet to the least recent snippet.
-        // Only candidates from *previous* snippets will have a non-null `originalReplSnippetSymbol`.
-        val mostRecentSnippet = candidates.firstNotNullOfOrNull { it.symbol.fir.originalReplSnippetSymbol }
+        val historyProvider = session.replHistoryProvider ?: return candidates
+        val containingSnippets = candidates.associateWith { historyProvider.getContainingSnippet(it.symbol) }
+        if (containingSnippets.values.all { it == null }) return candidates
+
+        val history = historyProvider.getSnippets().toList()
+
+        fun recency(snippet: FirReplSnippetSymbol): Int =
+            // A snippet that is not registered in the history, counts as the most recent one.
+            history.indexOfFirst { it === snippet }.takeIf { it >= 0 } ?: Int.MAX_VALUE
+
+        val mostRecentSnippet = containingSnippets.values.filterNotNull().maxBy(::recency)
         return candidates.filterTo(mutableSetOf()) {
-            val snippet = it.symbol.fir.originalReplSnippetSymbol
+            val snippet = containingSnippets[it]
             snippet === null || snippet === mostRecentSnippet
         }
     }

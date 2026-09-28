@@ -29,7 +29,7 @@ fun configureTestTask(test: Test) {
     test.doFirst {
         declaredInputsFile.get().asFile.apply {
             parentFile.mkdirs()
-            writeText(inputs.files.asFileTree.joinToString(separator = "\n"))
+            writeText(inputs.files.asFileTree.flatMapTo(LinkedHashSet(), File::expandSymlinks).joinToString("\n"))
         }
     }
 }

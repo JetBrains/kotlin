@@ -1,165 +1,108 @@
 # Test Federation
 
-The mono-repository is split into multiple 'Domains' (like 'Compiler', 'AnalysisApi', ...). The CI can verify commits into such Domains
-independently.
-'Plain old tests' of 'unaffected Domains' are not required for commits to prove correctness. All tests, however, will be executed on master
-builds.
+Test Federation selects the tests that must run and pass before a commit can be merged to master.
+It uses changed files, domain declarations, test annotations, and the `^test:` commit command.
+All tests run in master builds, even if they were not required for merging the commit to master.
 
 ## Table of contents
 
-- [What is a Domain? (Quick intuition)](#what-is-a-domain-quick-intuition)
-- [Changed and affected Domains](#changed-and-affected-domains)
-- [Defining Domains](#defining-domains)
-- [`^affects` commit command](#affects-commit-command)
-    - [Domains fully affecting other Domains](#domains-fully-affecting-other-domains)
+- [Domains and changed domains](#domains-and-changed-domains)
+- [Which tests are required for merging to master?](#which-tests-are-required-for-merging-to-master)
+- [Defining domains](#defining-domains)
+    - [Running all tests on changes in another domain](#running-all-tests-on-changes-in-another-domain)
+- [Running individual tests on changes in another domain](#running-individual-tests-on-changes-in-another-domain)
+- [Always running tests](#always-running-tests)
+- [`^test:` commit command](#test-commit-command)
+- [Nightly tests](#nightly-tests)
+- [Running a subset of a test task](#running-a-subset-of-a-test-task)
 - [Local testing](#local-testing)
-    - [Verifying domains](#verifying-domains)
+    - [Checking which files belong to each domain](#checking-which-files-belong-to-each-domain)
     - [Updating the dump](#updating-the-dump)
-    - [Checking domain dependencies](#checking-domain-dependencies)
-- [Smoke Tests: Verifying commits on the federal level](#smoke-tests-verifying-commits-on-the-federal-level)
-- [Running a small subset of tests, as smoke tests, automatically](#running-a-small-subset-of-tests-as-smoke-tests-automatically)
-- [Contracts between Domains](#contracts-between-domains--single-tests--test-suites-affected-by-other-domains)
-    - [Contracts require approval from the target team](#contracts-require-approval-from-the-target-team)
-- [Nightly Tests](#nightly-tests)
+    - [Running tests for specified changed domains](#running-tests-for-specified-changed-domains)
+- [Extra: Domains and code structure](#extra-domains-and-code-structure)
+- [Extra: Contract tests](#extra-contract-tests)
+- [Extra: Smoke tests](#extra-smoke-tests)
 
-## What is a Domain? (Quick intuition)
+## Domains and changed domains
 
+A domain is a named group of files, defined in [domains.yaml](./domains.yaml). For example, `Js` includes the files under `js`.
+A domain is **changed** when at least one file belonging to it is changed.
 A Domain is a **CI ownership and impact unit**, not an architecture concept.
 
-- It answers: "If files in this area change, which tests should CI run?"
-- It does **not** answer: "How should production code be layered or designed?"
+A test task belongs to the domains of its project directory. When a domain is changed, all its tests must run and pass
+before the commit can be merged to master. Other test filters, such as `@NightlyTest`, still apply.
 
-Think of a Domain as a **change-radius boundary**:
+## Which tests are required for merging to master?
 
-- Inside the boundary: changes mark this Domain as changed and, therefore, affected.
-- Outside the boundary: this Domain is not changed, although it can still become affected through `fullyAffectedBy`. Contracts can make
-  individual tests run without making their entire Domain affected.
+The following tests must run and pass before a commit can be merged to master:
 
-In other words, Domains model **test impact**, not **code structure purity**. A single subsystem can span multiple Domains, and one Domain
-can include files from multiple places if that gives better CI behavior.
+- All tests in changed domains.
+- All tests in a domain that lists a changed domain in `mustRunAllTestsOnChangesIn`.
+- Individual tests annotated with `@MustRunOnChangesInXYZ` when domain `XYZ` is changed.
+- Tests annotated with `@MustRunAlways`, regardless of which domains are changed.
+- All tests in domains listed in the `^test:` commit command.
+- Any additional tests selected by the test task's `smokeTestConfig`.
 
-## Changed and affected Domains
+Other test filters still apply. In particular, `@NightlyTest` tests are not required for merging to master.
 
-Test Federation computes two related sets for every change:
+Running all tests in a domain does **not** make that domain changed. Only changed files make a domain changed.
+Neither `mustRunAllTestsOnChangesIn` nor `^test:` triggers `@MustRunOnChangesInXYZ` tests in other domains unless `XYZ` itself is changed.
 
-1. **Changed Domains** are inferred from changed files.
-2. **Affected Domains** are the Domains whose full test suites must run. Changed Domains are expanded according to `fullyAffectedBy`
-   relationships, then any Domains named in an `^affects` commit command are added to the result.
+## Defining domains
 
-Thus, **changed Domains are always affected, but affected Domains are not necessarily changed**. The distinction matters for Contracts:
-
-- All affected Domains run their full test suites.
-- Only changed Domains activate their `@AffectedByXYZ` Contract tests in smoke-mode test tasks.
-
-For example, if `Native` is `fullyAffectedBy: Compiler` and `Compiler` is changed, both Domains are affected and run their full test suites.
-Only `Compiler` is changed, however, so `@AffectedByCompiler` Contracts run while `@AffectedByNative` Contracts do not.
-
-## Defining Domains
-
-Domains are defined in the [domains.yaml](./domains.yaml) file. e.g., the `Native` domain could be defined as:
+Use `include` and `exclude` in [domains.yaml](./domains.yaml) to specify which files belong to a domain. For example:
 
 ```yaml
-Native:
+Js:
   include:
-    - "native"
-    - "kotlin-native"
-  fullyAffectedBy:
-    - Compiler
+    - "js"
+    - "compiler/ir/backend.js"
+  mustRunAllTestsOnChangesIn:
+    - CoreLibs
 ```
 
 Entries under `include` and `exclude` can be directory paths or glob patterns. A directory path matches the directory and all its
-descendants, so the `Native` domain above includes everything under the `native` and `kotlin-native` directories. When `include` and
-`exclude` entries overlap, the most specific matching entry takes precedence. A domain is always marked as changed if any file belonging to
-the domain is changed.
+descendants. When entries overlap, the most specific matching entry takes precedence.
+A domain is changed when any file belonging to it is changed.
 
-## '^affects' commit command
+### Running all tests on changes in another domain
 
-If a commit is known to impact a Domain beyond those inferred from its changed files, the commit command `^affects:` can declare additional
-affected Domains. Their full test suites run, but they are not added to the changed Domains and therefore do not activate their Contracts.
-They also do not cause other Domains to become affected through `fullyAffectedBy`; command-listed Domains are added after that expansion.
+Use `mustRunAllTestsOnChangesIn` to require all tests in this domain to run and pass when a listed domain is changed.
+In the example above, all `Js` tests are required for merging to master when `CoreLibs` is changed.
+This declaration does not require all `CoreLibs` tests to run when only `Js` is changed.
+List every domain whose changes should require these tests explicitly: the declaration is **not transitive**.
 
-```
-^affects: Gradle, AnalysisApi
-^affects: Compiler
+## Running individual tests on changes in another domain
 
-// Mark all domains as affected
-^affects: *
-```
+Use `@MustRunOnChangesInXYZ` to require a test to run and pass when domain `XYZ` is changed.
+For example, `@MustRunOnChangesInJs` requires the annotated tests for merging to master when `Js` is changed,
+even if the tests belong to another domain.
 
-### Domains fully affecting other Domains
-
-Some Domains might form a 'Domain/Subdomain' relationship, which can be expressed using `fullyAffectedBy`. A Domain that is `fullyAffectedBy`
-another Domain will be marked as affected when that other Domain is changed. This does not mark the dependent Domain as changed. Domains
-listed using `^affects` do not participate in this expansion. In the example above:
-
-A change which marks the 'larger Compiler domain' as changed will also mark the 'Native' domain as affected, while a change isolated within
-the 'Native' domain will not affect the 'Compiler' domain.
-
-Note: 'fullyAffectedBy' is **not** transitive. All dependencies have to be listed explicitly. This allows for some modules acting as 'API'
-boundaries.
-
-### Local testing
-
-#### Verifying domains
-
-The declared domains will be 'expanded' into the actual files belonging to each domain. The dump file will be verified on CI. The file can
-be found at [domains.dump.txt](domains.dump.txt).
-
-Verify it locally from the repository root with:
-```shell
-./gradlew :repo:codebase-tests:test --tests "org.jetbrains.kotlin.code.DomainsDumpTest" --rerun -Pkotlin.native.enabled=true
+```kotlin
+@MustRunOnChangesInJs
+class MyImportantJsTests {
+    // ...
+}
 ```
 
-#### Updating the dump
+The annotation can be placed on a test method, a test class, an abstract test class, or another annotation.
+Other test filters, such as `@NightlyTest`, still apply.
 
-Changes to `domains.yaml` might require an update of the dump file. Update it from the repository root with:
+This annotation adds a reason to run a test. The test still runs whenever all tests in its own domain must run.
 
-```shell
-./gradlew :repo:codebase-tests:updateDomainsDump -Pkotlin.native.enabled=true
-```
+Adding or changing these annotations requires approval from both the team owning the tests and the team owning the named domain.
+See [Extra: Contract tests](#extra-contract-tests) for why these tests are useful.
 
-Alternatively, run `scripts/update-domains.sh` or use the `Update domains.dump.txt` run configuration in IntelliJ.
-Use `Update all project dumps` to refresh all project dumps at once.
+## Always running tests
 
-#### Checking domain dependencies
-
-You can verify dependencies between domains by making a relevant change, committing it locally and then invoking this command:
-
-```shell
-./gradlew -Ptest.federation.enabled=true inferAffectedDomains
-```
-
-To check how a specific task behaves when `Js` is changed and both `Js` and `Wasm` are affected, set both properties:
-
-```shell
-./gradlew :some:module:test \
-  -Ptest.federation.enabled=true \
-  -Ptest.federation.mode=Smoke \
-  -Ptest.federation.changed.domains="Js" \
-  -Ptest.federation.affected.domains="Js;Wasm"
-```
-
-`test.federation.affected.domains` controls which Domains run in full mode, while `test.federation.changed.domains` controls which Contracts
-run in smoke mode. When only `test.federation.affected.domains` is specified, the changed Domains default to the same value. Set
-`test.federation.changed.domains` explicitly when the two sets need to differ. Both properties accept:
-
-- a single domain (for example, `CompilerPlugins`)
-- several domains separated by semicolons (for example, `Wasm;Js`)
-- all domains (`*`)
-- no domains (`<none>`)
-
-For other properties and their values, see
-[runtimeEnvironment.kt](test-runtime/src/main/kotlin/org.jetbrains.kotlin.testFederation/runtimeEnvironment.kt).
-
-### Smoke Tests: Verifying commits on the federal level
-
-All tests of affected 'Domains' will be executed on CI. Running tests of a domain that is not affected can be done by marking a test as a
-'SmokeTest'. Using JUnit 5 (or higher) allows using the `@SmokeTest` annotation.
+Use `@MustRunAlways` to require a test to run and pass regardless of which domains are changed.
+These tests are required for merging to master. Other test filters, such as `@NightlyTest`, still apply.
+With JUnit 5 (or higher), the annotation can be placed:
 
 - on the test method directly
 
 ```kotlin
-@SmokeTest
+@MustRunAlways
 @Test
 fun `my important test`() {
     // ...
@@ -169,7 +112,7 @@ fun `my important test`() {
 - on the test class
 
 ```kotlin
-@SmokeTest
+@MustRunAlways
 class MyImportantTest {
     @Test
     fun `my important test`() {
@@ -181,7 +124,7 @@ class MyImportantTest {
 - on any abstract test class
 
 ```kotlin
-@SmokeTest
+@MustRunAlways
 abstract class AbstractImportantTests {
     // ...
 }
@@ -190,33 +133,78 @@ abstract class AbstractImportantTests {
 - as a meta-annotation on another annotation
 
 ```kotlin
-@SmokeTest
+@MustRunAlways
 annotation class MyImportantTest
 
 @MyImportantTest
+@Test
 fun `my important test`() {
     // ...
 }
 ```
 
-Smoke tests are always executed on CI, no matter the affected domains. Checking in a smoke test requires the test to fulfill the following
-criteria:
+Tests annotated with `@MustRunAlways` must be fast and stable, because they run for unrelated changes too.
 
-- The test is very stable
-- The test is fast
+## `^test:` commit command
 
-Because unstable/flaky smoke tests affect the entire team, fixing them is a high priority.
+Add `^test:` to a commit message to require all tests in the listed domains to run and pass before merging to master.
+Use `^test: *` to require all tests in all domains. Other test filters, such as `@NightlyTest`, still apply.
 
-### Running a small subset of tests, as smoke tests, automatically
+```
+^test: Gradle, AnalysisApi
+^test: Frontend
+```
 
-Some test tasks do not have a clear candidate that stands out as a 'Smoke Test'. However, if all tests are quick and stable, running a
-percentage of those tests in 'smoke test mode' might be a good strategy for gaining confidence when testing unrelated changes. Any test
-task, therefore, allows specifying a 'smokeTestConfig'.
+To require all tests in all domains:
 
-Example: Run 5% of all tests in 'Smoke Test Mode'. When a commit is verified on CI, but the domain to which this test belongs is
-'unaffected', then roughly 5% of the defined tests will still execute.
+```
+^test: *
+```
 
-Note: The selected tests are stable as the selection is based upon the FQN and unique ID of the test.
+The command does not make the listed domains changed. It does not trigger `mustRunAllTestsOnChangesIn` declarations or
+`@MustRunOnChangesInXYZ` tests in other domains.
+
+## Nightly tests
+
+Use `@NightlyTest` for tests that run only when nightly tests are enabled. These tests are not required for merging to master.
+The annotation can be placed on a test method or a test class.
+
+Nightly tests are enabled by default in local Gradle runs. Use `-Pnightly=false` to disable them locally.
+
+```kotlin
+class MyTests {
+    @NightlyTest
+    @Test
+    fun `my long nightly test`() {
+        superLongOperation()
+    }
+
+    @Test
+    fun `my regular test`() {
+        // ...
+    }
+}
+```
+
+When all tests in this class are selected, `my regular test` runs before merging to master. `my long nightly test` runs only when
+nightly tests are enabled. `@MustRunAlways` and `@MustRunOnChangesInXYZ` do not override this restriction.
+
+Long-running tests or tests that have not yet proven stable can be marked with `@NightlyTest` if they are not required for merging to master.
+
+## Running a subset of a test task
+
+A test task runs in one of two modes:
+
+- `Full`: run all tests in the task.
+- `Smoke`: run tests annotated with `@MustRunAlways`, tests annotated with `@MustRunOnChangesInXYZ` for a changed domain `XYZ`,
+  and any additional tests selected by `smokeTestConfig`.
+
+Other test filters, such as `@NightlyTest`, still apply in both modes.
+Test Federation uses `Full` when all tests in the task's domain must run, and `Smoke` otherwise.
+Setting `smokeTestConfig = SmokeTestConfig.Disabled` skips the task in `Smoke` mode, including its annotated tests.
+
+Use `smokeTestConfig` to select additional tests when the task runs in `Smoke` mode. By default, no additional tests are selected.
+For example, this configuration selects roughly 5% of the tests in addition to the annotated tests:
 
 ```kotlin
 tasks.withType<Test>().configureEach {
@@ -226,7 +214,10 @@ tasks.withType<Test>().configureEach {
 }
 ```
 
-Sometimes an entire test task should *always* run, even in 'smoke test mode'.
+The selection is stable: it uses the fully qualified name and unique ID of each test.
+Choose fast and stable tests, because the selected tests are required for merging to master even for unrelated changes.
+
+To require all tests in a task regardless of which domains are changed:
 
 ```kotlin
 tasks.withType<Test>().configureEach {
@@ -234,82 +225,70 @@ tasks.withType<Test>().configureEach {
 }
 ```
 
-This will ensure that the test task is always executed and all tests are verified.
+Other test filters still apply.
 
-### Contracts between Domains | Single Tests / Test Suites affected by other domains
+## Local testing
 
-Some Domains might rely on the behavior or API of another Domain. Such requirements can be expressed as a 'Contract' between two Domains.
-Any test can be promoted to a 'Contract Test' using the relevant `@AffectedByXYZ` annotation. e.g., a test that defines a contract to the
-'Js' compiler might be marked as `@AffectedByJs`.
+### Checking which files belong to each domain
 
-A set of well-maintained contracts is always preferable to marking a domain as 'fullyAffectedBy' another domain, as 'ContractTests' will
-enable actually building efficient pipelines for verifying commits, whereas 'fullyAffectedBy' will require a full build of the affected
-domains.
+[domains.dump.txt](domains.dump.txt) lists the files belonging to each domain. CI checks that it matches the domain declarations.
+Run the same check locally from the repository root:
 
-```kotlin
-@AffectedByJs
-class MyImportantJsTests {
-    // ...
-}
+```shell
+./gradlew :repo:codebase-tests:test --tests "org.jetbrains.kotlin.code.DomainsDumpTest" --rerun -Pkotlin.native.enabled=true
 ```
 
-Any commit that marks the `Js` Domain as changed will verify all Contracts associated with `Js`. A Domain added through `^affects` or affected
-only through `fullyAffectedBy` still runs its full test suites, but does not activate its Contracts in smoke-mode test tasks.
+### Updating the dump
 
-The full flow from changed files to the tests selected by Test Federation can be seen below.
+Changes to `domains.yaml` might require an update of the dump file. Update it from the repository root with:
 
-It works like this:
-* we collect **changed files** and find their home domains -> this gives us **changed domains**
-* we go through changed domains:
-    * every changed domain is marked as **affected**
-    * all domains `fullyAffectedBy` the changed domain are marked as **affected**
-    * all contracts `@AffectedBy` the changed domain are marked as **affected**
-* additionally, we take every domain from the `^affects:` commit command and mark them as **affected**
-
-Everything that is affected must be verified:
-* for affected domain, it means executing all its tests (FULL mode)
-* for affected contract test, it means to execute this test
-
-```mermaid
-flowchart TD
-    ChangedFiles["Changed files"]
-    ChangedDomains["Changed domains"]
-    ContractTests["Contract tests"]
-    AffectedDomains["Affected Domains"]
-    AffectsCommand["^affects"]
-    FullTestSuites["Full test suites"]
-
-    ChangedFiles --> ChangedDomains
-    ChangedDomains -->|activates| ContractTests
-    ChangedDomains -->|plus 'fullyAffectedBy' | AffectedDomains
-    AffectsCommand --->|added directly| AffectedDomains
-    AffectedDomains -->|run| FullTestSuites
+```shell
+./gradlew :repo:codebase-tests:updateDomainsDump -Pkotlin.native.enabled=true
 ```
 
-##### Contracts require approval from the target team
+Alternatively, run `scripts/update-domains.sh` or use the `Update domains.dump.txt` run configuration in IntelliJ.
+Use `Update all project dumps` to refresh all project dumps at once.
 
-Declaring a contract is transactional between at least two teams (owning their domains). Defining and changing a contract requires the
-explicit approval of both teams.
+### Running tests for specified changed domains
 
-### Nightly Tests
+To run a test task in `Smoke` mode as if `Js` were changed:
 
-Some tests, test-classes or even entire suites of tests might not qualify for our 'master aggregate'. Typically, nightly tests are 'long' or
-have not proven their stability (yet), while not being 'necessary' as 'mater quality gate'. Marking a test as 'nighlty' is done by using the
-`@NightlyTest` annotation
-
-```kotlin
-class MyTests {
-    @NightlyTest
-    @Test
-    fun `my looong nightly test`() {
-        superLongOperation()
-    }
-
-    @Test
-    fun `my regular test`() {
-
-    }
-}
+```shell
+./gradlew :some:module:test \
+  -Ptest.federation.enabled=true \
+  -Ptest.federation.mode=Smoke \
+  -Ptest.federation.changed.domains="Js"
 ```
 
-The above example will only execute 'my regular test' during safe-merge, while the `my looong nightly test` is only executed nightly.
+This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and any additional tests selected by `smokeTestConfig`.
+Use `-Ptest.federation.mode=Full` to run all tests in the task. Other test filters still apply.
+
+`test.federation.changed.domains` accepts:
+
+- a single domain (for example, `CompilerPlugins`)
+- several domains separated by semicolons (for example, `Wasm;Js`)
+- all domains (`*`)
+- no domains (`<none>`)
+
+For other properties and their values, see
+[runtimeEnvironment.kt](test-runtime/src/main/kotlin/org/jetbrains/kotlin/test/federation/runtimeEnvironment.kt).
+
+## Extra: Domains and code structure
+
+Domains group files for selecting tests, not for prescribing code structure. A subsystem can span several domains, and a domain can
+include files from several locations. Explicit, non-transitive test declarations let teams decide which tests are required for merging to master
+without requiring every test in every downstream domain.
+
+## Extra: Contract tests
+
+A contract test checks behavior that one domain relies on in another domain. `@MustRunOnChangesInXYZ` can be used to require such a test
+when the other domain is changed. These annotations use JUnit tags of the form `contract:XYZ`.
+
+A small set of these tests is preferable to `mustRunAllTestsOnChangesIn` when it covers the required behavior: fewer tests are required for
+merging to master. Both teams must approve changes to these tests because the tests describe behavior that they agree to preserve.
+
+## Extra: Smoke tests
+
+A smoke test is a quick check of core functionality. `@MustRunAlways` can be used for smoke tests that should run for every change,
+but not every smoke test needs to run for unrelated changes. Selecting a percentage of fast, stable tests through `smokeTestConfig` is
+another way to check core functionality for unrelated changes.

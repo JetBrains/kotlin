@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.impl.base.util.buildSmartList
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.jvmClassNameIfDeserialized
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.fir.FirSession
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.buildSmartList
 
 /**
  * The module-level [FirSymbolProvider] for an [LLFirSession], composing multiple kinds of symbol providers for the module's own content

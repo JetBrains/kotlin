@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class A(t : Int) : Comparable<A> {
     var i = t
     override fun compareTo(other : A) = (this.i - other.i)

@@ -52,7 +52,7 @@ fun main(b: Boolean) {
 
     myRun {
         if (b) return@myRun MySealed.X
-        <!ARGUMENT_TYPE_MISMATCH!>Y<!>
+        Y
     }
 }
 

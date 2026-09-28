@@ -116,11 +116,7 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
     }
 
     if (!aptModePassed) {
-        val isK2 = "-Xuse-k2-kapt=false" !in transformed && transformed.none { it.startsWith("-language-version=1") } &&
-                transformed.lastIndexOf("-language-version").takeIf { it >= 0 }
-                    ?.let { transformed.getOrNull(it + 1)?.startsWith('1') } != true
-
-        transformed.addAll(0, kaptArg(KaptCliOption.APT_MODE_OPTION, if (isK2) "stubsAndApt" else "compile"))
+        transformed.addAll(0, kaptArg(KaptCliOption.APT_MODE_OPTION, "stubsAndApt"))
     }
 
     if (!isTest && !isAtLeastJava9() && !areJavacComponentsAvailable() && !toolsJarPassed) {

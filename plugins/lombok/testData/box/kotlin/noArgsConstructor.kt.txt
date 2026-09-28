@@ -1,0 +1,107 @@
+@NoArgsConstructor
+open class ConstructorExample {
+  var boolean: Boolean
+    field = boolean
+    get
+    set
+
+  var char: Char
+    field = char
+    get
+    set
+
+  var int: Int
+    field = int
+    get
+    set
+
+  var str: String
+    field = str
+    get
+    set
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(boolean: Boolean, char: Char, int: Int, str: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+@NoArgsConstructor(force = true)
+class ConstructorExampleWithForce {
+  val int: Int
+    field = int
+    get
+
+  val x: Int
+    field = 5
+    get
+
+  val z: String /* by */
+    field = lazy<String>(initializer = local fun <anonymous>(): String {
+      return "TEST"
+    }
+)
+    get(): String {
+      return getValue<String>(/* <this> = <this>.#z$delegate, */ thisRef = <this>, property = KProperty1<ConstructorExampleWithForce, String>(
+        /* bound = */ [],
+        /* getter = */        local fun(p0: ConstructorExampleWithForce): String {
+          return p0.<get-z>()
+        }
+      )
+)
+    }
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(int: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val y: String
+    get(): String {
+      return "y"
+    }
+
+}
+
+@NoArgsConstructor
+class ConstructorExampleWithGenerics<T : Any?> {
+  var param: T
+    field = param
+    get
+    set
+
+  constructor() {
+    super/*Any*/()
+  }
+
+  constructor(param: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val zeroObject: ConstructorExample = ConstructorExample()
+  assertFalse(actual = zeroObject.<get-boolean>())
+  assertEquals<Char>(expected = Char(code = 0), actual = zeroObject.<get-char>())
+  assertEquals<Int>(expected = 0, actual = zeroObject.<get-int>())
+  assertNull(actual = zeroObject.<get-str>())
+  val zeroObjectWithGenerics: ConstructorExampleWithGenerics<Int> = ConstructorExampleWithGenerics<Int>()
+  assertNull(actual = zeroObjectWithGenerics.<get-param>())
+  assertEquals<Int>(expected = 0, actual = ConstructorExampleWithForce().<get-int>())
+  return "OK"
+}
+

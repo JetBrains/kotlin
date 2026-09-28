@@ -80,7 +80,7 @@ KtBlockExpression(179,210): '{'
   NO_CANDIDATES
 
 KtCallExpression(185,208): 'boundHolder(EnumValue1)'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -88,13 +88,13 @@ KtCallExpression(185,208): 'boundHolder(EnumValue1)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = ERROR CLASS: Cannot infer argument for type parameter T
+        returnType = MyEnum
         symbol = /boundHolder(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            returnType = MyEnum
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -102,22 +102,21 @@ KtCallExpression(185,208): 'boundHolder(EnumValue1)'
         contextParameters = []
         callableId = /boundHolder
       typeArgumentsMapping = {
-        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+        T -> (MyEnum)
       }
       valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = ERROR CLASS: Cannot infer argument for type parameter T
+          returnType = MyEnum
           symbol = arg: T
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : MyEnum> boundHolder(arg: T): T>
     isInBestCandidates = true
 
 KtNameReferenceExpression(185,196): 'boundHolder'
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -125,13 +124,13 @@ KtNameReferenceExpression(185,196): 'boundHolder'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = ERROR CLASS: Cannot infer argument for type parameter T
+        returnType = MyEnum
         symbol = /boundHolder(arg: T): T
         valueParameters = [
           KaVariableSignature:
             name = arg
             receiverType = null
-            returnType = ERROR CLASS: Cannot infer argument for type parameter T
+            returnType = MyEnum
             symbol = arg: T
             contextParameters = []
             callableId = null
@@ -139,18 +138,17 @@ KtNameReferenceExpression(185,196): 'boundHolder'
         contextParameters = []
         callableId = /boundHolder
       typeArgumentsMapping = {
-        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+        T -> (MyEnum)
       }
       valueArgumentMapping = {
         EnumValue1 -> (KaVariableSignature:
           name = arg
           receiverType = null
-          returnType = ERROR CLASS: Cannot infer argument for type parameter T
+          returnType = MyEnum
           symbol = arg: T
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <T : MyEnum> boundHolder(arg: T): T>
     isInBestCandidates = true
 
 KtValueArgumentList(196,208): '(EnumValue1)'
@@ -160,7 +158,25 @@ KtValueArgument(197,207): 'EnumValue1'
   NO_CANDIDATES
 
 KtNameReferenceExpression(197,207): 'EnumValue1'
-  NO_CANDIDATES
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = EnumValue1
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = true
+      kind = Read
+      signature = KaVariableSignature:
+        name = EnumValue1
+        receiverType = null
+        returnType = MyEnum
+        symbol = /MyEnum.EnumValue1
+        contextParameters = []
+        callableId = /MyEnum.EnumValue1
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
 
 KtNamedFunction(212,271): 'fun testFunBound2() {'
   NO_CANDIDATES

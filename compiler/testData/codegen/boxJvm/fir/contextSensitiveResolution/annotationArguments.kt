@@ -1,5 +1,5 @@
 // ISSUE: KT-75316
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 

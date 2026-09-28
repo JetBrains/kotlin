@@ -9,22 +9,11 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrSerializationSettings
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrFile
-
-fun interface JsIrFileMetadataFactory {
-    fun createJsIrFileMetadata(irFile: IrFile): JsIrFileMetadata
-}
-
-object JsIrFileEmptyMetadataFactory : JsIrFileMetadataFactory {
-    override fun createJsIrFileMetadata(irFile: IrFile) = JsIrFileMetadata(emptyList())
-}
 
 class JsIrFileSerializer(
     settings: IrSerializationSettings,
-    declarationTable: DeclarationTable.Default,
-    private val jsIrFileMetadataFactory: JsIrFileMetadataFactory
+    declarationTable: DeclarationTable.Default
 ) : IrFileSerializer(settings, declarationTable) {
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer) = node.isJsExportDeclaration()
     override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer) = node.isJsExportIgnoreDeclaration()
-    override fun backendSpecificMetadata(irFile: IrFile) = jsIrFileMetadataFactory.createJsIrFileMetadata(irFile)
 }

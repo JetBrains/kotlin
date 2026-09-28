@@ -13,7 +13,7 @@ fun box() {
     } while (--x > 0)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:5 box
 // test.kt:6 box
 // test.kt:7 box

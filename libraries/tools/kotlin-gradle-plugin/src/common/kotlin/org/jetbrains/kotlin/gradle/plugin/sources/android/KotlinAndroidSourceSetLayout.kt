@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android
 
-import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
-import org.jetbrains.kotlin.gradle.plugin.compareTo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.configurator.*
 
@@ -26,8 +24,7 @@ internal val singleTargetAndroidSourceSetLayout = KotlinAndroidSourceSetLayout(
         KotlinAndroidSourceSetInfoConfigurator,
         AndroidKaptSourceSetConfigurator,
         GradleConventionAddKotlinSourcesToAndroidSourceSetConfigurator,
-        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
-            .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
+        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator,
         KotlinAndroidJavaSourceDirConfigurator,
         SingleTargetSourceDirConfigurator,
     ),
@@ -43,14 +40,12 @@ internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayou
         AndroidKaptSourceSetConfigurator,
         MultiplatformAndroidResourceDirConfigurator,
         MultiplatformLayoutV2DependsOnConfigurator,
-        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
-            .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
+        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator,
         KotlinAndroidJavaSourceDirConfigurator,
         MultiplatformLayoutV2SourceDirConfigurator,
         MultiplatformLayoutV2DefaultManifestLocationConfigurator
     ),
     checker = KotlinAndroidSourceSetLayoutChecker(
-        MultiplatformLayoutV2AgpRequirementChecker,
         MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker,
     )
 )

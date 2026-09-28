@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: JavaBodySpec.java
 public interface JavaBodySpec<B, S extends JavaBodySpec<B, S>> {

@@ -8,28 +8,25 @@ package org.jetbrains.kotlin.testFederation
 import org.junit.jupiter.api.Tag
 
 /**
- * See [Test Federation](repo/TEST-FEDERATION.md)
+ * Requires the annotated tests to run and pass before merging to master, regardless of which domains contain changes.
+ * Other test filters, such as [NightlyTest], still apply.
  *
- * Smoke tests are always executed on CI, regardless of the affected domains.
- * Any commit pushed to the master branch must pass all smoke tests.
+ * These tests should be fast and stable because they run for unrelated changes too.
+ * See [Test Federation](repo/TEST-FEDERATION.md).
  *
- * Smoke tests are intended to cover the core functionality of a domain to catch regressions
- * caused by changes in unrelated domains.
- *
- * Requirements:
- * - Smoke tests must be very stable.
- * - Smoke test (suites) must be fast.
+ * ### Extra: Smoke tests
+ * Use this annotation for quick checks of core functionality that should run for unrelated changes too.
+ * Not every smoke test needs to run for unrelated changes.
  */
 @Tag("smoke")
-annotation class SmokeTest
+annotation class MustRunAlways
 
 /**
- * Will mark a given test as 'Nightly':
- * - This test will not run in remote runs (rr)
- * - This test will not run in safe-merge (and safe-merge dry runs)
- * - This test will only be executed nightly.
+ * Excludes the annotated tests when nightly tests are disabled, including remote runs and safe-merge builds.
+ * Nightly tests are enabled in nightly builds and by default in local Gradle runs.
+ * These tests are not required for merging to master.
  *
- * Marking a test as 'Nightly' will still execute this test locally.
+ * This annotation does not select a test on its own. Test Federation selection and other test filters still apply.
  */
 @Tag("nightly")
 annotation class NightlyTest

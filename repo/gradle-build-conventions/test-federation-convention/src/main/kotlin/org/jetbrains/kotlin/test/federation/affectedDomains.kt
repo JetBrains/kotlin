@@ -16,9 +16,9 @@ import kotlin.io.path.Path
 
 
 /**
- * Infer which [Domain]s are affected by the current set of changes.
- * This service uses the underlying [FeatureBranchDiffBuildService] to determine the 'diff' of the current branch
- * Based upon the ProjectDomain declaration (in ProjectDomains.yaml) and the current diff, a set of affected ProjectDomains can be inferred.
+ * Infers which domains require all their tests for merging to master.
+ * Uses [FeatureBranchDiffBuildService] and `domains.yaml` to find domains containing changed files,
+ * then adds domains that declare they must run all tests for those changes and domains requested in commit messages.
  */
 internal val Project.affectedDomainsService: Provider<AffectedDomainsBuildService>
     get() = gradle.sharedServices.registerIfAbsent("affectedDomainsBuildService", AffectedDomainsBuildService::class.java) {
@@ -75,10 +75,9 @@ internal fun inferAffectedDomains(changedDomains: Set<Domain>, commitMessages: L
 }
 
 /**
- * 'Inverse' dependencies of domains
+ * Maps a domain to the domains that must run all tests when it contains changed files.
  *
- * `key`: Domain
- * `value`: List of 'Domains' affected by the 'key' domain.
+ * Only direct declarations are included; this relationship is not transitive.
  */
 private val domainDependees: Map<Domain, List<Domain>> = buildMap<Domain, MutableList<Domain>> {
     allDomainInfos.forEach { domainInfo ->
@@ -86,7 +85,7 @@ private val domainDependees: Map<Domain, List<Domain>> = buildMap<Domain, Mutabl
     }
 
     allDomainInfos.forEach { domainInfo ->
-        domainInfo.fullyAffectedBy.forEach { dependency ->
+        domainInfo.mustRunAllTestsOnChangesIn.forEach { dependency ->
             get(dependency.domain)?.add(domainInfo.domain)
         }
     }
@@ -102,7 +101,7 @@ internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
 }
 
 internal fun resolveAffectedDomainsFromCommitMessages(commitMessages: List<String>): Set<Domain> {
-    val commandRegex = Regex("""\^affects:\v*(?<domains>.*)$""")
+    val commandRegex = Regex("""\^(?:test|affects):\v*(?<domains>.*)$""")
     val splitRegex = Regex("""([\h,;])""")
 
     return buildSet {

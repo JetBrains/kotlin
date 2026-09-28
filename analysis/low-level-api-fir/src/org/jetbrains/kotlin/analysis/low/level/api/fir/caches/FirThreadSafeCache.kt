@@ -81,6 +81,11 @@ internal class FirThreadSafeCache<K : Any, V, CONTEXT>(
             else -> withEntry("value", unwrapped.toString())
         }
     }
+
+    @FirCacheInternals
+    override fun clear() {
+        map.clear()
+    }
 }
 
 private val LOG = Logger.getInstance(FirThreadSafeCache::class.java)

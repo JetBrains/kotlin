@@ -1291,7 +1291,7 @@ KtNameReferenceExpression(1029,1040): 'propMyClass'
     isInBestCandidates = true
 
 KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1325,6 +1325,7 @@ KtCallExpression(1047,1070): 'anonymousConsumer(prop)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1047,1064): 'anonymousConsumer'
@@ -1373,7 +1374,7 @@ KtNameReferenceExpression(1065,1069): 'prop'
     isInBestCandidates = true
 
 KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1407,6 +1408,7 @@ KtCallExpression(1075,1103): 'anonymousConsumer(constProp)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1075,1092): 'anonymousConsumer'
@@ -1455,7 +1457,7 @@ KtNameReferenceExpression(1093,1102): 'constProp'
     isInBestCandidates = true
 
 KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1489,6 +1491,7 @@ KtCallExpression(1108,1135): 'anonymousConsumer(lazyProp)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1108,1125): 'anonymousConsumer'
@@ -1537,7 +1540,7 @@ KtNameReferenceExpression(1126,1134): 'lazyProp'
     isInBestCandidates = true
 
 KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1571,6 +1574,7 @@ KtCallExpression(1140,1169): 'anonymousConsumer(lambdaProp)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1140,1157): 'anonymousConsumer'
@@ -1619,7 +1623,7 @@ KtNameReferenceExpression(1158,1168): 'lambdaProp'
     isInBestCandidates = true
 
 KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1653,6 +1657,7 @@ KtCallExpression(1174,1202): 'anonymousConsumer(superProp)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1174,1191): 'anonymousConsumer'
@@ -1841,7 +1846,7 @@ KtValueArgumentList(1265,1267): '()'
   NO_CANDIDATES
 
 KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaImplicitInvokeCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1875,6 +1880,7 @@ KtCallExpression(1273,1302): 'anonymousConsumer(lambdaProp)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is '() -> MyClass.InheritorObject', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1273,1290): 'anonymousConsumer'

@@ -5,7 +5,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("oh_my_state_ExtractedByTypealias_init_allocate")
 public fun oh_my_state_ExtractedByTypealias_init_allocate(): kotlin.native.internal.NativePtr {

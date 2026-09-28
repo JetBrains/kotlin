@@ -208,7 +208,7 @@ FILE: usages.kt
             }
         }
 
-        lval annotation: R|ConstArgument!| = <getClass>(Q|Annotated|).R|kotlin/jvm/java|<R|Annotated|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|ConstArgument!|>(<getClass>(Q|ConstArgument|).R|kotlin/jvm/java|<R|ConstArgument|>)
+        lval annotation: R|ConstArgument!| = <getClass>(Q|Annotated|).R|kotlin/jvm/java|<R|Annotated|>.R|SubstitutionOverride<java/lang/Class.getAnnotation: R|A!|>|<R|ConstArgument!|>(<getClass>(Q|ConstArgument|).R|kotlin/jvm/java|<R|ConstArgument!|>)
         when () {
             !=(R|<local>/annotation|.R|/ConstArgument.intValue|, Int(13)) ->  {
                 ^box <strcat>(String(Fail annotation intValue: ), R|<local>/annotation|.R|/ConstArgument.intValue|)

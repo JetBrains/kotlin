@@ -1,4 +1,3 @@
-import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 
@@ -17,24 +16,10 @@ val kotlinNativeEmbeddedClasspath = configurations.resolvable("kotlinNativeEmbed
     extendsFrom(kotlinNativeEmbedded.get())
 }
 
-val kotlinNativeSources = configurations.create("kotlinNativeSources") {
+val kotlinNativeDocumentation = configurations.create("kotlinNativeDocumentation") {
     isCanBeConsumed = false
     isCanBeResolved = true
-
-    attributes {
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
-        attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
-    }
-}
-
-val kotlinNativeJavadoc = configurations.create("kotlinNativeJavadoc") {
-    isCanBeConsumed = false
-    isCanBeResolved = true
-
-    attributes {
-        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
-        attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.JAVADOC))
-    }
+    isTransitive = false
 }
 
 dependencies {
@@ -47,10 +32,8 @@ dependencies {
     kotlinNativeEmbedded(project(":native:cli-native"))
     kotlinNativeEmbedded(project(":kotlin-native:endorsedLibraries:kotlinx.cli", "jvmRuntimeElements"))
 
-    kotlinNativeSources(project(":kotlin-native:backend.native"))
-    kotlinNativeSources(project(":native:cli-native"))
-    kotlinNativeJavadoc(project(":kotlin-native:backend.native"))
-    kotlinNativeJavadoc(project(":native:cli-native"))
+    kotlinNativeDocumentation(project(":kotlin-native:backend.native"))
+    kotlinNativeDocumentation(project(":native:cli-native"))
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -72,16 +55,12 @@ val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {
 
 val runtimeJar = runtimeJar(compiler)
 
-val archiveZipper = serviceOf<ArchiveOperations>()::zipTree
-
 val sourcesJar = sourcesJar {
-    dependsOn(kotlinNativeSources)
-    from { kotlinNativeSources.map { archiveZipper(it) } }
+    addEmbeddedSources("kotlinNativeDocumentation")
 }
 
 val javadocJar = javadocJar {
-    dependsOn(kotlinNativeJavadoc)
-    from { kotlinNativeJavadoc.map { archiveZipper(it) } }
+    addEmbeddedJavadoc("kotlinNativeDocumentation")
 }
 
 publish {

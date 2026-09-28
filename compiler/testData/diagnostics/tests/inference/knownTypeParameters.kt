@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 open class A<T1, T2> {
     open inner class A1(val a1: T1)

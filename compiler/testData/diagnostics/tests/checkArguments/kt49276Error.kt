@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // LANGUAGE: -DisableCheckingChangedProgressionsResolve
 // This test is not K1/K2 identical due to KT-58789 not implemented yet

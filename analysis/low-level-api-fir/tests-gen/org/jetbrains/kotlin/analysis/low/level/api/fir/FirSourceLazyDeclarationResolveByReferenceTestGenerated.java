@@ -58,6 +58,18 @@ public class FirSourceLazyDeclarationResolveByReferenceTestGenerated extends Abs
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueObject.kt")
+  public void testFullValueObject() {
+    run("fullValueObject.kt");
+  }
+
+  @Test
   @TestMetadata("implicitJavaTypes_listOfStrings.kt")
   public void testImplicitJavaTypes_listOfStrings() {
     run("implicitJavaTypes_listOfStrings.kt");

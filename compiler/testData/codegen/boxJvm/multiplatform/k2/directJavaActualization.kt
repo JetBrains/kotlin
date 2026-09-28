@@ -1,6 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // LANGUAGE: +DirectJavaActualization
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // WITH_KOTLIN_JVM_ANNOTATIONS
 
 // MODULE: common

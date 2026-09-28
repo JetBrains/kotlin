@@ -192,22 +192,6 @@ class ExtensionConfigurationTest {
     }
 
     @Test
-    fun disableIntrinsicRemember() {
-        @Suppress("DEPRECATION_ERROR")
-        testComposeFeatureFlags(listOf("-IntrinsicRemember")) { extension ->
-            extension.featureFlags.value(setOf(ComposeFeatureFlag.IntrinsicRemember.disabled()))
-        }
-    }
-
-    @Test
-    fun disableStrongSkipping() {
-        @Suppress("DEPRECATION_ERROR")
-        testComposeFeatureFlags(listOf("-StrongSkipping")) { extension ->
-            extension.featureFlags.value(setOf(ComposeFeatureFlag.StrongSkipping.disabled()))
-        }
-    }
-
-    @Test
     fun disableNonSkippingGroupOptimization() {
         @Suppress("DEPRECATION")
         testComposeFeatureFlags(listOf("-OptimizeNonSkippingGroups")) { extension ->
@@ -224,22 +208,6 @@ class ExtensionConfigurationTest {
     }
 
     @Test
-    fun disableIntrinsicRememberCompatibility() {
-        testComposeFeatureFlags(listOf("-IntrinsicRemember")) { extension ->
-            @Suppress("DEPRECATION_ERROR")
-            extension.enableIntrinsicRemember.value(false)
-        }
-    }
-
-    @Test
-    fun disableStrongSkippingCompatibility() {
-        testComposeFeatureFlags(listOf("-StrongSkipping")) { extension ->
-            @Suppress("DEPRECATION_ERROR")
-            extension.enableStrongSkippingMode.value(false)
-        }
-    }
-
-    @Test
     fun enableNonSkippingGroupOptimizationCompatibility() {
         testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups")) { extension ->
             @Suppress("DEPRECATION_ERROR")
@@ -250,11 +218,10 @@ class ExtensionConfigurationTest {
     @Test
     fun enableMultipleFlags() {
         @Suppress("DEPRECATION_ERROR", "DEPRECATION")
-        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups", "-StrongSkipping", "-IntrinsicRemember")) { extension ->
+        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups", "-PausableComposition")) { extension ->
             extension.featureFlags.set(
                 setOf(
-                    ComposeFeatureFlag.StrongSkipping.disabled(),
-                    ComposeFeatureFlag.IntrinsicRemember.disabled(),
+                    ComposeFeatureFlag.PausableComposition.disabled(),
                     ComposeFeatureFlag.OptimizeNonSkippingGroups
                 )
             )
@@ -262,33 +229,20 @@ class ExtensionConfigurationTest {
     }
 
     @Test
-    fun enableMultipleFlagsCompatibility() {
-        @Suppress("DEPRECATION_ERROR")
-        testComposeFeatureFlags(listOf("OptimizeNonSkippingGroups", "-StrongSkipping", "-IntrinsicRemember")) { extension ->
-            extension.enableStrongSkippingMode.value(false)
-            extension.enableNonSkippingGroupOptimization.value(true)
-            extension.enableIntrinsicRemember.value(false)
-        }
-    }
-
-    @Test
     fun enableMultipleFlagsCompatibilityDefaults() {
         @Suppress("DEPRECATION_ERROR")
         testComposeFeatureFlags(emptyList()) { extension ->
-            extension.enableStrongSkippingMode.value(true)
             extension.enableNonSkippingGroupOptimization.value(false)
-            extension.enableIntrinsicRemember.value(true)
         }
     }
 
     @Test
     fun combineDeprecatedPropertiesWithFeatureFlags() {
-        @Suppress("DEPRECATION_ERROR")
+        @Suppress("DEPRECATION_ERROR", "DEPRECATION")
         val project = buildProjectWithJvm {
             val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
+            composeExtension.featureFlags.addAll(ComposeFeatureFlag.PausableComposition)
             composeExtension.enableNonSkippingGroupOptimization.set(true)
-            composeExtension.enableIntrinsicRemember.set(false)
-            composeExtension.featureFlags.addAll(ComposeFeatureFlag.StrongSkipping)
         }
 
         project.evaluate()
@@ -297,52 +251,8 @@ class ExtensionConfigurationTest {
         val composeOptions = jvmTask.composeOptions()
 
         listOf(
-            "OptimizeNonSkippingGroups",
-            "StrongSkipping",
-            "-IntrinsicRemember"
-        ).forEach { flag ->
-            composeOptions.assertFeature(flag)
-        }
-    }
-
-    @Test
-    fun contradictInConfiguredFlags() {
-        @Suppress("DEPRECATION_ERROR")
-        val project = buildProjectWithJvm {
-            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
-            composeExtension.enableStrongSkippingMode.set(false)
-            composeExtension.featureFlags.addAll(ComposeFeatureFlag.StrongSkipping)
-        }
-
-        project.evaluate()
-
-        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
-        val composeOptions = jvmTask.composeOptions()
-
-        listOf(
-            "StrongSkipping",
-        ).forEach { flag ->
-            composeOptions.assertFeature(flag)
-        }
-    }
-
-    @Test
-    fun combineDeprecatedPropertiesWithFeatureFlags_StrongSkipping() {
-        @Suppress("DEPRECATION_ERROR")
-        val project = buildProjectWithJvm {
-            val composeExtension = extensions.getByType(ComposeCompilerGradlePluginExtension::class.java)
-            composeExtension.enableStrongSkippingMode.set(false)
-            composeExtension.featureFlags.addAll(ComposeFeatureFlag.IntrinsicRemember.disabled())
-        }
-
-        project.evaluate()
-
-        val jvmTask = project.tasks.named<KotlinJvmCompile>("compileKotlin").get()
-        val composeOptions = jvmTask.composeOptions()
-
-        listOf(
-            "-StrongSkipping",
-            "-IntrinsicRemember"
+            "PausableComposition",
+            "OptimizeNonSkippingGroups"
         ).forEach { flag ->
             composeOptions.assertFeature(flag)
         }

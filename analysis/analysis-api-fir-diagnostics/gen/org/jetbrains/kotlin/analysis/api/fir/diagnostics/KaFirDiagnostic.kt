@@ -633,6 +633,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MissingDependencyClassInParameterWithDefaultValue : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<MissingDependencyClassInParameterWithDefaultValue>
+            get() = MissingDependencyClassInParameterWithDefaultValue::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface MissingDependencySuperclass : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<MissingDependencySuperclass>
             get() = MissingDependencySuperclass::class
@@ -2120,6 +2129,20 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface NestedJsModuleProhibited : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NestedJsModuleProhibited>
             get() = NestedJsModuleProhibited::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableEagerInitializationError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableEagerInitializationError>
+            get() = InapplicableEagerInitializationError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface InapplicableEagerInitializationWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<InapplicableEagerInitializationWarning>
+            get() = InapplicableEagerInitializationWarning::class
     }
 
     @KaUnstableDiagnosticApi
@@ -4880,6 +4903,16 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface LateinitValOverriddenByVal : KaFirDiagnostic<KtNamedDeclaration> {
+        override val diagnosticClass: KClass<LateinitValOverriddenByVal>
+            get() = LateinitValOverriddenByVal::class
+
+        public val overridingDeclaration: KaCallableSymbol
+        public val overriddenDeclaration: KaCallableSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NonFinalMemberInFinalClass : KaFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass: KClass<NonFinalMemberInFinalClass>
             get() = NonFinalMemberInFinalClass::class
@@ -5740,6 +5773,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface LateinitIntrinsicCallOnNonLateinit : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<LateinitIntrinsicCallOnNonLateinit>
             get() = LateinitIntrinsicCallOnNonLateinit::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface LateinitIntrinsicCallOnLateinitVal : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<LateinitIntrinsicCallOnLateinitVal>
+            get() = LateinitIntrinsicCallOnLateinitVal::class
     }
 
     @KaUnstableDiagnosticApi
@@ -7221,6 +7261,16 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IncompatibleStructuralClassComparison : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IncompatibleStructuralClassComparison>
+            get() = IncompatibleStructuralClassComparison::class
+
+        public val leftType: KaType
+        public val rightType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ForbiddenIdentityEquals : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<ForbiddenIdentityEquals>
             get() = ForbiddenIdentityEquals::class
@@ -8506,6 +8556,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JvmExposeBoxedNameIsNotJavaIdentifier : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<JvmExposeBoxedNameIsNotJavaIdentifier>
+            get() = JvmExposeBoxedNameIsNotJavaIdentifier::class
+
+        public val name: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface WrongTypeForJavaOverride : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<WrongTypeForJavaOverride>
             get() = WrongTypeForJavaOverride::class
@@ -9307,6 +9366,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ImplementingSuspendFunctionInterface : KaFirDiagnostic<KtClassOrObject> {
+        override val diagnosticClass: KClass<ImplementingSuspendFunctionInterface>
+            get() = ImplementingSuspendFunctionInterface::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface OverridingExternalFunWithOptionalParams : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<OverridingExternalFunWithOptionalParams>
             get() = OverridingExternalFunWithOptionalParams::class
@@ -9590,6 +9656,20 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = Syntax::class
 
         public val message: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface LeadingWhitespaceRequired : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<LeadingWhitespaceRequired>
+            get() = LeadingWhitespaceRequired::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface TrailingWhitespaceRequired : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<TrailingWhitespaceRequired>
+            get() = TrailingWhitespaceRequired::class
     }
 
     @KaUnstableDiagnosticApi

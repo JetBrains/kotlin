@@ -126,15 +126,13 @@ val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(2, 2, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 3, 10, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 3, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 3, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 4, 0, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 4, 10, null)),
-    BuildToolsVersion(KotlinToolingVersion(2, 4, 20, "RC")),
+    BuildToolsVersion(KotlinToolingVersion(2, 4, 20, null)),
 )
 
 val compatibilityTestsExcludedVersions = listOf(
-    BuildToolsVersion(KotlinToolingVersion(2, 4, 20, "Beta1")),
-    BuildToolsVersion(KotlinToolingVersion(2, 3, 21, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 20, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 10, null)),
     BuildToolsVersion(KotlinToolingVersion(2, 2, 0, null)),
@@ -199,7 +197,7 @@ val businessLogicTestSuits = setOf(
     "testKotlinLogger",
     "testDefaultOptions",
     "testDaemonOptions",
-    "testInternalInputsTracker",
+    "testJps",
     "testAbiValidation",
     "testRestrictedArguments",
     "testArgumentParsingWarnings",
@@ -280,7 +278,7 @@ testing {
                     projectTests {
                         testTask(
                             taskName = testTask.name,
-                            javaLauncher = JdkMajorVersion.JDK_1_8,
+                            javaLauncher = JdkMajorVersion.JDK_17_0,
                             skipInLocalBuild = false,
                             garbageCollector = GarbageCollector.Parallel
                         ) {
@@ -325,9 +323,9 @@ testing {
             }
         }
 
-        named<JvmTestSuite>("testInternalInputsTracker") {
+        named<JvmTestSuite>("testJps") {
             dependencies {
-                implementation(project(":compiler:build-tools:kotlin-build-tools-impl"))
+                implementation(project(":compiler:build-tools:kotlin-build-tools-api-jps"))
             }
         }
 

@@ -457,6 +457,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_CLAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_BACKING_FIELD_TYPE
@@ -531,6 +532,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KOTLIN_PACKAGE_US
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LABEL_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL
@@ -559,6 +561,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS
@@ -1137,6 +1140,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE,
             "Cannot access class ''{0}'' in the expression type. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
+            RENDER_TYPE,
+        )
+        map.put(
+            MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE,
+            "Cannot access class ''{0}'' in the parameter type when a default value of that parameter is in use. This may cause problems in cases such as when this type is based on an inline class. Check the module classpath for missing or conflicting dependencies.",
             RENDER_TYPE,
         )
         map.put(
@@ -2163,7 +2171,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(TYPE_ARGUMENTS_NOT_ALLOWED, "Type arguments are not allowed {0}.", STRING)
         map.put(
             TYPE_ARGUMENTS_NOT_ALLOWED_WARNING,
-            "Type arguments are not allowed {0}.".toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn25),
+            "Type arguments are not allowed {0}.".toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn26),
             STRING,
         )
         map.put(
@@ -2195,7 +2203,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             WRONG_NUMBER_OF_TYPE_ARGUMENTS_IN_GET_CLASS_WARNING,
-            "$wrongNumberOfTypeArguments for ''{1}''.".toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn25),
+            "$wrongNumberOfTypeArguments for ''{1}''.".toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn26),
             null,
             SYMBOL,
         )
@@ -2480,7 +2488,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CLASS_LITERAL_LHS_NOT_A_CLASS_WARNING,
             "Only classes are allowed on the left-hand side of a class literal."
-                .toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn25)
+                .toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn26)
         )
         map.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal cannot be nullable.")
         map.put(
@@ -2719,6 +2727,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_CLASS_OR_OBJECT_QUOTED,
             SYMBOL_WITH_CONTAINING_DECLARATION,
             SYMBOL_WITH_CONTAINING_DECLARATION
+        )
+        map.put(
+            FirErrors.LATEINIT_VAL_OVERRIDDEN_BY_VAL,
+            "''lateinit val'' property {0} cannot be overridden by ''val'' property ''{1}''.",
+            SYMBOL_WITH_CONTAINING_DECLARATION,
+            SYMBOL
         )
         map.put(NON_FINAL_MEMBER_IN_FINAL_CLASS, "'open' has no effect on a final class.")
         map.put(NON_FINAL_MEMBER_IN_OBJECT, "'open' has no effect on object.")
@@ -3140,13 +3154,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "{0} access cannot have explicit type arguments.", STRING)
         map.put(
             EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING,
-            "{0} access cannot have explicit type arguments.".toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn25),
+            "{0} access cannot have explicit type arguments.".toDeprecationWarningMessage(LanguageFeature.ForbidUselessTypeArgumentsIn26),
             STRING,
         )
         map.put(SAFE_CALLABLE_REFERENCE_CALL, "This syntax is reserved for future releases.")
 
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL, "This declaration can only be called on a property literal (e.g. 'Foo::bar').")
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, "This declaration can only be called on a reference to a 'lateinit' property.")
+        map.put(LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL, "This declaration cannot be called on a reference to a 'val' property.")
         map.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, "This declaration cannot be used inside an inline function.")
         map.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY, "Backing field of ''{0}'' is not accessible at this point.", SYMBOL)
 
@@ -3613,6 +3628,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE
         )
         map.put(
+            INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON,
+            "Comparison is always unsuccessful because ''{0}'' and ''{1}'' are incompatible types with structural equality.",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
             FORBIDDEN_IDENTITY_EQUALS,
             "Identity equality for arguments of types ''{0}'' and ''{1}'' is prohibited.",
             RENDER_TYPE,
@@ -4049,7 +4070,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INVALID_VERSIONING_ON_VALUE_CLASS_PARAMETER,
-            "'@IntroducedAt' annotation cannot be used in the (single) parameter of a value class constructor.",
+            "'@IntroducedAt' annotation cannot be used in the (single) parameter of an inline value class constructor.",
         )
         map.put(
             NON_ASCENDING_VERSION_ANNOTATION,

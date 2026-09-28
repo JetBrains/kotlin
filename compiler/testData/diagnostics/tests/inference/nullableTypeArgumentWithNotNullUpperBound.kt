@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <S : Any> foo1(x: Array<out S?>, y: Array<in S?>) {
     val xo = outANullable(x)
     val yo = inANullable(y)

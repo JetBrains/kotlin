@@ -54,6 +54,7 @@ private enum class TestProperty(shortName: String) {
     XCTEST_FRAMEWORK("xctest"),
     TEAMCITY("teamcity"),
     MINIDUMP_ANALYZER("minidumpAnalyzer"),
+    USE_PROVISIONED_XCODE("useProvisionedXcode"),
     JDK_VERSION("jdkVersion"),
     DEPEND_ON_PLATFORM_LIBS("dependOnPlatformLibs")
     ;
@@ -152,6 +153,9 @@ private open class NativeArgsProvider @Inject constructor(
 
     @get:Input
     protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild.get()
+
+    @get:Input
+    protected val useProvisionedXcode: Boolean = project.useProvisionedXcode()
 
     @get:Internal
     protected val customNativeHome: Provider<String> = providers.testProperty(KOTLIN_NATIVE_HOME)
@@ -264,6 +268,7 @@ private open class NativeArgsProvider @Inject constructor(
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
             "-D${TEAMCITY.fullName}=$teamcity",
+            "-D${USE_PROVISIONED_XCODE.fullName}=$useProvisionedXcode",
             customCompilerDist.orNull?.let { "-D${CUSTOM_KOTLIN_NATIVE_HOME.fullName}=${it.asFile.absolutePath}" },
             testTarget.orNull?.let { "-D${TEST_TARGET.fullName}=$it" },
             testMode.orNull?.let { "-D${TEST_MODE.fullName}=$it" },
@@ -319,6 +324,9 @@ private abstract class JdkVersionDependentFlagsProvider : CommandLineArgumentPro
 
 private fun ProviderFactory.testProperty(property: TestProperty) =
     gradleProperty(property.fullName).orElse(gradleProperty(property.shortName))
+
+private fun Project.useProvisionedXcode(): Boolean =
+    HostManager.hostIsMac && kotlinBuildProperties.booleanProperty("kotlin.native.internalServer.wholeXcode", false).get()
 
 private fun Project.hostXcodeConfiguration(): Configuration =
     configurations.findByName(HOST_XCODE_CONFIGURATION) ?: run {
@@ -383,7 +391,7 @@ fun ProjectTestsExtension.nativeTestTask(
 
         // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
         // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
-        val defaultJdkVersion = JdkMajorVersion.JDK_11_0
+        val defaultJdkVersion = JdkMajorVersion.JDK_17_0
 
         val nativeTestJdkVersion = project.providers.testProperty(JDK_VERSION)
             .map { versionString ->
@@ -438,9 +446,7 @@ fun ProjectTestsExtension.nativeTestTask(
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
 
-        if (HostManager.hostIsMac &&
-            kotlinBuildProperties.booleanProperty("kotlin.native.internalServer.wholeXcode", false).get()
-        ) {
+        if (project.useProvisionedXcode()) {
             dependsOn(project.hostXcodeConfiguration())
             environment(
                 "DEVELOPER_DIR",

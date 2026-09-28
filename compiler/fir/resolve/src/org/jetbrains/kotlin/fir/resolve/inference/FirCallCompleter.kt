@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgument
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirCallCompleter(
@@ -379,12 +380,16 @@ class FirCallCompleter(
         val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
 
         val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
-            override fun analyze(
-                postponedResolvedAtom: ConePostponedResolvedAtom,
-                withPCLASession: Boolean,
-                precalculatedBoundsForCL: CollectionLiteralBounds?,
-            ) {
-                analyzer.analyze(candidate.system, postponedResolvedAtom, candidate, withPCLASession, precalculatedBoundsForCL)
+            override fun analyze(atom: ConeFunctionLikeAtom, withPCLASession: Boolean) {
+                analyzer.analyze(candidate.system, atom, candidate, withPCLASession)
+            }
+
+            override fun analyze(atom: ConeContextSensitiveAlternativeForQualifierAtom) {
+                analyzer.analyze(atom, candidate)
+            }
+
+            override fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<*>) {
+                analyzer.analyze(state, candidate)
             }
         }
         completer.complete(

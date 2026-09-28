@@ -50,7 +50,6 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
-    put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
     put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
 
     val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
@@ -77,8 +76,6 @@ fun CompilerConfiguration.setupCommonArguments(
     }
     put(CommonConfigurationKeys.ADDITIONAL_IR_CHECKERS, arguments.enableAdditionalIrCheckers.toList())
 
-    put(CommonConfigurationKeys.USE_FIR_EXPERIMENTAL_CHECKERS, @Suppress("DEPRECATION") arguments.useFirExperimentalCheckers)
-
     setupMetadataVersion(arguments, createMetadataVersion)
 
     setupLanguageVersionSettings(arguments)
@@ -89,7 +86,7 @@ fun CompilerConfiguration.setupCommonArguments(
     checkRedundantArguments(arguments)
 
     put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
-    put(CommonConfigurationKeys.USE_LIGHT_TREE, @Suppress("DEPRECATION") arguments.useFirLT)
+    put(CommonConfigurationKeys.PARSER_MODE, @Suppress("DEPRECATION") if (arguments.useFirLT) ParserMode.LightTree else ParserMode.Psi)
 
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 
@@ -99,7 +96,29 @@ fun CompilerConfiguration.setupCommonArguments(
     }
 
     put(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES, arguments.dontSortSourceFiles)
+
+    handleMinimumRuntimeJdkOptOut(arguments)
 }
+
+private fun CompilerConfiguration.handleMinimumRuntimeJdkOptOut(arguments: CommonCompilerArguments) {
+    val optOutOption = CommonCompilerArguments::allowPre17RuntimeJdk.cliArgument
+    val stopsWorkingIn = "2.5.20-Beta1"
+    val requiredRuntimeJdk = 17
+
+    val currentJdkVersion = getRuntimeJdkVersion()
+
+    if (currentJdkVersion < requiredRuntimeJdk && !arguments.allowPre17RuntimeJdk) {
+        report(
+            COMPILER_ARGUMENTS_WARNING,
+            "Running Kotlin compiler using JDK $currentJdkVersion will not be supported in future versions of Kotlin. " +
+                    "Consider upgrading to at least JDK $requiredRuntimeJdk or supplying '$optOutOption' (which will only work until Kotlin $stopsWorkingIn). " +
+                    "See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+        )
+    }
+}
+
+fun getRuntimeJdkVersion(): Int =
+    System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6
 
 fun CompilerConfiguration.setupMetadataVersion(
     arguments: CommonCompilerArguments,
@@ -176,6 +195,10 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
     propertiesLoop@ for ([explicitArgument, values] in arguments.explicitArguments) {
         if (!explicitArgument.changesLanguageFeatures) continue@propertiesLoop
         val effectivePropertyValue = values.lastOrNull() ?: continue@propertiesLoop
+
+        // Ignore deprecated/removed arguments to avoid extra reporting
+        // They are already reported by `checkArgumentsLifecycle`
+        if (explicitArgument.status >= ArgumentLifecycleStatus.DEPRECATED) continue@propertiesLoop
 
         fun checkNecessity(feature: LanguageFeature, ifValueIs: String, state: LanguageFeature.State): Boolean {
             // At first, check if the annotation is relevant. Only Boolean and String types are allowed

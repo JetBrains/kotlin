@@ -17,7 +17,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.junit.jupiter.api.fail
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.concurrent.atomics.incrementAndFetch
+import kotlin.concurrent.atomics.plusAssign
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.test.Test
@@ -29,26 +29,21 @@ class TestMetadataTest {
     private val absoluteRoot = Path("").absolute()
 
     private val testMetadataAnnotationDesc = "Lorg/jetbrains/kotlin/test/TestMetadata;"
-    private val smokeTestAnnotationDesc = Type.getDescriptor(SmokeTest::class.java)
-    private val affectedByAnnotationDesc = Domain.entries.associateWith { domain ->
-        Type.getDescriptor(affectedByAnnotationOf(domain).java)
+    private val mustRunAlwaysAnnotationDesc = Type.getDescriptor(MustRunAlways::class.java)
+    private val mustRunOnChangesInAnnotationDesc = Domain.entries.associateWith { domain ->
+        Type.getDescriptor(mustRunOnChangesInAnnotationOf(domain).java)
     }
 
     /**
-     * Our repository contains many tests generated from test-data.
-     * Those tests can use test-data from generic locations.
-     * These test-data locations might be living within a different 'Domain' as the actual test.
-     * This test is checking if the test is executed when the given test-data is changed (according to the rules of federal ci)
+     * Checks that tests using test data are selected to run when the domain containing that test data is changed.
      *
-     * This test, therefore, walks through the repository, analyzing each class file for '@TestMetadata' annotations.
-     * If the provided '@TestMetadata' annotation is found, it will check if the test-data is inside the same 'Domain' as the test.
-     * If the test-data is not inside the same 'Domain', the test will check if the test is executed when the test-data is changed.
+     * Scans compiled classes for `@TestMetadata` annotations and compares the domains of the test and its test data.
      *
      * A test marked by the `@TestMetadata` annotation must meet one of the following conditions:
-     * - the metadata is living in the same domains as the test
-     * - the metadata is living in any of the 'fullyAffectedBy' dependencies of the test
-     * - the test is marked as '@AffectedBy' any of metadata domains
-     * - the test is marked as '@SmokeTest' (so it always runs)
+     * - the test data belongs to the same domains as the test
+     * - the test's domains list the test data's domains in `mustRunAllTestsOnChangesIn`
+     * - the test is annotated with `@MustRunOnChangesInXYZ` for a domain containing its test data
+     * - the test is annotated with `@MustRunAlways`
      */
     @Test
     fun `test-federation dependencies`() {
@@ -64,10 +59,10 @@ class TestMetadataTest {
 
         runBlocking(Dispatchers.IO) {
             forEachCompiledClass { file, classNode ->
-                checkedClasses.incrementAndFetch()
+                checkedClasses += 1
                 classNode.visibleAnnotations?.forEach { annotation ->
                     if (annotation.desc == testMetadataAnnotationDesc) {
-                        checkedAnnotations.incrementAndFetch()
+                        checkedAnnotations += 1
                         val now = Clock.System.now()
                         if ((now - lastProgressPrinted).inWholeSeconds >= 5) {
                             lastProgressPrinted = now
@@ -80,17 +75,17 @@ class TestMetadataTest {
                         /* Check if the metadata is living in the same domains as the test */
                         if (metadataDomains.intersect(testDomains.toSet()).isNotEmpty()) return@forEach
 
-                        /* Check if the metadata is living in any of the 'fullyAffectedBy' dependencies of the test */
-                        if (metadataDomains.intersect(testDomains.flatMap { it.fullyAffectedBy }.toSet()).isNotEmpty())
+                        /* Check if the metadata is living in any of the 'mustRunAllTestsOnChangesIn' dependencies of the test */
+                        if (metadataDomains.intersect(testDomains.flatMap { it.mustRunAllTestsOnChangesIn }.toSet()).isNotEmpty())
                             return@forEach
 
-                        /* Check if the test is marked as SmokeTest and therefore always runs */
-                        if (classNode.visibleAnnotations.any { it.desc == smokeTestAnnotationDesc }) return@forEach
+                        /* Check if the test is marked as MustRunAlways and therefore always runs */
+                        if (classNode.visibleAnnotations.any { it.desc == mustRunAlwaysAnnotationDesc }) return@forEach
 
-                        /* Check if the test is marked as '@AffectedBy' any of metadata domains*/
+                        /* Check if the test is marked as '@MustRunOnChangesIn' any of metadata domains*/
                         if (classNode.visibleAnnotations.any { annotation ->
                                 metadataDomains.any { metadataDomain ->
-                                    annotation.desc == affectedByAnnotationDesc[metadataDomain.domain]
+                                    annotation.desc == mustRunOnChangesInAnnotationDesc[metadataDomain.domain]
                                 }
                             }) return@forEach
 
@@ -100,10 +95,10 @@ class TestMetadataTest {
                             appendLine("""   The test class uses metadata from a different domain, without declaring a dependency on it.""")
                             appendLine("""   Solutions:""")
                             metadataDomains.forEach { metadataDomain ->
-                                appendLine("""       - Add @${affectedByAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
-                                appendLine("""       - Declare fullyAffectedBy: ${metadataDomain.domain.name} (if absolutely necessary)""")
+                                appendLine("""       - Add @${mustRunOnChangesInAnnotationOf(metadataDomain.domain).simpleName} (recommended)""")
+                                appendLine("""       - Declare mustRunAllTestsOnChangesIn: ${metadataDomain.domain.name} (if absolutely necessary)""")
                             }
-                            appendLine("""       - Add @${SmokeTest::class.simpleName} (mark this test as SmokeTest)""")
+                            appendLine("""       - Add @${MustRunAlways::class.simpleName} (run this test regardless of changed domains)""")
                         })
                     }
                 }

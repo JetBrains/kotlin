@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import java.io.File
 
@@ -63,6 +64,26 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             "Do not attempt to use script compilation cache, even if provided by the definition",
             required = false, allowMultipleOccurrences = false
         )
+        val REPL_SNIPPET_PRIOR_CLASS_OPTION = CliOption(
+            "repl-snippet-prior-class", "<ClassId>",
+            "ClassIds of a prior REPL snippets of this compilation; " +
+                    "repeat in snippet order (oldest first). The given ids may cover only the tail of " +
+                    "the session: the snippets preceding the oldest given one are recovered from the " +
+                    "prior-snippet links in the compiled snippets' metadata",
+            required = false, allowMultipleOccurrences = true
+        )
+        val REPL_SNIPPET_STATELESS_MODE_OPTION = CliOption(
+            "repl-snippet-stateless-mode", "true/false",
+            "Compile '.repl.<file extension>' sources in this compile as chained REPL snippets keeping no " +
+                    "state between compilations (with '-Xallow-any-scripts-in-source-roots'); previous snippets " +
+                    "are passed via 'repl-snippet-prior-class' and further restored from metadata",
+            required = false, allowMultipleOccurrences = false
+        )
+        val REPL_SNIPPET_CONFIGURATION_OPTION = CliOption(
+            "repl-snippet-configuration", "<path>",
+            "Path to a file with a serialized ScriptCompilationConfiguration for the snippets compilation",
+            required = false, allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = KOTLIN_SCRIPTING_PLUGIN_ID
@@ -78,6 +99,9 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
             ENABLE_SCRIPT_EXPLANATION_OPTION,
             DISABLE_SCRIPT_COMPILATION_CACHE,
+            REPL_SNIPPET_PRIOR_CLASS_OPTION,
+            REPL_SNIPPET_STATELESS_MODE_OPTION,
+            REPL_SNIPPET_CONFIGURATION_OPTION,
         )
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
@@ -148,6 +172,20 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
                 ScriptingConfigurationKeys.DISABLE_SCRIPT_COMPILATION_CACHE,
                 value.takeUnless { it.isBlank() }?.toBoolean() ?: false
             )
+        }
+        REPL_SNIPPET_PRIOR_CLASS_OPTION -> {
+            val current = configuration.getList(ScriptingConfigurationKeys.REPL_SNIPPET_PRIOR_CLASSES).toMutableList()
+            current.add(ClassId.fromString(value))
+            configuration.put(ScriptingConfigurationKeys.REPL_SNIPPET_PRIOR_CLASSES, current)
+        }
+        REPL_SNIPPET_STATELESS_MODE_OPTION -> {
+            configuration.put(
+                ScriptingConfigurationKeys.REPL_SNIPPET_STATELESS_MODE,
+                value.takeUnless { it.isBlank() }?.toBoolean() ?: true
+            )
+        }
+        REPL_SNIPPET_CONFIGURATION_OPTION -> {
+            configuration.put(ScriptingConfigurationKeys.REPL_SNIPPET_CONFIGURATION_FILE, File(value))
         }
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }

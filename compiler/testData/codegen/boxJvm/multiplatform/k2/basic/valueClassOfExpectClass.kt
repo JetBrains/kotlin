@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // ISSUE: KT-63638
 // WITH_STDLIB
 

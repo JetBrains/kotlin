@@ -10,7 +10,7 @@ import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightTypeElement
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
@@ -79,6 +79,7 @@ internal class LightTypeElementWithParent(
     type: PsiType,
 ) : LightTypeElement(lightParent.manager, type) {
     override fun getParent(): PsiElement = lightParent
+    override fun getContainingFile(): PsiFile? = lightParent.containingFile
 
     /**
      * Avoids delegating to [LightTypeElement.isValid][com.intellij.psi.impl.light.LightTypeElement.isValid]

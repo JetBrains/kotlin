@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // LANGUAGE: +CompanionBlocks
 // FILE: J.java
 public class J {

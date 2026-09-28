@@ -1,5 +1,5 @@
 // ISSUE: KT-57879
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // FILE: CoreBundle.java
 

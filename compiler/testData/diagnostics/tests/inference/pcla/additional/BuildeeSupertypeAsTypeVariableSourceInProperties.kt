@@ -1,5 +1,5 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_REFLECT
 // DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE
 // ISSUE: KT-65300

@@ -32,7 +32,7 @@ internal data class LightweightFileInfo(
  */
 internal fun extractFileInfoLightweight(file: File): LightweightFileInfo? {
     val fileContent = readJavaSourceFileText(file) ?: return null
-    val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.HIGHEST).apply { start(fileContent) }
+    val lexer = JavaSyntaxDefinition.createLexer(LanguageLevel.JDK_X).apply { start(fileContent) }
 
     var braceBalance = 0
     var parenthesisBalance = 0

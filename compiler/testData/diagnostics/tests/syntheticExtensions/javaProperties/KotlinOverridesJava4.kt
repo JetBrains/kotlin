@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: KotlinFile.kt
 abstract class KotlinClass : JavaInterface3 {
     override fun getSomething(): String = ""

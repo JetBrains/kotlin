@@ -104,7 +104,7 @@ private open class LightTreeSourceNavigator : SourceNavigator {
     ): CharSequence? = when (tokenType) {
         KtNodeTypes.REFERENCE_EXPRESSION, KtTokens.IDENTIFIER -> toString()
         KtNodeTypes.TYPE_PROJECTION -> getChildren(treeStructure).last().toString()
-        KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtTokens.SAFE_ACCESS -> getChildren(treeStructure).last().getRawIdentifier(treeStructure)
+        KtNodeTypes.DOT_QUALIFIED_EXPRESSION, KtTokens.SAFE_ACCESS, KtTokens.ERROR_SAFE_ACCESS -> getChildren(treeStructure).last().getRawIdentifier(treeStructure)
         else -> null
     }
 

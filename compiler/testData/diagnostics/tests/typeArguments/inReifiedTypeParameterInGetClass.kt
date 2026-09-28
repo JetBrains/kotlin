@@ -1,6 +1,6 @@
 // ISSUE: KT-84380
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
+// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn26
 
 inline fun <reified R> test() {
     val p1 = R::class

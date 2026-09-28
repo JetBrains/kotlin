@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Item(val name: String, val rating: Int): Comparable<Item> {
     public override fun compareTo(other: Item): Int {
         return compareBy(this, other, { rating }, { name })

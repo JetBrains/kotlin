@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // Same shape as `box/javaDirect/packagePrivateInheritedNestedClassNotVisibleAcrossPackages.kt`,
 // but `a.Base` lives in a dependency module, so `main` reads it as a *binary* Java class.

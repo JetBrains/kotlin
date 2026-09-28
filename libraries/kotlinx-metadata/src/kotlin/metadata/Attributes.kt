@@ -208,7 +208,6 @@ public var KmConstructor.hasNonStableParameterNames: Boolean by constructorBoole
  *
  * @see [MustUseReturnValues]
  */
-@ExperimentalMustUseStatus
 public var KmConstructor.returnValueStatus: ReturnValueStatus by returnValueStatusDelegate(
     KmConstructor::flags,
     ProtoFlags.RETURN_VALUE_STATUS_CTOR
@@ -291,7 +290,6 @@ public var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag
  *
  * @see [MustUseReturnValues]
  */
-@ExperimentalMustUseStatus
 public var KmFunction.returnValueStatus: ReturnValueStatus by returnValueStatusDelegate(
     KmFunction::flags,
     ProtoFlags.RETURN_VALUE_STATUS_FUNCTION
@@ -404,7 +402,6 @@ public var KmProperty.isExpect: Boolean by propertyBooleanFlag(FlagImpl(ProtoFla
  *
  * @see [MustUseReturnValues]
  */
-@ExperimentalMustUseStatus
 public var KmProperty.returnValueStatus: ReturnValueStatus by returnValueStatusDelegate(
     KmProperty::flags,
     ProtoFlags.RETURN_VALUE_STATUS_PROPERTY

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 inline fun <reified T> parse(json: String): T? = TODO()

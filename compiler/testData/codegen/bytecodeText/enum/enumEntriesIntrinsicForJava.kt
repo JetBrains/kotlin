@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // WITH_STDLIB
 // OPT_IN: kotlin.ExperimentalStdlibApi
 // FILE: MyEnum.java

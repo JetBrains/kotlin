@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrFileMetadata
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.collectJsExportNames
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -38,7 +36,6 @@ import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
-import org.jetbrains.kotlin.utils.toSmartList
 import java.io.File
 import java.nio.file.Path
 import java.util.*
@@ -51,9 +48,6 @@ val KotlinLibrary.serializedIrFileFingerprints: List<SerializedIrFileFingerprint
 
 val KotlinLibrary.serializedKlibFingerprint: SerializedKlibFingerprint?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_SERIALIZED_KLIB_FINGERPRINT)?.let { SerializedKlibFingerprint.fromString(it) }
-
-internal val SerializedIrFile.fileMetadata: ByteArray
-    get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
 
 /**
  * Note: This function returns the list of the deserialized [IrModuleFragment]s that has exactly the same
@@ -242,6 +236,19 @@ private fun String.parseSerializedIrFileFingerprints(): List<SerializedIrFileFin
     return split(FILE_FINGERPRINTS_SEPARATOR).mapNotNull(SerializedIrFileFingerprint::fromString)
 }
 
+private typealias ProcessFun = (
+    sourceFile: File,
+    fileData: ByteArray,
+    types: ByteArray,
+    signatures: ByteArray,
+    strings: ByteArray,
+    declarations: ByteArray,
+    bodies: ByteArray,
+    fqn: ByteArray,
+    debugInfo: ByteArray?,
+    fileEntries: ByteArray?
+) -> Unit
+
 fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
@@ -257,7 +264,6 @@ fun serializeModuleIntoKlib(
     wasmTarget: WasmTarget? = null,
     performanceManager: PerformanceManager? = null
 ) {
-    val moduleJsExportNames = moduleFragment.collectJsExportNames()
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val serializerOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
         serializeModuleIntoKlib(
@@ -272,27 +278,29 @@ fun serializeModuleIntoKlib(
                     settings = IrSerializationSettings(configuration),
                     irDiagnosticReporter,
                     irBuiltIns,
-                ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
+                )
             },
             metadataSerializer = metadataSerializer,
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
+                fun SerializedIrFile.processIrFile(ioFile: File, process: ProcessFun) {
+                    process(
+                        ioFile,
+                        fileData,
+                        types,
+                        signatures,
+                        strings,
+                        declarations,
+                        bodies,
+                        fqName.toByteArray(),
+                        debugInfo,
+                        fileEntries,
+                    )
+                }
+
                 { ioFile, compiledFile ->
                     icConsumer.processPackagePart(ioFile, compiledFile.metadata)
-                    with(compiledFile.irData!!) {
-                        icConsumer.processIrFile(
-                            ioFile,
-                            fileData,
-                            types,
-                            signatures,
-                            strings,
-                            declarations,
-                            bodies,
-                            fqName.toByteArray(),
-                            fileMetadata,
-                            debugInfo,
-                            fileEntries,
-                        )
-                    }
+                    compiledFile.irData!!.processIrFile(ioFile, icConsumer::processIrFile)
+                    compiledFile.irInlineData?.processIrFile(ioFile, icConsumer::processIrInlineFile)
                 }
             },
         )
@@ -366,6 +374,7 @@ private fun List<IrModuleFragment>.getUniqueNameForEachFragment(): Map<IrModuleF
 
 fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): List<KotlinFileSerializedData> {
     val compiledIrFiles = serializedIrFiles
+    val compiledIrInlineFiles = serializedIrInlineFiles
     val compiledMetaFiles = compiledPackageParts
 
     assert(compiledIrFiles.size == compiledMetaFiles.size)
@@ -388,11 +397,24 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
                 bodies,
                 declarations,
                 debugInfo,
-                fileMetadata,
                 fileEntries,
             )
         }
-        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile))
+        val irInlineFile = compiledIrInlineFiles[f]?.run {
+            SerializedIrFile(
+                fileData,
+                String(fqn),
+                f.path.replace('\\', '/'),
+                types,
+                signatures,
+                strings,
+                bodies,
+                declarations,
+                debugInfo,
+                fileEntries,
+            )
+        }
+        storage.add(KotlinFileSerializedData(metaFile.metadata, irFile, irInlineFile))
     }
     return storage
 }

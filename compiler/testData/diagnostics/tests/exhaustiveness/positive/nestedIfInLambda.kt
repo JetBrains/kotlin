@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun run(block: () -> Unit) {}
 
 fun test(b1: Boolean, b2: Boolean) {

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: MyAnn.java
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

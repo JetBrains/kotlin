@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Box<T>
 
 public fun <T> foo(nextFunction: (T) -> T): Box<T> = null!!

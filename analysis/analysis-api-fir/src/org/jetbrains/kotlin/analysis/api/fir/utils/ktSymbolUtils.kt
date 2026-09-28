@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 internal val KaSymbol.firSymbol: FirBasedSymbol<*>
     get() {

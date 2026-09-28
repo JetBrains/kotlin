@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.javaInterop.isPrimitiveBacked
@@ -20,38 +19,37 @@ import org.jetbrains.kotlin.analysis.api.types.hasFlexibleNullability
 import org.jetbrains.kotlin.analysis.api.types.isMarkedNullable
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcard
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightParameterForReceiver private constructor(
-    private val receiverPointer: KaSymbolPointer<KaReceiverParameterSymbol>,
+    override val symbolPointer: KaSymbolPointer<KaReceiverParameterSymbol>,
     methodName: String,
     method: SymbolLightMethodBase,
-) : SymbolLightParameterBase(method) {
+) : SymbolLightParameterBase<KaReceiverParameterSymbol>(method) {
     private inline fun <T> withReceiverSymbol(crossinline action: context(KaSession) (KaReceiverParameterSymbol) -> T): T =
-        receiverPointer.withSymbol(ktModule, action)
+        symbolPointer.withSymbol(useSiteModule, action)
 
     companion object {
         fun tryGet(
             callableSymbolPointer: KaSymbolPointer<KaCallableSymbol>,
             method: SymbolLightMethodBase
-        ): SymbolLightParameterForReceiver? = callableSymbolPointer.withSymbol(method.ktModule) { callableSymbol ->
+        ): SymbolLightParameterForReceiver? = callableSymbolPointer.withSymbol(method.useSiteModule) { callableSymbol ->
             if (callableSymbol !is KaNamedSymbol) return@withSymbol null
             if (!callableSymbol.isExtension) return@withSymbol null
             // Companion extensions hide their receiver from the JVM signature (KEEP-0449 §1.3.6, §4.1.3),
             // so the light class must not expose a leading receiver value parameter.
-            @OptIn(KaExperimentalApi::class)
             if (callableSymbol.isCompanion) return@withSymbol null
             val receiverSymbol = callableSymbol.receiverParameter ?: return@withSymbol null
 
             SymbolLightParameterForReceiver(
-                receiverPointer = receiverSymbol.createPointer(),
+                symbolPointer = receiverSymbol.createPointer(),
                 methodName = callableSymbol.name.asString(),
                 method = method,
             )
@@ -76,8 +74,8 @@ internal class SymbolLightParameterForReceiver private constructor(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = receiverPointer,
+                    useSiteModule = useSiteModule,
+                    annotatedSymbolPointer = symbolPointer,
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
@@ -108,10 +106,10 @@ internal class SymbolLightParameterForReceiver private constructor(
 
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightParameterForReceiver &&
-            ktModule == other.ktModule &&
-            compareSymbolPointers(receiverPointer, other.receiverPointer)
+            useSiteModule == other.useSiteModule &&
+            compareSymbolPointers(symbolPointer, other.symbolPointer)
 
     override fun hashCode(): Int = _name.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && receiverPointer.isValid(ktModule)
+    override fun isValid(): Boolean = super.isValid() && symbolPointer.isValid(useSiteModule)
 }

@@ -52,7 +52,8 @@ class PrimeList {
         bh.consume(primes)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun calcEratosthenes(bh: Blackhole) {
         primes.clear()
         primes.addAll(2..BENCHMARK_SIZE)

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtIdeApi::class)
+
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
@@ -107,6 +109,7 @@ open class KtClass : KtClassOrObject {
         "this.getOrCreatePrimaryConstructor()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreatePrimaryConstructor",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KtNonPublicApi::class)
 fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor =
@@ -118,6 +121,7 @@ fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor =
         "this.getOrCreatePrimaryConstructorParameterList()",
         "org.jetbrains.kotlin.idea.base.psi.getOrCreatePrimaryConstructorParameterList",
     ),
+    level = DeprecationLevel.ERROR,
 )
 @OptIn(KtNonPublicApi::class)
 fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterList =

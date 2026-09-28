@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-1066 false 'Variable cannot be initialized before declaration'
 
 package kt1066

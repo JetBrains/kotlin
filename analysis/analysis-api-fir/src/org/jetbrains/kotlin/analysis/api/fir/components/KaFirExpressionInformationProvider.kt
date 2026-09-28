@@ -477,7 +477,6 @@ private val KtResolvable.canReferenceCallable: Boolean
  *
  * in which the `f` in 2) is regarded as used and `f` in 1) is not.
  */
-@OptIn(KtExperimentalApi::class)
 context(_: KaSession)
 private fun doesCallExpressionUseCallee(callee: PsiElement): Boolean {
     return callee !is KtReferenceExpression || callee is KtResolvableCall && callee.resolveSuccessfulCall() is KaVariableAccessCall

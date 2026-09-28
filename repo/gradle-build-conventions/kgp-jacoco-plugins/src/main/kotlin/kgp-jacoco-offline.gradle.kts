@@ -46,6 +46,13 @@ tasks.withType<Test>().configureEach {
             // pass values to set up the classpath for integration tests to use offline instrumentation
             systemProperty("jacocoRuntimeJar", jacocoRuntimeJar.get().absolutePath)
             systemProperty("jacocoDestFile", jacocoDestFile.get().asFile.absolutePath)
+
+            // Overwrite value from kgp-it/build.gradle.kts to take up less space
+            // With test coverage, we run all KGP integration tests.
+            // The number of failing tests (for different reasons) could pass the threshold
+            // when temdirs fill up all the disk space and, leading to
+            // "No space left on device" errors on agents
+            systemProperty("junit.jupiter.tempdir.cleanup.mode.default", "always")
         }
     }
 }

@@ -68,7 +68,7 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
     /**
      * Outgoing configuration with all native dependencies.
      */
-    val nativeDependenciesElements: Configuration by project.configurations.creating {
+    val nativeDependenciesElements: Configuration = project.configurations.create("nativeDependenciesElements") {
         description = "Native dependencies"
         isCanBeConsumed = true
         isCanBeResolved = false

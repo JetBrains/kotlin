@@ -48,7 +48,7 @@ fun box() {
     })
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:34 box:
 // library.kt:5 box: xFoo\1:int=1:int, $i$f$foo\1\34:int=0:int
 // library.kt:13 box: xFoo\1:int=1:int, $i$f$foo\1\34:int=0:int, xBar1\2:int=0:int, xBar2\2:int=1:int, xBar3\2:int=2:int, $i$f$bar\2\293:int=0:int

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: J.java
 public interface J {
     public void foo1(Runnable r);

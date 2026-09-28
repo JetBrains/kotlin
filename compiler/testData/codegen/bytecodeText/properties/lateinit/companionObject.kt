@@ -20,5 +20,5 @@ class Foo {
 
 fun consume(s: String) {}
 
-// JVM_IR invokes getX() (as suggested in KT-28331)
+// JVM backend invokes getX() (as suggested in KT-28331)
 // 1 throwUninitializedPropertyAccessException

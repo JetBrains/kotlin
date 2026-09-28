@@ -1,19 +1,17 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.impl.base.projectStructure
 
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaContentScopeProvider
-import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaGlobalSearchScopeMerger
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinContentScopeRefiner
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 
 internal class KaBaseContentScopeProvider : KaContentScopeProvider {
-    @OptIn(KaPlatformInterface::class)
     override fun getRefinedContentScope(module: KaModule): GlobalSearchScope {
         val baseContentScope = module.baseContentScope
 

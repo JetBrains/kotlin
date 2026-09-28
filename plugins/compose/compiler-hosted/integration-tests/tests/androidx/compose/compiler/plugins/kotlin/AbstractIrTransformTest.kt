@@ -34,7 +34,6 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(
             ComposeConfiguration.FEATURE_FLAGS, listOf(
-                FeatureFlag.StrongSkipping.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
             )
         )

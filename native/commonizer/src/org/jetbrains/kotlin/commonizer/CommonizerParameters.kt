@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.commonizer.cli.Logger
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.mergedtree.CirFictitiousFunctionClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiersByModule
 import org.jetbrains.kotlin.commonizer.stats.StatsCollector
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.util.Logger
 
 data class CommonizerParameters(
     val outputTargets: Set<SharedCommonizerTarget>,

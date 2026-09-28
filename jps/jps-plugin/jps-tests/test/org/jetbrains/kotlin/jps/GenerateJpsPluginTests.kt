@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
 
         testGroup("jps/jps-plugin/jps-tests/tests-gen", "jps/jps-plugin/testData") {
             fun incrementalJvmTestData(): TestGroup.TestClass.() -> Unit = {
-                val excludePattern = "(^.*Expect.*)|(^companionConstantChanged)|(.*NoJps.*)"
+                val excludePattern = "(^.*Expect.*)"
                 modelForDirectoryBasedTest(
                     "incremental", "pureKotlin",
                     extension = null,
@@ -57,16 +57,18 @@ fun main(args: Array<String>) {
                     extension = null,
                     excludeParentDirs = true,
                 )
+                modelForDirectoryBasedTest(
+                    "incremental",
+                    "scopeExpansion",
+                    extension = null,
+                    excludeParentDirs = true,
+                    excludedPattern = "^protectedBecomesPublicAccessedTroughChild" // fixed in IJ 262.4852
+                )
+                modelForDirectoryBasedTest("incremental", "sealed", extension = null, excludeParentDirs = true)
+                modelForDirectoryBasedTest("incremental", "resolution", extension = null, excludeParentDirs = true)
             }
 
-            // K2
-            testClass<AbstractIncrementalK2JvmJpsTest>(
-                init = incrementalJvmTestData()
-            )
-            testClass<AbstractIncrementalK2LightTreeJvmJpsTest>(
-                init = incrementalJvmTestData()
-            )
-            testClass<AbstractIncrementalK2FirICLightTreeJvmJpsTest>(
+            testClass<AbstractIncrementalJvmJpsTest>(
                 init = incrementalJvmTestData()
             )
 

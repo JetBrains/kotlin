@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-30955
 
 // KT-30955: Incorrect inference of type parameter from constraint with intersection types with constraint errors

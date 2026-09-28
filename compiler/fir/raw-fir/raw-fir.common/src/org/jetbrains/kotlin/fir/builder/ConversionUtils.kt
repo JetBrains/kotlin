@@ -217,28 +217,16 @@ fun FirExpression.generateContainsOperation(
 
 fun FirExpression.generateComparisonExpression(
     argument: FirExpression,
-    operatorToken: IElementType,
+    firOperation: FirOperation,
     baseSource: KtSourceElement?,
     operationReferenceSource: KtSourceElement?,
 ): FirComparisonExpression {
-    require(operatorToken in OperatorConventions.COMPARISON_OPERATIONS) {
-        "$operatorToken is not in ${OperatorConventions.COMPARISON_OPERATIONS}"
-    }
-
     val compareToCall = createConventionCall(
         operationReferenceSource,
         baseSource?.fakeElement(KtFakeSourceElementKind.GeneratedComparisonExpression),
         argument,
         OperatorNameConventions.COMPARE_TO
     )
-
-    val firOperation = when (operatorToken) {
-        KtTokens.LT -> FirOperation.LT
-        KtTokens.GT -> FirOperation.GT
-        KtTokens.LTEQ -> FirOperation.LT_EQ
-        KtTokens.GTEQ -> FirOperation.GT_EQ
-        else -> error("Unknown $operatorToken")
-    }
 
     return buildComparisonExpression {
         this.source = baseSource
@@ -631,7 +619,11 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
 // this = .f(...)
 // receiver = <expr>
 // Returns safe call <expr>?.{ f(...) }
-fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source: KtSourceElement): FirSafeCallExpression {
+fun FirQualifiedAccessExpression.createSafeCall(
+    receiver: FirExpression,
+    source: KtSourceElement,
+    kind: FirSafeCallKind,
+): FirSafeCallExpression {
     val checkedSafeCallSubject = buildCheckedSafeCallSubject {
         @OptIn(FirContractViolation::class)
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
@@ -659,41 +651,10 @@ fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source:
             bind(checkedSafeCallSubject)
         }
         this.selector = this@createSafeCall
+        this.kind = kind
         this.source = source
     }
 }
-
-fun FirQualifiedAccessExpression.pullUpSafeCallIfNecessary(): FirExpression =
-    pullUpSafeCallIfNecessary(
-        FirQualifiedAccessExpression::explicitReceiver,
-        FirQualifiedAccessExpression::replaceExplicitReceiver
-    )
-
-// Turns a?.b.f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
-// Other patterns remain unchanged
-fun <F : FirExpression> F.pullUpSafeCallIfNecessary(
-    obtainReceiver: F.() -> FirExpression?,
-    replaceReceiver: F.(FirExpression) -> Unit,
-): FirExpression {
-    val safeCall = obtainReceiver() as? FirSafeCallExpression ?: return this
-    val safeCallSelector = safeCall.selector as? FirExpression ?: return this
-
-    // (a?.b).f and `(a?.b)[3]` should be left as is
-    if (safeCall.isChildInParentheses()) return this
-
-    replaceReceiver(safeCallSelector)
-    safeCall.replaceSelector(this)
-
-    return safeCall
-}
-
-fun FirStatement.isChildInParentheses(): Boolean {
-    val sourceElement = source ?: error("Nullable source")
-    return sourceElement.isChildInParentheses()
-}
-
-fun KtSourceElement.isChildInParentheses(): Boolean =
-    treeStructure.getParent(lighterASTNode)?.tokenType == KtNodeTypes.PARENTHESIZED
 
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
     mapNotNull {
@@ -703,13 +664,14 @@ fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget)
         }
     }
 
-fun AbstractRawFirBuilder<*>.createReceiverParameter(
+fun createReceiverParameter(
     typeRefCalculator: () -> FirTypeRef,
+    context: Context<*>,
     moduleData: FirModuleData,
     containingCallableSymbol: FirCallableSymbol<*>,
 ): FirReceiverParameter = buildReceiverParameter {
     symbol = FirReceiverParameterSymbol()
-    withContainerSymbol(symbol) {
+    context.withContainerSymbol(symbol) {
         val typeRef = typeRefCalculator()
         source = typeRef.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
 

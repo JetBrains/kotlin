@@ -10,7 +10,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaBuiltinsModuleImpl
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AnalysisApiEnvironmentManager : TestService {
@@ -53,6 +53,7 @@ class AnalysisApiEnvironmentManagerImpl(
         )
     }
 
+    @OptIn(KtPlatformInterface::class)
     override fun initializeEnvironment() {
         testServices.disposableProvider.registerDisposables(
             projectDisposable = _projectEnvironment.parentDisposable,
@@ -80,7 +81,7 @@ class AnalysisApiEnvironmentManagerImpl(
         }
     }
 
-    @OptIn(KaImplementationDetail::class, ExperimentalCompilerApi::class)
+    @OptIn(ExperimentalCompilerApi::class)
     override fun initializeProjectStructure() {
         val ktTestModuleStructure = testServices.ktTestModuleStructure
         val useSiteModule = testServices.moduleStructure.modules.first()

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class My(val z: Int) {
     var x: Int = 0
     constructor(arg: Int?): this(arg ?: 42) {

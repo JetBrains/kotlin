@@ -20,22 +20,30 @@ import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.classSymbol
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.classes.*
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.SymbolFakeFile
-import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
-import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import javax.swing.Icon
 
+/**
+ * Typealias to [SymbolLightClassBaseImpl] that can be used to avoid constantly specifying the required type argument.
+ */
+internal typealias SymbolLightClassBase = SymbolLightClassBaseImpl<KaSymbol>
 
-internal abstract class SymbolLightClassBase protected constructor(val ktModule: KaModule, manager: PsiManager) :
-    LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass {
+@OptIn(KaImplementationDetail::class)
+internal abstract class SymbolLightClassBaseImpl<out SType : KaSymbol> protected constructor(manager: PsiManager) :
+    LightElement(manager, KotlinLanguage.INSTANCE), PsiClass, KtExtensibleLightClass, KaSymbolJavaView<SType> {
 
     private val contentFinderCache by lazyPub {
         ClassContentFinderCache(
@@ -104,7 +112,7 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
         val baseClassOrigin = (baseClass as? KtLightClass)?.kotlinOrigin
 
         return if (baseClassOrigin != null && thisClassOrigin != null) {
-            analyzeForLightClasses(ktModule) {
+            analyzeForLightClasses(useSiteModule) {
                 checkIsInheritor(thisClassOrigin, baseClassOrigin, checkDeep)
             }
         } else {
@@ -117,7 +125,12 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
 
     private val _containingFile: PsiFile? by lazyPub {
         val kotlinOrigin = kotlinOrigin ?: return@lazyPub null
-        val containingClass = isTopLevel.ifFalse { KtPsiUtil.getOutermostClassOrObject(kotlinOrigin).toLightClass() } ?: this
+        val containingClass = isTopLevel.ifFalse {
+            analyzeForLightClasses(useSiteModule) {
+                val outermostClass = KtPsiUtil.getOutermostClassOrObject(kotlinOrigin)
+                outermostClass.classSymbol?.asPsiClass() as? KtLightClass
+            }
+        } ?: this
         SymbolFakeFile(kotlinOrigin, containingClass)
     }
 

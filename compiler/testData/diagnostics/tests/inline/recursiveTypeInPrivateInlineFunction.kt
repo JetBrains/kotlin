@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-56692
 
 private <!NOTHING_TO_INLINE!>inline<!> fun check(inf: Self<*>) = inf

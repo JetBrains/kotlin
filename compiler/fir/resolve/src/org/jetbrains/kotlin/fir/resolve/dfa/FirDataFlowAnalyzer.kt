@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 
 class DataFlowAnalyzerContext private constructor(
     private val session: FirSession,
@@ -241,6 +242,7 @@ abstract class FirDataFlowAnalyzer(
                                     ?.all { it.coneType.isAcceptableForSmartcast() } == true
                                 is ConeFlexibleType -> lowerBound.isAcceptableForSmartcast() && upperBound.isAcceptableForSmartcast()
                                 is ConeIntersectionType -> intersectedTypes.all { it.isAcceptableForSmartcast() }
+                                is ConeUnionType -> primaryType.isAcceptableForSmartcast() && richErrorTypes.all { it.isAcceptableForSmartcast() }
                                 is ConeDefinitelyNotNullType -> original.isAcceptableForSmartcast()
 
                                 is ConeCapturedType -> constructor.supertypes?.all { it.isAcceptableForSmartcast() } == true

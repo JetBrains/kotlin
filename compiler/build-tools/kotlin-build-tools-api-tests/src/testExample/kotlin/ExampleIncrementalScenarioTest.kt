@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.DisplayName
 import java.util.*
 import kotlin.random.Random
@@ -23,7 +23,7 @@ import kotlin.random.Random
 /**
  * The preferred way to write incremental compilation tests.
  */
-@SmokeTest
+@MustRunAlways
 class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Sample scenario DSL IC test with a single module")

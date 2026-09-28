@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 @file:OptIn(ExperimentalStdlibApi::class)
 
 @JvmInline

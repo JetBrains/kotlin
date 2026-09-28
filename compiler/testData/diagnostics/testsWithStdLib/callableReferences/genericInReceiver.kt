@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun test_1(a: String, s: String) {
     val pair = s.let(a::to)
 }

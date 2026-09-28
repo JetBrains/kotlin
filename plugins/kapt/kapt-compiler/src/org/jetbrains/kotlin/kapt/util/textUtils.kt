@@ -13,6 +13,3 @@ fun <T> StringBuilder.appendListIfNonEmpty(data: List<T>, openBracket: CharSeque
 fun <T> StringBuilder.appendList(data: List<T>, openBracket: CharSequence, closeBracket: CharSequence, transform: ((T) -> CharSequence)? = null) {
     data.joinTo(this, prefix = openBracket, postfix = closeBracket, separator = ", ", transform = transform)
 }
-
-fun joinPairedText(data: List<Pair<*, String>>, openBracket: CharSequence, closeBracket: CharSequence): String =
-    buildString { appendList(data, openBracket, closeBracket) { it.second } }

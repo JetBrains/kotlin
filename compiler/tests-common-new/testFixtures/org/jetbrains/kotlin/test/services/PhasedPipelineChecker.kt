@@ -52,8 +52,8 @@ class PhasedPipelineChecker(
     private fun TestArtifactKind<*>.toPhase(): TestPhase? = when (this) {
         is FrontendKind -> TestPhase.FRONTEND
         is BackendKind -> TestPhase.FIR2IR
-        ArtifactKinds.Jvm -> TestPhase.BACKEND
-        ArtifactKinds.KLib -> TestPhase.BACKEND
+        ArtifactKinds.Jvm -> TestPhase.CODEGEN
+        ArtifactKinds.KLib -> TestPhase.CODEGEN
         else -> error("Cannot infer phase by output artifact kind `${this.javaClass.simpleName}`.")
     }
 
@@ -64,11 +64,11 @@ class PhasedPipelineChecker(
                     TestPhase.FIR2IR
                 is BackendKind -> {
                     require(this is IrPreSerializationLoweringFacade)
-                    TestPhase.BACKEND
+                    TestPhase.LOWERINGS
                 }
                 is ArtifactKinds.KLib -> {
                     require(this is DeserializerFacade)
-                    TestPhase.BACKEND
+                    TestPhase.CODEGEN
                 }
                 else -> error(
                     "Unexpected facade of type ${this.javaClass.simpleName} taking input artifact of kind=$this, " +
@@ -212,10 +212,10 @@ class PhasedPipelineChecker(
                     processFailure(exception.failedModule, exception.facade.toPhase(), exception)
                 is WrappedException.WrappedExceptionWithoutModule -> nonSuppressibleFailures
                 is WrappedException.FromHandler ->
-                    processFailure(exception.failedModule, exception.handler.toPhase(), exception)
+                    processFailure(exception.failedModule, exception.phase ?: exception.handler.toPhase(), exception)
                 is WrappedException.FromGroupingFacade,
                 is WrappedException.FromGroupingHandler ->
-                    processFailure(module = null, TestPhase.BACKEND, exception)
+                    processFailure(module = null, TestPhase.CODEGEN, exception)
             }
             targetStorage += exception
         }

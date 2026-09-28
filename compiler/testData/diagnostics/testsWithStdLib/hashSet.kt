@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import java.util.HashSet
 
 val a: MutableSet<String>? = HashSet()

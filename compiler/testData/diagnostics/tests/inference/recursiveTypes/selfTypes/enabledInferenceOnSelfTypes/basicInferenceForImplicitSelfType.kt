@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: JavaBuilder.java
 public class JavaBuilder<B extends JavaBuilder<B>> {

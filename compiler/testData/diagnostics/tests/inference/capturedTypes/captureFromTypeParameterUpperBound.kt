@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Inv<T>
 
 fun <Y: X, X : Inv<out String>> foo(x: X, y: Y) {

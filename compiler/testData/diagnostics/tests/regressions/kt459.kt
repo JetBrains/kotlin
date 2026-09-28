@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-459 Type argument inference fails when class names are fully qualified
 
 fun test() {

@@ -157,7 +157,8 @@ val FirSession.moduleData: FirModuleData
 
 fun FirModuleData.canSeeInternalsOf(otherModule: FirModuleData): Boolean {
     return this == otherModule ||
-            otherModule in this.friendDependencies ||
-            otherModule in this.allDependsOnDependencies ||
-            this in otherModule.allDependsOnDependencies
+            otherModule in this.friendDependencies || // regular friend dependency
+            otherModule in this.allDependsOnDependencies || // dependsOn source modules see each other
+            this in otherModule.allDependsOnDependencies || // in both ways
+            this.allDependsOnDependencies.any { otherModule in it.friendDependencies } // friend of my dependsOn is my friend
 }

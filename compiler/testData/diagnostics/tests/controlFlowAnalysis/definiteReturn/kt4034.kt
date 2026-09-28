@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNUSED_PARAMETER
 
 // KT-4034 An expression of type Nothing may not affect 'definite return' analysis

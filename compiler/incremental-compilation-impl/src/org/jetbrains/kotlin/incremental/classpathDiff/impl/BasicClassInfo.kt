@@ -46,13 +46,15 @@ internal class BasicClassInfo(
 
     companion object {
 
-        fun compute(classContents: ByteArray): BasicClassInfo {
+        fun compute(classContents: ByteArray): BasicClassInfo = compute(ClassReader(classContents))
+
+        fun compute(classReader: ClassReader): BasicClassInfo {
             val kotlinClassHeaderClassVisitor = KotlinClassHeaderClassVisitor()
             val innerClassesClassVisitor = InnerClassesClassVisitor(kotlinClassHeaderClassVisitor)
             val basicClassInfoVisitor = BasicClassInfoClassVisitor(innerClassesClassVisitor)
 
             // parsingOptions = (SKIP_CODE, SKIP_DEBUG) as method bodies and debug info are not important
-            ClassReader(classContents).accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG)
+            classReader.accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG)
 
             val className = basicClassInfoVisitor.getClassName()
             val innerClassesInfo = innerClassesClassVisitor.getInnerClassesInfo()

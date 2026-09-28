@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Outer {
     fun foo(): Int {
         if (outerState > 0) return outerState

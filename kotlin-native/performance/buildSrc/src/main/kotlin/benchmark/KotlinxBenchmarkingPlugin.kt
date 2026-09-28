@@ -50,7 +50,7 @@ open class KotlinxBenchmarkExtension @Inject constructor(private val project: Pr
     val runBenchmark
         get() = project.tasks.named("${hostKotlinNativeTargetName}Benchmark", NativeBenchmarkExec::class)
 
-    val konanRun by project.tasks.registering(ConvertJMHReportTask::class)
+    val konanRun = project.tasks.register("konanRun", ConvertJMHReportTask::class.java)
 }
 
 /**

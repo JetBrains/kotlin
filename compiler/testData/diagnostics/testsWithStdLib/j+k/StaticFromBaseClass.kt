@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 /*
  * See org/jetbrains/kotlin/fir/java/scopes/JavaClassUseSiteMemberScope.kt:93
  */

@@ -7,7 +7,6 @@
 package org.jetbrains.kotlin.analysis.stubs
 
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.validateTree
@@ -16,8 +15,10 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExec
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtImplementationDetail
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.junit.jupiter.api.Test
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -25,6 +26,7 @@ import kotlin.io.path.name
 class BuiltinsStubsTest : AbstractAnalysisApiExecutionTest("testData/builtins/stubs") {
     override val configurator: AnalysisApiTestConfigurator = LLSourceLikeTestConfigurator()
 
+    @OptIn(KtPlatformInterface::class)
     @Test
     fun test(testServices: TestServices) {
         val project = testServices.ktTestModuleStructure.project

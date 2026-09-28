@@ -1,5 +1,5 @@
-// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
-// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-78621
 
 

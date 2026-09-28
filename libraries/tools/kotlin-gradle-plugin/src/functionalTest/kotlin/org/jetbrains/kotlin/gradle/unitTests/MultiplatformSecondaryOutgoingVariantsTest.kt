@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.C
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
-import org.jetbrains.kotlin.gradle.util.enableNonPackedKlibsUsage
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
 import org.junit.jupiter.api.Assumptions
@@ -171,15 +170,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     }
 
     @Test
-    fun nonPackedKlibsUsageMayBeDisabled() {
-        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) })
-        val apiConfigurations = project.getKlibApiConfigurations()
-        project.assertKlibWithoutNonPackedVariant(apiConfigurations)
-        val runtimeConfigurations = project.getKlibRuntimeConfigurations()
-        project.assertKlibWithoutNonPackedVariant(runtimeConfigurations)
-    }
-
-    @Test
     fun shouldAddNonPackedKlibVariantByDefaultForKlibTargets() {
         val project = buildKmpProjectWithKlibTargets()
         val apiConfigurations = project.getKlibApiConfigurations()
@@ -191,14 +181,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     @Test
     fun klibPackagingAttributeIsNotPublished() {
         val project = buildKmpProjectWithKlibTargets {
-            plugins.apply("maven-publish")
-        }
-        project.assertKlibPackagingAttributeNotPublished()
-    }
-
-    @Test
-    fun klibPackagingAttributeIsNotPublishedWhenNonPackedKlibsAreNotUsed() {
-        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) }) {
             plugins.apply("maven-publish")
         }
         project.assertKlibPackagingAttributeNotPublished()
@@ -220,7 +202,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         val project = buildKmpProjectWithKlibTargets(projectBuilder = { withName("app") }, preApplyCode = {
             enableDefaultStdlibDependency(false)
             enableDefaultJsDomApiDependency(false)
-            enableNonPackedKlibsUsage(true)
         })
         val configurations = project.configurations
         for (target in project.multiplatformExtension.targets) {
@@ -255,25 +236,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
                 }
             }
         }
-    }
-
-    @Test
-    fun testConsumableConfigurationProducerTasksWhenNonPackedKlibsAreNotUsed() {
-        val project = buildKmpProjectWithKlibTargets(preApplyCode = { project.enableNonPackedKlibsUsage(false) })
-        val consumableConfigurations = (project.getKlibApiConfigurations() + project.getKlibRuntimeConfigurations())
-            .associateBy { it.name }
-        @Suppress("DuplicatedCode")
-        run {
-            assertEquals(6, consumableConfigurations.size)
-            consumableConfigurations.assertProducerTasks("jsApiElements", project.tasks.getByName("jsJar") as Jar)
-            consumableConfigurations.assertProducerTasks("jsRuntimeElements", project.tasks.getByName("jsJar") as Jar)
-            consumableConfigurations.assertProducerTasks("wasmJsApiElements", project.tasks.getByName("wasmJsJar") as Jar)
-            consumableConfigurations.assertProducerTasks("wasmWasiApiElements", project.tasks.getByName("wasmWasiJar") as Jar)
-        }
-        val compileKlibTask = project.tasks.getByName("compileKotlinLinuxX64") as KotlinNativeCompile
-        val cinteropProcessTask = project.tasks.getByName("cinteropDummyLinuxX64") as CInteropProcess
-        consumableConfigurations.assertProducerTasks("linuxX64ApiElements", compileKlibTask, cinteropProcessTask)
-        consumableConfigurations.assertProducerTasks("linuxX64CInteropApiElements", cinteropProcessTask)
     }
 
     @Test

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo(l: List<String>?) {
   Pair(l?.joinToString(), "")
 }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -NOTHING_TO_INLINE
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // LANGUAGE: +JsAllowExportingSuspendFunctions +ContextParameters

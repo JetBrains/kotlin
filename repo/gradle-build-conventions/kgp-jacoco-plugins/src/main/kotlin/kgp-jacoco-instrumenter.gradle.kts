@@ -11,10 +11,16 @@ import org.gradle.kotlin.dsl.withType
 val versionCatalog = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 val jacocoCliDependency = versionCatalog.findLibrary("jacoco-cli").get()
 
-val jacocoCliClasspath = configurations.detachedConfiguration(jacocoCliDependency.get()).apply {
+val jacocoCli = configurations.dependencyScope("jacocoCli")
+val jacocoCliClasspath = configurations.resolvable("jacocoCliClasspath") {
+    extendsFrom(jacocoCli.get())
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
     }
+}
+
+dependencies {
+    jacocoCli(jacocoCliDependency.get())
 }
 
 // Final published jars: 'jar'/'embeddableJar' (main variant in kgp-api/kgp) plus the per-Gradle-version
@@ -27,8 +33,8 @@ if (kotlinBuildProperties.kgpTestCoverageEnabled.get()) {
     tasks.withType<Jar>()
         .matching { it.name.matches(instrumentedJarName) }
         .configureEach {
-            val jacocoCli = jacocoCliClasspath.incoming.files
-            inputs.files(jacocoCli)
+            val jacocoCliFiles = jacocoCliClasspath.get().incoming.files
+            inputs.files(jacocoCliFiles)
                 .withNormalizer(ClasspathNormalizer::class)
 
             val execOps = serviceOf<ExecOperations>()
@@ -45,7 +51,7 @@ if (kotlinBuildProperties.kgpTestCoverageEnabled.get()) {
 
                 execOps.javaexec {
                     mainClass.set("org.jacoco.cli.internal.Main")
-                    classpath(jacocoCli)
+                    classpath(jacocoCliFiles)
                     args(
                         "instrument",
                         actualOutputFile.absolutePath,

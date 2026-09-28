@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.commonizer.cli.Logger
 import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
-import org.jetbrains.kotlin.util.Logger
 import java.io.File
 
 internal fun interface NativeLibraryLoader {

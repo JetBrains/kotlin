@@ -70,7 +70,7 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
         substitutor: ConeSubstitutor,
         existingFunctionNames: Set<Name>,
     ) {
-        val visibility = builder.builderFunctionsAccessLevel.toVisibility(builderSymbol) ?: return
+        val visibility = builder.builderFunctionsVisibility(builderSymbol) ?: return
 
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) { name ->
             val declaredReturnTypeRef = when (builderDeclaration) {

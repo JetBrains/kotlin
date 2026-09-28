@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeReceiverInfo
+import org.jetbrains.kotlin.fir.types.ConeUnionType
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.types.getConstructor
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -53,7 +54,7 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
                 it.forEachType { typeWithinIt ->
                     val lowerBound = typeWithinIt.lowerBoundIfFlexible()
 
-                    if (lowerBound !is ConeIntersectionType) {
+                    if (lowerBound !is ConeIntersectionType && lowerBound !is ConeUnionType) {
                         add(lowerBound.getConstructor())
                     }
                 }

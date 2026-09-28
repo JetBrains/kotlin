@@ -1,0 +1,134 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionTypeSemanticErrorsKt]]
+  facadeFqName: UnionTypeSemanticErrorsKt
+  partSimpleName: "UnionTypeSemanticErrorsKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+    MODIFIER_LIST[error]
+  CLASS[classId=/Bar, fqName=Bar, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
+    MODIFIER_LIST[error]
+  FUNCTION[fqName=withIntersections, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=withIntersections]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          UNION_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+            TYPE_REFERENCE
+              INTERSECTION_TYPE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Any]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          INTERSECTION_TYPE
+            TYPE_REFERENCE
+              UNION_TYPE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Int]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Any]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
+        TYPE_REFERENCE
+          UNION_TYPE
+            TYPE_REFERENCE
+              INTERSECTION_TYPE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Int]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Any]
+            TYPE_REFERENCE
+              INTERSECTION_TYPE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=String]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Any]
+  FUNCTION[fqName=parentheses, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=parentheses]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          UNION_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+            TYPE_REFERENCE
+              UNION_TYPE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Bar]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          UNION_TYPE
+            TYPE_REFERENCE
+              UNION_TYPE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Int]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Foo]
+            TYPE_REFERENCE
+              UNION_TYPE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=String]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Bar]
+  FUNCTION[fqName=functionTypePrecedence, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=functionTypePrecedence]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          UNION_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                FUNCTION_TYPE_RECEIVER
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Foo]
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+  FUNCTION[fqName=nullable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=nullable]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          UNION_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Foo]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          UNION_TYPE
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Foo]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Bar]

@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.analysis.api.types.withNullability as withNullabilit
  * Routes the legacy [KaTypeProvider] surface through the new public `context(session: KaSession)` type endpoints, which in turn reach the
  * [org.jetbrains.kotlin.analysis.api.internals.KaInternalsTypeProvider] proxy.
  *
- * The deprecated/hidden members ([approximateToSuperPublicDenotable], [withNullability] with [KaTypeNullability][org.jetbrains.kotlin.analysis.api.types.KaTypeNullability],
+ * The deprecated/hidden members ([withNullability] with [KaTypeNullability][org.jetbrains.kotlin.analysis.api.types.KaTypeNullability],
  * [dispatchReceiverType]) and [collectImplicitReceiverTypes] (KT-75549) are intentionally not migrated to endpoints; they keep their
  * original bodies here.
  */
@@ -55,10 +55,6 @@ internal class KaTypeProviderBridge(
             // components.KaBuiltinTypes, so narrowing the result back to the legacy surface is safe.
             builtinTypesEndpoint as KaBuiltinTypes
         }
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? =
-        context(analysisSession) { approximateToDenotableSupertypeEndpoint(!approximateLocalTypes) }
 
     override fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType? =
         context(analysisSession) { approximateToDenotableSupertypeEndpoint(allowLocalDenotableTypes) }

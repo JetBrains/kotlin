@@ -585,7 +585,10 @@ class FirRenderer(
 
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
             safeCallExpression.receiver.accept(this)
-            print("?.{ ")
+            when (safeCallExpression.kind) {
+                FirSafeCallKind.NullSafe -> print("?.{ ")
+                FirSafeCallKind.ErrorSafe -> print("|.{ ")
+            }
             safeCallExpression.selector.accept(this)
             print(" }")
         }
@@ -621,6 +624,15 @@ class FirRenderer(
             }
             print(" ")
             returnExpression.result.accept(this)
+        }
+
+        override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion) {
+            annotationRenderer?.render(numericClassConversion)
+            print("NumericConversion<")
+            print(numericClassConversion.resolvedType)
+            print(">(")
+            numericClassConversion.originalExpression.accept(this)
+            print(")")
         }
 
         override fun visitWhenBranch(whenBranch: FirWhenBranch) {
@@ -943,6 +955,22 @@ class FirRenderer(
             functionTypeRef.returnTypeRef.accept(this)
             print(" )")
             visitUnresolvedTypeRef(functionTypeRef)
+        }
+
+        override fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef) {
+            val markedNullable = unionTypeRef.isMarkedNullable
+
+            if (markedNullable) print("(")
+
+            var isFirst = true
+            for (typeRef in unionTypeRef.types) {
+                if (!isFirst) print(" | ")
+                isFirst = false
+
+                typeRef.accept(this)
+            }
+
+            if (markedNullable) print(")?")
         }
 
         @OptIn(AllowedToUsedOnlyInK1::class)

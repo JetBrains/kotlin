@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import java.time.Duration
 
 internal class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
@@ -53,6 +54,7 @@ internal class KaBaseResolutionScopeProvider : KaResolutionScopeProvider {
         return KaGlobalSearchScopeMerger.getInstance(module.project).union(scopes)
     }
 
+    @OptIn(KtPlatformInterface::class)
     private fun createBuiltinsScope(project: Project): GlobalSearchScope {
         return BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project)
     }

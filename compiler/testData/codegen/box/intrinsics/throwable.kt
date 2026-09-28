@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 
 fun box(): String {
     val s: String? = "OK"

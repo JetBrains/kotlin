@@ -50,7 +50,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
     /**
      * Bucket of dependencies with compilation databases to merge in.
      */
-    val compilationDatabase: Configuration by project.configurations.creating {
+    val compilationDatabase: Configuration = project.configurations.create("compilationDatabase") {
         description = "Compilation Database dependencies"
         isCanBeConsumed = false
         isCanBeResolved = false
@@ -59,7 +59,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
     /**
      * Internal resolvable configuration of compilation database dependencies.
      */
-    private val compilationDatabaseJSON by project.configurations.creating {
+    private val compilationDatabaseJSON = project.configurations.create("compilationDatabaseJSON") {
         description = "Compilation Database dependencies (internal)"
         isCanBeConsumed = false
         isCanBeResolved = true
@@ -72,7 +72,7 @@ abstract class CompilationDatabaseExtension @Inject constructor(private val proj
     /**
      * Contains produced compilation database.
      */
-    val compilationDatabaseElements: Configuration by project.configurations.creating {
+    val compilationDatabaseElements: Configuration = project.configurations.create("compilationDatabaseElements") {
         description = "Compilation Database"
         isCanBeConsumed = true
         isCanBeResolved = false

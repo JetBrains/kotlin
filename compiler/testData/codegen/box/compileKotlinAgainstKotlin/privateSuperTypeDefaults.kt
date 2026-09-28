@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM, JVM_IR
+// IGNORE_BACKEND: JVM
 
 // MODULE: lib
 // FILE: Z.kt

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components.compilation
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmEvaluatorData
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
@@ -14,9 +15,25 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+
+/**
+ * Returns the closest non-local declaration which is converted to an IR declaration with its own metadata source.
+ *
+ * The result is compared with [IrMetadataSourceOwner.metadata] sources in [CodeFragmentContextDeclarationCache.registerLocalScope],
+ * so it has to be the declaration Fir2Ir uses as the metadata source.
+ * An explicit backing field is a lazily resolvable declaration, but its IR field shares the metadata source with the owning
+ * property, and the local scope of the field initializer is preserved for the property as well.
+ * Hence, the property is returned for elements inside the field.
+ *
+ * @see getNonLocalContainingOrThisDeclaration
+ */
+internal fun PsiElement.getNonLocalContainingOrThisDeclarationWithIrMetadata(): KtDeclaration? {
+    return getNonLocalContainingOrThisDeclaration { it !is KtBackingField }
+}
 
 /**
  * A cache for data to be passed between from the context file to the [KtCodeFragment].

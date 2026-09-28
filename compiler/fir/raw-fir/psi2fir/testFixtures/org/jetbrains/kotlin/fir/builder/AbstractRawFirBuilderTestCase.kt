@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiFile
-import com.intellij.psi.tree.IElementType
 import com.intellij.util.PathUtil
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.collectLanguageFeatureMap
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -38,9 +37,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
-import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
@@ -52,25 +49,19 @@ import kotlin.reflect.jvm.isAccessible
 
 @OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
-    private fun createFile(filePath: String, fileType: IElementType): PsiFile {
-        val psiFactory = KtPsiFactory(myProject)
-        return when (fileType) {
-            KtNodeTypes.EXPRESSION_CODE_FRAGMENT ->
-                psiFactory.createExpressionCodeFragment(loadFile(filePath), null)
-            KtNodeTypes.BLOCK_CODE_FRAGMENT ->
-                psiFactory.createBlockCodeFragment(loadFile(filePath), null)
-            else ->
-                createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(filePath))
-        }
+    private fun createFile(filePath: String): PsiFile {
+        val file = File(filePath)
+        return createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), loadFile(file))
     }
 
     protected open fun runTest(filePath: String) {
-        val file = createKtFile(filePath)
+        val absolutePath = ForTestCompileRuntime.transformTestDataPath(filePath).path
+        val file = createKtFile(absolutePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
         val firFileDump = dumpFirFile(firFile)
-        val expectedPath = expectedPath(filePath, ".txt")
+        val expectedPath = expectedPath(absolutePath, ".txt")
         TestDataAssertions.assertEqualsToFile(File(expectedPath), firFileDump)
-        checkAnnotationOwners(filePath, firFile)
+        checkAnnotationOwners(absolutePath, firFile)
     }
 
     protected fun expectedPath(originalPath: String, newExtension: String): String {
@@ -115,10 +106,9 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
         TestDataAssertions.assertEqualsToFile(expectedFile, actual)
     }
 
-    @OptIn(KtNonPublicApi::class)
     protected open fun createKtFile(filePath: String): KtFile {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))
-        return (createFile(filePath, KtNodeTypes.FILE) as KtFile).apply {
+        return (createFile(filePath) as KtFile).apply {
             myFile = this
         }
     }

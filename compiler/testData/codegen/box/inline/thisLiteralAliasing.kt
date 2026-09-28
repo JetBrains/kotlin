@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR, JVM_IR_SERIALIZE
+// IGNORE_BACKEND: JVM
 // ^^^ CIRCULAR REFERENCE: java.lang.AssertionError: D8 dexing warning: Ignoring an implementation of the method `void foo.A.setParam(int)` because it has multiple definitions]
 // FILE: lib.kt
 package foo

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import kotlinx.cinterop.*
 
 fun foo(f: Function0<*>) = f

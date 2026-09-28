@@ -263,7 +263,7 @@ private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: M
 
 internal fun Array<out TypeVariable<*>>.toKTypeParameters(container: KTypeParameterOwnerImpl): List<KTypeParameter> {
     val kTypeParameters = this.associateWith {
-        val unbound = (container as? ReflectKCallable<*>)?.unbindAllReceivers() ?: container
+        val unbound = (container as? ReflectKCallable<*>)?.unbind() ?: container
         KTypeParameterImpl(unbound, it.name, KVariance.INVARIANT, isReified = false)
     }
     for ((typeVariable, kTypeParameter) in kTypeParameters) {
@@ -289,7 +289,7 @@ private fun SimpleKType.toFlexibleArrayType(
     ) as FlexibleKType
 
 private fun Type.argumentsMakeSenseOnlyForMutableContainer(mutableType: SimpleKType?): Boolean =
-    this is ParameterizedType && actualTypeArguments.last().let {
+    this is ParameterizedType && actualTypeArguments.lastOrNull().let {
         it is WildcardType && it.lowerBounds.size == 1
     } && mutableType != null && (mutableType.classifier as KClass<*>).typeParameters.last().variance == KVariance.OUT
 

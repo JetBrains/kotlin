@@ -24,7 +24,7 @@ fun test1_2() {}
 @Ann2(*[])
 fun test2() {}
 
-@Ann3(a = <!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>*<!>[0f, <!DIVISION_BY_ZERO!>1 / 0f<!>])
+@Ann3(a = <!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>*<!>[0f, 1 / 0f])
 fun test3() {}
 
 @Ann5(Ann4(*["/"]))
@@ -41,7 +41,7 @@ annotation class AnnArray(val a: Array<String>)
 @AnnArray(<!NON_VARARG_SPREAD!>*<!>["/"])
 fun testArray() {}
 
-@Ann1(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL, UNSUPPORTED_FEATURE!>[""]<!>)
+@Ann1(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, UNRESOLVED_COLLECTION_LITERAL!>[""]<!>)
 fun testVararg() {}
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, collectionLiteral, functionDeclaration, integerLiteral,

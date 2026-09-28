@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun Runnable(f: () -> Unit): Runnable = object : Runnable {
     public override fun run() {
         f()

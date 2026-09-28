@@ -149,7 +149,6 @@ class SanityCheckGroupOptimizationCodegenTests : AbstractCodegenTest() {
         put(
             ComposeConfiguration.FEATURE_FLAGS,
             listOf(
-                FeatureFlag.StrongSkipping.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
             )
         )

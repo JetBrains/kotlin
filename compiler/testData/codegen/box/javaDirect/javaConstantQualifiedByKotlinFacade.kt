@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // FILE: one/two/Bar.java
 package one.two;

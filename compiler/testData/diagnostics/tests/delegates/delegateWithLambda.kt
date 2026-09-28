@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import kotlin.reflect.KProperty
 
 class LazyDelegate<T>(val value: T) {

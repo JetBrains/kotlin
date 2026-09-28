@@ -8,16 +8,16 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.file.Directory
+import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinChromiumTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinFirefoxTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWebkitTestRunner
-import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.utils.getFile
+import java.io.File
 import kotlin.reflect.KClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -49,7 +49,8 @@ class KotlinJsBrowserTestDslTest {
                     headless = true,
                     launchArgs = emptyList(),
                     launchEnvironmentVariables = mapOf(),
-                    testsLocation = bundle
+                    testsLocation = bundle,
+                    browserDataDir = null,
                 ),
                 "custom-chromium" to RunnerDump(
                     type = KotlinChromiumTestRunner::class,
@@ -58,6 +59,7 @@ class KotlinJsBrowserTestDslTest {
                     launchArgs = listOf("--lang=fi-FI"),
                     launchEnvironmentVariables = mapOf(),
                     testsLocation = bundle,
+                    browserDataDir = null,
                 ),
                 "firefox" to RunnerDump(
                     type = KotlinFirefoxTestRunner::class,
@@ -65,7 +67,8 @@ class KotlinJsBrowserTestDslTest {
                     headless = true,
                     launchArgs = emptyList(),
                     launchEnvironmentVariables = mapOf(),
-                    testsLocation = bundle
+                    testsLocation = bundle,
+                    browserDataDir = null,
                 ),
                 "webkit" to RunnerDump(
                     type = KotlinWebkitTestRunner::class,
@@ -73,7 +76,8 @@ class KotlinJsBrowserTestDslTest {
                     headless = true,
                     launchArgs = emptyList(),
                     launchEnvironmentVariables = mapOf(),
-                    testsLocation = bundle
+                    testsLocation = bundle,
+                    browserDataDir = null,
                 ),
                 "extra-webkit" to RunnerDump(
                     type = KotlinWebkitTestRunner::class,
@@ -81,7 +85,8 @@ class KotlinJsBrowserTestDslTest {
                     headless = true,
                     launchArgs = emptyList(),
                     launchEnvironmentVariables = mapOf(),
-                    testsLocation = bundle
+                    testsLocation = bundle,
+                    browserDataDir = null,
                 ),
             ),
             actual = test.dumpRunners(),
@@ -90,7 +95,11 @@ class KotlinJsBrowserTestDslTest {
 
     @Test
     fun `top-level configuration propagates to runners unless overridden`() {
-        val test = configureBrowserTest {
+        val project = buildProjectWithMPP()
+        val chromiumDataDir = project.layout.buildDirectory.dir("chromium")
+        val firefoxDataDir = project.layout.buildDirectory.dir("firefox")
+
+        val test = configureBrowserTest(project) {
             timeout.set(10L.seconds)
             headless.set(false)
             launchEnvironmentVariables.put("A", "1")
@@ -103,6 +112,7 @@ class KotlinJsBrowserTestDslTest {
                 // this should override convention,
                 // i.e. it will create new list instead of appending
                 it.launchEnvironmentVariables.put("B", "2")
+                it.browserDataDir.set(chromiumDataDir)
             }
 
             webkit("override") {
@@ -110,6 +120,11 @@ class KotlinJsBrowserTestDslTest {
                 it.timeout.set(42L.seconds)
                 it.launchArgs.set(listOf("--no-sandbox"))
                 it.launchEnvironmentVariables.set(mapOf("C" to "3"))
+            }
+
+            // Should re-use firefox declaration from above
+            firefox {
+                it.browserDataDir.set(firefoxDataDir)
             }
         }
 
@@ -122,7 +137,8 @@ class KotlinJsBrowserTestDslTest {
                     headless = false,
                     launchArgs = listOf("--global"),
                     launchEnvironmentVariables = mapOf("B" to "2"),
-                    testsLocation = bundle
+                    testsLocation = bundle,
+                    browserDataDir = chromiumDataDir.getFile(),
                 ),
                 "firefox" to RunnerDump(
                     type = KotlinFirefoxTestRunner::class,
@@ -130,7 +146,8 @@ class KotlinJsBrowserTestDslTest {
                     headless = false,
                     launchArgs = listOf(),
                     launchEnvironmentVariables = mapOf("A" to "1"),
-                    testsLocation = bundle
+                    testsLocation = bundle,
+                    browserDataDir = firefoxDataDir.getFile(),
                 ),
                 "override" to RunnerDump(
                     type = KotlinWebkitTestRunner::class,
@@ -138,7 +155,8 @@ class KotlinJsBrowserTestDslTest {
                     headless = true,
                     launchArgs = listOf("--no-sandbox"),
                     launchEnvironmentVariables = mapOf("C" to "3"),
-                    testsLocation = bundle
+                    testsLocation = bundle,
+                    browserDataDir = null,
                 ),
             ),
             actual = test.dumpRunners(),
@@ -175,6 +193,7 @@ class KotlinJsBrowserTestDslTest {
                     launchArgs = listOf("--flag"),
                     launchEnvironmentVariables = mapOf(),
                     testsLocation = test.defaultBundleDirectory,
+                    browserDataDir = null
                 ),
             ),
             test.dumpRunners(),
@@ -182,10 +201,9 @@ class KotlinJsBrowserTestDslTest {
     }
 }
 
-
-private fun configureBrowserTest(configure: KotlinJsBrowserTestDsl.() -> Unit): KotlinJsBrowserTestDsl {
+private fun configureBrowserTest(project: ProjectInternal, configure: KotlinJsBrowserTestDsl.() -> Unit): KotlinJsBrowserTestDsl {
     lateinit var testDsl: KotlinJsBrowserTestDsl
-    val project = buildProjectWithMPP {
+    with(project) {
         with(multiplatformExtension) {
             js {
                 browser {
@@ -199,6 +217,9 @@ private fun configureBrowserTest(configure: KotlinJsBrowserTestDsl.() -> Unit): 
     return testDsl
 }
 
+private fun configureBrowserTest(configure: KotlinJsBrowserTestDsl.() -> Unit): KotlinJsBrowserTestDsl =
+    configureBrowserTest(buildProjectWithMPP(), configure)
+
 internal data class RunnerDump(
     val type: KClass<*>,
     val timeout: Duration,
@@ -206,6 +227,7 @@ internal data class RunnerDump(
     val launchArgs: List<String>,
     val launchEnvironmentVariables: Map<String, String>,
     val testsLocation: Directory,
+    val browserDataDir: File?,
 )
 
 internal fun KotlinJsBrowserTestDsl.dumpRunners(): Map<String, RunnerDump> =
@@ -217,6 +239,7 @@ internal fun KotlinJsBrowserTestDsl.dumpRunners(): Map<String, RunnerDump> =
             launchArgs = runner.launchArgs.get(),
             testsLocation = runner.testsLocation.get().bundleLocation.get(),
             launchEnvironmentVariables = runner.launchEnvironmentVariables.get(),
+            browserDataDir = runner.browserDataDir.asFile.orNull,
         )
     }
 

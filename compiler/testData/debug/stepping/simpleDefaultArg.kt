@@ -10,7 +10,7 @@ fun box(): String {
 }
 
 // FORCE_STEP_INTO
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:9 box
 // test.kt:4 ifoo$default (synthetic)
 // test.kt:5 ifoo

@@ -121,13 +121,13 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::createConstEvaluationPhase,
     ::CopyInlineFunctionBodyLowering,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
+    ::ImplicitlyExportedDeclarationsMarkingLowering,
     ::PrepareInlineClassesToBeExportedLowering,
     ::PrepareExportedDefaultImplementationsLowering,
     ::ReplaceSuspendIntrinsicLowering,
     ::PrepareSuspendFunctionsForExportLowering,
     ::ReplaceExportedSuspendFunctionsCallsWithTheirBridgeCall,
     ::IgnoreOriginalSuspendFunctionsThatWereExportedLowering,
-    ::ImplicitlyExportedDeclarationsMarkingLowering,
     ::ExcludeSyntheticDeclarationsFromExportLowering,
     ::JsStaticLowering,
     ::JsInventNamesForLocalClasses,
@@ -218,11 +218,12 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::CallsLowering,
     ::EscapedIdentifiersLowering,
     ::MainFunctionCallWrapperLowering,
+    ::EffectAnalysisLowering,
     ::CleanupLowering,
     ::IrValidationAfterLoweringsSecondStagePhase,
 )
 
-val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
+val optimizationLoweringList: List<NamedCompilerPhase<JsIrOptimizationContext, IrModuleFragment, IrModuleFragment>> = createModulePhases(
     ::ES6CollectConstructorsWhichNeedBoxParameters,
     ::ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
     ::ES6ConstructorBoxParameterOptimizationLowering,
@@ -230,7 +231,6 @@ val optimizationLoweringList: List<NamedCompilerPhase<JsIrBackendContext, IrModu
     ::ES6PrimaryConstructorUsageOptimizationLowering,
     ::PurifyObjectInstanceGettersLowering,
     ::InlineObjectsWithPureInitializationLowering,
-    ::JsCleanupPurifiedLeftoverDeclarationsLowering,
     ::JsCleanupPurifiedLeftoverUsagesLowering,
     ::MoveCallableFactoriesToDeclarationsLowering,
     ::DeduplicateCallableReferenceFactoriesLowering,

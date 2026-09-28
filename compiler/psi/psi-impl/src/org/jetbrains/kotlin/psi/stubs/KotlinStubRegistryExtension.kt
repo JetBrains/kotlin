@@ -11,6 +11,7 @@ import com.intellij.psi.stubs.StubRegistryExtension
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.impl.KtUnionTypeImpl
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.factories.*
@@ -38,7 +39,6 @@ internal class KotlinStubRegistryExtension : StubRegistryExtension {
  * such as [KtStubSerializingElementFactory.shouldCreateStub].
  */
 internal object KtStubElementFactories {
-    @OptIn(KtImplementationDetail::class, KtExperimentalApi::class)
     val factories: Map<KtNodeType, KtStubSerializingElementFactory<*, *>> = buildMap {
         registerStubSerializingFactory(
             type = KtStubElementTypes.SECONDARY_CONSTRUCTOR,
@@ -198,6 +198,11 @@ internal object KtStubElementFactories {
         registerPlaceHolderFactory(
             type = KtStubElementTypes.INTERSECTION_TYPE,
             psiFactory = ::KtIntersectionType,
+        )
+
+        registerPlaceHolderFactory(
+            type = KtStubElementTypes.UNION_TYPE,
+            psiFactory = ::KtUnionTypeImpl,
         )
 
         registerPlaceHolderFactory(

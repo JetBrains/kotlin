@@ -76,10 +76,8 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.jvmTest by KotlinSourceSetConvention
 
-    @ExperimentalWasmDsl
     override val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsMain by KotlinSourceSetConvention
 
-    @ExperimentalWasmDsl
     override val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsTest by KotlinSourceSetConvention
 
     @ExperimentalWasmDsl

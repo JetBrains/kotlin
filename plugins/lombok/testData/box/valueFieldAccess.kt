@@ -10,8 +10,12 @@ public class MyValue {
 }
 
 // FILE: main.kt
+import kotlin.test.assertEquals
+
 fun box(): String {
     val x = MyValue("A", "B", "C")
     val result = x.defaultValue + x.privateValue + x.publicValue;
-    return if (result == "ABC") "OK" else "Error: $x"
+    assertEquals("ABC", result)
+
+    return "OK"
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.AnalysisHandler
 import org.jetbrains.kotlin.test.model.GroupingStageHandler
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestPhase
 
 sealed class WrappedException(
     cause: Throwable,
@@ -22,6 +23,8 @@ sealed class WrappedException(
      * If false, the next steps will ignore this exception and continue running.
      */
     open val failureDisablesNextSteps: Boolean get() = true
+
+    open val phase: TestPhase? get() = null
 
     abstract val failedModule: TestModule?
 
@@ -66,12 +69,13 @@ sealed class WrappedException(
         cause: Throwable,
         override val failedModule: TestModule?,
         val handler: AnalysisHandler<*>,
+        override val phase: TestPhase?,
     ) : WrappedException(cause, 1, 3) {
         override val failureDisablesNextSteps: Boolean
             get() = handler.failureDisablesNextSteps
 
         override fun withReplacedCause(newCause: Throwable): WrappedException {
-            return FromHandler(newCause, failedModule, handler)
+            return FromHandler(newCause, failedModule, handler, phase)
         }
     }
 

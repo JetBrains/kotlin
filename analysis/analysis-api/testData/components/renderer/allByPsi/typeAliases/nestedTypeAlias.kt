@@ -1,0 +1,11 @@
+class Base<T>
+
+typealias Inner<T> = Base<T>
+typealias Outer = Inner<String>
+typealias AliasChain = Outer
+
+fun direct(value: Inner<Int>) {}
+
+fun nested(value: Outer) {}
+
+fun chained(value: AliasChain) {}

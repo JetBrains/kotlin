@@ -59,7 +59,9 @@ internal fun validateTargetSpecificDumpFile(
     val matchedBackend = testServices.getMatchedBackendFromDirective(directiveForIrDifference)
     if (matchedBackend != null) {
         val targetSpecificExtension = targetSpecificDumpExtension(baseDumpExtension, matchedBackend)
-        val patchBackendName = targetBackend.directChildOf(matchedBackend).name.lowercase()
+        // The patch's `+++ b/` label uses the matched backend name (the same one as in the patch file name), so that all backends
+        // sharing the same patch file (e.g., JKLIB reusing JVM's patch) produce identical patch content.
+        val patchBackendName = matchedBackend.name.lowercase()
         val normalizedActualDump = actualDump.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
         val targetSpecificFile = moduleStructure.getClassifiedDumpFile(targetSpecificExtension)
 
@@ -181,23 +183,6 @@ private fun applyPatch(baseText: String, patchText: String): String {
 
     return patchedLines.joinToString(System.lineSeparator())
         .trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
-}
-
-/**
- * Returns the direct child of [ancestor] in this backend's compatibility chain,
- * or this backend itself if it equals [ancestor].
- *
- * This determines the backend name for the patch's `+++ b/` line, ensuring that
- * backends sharing the same patch file (e.g., JKLIB reusing JVM_IR's patch)
- * produce identical patch content.
- */
-private fun TargetBackend.directChildOf(ancestor: TargetBackend): TargetBackend {
-    var current = this
-    while (current != TargetBackend.ANY) {
-        if (current.compatibleWith == ancestor) return current
-        current = current.compatibleWith
-    }
-    return this
 }
 
 internal fun TestServices.getMatchedBackendFromDirective(directive: ValueDirective<TargetBackend>): TargetBackend? {

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-74572
 // LANGUAGE: +ContextParameters
 import kotlin.contracts.ExperimentalContracts

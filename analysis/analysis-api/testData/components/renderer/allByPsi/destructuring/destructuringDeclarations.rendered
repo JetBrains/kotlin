@@ -1,0 +1,5 @@
+(first: component1, second: component2)
+
+(mutableFirst: component1, mutableSecond: component2)
+
+(`<unused var>`: component1, used: component2)

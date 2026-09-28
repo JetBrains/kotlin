@@ -1,2 +1,5 @@
 warning: incorrect internal argument syntax, missing modificator: -XXLanguage:SoundSmartCastAfterTry
+compiler/testData/cli/jvm/legacySmartCastsAfterTry.kt:8:10: warning: unused return value of 'length'.
+    some.length
+         ^^^^^^
 OK

@@ -17,6 +17,7 @@ class ConstructorExampleLibrary(val str: String, val int: Int) {
 // FILE: main.kt
 
 import lombok.Builder
+import kotlin.test.assertEquals
 
 class ConstructorExample(val str: String, val int: Int) {
     @Builder
@@ -24,6 +25,17 @@ class ConstructorExample(val str: String, val int: Int) {
 
     @Builder
     constructor(int: Int) : this("empty", int)
+}
+
+// A constructor builder builds out of that constructor's parameters, so it works on a class with no primary
+// constructor at all - the shape a class-level `@Builder` reports BUILDER_REQUIRES_PRIMARY_CONSTRUCTOR for.
+class NoPrimaryConstructor {
+    val y: Int
+
+    @Builder
+    constructor(x: Int) {
+        y = x * 2
+    }
 }
 
 fun box(): String {
@@ -39,6 +51,8 @@ fun box(): String {
 
     assertEquals("empty", obj2.str)
     assertEquals(42, obj2.int)
+
+    assertEquals(10, NoPrimaryConstructor.builder().x(5).build().y)
 
     return "OK"
 }

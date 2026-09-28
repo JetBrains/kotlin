@@ -120,7 +120,7 @@ private val json = Json {
 internal sealed class PbxObject
 
 internal class PbxObjectEntitySerializer : JsonContentPolymorphicSerializer<PbxObject>(PbxObject::class) {
-    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out PbxObject> {
+    override fun selectDeserializer(element: JsonElement): DeserializationStrategy<PbxObject> {
         val isa = element.jsonObject["isa"]?.jsonPrimitive?.content ?: error("Missing isa")
         return when (isa) {
             "PBXProject" -> PbxProject.serializer()

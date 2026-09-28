@@ -1,7 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // LANGUAGE: -ForbidSyntheticPropertiesWithoutBaseJavaGetter
 // LANGUAGE: -DontCreateSyntheticPropertiesWithoutBaseJavaGetter
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // MODULE: common
 // FILE: Base.kt

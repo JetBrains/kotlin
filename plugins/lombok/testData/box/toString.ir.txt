@@ -1,10 +1,10 @@
 FILE fqName:<root> fileName:/test.kt
   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
-      CALL 'public final fun assertEquals <T> (a: T of <root>.assertEquals, b: T of <root>.assertEquals): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
         TYPE_ARG T: kotlin.String
-        ARG a: CONST String type=kotlin.String value="ToStringOnJavaClass(name=Alice, age=30)"
-        ARG b: CALL 'public open fun toString (): kotlin.String declared in <root>.ToStringOnJavaClass' type=kotlin.String origin=null
+        ARG expected: CONST String type=kotlin.String value="ToStringOnJavaClass(name=Alice, age=30)"
+        ARG actual: CALL 'public open fun toString (): kotlin.String declared in <root>.ToStringOnJavaClass' type=kotlin.String origin=null
           ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> (name: @[FlexibleNullability] kotlin.String?, age: kotlin.Int) declared in <root>.ToStringOnJavaClass' type=<root>.ToStringOnJavaClass origin=null
             ARG name: CONST String type=kotlin.String value="Alice"
             ARG age: CONST Int type=kotlin.Int value=30

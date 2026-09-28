@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: JVM
 // ^ @AssociatedObjectKey is not available in Kotlin/JVM
 
 @file:OptIn(ExperimentalAssociatedObjects::class)

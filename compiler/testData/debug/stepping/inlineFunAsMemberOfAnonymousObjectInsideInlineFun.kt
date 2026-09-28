@@ -13,7 +13,7 @@ fun box(): String {
     return foo()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:13 box
 // test.kt:4 box
 // test.kt:4 <init>

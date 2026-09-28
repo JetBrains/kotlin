@@ -14,28 +14,24 @@ import org.jetbrains.kotlin.fir.declarations.staticScope
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCollectionLiteralAtom
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.calls.UnsuccessfulCollectionLiteralArgument
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallInfo
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CallKind
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSinkImpl
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.ImplicitInvokeMode
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.createErrorReferenceWithErrorCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.prepareTypeForArgumentTypeMismatch
+import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
 import org.jetbrains.kotlin.fir.resolve.calls.stages.ArgumentCheckingProcessor
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeFallbackIsImpossible
-import org.jetbrains.kotlin.fir.resolve.inference.CollectionLiteralBounds
+import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.asCone
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -45,18 +41,14 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
-fun runCollectionLiteralResolution(
-    atom: ConeCollectionLiteralAtom,
-    precalculatedBounds: CollectionLiteralBounds?,
-) {
+context(context: ResolutionContext, outerCandidateContext: OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver)
+fun runCollectionLiteralResolution(state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>) {
+    val atom = state.atom
     val originalExpression = atom.expression
-    val classForResolution = when (precalculatedBounds) {
-        is CollectionLiteralBounds.SingleBound -> precalculatedBounds.bound
-        is CollectionLiteralBounds.NonTvExpected -> precalculatedBounds.bound
-        // it means CL is here through regular resolve of postponed atoms with all input types known
-        null -> atom.expectedType?.getClassRepresentativeForCollectionLiteralResolution()
-        else -> null
+    val classForResolution = when (state) {
+        is StateForAtomWithExpectedTypeAsStaticReceiver.SingleBound -> state.bound
+        is StateForAtomWithExpectedTypeAsStaticReceiver.NonTvExpected -> state.bound
+        is StateForAtomWithExpectedTypeAsStaticReceiver.MultipleBounds, is StateForAtomWithExpectedTypeAsStaticReceiver.FallbackOnly -> null
     }
 
     val resolvedThroughRegularStrategies = tryAllCLResolutionStrategies {
@@ -66,9 +58,9 @@ fun runCollectionLiteralResolution(
 
     val resolvedCall = when {
         resolvedThroughRegularStrategies != null -> resolvedThroughRegularStrategies
-        precalculatedBounds is CollectionLiteralBounds.Ambiguity -> {
+        state is StateForAtomWithExpectedTypeAsStaticReceiver.MultipleBounds -> {
             resolveCollectionLiteralToErrorCall(
-                precalculatedBounds.toConeDiagnostic(),
+                state.toConeDiagnostic(),
                 atom,
             )
         }
@@ -101,7 +93,7 @@ fun runCollectionLiteralResolution(
     postprocessCollectionLiteralCall(resolvedCall, atom)
 }
 
-context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
+context(context: ResolutionContext, outerCandidateContext: OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver)
 private fun resolveCollectionLiteralToPreparedCall(
     preparedCall: FirFunctionCall,
 ): FirFunctionCall {
@@ -109,7 +101,7 @@ private fun resolveCollectionLiteralToPreparedCall(
     call = context.bodyResolveComponents.callResolver.resolveCallAndSelectCandidate(
         call,
         ResolutionMode.ContextDependent,
-        outerCandidateContext,
+        outerCandidateContext.containingCandidate,
     )
     call = context.bodyResolveComponents.callCompleter.completeCall(
         call,
@@ -121,7 +113,7 @@ private fun resolveCollectionLiteralToPreparedCall(
     return call
 }
 
-context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
+context(context: ResolutionContext, outerCandidateContext: OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver)
 private fun resolveCollectionLiteralToErrorCall(
     diagnostic: ConeDiagnostic,
     collectionLiteralAtom: ConeCollectionLiteralAtom,
@@ -170,7 +162,7 @@ private fun resolveCollectionLiteralToErrorCall(
     return call
 }
 
-context(context: ResolutionContext, outerCandidateContext: CollectionLiteralOuterCandidateContext)
+context(context: ResolutionContext, outerCandidateContext: OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver)
 private fun postprocessCollectionLiteralCall(
     replacementForCL: FirFunctionCall,
     collectionLiteralAtom: ConeCollectionLiteralAtom,
@@ -333,6 +325,16 @@ private class CollectionLiteralResolutionStrategyForStdlibType(context: Resoluti
 
 context(context: ResolutionContext)
 fun <T : Any> tryAllCLResolutionStrategies(attempt: CollectionLiteralResolutionStrategy.() -> T?): T? {
-    CollectionLiteralResolutionStrategyThroughCompanion(context).attempt()?.let { return it }
-    return CollectionLiteralResolutionStrategyForStdlibType(context).attempt()
+    return if (LanguageFeature.CollectionLiterals.isEnabled()) {
+        CollectionLiteralResolutionStrategyThroughCompanion(context).attempt()
+            ?: CollectionLiteralResolutionStrategyForStdlibType(context).attempt()
+    } else {
+        // In the case of `+CollectionLiteralsBasedAnnotationResolution -CollectionLiterals`, let's prefer factory functions
+        // rather than proper `of` operators. This is mostly done to make collection literals in annotations work:
+        // otherwise, they'd resolve to `*Array.of` operators, and we'd report opt-in errors for them.
+        assert(LanguageFeature.CollectionLiteralsBasedAnnotationResolution.isEnabled())
+
+        CollectionLiteralResolutionStrategyForStdlibType(context).attempt()
+            ?: CollectionLiteralResolutionStrategyThroughCompanion(context).attempt()
+    }
 }

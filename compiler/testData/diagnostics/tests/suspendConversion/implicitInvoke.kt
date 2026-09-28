@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun box() = useSuspendFunInt(Test())
 
 fun useSuspendFunInt(fn: suspend () -> String): String = ""

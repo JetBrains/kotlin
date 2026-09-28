@@ -4963,6 +4963,50 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
   }
 
   @Nested
+  @TestMetadata("compiler/psi/psi-impl/testData/psi/richErrors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RichErrors {
+    private void run(String fileName) {
+      runTest("compiler/psi/psi-impl/testData/psi/richErrors/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInRichErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/richErrors"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("errorModifierSmoke.kt")
+    public void testErrorModifierSmoke() {
+      run("errorModifierSmoke.kt");
+    }
+
+    @Test
+    @TestMetadata("errorSafeCallSmoke.kt")
+    public void testErrorSafeCallSmoke() {
+      run("errorSafeCallSmoke.kt");
+    }
+
+    @Test
+    @TestMetadata("unionTypeParsingErrors.kt")
+    public void testUnionTypeParsingErrors() {
+      run("unionTypeParsingErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("unionTypeSemanticErrors.kt")
+    public void testUnionTypeSemanticErrors() {
+      run("unionTypeSemanticErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("unionTypeSmoke.kt")
+    public void testUnionTypeSmoke() {
+      run("unionTypeSmoke.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/psi/psi-impl/testData/psi/script")
   @TestDataPath("$PROJECT_ROOT")
   public class Script {

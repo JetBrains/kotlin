@@ -1,0 +1,63 @@
+FILE fqName:<root> fileName:/suspendConversionNonNullForNullableExpectedType.kt
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public returnType:<root>.C [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN name:run visibility:public modality:FINAL returnType:kotlin.Unit
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+      BLOCK_BODY
+  FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'private final fun isNull (runnable: <root>.C): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
+            ARG runnable: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.C' type=<root>.C origin=null
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            CONST String type=kotlin.String value="fail"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"
+  FUN name:isNull visibility:private modality:FINAL returnType:kotlin.Boolean
+    VALUE_PARAMETER kind:Regular name:runnable index:0 type:<root>.C
+    BLOCK_BODY
+      VAR name:a type:kotlin.reflect.KFunction0<kotlin.Unit> [val]
+        RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget='public final fun run (): kotlin.Unit declared in <root>.C'
+          overriddenFunctionSymbol: public abstract fun invoke (): R of kotlin.reflect.KFunction0 declared in kotlin.reflect.KFunction0
+          bound receiver: GET_VAR 'runnable: <root>.C declared in <root>.isNull' type=<root>.C origin=null
+          invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:run visibility:local modality:FINAL returnType:kotlin.Unit
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE kind:Regular name:receiver index:0 type:<root>.C
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun run (receiver: <root>.C): kotlin.Unit declared in <root>.isNull'
+                CALL 'public final fun run (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR 'receiver: <root>.C declared in <root>.isNull.run' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+      RETURN type=kotlin.Nothing from='private final fun isNull (runnable: <root>.C): kotlin.Boolean declared in <root>'
+        CALL 'private final fun isNullSuspend (func: kotlin.coroutines.SuspendFunction0<kotlin.Unit>?): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
+          ARG func: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION
+            FUN ADAPTER_FOR_SUSPEND_CONVERSION name:suspendConversion0 visibility:local modality:FINAL returnType:kotlin.Unit [suspend]
+              VALUE_PARAMETER ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION kind:ExtensionReceiver name:$callee index:0 type:kotlin.Function0<kotlin.Unit>
+              BLOCK_BODY
+                CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.Unit origin=null
+                  ARG <this>: GET_VAR '$callee: kotlin.Function0<kotlin.Unit> declared in <root>.isNull.suspendConversion0' type=kotlin.Function0<kotlin.Unit> origin=null
+            FUNCTION_REFERENCE 'local final fun suspendConversion0 ($callee: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>.isNull' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=FUNCTION_TYPE_EXPRESSION_CONVERSION reflectionTarget=null
+              ARG $callee: GET_VAR 'val a: kotlin.reflect.KFunction0<kotlin.Unit> declared in <root>.isNull' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+  FUN name:isNullSuspend visibility:private modality:FINAL returnType:kotlin.Boolean
+    VALUE_PARAMETER kind:Regular name:func index:0 type:kotlin.coroutines.SuspendFunction0<kotlin.Unit>?
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='private final fun isNullSuspend (func: kotlin.coroutines.SuspendFunction0<kotlin.Unit>?): kotlin.Boolean declared in <root>'
+        CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+          ARG arg0: GET_VAR 'func: kotlin.coroutines.SuspendFunction0<kotlin.Unit>? declared in <root>.isNullSuspend' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit>? origin=null
+          ARG arg1: CONST Null type=kotlin.Nothing? value=null

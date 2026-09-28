@@ -62,14 +62,13 @@ class SerializableCompanionIrGenerator(
     }
 
     fun generate() {
+        // A user-defined function with the same signature shadows the synthesized one. This is reported by
+        // the frontend as SERIALIZER_FUNCTION_CLASH_IN_COMPANION; bail out instead of failing with an ICE
+        // so that a suppressed diagnostic degrades to a missing serializer rather than a broken compilation.
         val serializerGetterFunction =
             getSerializerGetterFunction(serializableIrClass, SerialEntityNames.SERIALIZER_PROVIDER_NAME)?.takeIf {
                 it.isFromPlugin()
-            }
-                ?: throw IllegalStateException(
-                    "Can't find synthesized 'Companion.serializer()' function to generate, " +
-                            "probably clash with user-defined function has occurred"
-                )
+            } ?: return
 
         val serializer = requireNotNull(
             findTypeSerializer(
@@ -91,13 +90,7 @@ class SerializableCompanionIrGenerator(
                 getSerializerGetterFunction(
                     serializableIrClass,
                     SerialEntityNames.GENERATED_SERIALIZER_PROVIDER_NAME
-                )?.takeIf { it.isFromPlugin() }
-                    ?: throw IllegalStateException(
-                        "Can't find synthesized 'Companion.${
-                            SerializationAnnotations.keepGeneratedSerializerAnnotationFqName.shortName().asString()
-                        }()' function to generate, " +
-                                "probably clash with user-defined function has occurred"
-                    )
+                )?.takeIf { it.isFromPlugin() } ?: return // see the comment above
 
             val keepSerializer = requireNotNull(
                 findKeepSerializer(

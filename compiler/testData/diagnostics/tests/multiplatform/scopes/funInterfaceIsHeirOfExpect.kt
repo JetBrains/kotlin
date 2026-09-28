@@ -1,5 +1,5 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58845
 // Reason: MPP diagnostics are reported differentely in the compiler and AA

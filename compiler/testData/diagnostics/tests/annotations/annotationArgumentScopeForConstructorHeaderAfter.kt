@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ImprovedResolutionInSecondaryConstructors
 // ISSUE: KT-77180
 // ISSUE: KT-77276

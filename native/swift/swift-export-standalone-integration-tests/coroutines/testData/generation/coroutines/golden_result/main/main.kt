@@ -6,7 +6,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -27,22 +26,66 @@ public suspend fun FunctionalInterfaceWithSuspendFunction_emit__reverse(self: Fu
     }
 }
 
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Optional_U282920asyncU20throwsU202D_U20Swift_Void____")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Optional_U282920asyncU20throwsU202D_U20Swift_Void____(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_String___")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_String___(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_U282920asyncU20throwsU202D_U20Swift_Void___")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_U282920asyncU20throwsU202D_U20Swift_Void___(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Int): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Long): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Boolean): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_DoubleU2920asyncU20throwsU202D_U20Swift_Int32__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_DoubleU2920asyncU20throwsU202D_U20Swift_Int32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_FloatU29202D_U20Swift_Int32__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_FloatU29202D_U20Swift_Int32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_FloatU2920asyncU20throwsU202D_U20Swift_Int64__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_FloatU2920asyncU20throwsU202D_U20Swift_Int64__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Boolean
+
 @ExportedBridge("FunctionalInterfaceWithSuspendFunction_emit")
 public fun FunctionalInterfaceWithSuspendFunction_emit(self: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as FunctionalInterfaceWithSuspendFunction
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Unit ->
             val _arg0 = run { arg0; true }
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -68,13 +111,14 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
 @ExportedBridge("__root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__")
 public fun __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Void__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(function);
+        val closurePtr = function;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         suspend {
             suspendSwiftCoroutine { continuation: Function1<Unit, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
                 val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
                 val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
                 val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
-                val _result = kotlinFun(_continuation, _exception, _cancellation)
+                val _result = main_internal_functional_type_callee_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr(), _continuation, _exception, _cancellation)
                 run<Unit> { _result }
             }
         }
@@ -86,13 +130,14 @@ public fun __root___FunctionalInterfaceWithSuspendFunction__TypesOfArguments__U2
 @ExportedBridge("__root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__")
 public fun __root___accept_suspend_function_type__TypesOfArguments__U282920asyncU20throwsU202D_U20Swift_Int32__(block: kotlin.native.internal.NativePtr): Boolean {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->Boolean>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         suspend {
             suspendSwiftCoroutine { continuation: Function1<Int, Unit>, exception: Function1<kotlin.Throwable?, Unit>, cancellation: SwiftJob ->
                 val _continuation = kotlin.native.internal.ref.createRetainedExternalRCRef(continuation)
                 val _exception = kotlin.native.internal.ref.createRetainedExternalRCRef(exception)
                 val _cancellation = kotlin.native.internal.ref.createRetainedExternalRCRef(cancellation)
-                val _result = kotlinFun(_continuation, _exception, _cancellation)
+                val _result = main_internal_functional_type_callee_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr(), _continuation, _exception, _cancellation)
                 run<Unit> { _result }
             }
         }
@@ -104,18 +149,20 @@ public fun __root___accept_suspend_function_type__TypesOfArguments__U282920async
 @ExportedBridge("__root___alwaysFails")
 public fun __root___alwaysFails(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Nothing ->
             val _arg0 = arg0
-            val _result = kotlinFun(_arg0)
+            val _result = error("Unsupported functional type: (Swift.Never) -> Swift.Void")
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -128,10 +175,11 @@ public fun __root___alwaysFails(continuation: kotlin.native.internal.NativePtr, 
 @ExportedBridge("__root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__")
 public fun __root___closure_returning_flow__TypesOfArguments__U28anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo_U29202D_U20Swift_Void__(i: kotlin.native.internal.NativePtr): Boolean {
     val __i = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(i);
+        val closurePtr = i;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlinx.coroutines.flow.Flow<Foo> ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinCoroutineSupport_KotlinTypedFlow_main_Foo___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -191,18 +239,20 @@ public fun __root___produce_function(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___produce_function_typealias")
 public fun __root___produce_function_typealias(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Function1<Float, Int> ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_FloatU29202D_U20Swift_Int32__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -215,18 +265,20 @@ public fun __root___produce_function_typealias(continuation: kotlin.native.inter
 @ExportedBridge("__root___produce_suspend_function")
 public fun __root___produce_suspend_function(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.coroutines.SuspendFunction1<Double, Int> ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_DoubleU2920asyncU20throwsU202D_U20Swift_Int32__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -239,18 +291,20 @@ public fun __root___produce_suspend_function(continuation: kotlin.native.interna
 @ExportedBridge("__root___produce_suspend_function_typealias")
 public fun __root___produce_suspend_function_typealias(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.coroutines.SuspendFunction1<Float, Long> ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_U28Swift_FloatU2920asyncU20throwsU202D_U20Swift_Int64__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -263,18 +317,20 @@ public fun __root___produce_suspend_function_typealias(continuation: kotlin.nati
 @ExportedBridge("__root___retunsListOfSuspend")
 public fun __root___retunsListOfSuspend(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.collections.List<kotlin.coroutines.SuspendFunction0<Unit>> ->
             val _arg0 = arg0.map { __element -> kotlin.native.internal.ref.createRetainedExternalRCRef(__element).toLong() }.objcPtr()
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_U282920asyncU20throwsU202D_U20Swift_Void___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -287,18 +343,20 @@ public fun __root___retunsListOfSuspend(continuation: kotlin.native.internal.Nat
 @ExportedBridge("__root___returnSuspendGeneric")
 public fun __root___returnSuspendGeneric(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Any ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -317,18 +375,20 @@ public fun __root___returnSuspendUnit(): kotlin.native.internal.NativePtr {
 @ExportedBridge("__root___returnUnit")
 public fun __root___returnUnit(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Unit ->
             val _arg0 = run { arg0; true }
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -341,18 +401,20 @@ public fun __root___returnUnit(continuation: kotlin.native.internal.NativePtr, e
 @ExportedBridge("__root___returnsList")
 public fun __root___returnsList(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.collections.List<kotlin.String> ->
             val _arg0 = arg0.objcPtr()
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_String___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -365,18 +427,20 @@ public fun __root___returnsList(continuation: kotlin.native.internal.NativePtr, 
 @ExportedBridge("__root___returnsListOfSuspendNullables")
 public fun __root___returnsListOfSuspendNullables(continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(continuation);
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.collections.List<kotlin.coroutines.SuspendFunction0<Unit>?> ->
             val _arg0 = arg0.map { __element -> if (__element == null) 0L else kotlin.native.internal.ref.createRetainedExternalRCRef(__element).toLong() }.objcPtr()
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Optional_U282920asyncU20throwsU202D_U20Swift_Void____(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -386,90 +450,12 @@ public fun __root___returnsListOfSuspendNullables(continuation: kotlin.native.in
     }
 }
 
-@ExportedBridge("main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
-public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Int, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
-    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = _1
-    val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Int)->Boolean>(continuation);
-        { arg0: Int ->
-            val _arg0 = arg0
-            val _result = kotlinFun(_arg0)
-            run<Unit> { _result }
-        }
-    }
-    val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Throwable? ->
-            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
-            run<Unit> { _result }
-        }
-    }
-    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    swiftCoroutine(__continuation, __exception, __cancellation) {
-        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Int, Int>).invoke(___1)
-    }
-}
-
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__")
 public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Float): Int {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = _1
     val _result = run { (__pointerToBlock as Function1<Float, Int>).invoke(___1) }
     return _result
-}
-
-@ExportedBridge("main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double__")
-public fun main_internal_functional_type_caller_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Double, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
-    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = _1
-    val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Int)->Boolean>(continuation);
-        { arg0: Int ->
-            val _arg0 = arg0
-            val _result = kotlinFun(_arg0)
-            run<Unit> { _result }
-        }
-    }
-    val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Throwable? ->
-            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
-            run<Unit> { _result }
-        }
-    }
-    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    swiftCoroutine(__continuation, __exception, __cancellation) {
-        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Double, Int>).invoke(___1)
-    }
-}
-
-@ExportedBridge("main_internal_functional_type_caller_SwiftU2EInt64__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__")
-public fun main_internal_functional_type_caller_SwiftU2EInt64__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Float, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
-    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = _1
-    val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Long)->Boolean>(continuation);
-        { arg0: Long ->
-            val _arg0 = arg0
-            val _result = kotlinFun(_arg0)
-            run<Unit> { _result }
-        }
-    }
-    val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
-        { arg0: kotlin.Throwable? ->
-            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
-            run<Unit> { _result }
-        }
-    }
-    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
-    swiftCoroutine(__continuation, __exception, __cancellation) {
-        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Float, Long>).invoke(___1)
-    }
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
@@ -488,22 +474,116 @@ public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__
     return run { _result; true }
 }
 
-@ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
-public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
+public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Boolean): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val ___1 = run<Unit> { _1 }
+    val _result = run { (__pointerToBlock as Function1<Unit, Unit>).invoke(___1) }
+    return run { _result; true }
+}
+
+@ExportedBridge("main_internal_functional_type_caller_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+public fun main_internal_functional_type_caller_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Int, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val ___1 = _1
     val __continuation = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Boolean)->Boolean>(continuation);
-        { arg0: Unit ->
-            val _arg0 = run { arg0; true }
-            val _result = kotlinFun(_arg0)
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Int ->
+            val _arg0 = arg0
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
     val __exception = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(exception);
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Throwable? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Int, Int>).invoke(___1)
+    }
+}
+
+@ExportedBridge("main_internal_functional_type_caller_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double__")
+public fun main_internal_functional_type_caller_async_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Double, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val ___1 = _1
+    val __continuation = run {
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Int ->
+            val _arg0 = arg0
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(closureBox.objcPtr(), _arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __exception = run {
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: kotlin.Throwable? ->
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Double, Int>).invoke(___1)
+    }
+}
+
+@ExportedBridge("main_internal_functional_type_caller_async_SwiftU2EInt64__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__")
+public fun main_internal_functional_type_caller_async_SwiftU2EInt64__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Float__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Float, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val ___1 = _1
+    val __continuation = run {
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Long ->
+            val _arg0 = arg0
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64__(closureBox.objcPtr(), _arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __exception = run {
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: kotlin.Throwable? ->
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __cancellation = kotlin.native.internal.ref.dereferenceExternalRCRef(cancellation) as SwiftJob
+    swiftCoroutine(__continuation, __exception, __cancellation) {
+        (__pointerToBlock as kotlin.coroutines.SuspendFunction1<Float, Long>).invoke(___1)
+    }
+}
+
+@ExportedBridge("main_internal_functional_type_caller_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun main_internal_functional_type_caller_async_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock: kotlin.native.internal.NativePtr, continuation: kotlin.native.internal.NativePtr, exception: kotlin.native.internal.NativePtr, cancellation: kotlin.native.internal.NativePtr): Unit {
+    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
+    val __continuation = run {
+        val closurePtr = continuation;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: Unit ->
+            val _arg0 = run { arg0; true }
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(closureBox.objcPtr(), _arg0)
+            run<Unit> { _result }
+        }
+    }
+    val __exception = run {
+        val closurePtr = exception;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
+        { arg0: kotlin.Throwable? ->
+            val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -511,12 +591,4 @@ public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__
     swiftCoroutine(__continuation, __exception, __cancellation) {
         (__pointerToBlock as kotlin.coroutines.SuspendFunction0<Unit>).invoke()
     }
-}
-
-@ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__")
-public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Void__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Boolean): Boolean {
-    val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val ___1 = run<Unit> { _1 }
-    val _result = run { (__pointerToBlock as Function1<Unit, Unit>).invoke(___1) }
-    return run { _result; true }
 }

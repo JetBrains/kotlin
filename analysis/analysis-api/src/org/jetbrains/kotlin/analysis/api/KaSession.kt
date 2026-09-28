@@ -225,20 +225,3 @@ public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? {
         restoreSymbol()
     }
 }
-
-/**
- * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
- */
-@KaExperimentalApi
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith("this.restore()", "org.jetbrains.kotlin.analysis.api.types.restore"),
-    level = DeprecationLevel.ERROR,
-)
-@KaContextParameterApi
-context(session: KaSession)
-public fun <T : KaType> KaTypePointer<T>.restore(): T? {
-    return with(session) {
-        restore()
-    }
-}

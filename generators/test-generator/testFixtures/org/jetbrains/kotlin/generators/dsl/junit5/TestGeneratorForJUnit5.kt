@@ -32,7 +32,7 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
     }
 
     private fun Printer.generateSmokeTestAnnotation() {
-        println("@SmokeTest")
+        println("@MustRunAlways")
     }
 
     private fun Printer.generateNestedAnnotation(isNested: Boolean) {

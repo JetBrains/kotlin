@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <X> mySuspendable(block: (MyContinuation<X>) -> Unit): X = TODO()
 
 interface MyContinuation<in Y> {

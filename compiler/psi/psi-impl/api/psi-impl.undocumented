@@ -86,6 +86,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_PARAMETER
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_PARAMETER_LIST
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_PROJECTION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:TYPE_REFERENCE
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:UNION_TYPE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:USER_TYPE
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:VALUE_ARGUMENT
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:VALUE_ARGUMENT_LIST

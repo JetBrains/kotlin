@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.UnspecifiedTargetBackend
 import org.jetbrains.kotlin.test.runners.toKotlinTestInfo
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.testFederation.AffectedByNative
-import org.jetbrains.kotlin.testFederation.AffectedByWasm
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 
@@ -98,9 +98,9 @@ abstract class AbstractTwoStageKotlinCompilerTest @UnspecifiedTargetBackend cons
 }
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByWasm
+@MustRunOnChangesInWasm
 abstract class AbstractTwoStageKotlinCompilerWasmTest : AbstractTwoStageKotlinCompilerTest()
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByNative
+@MustRunOnChangesInNative
 abstract class AbstractTwoStageKotlinCompilerNativeTest : AbstractTwoStageKotlinCompilerTest()

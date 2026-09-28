@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class MyClass
 
 operator fun MyClass.inc(): MyClass { return null!! }

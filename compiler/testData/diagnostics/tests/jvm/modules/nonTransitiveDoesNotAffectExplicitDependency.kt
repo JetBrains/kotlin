@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // JDK_KIND: FULL_JDK_11
 
 // In this test, D depends on C (which requires B non-transitively) and on B; also B transitively requires A.

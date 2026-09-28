@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T> foo(x: () -> T, y: Int) {}
 fun <E> bar(x: E): Int = 1
 

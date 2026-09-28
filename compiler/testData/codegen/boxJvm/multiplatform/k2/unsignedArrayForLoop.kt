@@ -1,5 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // Reason: non-jvm tests don't support overriding stdlib declarations: KT-71950
 // PREFER_IN_TEST_OVER_STDLIB
 // ALLOW_KOTLIN_PACKAGE

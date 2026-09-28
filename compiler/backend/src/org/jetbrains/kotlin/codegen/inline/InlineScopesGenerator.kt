@@ -19,7 +19,7 @@ class InlineScopesGenerator {
     private class InlineScopeNode(
         // The marker variable is only null for the root node
         val markerVariable: LocalVariableNode?,
-        val scopeNumber: Int,
+        var scopeNumber: Int,
         var inlineNesting: Int,
         val parent: InlineScopeNode?
     ) {
@@ -140,21 +140,24 @@ class InlineScopesGenerator {
         }
     }
 
-    fun addInlineScopesInfo(node: MethodNode, isRegeneratingAnonymousObject: Boolean) {
+    // Return renamed marker variable name of the method inlined last or null otherwise.
+    // Not null only when the method carried scope numbers, i.e. when `addInlineScopesInfoFromScopeNumbers` was called.
+    fun addInlineScopesInfo(node: MethodNode, isRegeneratingAnonymousObject: Boolean): String? {
         val localVariables = node.localVariables
         if (localVariables?.isEmpty() == true) {
-            return
+            return null
         }
 
         val markerVariablesWithoutScopeInfoNum = localVariables.count {
             JvmAbi.isFakeLocalVariableForInline(it.name) && !it.name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
         }
 
-        when {
+        return when {
             isRegeneratingAnonymousObject -> {
                 if (markerVariablesWithoutScopeInfoNum > 0) {
                     addInlineScopesInfoFromIVSuffixesWhenRegeneratingAnonymousObject(node)
                 }
+                null
             }
             // When inlining a function its marker variable won't contain any scope numbers yet.
             // But if there are more than one marker variable like this, it means that we
@@ -162,32 +165,42 @@ class InlineScopesGenerator {
             // have not been introduced.
             markerVariablesWithoutScopeInfoNum == 1 ->
                 addInlineScopesInfoFromScopeNumbers(node)
-            else ->
+            else -> {
                 addInlineScopesInfoFromIVSuffixes(node)
+                null
+            }
         }
     }
 
-    private fun addInlineScopesInfoFromScopeNumbers(node: MethodNode) {
+    private fun addInlineScopesInfoFromScopeNumbers(node: MethodNode): String {
+        val inlinedFunctionMarkerVariable = node.localVariables.find {
+            JvmAbi.isFakeLocalVariableForInline(it.name) && !it.name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
+        } ?: error("Expected to find fake inline variable without inline scope suffix in ${node.name}")
         val renamer = object : VariableRenamer() {
             override fun computeInlineScopeInfo(node: InlineScopeNode) {
                 val name = node.markerVariable!!.name
-                val scopeNumber = node.scopeNumber
                 val info = name.getInlineScopeInfo()
                 node.inlineNesting = info?.scopeNumber ?: 0
-                node.callSiteLineNumber =
-                    if (scopeNumber == 1) {
-                        currentCallSiteLineNumber
-                    } else {
-                        info?.callSiteLineNumber ?: 0
-                    }
+                // The only marker variable without scope info is the marker of the method being
+                // inlined (this code path is only taken when there is exactly one such variable).
+                // It is not necessarily the bytecode-first marker: in a $default stub of an inline
+                // function the markers created while inlining default argument values precede the
+                // stub's own marker (KT-88995). Scope numbers of already inlined scopes are shifted
+                // by 1 to keep the numbering consistent with the surrounding scope number update below.
+                if (info == null) {
+                    node.scopeNumber = 1
+                    node.callSiteLineNumber = currentCallSiteLineNumber
+                } else {
+                    node.scopeNumber = info.scopeNumber + 1
+                    node.callSiteLineNumber = info.callSiteLineNumber ?: 0
+                }
 
                 if (name.isInlineLambdaName) {
                     val surroundingScopeNumber = info?.surroundingScopeNumber
                     node.surroundingScopeNumber =
                         when {
-                            // The first encountered inline scope belongs to the lambda, which means
-                            // that its surrounding scope is the function where the lambda is being inlined to.
-                            scopeNumber == 1 -> 0
+                            // A lambda being inlined belongs to the function it is inlined into.
+                            info == null -> 0
                             // Every lambda that is already inlined must have a surrounding scope number.
                             // If it doesn't, then it means that we are inlining the code compiled by
                             // the older versions of the Kotlin compiler, where surrounding scope numbers
@@ -210,6 +223,7 @@ class InlineScopesGenerator {
         }
 
         inlinedScopes += renamer.renameVariables(node)
+        return inlinedFunctionMarkerVariable.name
     }
 
     private fun addInlineScopesInfoFromIVSuffixes(node: MethodNode) {

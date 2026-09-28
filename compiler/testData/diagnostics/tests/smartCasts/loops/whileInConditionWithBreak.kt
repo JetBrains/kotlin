@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun bar(): Boolean { return true }
 
 fun foo(s: String?): Int {

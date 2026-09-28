@@ -1,0 +1,27 @@
+// MODULE: lib
+// FILE: lib.kt
+
+class StringIterable : MyIterable<String> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override operator fun iterator(): Iterator<String> {
+    return emptyIterator<@FlexibleNullability String?>() /*!! @FlexibleMutability MutableIterator<@FlexibleNullability String?> */
+  }
+
+}
+
+interface MyIterable<T : Any?> : Iterable<T> {
+}
+
+// MODULE: main
+// FILE: main.kt
+
+fun test(iterable: MyIterable<Int>, stringIterable: StringIterable) {
+  iterable.spliterator() /*~> Unit */
+  stringIterable.spliterator() /*~> Unit */
+}
+

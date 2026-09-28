@@ -11,7 +11,8 @@ fun box(): String {
     assertEquals(a, test(a), "a = AImpl()")
     a = object : A {}
     assertEquals(a, test(a), "a = object : A{}")
-    failsClassCast("test(null)") { test(null) }
+
+    failsNullPointer("test(null)") { test(null) }
     failsClassCast("test(object{})") { test(object{}) }
 
     return "OK"

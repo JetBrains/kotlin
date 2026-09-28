@@ -16,6 +16,7 @@ build.txt
 lib/allopen-compiler-plugin.jar
 lib/annotations-13.0.jar
 lib/assignment-compiler-plugin.jar
+lib/atomicfu-compiler-plugin.jar
 lib/compose-compiler-plugin.jar
 lib/jklib-compiler.jar
 lib/jvm-abi-gen.jar

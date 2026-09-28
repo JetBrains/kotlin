@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 package kt939
 
 //KT-939 CommonSupertypes erases scopes associated to types

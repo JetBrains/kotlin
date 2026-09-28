@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-74501
 // LANGUAGE: +ContextParameters
 // SCOPE_DUMP: KJK:foo;bar;baz;qux;quux

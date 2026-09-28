@@ -18,7 +18,7 @@ kotlin {
         }
         jvmMain {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.6")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0")
             }
         }

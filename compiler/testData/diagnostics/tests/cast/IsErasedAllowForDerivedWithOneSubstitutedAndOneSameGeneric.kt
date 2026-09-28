@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class BaseTwo<A, B>
 open class DerivedWithOne<D>: BaseTwo<D, String>()
 

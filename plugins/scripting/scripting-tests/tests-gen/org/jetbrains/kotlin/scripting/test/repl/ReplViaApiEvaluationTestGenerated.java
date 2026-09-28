@@ -154,6 +154,18 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("nested_class_used_from_other_snippet.repl.kts")
+  public void testNested_class_used_from_other_snippet_repl() {
+    run("nested_class_used_from_other_snippet.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("nested_class_via_type_alias_from_other_snippet.repl.kts")
+  public void testNested_class_via_type_alias_from_other_snippet_repl() {
+    run("nested_class_via_type_alias_from_other_snippet.repl.kts");
+  }
+
+  @Test
   @TestMetadata("property_accessors.kts")
   public void testProperty_accessors() {
     run("property_accessors.kts");

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-13110 Strange type mismatch error on class literal with integer receiver expression
 
 import kotlin.reflect.KClass

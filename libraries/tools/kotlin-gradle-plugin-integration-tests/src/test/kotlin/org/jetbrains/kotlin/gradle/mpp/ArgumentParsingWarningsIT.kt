@@ -9,16 +9,15 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
-@AffectedByBuildToolsApi
+@MustRunOnChangesInBuildToolsApi
 @DisplayName("Argument-parsing warnings are reported by the Kotlin Gradle plugin")
 class ArgumentParsingWarningsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
@@ -163,12 +162,12 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
     @DisplayName("A deprecated argument that the compiler reports itself is not duplicated")
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
     fun testDeprecatedLifecycleArgumentIsNotDuplicated(gradleVersion: GradleVersion) {
-        multiplatformProject(gradleVersion, freeCompilerArgs = listOf("-Xsuppress-warning=NOTHING_TO_INLINE")) {
+        multiplatformProject(gradleVersion, jvmOnlyFreeCompilerArgs = listOf("-Xjvm-default=all")) {
             buildAllCompileTasks {
-                forEachCompileTask { taskOutput ->
+                forEachCompileTask(listOf(JVM_TASK)) { taskOutput ->
                     assertWarningReportedOnce(
                         taskOutput,
-                        "The argument '-Xsuppress-warning' is deprecated since Kotlin".toRegex(RegexOption.LITERAL),
+                        "The argument '-Xjvm-default' is deprecated since Kotlin".toRegex(RegexOption.LITERAL),
                     )
                 }
             }
@@ -192,7 +191,6 @@ class ArgumentParsingWarningsIT : KGPBaseTest() {
                     js {
                         nodejs()
                     }
-                    @OptIn(ExperimentalWasmDsl::class)
                     wasmJs {
                         nodejs()
                     }

@@ -13,23 +13,21 @@ repositories {
 
 kotlin {
     tvosArm64("tvosLibArm64")
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-    tvosX64("tvosLibX64")
+    tvosSimulatorArm64("tvosLibSimulatorArm64")
 
     tvosArm64("tvosLibArm64") {
         logger.lifecycle("Configuring ${this.name}")
     }
 
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-    tvosX64("tvosLibX64") {
+    tvosSimulatorArm64("tvosLibSimulatorArm64") {
         logger.lifecycle("Configuring ${this.name}")
     }
 
     sourceSets {
         val tvosLibMain = create("tvosLibMain")
-        val tvosLibX64Main = getByName("tvosLibX64Main")
+        val tvosLibSimulatorArm64Main = getByName("tvosLibSimulatorArm64Main")
         val tvosLibArm64Main = getByName("tvosLibArm64Main")
-        tvosLibX64Main.dependsOn(tvosLibMain)
+        tvosLibSimulatorArm64Main.dependsOn(tvosLibMain)
         tvosLibArm64Main.dependsOn(tvosLibMain)
     }
 }

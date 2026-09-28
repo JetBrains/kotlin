@@ -3,7 +3,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void * datetime_LocalDate_Companion_Format__TypesOfArguments__U28anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDateU29202D_U20Swift_Void__(void * self, _Bool (^block)(void *));
+_Bool dependency_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDate__(void * pointerToClosure, void * _1);
+
+void * datetime_LocalDate_Companion_Format__TypesOfArguments__U28anyU20dependency__ExportedKotlinPackages_datetime_DateTimeFormatBuilder_WithDateU29202D_U20Swift_Void__(void * self, void * block);
 
 void * datetime_LocalDate_Companion_get();
 

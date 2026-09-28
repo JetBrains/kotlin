@@ -50,7 +50,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 import packagewithprotocols.foo as packagewithprotocols_foo
 
 @ImportedBridge("Barable_bar__TypesOfArguments__anyU20main_Foeble____reverse_swift")

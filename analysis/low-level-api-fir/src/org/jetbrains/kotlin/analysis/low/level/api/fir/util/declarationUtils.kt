@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isCopiedDelegatedProperty
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
@@ -166,6 +167,14 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             } else {
                 firPropertyDeclaration.setter
             }
+        }
+
+        is KtBackingField -> {
+            val firProperty = property.findSourceNonLocalFirDeclarationByProvider(
+                firDeclarationProvider,
+            ) as? FirProperty ?: return null
+
+            firProperty.getExplicitBackingField()
         }
 
         is KtParameter -> {

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent
 // ISSUE: KT-66690
 // MODULE: base

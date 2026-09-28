@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-9682 Overload Resolution Ambiguity after casting to Interface
 
 open class Foo {

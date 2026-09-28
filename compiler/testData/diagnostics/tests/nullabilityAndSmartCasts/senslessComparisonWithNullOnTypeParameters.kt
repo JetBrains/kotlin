@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // The type checker used to think that T is not null no matter what the upper bound
 
 fun <T, INDIRECT: T> nullableUpperBound(t: T, ind: INDIRECT) {

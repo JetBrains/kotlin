@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo1() :  (Int) -> Int = { x: Int -> x }
 
 fun foo() {

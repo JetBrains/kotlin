@@ -1,6 +1,6 @@
 // ISSUE: KT-84380, KT-84281
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidUselessTypeArgumentsIn25,  +ProperSupportOfInnerClassesInCallableReferenceLHS
+// LANGUAGE: +ForbidUselessTypeArgumentsIn26,  +ProperSupportOfInnerClassesInCallableReferenceLHS
 //                                              ^ otherwise, different positioning for one of the diagnostics
 
 object SomeObject {

@@ -3,7 +3,7 @@
 // module. In compiler mode, all modules in the test have the same target platform, so `m1-common` is a JVM module there.
 // LL_FIR_DIVERGENCE
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // MODULE: m1-common
 // FILE: common.kt
 

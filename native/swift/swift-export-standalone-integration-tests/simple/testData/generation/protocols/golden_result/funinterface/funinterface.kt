@@ -11,7 +11,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("funinterface_FunctionalInterface_invoke__reverse_swift")
 internal external fun funinterface_FunctionalInterface_invoke__reverse_swift(self: kotlin.native.internal.NativePtr): Int
@@ -73,12 +72,16 @@ public fun funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__r
     return _result
 }
 
+@ImportedBridge("funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): Int
+
 @ExportedBridge("funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__")
 public fun funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
+        val closurePtr = function;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             _result
         }
     }
@@ -116,9 +119,10 @@ public fun funinterface_FunctorClass_invoke(self: kotlin.native.internal.NativeP
 @ExportedBridge("funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__")
 public fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
+        val closurePtr = function;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             _result
         }
     }
@@ -136,9 +140,10 @@ public fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke(sel
 @ExportedBridge("funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__")
 public fun funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
+        val closurePtr = function;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             _result
         }
     }
@@ -156,9 +161,10 @@ public fun funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke(self: k
 @ExportedBridge("funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__")
 public fun funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
+        val closurePtr = function;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             _result
         }
     }
@@ -176,9 +182,10 @@ public fun funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAn
 @ExportedBridge("funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__")
 public fun funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
+        val closurePtr = function;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             _result
         }
     }
@@ -196,9 +203,10 @@ public fun funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke(self: k
 @ExportedBridge("funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__")
 public fun funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__(function: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __function = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
+        val closurePtr = function;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             _result
         }
     }

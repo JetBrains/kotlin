@@ -24,7 +24,7 @@ import kotlin.reflect.KProperty2
 
 internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, DescriptorKProperty<V> {
     constructor(container: KDeclarationContainerImpl, name: String, signature: String) : super(
-        container, name, signature, CallableReference.NO_RECEIVER
+        container, name, signature, CallableReference.NO_RECEIVER, boundContextArguments = emptyList()
     )
 
     constructor(
@@ -50,15 +50,10 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
     ): DescriptorKProperty2<D, E, V> =
         DescriptorKProperty2(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        DescriptorKProperty2<D, E, V>(container, descriptor, boundReceiver, overriddenStorage)
-
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
-        throw KotlinReflectionInternalError("Cannot unbind KProperty2: $this")
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKCallable<V> =
         // We don't have bound member extensions in the language yet (KT-8835).
         throw KotlinReflectionInternalError("Cannot bind KProperty2: $this")
+
 
     class Getter<D, E, out V>(override val property: DescriptorKProperty2<D, E, V>) : DescriptorKProperty.Getter<V>(), KProperty2.Getter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E): V = property.get(receiver1, receiver2)
@@ -84,9 +79,6 @@ internal class DescriptorKMutableProperty2<D, E, V> : DescriptorKProperty2<D, E,
         overriddenStorage: KCallableOverriddenStorage,
     ): DescriptorKMutableProperty2<D, E, V> =
         DescriptorKMutableProperty2(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
-
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        DescriptorKMutableProperty2<D, E, V>(container, descriptor, boundReceiver, overriddenStorage)
 
     class Setter<D, E, V>(override val property: DescriptorKMutableProperty2<D, E, V>) : DescriptorKProperty.Setter<V>(),
         KMutableProperty2.Setter<D, E, V> {

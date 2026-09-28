@@ -29,7 +29,7 @@ internal interface SemanticWhitespaceAwareSyntaxBuilder : SyntaxTreeBuilder {
 internal class SemanticWhitespaceAwareSyntaxBuilderImpl(val delegate: SyntaxTreeBuilder) : SyntaxTreeBuilderAdapter(delegate),
     SemanticWhitespaceAwareSyntaxBuilder {
     companion object {
-        private val complexTokens = syntaxElementTypeSetOf(KtTokens.SAFE_ACCESS, KtTokens.ELVIS, KtTokens.EXCLEXCL)
+        private val complexTokens = syntaxElementTypeSetOf(KtTokens.SAFE_ACCESS, KtTokens.ERROR_SAFE_ACCESS, KtTokens.ELVIS, KtTokens.EXCLEXCL)
         private val newlineBeforeCurrentTokenIgnoredSet =
             syntaxElementTypeSetOf(KtTokens.BLOCK_COMMENT, KtTokens.DOC_COMMENT, KtTokens.EOL_COMMENT, KtTokens.SHEBANG_COMMENT)
     }
@@ -114,6 +114,9 @@ internal class SemanticWhitespaceAwareSyntaxBuilderImpl(val delegate: SyntaxTree
             val nextRawToken = rawLookup(rawLookupSteps)
             if (nextRawToken === KtTokens.DOT) return KtTokens.SAFE_ACCESS
             if (nextRawToken === KtTokens.COLON) return KtTokens.ELVIS
+        } else if (rawTokenType === KtTokens.OR) {
+            val nextRawToken = rawLookup(rawLookupSteps)
+            if (nextRawToken === KtTokens.DOT) return KtTokens.ERROR_SAFE_ACCESS
         } else if (rawTokenType === KtTokens.EXCL) {
             val nextRawToken = rawLookup(rawLookupSteps)
             if (nextRawToken === KtTokens.EXCL) return KtTokens.EXCLEXCL
@@ -144,6 +147,7 @@ internal class SemanticWhitespaceAwareSyntaxBuilderImpl(val delegate: SyntaxTree
             if (complexTokens.contains(tokenType)) {
                 if (tokenType === KtTokens.ELVIS) return "?:"
                 if (tokenType === KtTokens.SAFE_ACCESS) return "?."
+                if (tokenType === KtTokens.ERROR_SAFE_ACCESS) return "|."
             }
             return super.tokenText
         }

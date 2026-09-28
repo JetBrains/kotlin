@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // NB: should work after KT-5907 / KT-4450 fix
 
 val currentTimeMillis = 1234L

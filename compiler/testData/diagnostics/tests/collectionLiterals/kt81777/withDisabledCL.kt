@@ -39,3 +39,6 @@ fun testWithCallables() {
     val withReturn: Array<() -> Int> = [::const42]
     val withReturnAndParam: Array<(Int) -> Int> = [::id]
 }
+
+/* GENERATED_FIR_TAGS: anonymousFunction, callableReference, functionDeclaration, integerLiteral, lambdaLiteral,
+localProperty, nullableType, propertyDeclaration, typeParameter */

@@ -143,6 +143,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: D): R =
         visitElement(literalExpression, data)
 
+    open fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: D): R =
+        visitElement(numericClassConversion, data)
+
     open fun visitFunctionCall(functionCall: FirFunctionCall, data: D): R =
         visitElement(functionCall, data)
 
@@ -463,6 +466,9 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): R =
         visitElement(intersectionTypeRef, data)
+
+    open fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: D): R =
+        visitElement(unionTypeRef, data)
 
     open fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): R =
         visitElement(thisReceiverExpression, data)

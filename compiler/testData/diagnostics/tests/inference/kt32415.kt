@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 abstract class TestType<V: Any> {
     open inner class Inner(val item: V)

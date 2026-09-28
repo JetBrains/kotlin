@@ -1,20 +1,59 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.utils
 
 // Needed for Java interop: otherwise you need to specify all the optional parameters to join, i.e. prefix, postfix, limit, truncated
 fun join(collection: Iterable<Any>, separator: String) = collection.joinToString(separator)
+
+/** Renders [value] as a Kotlin string literal, escaping the characters which cannot appear in one verbatim. */
+fun renderKotlinStringLiteral(value: String): String = buildString(value.length + 2) {
+    append('"')
+    for (character in value) {
+        val escaped = character.escapedInKotlinLiteral(quote = '"')
+        if (escaped != null) append(escaped) else append(character)
+    }
+    append('"')
+}
+
+/** Renders [value] as a Kotlin character literal, escaping it when it cannot appear in one verbatim. */
+fun renderKotlinCharLiteral(value: Char): String = "'" + (value.escapedInKotlinLiteral(quote = '\'') ?: value) + "'"
+
+/**
+ * The escape sequence for [this] character inside a Kotlin literal delimited by [quote], or `null` if the character
+ * can be rendered as is.
+ *
+ * Non-printable characters have to be escaped as the rendered text is expected to be readable,
+ * and some of them (e.g., a line separator) would break the literal.
+ */
+fun Char.escapedInKotlinLiteral(quote: Char): String? = when (this) {
+    '\\' -> ESCAPE + '\\'
+    quote -> ESCAPE + quote
+    '$' -> "$ESCAPE$"
+    '\n' -> ESCAPE + 'n'
+    '\r' -> ESCAPE + 'r'
+    '\t' -> ESCAPE + 't'
+    '\b' -> ESCAPE + 'b'
+    else -> if (isPrintable()) null else ESCAPE + UNICODE_ESCAPE_MARKER + "%04X".format(code)
+}
+
+/**
+ * Mirrors the printability check of `org.jetbrains.kotlin.constant.CharValue`.
+ */
+private fun Char.isPrintable(): Boolean = when (Character.getType(this).toByte()) {
+    Character.UNASSIGNED,
+    Character.LINE_SEPARATOR,
+    Character.PARAGRAPH_SEPARATOR,
+    Character.CONTROL,
+    Character.FORMAT,
+    Character.PRIVATE_USE,
+    Character.SURROGATE,
+        -> false
+
+    else -> true
+}
+
+private const val ESCAPE = "\\"
+private const val UNICODE_ESCAPE_MARKER = 'u'

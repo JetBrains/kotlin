@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // ISSUE: KT-70617
 
 // FILE: Interface.java

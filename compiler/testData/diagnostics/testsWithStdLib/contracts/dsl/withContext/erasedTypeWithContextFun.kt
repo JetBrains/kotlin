@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +AllowCheckForErasedTypesInContracts, +ContextParameters
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 

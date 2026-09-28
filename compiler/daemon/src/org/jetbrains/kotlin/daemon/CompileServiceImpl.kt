@@ -64,6 +64,7 @@ import java.util.concurrent.ConcurrentSkipListSet
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -112,20 +113,30 @@ abstract class CompileServiceImplBase(
         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value = "true"
     }
 
+    protected class OneShotDisposable(disposable: Disposable?) {
+        val disposableReference = AtomicReference<Disposable?>(disposable)
+
+        fun dispose() {
+            val disposable = disposableReference.getAndSet(null)
+            disposable?.let {
+                Disposer.dispose(it)
+            }
+        }
+    }
+
+    protected fun Disposable.asOneShot(): OneShotDisposable = OneShotDisposable(this)
+
     // wrapped in a class to encapsulate alive check logic
-    protected class ClientOrSessionProxy<out T : Any>(
+    protected data class ClientOrSessionProxy<out T : Any>(
         val aliveFlagPath: String?,
         val data: T? = null,
-        private var disposable: Disposable? = null,
+        private val disposable: OneShotDisposable? = null,
     ) {
         val isAlive: Boolean
             get() = aliveFlagPath?.let { File(it).exists() } ?: true // assuming that if no file was given, the client is alive
 
         fun dispose() {
-            disposable?.let {
-                Disposer.dispose(it)
-                disposable = null
-            }
+            disposable?.dispose()
         }
     }
 
@@ -266,7 +277,7 @@ abstract class CompileServiceImplBase(
         if (state.sessions.isEmpty()) {
             // TODO: and some goes here
         }
-        timer.schedule(0) {
+        val _ = timer.schedule(0) {
             periodicAndAfterSessionCheck()
         }
         return CompileService.CallResult.Ok()
@@ -621,17 +632,17 @@ abstract class CompileServiceImplBase(
     //    }
 
     fun startDaemonElections() {
-        timer.schedule(10) {
+        val _ = timer.schedule(10) {
             exceptionLoggingTimerThread { initiateElections() }
         }
     }
 
     fun configurePeriodicActivities() {
         log.info("Periodic liveness check activities configured")
-        timer.schedule(delay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
+        val _ = timer.schedule(delay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
             exceptionLoggingTimerThread { periodicAndAfterSessionCheck() }
         }
-        timer.schedule(delay = DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS + 100, period = DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS) {
+        val _ = timer.schedule(delay = DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS + 100, period = DAEMON_PERIODIC_SELDOM_CHECK_INTERVAL_MS) {
             exceptionLoggingTimerThread { periodicSeldomCheck() }
         }
     }
@@ -884,7 +895,7 @@ class CompileServiceImpl(
                     override fun dispose() {
                         runningCompilations.cancelAll()
                     }
-                })
+                }.asOneShot())
             }).apply {
                 log.info("leased a new session $this, session alive file: $aliveFlagPath")
             })
@@ -1021,7 +1032,7 @@ class CompileServiceImpl(
                 disposable, port, compilerId, templateClasspath, templateClassName,
                 messageCollector, null
             )
-            val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
+            val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable.asOneShot()))
 
             CompileService.CallResult.Good(sessionId)
         }
@@ -1218,7 +1229,7 @@ class CompileServiceImpl(
         val currentSessionId = state.sessions.lastSessionId
         val currentCompilationsCount = compilationsCounter.get()
         log.info("Delayed shutdown in ${daemonOptions.shutdownDelayMilliseconds}ms")
-        timer.schedule(daemonOptions.shutdownDelayMilliseconds) {
+        val _ = timer.schedule(daemonOptions.shutdownDelayMilliseconds) {
             state.delayedShutdownQueued.set(false)
             if (currentClientsCount == state.clientsCounter &&
                 currentCompilationsCount == compilationsCounter.get() &&
@@ -1258,7 +1269,7 @@ class CompileServiceImpl(
         if (!onAnotherThread) {
             shutdownIfIdle()
         } else {
-            timer.schedule(1) {
+            val _ = timer.schedule(1) {
                 shutdownIfIdle()
             }
         }

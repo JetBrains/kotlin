@@ -46,11 +46,11 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-class ValueParameter(
+class ValueParameter<Node : Any>(
     private val valueParameterSymbol: FirValueParameterSymbol,
     private val isVal: Boolean,
     private val isVar: Boolean,
-    private val modifiers: ModifierList,
+    private val modifiers: ModifierList<Node>,
     private val valueParameterAnnotations: List<FirAnnotationCall>,
     val returnTypeRef: FirTypeRef,
     val source: KtSourceElement,

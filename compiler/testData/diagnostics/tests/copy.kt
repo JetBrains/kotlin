@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 data class Some(val x: Int, val y: String)
 
 fun test(some: Some) {

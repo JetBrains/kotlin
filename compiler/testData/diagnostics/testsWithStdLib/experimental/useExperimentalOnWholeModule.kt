@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // OPT_IN: kotlin.RequiresOptIn api.ExperimentalAPI
 // MODULE: api
 // FILE: api.kt

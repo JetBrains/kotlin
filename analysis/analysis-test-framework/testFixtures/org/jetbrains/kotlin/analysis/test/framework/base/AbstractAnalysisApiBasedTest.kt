@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.NonGroupingStageTestConfiguration
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -50,7 +49,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
-import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.bind
@@ -78,7 +77,7 @@ import kotlin.io.path.nameWithoutExtension
  * @see doTestByMainModuleAndOptionalMainFile
  * @see doTest
  */
-@AffectedByAnalysisApi
+@MustRunOnChangesInAnalysisApi
 abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest {
     abstract val configurator: AnalysisApiTestConfigurator
 
@@ -476,7 +475,6 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
         return directoryPath.resolve(relativePath)
     }
 
-    @OptIn(TestInfrastructureInternals::class)
     private val configure: TestConfigurationBuilder.() -> Unit = {
         globalDefaults {
             frontend = FrontendKinds.FIR

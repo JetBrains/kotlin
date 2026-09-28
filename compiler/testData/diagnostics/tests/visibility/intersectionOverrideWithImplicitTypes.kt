@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Common {
     fun <T, R> foo(value: T, producer: (T) -> R): R
 }

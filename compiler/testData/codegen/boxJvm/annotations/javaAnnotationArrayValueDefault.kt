@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // DUMP_IR
 // MODULE: lib
+// LANGUAGE: +DnnTypeForUnboundedReifiedTypeParameters
 // FILE: JavaAnn.java
 
 import java.lang.annotation.Retention;

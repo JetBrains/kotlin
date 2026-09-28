@@ -12,11 +12,11 @@ import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -78,9 +78,7 @@ internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(
         usesPlatformOf(this@exportedSwiftExportApiConfiguration)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
-        if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-            KlibPackaging.setAttributeTo(project, attributes, false)
-        }
+        KlibPackaging.setAttributeTo(project, attributes, false)
     }
 
 /**
@@ -102,6 +100,12 @@ internal val String.normalizedSwiftExportModuleName: String
 
 internal fun Project.validateSwiftExportModuleName(moduleName: String) =
     kotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(this, moduleName)
+
+internal fun validateSwiftExportModuleName(moduleName: String, reportDiagnostic: (ToolingDiagnostic) -> Unit) {
+    if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftExportInvalidModuleName(moduleName))
+    }
+}
 
 internal fun KotlinToolingDiagnosticsCollector.validateSwiftExportModuleName(project: Project, moduleName: String) {
     if (!moduleName.matches(Regex(SWIFT_EXPORT_MODULE_NAME_VALIDATION_PATTERN))) {

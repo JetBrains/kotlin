@@ -64,6 +64,11 @@ private class FirThreadUnsafeCache<K : Any, V, CONTEXT>(
     @FirCacheInternals
     override val cachedValues: Collection<V>
         get() = map.valuesSnapshot.toList()
+
+    @FirCacheInternals
+    override fun clear() {
+        map.clear()
+    }
 }
 
 private class FirThreadUnsafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
@@ -87,6 +92,11 @@ private class FirThreadUnsafeCacheWithPostCompute<K : Any, V, CONTEXT, DATA>(
     @FirCacheInternals
     override val cachedValues: Collection<V>
         get() = map.valuesSnapshot.toList()
+
+    @FirCacheInternals
+    override fun clear() {
+        map.clear()
+    }
 }
 
 private class FirThreadUnsafeValue<V>(createValue: () -> V) : FirLazyValue<V>() {

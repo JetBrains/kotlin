@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE_FEATURE_TOGGLED: IntrinsicConstEvaluation
 
 class A(val OK: Int, val somePropertyWithLongName: String) {

@@ -7,6 +7,8 @@
 
 package kotlin.js
 
+import kotlin.internal.Effects
+import kotlin.internal.EffectsKind
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.boxedLong.BoxedLongApi
 import kotlin.js.internal.boxedLong.toStringImpl
@@ -18,14 +20,17 @@ internal annotation class JsIntrinsic
 
 @UsedFromCompilerGeneratedCode
 @JsIntrinsic
+@Effects(EffectsKind.PURE)
 internal fun isLongCompiledToBigInt(): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsEqeq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsNotEq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
@@ -33,210 +38,262 @@ internal fun jsUndefined(): Nothing?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsEqeqeq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsNotEqeq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsGt(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsGtEq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsLt(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsLtEq(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsNot(a: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsUnaryPlus(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsUnaryMinus(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsPrefixInc(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsPostfixInc(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsPrefixDec(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsPostfixDec(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsPlus(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsMinus(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsMult(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsDiv(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsMod(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsPlusAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsMinusAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsMultAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsDivAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsModAssign(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsAnd(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsOr(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsBitAnd(a: Any?, b: Any?): Int
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsBitOr(a: Any?, b: Any?): Int
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsBitXor(a: Any?, b: Any?): Int
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsBitNot(a: Any?): Int
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsBitShiftR(a: Any?, b: Any?): Int
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsBitShiftRU(a: Any?, b: Any?): Int
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsBitShiftL(a: Any?, b: Any?): Int
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsInstanceOfIntrinsic(a: Any?, b: Any?): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsNewTarget(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun emptyObject(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun openInitializerBox(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsArrayLength(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsArrayGet(a: Any?, b: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsArraySet(a: Any?, b: Any?, c: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun arrayLiteral(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun int8Array(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun int16Array(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun int32Array(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun float32Array(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun float64Array(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun bigint64Array(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun int8ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun int16ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun int32ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun float32ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun float64ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun bigint64ArrayOf(a: Any?): Any?
 
 @JsIntrinsic
@@ -244,83 +301,102 @@ internal fun <T> DefaultType(): T
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsBind(receiver: Any?, target: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsCall(receiver: Any?, target: Any?, vararg args: Any?): Any?
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun <A> slice(a: A): A
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun <T> jsArrayLike2Array(arrayLike: Any?): Array<T>
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun <T> jsSliceArrayLikeFromIndex(arrayLike: Any?, start: Int): Array<T>
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun <T> jsSliceArrayLikeFromIndexToIndex(arrayLike: Any?, start: Int, end: Int): Array<T>
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.WRITE)
 internal fun unreachable(): Nothing
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.READ)
 internal fun jsArguments(): Any?
 
 @JsIntrinsic
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun <reified T : Any> jsNewAnonymousClass(superClass: JsClass<T>): JsClass<T>
 
 @JsIntrinsic
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE") // TODO: mark `inline` and skip in inliner
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun <reified T : Any> jsClassIntrinsic(): JsClass<T>
 
 // Returns true if the specified property is in the specified object or its prototype chain.
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsInIntrinsic(lhs: Any?, rhs: Any): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.WRITE)
 internal fun jsDelete(e: Any?)
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsContextfulRef(context: dynamic, fn: dynamic): dynamic
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.WRITE)
 internal fun <T> jsYield(value: T): T
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.WRITE)
 internal fun <T> jsYieldStar(value: T): T
 
 // @JsIntrinsic
 // TODO: after the next bootstrap drop the body of this function, and uncomment the @JsIntrinsic annotation;
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsGenerateInterfaceSymbol(): dynamic =
     generateInterfaceSymbolById()
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun signatureId(signatureString: String): dynamic
 
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsMethodReference(dispatchReceiver: Any, rawFunctionRef: dynamic): dynamic
 
 /**
@@ -335,6 +411,7 @@ internal fun jsMethodReference(dispatchReceiver: Any, rawFunctionRef: dynamic): 
 // @JsIntrinsic
 @OptIn(BoxedLongApi::class)
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic, toIndex: dynamic): LongArray =
     kotlin.js.internal.boxedLong.longCopyOfRange(arr, fromIndex, toIndex)
 
@@ -345,6 +422,7 @@ internal fun longCopyOfRange(arr: dynamic, fromIndex: dynamic, toIndex: dynamic)
  * TODO(KT-70480): Replace call sites with `value.unsafeCast<BigInt>().toString(radix)` when we drop the ES5 target
  */
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun jsLongToString(value: Long, radix: Int): String {
     // TODO(KT-57128): Make bodiless after 2.2.20 branching and mark with @JsIntrinsic
     @OptIn(BoxedLongApi::class)

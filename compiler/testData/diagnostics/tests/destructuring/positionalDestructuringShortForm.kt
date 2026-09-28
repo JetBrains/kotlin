@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +NameBasedDestructuring
 data class Tuple(val first: String, val second: Int)
 

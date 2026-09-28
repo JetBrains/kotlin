@@ -1,0 +1,536 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassWithSuper.kt
+    public final? value [ResolvedTo(RAW_FIR)] class FullValueClass : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FullValueClass.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FullValueClass.second] second: Int): R|FullValueClass| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(RAW_FIR)] class Base : AnotherSuperInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? abstract override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final? value [ResolvedTo(RAW_FIR)] class FullValueClass : Base {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FullValueClass.first] first: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FullValueClass.second] second: Int): R|FullValueClass| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(RAW_FIR)] class Base : AnotherSuperInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? abstract override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FullValueClass : Base {
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/FullValueClass.first] first: Int, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [CorrespondingProperty=/FullValueClass.second] second: Int): R|FullValueClass| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(RAW_FIR)] class Base : AnotherSuperInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? abstract override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class FullValueClass : Base {
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/FullValueClass.first] first: Int, [ResolvedTo(COMPANION_GENERATION)] [CorrespondingProperty=/FullValueClass.second] second: Int): R|FullValueClass| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(RAW_FIR)] class Base : AnotherSuperInterface {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? abstract override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(RAW_FIR)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final? value [ResolvedTo(SUPER_TYPES)] class FullValueClass : R|Base| {
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/FullValueClass.first] first: Int, [ResolvedTo(SUPER_TYPES)] [CorrespondingProperty=/FullValueClass.second] second: Int): R|FullValueClass| {
+            LAZY_super<Base>
+        }
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] [IsFromPrimaryConstructor=true] val first: Int = R|<local>/first|
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? final? [ResolvedTo(SUPER_TYPES)] [IsFromPrimaryConstructor=true] val second: Int = R|<local>/second|
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=FullValueClass] get(): Int
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base : R|AnotherSuperInterface| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? abstract override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final? value [ResolvedTo(TYPES)] class FullValueClass : R|Base| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            LAZY_super<R|Base|>
+        }
+
+        public? open? override [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public? final? [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public? open? override [ResolvedTo(TYPES)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base : R|AnotherSuperInterface| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun functionWithDefaultImplementation([ResolvedTo(RAW_FIR)] i: Int): Int { LAZY_BLOCK }
+
+        public? abstract override [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final? [ResolvedTo(SUPER_TYPES)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun baz(): R|kotlin/Unit|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/Int), (second, kotlin/Int)])] class FullValueClass : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base : R|AnotherSuperInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val first: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/Int), (second, kotlin/Int)])] class FullValueClass : R|Base| {
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base : R|AnotherSuperInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val first: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/Int), (second, kotlin/Int)])] class FullValueClass : R|Base| {
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(CONTRACTS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base : R|AnotherSuperInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val first: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/Int), (second, kotlin/Int)])] class FullValueClass : R|Base| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base : R|AnotherSuperInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val first: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/Int), (second, kotlin/Int)])] class FullValueClass : R|Base| {
+        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(CONSTANT_EVALUATION)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(CONSTANT_EVALUATION)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base : R|AnotherSuperInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val first: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/Int), (second, kotlin/Int)])] class FullValueClass : R|Base| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun baseFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base : R|AnotherSuperInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val first: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuper.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/Int), (second, kotlin/Int)])] class FullValueClass : R|Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            super<R|Base|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base : R|AnotherSuperInterface| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<<implicit>>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val first: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun functionWithDefaultImplementation([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+        public abstract override [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/Unit|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassWithSuper.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, kotlin/Int), (second, kotlin/Int)])] class FullValueClass : R|Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/FullValueClass.first] first: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/FullValueClass.second] second: R|kotlin/Int|): R|FullValueClass| {
+            super<R|Base|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|kotlin/Int| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|kotlin/Int|
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base : R|AnotherSuperInterface| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val first: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun functionWithDefaultImplementation([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Int| {
+            ^functionWithDefaultImplementation R|<local>/i|
+        }
+
+        public abstract override [ResolvedTo(BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit|
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface AnotherSuperInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun baz(): R|kotlin/Unit|
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun baseFunction(): R|kotlin/Unit|
+
+    }

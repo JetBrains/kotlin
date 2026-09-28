@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -33,11 +34,11 @@ class FirCachingCompositeSymbolProvider(
     private val expectedCachesToBeCleanedOnce: Boolean = false,
 ) : FirSymbolProvider(session) {
 
-    private val classLikeCache = session.firCachesFactory.createCache(::computeClass)
-    private val topLevelCallableCache = session.firCachesFactory.createCache(::computeTopLevelCallables)
-    private val topLevelFunctionCache = session.firCachesFactory.createCache(::computeTopLevelFunctions)
-    private val topLevelPropertyCache = session.firCachesFactory.createCache(::computeTopLevelProperties)
-    private val packageCache = session.firCachesFactory.createCache(::computePackage)
+    private val classLikeCache: FirCache<ClassId, FirClassLikeSymbol<*>?, Nothing?> =session.firCachesFactory.createCache(::computeClass)
+    private val topLevelCallableCache: FirCache<CallableId, List<FirCallableSymbol<*>>, Nothing?> = session.firCachesFactory.createCache(::computeTopLevelCallables)
+    private val topLevelFunctionCache: FirCache<CallableId, List<FirNamedFunctionSymbol>, Nothing?> = session.firCachesFactory.createCache(::computeTopLevelFunctions)
+    private val topLevelPropertyCache: FirCache<CallableId, List<FirPropertySymbol>, Nothing?> = session.firCachesFactory.createCache(::computeTopLevelProperties)
+    private val packageCache: FirCache<FqName, Boolean, Nothing?> = session.firCachesFactory.createCache(::computePackage)
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirCompositeCachedSymbolNamesProvider(
         session,
@@ -89,6 +90,7 @@ class FirCachingCompositeSymbolProvider(
 
     // Unfortunately, this is a part of a hack for overcoming the problem of plugin's generated entities
     // (for more details see its usage at org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveProcessor.afterPhase)
+    @FirSymbolProviderInternals
     fun createCopyWithCleanCaches(): FirCachingCompositeSymbolProvider {
         require(expectedCachesToBeCleanedOnce) { "Unexpected caches clearing" }
         return FirCachingCompositeSymbolProvider(session, providers, expectedCachesToBeCleanedOnce = false)
@@ -145,4 +147,9 @@ class FirCachingCompositeSymbolProvider(
 
     private fun computeClass(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { provider -> provider.getClassLikeSymbolByClassId(classId) }
+
+    @FirSymbolProviderInternals
+    override fun clearInsignificantCaches() {
+        providers.forEach { it.clearInsignificantCaches() }
+    }
 }

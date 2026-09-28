@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -375,6 +376,11 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitQualifiedExpression(expression, data);
     }
 
+    @KtExperimentalApi
+    public R visitErrorSafeQualifiedExpression(@NotNull KtErrorSafeQualifiedExpression expression, D data) {
+        return visitQualifiedExpression(expression, data);
+    }
+
     public R visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, D data) {
         return visitExpression(expression, data);
     }
@@ -459,7 +465,8 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
      * @deprecated This method is obsolete because {@link KtSelfType} is obsolete.
      */
     @kotlin.Deprecated(
-            message = "This method is obsolete because 'KtSelfType' is obsolete."
+            message = "This method is obsolete because 'KtSelfType' is obsolete.",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public R visitSelfType(@NotNull KtSelfType type, D data) {
@@ -489,6 +496,11 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
 
     public R visitIntersectionType(@NotNull KtIntersectionType definitelyNotNullType, D data) {
         return visitTypeElement(definitelyNotNullType, data);
+    }
+
+    @KtExperimentalApi
+    public R visitUnionType(@NotNull KtUnionType unionType, D data) {
+        return visitTypeElement(unionType, data);
     }
 
     public R visitTypeProjection(@NotNull KtTypeProjection typeProjection, D data) {

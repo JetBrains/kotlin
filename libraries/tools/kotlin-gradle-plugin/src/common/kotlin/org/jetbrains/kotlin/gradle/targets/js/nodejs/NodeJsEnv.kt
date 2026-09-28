@@ -16,8 +16,4 @@ data class NodeJsEnv(
 ) : AbstractEnv {
     val isWindows: Boolean
         get() = platformName == "win"
-
-    @Deprecated("Use executable instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("executable"), level = DeprecationLevel.ERROR)
-    val nodeExecutable
-        get() = executable
 }

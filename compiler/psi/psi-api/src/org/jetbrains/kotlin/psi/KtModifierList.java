@@ -9,6 +9,7 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -88,7 +89,8 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
             replaceWith = @ReplaceWith(
                     expression = "contextParameterList",
                     imports = {}
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @Nullable
@@ -119,7 +121,8 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
             replaceWith = @ReplaceWith(
                     expression = "contextParameterLists",
                     imports = {}
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @SuppressWarnings("unchecked")

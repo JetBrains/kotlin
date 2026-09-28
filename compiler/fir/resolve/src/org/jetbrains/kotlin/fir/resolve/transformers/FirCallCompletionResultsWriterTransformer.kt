@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.isError
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -620,6 +621,11 @@ class FirCallCompletionResultsWriterTransformer(
                     transformed = samConversionExpression
                 }
 
+                expectedArgumentsTypeMapping?.numericClassConversions?.get(key)?.let { expectedType ->
+                    check(transformed is FirExpression) { "Numeric class conversions conversion should be applied to expressions only" }
+                    transformed = transformed.wrapIntoNumericClassConversionTo(expectedType)
+                }
+
                 @Suppress("UNCHECKED_CAST")
                 return transformed as E
             }
@@ -653,7 +659,7 @@ class FirCallCompletionResultsWriterTransformer(
     ): FirFunctionTypeConversionExpression {
         return buildFunctionTypeConversionExpression {
             expression = this@wrapInFunctionTypeConversionExpression
-            coneTypeOrNull = expectedArgumentType.withNullabilityOf(resolvedType, session.typeContext)
+            coneTypeOrNull = expectedArgumentType.withNullabilityOfCanBeNull(resolvedType, session.typeContext)
                 .let {
                     typeApproximator.approximateToSuperType(
                         it,
@@ -930,6 +936,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         var samConversions: MutableMap<FirElement, FirSamResolver.SamConversionInfo>? = null
         var functionConversions: MutableMap<FirExpression, Candidate.FunctionConversionDescription>? = null
+        var numericClassConversions: MutableMap<FirElement, ConeKotlinType>? = null
         val arguments = argumentMapping.flatMap { [atom, valueParameter] ->
             val argument = atom.expression
             val expectedType = when {
@@ -956,6 +963,10 @@ class FirCallCompletionResultsWriterTransformer(
                         expectedType = conversionDescription.expectedType.substituteType(this),
                     )
                 }
+                argumentsWithNumericClassConversion?.get(it)?.let { expectedType ->
+                    if (numericClassConversions == null) numericClassConversions = mutableMapOf()
+                    numericClassConversions[it] = expectedType
+                }
                 element to expectedType
             }
         }.toMap()
@@ -968,6 +979,7 @@ class FirCallCompletionResultsWriterTransformer(
             lambdasReturnTypes = lambdasReturnType,
             samConversions = samConversions ?: emptyMap(),
             argumentsWithFunctionKindConversion = functionConversions ?: emptyMap(),
+            numericClassConversions = numericClassConversions ?: emptyMap(),
             forErrorReference = forErrorReference,
             argumentReplacements,
         )
@@ -1526,6 +1538,7 @@ sealed class ExpectedArgumentType(
         val lambdasReturnTypes: Map<FirAnonymousFunction, ConeKotlinType>,
         val samConversions: Map<FirElement, FirSamResolver.SamConversionInfo>,
         val argumentsWithFunctionKindConversion: Map<FirExpression, Candidate.FunctionConversionDescription>,
+        val numericClassConversions: Map<FirElement, ConeKotlinType>,
         val forErrorReference: Boolean,
         argumentReplacements: Map<FirElement, FirExpression>?,
     ) : ExpectedArgumentType(argumentReplacements)

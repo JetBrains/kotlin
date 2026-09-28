@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import java.util.Enumeration
 
 fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {

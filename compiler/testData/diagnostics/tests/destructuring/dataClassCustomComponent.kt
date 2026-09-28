@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +NameBasedDestructuring, +DeprecateNameMismatchInShortDestructuringWithParentheses, -EnableNameBasedDestructuringShortForm
 // RENDER_DIAGNOSTICS_FULL_TEXT
 data class User(val name: String, val age: Int) {

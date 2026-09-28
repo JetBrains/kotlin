@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: JVM
 // ^Implementing sealed interfaces in a different module fails with IncompatibleClassChangeError starting from JVM 17
 // WITH_STDLIB
 // LANGUAGE: +NoWhenBranchMatchedExceptionWithMessage

@@ -87,6 +87,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitExpression(literalExpression)
     }
 
+    override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion) {
+        visitExpression(numericClassConversion)
+    }
+
     override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall) {
         visitFunctionCall(integerLiteralOperatorCall)
     }
@@ -349,6 +353,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef) {
         visitUnresolvedTypeRef(intersectionTypeRef)
+    }
+
+    override fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef) {
+        visitUnresolvedTypeRef(unionTypeRef)
     }
 
     override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression) {

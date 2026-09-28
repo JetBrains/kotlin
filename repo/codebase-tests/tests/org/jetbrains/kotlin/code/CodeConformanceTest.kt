@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.code
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
+import org.jetbrains.kotlin.code.tools.FileMatcher
+import org.jetbrains.kotlin.code.tools.excludeWalkTopDown
 import org.junit.jupiter.api.Test
-import kotlin.test.fail
 import java.io.File
 import java.util.regex.Pattern
+import kotlin.test.fail
 
 class CodeConformanceTest {
     companion object {
@@ -136,7 +137,10 @@ class CodeConformanceTest {
             FileTestCase(
                 "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s",
                 allowedFiles = listOf(
-                    "native/swift/swift-export-standalone-integration-tests/simple/testData/generation/docc/"
+                    "native/swift/swift-export-standalone-integration-tests/simple/testData/generation/docc/",
+                    "libraries/tools/kotlin-documentation-model/analyzer/src/test/kotlin/translators/JavadocInheritedDocTagsTest.kt",
+                    "libraries/tools/kotlin-documentation-model/analyzer/src/test/kotlin/translators/JavadocParserTest.kt",
+                    "libraries/tools/kotlin-documentation-model/analyzer/src/main/kotlin/org/jetbrains/dokka/analysis/java/parsers/doctag/PsiElementToHtmlConverter.kt"
                 )
             ) { _, source ->
                 // substring check is an optimization
@@ -265,40 +269,6 @@ class CodeConformanceTest {
                         "Please update license/README.md accordingly:\n${filesWithUnlistedCopyrights.joinToString("\n")}"
             )
         }
-    }
-
-    private class FileMatcher(val root: File, paths: Collection<String>) {
-        private val files = paths.map { File(it) }
-        private val paths = files.mapTo(HashSet()) { it.invariantSeparatorsPath }
-        private val relativePaths = files.filterTo(ArrayList()) { it.isDirectory }.mapTo(HashSet()) { it.invariantSeparatorsPath + "/" }
-
-        private fun File.invariantRelativePath() = relativeTo(root).invariantSeparatorsPath
-
-        fun matchExact(file: File): Boolean {
-            return file.invariantRelativePath() in paths
-        }
-
-        fun matchWithContains(file: File): Boolean {
-            if (matchExact(file)) return true
-            val relativePath = file.invariantRelativePath()
-            return relativePaths.any { relativePath.startsWith(it) }
-        }
-
-        fun unmatched(files: List<File>): Set<String> {
-            val filePaths = files.map { it.invariantRelativePath() }.toSet()
-            val relativePaths = paths.filter { p -> filePaths.any { it.startsWith(p) } }.toSet()
-            return paths - filePaths - relativePaths
-        }
-    }
-
-    private fun FileMatcher.excludeWalkTopDown(filePattern: Pattern): Sequence<File> {
-        return root.walkTopDown()
-            .onEnter { dir ->
-                !matchExact(dir) && !dir.toPath().isGitIgnored() // Don't enter to ignored dirs
-            }
-            .filter { file -> !matchExact(file) } // filter ignored files
-            .filter { file -> filePattern.matcher(file.name).matches() }
-            .filter { file -> file.isFile }
     }
 
     @Test

@@ -1,4 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: JVM
 // ^EagerInitialization is not supported
 // PROPERTY_LAZY_INITIALIZATION
 // WASM_IGNORE_FOR: mode=single-module

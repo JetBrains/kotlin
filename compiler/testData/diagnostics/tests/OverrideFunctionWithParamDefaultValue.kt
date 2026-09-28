@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 abstract class B() {
     abstract fun foo2(arg: Int = 239) : Int
 }

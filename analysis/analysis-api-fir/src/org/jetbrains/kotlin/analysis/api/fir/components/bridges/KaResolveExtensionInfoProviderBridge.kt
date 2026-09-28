@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -23,7 +22,6 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.resolveExtensionScop
  * Routes the legacy [KaResolveExtensionInfoProvider] surface through the new public `context(session: KaSession)` endpoints in the
  * `org.jetbrains.kotlin.analysis.api.resolve.extensions` package, which in turn reach the [KaInternalsResolveExtensionInfoProvider] proxy.
  */
-@OptIn(KaExperimentalApi::class)
 internal class KaResolveExtensionInfoProviderBridge(
     override val analysisSessionProvider: () -> KaSession,
 ) : KaBaseSessionComponent<KaSession>(), KaResolveExtensionInfoProvider {

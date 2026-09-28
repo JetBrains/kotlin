@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvide
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.PartialLinkageConfig
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -22,8 +21,6 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.klibModuleOriginOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
@@ -34,7 +31,6 @@ class JsIrLinker(
     irDiagnosticReporter: IrDiagnosticReporter,
     friendModules: Map<String, Collection<String>> = emptyMap(),
 ) : KotlinIrLinker(
-    currentModule = null,
     configuration = configuration,
     symbolTable = symbolTable,
     deserializedSymbolPostProcessor = { symbol, signature, fileSymbol ->

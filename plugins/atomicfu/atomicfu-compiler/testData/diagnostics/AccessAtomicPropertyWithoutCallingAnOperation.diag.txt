@@ -1,0 +1,45 @@
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:31:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:32:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:33:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:34:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:35:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:36:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:37:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:38:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:40:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:41:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:42:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:43:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:44:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:45:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:46:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:47:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:51:9: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:52:17: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:56:18: error: Atomic type operators are prohibited except unsafe casts between AtomicRef types or between AtomicArray types.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:60:9: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:61:16: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:62:26: error: Atomic properties can only be accessed as receivers of atomic operations.
+
+/AccessAtomicPropertyWithoutCallingAnOperation.kt:63:17: error: Atomic properties can only be accessed as receivers of atomic operations.

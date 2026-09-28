@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 interface A {
     override fun equals(@EqualityBound(A::class) other: Any?): Boolean

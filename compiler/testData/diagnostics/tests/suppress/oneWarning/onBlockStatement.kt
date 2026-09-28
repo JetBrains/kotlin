@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -REDUNDANT_CALL_OF_CONVERSION_METHOD
 fun <T : CharSequence> foo(x: Array<Any>, y: IntArray, block: (T, Int) -> Int) {
     var r: Any?

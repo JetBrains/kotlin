@@ -152,9 +152,9 @@ abstract class AbstractWasmWasiCodegenBoxTest : AbstractWasmCodegenBoxTest(Targe
 
 abstract class AbstractWasmJsCodegenSplittingTest : AbstractWasmJsCodegenBoxTest() {
     // Splitting multi-module runs must respect K2 multi-module ignore directives present
-    // in testdata. Support `IGNORE_BACKEND_K2_MULTI_MODULE` just like the single-stage base.
+    // in testdata. Support `IGNORE_BACKEND_MULTI_MODULE` just like the single-stage base.
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = listOf(CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE)
 
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(this)

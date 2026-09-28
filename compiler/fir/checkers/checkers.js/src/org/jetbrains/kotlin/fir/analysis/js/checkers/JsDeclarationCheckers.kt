@@ -62,7 +62,8 @@ object JsDeclarationCheckers : DeclarationCheckers() {
 
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
-            FirJsPropertyDelegationByDynamicChecker
+            FirJsPropertyDelegationByDynamicChecker,
+            FirJsEagerInitializationChecker,
         )
 
     override val fileCheckers: Set<FirFileChecker>

@@ -71,7 +71,6 @@ import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -795,7 +794,7 @@ internal class KaFirResolver(
                 parent.receiverExpression != callExpression -> {}
 
                 // The workaround is required only without the feature
-                analysisSession.firSession.languageVersionSettings.supportsFeature(LanguageFeature.ForbidUselessTypeArgumentsIn25) -> {}
+                analysisSession.firSession.languageVersionSettings.supportsFeature(LanguageFeature.ForbidUselessTypeArgumentsIn26) -> {}
                 else -> return null
             }
         }
@@ -1498,13 +1497,11 @@ internal class KaFirResolver(
         val iteratorPropertySymbol = (iteratorPropertyAccess.calleeReference as? FirResolvedNamedReference)
             ?.resolvedSymbol as? FirPropertySymbol ?: return null
 
-        @OptIn(SymbolInternals::class)
         val firIteratorCall = iteratorPropertySymbol.fir
             .initializer
             ?.asFunctionOperatorCall(KtFakeSourceElementKind.DesugaredForLoop)
             ?: return null
 
-        @OptIn(SymbolInternals::class)
         val firNextCall = (firLoop.block.statements.firstOrNull() as? FirProperty)
             ?.initializer
             ?.asFunctionOperatorCall(KtFakeSourceElementKind.DesugaredForLoop)
@@ -1781,7 +1778,6 @@ internal class KaFirResolver(
         )
     }
 
-    @OptIn(SymbolInternals::class)
     private fun getInitializerOfReferencedLocalVariable(variableReference: FirExpression): FirFunctionCall? {
         return variableReference.toReference(resolutionFacade.useSiteFirSession)
             ?.toResolvedVariableSymbol()

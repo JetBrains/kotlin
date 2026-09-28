@@ -17,6 +17,7 @@ declare namespace JS_TESTS {
         function callParentSuspend(holder: foo.HolderOfInheritedSuspend, value: string): Promise<string>;
         function callOverrideSuspend(value: foo.OverridableSuspend): Promise<string>;
         function consumeNonClassNestedDeclarations(nestedI: foo.NonClassNestedDeclarations.NestedI, nestedObject: typeof foo.NonClassNestedDeclarations.NestedObject, nestedEnum: foo.NonClassNestedDeclarations.NestedEnum, nestedAnnotation: foo.NonClassNestedDeclarations.NestedAnnotation): string;
+        function consumeSealedInterfaceWithNestedObject(value: foo.SealedInterfaceWithNestedObject): string;
         interface TestInterface {
             getOwnerName(): string;
             readonly value: string;
@@ -599,7 +600,25 @@ declare namespace JS_TESTS {
                 const constructor: abstract new () => KotlinImplementsNestedI;
             }
         }
+        interface SealedInterfaceWithNestedObject {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.SealedInterfaceWithNestedObject": unique symbol;
+            };
+        }
+        namespace SealedInterfaceWithNestedObject {
+            abstract class Only extends KtSingleton<Only.$metadata$.constructor>() {
+                private constructor();
+            }
+            namespace Only {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    abstract class constructor implements foo.SealedInterfaceWithNestedObject {
+                        get value(): string;
+                        readonly __doNotUseOrImplementIt: foo.SealedInterfaceWithNestedObject["__doNotUseOrImplementIt"];
+                        private constructor();
+                    }
+                }
+            }
+        }
     }
 }
-
-

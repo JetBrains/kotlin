@@ -48,7 +48,7 @@ fun box() {
     baz()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:43 box:
 // test.kt:44 box: m:int=-1:int
 // library.kt:11 box: m:int=-1:int, $i$f$bar\1\44:int=0:int

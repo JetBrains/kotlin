@@ -13,9 +13,5 @@ publish {
 }
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-sourcesJarWithSourcesFromEmbedded(
-    project(":kotlin-noarg-compiler-plugin").tasks.named<Jar>("sourcesJar")
-)
-javadocJarWithJavadocFromEmbedded(
-    project(":kotlin-noarg-compiler-plugin").tasks.named<Jar>("javadocJar")
-)
+sourcesJarWithSourcesFromEmbedded()
+javadocJarWithJavadocFromEmbedded()

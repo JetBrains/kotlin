@@ -52,7 +52,8 @@ class ForLoops : SkipWhenBaseOnly() {
         bh.consume(sum)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun intArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
         var sum = 0L
@@ -62,7 +63,8 @@ class ForLoops : SkipWhenBaseOnly() {
         bh.consume(sum)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun charArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
         var sum = 0L

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Diagnostic should be added when KT-82785 is fixed
 external class C {
     @JsQualifier("a")

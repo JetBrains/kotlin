@@ -1,0 +1,80 @@
+Module: lib
+FILE fqName:<root> fileName:/lib.kt
+  CLASS CLASS name:StringIterable modality:FINAL visibility:public superTypes:[<root>.MyIterable<kotlin.String>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.StringIterable
+    CONSTRUCTOR visibility:public returnType:<root>.StringIterable [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:StringIterable modality:FINAL visibility:public superTypes:[<root>.MyIterable<kotlin.String>]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.MyIterable
+    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.String?>?
+      overridden:
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of <root>.MyIterable?>?): kotlin.Unit declared in <root>.MyIterable
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.MyIterable
+    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] kotlin.String> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<kotlin.String>
+      overridden:
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.MyIterable> declared in <root>.MyIterable
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.MyIterable
+    FUN name:iterator visibility:public modality:OPEN returnType:kotlin.collections.Iterator<kotlin.String> [operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.StringIterable
+      overridden:
+        public abstract fun iterator (): kotlin.collections.Iterator<T of <root>.MyIterable> declared in <root>.MyIterable
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.Iterator<kotlin.String> declared in <root>.StringIterable'
+          TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?>
+            CALL 'public open fun emptyIterator <T> (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableIterator<@[FlexibleNullability] T of java.util.Collections.emptyIterator?>? declared in java.util.Collections' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableIterator<@[FlexibleNullability] kotlin.String?>? origin=null
+              TYPE_ARG T: @[FlexibleNullability] kotlin.String?
+  CLASS INTERFACE name:MyIterable modality:ABSTRACT visibility:public superTypes:[kotlin.collections.Iterable<T of <root>.MyIterable>]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MyIterable<T of <root>.MyIterable>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Iterable
+    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.MyIterable>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of <root>.MyIterable?>?
+      overridden:
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] T of kotlin.collections.Iterable?>?): kotlin.Unit declared in kotlin.collections.Iterable
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.collections.Iterable
+    FUN FAKE_OVERRIDE name:iterator visibility:public modality:ABSTRACT returnType:kotlin.collections.Iterator<T of <root>.MyIterable> [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.MyIterable>
+      overridden:
+        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable
+    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.MyIterable> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<T of <root>.MyIterable>
+      overridden:
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of kotlin.collections.Iterable> declared in kotlin.collections.Iterable
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.collections.Iterable
+Module: main
+FILE fqName:<root> fileName:/main.kt
+  FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+    VALUE_PARAMETER kind:Regular name:iterable index:0 type:<root>.MyIterable<kotlin.Int>
+    VALUE_PARAMETER kind:Regular name:stringIterable index:1 type:<root>.StringIterable
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] T of <root>.MyIterable> declared in <root>.MyIterable' type=@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] kotlin.Int> origin=null
+          ARG <this>: GET_VAR 'iterable: <root>.MyIterable<kotlin.Int> declared in <root>.test' type=<root>.MyIterable<kotlin.Int> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] kotlin.String> declared in <root>.StringIterable' type=@[EnhancedNullability] java.util.Spliterator<@[EnhancedNullability] kotlin.String> origin=null
+          ARG <this>: GET_VAR 'stringIterable: <root>.StringIterable declared in <root>.test' type=<root>.StringIterable origin=null

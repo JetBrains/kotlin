@@ -1,7 +1,9 @@
 import gradle.GradlePluginVariant
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 import java.nio.file.Paths
 
 plugins {
@@ -36,10 +38,28 @@ kotlin {
             "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
             "kotlin.io.path.ExperimentalPathApi",
         )
+        // Avoid having to use JvmSerializableLambda in build script injections
+        freeCompilerArgs.add("-Xlambdas=class")
+    }
+}
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        // The test sources use multi-dollar string templates. The feature is stable since 2.2, but
+        // `gradle-plugin-published-compiler-dependency-configuration` pins this module to an older language
+        // version, where the flag is still required. Passing it at 2.2 and above would be reported as
+        // REDUNDANT_CLI_ARG, so add it only while the pinned language version is below 2.2.
+        //
+        // The argument itself is deprecated since 2.5.0 (the feature is on by default in every supported
+        // language version), so it also has to have DEPRECATED_CLI_ARG suppressed for as long as it is needed.
         freeCompilerArgs.addAll(
-            // Avoid having to use JvmSerializableLambda in build script injections
-            "-Xlambdas=class",
-            "-Xmulti-dollar-interpolation",
+            languageVersion.map { languageVersion ->
+                if (languageVersion < @Suppress("DEPRECATION") KotlinVersion.KOTLIN_2_2) {
+                    listOf("-Xmulti-dollar-interpolation", "-Xwarning-level=DEPRECATED_CLI_ARG:disabled")
+                } else {
+                    emptyList()
+                }
+            }
         )
     }
 }
@@ -89,6 +109,8 @@ dependencies {
     testImplementation(project(":kotlin-gradle-plugin-idea"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
+    // the IDE side of the Kotlin/JS browser debug session, used to drive the session in JsBrowserDebugSessionIT
+    testImplementation(project(":kotlin-gradle-plugin-idea-browser-debug"))
     testImplementation(project(":gradle:kotlin-gradle-ecosystem-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
 
@@ -223,7 +245,7 @@ val maxParallelTestForks =
 
 // Must be in sync with TestVersions.kt KTI-1612
 val gradleVersions = listOf(
-    "7.4.2", // check org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion
+    "8.13", // check org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion
     "8.14.5",
     "9.0.0",
     "9.1.0",
@@ -561,9 +583,11 @@ tasks.withType<Test>().configureEach {
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
 
-registerKgpTestCoverageDataVariant(
-    configurationName = "integrationTestCoverageDataElements",
-    suiteName = "integrationTest",
-    execFile = layout.buildDirectory.file("jacoco/coverage.exec"),
-    testTask = tasks.named("kgpAllParallelTests"),
-)
+if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
+    registerKgpTestCoverageDataVariant(
+        configurationName = "integrationTestCoverageDataElements",
+        suiteName = "integrationTest",
+        execFile = layout.buildDirectory.file("jacoco/coverage.exec"),
+        testTask = tasks.named("kgpAllParallelTests"),
+    )
+}

@@ -19,6 +19,8 @@ class ToStringOnJavaClass {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     assertEquals("ToStringOnJavaClass(name=Alice, age=30)", ToStringOnJavaClass("Alice", 30).toString())
     return "OK"

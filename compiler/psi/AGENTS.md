@@ -16,7 +16,8 @@ Source Code → PSI Tree (syntax) → Analysis API (semantics) → Symbols
 
 ## Module Structure
 
-- `psi-api/` - Core PSI interfaces (`KtElement`, `KtExpression`, `KtDeclaration`)
+- `psi-api/` - Core PSI interfaces (`KtElement`, `KtExpression`, `KtDeclaration`), plus the platform interfaces the code hosting
+  the PSI implements: the binary Kotlin file types and their services in `org.jetbrains.kotlin.analysis.decompiler`
 - `psi-impl/` - Implementations and stubs for incremental compilation
 - `psi-frontend-utils/` - Compiler integration utilities
 - `psi-utils/` - Helper utilities

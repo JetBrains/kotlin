@@ -84,13 +84,29 @@ object AbstractExpectActualChecker {
             checkSingleExpectAgainstMatchedActual(
                 expectDeclaration,
                 actualDeclaration,
-                substitutor = null,
+                substitutor = computeParentSubstitutorForPotentiallyInnerClasses(expectDeclaration, actualDeclaration),
                 expectClassSymbol = null,
                 actualClassSymbol = null,
                 incompatibleMembers = null,
                 languageVersionSettings,
             )
         }
+    }
+
+    private fun ExpectActualMatchingContext<*>.computeParentSubstitutorForPotentiallyInnerClasses(
+        expectDeclaration: DeclarationSymbolMarker,
+        actualDeclaration: DeclarationSymbolMarker,
+    ): TypeSubstitutorMarker? {
+        var expectClass = expectDeclaration as? RegularClassSymbolMarker ?: return null
+        var actualClass = actualDeclaration as? RegularClassSymbolMarker ?: return null
+        var substitutor = createEmptySubstitutor()
+
+        while (expectClass.isInner && actualClass.isInner) {
+            expectClass = expectClass.containingClass as? RegularClassSymbolMarker ?: break
+            actualClass = actualClass.containingClass as? RegularClassSymbolMarker ?: break
+            substitutor = createExpectActualTypeParameterSubstitutor(expectClass.typeParameters zip actualClass.typeParameters, substitutor)
+        }
+        return substitutor
     }
 
     private fun ExpectActualMatchingContext<*>.isInterfaceActualizedAsAny(

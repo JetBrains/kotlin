@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //ERROR_CALL 'Unresolved reference: <Unresolved name: OK>#' type=IrErrorType([Error type: Unresolved type for OK])
 // MODULE: lib
 

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.incremental.impl.InstanceOwnerRecordingClassVisitor
 import org.jetbrains.kotlin.incremental.impl.hashToLong
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
@@ -67,7 +66,7 @@ private class InstanceBasedSnapshotter(
 
         val usedClasses = mutableSetOf<JvmClassName>()
         val visitor = InstanceOwnerRecordingClassVisitor(delegateClassVisitor = null, allUsedClassesSet = usedClasses)
-        val classReader = ClassReader(classData.contents)
+        val classReader = classData.classReader
         classReader.accept(visitor, 0)
         knownClassUsages[JvmClassName.byClassId(classData.classInfo.classId)] = usedClasses
 

@@ -221,14 +221,18 @@ class NonGroupingStageTestConfigurationBuilder :
         }
     }
 
+    /**
+     * Pass [stepPhase] explicitly if the phase extraction from [artifactKind] kind is ambiguous.
+     */
     inline fun <InputArtifact, InputArtifactKind> handlersStep(
         artifactKind: InputArtifactKind,
         compilationStage: CompilationStage,
+        stepPhase: TestPhase? = null,
         init: TestStepBuilder.HandlersStepBuilder.NonGroupingStage<InputArtifact, InputArtifactKind>.() -> Unit,
     ): TestStepBuilder.HandlersStepBuilder.NonGroupingStage<InputArtifact, InputArtifactKind>
             where InputArtifact : ResultingArtifact<InputArtifact>,
                   InputArtifactKind : TestArtifactKind<InputArtifact> {
-        return TestStepBuilder.HandlersStepBuilder.NonGroupingStage(artifactKind, compilationStage).also {
+        return TestStepBuilder.HandlersStepBuilder.NonGroupingStage(artifactKind, compilationStage, stepPhase).also {
             it.init()
             steps += it
         }
@@ -238,13 +242,14 @@ class NonGroupingStageTestConfigurationBuilder :
         name: String,
         artifactKind: InputArtifactKind,
         compilationStage: CompilationStage,
+        stepPhase: TestPhase?,
         init: TestStepBuilder.HandlersStepBuilder.NonGroupingStage<InputArtifact, InputArtifactKind>.() -> Unit,
     ): TestStepBuilder.HandlersStepBuilder.NonGroupingStage<InputArtifact, InputArtifactKind>
             where InputArtifact : ResultingArtifact<InputArtifact>,
                   InputArtifactKind : TestArtifactKind<InputArtifact> {
         val previouslyContainedStep = namedStepOfType<InputArtifact, InputArtifactKind>(name)
         return if (previouslyContainedStep == null) {
-            val step = handlersStep(artifactKind, compilationStage, init)
+            val step = handlersStep(artifactKind, compilationStage, stepPhase, init)
             namedSteps[name] = step
             step
         } else {

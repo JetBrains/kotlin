@@ -176,7 +176,8 @@ class Calls : SkipWhenBaseOnly() {
         bh.consume(x)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun openMethodMonomorphic(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
@@ -215,7 +216,8 @@ class Calls : SkipWhenBaseOnly() {
         bh.consume(x)
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun interfaceMethodMonomorphic(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses

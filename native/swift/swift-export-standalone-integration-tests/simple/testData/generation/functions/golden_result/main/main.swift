@@ -463,12 +463,6 @@ extension ExportedKotlinPackages.operators {
         ) -> Swift.Bool {
             this._compareTo(other: other) <= 0
         }
-        public static func ==(
-            this: ExportedKotlinPackages.operators.Foo,
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            this.equals(other: other)
-        }
         public static func >(
             this: ExportedKotlinPackages.operators.Foo,
             other: ExportedKotlinPackages.operators.Foo
@@ -572,14 +566,6 @@ extension ExportedKotlinPackages.operators {
         public func dec() -> ExportedKotlinPackages.operators.Foo {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_dec(self.__externalRCRef()))
         }
-        public func equals(
-            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool {
-            return operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-        }
-        public func hashCode() -> Swift.Int32 {
-            return operators_Foo_hashCode(self.__externalRCRef())
-        }
         public func inc() -> ExportedKotlinPackages.operators.Foo {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_inc(self.__externalRCRef()))
         }
@@ -595,9 +581,6 @@ extension ExportedKotlinPackages.operators {
             other: ExportedKotlinPackages.operators.Foo
         ) -> ExportedKotlinPackages.operators.Foo {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_rangeUntil__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(self.__externalRCRef(), other.__externalRCRef()))
-        }
-        public func toString() -> Swift.String {
-            return operators_Foo_toString(self.__externalRCRef())
         }
         public static func ~=(
             this: ExportedKotlinPackages.operators.Foo,

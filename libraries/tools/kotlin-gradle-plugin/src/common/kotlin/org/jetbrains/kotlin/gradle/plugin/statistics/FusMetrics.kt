@@ -15,11 +15,7 @@ import org.jetbrains.kotlin.build.report.metrics.ANALYSIS_LPS
 import org.jetbrains.kotlin.build.report.metrics.CODE_GENERATION_LPS
 import org.jetbrains.kotlin.build.report.metrics.SOURCE_LINES_NUMBER
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
-import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -27,6 +23,10 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportXcodeIntegrationConfiguration
+import org.jetbrains.kotlin.gradle.plugin.statistics.arguments.TrackedCompilerArgument
+import org.jetbrains.kotlin.gradle.plugin.statistics.arguments.TrackedCompilerArguments
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal sealed interface FusMetrics
 internal object ExecutedTaskMetrics : FusMetrics {
@@ -70,9 +69,9 @@ internal object ExecutedTaskMetrics : FusMetrics {
     }
 
     internal fun collectMetrics(event: FinishEvent?, metricConsumer: StatisticsValuesConsumer) {
-        event?.descriptor?.name?.also {
-            getMetricToReport(it)?.also { metricConsumer.report(it, true) }
-        }
+        val name = event?.descriptor?.name ?: return
+        val metrics = getMetricToReport(name) ?: return
+        metricConsumer.report(metrics, value = true)
     }
 }
 
@@ -83,14 +82,43 @@ internal object CompilerArgumentMetrics : FusMetrics {
     internal fun collectMetrics(
         compilerArgs: CommonCompilerArguments?,
         argsArray: Array<String>,
+        logger: Logger,
         metricsConsumer: StatisticsValuesConsumer,
     ) {
-        when (compilerArgs) {
-            is K2JVMCompilerArguments -> {
-                val args = K2JVMCompilerArguments()
-                parseCommandLineArguments(argsArray.toList(), args)
-                metricsConsumer.report(StringListMetrics.JVM_DEFAULTS, args.jvmDefaultStable ?: JvmDefaultMode.DISABLE.description)
+        if (compilerArgs == null) return
 
+        val reconstructedArguments = runMetricMethodSafely(logger, "parse ${compilerArgs::class.simpleName} for FUS metrics") {
+            compilerArgs::class.java.getDeclaredConstructor().newInstance().also {
+                parseCommandLineArguments(argsArray.toList(), it)
+            }
+        } ?: return
+
+        collectTrackedArguments(reconstructedArguments, logger, metricsConsumer)
+        collectManualMetrics(reconstructedArguments, metricsConsumer)
+    }
+
+    internal fun collectTrackedArguments(
+        arguments: CommonToolArguments,
+        logger: Logger,
+        metricsConsumer: StatisticsValuesConsumer,
+        trackedArguments: List<TrackedCompilerArgument<*>> = TrackedCompilerArguments.ALL,
+    ) {
+        val applicableRules = trackedArguments.filter { it.argumentsClass.java.isAssignableFrom(arguments::class.java) }
+        if (applicableRules.isEmpty()) return
+
+        for (rule in applicableRules) {
+            runMetricMethodSafely(logger, "report FUS metrics for compiler arguments") {
+                rule.reportIfApplicable(arguments, metricsConsumer)
+            }
+        }
+    }
+
+    private fun collectManualMetrics(
+        args: CommonCompilerArguments,
+        metricsConsumer: StatisticsValuesConsumer,
+    ) {
+        when (args) {
+            is K2JVMCompilerArguments -> {
                 val pluginPatterns = listOf(
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN, "kotlin-allopen-.*jar"),
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_NO_ARG, "kotlin-noarg-.*jar"),
@@ -111,23 +139,11 @@ internal object CompilerArgumentMetrics : FusMetrics {
                 metricsConsumer.reportPluginsFromListIfUsed(args, pluginPatterns)
             }
             is K2JSCompilerArguments -> {
-                val args = K2JSCompilerArguments()
-                parseCommandLineArguments(argsArray.toList(), args)
-
                 val pluginPatterns = listOf(
                     Pair(BooleanMetrics.ENABLED_COMPILER_PLUGIN_JS_PLAIN_OBJECTS, "js-plain-objects-.*jar"),
                 )
 
                 metricsConsumer.reportPluginsFromListIfUsed(args, pluginPatterns)
-
-                if (args.irProduceJs) {
-                    metricsConsumer.report(BooleanMetrics.JS_SOURCE_MAP, args.sourceMap)
-                    metricsConsumer.report(StringListMetrics.JS_PROPERTY_LAZY_INITIALIZATION, args.irPropertyLazyInitialization.toString())
-
-                    metricsConsumer.report(BooleanMetrics.JS_GENERATE_DTS, args.generateDts)
-                    metricsConsumer.report(StringMetrics.JS_ES_TARGET, args.target ?: "default")
-                    metricsConsumer.report(StringMetrics.JS_MODULE_SYSTEM, args.moduleKind ?: "default")
-                }
             }
         }
     }
@@ -137,63 +153,10 @@ internal object CompilerArgumentMetrics : FusMetrics {
         pluginPatterns: List<Pair<BooleanMetrics, String>>,
     ) {
         val pluginJars = args.pluginClasspaths.map { it.replace("\\", "/").split("/").last() }
-        for (pluginPattern in pluginPatterns) {
-            if (pluginJars.any { it.matches(pluginPattern.second.toRegex()) }) {
-                report(pluginPattern.first, true)
+        for ((metrics, pattern) in pluginPatterns) {
+            if (pluginJars.any { it.matches(pattern.toRegex()) }) {
+                report(metrics, value = true)
             }
-        }
-    }
-}
-
-internal object NativeArgumentMetrics : FusMetrics {
-
-    private fun getGcTypeMetrics(arguments: K2NativeCompilerArguments): BooleanMetrics? {
-        return arguments.binaryOptions
-            .firstOrNull { it.startsWith("gc=") }
-            ?.substring("gc=".length)
-            ?.let {
-                //Values are connected to [org.jetbrains.kotlin.backend.konan.GC], but the class can't be access from here
-                when (it) {
-                    "noop" -> BooleanMetrics.ENABLED_NOOP_GC
-                    "stwms" -> BooleanMetrics.ENABLED_STWMS_GC
-                    "pmcs" -> BooleanMetrics.ENABLED_PMCS_GC
-                    "cms" -> BooleanMetrics.ENABLED_CMS_GC
-                    else -> null
-                }
-            }
-    }
-
-    private fun getSwiftExportMetrics(arguments: K2NativeCompilerArguments): BooleanMetrics? {
-        return if (arguments.binaryOptions.contains("swiftExport=true")) {
-            BooleanMetrics.ENABLED_SWIFT_EXPORT
-        } else {
-            null
-        }
-    }
-
-    fun collectMetrics(compilerArguments: List<String>, metricsConsumer: StatisticsValuesConsumer) {
-        val arguments = K2NativeCompilerArguments()
-        parseCommandLineArguments(compilerArguments, arguments)
-        getGcTypeMetrics(arguments)?.let { metricsConsumer.report(it, true) }
-        getSwiftExportMetrics(arguments)?.let { metricsConsumer.report(it, true) }
-    }
-}
-
-internal object NativeCompilerOptionMetrics : FusMetrics {
-    fun collectMetrics(
-        compilerOptions: KotlinNativeCompilerOptions,
-        separateKmpCompilationEnabled: Boolean,
-        metricsConsumer: StatisticsValuesConsumer,
-    ) {
-        metricsConsumer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
-        compilerOptions.apiVersion.orNull?.also { v ->
-            metricsConsumer.report(StringMetrics.KOTLIN_API_VERSION, v.version)
-        }
-        compilerOptions.languageVersion.orNull?.also { v ->
-            metricsConsumer.report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
-        }
-        if (separateKmpCompilationEnabled) {
-            metricsConsumer.report(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, true)
         }
     }
 }
@@ -274,8 +237,6 @@ internal object BuildFinishMetrics : FusMetrics {
 internal object CompileKotlinTaskMetrics : FusMetrics {
     internal fun collectMetrics(
         name: String,
-        compilerOptions: KotlinCommonCompilerOptions,
-        separateKmpCompilationEnabled: Boolean,
         firRunnerEnabled: Boolean, // jvm only as of 2.2.20
         executionPolicy: KotlinCompilerExecutionStrategy,
         // both are null for anything that is not a multiplatform Kotlin/JVM compilation
@@ -283,20 +244,10 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         kmpJvmIncrementalCompilationOfCommonSourcesEnabled: Boolean?,
         metricsContainer: StatisticsValuesConsumer,
     ) {
-        metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
-        compilerOptions.apiVersion.orNull?.also { v ->
-            metricsContainer.report(StringMetrics.KOTLIN_API_VERSION, v.version)
-        }
-        compilerOptions.languageVersion.orNull?.also { v ->
-            metricsContainer.report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
-        }
         if (name.contains("Test"))
             metricsContainer.report(BooleanMetrics.TESTS_EXECUTED, true)
         else
             metricsContainer.report(BooleanMetrics.COMPILATION_STARTED, true)
-        if (separateKmpCompilationEnabled) {
-            metricsContainer.report(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, true)
-        }
         if (firRunnerEnabled) {
             metricsContainer.report(BooleanMetrics.KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED, true)
         }
@@ -312,20 +263,10 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
 
 internal object CompileKotlinJsIrLinkMetrics : FusMetrics {
     internal fun collectMetrics(
-        compilerArgs: K2JSCompilerArguments,
         incrementalJsIr: Boolean,
         metricsConsumer: StatisticsValuesConsumer,
     ) {
         metricsConsumer.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
-        val newArgs = K2JSCompilerArguments()
-        parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(compilerArgs), newArgs)
-        metricsConsumer.report(
-            StringMetrics.JS_OUTPUT_GRANULARITY,
-            if (newArgs.irPerModule)
-                KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCaseAsciiOnly()
-            else
-                KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCaseAsciiOnly()
-        )
     }
 }
 
@@ -373,6 +314,7 @@ internal object KotlinJsBinaryTypeMetrics : FusMetrics {
             val isLibraryConfigured = jsTarget.binaries.withType<Library>().isNotEmpty()
             val isExecutableConfigured = jsTarget.binaries.withType<Executable>().isNotEmpty()
             project.addConfigurationMetrics { metricContainer ->
+                @Suppress("KotlinConstantConditions")
                 when {
                     isLibraryConfigured && isExecutableConfigured -> metricContainer.put(StringListMetrics.JS_BINARY_TYPE, "both")
                     isLibraryConfigured -> metricContainer.put(StringListMetrics.JS_BINARY_TYPE, "library")
@@ -387,6 +329,7 @@ internal object KotlinJsBinaryTypeMetrics : FusMetrics {
 internal object KotlinJsIrTargetMetrics : FusMetrics {
     internal fun collectMetrics(isBrowserConfigured: Boolean, isNodejsConfigured: Boolean, project: Project) {
         project.addConfigurationMetrics { metricContainer ->
+            @Suppress("KotlinConstantConditions")
             when {
                 isBrowserConfigured && isNodejsConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "both")
                 isBrowserConfigured -> metricContainer.put(StringListMetrics.JS_TARGET_MODE, "browser")
@@ -414,6 +357,7 @@ internal object KotlinJsBrowserTestMetrics : FusMetrics {
 
     private fun KotlinBrowserTestRunnerDsl.optionsChangedFromDefaults(): List<String> = mutableListOf<String>().apply {
         if (testsLocation.get() !is KotlinDefaultJsTestLocation) add("testsLocation")
+        @Suppress("SimplifyBooleanWithConstants")
         if (headless.get() != KotlinJsBrowserTestImpl.DEFAULT_HEADLESS) add("headless")
         if (launchArgs.get().isNotEmpty()) add("launchArgs")
         if (launchEnvironmentVariables.get().isNotEmpty()) add("launchEnvironmentVariables")
@@ -503,8 +447,8 @@ internal object KotlinSourceSetMetrics : FusMetrics {
     }
 
     private suspend fun Project.reportGeneratedSourcesUsage() {
-        project.kotlinExtension.awaitSourceSets().configureEach {
-            if (it.generatedKotlin.srcDirs.isNotEmpty()) {
+        project.kotlinExtension.awaitSourceSets().configureEach { sourceSet ->
+            if (sourceSet.generatedKotlin.srcDirs.isNotEmpty()) {
                 project.addConfigurationMetrics {
                     it.put(BooleanMetrics.KOTLIN_GENERATED_SOURCES_USED, true)
                 }
@@ -547,6 +491,50 @@ internal object KotlinSourceSetMetrics : FusMetrics {
                         }
                     }
             }
+        }
+    }
+}
+
+internal object SwiftExportDslMetrics : FusMetrics {
+    internal fun collectSwiftExportConfigured(project: Project) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.SWIFT_EXPORT_DSL_CONFIGURED, true)
+        }
+    }
+
+    internal fun collectModuleMetrics(project: Project, moduleNameOverridden: Boolean, rootPackageOverridden: Boolean) {
+        val overriddenOptions = buildList {
+            if (moduleNameOverridden) add("moduleName")
+            if (rootPackageOverridden) add("rootPackage")
+        }
+        if (overriddenOptions.isEmpty()) return
+        project.addConfigurationMetrics {
+            it.put(StringListMetrics.SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES, overriddenOptions)
+        }
+    }
+
+    internal fun collectXcodeIntegrationMetrics(
+        project: Project,
+        activatedXcodeIntegration: SwiftExportXcodeIntegrationConfiguration,
+    ) {
+        project.addConfigurationMetrics {
+            it.put(BooleanMetrics.SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED, true)
+        }
+        val overriddenOptions = buildSet {
+            if (activatedXcodeIntegration.settings.get().isNotEmpty()) add("settings")
+            for ((moduleName, rootPackage, visibility) in activatedXcodeIntegration.dependencyOverrides.get().values) {
+                if (moduleName != null) add("moduleName")
+                if (rootPackage != null) add("rootPackage")
+                when (visibility) {
+                    SwiftExportVisibility.EXPOSED -> add("exposed")
+                    SwiftExportVisibility.HIDDEN -> add("hidden")
+                    null -> Unit
+                }
+            }
+        }
+        if (overriddenOptions.isEmpty()) return
+        project.addConfigurationMetrics {
+            it.put(StringListMetrics.SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES, overriddenOptions.sorted())
         }
     }
 }

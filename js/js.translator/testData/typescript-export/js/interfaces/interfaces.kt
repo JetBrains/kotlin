@@ -380,3 +380,14 @@ fun consumeNonClassNestedDeclarations(
     nestedEnum: NonClassNestedDeclarations.NestedEnum,
     nestedAnnotation: NonClassNestedDeclarations.NestedAnnotation,
 ): String = "${nestedI.value} ${nestedObject.value} ${nestedEnum.value} ${nestedAnnotation.value}"
+
+@JsExport
+sealed interface SealedInterfaceWithNestedObject {
+    object Only : SealedInterfaceWithNestedObject {
+        val value = "OK"
+    }
+}
+
+@JsExport
+fun consumeSealedInterfaceWithNestedObject(value: SealedInterfaceWithNestedObject): String =
+    if (value === SealedInterfaceWithNestedObject.Only) SealedInterfaceWithNestedObject.Only.value else "Fail"

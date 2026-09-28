@@ -6,38 +6,38 @@ operator fun Any?.contains(a: Any): Boolean = true
 
 fun test(a: Any) {
 
-    a <!UNSUPPORTED!>foo<!>""
-    a <!UNSUPPORTED!>foo<!>"asd"
-    a <!UNSUPPORTED!>foo<!>"$a"
-    a <!UNSUPPORTED!>foo<!>"asd${a}sfsa"
-    a <!UNSUPPORTED!>foo<!>"""sdf"""
-    a <!UNSUPPORTED!>foo<!>'d'
-    a <!UNSUPPORTED!>foo<!><!EMPTY_CHARACTER_LITERAL!>''<!>
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>""
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>"asd"
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>"$a"
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>"asd${a}sfsa"
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>"""sdf"""
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>'d'
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!><!EMPTY_CHARACTER_LITERAL!>''<!>
 
-    a <!UNSUPPORTED!>foo<!>""<!UNSUPPORTED!>foo<!> a
-    a <!UNSUPPORTED!>foo<!>"asd"<!UNSUPPORTED!>foo<!> a
-    a <!UNSUPPORTED!>foo<!>"$a"<!UNSUPPORTED!>foo<!> a
-    a <!UNSUPPORTED!>foo<!>"asd${a}sfsa"<!UNSUPPORTED!>foo<!> a
-    a <!UNSUPPORTED!>foo<!>"""sdf"""<!UNSUPPORTED!>foo<!> a
-    a <!UNSUPPORTED!>foo<!>'d'<!UNSUPPORTED!>foo<!> a
-    a <!UNSUPPORTED!>foo<!><!EMPTY_CHARACTER_LITERAL!>''<!><!UNSUPPORTED!>foo<!> a
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>""<!LEADING_WHITESPACE_REQUIRED!>foo<!> a
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>"asd"<!LEADING_WHITESPACE_REQUIRED!>foo<!> a
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>"$a"<!LEADING_WHITESPACE_REQUIRED!>foo<!> a
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>"asd${a}sfsa"<!LEADING_WHITESPACE_REQUIRED!>foo<!> a
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>"""sdf"""<!LEADING_WHITESPACE_REQUIRED!>foo<!> a
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>'d'<!LEADING_WHITESPACE_REQUIRED!>foo<!> a
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!><!EMPTY_CHARACTER_LITERAL!>''<!><!LEADING_WHITESPACE_REQUIRED!>foo<!> a
 
-    a <!UNSUPPORTED!>in<!>"foo"
-    a <!UNSUPPORTED!>in<!>"""foo"""
-    a <!UNSUPPORTED!>in<!>'s'
-    a <!UNSUPPORTED!>in<!><!EMPTY_CHARACTER_LITERAL!>''<!>
+    a <!TRAILING_WHITESPACE_REQUIRED!>in<!>"foo"
+    a <!TRAILING_WHITESPACE_REQUIRED!>in<!>"""foo"""
+    a <!TRAILING_WHITESPACE_REQUIRED!>in<!>'s'
+    a <!TRAILING_WHITESPACE_REQUIRED!>in<!><!EMPTY_CHARACTER_LITERAL!>''<!>
 
-    a <!UNSUPPORTED!>!in<!>"foo"
-    a <!UNSUPPORTED!>!in<!>"""foo"""
-    a <!UNSUPPORTED!>!in<!>'s'
-    a <!UNSUPPORTED!>!in<!><!EMPTY_CHARACTER_LITERAL!>''<!>
+    a <!TRAILING_WHITESPACE_REQUIRED!>!in<!>"foo"
+    a <!TRAILING_WHITESPACE_REQUIRED!>!in<!>"""foo"""
+    a <!TRAILING_WHITESPACE_REQUIRED!>!in<!>'s'
+    a <!TRAILING_WHITESPACE_REQUIRED!>!in<!><!EMPTY_CHARACTER_LITERAL!>''<!>
 
-    if(<!USELESS_IS_CHECK!>"s"<!UNSUPPORTED!>is<!> Any<!>) {}
-    if(<!USELESS_IS_CHECK!>"s"<!UNSUPPORTED!>is<!> Any<!>) {}
-    test("s"<!UNSUPPORTED!>as<!> Any)
+    if(<!USELESS_IS_CHECK!>"s"<!LEADING_WHITESPACE_REQUIRED!>is<!> Any<!>) {}
+    if(<!USELESS_IS_CHECK!>"s"<!LEADING_WHITESPACE_REQUIRED!>is<!> Any<!>) {}
+    test("s"<!LEADING_WHITESPACE_REQUIRED!>as<!> Any)
 
-    a <!UNSUPPORTED!>foo<!>""<!SYNTAX, UNSUPPORTED!>1<!>
-    a <!UNSUPPORTED!>foo<!>""<!SYNTAX, UNSUPPORTED!>1.0<!>
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>""<!LEADING_WHITESPACE_REQUIRED, SYNTAX!>1<!>
+    a <!TRAILING_WHITESPACE_REQUIRED!>foo<!>""<!LEADING_WHITESPACE_REQUIRED, SYNTAX!>1.0<!>
 }
 
 /* GENERATED_FIR_TAGS: asExpression, funWithExtensionReceiver, functionDeclaration, ifExpression, infix, isExpression,

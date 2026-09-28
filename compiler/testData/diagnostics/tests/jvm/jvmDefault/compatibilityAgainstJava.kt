@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // MODULE: library
 // JVM_DEFAULT_MODE: disable
 // FILE: test/JavaInterface.java

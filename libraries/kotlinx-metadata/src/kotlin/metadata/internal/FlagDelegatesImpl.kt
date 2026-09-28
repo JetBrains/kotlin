@@ -56,7 +56,6 @@ internal fun <Node> modalityDelegate(flags: KMutableProperty1<Node, Int>) =
 internal fun <Node> memberKindDelegate(flags: KMutableProperty1<Node, Int>) =
     EnumFlagDelegate(flags, ProtoFlags.MEMBER_KIND, MemberKind.entries, MemberKind.entries.map { it.flag })
 
-@ExperimentalMustUseStatus
 internal fun <Node> returnValueStatusDelegate(flags: KMutableProperty1<Node, Int>, protoSet: ProtoFlagSet<out ProtoEnumLite>) =
     EnumFlagDelegate(flags, protoSet, ReturnValueStatus.entries, ReturnValueStatus.entries.map { FlagImpl(protoSet, it.ordinal) })
 

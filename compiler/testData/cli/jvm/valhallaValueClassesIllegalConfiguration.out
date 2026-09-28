@@ -1,0 +1,2 @@
+error: [COMPILER_ARGUMENTS_ERROR] Valhalla value classes ('-Xvalhalla-value-classes') require JVM target 27 or later and the '-Xjvm-enable-preview' flag.
+COMPILATION_ERROR

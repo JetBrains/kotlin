@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
+import org.jetbrains.kotlin.test.builders.configureLoweredIrHandlersStep
 import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.utils.bind
 abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : AbstractKotlinCompilerJvmTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+            LATEST_PHASE_IN_PIPELINE with TestPhase.CODEGEN
             LANGUAGE + "+EnableDfaWarningsInK2"
             DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
@@ -52,6 +53,13 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
             )
         }
 
+        configureLoweredIrHandlersStep {
+            useHandlers(
+                IrDiagnosticsHandler.forLoweredIr,
+                ::NoIrCompilationErrorsHandler
+            )
+        }
+
         configureJvmArtifactsHandlersStep {
             commonBackendHandlersForCodegenTest(includeNoCompilationErrorsHandler = false)
         }
@@ -64,6 +72,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
     }
 }
 
+open class AbstractPhasedJvmDiagnosticKmpTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.KmpTree)
 open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree)
 open class AbstractPhasedJvmDiagnosticPsiTest : AbstractFirPhasedDiagnosticTest(FirParser.Psi)
 

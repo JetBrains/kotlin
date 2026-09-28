@@ -15,7 +15,7 @@ interface TestVersions {
     // https://gradle.org/nightly/
     // Gradle nightly releases retention policy is 3 months
     object Gradle {
-        const val G_7_4 = "7.4.2"
+        const val G_8_13 = "8.13"
         const val G_8_14 = "8.14.5"
         const val G_9_0 = "9.0.0"
         const val G_9_1 = "9.1.0"
@@ -29,11 +29,10 @@ interface TestVersions {
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
          */
-        // TODO - KT-84114 change to Gradle 8.13
-        const val MIN_UNSUPPORTED_VERSION_TO_CHECK = G_7_4
+        const val MIN_UNSUPPORTED_VERSION_TO_CHECK = G_8_13
 
         // Should be the same as GradleCompatibilityCheck.minSupportedGradleVersion
-        const val MIN_SUPPORTED = G_8_14 // TODO - KT-84114: return back to MINIMALLY_SUPPORTED_GRADLE_VERSION
+        const val MIN_SUPPORTED = MINIMALLY_SUPPORTED_GRADLE_VERSION
         const val MAX_SUPPORTED = G_9_7
     }
 
@@ -55,11 +54,12 @@ interface TestVersions {
         const val AGP_90 = "9.0.1"
         const val AGP_91 = "9.1.1"
         const val AGP_92 = "9.2.1"
-        const val AGP_93 = "9.3.1"
+        const val AGP_93 = "9.3.2"
+        const val AGP_94 = "9.4.0"
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_88 // AgpCompatibilityCheck.minimalSupportedAgpVersion
-        const val MAX_SUPPORTED = AGP_93 // Update once the Gradle MAX_SUPPORTED version is bumped
+        const val MAX_SUPPORTED = AGP_94 // Update once the Gradle MAX_SUPPORTED version is bumped
     }
 
     enum class AgpCompatibilityMatrix(
@@ -77,7 +77,8 @@ interface TestVersions {
         AGP_90(AGP.AGP_90, GradleVersion.version(Gradle.G_9_1), GradleVersion.version(Gradle.G_9_4), JavaVersion.VERSION_17),
         AGP_91(AGP.AGP_91, GradleVersion.version(Gradle.G_9_3), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
         AGP_92(AGP.AGP_92, GradleVersion.version(Gradle.G_9_4), GradleVersion.version(Gradle.G_9_5), JavaVersion.VERSION_17),
-        AGP_93(AGP.AGP_93, GradleVersion.version(Gradle.G_9_4), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
+        AGP_93(AGP.AGP_93, GradleVersion.version(Gradle.G_9_5), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
+        AGP_94(AGP.AGP_94, GradleVersion.version(Gradle.G_9_6), GradleVersion.version(Gradle.G_9_7), JavaVersion.VERSION_17),
         ;
 
         companion object {

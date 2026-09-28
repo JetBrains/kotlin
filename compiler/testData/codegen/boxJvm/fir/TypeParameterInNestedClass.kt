@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // ISSUE: KT-58008
 
 import kotlin.coroutines.*

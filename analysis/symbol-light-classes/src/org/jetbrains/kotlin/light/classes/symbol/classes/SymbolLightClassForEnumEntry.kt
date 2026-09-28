@@ -6,30 +6,48 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
+import org.jetbrains.kotlin.analysis.api.session.useSiteSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ReferenceInformationHolder
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
-import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.Companion.createConstructors
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.isOriginEquivalentTo
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class SymbolLightClassForEnumEntry(
     private val enumConstant: SymbolLightFieldForEnumEntry,
     private val enumClass: SymbolLightClassBase,
-    ktModule: KaModule,
-) : SymbolLightClassBase(ktModule, enumConstant.manager), PsiEnumConstantInitializer {
+    override val useSiteModule: KaModule,
+) : SymbolLightClassBaseImpl<KaAnonymousObjectSymbol>(enumConstant.manager), PsiEnumConstantInitializer {
+    override val symbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>
+        get() = enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
+            enumEntrySymbol.initializer?.createPointer() ?: errorWithAttachment(
+                "Light class for enum entry should only be created for enum entries with initializers",
+            ) {
+                withEntry("KaEnumEntrySymbol", enumEntrySymbol) {
+                    @OptIn(KaNonPublicApi::class)
+                    KaDebugRenderer(renderExtra = true).render(useSiteSession, enumEntrySymbol)
+                }
+            }
+        }
+
     override fun getBaseClassType(): PsiClassType = enumConstant.type as PsiClassType //???TODO
 
     override fun getBaseClassReference(): PsiJavaCodeReferenceElement = SymbolLightPsiJavaCodeReferenceElementWithNoReference(
@@ -45,7 +63,7 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun isInQualifiedNew(): Boolean = false
 
-    override fun copy() = SymbolLightClassForEnumEntry(enumConstant, enumClass, ktModule)
+    override fun copy() = SymbolLightClassForEnumEntry(enumConstant, enumClass, useSiteModule)
 
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightClassForEnumEntry && other.enumConstant == enumConstant

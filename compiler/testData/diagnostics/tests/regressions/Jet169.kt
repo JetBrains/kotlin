@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun set(key : String, value : String) {
   val a : String? = ""
   when (a) {

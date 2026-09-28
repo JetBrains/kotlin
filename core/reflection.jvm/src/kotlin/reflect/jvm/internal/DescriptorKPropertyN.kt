@@ -34,14 +34,15 @@ internal open class DescriptorKPropertyN<out V> : DescriptorKProperty<V> {
     override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): DescriptorKPropertyN<V> =
         DescriptorKPropertyN(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        DescriptorKPropertyN(container, descriptor, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKProperty<V> {
+        if (boundContextArguments.isEmpty()) error("Cannot bind receiver without binding context arguments: $this")
+        return when (val receiverCount = countUnboundReceivers(boundReceiver)) {
+            0 -> DescriptorKProperty0(container, descriptor, boundReceiver, overriddenStorage, boundContextArguments)
+            1 -> DescriptorKProperty1<Any?, V>(container, descriptor, boundReceiver, overriddenStorage, boundContextArguments)
+            else -> throw KotlinReflectionInternalError("Cannot bind context arguments to a property with $receiverCount receivers: $this")
+        }
+    }
 
-    override fun unbindToHigherArity(): ReflectKProperty<V> =
-        throw KotlinReflectionInternalError("Cannot unbind KPropertyN: $this")
-
-    override fun bindToLowerArity(boundReceiver: Any?): ReflectKProperty<V> =
-        throw KotlinReflectionInternalError("Cannot bind KPropertyN: $this")
 
     class Getter<out V>(override val property: DescriptorKPropertyN<V>) : DescriptorKProperty.Getter<V>()
 }
@@ -62,8 +63,14 @@ internal class DescriptorKMutablePropertyN<V> : DescriptorKPropertyN<V>, KMutabl
     ): DescriptorKMutablePropertyN<V> =
         DescriptorKMutablePropertyN(container, descriptor, CallableReference.NO_RECEIVER, overriddenStorage)
 
-    override fun rebindSameArity(boundReceiver: Any?): ReflectKProperty<V> =
-        DescriptorKMutablePropertyN(container, descriptor, boundReceiver, overriddenStorage)
+    override fun bindToLowerArity(boundReceiver: Any?, boundContextArguments: List<Any?>): ReflectKProperty<V> {
+        if (boundContextArguments.isEmpty()) error("Cannot bind receiver without binding context arguments: $this")
+        return when (val receiverCount = countUnboundReceivers(boundReceiver)) {
+            0 -> DescriptorKMutableProperty0(container, descriptor, boundReceiver, overriddenStorage, boundContextArguments)
+            1 -> DescriptorKMutableProperty1<Any?, V>(container, descriptor, boundReceiver, overriddenStorage, boundContextArguments)
+            else -> throw KotlinReflectionInternalError("Cannot bind context arguments to a property with $receiverCount receivers: $this")
+        }
+    }
 
     class Setter<V>(override val property: DescriptorKMutablePropertyN<V>) : DescriptorKProperty.Setter<V>()
 }

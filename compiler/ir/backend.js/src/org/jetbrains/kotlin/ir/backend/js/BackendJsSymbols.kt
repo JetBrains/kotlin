@@ -210,6 +210,25 @@ class BackendJsSymbols(
     val longLowBits by CallableIds.lowBits(compileLongAsBigint).functionSymbolOrNull()
     val longHighBits by CallableIds.highBits(compileLongAsBigint).functionSymbolOrNull()
 
+    val ulongDivideImpl by CallableIds.ulongDivide(compileLongAsBigint).functionSymbol()
+    val ulongRemainderImpl by CallableIds.ulongRemainder(compileLongAsBigint).functionSymbol()
+    val ulongToDoubleImpl by CallableIds.ulongToDouble(compileLongAsBigint).functionSymbol()
+    val ulongFromUnsignedSafeDoubleImpl by CallableIds.ulongFromUnsignedSafeDouble(compileLongAsBigint).functionSymbol()
+    val ulongToStringWithBaseImpl by run {
+        val functions by CallableIds.ulongToStringWithBase(compileLongAsBigint).functionSymbols()
+        lazy { functions.single { it.owner.parameters.size == 2 } }
+    }
+
+    val ulongDivide by CallableIds.ulongDivide.functionSymbol()
+    val ulongRemainder by CallableIds.ulongRemainder.functionSymbol()
+    val ulongToDouble by CallableIds.ulongToDouble.functionSymbol()
+    val ulongFromUnsignedSafeDouble by CallableIds.ulongFromUnsignedSafeDouble.functionSymbol()
+
+    val ulongToStringWithBase by run {
+        val functions by CallableIds.ulongToString.functionSymbols()
+        lazy { functions.single { it.owner.parameters.size == 2 } }
+    }
+
     // RTTI:
     enum class RuntimeMetadataKind(val namePart: String, val isSpecial: Boolean = false) {
         CLASS("Class"),
@@ -522,7 +541,7 @@ class BackendJsSymbols(
 
     val constructCallableReferenceSymbol by CallableIds.constructCallableReference.functionSymbol()
 
-    val checkStaticInitializationState by CallableIds.checkStaticInitializationState.functionSymbol()
+    val staticInitializationFailureWithClassName by CallableIds.staticInitializationFailureWithClassName.functionSymbol()
 }
 
 private object ClassIds {
@@ -712,6 +731,12 @@ private object CallableIds {
 
     val longBoxedOne = "ONE".jsBoxedLongId
 
+    val ulongDivide = "ulongDivide".kotlinCallableId
+    val ulongRemainder = "ulongRemainder".kotlinCallableId
+    val ulongToString = "ulongToString".kotlinCallableId
+    val ulongToDouble = "ulongToDouble".kotlinCallableId
+    val ulongFromUnsignedSafeDouble = "ulongFromUnsignedSafeDouble".kotlinCallableId
+
     fun negate(compileLongAsBigint: Boolean) = "negate".jsLongId(compileLongAsBigint)
     fun add(compileLongAsBigint: Boolean) = "add".jsLongId(compileLongAsBigint)
     fun subtract(compileLongAsBigint: Boolean) = "subtract".jsLongId(compileLongAsBigint)
@@ -740,6 +765,11 @@ private object CallableIds {
     fun equalsLong(compileLongAsBigint: Boolean) = "equalsLong".jsLongId(compileLongAsBigint)
     fun compare(compileLongAsBigint: Boolean) = "compare".jsLongId(compileLongAsBigint)
     fun toStringImpl(compileLongAsBigint: Boolean) = "toStringImpl".jsLongId(compileLongAsBigint)
+    fun ulongDivide(compileLongAsBigint: Boolean) = "ulongDivide".jsLongId(compileLongAsBigint)
+    fun ulongRemainder(compileLongAsBigint: Boolean) = "ulongRemainder".jsLongId(compileLongAsBigint)
+    fun ulongToStringWithBase(compileLongAsBigint: Boolean) = "ulongToString".jsLongId(compileLongAsBigint)
+    fun ulongToDouble(compileLongAsBigint: Boolean) = "ulongToDouble".jsLongId(compileLongAsBigint)
+    fun ulongFromUnsignedSafeDouble(compileLongAsBigint: Boolean) = "ulongFromUnsignedSafeDouble".jsLongId(compileLongAsBigint)
 
     // Root functions
     private val String.rootId get() = CallableId(FqName.ROOT, Name.identifier(this))
@@ -794,5 +824,5 @@ private object CallableIds {
     val test = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("test"))
     val suite = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("suite"))
     val EmptyContinuation = CallableId(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal")), Name.identifier("EmptyContinuation"))
-    val checkStaticInitializationState = "checkStaticInitializationState".jsCallableId
+    val staticInitializationFailureWithClassName = "staticInitializationFailureWithClassName".jsCallableId
 }

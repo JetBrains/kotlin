@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface FirElement {
     fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R
 

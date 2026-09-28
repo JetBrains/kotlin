@@ -1,0 +1,41 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Static scope owner symbol: FirRegularClassSymbol public final value class Point : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final value class Point : R|kotlin/Any|
+                Type: Point
+    Element 8
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] fullValueClassFunction.kt
+    public final value [ResolvedTo(STATUS)] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|, [ResolvedTo(STATUS)] y: R|kotlin/Int|): R|Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun sum(): R|kotlin/Int| {
+            ^sum this@R|/Point|.R|/Point.plus|(this@R|/Point|.R|/Point.x|, this@R|/Point|.R|/Point.y|)
+        }
+
+        public final [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] a: R|kotlin/Int|, [ResolvedTo(STATUS)] b: R|kotlin/Int|): R|kotlin/Int| { LAZY_BLOCK }
+
+    }

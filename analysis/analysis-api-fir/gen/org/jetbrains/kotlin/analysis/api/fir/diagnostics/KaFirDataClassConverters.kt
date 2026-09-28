@@ -2300,6 +2300,12 @@ private fun KaDiagnosticConverterBuilder.addConversions48() {
             token,
         )
     }
+    add(FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION.warningFactory) { firDiagnostic ->
+        InapplicableEagerInitializationWarningImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT) { firDiagnostic ->
         ProjectionOnNonClassTypeArgumentImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -2888,6 +2894,12 @@ private fun KaDiagnosticConverterBuilder.addConversions62() {
             token,
         )
     }
+    add(FirSyntaxErrors.LEADING_WHITESPACE_REQUIRED) { firDiagnostic ->
+        LeadingWhitespaceRequiredImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions63() {
@@ -3127,6 +3139,12 @@ private fun KaDiagnosticConverterBuilder.addConversions68() {
     }
     add(FirJvmErrors.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION) { firDiagnostic ->
         PositionedValueArgumentForJavaAnnotationImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirJsErrors.IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE) { firDiagnostic ->
+        ImplementingSuspendFunctionInterfaceImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -3866,6 +3884,14 @@ private fun KaDiagnosticConverterBuilder.addConversions85() {
     }
     add(FirErrors.BACKING_FIELD_IN_INTERFACE) { firDiagnostic ->
         BackingFieldInInterfaceImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.INCOMPATIBLE_STRUCTURAL_CLASS_COMPARISON) { firDiagnostic ->
+        IncompatibleStructuralClassComparisonImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4960,6 +4986,12 @@ private fun KaDiagnosticConverterBuilder.addConversions108() {
             token,
         )
     }
+    add(FirWebCommonErrors.INAPPLICABLE_EAGER_INITIALIZATION.errorFactory) { firDiagnostic ->
+        InapplicableEagerInitializationErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE) { firDiagnostic ->
         HasNextFunctionNoneApplicableImpl(
             firDiagnostic.a.map { firBasedSymbol ->
@@ -5026,6 +5058,14 @@ private fun KaDiagnosticConverterBuilder.addConversions109() {
     }
     add(FirErrors.EMPTY_CHARACTER_LITERAL) { firDiagnostic ->
         EmptyCharacterLiteralImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_VAL_OVERRIDDEN_BY_VAL) { firDiagnostic ->
+        LateinitValOverriddenByValImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6957,6 +6997,12 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
             token,
         )
     }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_LATEINIT_VAL) { firDiagnostic ->
+        LateinitIntrinsicCallOnLateinitValImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.LOCAL_EXTENSION_PROPERTY) { firDiagnostic ->
         LocalExtensionPropertyImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -7270,6 +7316,12 @@ private fun KaDiagnosticConverterBuilder.addConversions160() {
         ProtectedCallFromPublicInlineErrorImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirSyntaxErrors.TRAILING_WHITESPACE_REQUIRED) { firDiagnostic ->
+        TrailingWhitespaceRequiredImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7727,6 +7779,13 @@ private fun KaDiagnosticConverterBuilder.addConversions170() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions171() {
+    add(FirErrors.MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE) { firDiagnostic ->
+        MissingDependencyClassInParameterWithDefaultValueImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.NULLABLE_SUPERTYPE_THROUGH_TYPEALIAS.errorFactory) { firDiagnostic ->
         NullableSupertypeThroughTypealiasErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -8882,6 +8941,13 @@ private fun KaDiagnosticConverterBuilder.addConversions196() {
             firDiagnostic.a,
             firDiagnostic.b,
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.c),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirJvmErrors.JVM_EXPOSE_BOXED_NAME_IS_NOT_JAVA_IDENTIFIER) { firDiagnostic ->
+        JvmExposeBoxedNameIsNotJavaIdentifierImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

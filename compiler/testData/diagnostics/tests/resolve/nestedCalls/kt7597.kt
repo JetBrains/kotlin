@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Inv<I>
 
 fun <S, T: S> Inv<T>.reduce2(): S = null!!

@@ -38,11 +38,8 @@ dependencies {
     embedded(project(":analysis:light-classes-base")) { isTransitive = false }
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }
     embedded(project(":analysis:analysis-internal-utils")) { isTransitive = false }
-    embedded(project(":analysis:decompiled:decompiler-native")) { isTransitive = false }
-    embedded(project(":analysis:decompiled:decompiler-to-psi")) { isTransitive = false }
+    embedded(project(":analysis:decompiled:decompiler")) { isTransitive = false }
     embedded(project(":analysis:decompiled:light-classes-for-decompiled")) { isTransitive = false }
-    embedded(project(":analysis:decompiled:decompiler-to-stubs")) { isTransitive = false }
-    embedded(project(":analysis:decompiled:decompiler-to-file-stubs")) { isTransitive = false }
 
     val projectsToInheritDependenciesFrom = configurations.runtimeClasspath.get().copy()
     projectsToInheritDependenciesFrom.dependencies.clear()
@@ -82,8 +79,8 @@ fun registerSwiftExportEmbeddableValidationTasks(swiftExportEmbeddableJarTask: T
              * These are needed for .kts files analysis; we don't actually want them in Swift Export, but currently ProGuard sees these in
              * shared Analysis API code and complaints
              */
-            dependencies.create(project(":kotlin-scripting-compiler-embeddable")),
-            dependencies.create(project(":kotlin-assignment-compiler-plugin.embeddable")),
+            dependencies.create(dependencies.project(":kotlin-scripting-compiler-embeddable")),
+            dependencies.create(dependencies.project(":kotlin-assignment-compiler-plugin.embeddable")),
         )
     )
 
@@ -160,16 +157,16 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     dependencies.add(project.dependencies.project(":kotlin-test"))
     dependencies.add(project.dependencies.project(":native:external-projects-test-utils"))
 
-    dependencies.add(project.dependencies.testFixtures(project(":native:native.tests")))
-    dependencies.add(project.dependencies.testFixtures(project(":compiler:tests-compiler-utils")))
-    dependencies.add(project.dependencies.testFixtures(project(":compiler:tests-common")))
-    dependencies.add(project.dependencies.testFixtures(project(":compiler:tests-common-new")))
-    dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure")))
-    dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
-    dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils.common")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":native:native.tests")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:tests-compiler-utils")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:tests-common")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:tests-common-new")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:test-infrastructure")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:test-infrastructure-utils")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":compiler:test-infrastructure-utils.common")))
 
-    dependencies.add(project.dependencies.testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
-    dependencies.add(project.dependencies.testFixtures(project(":native:swift:swift-export-standalone-integration-tests:external")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":native:swift:swift-export-standalone-integration-tests")))
+    dependencies.add(project.dependencies.testFixtures(project.dependencies.project(":native:swift:swift-export-standalone-integration-tests:external")))
 }
 
 val shadedIntransitiveTestDependenciesJar = tasks.register<ShadowJar>("shadedTestDependencies") {

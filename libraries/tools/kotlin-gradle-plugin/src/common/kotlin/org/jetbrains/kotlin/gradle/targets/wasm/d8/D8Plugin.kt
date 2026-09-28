@@ -24,7 +24,7 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
         val spec = project.extensions.createD8EnvSpec()
 
         if (project.isRootProject()) {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             project.extensions.create(
                 D8RootExtension.EXTENSION_NAME,
                 D8RootExtension::class.java,
@@ -57,7 +57,7 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
         )
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun D8EnvSpec.initializeD8EnvSpec(
         d8: D8RootExtension,
     ) {
@@ -81,7 +81,7 @@ abstract class D8Plugin internal constructor() : Plugin<Project> {
             ) as D8EnvSpec
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         private fun applyRootProject(project: Project): D8RootExtension {
             project.jsToolingProject().plugins.apply(D8Plugin::class.java)
             return project.jsToolingProject().extensions.getByName(

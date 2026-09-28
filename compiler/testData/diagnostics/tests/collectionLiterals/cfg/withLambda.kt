@@ -1,5 +1,5 @@
 // DUMP_CFG
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 import WithInlineOf.Companion.of

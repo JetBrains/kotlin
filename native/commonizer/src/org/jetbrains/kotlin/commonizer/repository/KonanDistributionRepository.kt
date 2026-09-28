@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.commonizer.repository
 
 import org.jetbrains.kotlin.commonizer.*
-import org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
+import org.jetbrains.kotlin.commonizer.cli.CliLogger
 import org.jetbrains.kotlin.commonizer.cli.errorAndExitJvmProcess
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 internal class KonanDistributionRepository(
     konanDistribution: KonanDistribution,
     targets: Set<KonanTarget>,
-    logger: CliLoggerAdapter,
+    logger: CliLogger,
 ) : Repository {
     private val librariesByTarget: Map<KonanTarget, Lazy<Set<NativeLibrary>>> =
         targets.associateWith { target ->

@@ -9,21 +9,19 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionContainer
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-@ExperimentalWasmDsl
 abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
     override fun apply(project: Project) {
         project.plugins.apply(BasePlugin::class.java)
 
         val spec = project.extensions.createBinaryenEnvSpec()
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val settings = project.extensions.create(
             BinaryenExtension.EXTENSION_NAME,
             BinaryenExtension::class.java,
@@ -57,7 +55,7 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
         )
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun BinaryenEnvSpec.initializeBinaryenRootEnvSpec(
         rootBinaryen: BinaryenExtension,
     ) {
@@ -71,7 +69,7 @@ abstract class BinaryenPlugin internal constructor() : Plugin<Project> {
         platform.convention(rootBinaryen.platform)
     }
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun addPlatform(project: Project, extension: BinaryenExtension) {
         val uname = project.providers.unameExecResult
 

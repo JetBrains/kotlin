@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 val test: String by materializeDelegate()
 
 fun <T> materializeDelegate(): Delegate<T> = Delegate()

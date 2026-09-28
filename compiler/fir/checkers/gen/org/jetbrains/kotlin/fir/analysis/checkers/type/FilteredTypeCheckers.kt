@@ -22,4 +22,5 @@ class FilteredTypeCheckers(
     override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = delegate.resolvedTypeRefCheckers.filterTo(mutableSetOf(), predicate)
     override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = delegate.functionTypeRefCheckers.filterTo(mutableSetOf(), predicate)
     override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = delegate.intersectionTypeRefCheckers.filterTo(mutableSetOf(), predicate)
+    override val unionTypeRefCheckers: Set<FirUnionTypeRefChecker> = delegate.unionTypeRefCheckers.filterTo(mutableSetOf(), predicate)
 }

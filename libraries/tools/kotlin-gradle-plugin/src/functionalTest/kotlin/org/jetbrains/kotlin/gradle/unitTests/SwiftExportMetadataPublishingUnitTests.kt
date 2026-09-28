@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalExportDsl::class, ExperimentalSwiftExportDsl::class)
+@file:OptIn(ExperimentalSwiftExportDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests
 
@@ -11,7 +11,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
-import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SWIFT_EXPORT_METADATA_SCHEMA_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.deserializeSwiftExportMetadata

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class Inv<T>(val value: String)
 
 fun <T : Inv<*>?, F: Inv<out Any>?, G : Inv<*>> test1(t: T, f: F, g: G?) {

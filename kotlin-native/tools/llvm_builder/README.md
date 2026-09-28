@@ -45,6 +45,9 @@ Some examples:
 * `--num-stages` specifies number of steps in build. Passing 2 or more makes bootstrap build which
   means that LLVM will build itself by using distribution from the previous step.
 * `--stage0` allows using existing LLVM toolchain for bootstrapping.
+* `--lto thin` or `--lto full` enables LTO when building the final LLVM stage.
+  Earlier stages keep their original configuration. Omitting this option leaves
+  the LTO configuration unchanged.
 * `--build-targets` specifies what targets will be passed to Ninja.
 * `--distribution-components` is a list of components that will be installed with `install-distribution` build target.
 

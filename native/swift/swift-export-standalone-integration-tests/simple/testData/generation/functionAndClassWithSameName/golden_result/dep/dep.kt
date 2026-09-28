@@ -3,7 +3,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("test_factory_modules_ClassFromDependency_init_allocate")
 public fun test_factory_modules_ClassFromDependency_init_allocate(): kotlin.native.internal.NativePtr {

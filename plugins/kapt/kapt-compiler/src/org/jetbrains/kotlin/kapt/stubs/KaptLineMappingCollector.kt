@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
-import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt.base.stubs.LineInfoMap
-import org.jetbrains.kotlin.kapt.base.stubs.getJavacSignature
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -79,8 +77,8 @@ class KaptLineMappingCollector(private val kaptContext: KaptContextForStubGenera
         register(field, clazz.name + "#" + field.name)
     }
 
-    fun registerSignature(declaration: JCTree.JCMethodDecl, method: MethodNode) {
-        signatureInfo[declaration.getJavacSignature()] = method.name + method.desc
+    fun registerSignature(signature: String, method: MethodNode) {
+        signatureInfo[signature] = method.name + method.desc
     }
 
     fun getPosition(clazz: ClassNode): KotlinPosition? = lineInfo[clazz.name]

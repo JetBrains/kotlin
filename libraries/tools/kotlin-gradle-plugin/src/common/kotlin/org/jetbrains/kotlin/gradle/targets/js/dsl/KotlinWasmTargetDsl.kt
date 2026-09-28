@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
  *
  * **Note:** This interface is not intended for implementation by build script or plugin authors.
  */
-interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContainer> {
+interface KotlinWasmTargetDsl :
+    KotlinTarget,
+    HasBinaries<KotlinJsBinaryContainer> {
 
     /**
      * Specifies the Wasm target (Wasi or JS) these options configure.
@@ -30,30 +32,4 @@ interface KotlinWasmTargetDsl : KotlinTarget, HasBinaries<KotlinJsBinaryContaine
     override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
 
     override val binaries: KotlinJsBinaryContainer
-
-    //region deprecated options
-    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-    @Deprecated(
-        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    fun applyBinaryen() = applyBinaryen { }
-
-    @Deprecated(
-        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    fun applyBinaryen(body: BinaryenExec.() -> Unit)
-
-    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
-    @Deprecated(
-        "Binaryen is enabled by default. This call is redundant. Scheduled for removal in Kotlin 2.3.",
-        level = DeprecationLevel.ERROR
-    )
-    fun applyBinaryen(fn: Action<BinaryenExec>) {
-        applyBinaryen {
-            fn.execute(this)
-        }
-    }
-    //endregion
 }

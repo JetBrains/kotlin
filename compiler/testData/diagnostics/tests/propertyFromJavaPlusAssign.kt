@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 /*
  * Here we desugar b.text += "" into b.text = b.text + ""
  *                                    ^1       ^2

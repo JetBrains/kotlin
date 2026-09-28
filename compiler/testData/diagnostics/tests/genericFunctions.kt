@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Any
 
 inline fun <reified T : Any> Any.safeAs(): T? = this as? T

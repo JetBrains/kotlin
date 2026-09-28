@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.utils.ConversionTypeOrigin
-import org.jetbrains.kotlin.fir.backend.utils.convertWithOffsets
-import org.jetbrains.kotlin.fir.backend.utils.createWhenForSafeFall
-import org.jetbrains.kotlin.fir.backend.utils.varargElementType
+import org.jetbrains.kotlin.fir.backend.utils.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -36,19 +33,17 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrDeclarationWithAccessorsSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.implicitCastIfNeededTo
 import org.jetbrains.kotlin.ir.util.isKMutableProperty
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -135,8 +130,8 @@ class AdapterGenerator(
         val substitutor: ConeSubstitutor =
             callableReferenceAccess.createConeSubstitutorFromTypeArguments(session) ?: ConeSubstitutor.Empty
         val boundDispatchReceiver: IrExpression? = when {
-            // Dispatch receivers for previous snippet declarations are injected later by ReplSnippetToClassTransformer.
-            firAdaptee.originalReplSnippetSymbol != null -> IrErrorCallExpressionImpl(
+            // Dispatch receivers for other snippets' declarations are injected later by ReplSnippetToClassTransformer.
+            conversionScope.isFromAnotherReplSnippet(firAdaptee.symbol, session) -> IrErrorCallExpressionImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, builtins.nothingType,
                 description = "No REPL snippet class instance."
             )
@@ -742,23 +737,42 @@ class AdapterGenerator(
         }
 
         val expectedIrType = expectedType.toIrType() as IrSimpleType
+        val expectedIrTypeNonNullable = expectedIrType.withNullability(false)
+        val adapteeParameterType = functionTypeBeforeConversion.withNullability(false, session.typeContext).toIrType()
         return argument.convertWithOffsets { startOffset, endOffset ->
             val irAdapterFunction = createAdapterFunctionForArgument(
                 startOffset,
                 endOffset,
-                expectedIrType,
-                adapteeParameterType = functionTypeBeforeConversion.toIrType(),
-                originalArgumentType.isMarkedNullable,
+                expectedIrTypeNonNullable,
+                adapteeParameterType = adapteeParameterType,
                 invokeSymbol,
                 isSuspendFunctionTypeExpected,
             )
             val irAdapterRef = IrFunctionReferenceImpl(
-                startOffset, endOffset, expectedIrType, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
+                startOffset, endOffset, expectedIrTypeNonNullable, irAdapterFunction.symbol, irAdapterFunction.typeParameters.size,
                 null, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION
             )
-            IrBlockImpl(startOffset, endOffset, expectedIrType, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION).apply {
-                statements.add(irAdapterFunction)
-                statements.add(irAdapterRef.apply { arguments[0] = this@applyConversionBetweenFunctionTypes })
+
+            fun createConversionBlock(boundReceiver: IrExpression): IrBlockImpl {
+                return IrBlockImpl(startOffset, endOffset, expectedIrTypeNonNullable, FUNCTION_TYPE_EXPRESSION_CONVERSION)
+                    .apply {
+                        statements.add(irAdapterFunction)
+                        statements.add(irAdapterRef.apply { arguments[0] = boundReceiver })
+                    }
+            }
+
+            if (originalArgumentType.canBeNull(session)) {
+                IrBlockImpl(startOffset, endOffset, expectedIrType).apply {
+                    val [tempVariable, tempVariableSymbol] = conversionScope.createTemporaryVariable(this@applyConversionBetweenFunctionTypes)
+                    statements.add(tempVariable)
+
+                    val boundReceiver = IrGetValueImpl(startOffset, endOffset, tempVariableSymbol)
+                        .implicitCastIfNeededTo(adapteeParameterType)
+                    val conversionBlock = createConversionBlock(boundReceiver)
+                    statements.add(createWhenForSafeFall(expectedIrType, tempVariableSymbol, conversionBlock))
+                }
+            } else {
+                createConversionBlock(this@applyConversionBetweenFunctionTypes)
             }
         }
     }
@@ -791,12 +805,49 @@ class AdapterGenerator(
         }
     }
 
+    fun IrExpression.applyNumericClassCoercionIfNeeded(conversionNode: FirNumericClassConversion): IrExpression {
+        val expectedType = conversionNode.resolvedType
+        val expectedTypeSymbol = expectedType.toSymbol(session) ?: return this
+
+        return when (expectedTypeSymbol.hasAnnotation(StandardClassIds.Annotations.NumericClass, session)) {
+            true -> applyBuiltinToNumericClassCoercionIfNeeded(conversionNode)
+            false -> applyNumericClassToBuiltinCoercionIfNeeded(conversionNode)
+        }
+    }
+
+    private fun IrExpression.applyBuiltinToNumericClassCoercionIfNeeded(conversionNode: FirNumericClassConversion): IrExpression {
+        val expression = conversionNode.originalExpression
+        val expectedType = conversionNode.resolvedType
+
+        val [firSymbol, irSymbol] = builtins.getCinteropConvertFunctionOver(expression.resolvedType)
+            ?: error("No conversion function found for ${expression.resolvedType}")
+
+        with(callGenerator) {
+            return IrCallImpl(startOffset, endOffset, expectedType.toIrType(), irSymbol)
+                .apply { arguments[0] = this@applyBuiltinToNumericClassCoercionIfNeeded }
+                .applyTypeArguments(
+                    typeArguments = listOf(expectedType),
+                    typeParameters = firSymbol.typeParameterSymbols.map { it.fir },
+                )
+        }
+    }
+
+    private fun IrExpression.applyNumericClassToBuiltinCoercionIfNeeded(conversionNode: FirNumericClassConversion): IrExpression {
+        val expression = conversionNode.originalExpression
+        val expectedType = conversionNode.resolvedType
+
+        val irFunction = builtins.getMemberConversionFunction(expression.resolvedType, expectedType)
+            ?: error("No conversion function found for ${expression.resolvedType}")
+
+        return IrCallImpl(startOffset, endOffset, expectedType.toIrType(), irFunction)
+            .apply { arguments[0] = this@applyNumericClassToBuiltinCoercionIfNeeded }
+    }
+
     private fun createAdapterFunctionForArgument(
         startOffset: Int,
         endOffset: Int,
         type: IrSimpleType,
         adapteeParameterType: IrType,
-        argumentIsNullable: Boolean,
         invokeSymbol: IrSimpleFunctionSymbol,
         isSuspend: Boolean,
     ): IrSimpleFunction {
@@ -839,11 +890,7 @@ class AdapterGenerator(
                 }
             }
             irAdapterFunction.body = IrFactoryImpl.createBlockBody(startOffset, endOffset) {
-                var irCall = createAdapteeCallForArgument(startOffset, endOffset, irAdapterFunction, invokeSymbol)
-
-                if (argumentIsNullable) {
-                    irCall = createWhenForSafeFall(irCall.type, irAdapterFunction.parameters[0].symbol, irCall)
-                }
+                val irCall = createAdapteeCallForArgument(startOffset, endOffset, irAdapterFunction, invokeSymbol)
 
                 if (returnType.isUnit()) {
                     statements.add(irCall)

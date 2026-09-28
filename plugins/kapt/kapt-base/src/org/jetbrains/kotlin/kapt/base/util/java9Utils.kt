@@ -11,13 +11,26 @@ import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Options
 import com.sun.tools.javac.util.List as JavacList
 import org.jetbrains.kotlin.kapt.base.plus
+import java.lang.reflect.Method
 
-private fun getJavaVersion(): Int =
+private val javaVersion: Int =
     System.getProperty("java.specification.version")?.substringAfter('.')?.toIntOrNull() ?: 6
 
-fun isJava9OrLater() = getJavaVersion() >= 9
-fun isJava11OrLater() = getJavaVersion() >= 11
-fun isJava17OrLater() = getJavaVersion() >= 17
+fun isJava9OrLater() = javaVersion >= 9
+fun isJava11OrLater() = javaVersion >= 11
+fun isJava17OrLater() = javaVersion >= 17
+
+private val topLevelMethod: Method by lazy {
+    TreeMaker::class.java.declaredMethods.single { it.name == "TopLevel" }
+}
+
+private val packageDeclMethod: Method by lazy {
+    TreeMaker::class.java.methods.single { it.name == "PackageDecl" }
+}
+
+private val getPackageNameMethod: Method by lazy {
+    JCTree.JCCompilationUnit::class.java.getDeclaredMethod("getPackageName")
+}
 
 fun Options.putJavacOption(jdk8Name: String, jdk9Name: String, value: String) {
     val option = if (isJava9OrLater()) {
@@ -31,17 +44,13 @@ fun Options.putJavacOption(jdk8Name: String, jdk9Name: String, value: String) {
 
 @Suppress("FunctionName")
 fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, declarations: JavacList<JCTree>): JCTree.JCCompilationUnit {
-    @Suppress("SpellCheckingInspection")
     return if (isJava9OrLater()) {
-        val topLevelMethod = TreeMaker::class.java.declaredMethods.single { it.name == "TopLevel" }
         val packageDecl: JCTree? = packageClause?.let {
-            val packageDeclMethod = TreeMaker::class.java.methods.single { it.name == "PackageDecl" }
             packageDeclMethod.invoke(this, JavacList.nil<JCTree>(), packageClause) as JCTree
         }
         val allDeclarations = if (packageDecl != null) JavacList.of(packageDecl) + declarations else declarations
         topLevelMethod.invoke(this, allDeclarations) as JCTree.JCCompilationUnit
     } else {
-        val topLevelMethod = TreeMaker::class.java.declaredMethods.single { it.name == "TopLevel" }
         topLevelMethod.invoke(this, JavacList.nil<JCTree.JCAnnotation>(), packageClause, declarations) as JCTree.JCCompilationUnit
     }
 }
@@ -50,7 +59,7 @@ fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, declaratio
 @Suppress("USELESS_CAST")
 fun JCTree.JCCompilationUnit.getPackageNameJava9Aware(): JCTree? {
     return if (isJava9OrLater()) {
-        JCTree.JCCompilationUnit::class.java.getDeclaredMethod("getPackageName").invoke(this) as JCTree?
+        getPackageNameMethod.invoke(this) as JCTree?
     } else {
         this.packageName as JCTree?
     }

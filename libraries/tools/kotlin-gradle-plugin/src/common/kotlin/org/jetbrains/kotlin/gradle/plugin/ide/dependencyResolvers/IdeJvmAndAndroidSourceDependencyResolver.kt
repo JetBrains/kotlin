@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint.Companion.isJvmAndAndroid
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
-import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
@@ -49,9 +47,7 @@ import org.jetbrains.kotlin.gradle.utils.toMap
  * In order to set up attributes, the algorithm will copy the jvm platform attributes from the corresponding jvm compilations
  * of the current SourceSet.
  */
-internal class IdeJvmAndAndroidSourceDependencyResolver(
-    private val buildIdentifierAccessor: Provider<BuildIdentifierAccessor.Factory>,
-) : IdeDependencyResolver {
+internal class IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (!isJvmAndAndroid(sourceSet)) return emptySet()
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
@@ -87,7 +83,7 @@ internal class IdeJvmAndAndroidSourceDependencyResolver(
 
         return allVisibleSourceSetNames.map { sourceSetName ->
             val coordinates = org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates(
-                project = IdeaKotlinProjectCoordinates(componentId, buildIdentifierAccessor),
+                project = IdeaKotlinProjectCoordinates(componentId),
                 sourceSetName = sourceSetName
             )
             IdeaKotlinSourceDependency(type = Regular, coordinates = coordinates)

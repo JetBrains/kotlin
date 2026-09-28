@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: ColoredTextContainer.java
 public interface ColoredTextContainer {
     default void setToolTipText(String text) {}

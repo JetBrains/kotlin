@@ -13,9 +13,15 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextMaybeReplacedWithKar
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.isStoredInKotlinArchive
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.rootSourcesJarTask
+
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -124,10 +130,11 @@ abstract class AbstractKotlinTarget(
                 producingCompilation is KotlinCompilationToRunnableFiles
             }
         ).mapTo(mutableSetOf()) { (mavenScope, dependenciesConfigurationName) ->
-            DefaultKotlinUsageContext(
-                producingCompilation,
-                mavenScope,
-                dependenciesConfigurationName
+            project.defaultKotlinUsageContextMaybeReplacedWithKar(
+                isStoredInKotlinArchive = isStoredInKotlinArchive,
+                compilation = producingCompilation,
+                mavenScope = mavenScope,
+                dependencyConfigurationName = dependenciesConfigurationName,
             )
         }
     }
@@ -154,13 +161,17 @@ abstract class AbstractKotlinTarget(
         val artifact = project.artifacts.add(sourcesElementsConfigurationName, sourcesJarTask) as ConfigurablePublishArtifact
         artifact.classifier = dashSeparatedName(classifierPrefix, "sources")
 
-        return DefaultKotlinUsageContext(
+        val rootSourcesJarTask = project.multiplatformExtensionOrNull?.rootSourcesJarTask()
+
+        return defaultKotlinUsageContextWithArtifactsMaybeReplacedByTask(
+            replacementTaskProvider = isStoredInKotlinArchive.map { if (it) rootSourcesJarTask else null },
+            movedToSoftwareComponent = project.multiplatformExtensionOrNull?.rootSoftwareComponent,
             compilation = producingCompilation,
+            mavenScope = mavenScope,
             dependencyConfigurationName = sourcesElementsConfigurationName,
             overrideConfigurationAttributes = overrideConfigurationAttributes,
-            mavenScope = mavenScope,
             includeIntoProjectStructureMetadata = false,
-            publishOnlyIf = { isSourcesPublishable }
+            publishOnlyIf = { isSourcesPublishable },
         )
     }
 

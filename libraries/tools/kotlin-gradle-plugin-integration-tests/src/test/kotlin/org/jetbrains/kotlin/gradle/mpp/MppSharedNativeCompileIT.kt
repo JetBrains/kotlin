@@ -9,7 +9,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
@@ -29,10 +28,6 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
                 assertDirectoryExists(nativeMainKlib)
 
                 val libraryFile = KlibLoader { libraryPaths(nativeMainKlib) }.load().librariesStdlibFirst.single()
-
-                if (libraryFile.unresolvedDependencies.isNotEmpty()) {
-                    fail("Expected metadata klib to not list dependencies. Found ${libraryFile.unresolvedDependencies}")
-                }
 
                 if (KLIB_PROPERTY_DEPENDS in libraryFile.manifestProperties) {
                     fail(

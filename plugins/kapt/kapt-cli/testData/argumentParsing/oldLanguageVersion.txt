@@ -1,0 +1,11 @@
+# before
+-language-version
+1.9
+Test.kt
+
+# after
+-P
+plugin:org.jetbrains.kotlin.kapt3:aptMode=stubsAndApt
+-language-version
+1.9
+Test.kt

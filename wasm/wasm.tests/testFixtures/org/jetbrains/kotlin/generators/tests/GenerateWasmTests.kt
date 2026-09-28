@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationMultiModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationSingleModuleTest
+import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationStackSwitchingMultiModuleTest
+import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationStackSwitchingSingleModuleTest
+import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationStackSwitchingTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLMultiModuleTest
 import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLSingleModuleTest
@@ -65,6 +68,31 @@ fun main(args: Array<String>) {
                     recursive = false,
                 )
             }
+
+            // Stack switching only changes how coroutines are compiled, so these suites run just the
+            // coroutine projects, selected by their `suspend` prefix.
+            testClass<AbstractFirWasmInvalidationStackSwitchingTest> {
+                model(
+                    "invalidation/",
+                    pattern = "^(suspend.+)$",
+                    recursive = false,
+                )
+            }
+            testClass<AbstractFirWasmInvalidationStackSwitchingMultiModuleTest> {
+                model(
+                    "invalidation/",
+                    pattern = "^(suspend.+)$",
+                    recursive = false,
+                )
+            }
+            testClass<AbstractFirWasmInvalidationStackSwitchingSingleModuleTest> {
+                model(
+                    "invalidation/",
+                    pattern = "^(suspend.+)$",
+                    recursive = false,
+                )
+            }
+
             testClass<AbstractFirWasmInvalidationWithPLTest> {
                 model(
                     "invalidationWithPL/",

@@ -15,7 +15,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.tasks.GenerateMavenPom
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.getExtension
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -86,9 +85,6 @@ internal fun Project.addSigningValidationHelpers() {
                 }
                 if (signatory != null) {
                     task.signatory.set(signatory)
-                }
-                if (GradleVersion.current() < GradleVersion.version("8.1")) {
-                    task.notCompatibleWithConfigurationCache("checkSigningConfiguration task is not compatible with configuration cache on Gradle versions < 8.1.")
                 }
                 task.keyId.set(providers.gradleProperty("signing.keyId"))
                 task.keyringPath.set(layout.file(providers.gradleProperty("signing.secretKeyRingFile").map { File(it) }))

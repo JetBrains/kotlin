@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Generic<T : CharSequence?>(val value: T) {
     fun foo(): T = value
 }

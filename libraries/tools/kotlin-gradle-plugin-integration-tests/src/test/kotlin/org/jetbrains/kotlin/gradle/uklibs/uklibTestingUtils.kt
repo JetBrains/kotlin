@@ -62,6 +62,7 @@ data class PublishedProject(
         val pom: File get() = path.resolve("${artifactsPrefix}.pom")
         val uklib: File get() = path.resolve("${artifactsPrefix}.uklib")
         val jar: File get() = path.resolve("${artifactsPrefix}.jar")
+        val sourcesJar: File get() = path.resolve("${artifactsPrefix}-sources.jar")
         val psmJar: File get() = path.resolve("${artifactsPrefix}-psm.jar")
         val gradleMetadata: File get() = path.resolve("${artifactsPrefix}.module")
         val swiftPmMetadata: File get() = path.resolve("${artifactsPrefix}-swiftpm-metadata.json")
@@ -356,7 +357,19 @@ data class Variant(
     val attributes: Map<String, String>,
     @SerialName("available-at")
     val availableAt: ComponentPointer? = null,
+    /**
+     * Gradle writes this only for a variant that declares a capability, so it stays empty for most variants.
+     * The order of the capabilities is not stable, so this is a set to keep the pretty printed form deterministic.
+     */
+    val capabilities: Set<Capability> = emptySet(),
     val files: List<VariantFile> = emptyList(),
+)
+
+@kotlinx.serialization.Serializable
+data class Capability(
+    val group: String,
+    val name: String,
+    val version: String? = null,
 )
 
 @kotlinx.serialization.Serializable

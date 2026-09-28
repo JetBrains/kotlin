@@ -6,39 +6,35 @@
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor.Companion.createConstructors
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.getParentForLocalDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike<KaAnonymousObjectSymbol>, PsiAnonymousClass {
-    @OptIn(KaImplementationDetail::class)
     constructor(
-        anonymousObjectDeclaration: KtClassOrObject,
-        ktModule: KaModule,
+        anonymousObjectDeclaration: KaAnonymousObjectSymbol,
+        useSiteModule: KaModule,
     ) : this(
-        classOrObjectDeclaration = anonymousObjectDeclaration,
-        classSymbolPointer = anonymousObjectDeclaration.createSymbolPointer(ktModule),
-        ktModule = ktModule,
-        manager = anonymousObjectDeclaration.manager,
+        classOrObjectDeclaration = anonymousObjectDeclaration.anchorPsi as? KtClassOrObject,
+        classSymbolPointer = anonymousObjectDeclaration.createPointer(),
+        useSiteModule = useSiteModule,
     )
 
     private constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaAnonymousObjectSymbol>,
-        ktModule: KaModule,
-        manager: PsiManager,
-    ) : super(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+        useSiteModule: KaModule,
+    ) : super(classOrObjectDeclaration, classSymbolPointer, useSiteModule)
 
     private val _baseClassType: PsiClassType by lazyPub {
         extendsListTypes.firstOrNull()
@@ -63,8 +59,8 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         }
     }
 
-    override fun getExtendsList(): PsiReferenceList? = _extendsList
-    override fun getImplementsList(): PsiReferenceList? = _implementsList
+    override fun getExtendsList(): PsiReferenceList = _extendsList
+    override fun getImplementsList(): PsiReferenceList = _implementsList
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol {
@@ -98,7 +94,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
         }
     }
 
-    override fun getParent(): PsiElement? = kotlinOrigin?.let(::getParentForLocalDeclaration)
+    override fun getParent(): PsiElement? = kotlinOrigin?.let { getParentForLocalDeclaration(it, useSiteModule) }
     override fun getArgumentList(): PsiExpressionList? = null
     override fun isInQualifiedNew(): Boolean = false
     override fun getName(): String? = null
@@ -112,5 +108,5 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getQualifiedName(): String? = null
-    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, classSymbolPointer, ktModule, manager)
+    override fun copy() = SymbolLightClassForAnonymousObject(classOrObjectDeclaration, symbolPointer, useSiteModule)
 }

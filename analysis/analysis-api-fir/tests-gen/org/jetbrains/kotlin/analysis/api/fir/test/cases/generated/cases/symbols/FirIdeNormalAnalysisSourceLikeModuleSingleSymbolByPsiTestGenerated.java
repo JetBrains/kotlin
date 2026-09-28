@@ -117,6 +117,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSingleSymbolByPsiTestGenerated 
   }
 
   @Test
+  @TestMetadata("explicitBackingFieldWithAnnotations.kt")
+  public void testExplicitBackingFieldWithAnnotations() {
+    run("explicitBackingFieldWithAnnotations.kt");
+  }
+
+  @Test
   @TestMetadata("file.kt")
   public void testFile() {
     run("file.kt");

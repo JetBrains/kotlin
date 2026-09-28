@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -284,6 +285,11 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitSafeQualifiedExpression(expression, data);
     }
 
+    @KtExperimentalApi
+    public void visitErrorSafeQualifiedExpressionVoid(@NotNull KtErrorSafeQualifiedExpression expression, P data) {
+        super.visitErrorSafeQualifiedExpression(expression, data);
+    }
+
     public void visitObjectLiteralExpressionVoid(@NotNull KtObjectLiteralExpression expression, P data) {
         super.visitObjectLiteralExpression(expression, data);
     }
@@ -352,7 +358,8 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
      * @deprecated This method is obsolete because {@link KtSelfType} is obsolete.
      */
     @kotlin.Deprecated(
-            message = "This method is obsolete because 'KtSelfType' is obsolete."
+            message = "This method is obsolete because 'KtSelfType' is obsolete.",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void visitSelfTypeVoid(@NotNull KtSelfType type, P data) {
@@ -819,6 +826,13 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     	return null;
     }
 
+    @KtExperimentalApi
+    @Override
+    public final Void visitErrorSafeQualifiedExpression(@NotNull KtErrorSafeQualifiedExpression expression, P data) {
+        visitErrorSafeQualifiedExpressionVoid(expression, data);
+        return null;
+    }
+
     @Override
     public final Void visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, P data) {
         visitObjectLiteralExpressionVoid(expression, data);
@@ -919,7 +933,8 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
      * @deprecated This method is obsolete because {@link KtSelfType} is obsolete.
      */
     @kotlin.Deprecated(
-            message = "This method is obsolete because 'KtSelfType' is obsolete."
+            message = "This method is obsolete because 'KtSelfType' is obsolete.",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @Override

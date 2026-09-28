@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
@@ -54,7 +54,8 @@ object FirExpressionWithErrorTypeChecker : FirBasicExpressionChecker(MppCheckerK
             expression is FirWhenSubjectExpression ||
             expression is FirSmartCastExpression ||
             expression is FirCheckedSafeCallSubject ||
-            expression is FirReplExpressionReference
+            expression is FirReplExpressionReference ||
+            expression is FirWrappedArgumentExpression
         ) return
         // Below we do a return in case expression has its own diagnostic or has a diagnostic inside child nodes
         // (as, again, ErrorNodeDiagnosticCollectorComponent handles such situations itself)

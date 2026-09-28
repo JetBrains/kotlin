@@ -1,0 +1,365 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class FullValueClass<[ResolvedTo(RAW_FIR)] T> : Base<T> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.second] second: T): R|pack/FullValueClass<T>| {
+            LAZY_super<Base<T>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class FullValueClass<[ResolvedTo(RAW_FIR)] T> : Base<T> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.second] second: T): R|pack/FullValueClass<T>| {
+            LAZY_super<Base<T>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class FullValueClass<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T> : Base<T> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.second] second: T): R|pack/FullValueClass<T>| {
+            LAZY_super<Base<T>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(RAW_FIR)] class Base<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(RAW_FIR)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class FullValueClass<[ResolvedTo(COMPANION_GENERATION)] T> : Base<T> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(COMPANION_GENERATION)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.second] second: T): R|pack/FullValueClass<T>| {
+            LAZY_super<Base<T>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final? value [ResolvedTo(SUPER_TYPES)] class FullValueClass<[ResolvedTo(SUPER_TYPES)] T> : R|pack/Base<T>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(SUPER_TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.second] second: T): R|pack/FullValueClass<T>| {
+            LAZY_super<Base<R|T|>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final? value [ResolvedTo(TYPES)] class FullValueClass<[ResolvedTo(TYPES)] T> : R|pack/Base<T>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(TYPES)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.first] first: T, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/FullValueClass.second] second: T): R|pack/FullValueClass<T>| {
+            LAZY_super<Base<R|T|>>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class FullValueClass<[ResolvedTo(STATUS)] T> : R|pack/Base<T>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.second] second: R|T|): R|pack/FullValueClass<T>| {
+            LAZY_super<R|pack/Base<T>|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class FullValueClass<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T> : R|pack/Base<T>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.second] second: R|T|): R|pack/FullValueClass<T>| {
+            LAZY_super<R|pack/Base<T>|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class FullValueClass<[ResolvedTo(CONTRACTS)] T> : R|pack/Base<T>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(CONTRACTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.second] second: R|T|): R|pack/FullValueClass<T>| {
+            LAZY_super<R|pack/Base<T>|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class FullValueClass<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T> : R|pack/Base<T>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.second] second: R|T|): R|pack/FullValueClass<T>| {
+            LAZY_super<R|pack/Base<T>|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class FullValueClass<[ResolvedTo(CONSTANT_EVALUATION)] T> : R|pack/Base<T>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(CONSTANT_EVALUATION)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.second] second: R|T|): R|pack/FullValueClass<T>| {
+            LAZY_super<R|pack/Base<T>|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(SUPER_TYPES)] class Base<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val first: T
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Base] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] fun firstValue(): T { LAZY_BLOCK }
+
+    }
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class FullValueClass<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|pack/Base<T>| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T>([ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.first] first: R|T|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/FullValueClass.second] second: R|T|): R|pack/FullValueClass<T>| {
+            LAZY_super<R|pack/Base<T>|>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: T = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: T = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FullValueClass] get(): T
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor<[ResolvedTo(STATUS)] T>(): R|pack/Base<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val first: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|T|
+
+        public final [ResolvedTo(STATUS)] fun firstValue(): R|T| { LAZY_BLOCK }
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class FullValueClass<[ResolvedTo(BODY_RESOLVE)] T> : R|pack/Base<T>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/FullValueClass.first] first: R|T|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/FullValueClass.second] second: R|T|): R|pack/FullValueClass<T>| {
+            super<R|pack/Base<T>|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|T| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|T|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|T| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|T|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassWithSuperClass.kt
+    public abstract value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Base<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|pack/Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val first: R|T|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Base] get(): R|T|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun firstValue(): R|T| {
+            ^firstValue this@R|pack/Base|.R|pack/Base.first|
+        }
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, T), (second, T)])] class FullValueClass<[ResolvedTo(BODY_RESOLVE)] T> : R|pack/Base<T>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/FullValueClass.first] first: R|T|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/FullValueClass.second] second: R|T|): R|pack/FullValueClass<T>| {
+            super<R|pack/Base<T>|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|T| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|T|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|T| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FullValueClass] get(): R|T|
+
+    }

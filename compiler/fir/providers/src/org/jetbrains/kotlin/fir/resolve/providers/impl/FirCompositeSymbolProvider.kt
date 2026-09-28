@@ -53,4 +53,9 @@ class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSym
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
     }
+
+    @FirSymbolProviderInternals
+    override fun clearInsignificantCaches() {
+        providers.forEach { it.clearInsignificantCaches() }
+    }
 }

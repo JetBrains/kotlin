@@ -5,7 +5,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("ClassB_hash__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun ClassB_hash__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, intoOk: kotlin.native.internal.NativePtr): Boolean {

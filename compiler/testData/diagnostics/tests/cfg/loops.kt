@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DUMP_CFG
 fun testWhile(b: Boolean, x: Any?) {
     while (b) {

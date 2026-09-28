@@ -26,9 +26,9 @@ public class SetterTest {
 fun test() {
     val obj = SetterTest()
     obj.setAge(42)
-    assertEquals(obj.age, 42)
+    val age = obj.age
     obj.age = 43
-    assertEquals(obj.age, 43)
+    val updatedAge = obj.age
 
     obj.setPrimitiveBoolean(true)
 

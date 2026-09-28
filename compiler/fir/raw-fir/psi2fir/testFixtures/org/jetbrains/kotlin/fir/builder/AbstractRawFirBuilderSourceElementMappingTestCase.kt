@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.realPsi
@@ -21,9 +22,10 @@ import java.io.File
 
 abstract class AbstractRawFirBuilderSourceElementMappingTestCase : AbstractRawFirBuilderTestCase() {
     override fun runTest(filePath: String) {
-        val fileTextWithCaret = loadFile(filePath)
+        val absolutePath = ForTestCompileRuntime.transformTestDataPath(filePath).path
+        val fileTextWithCaret = createKtFile(absolutePath).text
         val fileTextWithoutCaret = fileTextWithCaret.replace(START_EXPRESSION_TAG, "").replace(END_EXPRESSION_TAG, "")
-        val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileTextWithoutCaret) as KtFile
+        val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(absolutePath)), fileTextWithoutCaret) as KtFile
         val selectedExpression = run {
             val startCaretPosition = fileTextWithCaret.indexOf(START_EXPRESSION_TAG)
             if (startCaretPosition < 0) {
@@ -48,7 +50,7 @@ abstract class AbstractRawFirBuilderSourceElementMappingTestCase : AbstractRawFi
             foundElements.single()
         }
 
-        val expectedPath = filePath.replace(".kt", ".txt")
+        val expectedPath = absolutePath.replace(".kt", ".txt")
         TestDataAssertions.assertEqualsToFile(File(expectedPath), foundElement.render())
     }
 

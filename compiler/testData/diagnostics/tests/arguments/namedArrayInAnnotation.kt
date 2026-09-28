@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 annotation class Ann(vararg val strings: String)
 
 @Ann(strings = ["hello"])

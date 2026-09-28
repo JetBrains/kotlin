@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DISABLE_JAVA_FACADE
 // SCOPE_DUMP: C:getName;setName;name, D:getName;setName;name
 // FILE: A.java

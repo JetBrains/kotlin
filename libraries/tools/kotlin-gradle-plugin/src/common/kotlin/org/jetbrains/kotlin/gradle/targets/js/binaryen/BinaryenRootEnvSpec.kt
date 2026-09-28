@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 
 @Deprecated(
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
         "BinaryenEnvSpec",
         "org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec"
     ),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
-@OptIn(ExperimentalWasmDsl::class)
 typealias BinaryenRootEnvSpec = BinaryenEnvSpec

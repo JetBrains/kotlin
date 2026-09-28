@@ -13,7 +13,7 @@ import kotlin.io.path.createParentDirectories
 import kotlin.io.path.writeText
 
 /**
- * Generates code available at runtime for tests (e.g. all contract annotations such as '@CompilerContract', ...)
+ * Generates the domain enum and annotations that select tests when a domain contains changed files.
  */
 
 @Suppress("unused")
@@ -39,18 +39,22 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 for (domain in domains) {
                     this += """
                         |/**
-                        |* Will mark tests as 'affected by' the given domain [Domain.${domain.name}].
-                        |* Such tests will run, additionally, for all commits affecting the ${domain.name} domain.
+                        |* Requires the annotated tests to run and pass before merging to master when [Domain.${domain.name}] contains changed files.
+                        |* The tests still run whenever all tests in their own domain must run.
+                        |* Other test filters, including [NightlyTest], still apply.
+                        |*
+                        |* ### Extra: Contract tests
+                        |* Use this annotation for tests that check behavior another domain relies on.
                         |*/
                     """.trimMargin()
-                    this += "|@Tag(\"affectedBy:${domain.name}\")"
-                    this += "|annotation class AffectedBy${domain.name}"
+                    this += "|@Tag(\"contract:${domain.name}\")"
+                    this += "|annotation class MustRunOnChangesIn${domain.name}"
                     this += "|"
                 }
 
-                this += "|fun affectedByAnnotationOf(domain: Domain) = when (domain) {"
+                this += "|fun mustRunOnChangesInAnnotationOf(domain: Domain) = when (domain) {"
                 for (domain in domains) {
-                    this += "|    Domain.${domain.name} -> AffectedBy${domain.name}::class"
+                    this += "|    Domain.${domain.name} -> MustRunOnChangesIn${domain.name}::class"
                 }
                 this += "|}"
             }.trimMargin()

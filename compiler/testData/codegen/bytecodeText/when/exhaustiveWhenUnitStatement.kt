@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 
 enum class AccessMode { READ, WRITE, EXECUTE }
 

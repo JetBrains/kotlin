@@ -58,7 +58,7 @@ object ValueClassDeclarationChecker : DeclarationChecker {
         }
 
         if (declaration.contextReceivers.isNotEmpty()) {
-            @Suppress("DEPRECATION")
+            @Suppress("DEPRECATION_ERROR")
             val contextReceiverList = declaration.modifierList?.contextReceiverList
             requireNotNull(contextReceiverList) { "Declaration cannot have context receivers with no context receiver list" }
             trace.report(Errors.VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS.on(contextReceiverList))

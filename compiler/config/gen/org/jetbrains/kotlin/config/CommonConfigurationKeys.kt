@@ -63,7 +63,7 @@ object CommonConfigurationKeys {
     val USE_FIR = CompilerConfigurationKey.create<Boolean>("USE_FIR")
 
     @JvmField
-    val USE_LIGHT_TREE = CompilerConfigurationKey.create<Boolean>("USE_LIGHT_TREE")
+    val PARSER_MODE = CompilerConfigurationKey.create<ParserMode>("PARSER_MODE")
 
     @JvmField
     val HMPP_MODULE_STRUCTURE = CompilerConfigurationKey.create<HmppCliModuleStructure>("HMPP_MODULE_STRUCTURE")
@@ -93,9 +93,6 @@ object CommonConfigurationKeys {
 
     @JvmField
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS = CompilerConfigurationKey.create<Boolean>("ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS")
-
-    @JvmField
-    val IGNORE_CONST_OPTIMIZATION_ERRORS = CompilerConfigurationKey.create<Boolean>("IGNORE_CONST_OPTIMIZATION_ERRORS")
 
     @JvmField
     @MessageCollectorAccess
@@ -191,9 +188,9 @@ var CompilerConfiguration.useFir: Boolean
     get() = getBoolean(CommonConfigurationKeys.USE_FIR)
     set(value) { put(CommonConfigurationKeys.USE_FIR, value) }
 
-var CompilerConfiguration.useLightTree: Boolean
-    get() = getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
-    set(value) { put(CommonConfigurationKeys.USE_LIGHT_TREE, value) }
+var CompilerConfiguration.parserMode: ParserMode
+    get() = get(CommonConfigurationKeys.PARSER_MODE, ParserMode.Default)
+    set(value) { put(CommonConfigurationKeys.PARSER_MODE, value) }
 
 var CompilerConfiguration.hmppModuleStructure: HmppCliModuleStructure?
     get() = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
@@ -230,10 +227,6 @@ var CompilerConfiguration.incrementalCompilation: Boolean
 var CompilerConfiguration.allowAnyScriptsInSourceRoots: Boolean
     get() = getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)
     set(value) { put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, value) }
-
-var CompilerConfiguration.ignoreConstOptimizationErrors: Boolean
-    get() = getBoolean(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS)
-    set(value) { put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, value) }
 
 @MessageCollectorAccess
 var CompilerConfiguration.messageCollector: MessageCollector

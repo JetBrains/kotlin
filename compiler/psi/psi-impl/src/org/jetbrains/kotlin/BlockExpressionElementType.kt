@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.parsing.KotlinParser
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtImplementationDetail
 
-@OptIn(KtImplementationDetail::class)
 class BlockExpressionElementType : IErrorCounterReparseableElementType("BLOCK", KotlinLanguage.INSTANCE), ICompositeElementType {
 
     override fun createCompositeNode() = KtBlockExpression(null)

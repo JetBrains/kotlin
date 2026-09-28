@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.KtSourcelessDiagnosticFactory
+import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
@@ -175,7 +176,9 @@ class ClasspathRootsResolver(
                 ?: if (isJar) tryLoadVersionSpecificModuleInfo(root, manifest) else null
 
         if (moduleInfoFile != null) {
-            val moduleInfo = JavaModuleInfo.read(moduleInfoFile, javaFileManager, searchScope) ?: return null
+            val moduleInfo = JavaModuleInfo.read(moduleInfoFile) {
+                javaFileManager.findClass(JavaClassFinder.Request(it), searchScope)
+            } ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
 

@@ -56,10 +56,7 @@ open class BasicJvmScriptClassFilesGenerator(val outputDir: File) : ScriptEvalua
 fun KJvmCompiledScript.saveToJar(outputJar: File) {
     val module = (getCompiledModule() as? KJvmCompiledModuleInMemory)
         ?: throw IllegalArgumentException("Unsupported module type ${getCompiledModule()}")
-    val dependenciesFromScript = compilationConfiguration[ScriptCompilationConfiguration.dependencies]
-        ?.filterIsInstance<JvmDependency>()
-        ?.flatMap { it.classpath }
-        .orEmpty()
+    val dependenciesFromScript = recursiveJvmClassPath()
     val dependenciesForMain = scriptCompilationClasspathFromContextOrNull(
         KotlinPaths.Jar.ScriptingLib.baseName, KotlinPaths.Jar.ScriptingJvmLib.baseName,
         classLoader = this::class.java.classLoader,
@@ -92,6 +89,22 @@ fun KJvmCompiledScript.saveToJar(outputJar: File) {
         }
         fileStream.flush()
     }
+}
+
+private fun CompiledScript.recursiveJvmClassPath(): List<File> {
+    val processedScripts = mutableSetOf<CompiledScript>()
+    val classPath = mutableListOf<File>()
+
+    fun collect(script: CompiledScript) {
+        if (!processedScripts.add(script)) return
+        script.compilationConfiguration[ScriptCompilationConfiguration.dependencies]
+            ?.filterIsInstance<JvmDependency>()
+            ?.forEach { classPath.addAll(it.classpath) }
+        script.otherScripts.forEach(::collect)
+    }
+
+    collect(this)
+    return classPath
 }
 
 fun File.loadScriptFromJar(checkMissingDependencies: Boolean = true): CompiledScript? {

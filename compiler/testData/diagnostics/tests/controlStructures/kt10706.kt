@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun fn(c: Char?): Any? =
         if (c == null) TODO()
         else when (c) {

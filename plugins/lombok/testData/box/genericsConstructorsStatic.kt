@@ -21,10 +21,12 @@ public class ConstructorExample<A, B> {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val generated: ConstructorExample<Long, Boolean> = ConstructorExample.of(12, 42L, true)
-    assertEquals(generated.name, 42L)
+    assertEquals(42L, generated.name)
     val generatedReq: ConstructorExample<String, Boolean> = ConstructorExample.of("234")
-    assertEquals(generatedReq.name, "234")
+    assertEquals("234", generatedReq.name)
     return "OK"
 }

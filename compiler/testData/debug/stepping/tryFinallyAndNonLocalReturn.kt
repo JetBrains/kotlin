@@ -30,7 +30,7 @@ fun box() {
     callSite(false)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:29 box
 // test.kt:20 callSite
 // test.kt:11 callSite

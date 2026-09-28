@@ -56,6 +56,8 @@ FILE: uintOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(4)] val plus6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.plus|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(3)] val plus7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.plus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(4294967295)] val minus1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.minus|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val minus2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.minus|(R|/twoVal|)
@@ -68,6 +70,8 @@ FILE: uintOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(0)] val minus6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.minus|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(4294967295)] val minus7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.minus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(2)] val times1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.times|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(4)] val times2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.times|(R|/twoVal|)
@@ -80,6 +84,8 @@ FILE: uintOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(4)] val times6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.times|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(2)] val times7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.times|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val div1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.div|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(1)] val div2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.div|(R|/twoVal|)
@@ -92,6 +98,8 @@ FILE: uintOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(1)] val div6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.div|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(0)] val div7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.div|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val floorDiv1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.floorDiv|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(1)] val floorDiv2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.floorDiv|(R|/twoVal|)
@@ -116,6 +124,8 @@ FILE: uintOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(0)] val rem6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UInt.rem|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(1)] val rem7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.rem|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(1)] val mod1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.mod|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val mod2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.mod|(R|/twoVal|)
@@ -136,6 +146,8 @@ FILE: uintOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(8)] val and4: R|kotlin/UInt| = UInt(12).R|kotlin/UInt.and|(UInt(10))
         public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val and5: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.and|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(3)] val or1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.or|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(2)] val or2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.or|(R|/twoVal|)
@@ -144,6 +156,8 @@ FILE: uintOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(14)] val or4: R|kotlin/UInt| = UInt(12).R|kotlin/UInt.or|(UInt(10))
         public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(3)] val or5: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.or|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(3)] val xor1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.xor|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val xor2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.xor|(R|/twoVal|)
@@ -151,6 +165,8 @@ FILE: uintOperations.kt
     public final const [EvaluatedValue=UInt(1)] val xor3: R|kotlin/UInt| = R|/threeVal|.R|kotlin/UInt.xor|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(6)] val xor4: R|kotlin/UInt| = UInt(12).R|kotlin/UInt.xor|(UInt(10))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(3)] val xor5: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.xor|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(4294967295)] val inv1: R|kotlin/UInt| = R|/zeroVal|.R|kotlin/UInt.inv|()
         public get(): R|kotlin/UInt|
@@ -168,6 +184,8 @@ FILE: uintOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(2147483648)] val shl6: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shl|(Int(63))
         public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(2)] val shl7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shl|(Int(1))
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val shr1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shr|(Int(1))
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(1)] val shr2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UInt.shr|(Int(1))
@@ -179,6 +197,8 @@ FILE: uintOperations.kt
     public final const [EvaluatedValue=UInt(1)] val shr5: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shr|(Int(32))
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val shr6: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shr|(Int(63))
+        public get(): R|kotlin/UInt|
+    public final const [EvaluatedValue=UInt(0)] val shr7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UInt.shr|(Int(1))
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UByte(1)] val convert1: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UInt.toUByte|()
         public get(): R|kotlin/UByte|
@@ -304,6 +324,12 @@ FILE: uintOperations.kt
         }
 
         when () {
+            !=(R|/plus7|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
+                ^box String(Fail plus7)
+            }
+        }
+
+        when () {
             !=(R|/minus1|.R|/id|<R|kotlin/UInt|>(), UInt(4294967295)) ->  {
                 ^box String(Fail minus1)
             }
@@ -336,6 +362,12 @@ FILE: uintOperations.kt
         when () {
             !=(R|/minus6|.R|/id|<R|kotlin/ULong|>(), ULong(0)) ->  {
                 ^box String(Fail minus6)
+            }
+        }
+
+        when () {
+            !=(R|/minus7|.R|/id|<R|kotlin/UInt|>(), UInt(4294967295)) ->  {
+                ^box String(Fail minus7)
             }
         }
 
@@ -376,6 +408,12 @@ FILE: uintOperations.kt
         }
 
         when () {
+            !=(R|/times7|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail times7)
+            }
+        }
+
+        when () {
             !=(R|/div1|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
                 ^box String(Fail div1)
             }
@@ -408,6 +446,12 @@ FILE: uintOperations.kt
         when () {
             !=(R|/div6|.R|/id|<R|kotlin/ULong|>(), ULong(1)) ->  {
                 ^box String(Fail div6)
+            }
+        }
+
+        when () {
+            !=(R|/div7|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail div7)
             }
         }
 
@@ -484,6 +528,12 @@ FILE: uintOperations.kt
         }
 
         when () {
+            !=(R|/rem7|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail rem7)
+            }
+        }
+
+        when () {
             !=(R|/mod1|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
                 ^box String(Fail mod1)
             }
@@ -544,6 +594,12 @@ FILE: uintOperations.kt
         }
 
         when () {
+            !=(R|/and5|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail and5)
+            }
+        }
+
+        when () {
             !=(R|/or1|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
                 ^box String(Fail or1)
             }
@@ -568,6 +624,12 @@ FILE: uintOperations.kt
         }
 
         when () {
+            !=(R|/or5|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
+                ^box String(Fail or5)
+            }
+        }
+
+        when () {
             !=(R|/xor1|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
                 ^box String(Fail xor1)
             }
@@ -588,6 +650,12 @@ FILE: uintOperations.kt
         when () {
             !=(R|/xor4|.R|/id|<R|kotlin/UInt|>(), UInt(6)) ->  {
                 ^box String(Fail xor4)
+            }
+        }
+
+        when () {
+            !=(R|/xor5|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
+                ^box String(Fail xor5)
             }
         }
 
@@ -640,6 +708,12 @@ FILE: uintOperations.kt
         }
 
         when () {
+            !=(R|/shl7|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail shl7)
+            }
+        }
+
+        when () {
             !=(R|/shr1|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
                 ^box String(Fail shr1)
             }
@@ -672,6 +746,12 @@ FILE: uintOperations.kt
         when () {
             !=(R|/shr6|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
                 ^box String(Fail shr6)
+            }
+        }
+
+        when () {
+            !=(R|/shr7|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail shr7)
             }
         }
 

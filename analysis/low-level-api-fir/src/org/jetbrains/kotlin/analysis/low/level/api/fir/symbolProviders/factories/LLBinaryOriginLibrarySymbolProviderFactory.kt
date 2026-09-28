@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
+import org.jetbrains.kotlin.library.metadata.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
@@ -42,7 +42,6 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.extension
 import kotlin.io.path.isDirectory
-import org.jetbrains.kotlin.util.Logger as KLogger
 
 /**
  * [LLLibrarySymbolProviderFactory] for [KotlinDeserializedDeclarationsOrigin.BINARIES][org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin.BINARIES].
@@ -177,25 +176,6 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
     }
 
     private val LOG = Logger.getInstance(LLBinaryOriginLibrarySymbolProviderFactory::class.java)
-
-    private object IntellijLogBasedLogger : KLogger {
-        override fun log(message: String) {
-            LOG.info(message)
-        }
-
-        override fun error(message: String) {
-            LOG.error(message)
-        }
-
-        override fun warning(message: String) {
-            LOG.warn(message)
-        }
-
-        @Deprecated(KLogger.FATAL_DEPRECATION_MESSAGE, ReplaceWith(KLogger.FATAL_REPLACEMENT))
-        override fun fatal(message: String): Nothing {
-            throw IllegalStateException(message)
-        }
-    }
 }
 
 /**

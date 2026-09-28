@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isRichError
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -37,6 +38,8 @@ import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -642,10 +645,40 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     FirTypeResolutionResult(ConeErrorType(ConeForbiddenIntersection), diagnostic = null)
                 }
             }
+            is FirUnionTypeRef -> {
+                val coneTypes = typeRef.types.mapTo(mutableListOf()) { it.coneType }
+
+                val firstType = coneTypes.first()
+                val primaryType = if (firstType.isNonRichError()) {
+                    coneTypes.removeAt(0)
+                    firstType.applyIf(typeRef.isMarkedNullable) {
+                        withNullability(true, session.typeContext)
+                    }
+                } else if (typeRef.isMarkedNullable) {
+                    session.builtinTypes.nullableNothingType.coneType
+                } else {
+                    session.builtinTypes.nothingType.coneType
+                }
+
+                val unionType = ConeTypeUnifier.unify(primaryType, coneTypes, ConeAttributes.Empty, session.typeContext)
+                FirTypeResolutionResult(
+                    if (coneTypes.any { it.isNonRichError() }) {
+                        ConeErrorType(ConeSimpleDiagnostic("Non-rich error component must appear first"), delegatedType = unionType)
+                    } else {
+                        unionType
+                    },
+                    null,
+                )
+            }
             else -> error(typeRef.render())
         }.also {
             session.lookupTracker?.recordTypeResolveAsLookup(it.type, typeRef.source, configuration.useSiteFile?.source)
         }
+    }
+
+    private fun ConeKotlinType.isNonRichError(): Boolean {
+        // TODO(KT-89098) check type parameter bounds here, too
+        return toClassLikeSymbol(session).let { it != null && !it.isRichError }
     }
 
     private fun TypeResolutionConfiguration.iterateScopesWithSubstitution(

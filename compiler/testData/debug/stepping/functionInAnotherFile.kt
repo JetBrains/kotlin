@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: ANY
+// IGNORE_BACKEND_MULTI_MODULE: ANY
 // FILE: foo.kt
 import bar
 fun foo(x: Int): Int {
@@ -21,7 +21,7 @@ fun bar(x: Int) =
         foo(x)
     }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:14 box
 // foo.kt:5 foo
 // foo.kt:8 foo

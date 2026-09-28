@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.abi.internal.AbiValidationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resources.RegisterMultiplatformRes
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.SetUpMultiplatformJvmResourcesPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.SetupKotlinArchiveAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.SetupRootPublicationAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.UklibConsumptionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UklibPublicationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeToolchainProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryPreparationSetupAction
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmBinaryTransformRegisteringSetupAction
+import org.jetbrains.kotlin.gradle.targets.web.npm.shared.PublishSharedPackageJsonSideEffect
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.RegisterIsAllGradleProjectsEvaluatedListener
 
@@ -105,6 +106,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, RegisterMultiplatformResourcesPublicationExtensionAction)
             register(project, SetUpMultiplatformJvmResourcesPublicationAction)
             register(project, SetUpMultiplatformAndroidAssetsAndResourcesPublicationAction)
+            register(project, SetupRootPublicationAction)
             register(project, SetUpSwiftExportAction)
             register(project, ConfigureKotlinTopLevelDependenciesDSL)
             register(project, SwiftImportSetupAction)
@@ -136,13 +138,13 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
         register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
         register(project, ConfigureJavaTestFixturesSideEffect)
-        if (useNonPackedKlibs) {
-            register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
-            register(project, CreateNonPackedKlibVariantsSideEffect)
-            register(project, ConfigureNonPackedKlibConsumingSideEffect)
-        }
+        register(project, MaybeAddWorkaroundForSecondaryVariantsBug)
+        register(project, CreateNonPackedKlibVariantsSideEffect)
+        register(project, ConfigureNonPackedKlibConsumingSideEffect)
         register(project, WasmBinaryPreparationSetupAction)
         register(project, ConfigureKotlinPlaywrightTestRunner)
+        register(project, PublishSharedPackageJsonSideEffect)
+
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
@@ -203,6 +205,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, DeprecatedNativeHostChecker)
             register(project, MultipleSourceSetRootsInCompilationChecker)
             register(project, SwiftExportModuleNameChecker)
+            register(project, SwiftExportDslDeprecationChecker)
             register(project, CinteropCrossCompilationChecker)
             register(project, NativeBinaryConfigurationChecker)
         }
@@ -217,5 +220,3 @@ private val Project.isMultiplatform get() = multiplatformExtensionOrNull != null
 private val Project.isJvm get() = kotlinJvmExtensionOrNull != null
 
 private val Project.isAndroid get() = kotlinExtension is KotlinAndroidProjectExtension
-
-private val Project.useNonPackedKlibs get() = kotlinPropertiesProvider.useNonPackedKlibs

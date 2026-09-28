@@ -268,7 +268,7 @@ object AbstractTypeMapper {
         arguments: List<TypeArgumentMarker>,
         parameters: List<TypeParameterMarker>,
         mode: TypeMappingMode,
-        mapType: (KotlinTypeMarker, JvmSignatureWriter, TypeMappingMode) -> Type
+        mapType: (KotlinTypeMarker, JvmSignatureWriter, TypeMappingMode) -> Unit
     ) {
         processGenericArguments(
             arguments,
@@ -350,7 +350,7 @@ object AbstractTypeMapper {
     fun TypeSystemCommonBackendContext.writeFormalTypeParameter(
         typeParameter: TypeParameterMarker,
         sw: JvmSignatureWriter,
-        mapType: (KotlinTypeMarker, TypeMappingMode) -> Type
+        mapType: (KotlinTypeMarker, TypeMappingMode) -> Unit
     ) {
         sw.writeFormalTypeParameter(typeParameter.getName().asString())
 

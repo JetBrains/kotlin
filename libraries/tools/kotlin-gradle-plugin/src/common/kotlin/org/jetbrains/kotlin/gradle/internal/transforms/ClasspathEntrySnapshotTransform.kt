@@ -60,9 +60,6 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
         internal abstract val suppressVersionInconsistencyChecks: Property<Boolean>
 
         @get:Input
-        abstract val parseInlinedLocalClasses: Property<Boolean>
-
-        @get:Input
         abstract val expandTypeAliases: Property<Boolean>
 
         @get:Internal
@@ -102,7 +99,6 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
             parameters.gradleUserHomeDir.get().asFile,
             parameters.gradleReadOnlyDependenciesCacheDir.orNull?.asFile
         )
-        val parseInlinedLocalClasses = parameters.parseInlinedLocalClasses.get()
         val expandTypeAliases = parameters.expandTypeAliases.get()
 
         val buildSession = parameters.buildSessionService.get().getOrCreateBuildSession(
@@ -114,7 +110,6 @@ internal abstract class ClasspathEntrySnapshotTransform : TransformAction<Classp
         val snapshotOperation = kotlinToolchains.jvm.classpathSnapshottingOperationBuilder(classpathEntryInputDirOrJar.toPath())
             .apply {
                 this[GRANULARITY] = granularity
-                this[PARSE_INLINED_LOCAL_CLASSES] = parseInlinedLocalClasses
 
                 if (supportsExpandTypeAliases()) {
                     this[EXPAND_TYPE_ALIASES] = expandTypeAliases

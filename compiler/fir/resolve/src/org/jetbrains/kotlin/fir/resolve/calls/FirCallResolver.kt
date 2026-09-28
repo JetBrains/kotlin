@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -84,15 +85,15 @@ class FirCallResolver(
     fun resolveCallAndSelectCandidate(
         functionCall: FirFunctionCall,
         resolutionMode: ResolutionMode,
-        collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
+        outerCandidateForCollectionLiteral: Candidate? = null,
     ): FirFunctionCall {
-        val isCollectionLiteralCall = collectionLiteralContext != null
+        val isCollectionLiteralCall = outerCandidateForCollectionLiteral != null
         val name = functionCall.calleeReference.name
         val result = collectCandidates(
             functionCall, name,
             origin = functionCall.origin,
             resolutionMode = resolutionMode,
-            collectionLiteralContext = collectionLiteralContext
+            outerCandidateForCollectionLiteral = outerCandidateForCollectionLiteral
         )
 
         var forceCandidates: Collection<Candidate>? = null
@@ -277,9 +278,17 @@ class FirCallResolver(
         collector: CandidateCollector? = null,
         callSite: FirElement = qualifiedAccess,
         resolutionMode: ResolutionMode,
-        collectionLiteralContext: CollectionLiteralOuterCandidateContext? = null,
+        outerCandidateForCollectionLiteral: Candidate? = null,
+        /**
+         * Might be `true` for CSR or CLs.
+         * Also, it seems like being always `true` doesn't change the semantics,
+         * but just helps to reuse TowerResolveManager/CandidateCollector.
+         *
+         * So, it's some sort of questionable performance optimization.
+         */
+        isNestedIntoOuterCallResolution: Boolean = outerCandidateForCollectionLiteral != null,
     ): ResolutionResult {
-        assert(collectionLiteralContext == null || forceCallKind == null) {
+        assert(outerCandidateForCollectionLiteral == null || forceCallKind == null) {
             "We only force call kind in cases we resolve incorrect variable access as though it was function call (or vice versa)," +
                     " it does not have sense for collection literal"
         }
@@ -292,7 +301,7 @@ class FirCallResolver(
 
         val callKind = when {
             forceCallKind != null -> forceCallKind
-            collectionLiteralContext != null -> CallKind.CollectionLiteral
+            outerCandidateForCollectionLiteral != null -> CallKind.CollectionLiteral
             qualifiedAccess is FirFunctionCall -> CallKind.Function
             else -> CallKind.VariableAccess
         }
@@ -311,18 +320,19 @@ class FirCallResolver(
             origin = origin,
             resolutionMode = resolutionMode,
             implicitInvokeMode = if (qualifiedAccess is FirImplicitInvokeCall) ImplicitInvokeMode.Regular else ImplicitInvokeMode.None,
-            containingCandidateForCollectionLiteral = collectionLiteralContext?.containingCandidate,
+            containingCandidateForCollectionLiteral = outerCandidateForCollectionLiteral,
         )
-        val resultCollector = if (collectionLiteralContext != null) {
-            // collection literals may be resolved during resolve of outer call, hence no resolve and fresh CandidateCollector instance
-            val collectorForCLCall = CandidateCollector(components, components.resolutionStageRunner)
-            val managerForCLCall = TowerResolveManager(collectorForCLCall)
+        val resultCollector = if (isNestedIntoOuterCallResolution) {
+            // Collection literals and CSR may be resolved during resolve of outer call,
+            // thus we use fresh instances instead of resetting.
+            val collectorForNestedCall = CandidateCollector(components, components.resolutionStageRunner)
+            val managerForNestedCall = TowerResolveManager(collectorForNestedCall)
 
             towerResolver.runResolver(
                 info,
                 resolutionContext,
-                collectorForCLCall,
-                managerForCLCall,
+                collectorForNestedCall,
+                managerForNestedCall,
             )
         } else {
             towerResolver.reset()
@@ -386,23 +396,14 @@ class FirCallResolver(
         isUsedAsGetClassReceiver: Boolean,
         callSite: FirElement,
         resolutionMode: ResolutionMode,
-    ): FirExpression {
-        return resolveVariableAccessAndSelectCandidateImpl(
-            qualifiedAccess,
-            isUsedAsReceiver,
-            resolutionMode,
-            isUsedAsGetClassReceiver,
-            callSite
-        ) { true }
-    }
-
-    private fun resolveVariableAccessAndSelectCandidateImpl(
-        qualifiedAccess: FirQualifiedAccessExpression,
-        isUsedAsReceiver: Boolean,
-        resolutionMode: ResolutionMode,
-        isUsedAsGetClassReceiver: Boolean,
-        callSite: FirElement = qualifiedAccess,
-        acceptCandidates: (Collection<Candidate>) -> Boolean,
+        /**
+         * Might be `true` for CSR.
+         * Also, it seems like being always `true` doesn't change the semantics,
+         * but just helps to reuse TowerResolveManager/CandidateCollector.
+         *
+         * So, it's some sort of questionable performance optimization.
+         */
+        isNestedIntoOuterCallResolution: Boolean = false,
     ): FirExpression {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
@@ -417,6 +418,7 @@ class FirCallResolver(
                 isUsedAsGetClassReceiver = isUsedAsGetClassReceiver,
                 callSite = callSite,
                 resolutionMode = resolutionMode,
+                isNestedIntoOuterCallResolution = isNestedIntoOuterCallResolution,
             )
         }
 
@@ -475,7 +477,11 @@ class FirCallResolver(
             // Don't report FUNCTION_CALL_EXPECTED in name-based destructuring, it's not helpful.
             qualifiedAccess.source?.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring
         ) {
-            val newResult = collectCandidates(qualifiedAccess, callee.name, CallKind.Function, resolutionMode = resolutionMode)
+            val newResult = collectCandidates(
+                qualifiedAccess, callee.name, CallKind.Function,
+                resolutionMode = resolutionMode,
+                isNestedIntoOuterCallResolution = isNestedIntoOuterCallResolution,
+            )
             if (newResult.candidates.isNotEmpty()) {
                 result = newResult
                 functionCallExpected = true
@@ -483,7 +489,6 @@ class FirCallResolver(
         }
 
         val reducedCandidates = result.candidates
-        if (!acceptCandidates(reducedCandidates)) return qualifiedAccess
 
         val nameReference = createResolvedNamedReference(
             callee,

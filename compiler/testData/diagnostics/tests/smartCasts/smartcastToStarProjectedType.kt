@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-42449
 
 data class NodePropertyDescriptor<TNode : Node, TProperty : Any, TPropertyVal : TProperty?>(

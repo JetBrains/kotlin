@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-3343 Type mismatch when function literal consists of try-catch with Int returning call, and Unit is expected
 
 fun main() {

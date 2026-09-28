@@ -131,6 +131,54 @@ open class Child: overrides.Parent {
             }
         }
     }
+    open override var subtypeValToVar: overrides.Child {
+        get {
+            if Self.self == overrides.Child.self {
+                return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeValToVar_get(self.__externalRCRef()))
+            } else {
+                return overrides.Child.__createClassWrapper(externalRCRef: Child_subtypeValToVar_get_direct(self.__externalRCRef()))
+            }
+        }
+        set {
+            if Self.self == overrides.Child.self {
+                return { Child_subtypeValToVar_set__TypesOfArguments__overrides_Child__(self.__externalRCRef(), newValue.__externalRCRef()); return () }()
+            } else {
+                return { Child_subtypeValToVar_set__TypesOfArguments__overrides_Child___direct(self.__externalRCRef(), newValue.__externalRCRef()); return () }()
+            }
+        }
+    }
+    open override var valToVar: Swift.Int32 {
+        get {
+            if Self.self == overrides.Child.self {
+                return Child_valToVar_get(self.__externalRCRef())
+            } else {
+                return Child_valToVar_get_direct(self.__externalRCRef())
+            }
+        }
+        set {
+            if Self.self == overrides.Child.self {
+                return { Child_valToVar_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
+            } else {
+                return { Child_valToVar_set__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), newValue); return () }()
+            }
+        }
+    }
+    open override var varToVar: Swift.Int32 {
+        get {
+            if Self.self == overrides.Child.self {
+                return Child_varToVar_get(self.__externalRCRef())
+            } else {
+                return Child_varToVar_get_direct(self.__externalRCRef())
+            }
+        }
+        set {
+            if Self.self == overrides.Child.self {
+                return { Child_varToVar_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
+            } else {
+                return { Child_varToVar_set__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), newValue); return () }()
+            }
+        }
+    }
     public init(
         value: Swift.Int32
     ) {
@@ -175,12 +223,6 @@ open class Child: overrides.Parent {
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
         { __root___Child_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_overrides_Parent_overrides_Parent__(__kt, nullable, poly.__externalRCRef(), nullablePoly.__externalRCRef()); return () }()
     }
-    public static func ==(
-        this: overrides.Child,
-        to: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(to: to)
-    }
     open override func actuallyOverride(
         nullable: Swift.Int32?,
         poly: overrides.Parent,
@@ -199,15 +241,6 @@ open class Child: overrides.Parent {
             return Child_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
         } else {
             return Child_contains__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), element)
-        }
-    }
-    open override func equals(
-        to: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        if Self.self == overrides.Child.self {
-            return Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
-        } else {
-            return Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
         }
     }
     public final override func finalOverrideFunc() -> Swift.Void {
@@ -423,9 +456,43 @@ open class Parent: KotlinRuntime.KotlinBase {
             }
         }
     }
+    open var subtypeValToVar: overrides.Parent {
+        get {
+            if Self.self == overrides.Parent.self {
+                return overrides.Parent.__createClassWrapper(externalRCRef: Parent_subtypeValToVar_get(self.__externalRCRef()))
+            } else {
+                return overrides.Parent.__createClassWrapper(externalRCRef: Parent_subtypeValToVar_get_direct(self.__externalRCRef()))
+            }
+        }
+    }
+    open var valToVar: Swift.Int32 {
+        get {
+            if Self.self == overrides.Parent.self {
+                return Parent_valToVar_get(self.__externalRCRef())
+            } else {
+                return Parent_valToVar_get_direct(self.__externalRCRef())
+            }
+        }
+    }
     public final var value: Swift.String {
         get {
             return Parent_value_get(self.__externalRCRef())
+        }
+    }
+    open var varToVar: Swift.Int32 {
+        get {
+            if Self.self == overrides.Parent.self {
+                return Parent_varToVar_get(self.__externalRCRef())
+            } else {
+                return Parent_varToVar_get_direct(self.__externalRCRef())
+            }
+        }
+        set {
+            if Self.self == overrides.Parent.self {
+                return { Parent_varToVar_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue); return () }()
+            } else {
+                return { Parent_varToVar_set__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), newValue); return () }()
+            }
         }
     }
     public init(
@@ -446,12 +513,6 @@ open class Parent: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: overrides.Parent,
-        to: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(to: to)
-    }
     open func actuallyOverride(
         nullable: Swift.Int32,
         poly: overrides.Child,
@@ -470,15 +531,6 @@ open class Parent: KotlinRuntime.KotlinBase {
             return Parent_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
         } else {
             return Parent_contains__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), element)
-        }
-    }
-    open func equals(
-        to: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        if Self.self == overrides.Parent.self {
-            return Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
-        } else {
-            return Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
         }
     }
     open func finalOverrideFunc() -> Swift.Void {
@@ -580,6 +632,66 @@ open class Parent: KotlinRuntime.KotlinBase {
         this.contains(element: element)
     }
 }
+open class RenamedInitBase: KotlinRuntime.KotlinBase {
+    public final var a: Swift.Int32 {
+        get {
+            return RenamedInitBase_a_get(self.__externalRCRef())
+        }
+    }
+    public init(
+        a: Swift.Int32
+    ) {
+         let __kt: Swift.UnsafeMutableRawPointer!
+         if Self.self == overrides.RenamedInitBase.self {
+             __kt = __root___RenamedInitBase_init_allocate()
+         } else {
+             __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+         }
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___RenamedInitBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+public final class RenamedInitDerived: overrides.RenamedInitBase {
+    public var b: Swift.Int32 {
+        get {
+            return RenamedInitDerived_b_get(self.__externalRCRef())
+        }
+    }
+    public init(
+        b: Swift.Int32
+    ) {
+        let __kt = __root___RenamedInitDerived_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___RenamedInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, b); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
+public final class SameInitDerived: overrides.RenamedInitBase {
+    public override init(
+        a: Swift.Int32
+    ) {
+        let __kt = __root___SameInitDerived_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+        { __root___SameInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, a); return () }()
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+    }
+}
 @_cdecl("AbstractBase_abstractFun1__reverse_swift")
 package func AbstractBase_abstractFun1__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = overrides.AbstractBase.__createClassWrapper(externalRCRef: `self`)!
@@ -619,13 +731,6 @@ package func Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int3
 package func Child_contains__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ element: Swift.Int32) -> Swift.Bool {
     let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Bool = _self.contains(element: element)
-    return _result
-}
-
-@_cdecl("Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
-package func Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ to: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.Bool = _self.equals(to: { switch to { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
@@ -734,6 +839,48 @@ package func Child_subtypeOptionalPrimitiveVar_get__reverse_swift(_ `self`: Swif
     return _result
 }
 
+@_cdecl("Child_subtypeValToVar_get__reverse_swift")
+package func Child_subtypeValToVar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)!
+    let _result: overrides.Child = _self.subtypeValToVar
+    return _result.__externalRCRef()
+}
+
+@_cdecl("Child_subtypeValToVar_set__TypesOfArguments__overrides_Child____reverse_swift")
+package func Child_subtypeValToVar_set__TypesOfArguments__overrides_Child____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = { _self.subtypeValToVar = overrides.Child.__createClassWrapper(externalRCRef: newValue) }()
+    return { _result; return true }()
+}
+
+@_cdecl("Child_valToVar_get__reverse_swift")
+package func Child_valToVar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.valToVar
+    return _result
+}
+
+@_cdecl("Child_valToVar_set__TypesOfArguments__Swift_Int32____reverse_swift")
+package func Child_valToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
+    let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = { _self.valToVar = newValue }()
+    return { _result; return true }()
+}
+
+@_cdecl("Child_varToVar_get__reverse_swift")
+package func Child_varToVar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.varToVar
+    return _result
+}
+
+@_cdecl("Child_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift")
+package func Child_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
+    let _self = overrides.Child.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = { _self.varToVar = newValue }()
+    return { _result; return true }()
+}
+
 @_cdecl("OpenDerived1_abstractFun1__reverse_swift")
 package func OpenDerived1_abstractFun1__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
     let _self = overrides.OpenDerived1.__createClassWrapper(externalRCRef: `self`)!
@@ -766,13 +913,6 @@ package func Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Ch
 package func Parent_contains__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ element: Swift.Int32) -> Swift.Bool {
     let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Bool = _self.contains(element: element)
-    return _result
-}
-
-@_cdecl("Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
-package func Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ to: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
-    let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)!
-    let _result: Swift.Bool = _self.equals(to: { switch to { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
     return _result
 }
 
@@ -900,4 +1040,32 @@ package func Parent_subtypeOptionalPrimitiveVar_get__reverse_swift(_ `self`: Swi
     let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.Optional<Swift.Int32> = _self.subtypeOptionalPrimitiveVar
     return _result.map { it in NSNumber(value: it) } ?? nil
+}
+
+@_cdecl("Parent_subtypeValToVar_get__reverse_swift")
+package func Parent_subtypeValToVar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)!
+    let _result: overrides.Parent = _self.subtypeValToVar
+    return _result.__externalRCRef()
+}
+
+@_cdecl("Parent_valToVar_get__reverse_swift")
+package func Parent_valToVar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.valToVar
+    return _result
+}
+
+@_cdecl("Parent_varToVar_get__reverse_swift")
+package func Parent_varToVar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Int32 = _self.varToVar
+    return _result
+}
+
+@_cdecl("Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift")
+package func Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ newValue: Swift.Int32) -> Swift.Bool {
+    let _self = overrides.Parent.__createClassWrapper(externalRCRef: `self`)!
+    let _result: Swift.Void = { _self.varToVar = newValue }()
+    return { _result; return true }()
 }

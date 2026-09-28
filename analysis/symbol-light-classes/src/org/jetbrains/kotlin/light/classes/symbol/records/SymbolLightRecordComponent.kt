@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.records
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.asPsiType
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -19,39 +20,42 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
-import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.analysis.api.javaInterop.KaSymbolJavaView
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.suppressWildcardMode
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.psi.KtParameter
 
+@OptIn(KaImplementationDetail::class)
 internal class SymbolLightRecordComponent private constructor(
-    private val parameterSymbolPointer: KaSymbolPointer<KaValueParameterSymbol>,
+    override val symbolPointer: KaSymbolPointer<KaValueParameterSymbol>,
     private val backingFieldSymbolPointer: KaSymbolPointer<KaBackingFieldSymbol>,
     parent: PsiElement,
     private val containingClass: SymbolLightClassBase,
     override val kotlinOrigin: KtParameter?,
-) : KtLightElementBase(parent), PsiRecordComponent, KtLightElement<KtParameter, PsiRecordComponent> {
+) : KtLightElementBase(parent), PsiRecordComponent, KtLightElement<KtParameter, PsiRecordComponent>,
+    KaSymbolJavaView<KaValueParameterSymbol> {
     internal constructor(
         parameterSymbol: KaValueParameterSymbol,
         backingFieldSymbol: KaBackingFieldSymbol,
         parent: PsiElement,
         containingClass: SymbolLightClassBase,
     ) : this(
-        parameterSymbolPointer = parameterSymbol.createPointer(),
+        symbolPointer = parameterSymbol.createPointer(),
         backingFieldSymbolPointer = backingFieldSymbol.createPointer(),
         parent = parent,
         containingClass = containingClass,
         kotlinOrigin = parameterSymbol.sourcePsiSafe(),
     )
 
-    private val kaModule: KaModule get() = containingClass.ktModule
+    override val useSiteModule: KaModule get() = containingClass.useSiteModule
 
     private inline fun <T> withParameterSymbol(crossinline action: context(KaSession) (KaValueParameterSymbol) -> T): T {
-        return parameterSymbolPointer.withSymbol(kaModule, action)
+        return symbolPointer.withSymbol(useSiteModule, action)
     }
 
     private val _name: String by lazyPub {
@@ -76,7 +80,7 @@ internal class SymbolLightRecordComponent private constructor(
         SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = SymbolAnnotationsProvider(ktModule = kaModule, annotatedSymbolPointer = backingFieldSymbolPointer),
+                annotationsProvider = SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = backingFieldSymbolPointer),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::typeNullability),
             ),
         )
@@ -124,17 +128,17 @@ internal class SymbolLightRecordComponent private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightRecordComponent || other.kaModule != kaModule) return false
+        if (other !is SymbolLightRecordComponent || other.useSiteModule != useSiteModule) return false
 
         if (kotlinOrigin != null || other.kotlinOrigin != null) {
             return kotlinOrigin == other.kotlinOrigin
         }
 
-        return compareSymbolPointers(parameterSymbolPointer, other.parameterSymbolPointer)
+        return compareSymbolPointers(symbolPointer, other.symbolPointer)
     }
 
     override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: _name.hashCode()
 
     override fun isValid(): Boolean =
-        super.isValid() && kotlinOrigin?.isValid() ?: parameterSymbolPointer.isValid(kaModule)
+        super.isValid() && kotlinOrigin?.isValid() ?: symbolPointer.isValid(useSiteModule)
 }

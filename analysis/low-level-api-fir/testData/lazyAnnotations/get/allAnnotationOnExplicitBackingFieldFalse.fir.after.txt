@@ -1,1 +1,1 @@
-@R|Another|[Types]() private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/collections/MutableList<kotlin/Int>|
+@R|Another|[Types]() private final? [ResolvedTo(TYPES)] backing field field: R|kotlin/collections/MutableList<kotlin/Int>|

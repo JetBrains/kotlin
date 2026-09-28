@@ -1,0 +1,20 @@
+KT element: KtConstantExpression
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] explicitBackingFieldInDestructuringDeclaration.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/Tuple.Tuple|()
+    public final [ResolvedTo(STATUS)] class Tuple : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Tuple] constructor(): R|Tuple| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }

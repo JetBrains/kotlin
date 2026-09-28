@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -70,7 +71,8 @@ public class KtAnnotation extends KtElementImplStub<KotlinPlaceHolderStub<KtAnno
             replaceWith = @ReplaceWith(
                     expression = "this.removeAnnotationEntry(entry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeAnnotationEntry"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void removeEntry(@NotNull KtAnnotationEntry entry) {

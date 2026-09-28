@@ -1,0 +1,26 @@
+KT element: KtDestructuringDeclaration
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|Point| = R|<local>/point|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassDestructuring.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Point.y] y: R|kotlin/String|): R|Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/String| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] point: R|Point|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval <destruct>: R|Point| = R|<local>/point|
+        [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/String| = R|<local>/<destruct>|.R|/Point.y|
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/<destruct>|.R|/Point.x|
+    }

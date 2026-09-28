@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 
 val list = ArrayList<String>()

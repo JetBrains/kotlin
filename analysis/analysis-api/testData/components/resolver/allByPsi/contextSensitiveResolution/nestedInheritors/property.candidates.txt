@@ -246,7 +246,7 @@ KtBlockExpression(366,534): '{'
   NO_CANDIDATES
 
 KtCallExpression(372,532): 'receiveMyClass('
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -280,10 +280,11 @@ KtCallExpression(372,532): 'receiveMyClass('
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(m: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -317,6 +318,7 @@ KtNameReferenceExpression(372,386): 'receiveMyClass'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(m: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(386,532): '('

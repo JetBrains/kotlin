@@ -86,7 +86,7 @@ class FirebaseCloudXCTestExecutor(
                 createZip(bundle.prepareToRun(projectDir))
             }
         } catch (throwable: Throwable) {
-            rememberedFailure.compareAndSet(
+            val _ = rememberedFailure.compareAndSet(
                 null,
                 IllegalStateException(
                     "Failed to prepare a XCTest bundle with Xcode. Check Xcode or project configuration",
@@ -105,7 +105,7 @@ class FirebaseCloudXCTestExecutor(
                 "firebase", "test", "ios", "run",
                 "--test=$testsZip",
                 "--no-record-video",
-                "--device=model=iphone16pro,version=18.3",
+                "--device=model=iphonese3,version=18.4",
                 "--client-details=matrixLabel=$description"
             ),
             stderr = stderr

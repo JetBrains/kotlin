@@ -11,6 +11,7 @@ fun copyCommonJsAndWasmCompilerArguments(from: CommonJsAndWasmCompilerArguments,
     copyCommonKlibBasedCompilerArguments(from, to)
 
     to.cacheDirectory = from.cacheDirectory
+    to.enableAdvancedOptimizations = from.enableAdvancedOptimizations
     to.friendModules = from.friendModules
     to.friendModulesDisabled = from.friendModulesDisabled
     to.generateDts = from.generateDts

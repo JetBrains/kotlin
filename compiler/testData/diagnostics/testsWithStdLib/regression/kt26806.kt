@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 const val myPi = kotlin.math.PI
 
 annotation class Anno(val d: Double)

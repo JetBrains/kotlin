@@ -24,6 +24,7 @@ HIGH:
   import kotlin.DslMarker
   import kotlin.Enum
   import kotlin.EqualityBound
+  import kotlin.ExperimentalCollectionLiteralsApi
   import kotlin.ExperimentalStdlibApi
   import kotlin.ExperimentalSubclassOptIn
   import kotlin.ExtensionFunctionType

@@ -1,8 +1,9 @@
 // WITH_STDLIB
 // WITH_REFLECT
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // FIR_DUMP
 // DUMP_IR
+// LANGUAGE: +DnnTypeForUnboundedReifiedTypeParameters
 
 // FILE: NoTarget.java
 import java.lang.annotation.*;

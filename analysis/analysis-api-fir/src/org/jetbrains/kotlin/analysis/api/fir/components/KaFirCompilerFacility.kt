@@ -15,13 +15,13 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compilation.*
 import org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragmentContextDeclarationCache
+import org.jetbrains.kotlin.analysis.api.fir.components.compilation.getNonLocalContainingOrThisDeclarationWithIrMetadata
 import org.jetbrains.kotlin.analysis.api.impl.base.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
@@ -94,7 +93,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.name.ClassId
@@ -155,7 +153,6 @@ private val USE_STDLIB_BUILD_OUTPUT: Boolean by lazy(LazyThreadSafetyMode.PUBLIC
 internal class KaFirCompilerFacility(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSessionComponent<KaFirSession>(), KaInternalsCompilerFacility, KaFirSessionComponent {
-    @OptIn(KaImplementationDetail::class)
     override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult = withPsiValidityAssertion(file) {
         val opts = options as KaBaseCompilationOptions
         return withPsiValidityAssertion(file) {
@@ -163,12 +160,10 @@ internal class KaFirCompilerFacility(
         }
     }
 
-    @OptIn(KaImplementationDetail::class)
     override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
         return KaBaseCompilationOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
     }
 
-    @OptIn(KaImplementationDetail::class)
     override fun modify(options: KaCompilationOptions, init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
         return (options as KaBaseCompilationOptions).modify(init)
     }
@@ -255,7 +250,7 @@ internal class KaFirCompilerFacility(
         val contextDeclarationCache = if (codeFragmentMappings != null) {
             // A code fragment may be moved to a different dangling file module, so here we cannot use the 'mainFile'
             val effectiveCodeFragment = chunks.values.last().mainFile as KtCodeFragment
-            val contextDeclaration = effectiveCodeFragment.context?.getNonLocalContainingOrThisDeclaration()
+            val contextDeclaration = effectiveCodeFragment.context?.getNonLocalContainingOrThisDeclarationWithIrMetadata()
             if (contextDeclaration != null) {
                 CodeFragmentContextDeclarationCache(
                     contextDeclaration,
@@ -1115,7 +1110,6 @@ internal class KaFirCompilerFacility(
         )
     }
 
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun computeAdditionalCodeFragmentMapping(descriptor: IrBasedDeclarationDescriptor<*>): KaCodeFragmentCapturedValue? {
         val owner = descriptor.owner
 

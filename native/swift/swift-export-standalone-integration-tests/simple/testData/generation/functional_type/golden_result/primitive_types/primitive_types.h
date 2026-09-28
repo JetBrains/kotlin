@@ -3,9 +3,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-int8_t __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__(int8_t (^block)(int8_t));
+int8_t primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__(void * pointerToClosure, int8_t _1);
 
-uint32_t __root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt32U29202D_U20Swift_UInt32__(uint32_t (^block)(uint32_t));
+uint32_t primitive_types_internal_functional_type_callee_SwiftU2EUInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32__(void * pointerToClosure, uint32_t _1);
+
+int8_t __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__(void * block);
+
+uint32_t __root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt32U29202D_U20Swift_UInt32__(void * block);
 
 void * __root___produce_block_with_byte_byte();
 

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 @file:OptIn(ExperimentalSubclassOptIn::class)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class ApiMarker

@@ -186,6 +186,7 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
             }
             task.disableClassloaderCacheForProcessors = project.disableClassloaderCacheForProcessors()
             task.classLoadersCacheSize = KaptProperties.getClassloadersCacheSize(project).get()
+            task.isolateProcessorsFromBuildClasspath.set(KaptProperties.isIsolateProcessorsFromBuildClasspath(project))
             task.javacOptions.set(getJavaOptions(task.defaultJavaSourceCompatibility))
         }
     }

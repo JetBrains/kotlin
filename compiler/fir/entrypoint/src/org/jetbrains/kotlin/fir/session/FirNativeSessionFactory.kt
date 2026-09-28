@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.scopes.impl.FirEnumEntriesSupport
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
+import org.jetbrains.kotlin.library.metadata.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.resolve.konan.platform.NativeDefaultImportsProvider
 
 @OptIn(SessionConfiguration::class)

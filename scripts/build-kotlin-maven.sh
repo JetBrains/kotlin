@@ -37,6 +37,7 @@ JAVA_HOME="${GRADLE_JAVA_HOME:-$JAVA_HOME}" ./gradlew \
   -Pversions.kotlin-native=$KOTLIN_NATIVE_VERSION \
   -Pteamcity=true \
   --no-daemon \
+  --no-build-cache \
   --info \
   publish publishToMavenLocal
 

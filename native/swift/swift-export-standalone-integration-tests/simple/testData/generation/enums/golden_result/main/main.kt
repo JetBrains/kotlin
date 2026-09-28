@@ -2,7 +2,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("EnumSimple_FIRST")
 public fun EnumSimple_FIRST(): kotlin.native.internal.NativePtr {

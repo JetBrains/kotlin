@@ -13,4 +13,5 @@ interface IncrementalDataProvider {
     val compiledPackageParts: Map<File, TranslationResultValue>
 
     val serializedIrFiles: Map<File, IrTranslationResultValue>
+    val serializedIrInlineFiles: Map<File, IrTranslationResultValue>
 }

@@ -38,7 +38,6 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
                 "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
                 "org.jetbrains.kotlin.gradle.ComposeKotlinGradlePluginApi",
-                "org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl",
                 "org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl",
                 "org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation",
                 "org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl",
@@ -47,31 +46,6 @@ kotlin {
         )
     }
 }
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_82,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_86,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_811,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_MIN,
-    GradlePluginVariant.GRADLE_96,
-)
-
-registerKotlinSourceForVersionRange(
-    GradlePluginVariant.GRADLE_86,
-    GradlePluginVariant.GRADLE_96,
-)
 
 binaryCompatibilityValidator {
     targets.configureEach {
@@ -129,6 +103,11 @@ val unpublishedCompilerRuntimeDependencies = listOf(
     ":wasm:wasm.config", // for k/js task
 )
 
+configurations.embedded.configure {
+    // excludes stdlib and other dependencies provided by Gradle runtime
+    excludeGradleCommonDependencies()
+}
+
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
@@ -150,6 +129,7 @@ dependencies {
     }
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
+    commonCompileOnly(project(":kotlin-gradle-plugin-idea-browser-debug"))
     commonCompileOnly(project(":compiler:build-tools:kotlin-build-tools-jdk-utils"))
     commonCompileOnly(libs.android.gradle.plugin.gradle.api) {
         overrideTargetJvmVersion(11)
@@ -205,14 +185,11 @@ dependencies {
 
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))
+    embedded(project(":kotlin-gradle-plugin-idea-browser-debug"))
     embedded(libs.intellij.asm) { isTransitive = false }
     embedded(commonDependency("com.google.code.gson:gson")) { isTransitive = false }
     embedded(libs.develocity.gradlePluginAdapter)
     embedded("org.jetbrains.kotlinx:kotlinx-serialization-json") {
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-common")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-        exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
         version {
             strictly(GradlePluginVariant.GRADLE_MIN.compatibleKotlinxJsonSerializationVersion)
         }

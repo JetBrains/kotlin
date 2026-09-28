@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun testInvoke() {
     operator fun Nothing.invoke(): Nothing = this
     todo()<!UNREACHABLE_CODE!>()<!>

@@ -15,6 +15,7 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
@@ -36,7 +37,7 @@ internal constructor(
     private val objects: ObjectFactory,
     execOps: ExecOperations,
 ) : KotlinTest(execOps),
-    RequiresNpmDependenciesTask {
+    RequiresNpmDependenciesTask, UsesKotlinToolingDiagnostics {
 
     @Input
     var environment = mutableMapOf<String, String>()
@@ -107,20 +108,6 @@ internal constructor(
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = testFramework!!.requiredNpmDependencies
-
-
-    @Deprecated("Use useMocha instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("useMocha()"), level = DeprecationLevel.ERROR)
-    fun useNodeJs() = useMocha()
-
-    @Deprecated("Use useMocha instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("useMocha(body)"), level = DeprecationLevel.ERROR)
-    fun useNodeJs(body: KotlinMocha.() -> Unit) = useMocha(body)
-
-    @Deprecated("Use useMocha instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("useMocha(fn)"), level = DeprecationLevel.ERROR)
-    fun useNodeJs(fn: Action<KotlinMocha>) {
-        useMocha {
-            fn.execute(this)
-        }
-    }
 
     fun useMocha() = useMocha {}
     fun useMocha(body: KotlinMocha.() -> Unit) =

@@ -1,0 +1,271 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassCustomEquals.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun equals([ResolvedTo(RAW_FIR)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun equals([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final? value [ResolvedTo(RAW_FIR)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] fun equals([ResolvedTo(COMPANION_GENERATION)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final? value [ResolvedTo(SUPER_TYPES)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] fun equals([ResolvedTo(SUPER_TYPES)] other: Any?): Boolean { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final? value [ResolvedTo(TYPES)] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.x] x: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Point.y] y: Int): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? open? override [ResolvedTo(TYPES)] fun equals([ResolvedTo(TYPES)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun hashCode(): Int { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public open override operator [ResolvedTo(STATUS)] fun equals([ResolvedTo(STATUS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public open override operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun equals([ResolvedTo(EXPECT_ACTUAL_MATCHING)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public open override operator [ResolvedTo(CONTRACTS)] fun equals([ResolvedTo(CONTRACTS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public open override operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun equals([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public open override operator [ResolvedTo(CONSTANT_EVALUATION)] fun equals([ResolvedTo(CONSTANT_EVALUATION)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public open override operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun equals([ResolvedTo(ANNOTATION_ARGUMENTS)] other: R|kotlin/Any?|): R|kotlin/Boolean| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassCustomEquals.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Point] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals (R|<local>/other| is R|pack/Point|) && ==(this@R|pack/Point|.R|pack/Point.x|, R|<local>/other|.R|pack/Point.x|)
+        }
+
+        public open override [ResolvedTo(STATUS)] fun hashCode(): R|kotlin/Int| { LAZY_BLOCK }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassCustomEquals.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.x] x: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Point.y] y: R|kotlin/Int|): R|pack/Point| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val y: R|kotlin/Int| = R|<local>/y|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Point] get(): R|kotlin/Int|
+
+        public open override operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals (R|<local>/other| is R|pack/Point|) && ==(this@R|pack/Point|.R|pack/Point.x|, R|<local>/other|.R|pack/Point.x|)
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int| {
+            ^hashCode this@R|pack/Point|.R|pack/Point.x|
+        }
+
+    }

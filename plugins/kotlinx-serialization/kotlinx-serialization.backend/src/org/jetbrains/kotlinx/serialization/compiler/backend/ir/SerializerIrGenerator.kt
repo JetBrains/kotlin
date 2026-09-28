@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.CallingConventions
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
@@ -640,6 +641,9 @@ open class SerializerIrGenerator(
             context: SerializationPluginContext,
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(irClass) ?: return
+            if (irClass.isFromPlugin()) {
+                irClass.copyTypeParameterBoundsFrom(serializableDesc)
+            }
             val generator = when {
                 serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(irClass, context)
                 serializableDesc.isInlineClass(treatCompatibleFullValueClassesAsInline = !context.platform.isJvm()) ->
@@ -653,6 +657,19 @@ open class SerializerIrGenerator(
             }
             irClass.addDefaultConstructorBodyIfAbsent(context)
             irClass.patchDeclarationParents(irClass.parent)
+        }
+
+        /**
+         * The frontend can't copy the bounds when it generates the serializer class, because they are not
+         * resolved yet at that point. Wasm erases type parameters to their bounds, so without them it emits
+         * an invalid call to the serializable class's constructor (KT-89275).
+         */
+        private fun IrClass.copyTypeParameterBoundsFrom(serializableIrClass: IrClass) {
+            for ([typeParameter, serializableTypeParameter] in typeParameters.zip(serializableIrClass.typeParameters)) {
+                typeParameter.superTypes = serializableTypeParameter.superTypes.memoryOptimizedMap {
+                    it.remapTypeParameters(serializableIrClass, this)
+                }
+            }
         }
     }
 }

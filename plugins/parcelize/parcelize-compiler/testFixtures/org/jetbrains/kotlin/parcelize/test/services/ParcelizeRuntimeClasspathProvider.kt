@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.parcelize.test.services
 
 import org.hamcrest.BaseDescription
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.PARCELIZE_COMPILER_PLUGIN_CLASSPATH
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeDirectives.ENABLE_PARCELIZE
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
@@ -116,8 +117,8 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
             .map { File(it) }
             .sortedBy { it.nameWithoutExtension }
 
-        val parcelizeRuntimeJars = System.getProperty("parcelizeRuntime.classpath")?.split(File.pathSeparator)?.map(::File)
-            ?: error("Unable to get a valid classpath from 'parcelizeRuntime.classpath' property")
+        val parcelizeRuntimeJars = System.getProperty(PARCELIZE_COMPILER_PLUGIN_CLASSPATH)?.split(File.pathSeparator)?.map(::File)
+            ?: error("Unable to get a valid classpath from '$PARCELIZE_COMPILER_PLUGIN_CLASSPATH' property")
 
         val tempDir = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("additionalClassFiles")
         tempDir

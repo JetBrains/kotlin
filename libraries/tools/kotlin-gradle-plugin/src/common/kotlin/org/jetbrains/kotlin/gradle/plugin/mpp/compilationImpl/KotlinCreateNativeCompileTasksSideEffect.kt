@@ -31,7 +31,6 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
     val project = compilation.project
     val extension = project.topLevelExtension
     val compilationInfo = KotlinCompilationInfo(compilation)
-    val isMetadataCompilation = compilationInfo.compilation is KotlinMetadataCompilation<*>
     val crossCompilationSharedData = compilation.crossCompilationSharedData
 
     val kotlinNativeCompile = project.registerTask<KotlinNativeCompile>(
@@ -82,8 +81,6 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
             .finalizeValueOnRead()
-        // for metadata tasks we should always provide unpackaged klib
-        task.produceUnpackagedKlib.set(isMetadataCompilation || project.kotlinPropertiesProvider.useNonPackedKlibs)
         task.separateKmpCompilation.convention(project.kotlinPropertiesProvider.separateKmpCompilation)
     }
 

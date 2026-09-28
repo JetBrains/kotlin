@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -FINAL_UPPER_BOUND
 
 fun <U : Unit> fork(task: () -> U) {}

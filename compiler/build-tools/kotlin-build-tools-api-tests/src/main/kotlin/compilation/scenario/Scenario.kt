@@ -30,6 +30,7 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
      * @param moduleName The name of the module.
      * @param dependencies (optional) The list of scenario modules that this module depends on. Defaults to an empty list.
      * @param snapshotConfig Snapshotter settings including granulairty and whether to enable snapshotting inlined classes.
+     * @param compileJavaSources (optional) Whether the Java sources of this module should also be compiled with the system Java compiler. Only supported for JVM modules. Defaults to `false`.
      * @param compilationConfigAction (optional) A function that can be used to modify the compilation configuration for this module.
      * @param icOptionsConfigAction (optional) A function that can be used to modify the incremental compilation configuration for this module.
      * @return The created scenario module in the compiled state.
@@ -38,10 +39,11 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
         moduleName: String,
         dependencies: List<ScenarioDependency> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
+        compileJavaSources: Boolean = false,
         compilationConfigAction: (B) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},
     ): ScenarioModule {
-        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction)
+        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction, compileJavaSources = compileJavaSources)
     }
 
     /**
@@ -56,6 +58,7 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
      * @param moduleName The name of the module.
      * @param dependencies (optional) The list of scenario modules that this module depends on. Defaults to an empty list.
      * @param snapshotConfig Snapshotter settings including granulairty and whether to enable snapshotting inlined classes.
+     * @param compileJavaSources (optional) Whether the Java sources of this module should also be compiled with the system Java compiler. Only supported for JVM modules. Defaults to `false`.
      * @param compilationConfigAction (optional) A function that can be used to modify the compilation configuration for this module.
      * @param icOptionsConfigAction (optional) A function that can be used to modify the incremental compilation configuration for this module.
      * @return The created scenario module in the compiled state.
@@ -64,10 +67,11 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
         moduleName: String,
         dependencies: List<ScenarioDependency> = emptyList(),
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
+        compileJavaSources: Boolean = false,
         compilationConfigAction: (B) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},
     ): ScenarioModule {
-        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction, true)
+        return createModule(dependencies, moduleName, snapshotConfig, compilationConfigAction, icOptionsConfigAction, true, compileJavaSources = compileJavaSources)
     }
 }
 
@@ -78,6 +82,7 @@ private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilati
     compilationConfigAction: (B) -> Unit,
     icOptionsConfigAction: (IC) -> Unit,
     tracked: Boolean = false,
+    compileJavaSources: Boolean = false,
 ): ScenarioModule {
     val moduleDependencies = mutableListOf<ScenarioModule>()
     val fileDependencies = mutableListOf<FileDependency>()
@@ -94,7 +99,13 @@ private fun <B : BaseCompilationOperation.Builder, IC : BaseIncrementalCompilati
     } + fileDependencies
 
     val module =
-        project.module(moduleName, transformedDependencies, snapshotConfig, moduleCompilationConfigAction = compilationConfigAction)
+        project.module(
+            moduleName,
+            transformedDependencies,
+            snapshotConfig,
+            compileJavaSources = compileJavaSources,
+            moduleCompilationConfigAction = compilationConfigAction
+        )
     return GlobalCompiledProjectsCache.getProjectFromCache(
         module,
         strategyConfig,

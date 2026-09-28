@@ -13,7 +13,6 @@ import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdErr
 import org.gradle.api.tasks.testing.TestOutputEvent.Destination.StdOut
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.api.tasks.testing.TestResult.ResultType.*
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internal.LogType
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
@@ -603,9 +602,4 @@ internal open class TCServiceMessagesClient(
 private fun DefaultTestOutputEventCompat(
     destination: TestOutputEvent.Destination,
     text: String,
-): DefaultTestOutputEvent = if (GradleVersion.current() < GradleVersion.version("8.12")) {
-    @Suppress("DEPRECATION")
-    DefaultTestOutputEvent(destination, text)
-} else {
-    DefaultTestOutputEvent(System.currentTimeMillis(), destination, text)
-}
+): DefaultTestOutputEvent = DefaultTestOutputEvent(System.currentTimeMillis(), destination, text)

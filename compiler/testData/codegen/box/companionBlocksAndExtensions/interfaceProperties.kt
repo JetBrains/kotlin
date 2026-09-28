@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: JVM
 // ^ interface properties on JVM must have @JvmField
 // WITH_STDLIB
 interface I {

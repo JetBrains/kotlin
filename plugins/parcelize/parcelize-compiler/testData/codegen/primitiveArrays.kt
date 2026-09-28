@@ -1,6 +1,6 @@
 // CURIOUS_ABOUT: writeToParcel, createFromParcel
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 /*
  * Serializing of short arrays is not properly supported in old frontend, so this
  *   test is on only for JVM IR backend

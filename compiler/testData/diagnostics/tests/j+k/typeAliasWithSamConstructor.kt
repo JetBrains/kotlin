@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: OnSubscribe.java
 public interface OnSubscribe<T> {
     void f();

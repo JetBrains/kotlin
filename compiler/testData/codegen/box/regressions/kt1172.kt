@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 // not sure if it's ok to change Object to Any
 
 // WITH_STDLIB

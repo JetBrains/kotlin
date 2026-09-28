@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.CompilationStage
+import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.bind
 
@@ -99,6 +100,7 @@ sealed class TestStepBuilder<InputArtifact, OutputArtifact, out FacadeStep>
         class NonGroupingStage<InputArtifact, InputArtifactKind>(
             artifactKind: InputArtifactKind,
             compilationStage: CompilationStage,
+            val stepPhase: TestPhase?,
         ) : HandlersStepBuilder<
                 InputArtifact,
                 InputArtifactKind,
@@ -108,7 +110,7 @@ sealed class TestStepBuilder<InputArtifact, OutputArtifact, out FacadeStep>
                 where InputArtifact : ResultingArtifact<InputArtifact>,
                       InputArtifactKind : TestArtifactKind<InputArtifact> {
             override fun createStep(handlers: List<AnalysisHandler<InputArtifact>>): TestStep.NonGroupingStep.HandlersStep<InputArtifact> {
-                return TestStep.NonGroupingStep.HandlersStep(artifactKind, handlers)
+                return TestStep.NonGroupingStep.HandlersStep(artifactKind, handlers, stepPhase)
             }
         }
 

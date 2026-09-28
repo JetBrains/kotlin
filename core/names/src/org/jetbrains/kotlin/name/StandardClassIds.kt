@@ -109,6 +109,7 @@ object StandardClassIds {
     val elementTypeByUnsignedArrayType = unsignedArrayTypeByElementType.inverseMap()
 
     val constantAllowedTypes = primitiveTypes + unsignedTypes + String
+    val allIntegerTypes = signedIntegerTypes + unsignedTypes
 
     val Continuation = "Continuation".coroutinesId()
     val CoroutineContext = "CoroutineContext".coroutinesId()
@@ -198,6 +199,8 @@ object StandardClassIds {
         val DslMarker = "DslMarker".baseId()
         val IntroducedAt = "IntroducedAt".baseId()
 
+        val NumericClass = "NumericClass".baseId()
+
         val LowPriorityInOverloadResolution = "LowPriorityInOverloadResolution".internalId()
 
         val ConsistentCopyVisibility = "ConsistentCopyVisibility".baseId()
@@ -283,6 +286,8 @@ object StandardClassIds {
             val equalityBound = Name.identifier("bound")
 
             val sinceKotlinVersion = Name.identifier("version")
+
+            val actualizations = Name.identifier("actualizations")
 
             val deprecatedMessage = Name.identifier("message")
             val deprecatedLevel = Name.identifier("level")

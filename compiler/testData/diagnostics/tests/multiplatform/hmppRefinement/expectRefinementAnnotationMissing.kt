@@ -1,6 +1,6 @@
 // LANGUAGE: +ExpectRefinement
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // MODULE: common1
 expect fun foo()

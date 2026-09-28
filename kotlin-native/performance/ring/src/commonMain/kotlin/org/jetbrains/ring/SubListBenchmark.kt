@@ -46,7 +46,8 @@ class SubList : SkipWhenBaseOnly() {
         bh.consume(getData(false) + getData(true))
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun concatenateManual(bh: Blackhole) {
         skipWhenBaseOnly()
         val list = ArrayList<Value>(2 * BENCHMARK_SIZE)

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class E

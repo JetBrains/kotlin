@@ -14,13 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependenc
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirMissingDependencyClassProxy.MissingTypeOrigin
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.correspondingProperty
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.utils.isData
-import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -32,7 +29,7 @@ import org.jetbrains.kotlin.name.Name
  * ```
  * foo { x -> ...}
  * ```
- * - explicit type of data class constructor parameter
+ * - explicit type of data / value class constructor parameter
  * ```
  * data class Foo(val x: Some)
  * ```
@@ -49,8 +46,8 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
                 val inlineStatus = containingDeclaration.inlineStatus
                 checkLambdaParameter(declaration, inlineStatus == InlineStatus.Inline || inlineStatus == InlineStatus.CrossInline)
             }
-            declaration.correspondingProperty != null && containingDeclaration.getContainingClassSymbol()?.isData == true -> {
-                checkDataClassParameter(declaration)
+            declaration.isParameterOfDataOrValueClass() -> {
+                checkDataOrValueClassParameter(declaration)
             }
         }
     }
@@ -74,7 +71,13 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkDataClassParameter(parameter: FirValueParameter) {
+    private fun checkDataOrValueClassParameter(parameter: FirValueParameter) {
         checkMissingDependencySuperTypes(parameter.returnTypeRef.coneType, parameter.source)
+    }
+
+    private fun FirValueParameter.isParameterOfDataOrValueClass(): Boolean {
+        if (correspondingProperty == null) return false
+        val containingClass = containingDeclarationSymbol.getContainingClassSymbol() ?: return false
+        return containingClass.isData || containingClass.isInlineOrValue
     }
 }

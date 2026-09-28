@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-41383
 
 // KT-41383: Impossible to use callable reference to extension function as default parameter value

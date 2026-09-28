@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 abstract class Base<T>(val x: T) {
     abstract fun foo(): T
 }

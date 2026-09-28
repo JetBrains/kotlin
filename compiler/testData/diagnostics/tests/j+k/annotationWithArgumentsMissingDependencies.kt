@@ -1,5 +1,5 @@
 // DISABLE_JAVA_FACADE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: A.java
 @missing.Ann(x = "")
 public class A {

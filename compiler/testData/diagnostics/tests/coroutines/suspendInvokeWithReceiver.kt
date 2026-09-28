@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T> r(x: suspend () -> T): T = null!!
 
 fun nonReproducer1(): String = r {

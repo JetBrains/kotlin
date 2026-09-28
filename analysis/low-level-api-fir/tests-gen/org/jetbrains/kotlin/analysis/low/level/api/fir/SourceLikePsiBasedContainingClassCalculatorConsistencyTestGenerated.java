@@ -113,6 +113,18 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueObject.kt")
+  public void testFullValueObject() {
+    run("fullValueObject.kt");
+  }
+
+  @Test
   @TestMetadata("genericClass.kt")
   public void testGenericClass() {
     run("genericClass.kt");

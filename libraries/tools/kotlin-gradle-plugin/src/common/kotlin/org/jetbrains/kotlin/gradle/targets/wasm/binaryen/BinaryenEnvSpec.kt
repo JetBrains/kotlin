@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.EnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
@@ -18,8 +17,6 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 /**
  * Specification for executing Binaryen, an optimization tool for wasm files.
  */
-@Suppress("DEPRECATION_ERROR")
-@ExperimentalWasmDsl
 abstract class BinaryenEnvSpec : EnvSpec<BinaryenEnv>() {
     /**
      * Specify Binaryen platform information, with name and architecture.

@@ -14,7 +14,9 @@ dependencies {
     api(project(":core:compiler.common"))
     api(project(":compiler:util"))
     api(project(":compiler:frontend.common"))
+    api(project(":core:deserialization.common"))
 
+    compileOnly(project(":kotlin-util-klib"))
     compileOnly(intellijCore())
     compileOnly(libs.guava)
     compileOnly(libs.intellij.fastutil)

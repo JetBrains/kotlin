@@ -25,6 +25,11 @@ object NativeDeclarationCheckers : DeclarationCheckers() {
             FirNativeObjCVariadicMethodOverrideChecker,
         )
 
+    override val propertyCheckers: Set<FirPropertyChecker>
+        get() = setOf(
+            FirNativeEagerInitializationChecker,
+        )
+
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
         get() = setOf(
             FirNativeObjCRefinementChecker,

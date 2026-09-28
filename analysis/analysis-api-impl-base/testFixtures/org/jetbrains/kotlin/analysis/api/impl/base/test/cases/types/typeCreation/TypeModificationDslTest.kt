@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.typeCreation
 
 import com.intellij.testFramework.TestDataPath
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.copy
@@ -23,7 +22,6 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.fail
 
-@OptIn(KaExperimentalApi::class)
 @TestMetadata("analysis/analysis-api/testData/types/typeCreation/byDsl")
 @TestDataPath($$"$PROJECT_ROOT")
 @Disabled("Only the concrete subclasses of 'AbstractTypeModificationDslTest' should run")

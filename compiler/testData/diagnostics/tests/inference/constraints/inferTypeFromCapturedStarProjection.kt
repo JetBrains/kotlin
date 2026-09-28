@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface Box<out R>
 fun <R> List<Box<R>>.choose(): Box<R>? = TODO()
 fun list(): List<Box<*>> = TODO()

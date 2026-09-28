@@ -5,7 +5,40 @@ and instructing it to check the changed files against rules defined in `code-rul
 
 ## Requirements for running locally
 
-Install Claude Code CLI and log in: https://code.claude.com/docs/en/quickstart.
+Install Claude Code CLI: https://code.claude.com/docs/en/quickstart.
+
+The tool runs Claude Code in [bare mode](#operation), which supports only API authentication.
+Logging in with a Claude subscription is not supported.
+The authentication can be provided in one of the following ways.
+
+### JetBrains Central CLI
+
+[JetBrains Central CLI](https://www.jetbrains.com/help/central-cli/quickstart.html) provides access to Claude
+with a JetBrains AI subscription. Install it and log in with `central login`.
+Then choose one of the two ways to [use it with Claude Code](https://www.jetbrains.com/help/central-cli/cli-agents.html):
+
+* Connect Claude Code to JetBrains Central permanently with `central add claude`.
+  This sets `apiKeyHelper` and `ANTHROPIC_BASE_URL` in `~/.claude/settings.json`, which the tool picks up,
+  so no additional configuration is needed.
+* Make the tool run Claude Code through JetBrains Central, like `central run claude -- ...`.
+  This doesn't change the Claude Code configuration, so it is preferable when you want to keep using Claude Code
+  in a different way otherwise, e.g. with a Claude subscription.
+  To enable it, set the `kotlin.autoCodeReview.useJetBrainsCentralCLI` Gradle property to the `central` binary
+  in `local.properties` in the repository root or in `~/.gradle/gradle.properties`:
+
+  ```properties
+  kotlin.autoCodeReview.useJetBrainsCentralCLI=central
+  ```
+
+  Use the full path to the binary if it isn't in `PATH`.
+
+### API key
+
+To use this authentication method, make sure that one of the following is defined:
+
+* `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN`, as an environment variable
+  or in the `env` section of `~/.claude/settings.json`;
+* `apiKeyHelper` in `~/.claude/settings.json`.
 
 ## Run locally
 
@@ -27,6 +60,21 @@ The report includes rule violations (if any) and some meta-information.
 If you run the tool from IntelliJ IDEA, the printed report link is clickable and opens the report in the IDE.
 Viewing the report in IntelliJ IDEA with Markdown preview enabled is the intended way of reading it:
 all the links to code and code rules are clickable and open the destinations in the IDE.
+
+## Run for a GitHub PR
+
+JetBrains employees can run the tool for a GitHub pull request
+by posting a comment with the text `/review` in the pull request.
+At the moment this is only supported for pull requests authored by JetBrains employees.
+
+If the requirements are met and the review is started, the comment gets a 🚀 reaction,
+and the response is posted to the PR after the review is finished.
+
+> [!NOTE]
+> The review might take 15 minutes or more.
+> If the response doesn't arrive, you can check the status manually in
+> [the build configuration](https://kotlinlang.teamcity.com/buildConfiguration/Kotlin_KotlinCloud_Dev_AutoCodeReview).
+> Look for builds for the PR branch — `refs/pull/<number>/head`.
 
 ## Run on CI
 

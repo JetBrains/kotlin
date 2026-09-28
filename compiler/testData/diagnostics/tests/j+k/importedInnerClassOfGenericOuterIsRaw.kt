@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // An inner class of a generic outer, named by its simple name from a class which neither encloses nor
 // inherits it. Nothing supplies `Outer`'s `T` there, so the reference is raw, as the qualified
 // `Outer.Inner` spelling is; javac reports `[rawtypes]` for both.

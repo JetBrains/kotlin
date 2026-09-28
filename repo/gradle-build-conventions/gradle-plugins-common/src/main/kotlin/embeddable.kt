@@ -20,7 +20,6 @@ val packagesToRelocate =
         "org.apache",
         "org.jdom",
         "org.picocontainer",
-        "org.jline",
         "org.fusesource",
         "net.jpountz",
         "one.util.streamex",

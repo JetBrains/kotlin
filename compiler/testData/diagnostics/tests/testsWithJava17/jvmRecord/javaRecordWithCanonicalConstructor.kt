@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: WithCompactCtor.java
 public record WithCompactCtor(String s) {

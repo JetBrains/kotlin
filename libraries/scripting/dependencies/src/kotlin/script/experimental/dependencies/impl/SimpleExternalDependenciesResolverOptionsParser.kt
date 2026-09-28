@@ -65,8 +65,14 @@ object SimpleExternalDependenciesResolverOptionsParser {
     operator fun invoke(
         vararg options: String,
         locationWithId: SourceCode.LocationWithId? = null
-    ): ResultWithDiagnostics<ExternalDependenciesResolver.Options> {
+    ): ResultWithDiagnostics<ExternalDependenciesResolver.Options> =
+        parseToMap(*options, locationWithId = locationWithId)
+            .onSuccess { makeExternalDependenciesResolverOptions(it).asSuccess() }
 
+    fun parseToMap(
+        vararg options: String,
+        locationWithId: SourceCode.LocationWithId? = null
+    ): ResultWithDiagnostics<Map<String, String>> {
         val map = mutableMapOf<String, String>()
 
         for (option in options) {
@@ -92,7 +98,7 @@ object SimpleExternalDependenciesResolverOptionsParser {
             }
         }
 
-        return makeExternalDependenciesResolverOptions(map).asSuccess()
+        return map.asSuccess()
     }
 }
 

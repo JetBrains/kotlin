@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class BaseMulti<out A, B>
 class SomeMultiDerived<out D>: BaseMulti<D, Any>()
 

@@ -5,12 +5,14 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(GrandChild::class, "9overrides10GrandChildC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(OpenDerived1::class, "9overrides12OpenDerived1C")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Parent::class, "9overrides6ParentC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(RenamedInitBase::class, "9overrides15RenamedInitBaseC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(RenamedInitDerived::class, "9overrides18RenamedInitDerivedC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(SameInitDerived::class, "9overrides15SameInitDerivedC")
 
 import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("AbstractBase_abstractFun1__reverse_swift")
 internal external fun AbstractBase_abstractFun1__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
@@ -72,17 +74,6 @@ internal external fun Child_contains__TypesOfArguments__Swift_Int32____reverse_s
 public fun Child_contains__TypesOfArguments__Swift_Int32____reverse(self: Child, element: Int): Boolean {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = Child_contains__TypesOfArguments__Swift_Int32____reverse_swift(__self, element)
-    return _result
-}
-
-@ImportedBridge("Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
-internal external fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean
-
-@BindReverseBridgeToMethod(Child::class, "equals")
-public fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: Child, to: kotlin.Any?): Boolean {
-    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __to = if (to == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(to)
-    val _result = Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __to)
     return _result
 }
 
@@ -239,6 +230,67 @@ public fun Child_subtypeOptionalPrimitiveVar_get__reverse(self: Child): Int {
     return _result
 }
 
+@ImportedBridge("Child_subtypeValToVar_get__reverse_swift")
+internal external fun Child_subtypeValToVar_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Child::class, "<get-subtypeValToVar>")
+public fun Child_subtypeValToVar_get__reverse(self: Child): Child {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Child_subtypeValToVar_get__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Child
+}
+
+@ImportedBridge("Child_subtypeValToVar_set__TypesOfArguments__overrides_Child____reverse_swift")
+internal external fun Child_subtypeValToVar_set__TypesOfArguments__overrides_Child____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean
+
+@BindReverseBridgeToMethod(Child::class, "<set-subtypeValToVar>")
+public fun Child_subtypeValToVar_set__TypesOfArguments__overrides_Child____reverse(self: Child, newValue: Child): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val __newValue = kotlin.native.internal.ref.createRetainedExternalRCRef(newValue)
+    val _result = Child_subtypeValToVar_set__TypesOfArguments__overrides_Child____reverse_swift(__self, __newValue)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("Child_valToVar_get__reverse_swift")
+internal external fun Child_valToVar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(Child::class, "<get-valToVar>")
+public fun Child_valToVar_get__reverse(self: Child): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Child_valToVar_get__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("Child_valToVar_set__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun Child_valToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean
+
+@BindReverseBridgeToMethod(Child::class, "<set-valToVar>")
+public fun Child_valToVar_set__TypesOfArguments__Swift_Int32____reverse(self: Child, newValue: Int): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Child_valToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(__self, newValue)
+    return run<Unit> { _result }
+}
+
+@ImportedBridge("Child_varToVar_get__reverse_swift")
+internal external fun Child_varToVar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(Child::class, "<get-varToVar>")
+public fun Child_varToVar_get__reverse(self: Child): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Child_varToVar_get__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("Child_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun Child_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean
+
+@BindReverseBridgeToMethod(Child::class, "<set-varToVar>")
+public fun Child_varToVar_set__TypesOfArguments__Swift_Int32____reverse(self: Child, newValue: Int): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Child_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(__self, newValue)
+    return run<Unit> { _result }
+}
+
 @ImportedBridge("OpenDerived1_abstractFun1__reverse_swift")
 internal external fun OpenDerived1_abstractFun1__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean
 
@@ -288,17 +340,6 @@ internal external fun Parent_contains__TypesOfArguments__Swift_Int32____reverse_
 public fun Parent_contains__TypesOfArguments__Swift_Int32____reverse(self: Parent, element: Int): Boolean {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
     val _result = Parent_contains__TypesOfArguments__Swift_Int32____reverse_swift(__self, element)
-    return _result
-}
-
-@ImportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")
-internal external fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean
-
-@BindReverseBridgeToMethod(Parent::class, "equals")
-public fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse(self: Parent, to: kotlin.Any?): Boolean {
-    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
-    val __to = if (to == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(to)
-    val _result = Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(__self, __to)
     return _result
 }
 
@@ -485,6 +526,46 @@ public fun Parent_subtypeOptionalPrimitiveVar_get__reverse(self: Parent): Int? {
     return if (_result == kotlin.native.internal.NativePtr.NULL) null else interpretObjCPointer<Int>(_result)
 }
 
+@ImportedBridge("Parent_subtypeValToVar_get__reverse_swift")
+internal external fun Parent_subtypeValToVar_get__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+
+@BindReverseBridgeToMethod(Parent::class, "<get-subtypeValToVar>")
+public fun Parent_subtypeValToVar_get__reverse(self: Parent): Parent {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Parent_subtypeValToVar_get__reverse_swift(__self)
+    return kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Parent
+}
+
+@ImportedBridge("Parent_valToVar_get__reverse_swift")
+internal external fun Parent_valToVar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(Parent::class, "<get-valToVar>")
+public fun Parent_valToVar_get__reverse(self: Parent): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Parent_valToVar_get__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("Parent_varToVar_get__reverse_swift")
+internal external fun Parent_varToVar_get__reverse_swift(self: kotlin.native.internal.NativePtr): Int
+
+@BindReverseBridgeToMethod(Parent::class, "<get-varToVar>")
+public fun Parent_varToVar_get__reverse(self: Parent): Int {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Parent_varToVar_get__reverse_swift(__self)
+    return _result
+}
+
+@ImportedBridge("Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift")
+internal external fun Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean
+
+@BindReverseBridgeToMethod(Parent::class, "<set-varToVar>")
+public fun Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse(self: Parent, newValue: Int): Unit {
+    val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val _result = Parent_varToVar_set__TypesOfArguments__Swift_Int32____reverse_swift(__self, newValue)
+    return run<Unit> { _result }
+}
+
 @ExportedBridge("AbstractBase_abstractFun1")
 public fun AbstractBase_abstractFun1(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as AbstractBase
@@ -546,22 +627,6 @@ public fun Child_contains__TypesOfArguments__Swift_Int32___direct(self: kotlin.n
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
     val __element = element
     val _result = run { __self.contains(__element) }
-    return _result
-}
-
-@ExportedBridge("Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
-    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
-    val _result = run { __self.equals(__to) }
-    return _result
-}
-
-@ExportedBridge("Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "equals")
-public fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
-    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
-    val _result = run { __self.equals(__to) }
     return _result
 }
 
@@ -790,6 +855,96 @@ public fun Child_subtypeOptionalPrimitiveVar_get_direct(self: kotlin.native.inte
     return _result
 }
 
+@ExportedBridge("Child_subtypeValToVar_get")
+public fun Child_subtypeValToVar_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val _result = run { __self.subtypeValToVar }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Child_subtypeValToVar_get_direct", nonVirtualTargetMethod = "<get-subtypeValToVar>")
+public fun Child_subtypeValToVar_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val _result = run { __self.subtypeValToVar }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Child_subtypeValToVar_set__TypesOfArguments__overrides_Child__")
+public fun Child_subtypeValToVar_set__TypesOfArguments__overrides_Child__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Child
+    val _result = run { __self.subtypeValToVar = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("Child_subtypeValToVar_set__TypesOfArguments__overrides_Child___direct", nonVirtualTargetMethod = "<set-subtypeValToVar>")
+public fun Child_subtypeValToVar_set__TypesOfArguments__overrides_Child___direct(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Child
+    val _result = run { __self.subtypeValToVar = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("Child_valToVar_get")
+public fun Child_valToVar_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val _result = run { __self.valToVar }
+    return _result
+}
+
+@ExportedBridge("Child_valToVar_get_direct", nonVirtualTargetMethod = "<get-valToVar>")
+public fun Child_valToVar_get_direct(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val _result = run { __self.valToVar }
+    return _result
+}
+
+@ExportedBridge("Child_valToVar_set__TypesOfArguments__Swift_Int32__")
+public fun Child_valToVar_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __newValue = newValue
+    val _result = run { __self.valToVar = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("Child_valToVar_set__TypesOfArguments__Swift_Int32___direct", nonVirtualTargetMethod = "<set-valToVar>")
+public fun Child_valToVar_set__TypesOfArguments__Swift_Int32___direct(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __newValue = newValue
+    val _result = run { __self.valToVar = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("Child_varToVar_get")
+public fun Child_varToVar_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val _result = run { __self.varToVar }
+    return _result
+}
+
+@ExportedBridge("Child_varToVar_get_direct", nonVirtualTargetMethod = "<get-varToVar>")
+public fun Child_varToVar_get_direct(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val _result = run { __self.varToVar }
+    return _result
+}
+
+@ExportedBridge("Child_varToVar_set__TypesOfArguments__Swift_Int32__")
+public fun Child_varToVar_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __newValue = newValue
+    val _result = run { __self.varToVar = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("Child_varToVar_set__TypesOfArguments__Swift_Int32___direct", nonVirtualTargetMethod = "<set-varToVar>")
+public fun Child_varToVar_set__TypesOfArguments__Swift_Int32___direct(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
+    val __newValue = newValue
+    val _result = run { __self.varToVar = __newValue }
+    return run { _result; true }
+}
+
 @ExportedBridge("GrandChild_finalOverrideHopFunc")
 public fun GrandChild_finalOverrideHopFunc(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GrandChild
@@ -886,22 +1041,6 @@ public fun Parent_contains__TypesOfArguments__Swift_Int32___direct(self: kotlin.
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val __element = element
     val _result = run { __self.contains(__element) }
-    return _result
-}
-
-@ExportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
-public fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
-    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
-    val _result = run { __self.equals(__to) }
-    return _result
-}
-
-@ExportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct", nonVirtualTargetMethod = "equals")
-public fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
-    val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
-    val _result = run { __self.equals(__to) }
     return _result
 }
 
@@ -1165,11 +1304,83 @@ public fun Parent_subtypeOptionalPrimitiveVar_get_direct(self: kotlin.native.int
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
+@ExportedBridge("Parent_subtypeValToVar_get")
+public fun Parent_subtypeValToVar_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val _result = run { __self.subtypeValToVar }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Parent_subtypeValToVar_get_direct", nonVirtualTargetMethod = "<get-subtypeValToVar>")
+public fun Parent_subtypeValToVar_get_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val _result = run { __self.subtypeValToVar }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("Parent_valToVar_get")
+public fun Parent_valToVar_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val _result = run { __self.valToVar }
+    return _result
+}
+
+@ExportedBridge("Parent_valToVar_get_direct", nonVirtualTargetMethod = "<get-valToVar>")
+public fun Parent_valToVar_get_direct(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val _result = run { __self.valToVar }
+    return _result
+}
+
 @ExportedBridge("Parent_value_get")
 public fun Parent_value_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val _result = run { __self.value }
     return _result.objcPtr()
+}
+
+@ExportedBridge("Parent_varToVar_get")
+public fun Parent_varToVar_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val _result = run { __self.varToVar }
+    return _result
+}
+
+@ExportedBridge("Parent_varToVar_get_direct", nonVirtualTargetMethod = "<get-varToVar>")
+public fun Parent_varToVar_get_direct(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val _result = run { __self.varToVar }
+    return _result
+}
+
+@ExportedBridge("Parent_varToVar_set__TypesOfArguments__Swift_Int32__")
+public fun Parent_varToVar_set__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val __newValue = newValue
+    val _result = run { __self.varToVar = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("Parent_varToVar_set__TypesOfArguments__Swift_Int32___direct", nonVirtualTargetMethod = "<set-varToVar>")
+public fun Parent_varToVar_set__TypesOfArguments__Swift_Int32___direct(self: kotlin.native.internal.NativePtr, newValue: Int): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
+    val __newValue = newValue
+    val _result = run { __self.varToVar = __newValue }
+    return run { _result; true }
+}
+
+@ExportedBridge("RenamedInitBase_a_get")
+public fun RenamedInitBase_a_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as RenamedInitBase
+    val _result = run { __self.a }
+    return _result
+}
+
+@ExportedBridge("RenamedInitDerived_b_get")
+public fun RenamedInitDerived_b_get(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as RenamedInitDerived
+    val _result = run { __self.b }
+    return _result
 }
 
 @ExportedBridge("__root___AbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
@@ -1280,5 +1491,47 @@ public fun __root___Parent_init_initialize__TypesOfArguments__Swift_UnsafeMutabl
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __value = interpretObjCPointer<kotlin.String>(value)
     val _result = run { kotlin.native.internal.initInstance(____kt, Parent(__value)) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___RenamedInitBase_init_allocate")
+public fun __root___RenamedInitBase_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<RenamedInitBase>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___RenamedInitBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+public fun __root___RenamedInitBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __a = a
+    val _result = run { kotlin.native.internal.initInstance(____kt, RenamedInitBase(__a)) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___RenamedInitDerived_init_allocate")
+public fun __root___RenamedInitDerived_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<RenamedInitDerived>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___RenamedInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+public fun __root___RenamedInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, b: Int): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __b = b
+    val _result = run { kotlin.native.internal.initInstance(____kt, RenamedInitDerived(__b)) }
+    return run { _result; true }
+}
+
+@ExportedBridge("__root___SameInitDerived_init_allocate")
+public fun __root___SameInitDerived_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<SameInitDerived>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___SameInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+public fun __root___SameInitDerived_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt: kotlin.native.internal.NativePtr, a: Int): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __a = a
+    val _result = run { kotlin.native.internal.initInstance(____kt, SameInitDerived(__a)) }
     return run { _result; true }
 }

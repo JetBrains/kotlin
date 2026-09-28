@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ImprovedExhaustivenessCheckForSubjectVariable24
 // ISSUE: KT-83903
 

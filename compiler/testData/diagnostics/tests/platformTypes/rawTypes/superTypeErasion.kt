@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: BaseOperation.java
 class BaseOperation<T extends Bar, L extends Foo<T>> {}

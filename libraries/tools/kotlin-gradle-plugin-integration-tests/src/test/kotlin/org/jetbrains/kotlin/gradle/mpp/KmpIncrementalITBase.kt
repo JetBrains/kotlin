@@ -10,8 +10,8 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
-import org.jetbrains.kotlin.testFederation.AffectedByBuildToolsApi
-import org.jetbrains.kotlin.testFederation.AffectedByCompilerInfrastructure
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerInfrastructure
 import java.nio.file.Path
 
 /**
@@ -19,8 +19,8 @@ import java.nio.file.Path
  *
  * Consider moving all general-purpose logic to `org.jetbrains.kotlin.gradle.testbase` package.
  */
-@AffectedByCompilerInfrastructure
-@AffectedByBuildToolsApi
+@MustRunOnChangesInCompilerInfrastructure
+@MustRunOnChangesInBuildToolsApi
 abstract class KmpIncrementalITBase : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions

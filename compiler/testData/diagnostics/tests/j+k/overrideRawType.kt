@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //FILE: Foo.java
 public class Foo<T extends CharSequence> {
 }

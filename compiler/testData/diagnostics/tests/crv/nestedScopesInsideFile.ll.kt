@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // KT-80708 firProvider.getFirCallableContainerFile difference for LL and Fir on local classes
 // LL_FIR_DIVERGENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 
 @file:MustUseReturnValues

@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.stubs
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 
 /**
  * This test is supposed to validate the source stubs output
  */
-@SmokeTest
+@MustRunAlways
 abstract class AbstractSourceStubsTest : AbstractStubsTest() {
     override val outputFileExtension: String get() = "stubs.txt"
     override val configurator: AnalysisApiTestConfigurator = LLSourceLikeTestConfigurator()

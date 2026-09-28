@@ -1,15 +1,15 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.lifetime.ModificationTrackerWithInvalidationReason
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaModulePlatformKind
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.platformKind
@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import java.lang.ref.WeakReference
 import java.util.concurrent.atomic.AtomicLongFieldUpdater
 import kotlin.time.TimeSource
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /**
@@ -86,7 +85,6 @@ abstract class LLFirSession(
      * For example, the UUID can be used to identify a session across multiple session structure files (see
      * [LLSessionStructureWriter][org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.structure.LLSessionStructureWriter]).
      */
-    @OptIn(ExperimentalUuidApi::class)
     val uuid: Uuid = Uuid.random()
 
     /**

@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ConeAtomWithCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.ConeContextSensitiveAlternativeForQualifierAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConeFunctionLikeAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceError
@@ -172,18 +174,19 @@ class FirDelegatedPropertyInferenceSession(
 
         resolutionContext.bodyResolveContext.withInferenceSession(DEFAULT) {
             val postponedAtomAnalyzer = object : ConstraintSystemCompleter.PostponedAtomAnalyzer {
-                override fun analyze(
-                    postponedResolvedAtom: ConePostponedResolvedAtom,
-                    withPCLASession: Boolean,
-                    precalculatedBoundsForCL: CollectionLiteralBounds?,
-                ) {
-                    callCompleter.createPostponedArgumentsAnalyzer(resolutionContext).analyze(
-                        parentSystem,
-                        postponedResolvedAtom,
-                        getCurrentCandidate(postponedResolvedAtom),
-                        withPCLASession,
-                        precalculatedBoundsForCL,
-                    )
+                override fun analyze(atom: ConeFunctionLikeAtom, withPCLASession: Boolean) {
+                    callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
+                        .analyze(parentSystem, atom, getCurrentCandidate(atom), withPCLASession)
+                }
+
+                override fun analyze(atom: ConeContextSensitiveAlternativeForQualifierAtom) {
+                    callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
+                        .analyze(atom, getCurrentCandidate(atom))
+                }
+
+                override fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<*>) {
+                    callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)
+                        .analyze(state, getCurrentCandidate(state.atom))
                 }
 
                 private fun getCurrentCandidate(postponedResolvedAtom: ConePostponedResolvedAtom): Candidate {

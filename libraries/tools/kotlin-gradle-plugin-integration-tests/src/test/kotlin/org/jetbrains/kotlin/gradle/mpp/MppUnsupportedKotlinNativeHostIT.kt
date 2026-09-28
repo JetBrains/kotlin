@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -29,7 +28,6 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
      */
     private val linuxArm64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=aarch64")
 
-    @OptIn(ExperimentalWasmDsl::class)
     @DisplayName("Build multiplatform project should not fail on unsupported native host platforms")
     @GradleTest
     fun testMultiplatformProjectOnUnsupportedHostPlatform(

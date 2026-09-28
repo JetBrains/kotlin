@@ -177,10 +177,6 @@ open class IrFileSerializer(
     private var isInsideInline: Boolean = false
     private var fileContainsInline = false
 
-    interface FileBackendSpecificMetadata {
-        fun toByteArray(): ByteArray
-    }
-
     sealed class XStatementOrExpression {
         abstract fun toByteArray(): ByteArray
 
@@ -299,10 +295,7 @@ open class IrFileSerializer(
             is IrVariableSymbol ->
                 BinarySymbolData.SymbolKind.VARIABLE_SYMBOL
             is IrValueParameterSymbol ->
-                if (symbol.descriptor is ReceiverParameterDescriptor) // TODO: we use descriptor here.
-                    BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL
-                else
-                    BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL
+                BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL
             is IrSimpleFunctionSymbol ->
                 BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
             is IrReturnableBlockSymbol ->
@@ -1475,7 +1468,6 @@ open class IrFileSerializer(
     open fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer): Boolean = false
     open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
-    open fun backendSpecificMetadata(irFile: IrFile): FileBackendSpecificMetadata? = null
 
     private fun skipIfPrivate(declaration: IrDeclaration) =
         settings.publicAbiOnly
@@ -1595,7 +1587,6 @@ open class IrFileSerializer(
             bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
-            backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
             fileEntries = with(protoIrFileEntryArray) {
                 if (isNotEmpty()) {
                     IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory()
@@ -1606,8 +1597,16 @@ open class IrFileSerializer(
         )
     }
 
-    fun serializeIrFileWithPreparedInlineFunctions(preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
+    fun serializeIrFileWithPreparedInlineFunctions(file: IrFile, preparedFunctions: List<IrSimpleFunction>): SerializedIrFile {
         val topLevelDeclarations = preparedFunctions.map { function ->
+            require(function.file == file) {
+                """
+                    |Given function is located in the incorrect file
+                    |FILE: ${file.render()}
+                    |FUNCTION:${function.render()}
+                """.trimMargin()
+            }
+
             inFile(function.file) {
                 val byteArray = serializeDeclaration(function, function.file).toByteArray()
                 val idSig = declarationTable.signatureByDeclaration(
@@ -1624,20 +1623,19 @@ open class IrFileSerializer(
         // Memoize all preprocessed functions in `ProtoFile.declarationIdList`.
         // This way it could be possible to quickly look up for a specific preprocessed function in a KLIB.
         val fileProto = ProtoFile.newBuilder()
-            .addAllFqName(serializeFqName(FqName.ROOT.asString()))
+            .addAllFqName(serializeFqName(file.packageFqName.asString()))
             .addAllDeclarationId(topLevelDeclarations.map { /* signature index */ it.id })
 
         return SerializedIrFile(
             fileData = fileProto.build().toByteArray(),
-            fqName = FqName.ROOT.asString(),
-            path = "",
+            fqName = file.packageFqName.asString(),
+            path = file.path,
             types = IrArrayWriter(protoTypeArray.byteArrays, useVarIntInDataArrays).writeIntoMemory(),
             signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             strings = IrStringWriter(protoStringArray, useVarIntInDataArrays).writeIntoMemory(),
             bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
             declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
             debugInfo = IrStringWriter(protoDebugInfoArray, useVarIntInDataArrays).writeIntoMemory(),
-            backendSpecificMetadata = null,
             fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }, useVarIntInDataArrays).writeIntoMemory(),
         )
     }

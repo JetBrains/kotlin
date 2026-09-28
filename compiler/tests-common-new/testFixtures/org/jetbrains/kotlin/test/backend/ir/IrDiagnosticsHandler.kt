@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
+import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
 import org.jetbrains.kotlin.test.backend.handlers.findByPath
@@ -16,7 +17,18 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.diagnosticCodeMetaInfos
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
-class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
+class IrDiagnosticsHandler(
+    testServices: TestServices,
+    private val diagnosticsDumpFileExtension: String = IR_DIAG,
+) : AbstractIrHandler(testServices) {
+    companion object {
+        const val IR_DIAG = ".ir.diag.txt"
+        const val LOWERED_IR_DIAG = ".lowered.ir.diag.txt"
+
+        val forLoweredIr: Constructor<IrDiagnosticsHandler>
+            get() = { IrDiagnosticsHandler(it, LOWERED_IR_DIAG) }
+    }
+
     private val globalMetadataInfoHandler: GlobalMetadataInfoHandler
         get() = testServices.globalMetadataInfoHandler
 
@@ -51,6 +63,6 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, ".ir.diag.txt")
+        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, diagnosticsDumpFileExtension)
     }
 }

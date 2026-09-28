@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplCompilerPluginRegistrar
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplEvaluator
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_EVAL_FUN_NAME
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.REPL_SNIPPET_RESULT_PROP_NAME
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
@@ -51,6 +50,7 @@ import java.io.PrintStream
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
+import kotlin.script.experimental.jvm.K2ReplEvaluator
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -106,7 +106,7 @@ open class AbstractReplViaApiDiagnosticsTest : AbstractKotlinCompilerTest() {
                 ::ReplConfigurator
             )
             facadeStep(::FirReplCompilerFacade)
-            namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST) {
+            namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST, stepPhase = null) {
                 useHandlers(::ReplCompilerDiagnosticsHandler)
             }
 
@@ -143,7 +143,7 @@ open class AbstractReplViaApiEvaluationTest : AbstractReplViaApiDiagnosticsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            namedHandlersStep("ReplEvaluationStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST) {
+            namedHandlersStep("ReplEvaluationStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST, stepPhase = null) {
                 useHandlers(::ReplRunViaApiChecker)
             }
         }

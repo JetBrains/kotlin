@@ -38,8 +38,8 @@ enum class KaptCliOption(
     val cliToolOption: CliToolOption? = null
 ) : AbstractCliOption {
     APT_MODE_OPTION(
-        "aptMode", "<apt|stubs|stubsAndApt|compile>",
-        "Annotation processing mode: only apt, only stub generation, both, or with the subsequent compilation",
+        "aptMode", "<apt|stubs|stubsAndApt>",
+        "Annotation processing mode: only apt, only stub generation, or both",
         cliToolOption = CliToolOption("-Kapt-mode", VALUE)
     ),
 
@@ -199,6 +199,13 @@ enum class KaptCliOption(
         "true | false",
         "Strip @Metadata annotations from stubs",
         cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
+    ),
+
+    ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH_OPTION(
+        "isolateProcessorsFromBuildClasspath",
+        "true | false",
+        "Hide the build process classpath from annotation processors, exposing only JDK classes",
+        cliToolOption = CliToolOption("-Kapt-isolate-processors-from-build-classpath", FLAG)
     ),
 
     STUB_GENERATION_SCHEME_OPTION(

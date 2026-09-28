@@ -1,0 +1,750 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.decompiler.psi.text
+
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
+import org.jetbrains.kotlin.analysis.internal.utils.buildIndentedText
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.render
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
+import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
+
+private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
+private const val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
+private const val DECOMPILED_CONTRACT_STUB = "contract { /* compiled contract */ }"
+
+internal fun buildDecompiledText(fileStub: KotlinFileStubImpl): String = buildIndentedText {
+    (fileStub.kind as? KotlinFileStubKind.Invalid)?.errorMessage?.let {
+        return it
+    }
+
+    appendLine("// IntelliJ API Decompiler stub source generated from a class file")
+    appendLine("// Implementation of methods is not available")
+    appendLine()
+
+    val packageFqName = fileStub.getPackageFqName()
+    if (!packageFqName.isRoot) {
+        append("package ")
+        appendLine(packageFqName.render())
+        appendLine()
+    }
+
+    // The visitor is declared as local to capture the pretty printer as a context
+    val visitor = object : KtVisitorVoid() {
+        private fun process(element: PsiElement?) {
+            element?.accept(this)
+        }
+
+        override fun visitClassOrObject(classOrObject: KtClassOrObject) {
+            printDeclarationModifierList(classOrObject.modifierList)
+            when (classOrObject) {
+                is KtObjectDeclaration -> append("object")
+                is KtClass -> when {
+                    classOrObject.isInterface() -> append("interface")
+                    else -> append("class")
+                }
+            }
+
+            withPrefix(" ") {
+                val name = classOrObject.name?.quoteIfNeeded()
+                if (classOrObject !is KtObjectDeclaration || !classOrObject.isCompanion() || name != "Companion") {
+                    append(name)
+                }
+            }
+
+            classOrObject.typeParameterList?.accept(this)
+            withPrefix(" ") { process(classOrObject.primaryConstructor) }
+            withPrefix(" : ") {
+                process(classOrObject.getSuperTypeList())
+            }
+
+            withPrefix(" ") { process(classOrObject.typeConstraintList) }
+            appendLine(" {")
+            withIndent {
+                val isEnumClass = classOrObject is KtClass && classOrObject.isEnum()
+                val declarationsAndCompanionBlocks = classOrObject.body?.declarationsAndCompanionBlocks.orEmpty()
+                val [enumEntries, members] = if (isEnumClass) {
+                    declarationsAndCompanionBlocks.partition { it is KtEnumEntry }
+                } else {
+                    emptyList<KtDeclaration>() to declarationsAndCompanionBlocks
+                }
+
+                withSuffix("\n") {
+                    appendBlocks(
+                        "\n\n",
+                        {
+                            if (isEnumClass) {
+                                appendCollection(enumEntries, separator = ",\n\n", postfix = ";") { process(it) }
+                            }
+                        },
+                        {
+                            appendCollection(members, separator = "\n\n", skipIfEmpty = true) { process(it) }
+                        }
+                    )
+                }
+            }
+            append('}')
+        }
+
+        override fun visitCompanionBlock(companionBlock: KtCompanionBlock) {
+            appendLine("companion {")
+            withIndent {
+                withSuffix("\n") {
+                    appendCollection(companionBlock.declarations, separator = "\n\n", skipIfEmpty = true) { process(it) }
+                }
+            }
+
+            append("}")
+        }
+
+        override fun visitEnumEntry(enumEntry: KtEnumEntry) {
+            printDeclarationModifierList(enumEntry.modifierList)
+            append(enumEntry.name?.quoteIfNeeded())
+        }
+
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            printDeclarationModifierList(function.modifierList)
+            append("fun ")
+            withSuffix(" ") { process(function.typeParameterList) }
+            withSuffix(".") {
+                function.receiverTypeReference?.let {
+                    printTypeReference(it, position = TypeReferencePosition.DECLARATION_RECEIVER)
+                }
+            }
+
+            append(function.name?.quoteIfNeeded())
+            function.valueParameterList?.accept(this)
+            withPrefix(": ") { process(function.typeReference) }
+
+            withPrefix(" ") { process(function.typeConstraintList) }
+
+            printBody(function)
+        }
+
+        fun printBody(declaration: KtDeclarationWithBody) {
+            if (!declaration.hasBody()) {
+                return
+            }
+
+            append(" { ")
+            if (declaration.mayHaveContract()) {
+                append(DECOMPILED_CONTRACT_STUB)
+                append("; ")
+            }
+
+            append(DECOMPILED_CODE_COMMENT)
+            append(" }")
+        }
+
+        override fun visitTypeAlias(typeAlias: KtTypeAlias) {
+            printDeclarationModifierList(typeAlias.modifierList)
+            append("typealias ")
+            append(typeAlias.name?.quoteIfNeeded())
+            typeAlias.typeParameterList?.accept(this)
+            withPrefix(" ") { process(typeAlias.typeConstraintList) }
+            withPrefix(" = ") { process(typeAlias.getTypeReference()) }
+        }
+
+        override fun visitConstructor(constructor: KtConstructor<*>) {
+            if (constructor is KtSecondaryConstructor) {
+                printDeclarationModifierList(constructor.modifierList)
+            } else {
+                // A primary constructor is printed on the same line as its class
+                withSuffix(" ") { process(constructor.modifierList) }
+            }
+
+            append("constructor")
+            constructor.valueParameterList?.accept(this)
+            if (constructor is KtSecondaryConstructor) {
+                append(" { ")
+                append(DECOMPILED_CODE_COMMENT)
+                append(" }")
+            }
+        }
+
+        override fun visitTypeParameter(parameter: KtTypeParameter) {
+            withSuffix(" ") { process(parameter.modifierList) }
+            append(parameter.name?.quoteIfNeeded())
+            withPrefix(" : ") { process(parameter.extendsBound) }
+        }
+
+        override fun visitTypeReference(typeReference: KtTypeReference) {
+            printTypeReference(typeReference, position = TypeReferencePosition.REGULAR)
+        }
+
+        fun printTypeReference(typeReference: KtTypeReference, position: TypeReferencePosition) {
+            val modifierList = typeReference.modifierList
+            val typeElement = typeReference.typeElement
+            val closeParenthesisIsRequired = when (position) {
+                TypeReferencePosition.REGULAR -> {
+                    withSuffix(" ") { process(modifierList) }
+                    false
+                }
+
+                TypeReferencePosition.CONTEXT_RECEIVER -> {
+                    val openParenthesisIsAdded = modifierList != null && hasPrinted {
+                        withPrefix("(") {
+                            withSuffix(" ") {
+                                printAnnotations(modifierList)
+                            }
+                        }
+                    }
+
+                    withSuffix(" ") {
+                        modifierList?.let { printModifiers(it) }
+                    }
+
+                    openParenthesisIsAdded
+                }
+
+                TypeReferencePosition.DECLARATION_RECEIVER -> {
+                    val annotationCallAmbiguityIsImpossible = typeElement is KtUserType ||
+                            typeElement is KtNullableType && typeElement.innerType is KtUserType && typeElement.modifierList == null
+
+                    val parenthesisIsAddedWithModifier = hasPrinted {
+                        withSuffix(" ") {
+                            withPrefix(if (annotationCallAmbiguityIsImpossible) "" else "(") {
+                                process(modifierList)
+                            }
+                        }
+                    } && !annotationCallAmbiguityIsImpossible
+
+                    val parenthesisIsRequired = when (typeElement) {
+                        is KtFunctionType, is KtIntersectionType -> true
+                        else -> false
+                    }
+
+                    if (!parenthesisIsAddedWithModifier && parenthesisIsRequired) {
+                        append("(")
+                    }
+
+                    parenthesisIsAddedWithModifier || parenthesisIsRequired
+                }
+                TypeReferencePosition.FUNCTION_TYPE_RECEIVER -> {
+                    val hasModifier = hasPrinted {
+                        withSuffix(" ") {
+                            withPrefix("(") {
+                                process(modifierList)
+                            }
+                        }
+                    }
+
+                    val parenthesisIsRequired = when (typeElement) {
+                        is KtFunctionType, is KtIntersectionType -> true
+                        else -> false
+                    }
+
+                    if (!hasModifier && parenthesisIsRequired) {
+                        append("(")
+                    }
+
+                    hasModifier || parenthesisIsRequired
+                }
+            }
+
+            printTypeElement(typeElement)
+            if (closeParenthesisIsRequired) {
+                append(")")
+            }
+        }
+
+        fun printTypeElement(typeElement: KtTypeElement?, printAbbreviatedType: Boolean = true) {
+            when (typeElement) {
+                null -> {}
+                is KtUserType -> {
+                    withSuffix(".") { printTypeElement(typeElement.qualifier) }
+                    append(typeElement.referencedName?.quoteIfNeeded())
+                    val args = typeElement.typeArguments
+                    appendCollection(args, prefix = "<", postfix = ">", skipIfEmpty = true) {
+                        appendBlocks(
+                            separator = " ",
+                            { it.projectionKind.token?.value?.let(::append) },
+                            { process(it.typeReference) }
+                        )
+                    }
+
+                    val stubImpl = typeElement.stub as? KotlinUserTypeStubImpl
+                    if (stubImpl?.upperBound != null) {
+                        append(' ')
+                        append(FLEXIBLE_TYPE_COMMENT)
+                    }
+                }
+                is KtFunctionType -> {
+                    withSuffix(" ") {
+                        appendCollection(
+                            typeElement.contextReceiversTypeReferences,
+                            prefix = "context(",
+                            postfix = ")",
+                            skipIfEmpty = true
+                        ) {
+                            printTypeReference(it, position = TypeReferencePosition.CONTEXT_RECEIVER)
+                        }
+                    }
+
+                    withSuffix(".") {
+                        typeElement.receiverTypeReference?.let {
+                            printTypeReference(it, position = TypeReferencePosition.FUNCTION_TYPE_RECEIVER)
+                        }
+                    }
+
+                    appendCollection(typeElement.parameters, prefix = "(", postfix = ")") { param ->
+                        withSuffix(": ") {
+                            param.name?.let(::append)
+                        }
+
+                        process(param.typeReference)
+                    }
+
+                    typeElement.returnTypeReference?.let { returnType ->
+                        append(" -> ")
+                        process(returnType)
+                    }
+                }
+
+                /**
+                 * Intersection type can be represented only as two simple [KtUserType]s yet,
+                 * but this is a future-proof implementation
+                 */
+                is KtIntersectionType -> {
+                    appendBlocks(
+                        separator = " & ",
+                        {
+                            typeElement.getLeftTypeRef()?.let {
+                                printTypeReference(it, position = TypeReferencePosition.FUNCTION_TYPE_RECEIVER)
+                            }
+                        },
+                        {
+                            typeElement.getRightTypeRef()?.let {
+                                printTypeReference(it, position = TypeReferencePosition.FUNCTION_TYPE_RECEIVER)
+                            }
+                        },
+                    )
+                }
+
+                is KtNullableType -> {
+                    val openParenthesisIsAdded = hasPrinted {
+                        withPrefix("(") {
+                            withSuffix(" ") {
+                                process(typeElement.modifierList)
+                            }
+                        }
+                    }
+
+                    val innerType = typeElement.innerType
+                    val openParenthesisIsRequired = innerType !is KtUserType
+                    val closeParenthesisIsRequired = openParenthesisIsAdded || openParenthesisIsRequired
+                    if (!openParenthesisIsAdded && openParenthesisIsRequired) {
+                        append('(')
+                    }
+
+                    printTypeElement(innerType, printAbbreviatedType = false)
+                    if (closeParenthesisIsRequired) {
+                        append(')')
+                    }
+
+                    append('?')
+                    printAbbreviatedType(innerType)
+                }
+                is KtDynamicType -> append("dynamic")
+                else -> errorWithAttachment("Unsupported type ${typeElement::class.simpleName}") {
+                    withPsiEntry("typeElement", typeElement)
+                }
+            }
+
+            if (printAbbreviatedType) {
+                printAbbreviatedType(typeElement)
+            }
+        }
+
+        fun printAbbreviatedType(typeElement: KtTypeElement?) {
+            val abbreviatedType = when (typeElement) {
+                is KtUserType -> (typeElement.stub as? KotlinUserTypeStubImpl)?.abbreviatedType
+                is KtFunctionType -> (typeElement.stub as? KotlinFunctionTypeStubImpl)?.abbreviatedType
+                else -> null
+            }
+
+            abbreviatedType?.let(::printAbbreviatedType)
+        }
+
+        fun printAbbreviatedType(type: KotlinTypeBean) {
+            append(" /* from: ")
+            printKotlinTypeBean(type)
+            append(" */")
+        }
+
+        fun printFqName(fqName: FqName) {
+            if (fqName.isRoot) return
+
+            withSuffix(".") { printFqName(fqName.parent()) }
+            append(fqName.shortName().asString().quoteIfNeeded())
+        }
+
+        fun printClassId(classId: ClassId) {
+            withSuffix(".") { printFqName(classId.packageFqName) }
+            printFqName(classId.relativeClassName)
+        }
+
+        fun printKotlinTypeBean(bean: KotlinTypeBean) {
+            when (bean) {
+                is KotlinClassTypeBean -> {
+                    printClassId(bean.classId)
+
+                    val arguments = bean.arguments
+                    appendCollection(arguments, prefix = "<", postfix = ">", skipIfEmpty = true) { arg ->
+                        appendBlocks(
+                            separator = " ",
+                            { arg.projectionKind.token?.value?.let(::append) },
+                            { arg.type?.let(::printKotlinTypeBean) },
+                        )
+                    }
+
+                    if (bean.nullable) {
+                        append("?")
+                    }
+
+                    val abbreviatedType = bean.abbreviatedType
+                    if (abbreviatedType != null) {
+                        printAbbreviatedType(abbreviatedType)
+                    }
+                }
+
+                is KotlinTypeParameterTypeBean -> {
+                    append(bean.typeParameterName.quoteIfNeeded())
+                    if (bean.nullable) {
+                        append("?")
+                    }
+
+                    if (bean.definitelyNotNull) {
+                        append(" & Any")
+                    }
+                }
+
+                is KotlinFlexibleTypeBean -> {
+                    printKotlinTypeBean(bean.lowerBound)
+                    append(" .. ")
+                    printKotlinTypeBean(bean.upperBound)
+                }
+            }
+        }
+
+        override fun visitProperty(property: KtProperty) {
+            printDeclarationModifierList(property.modifierList)
+
+            if (property.isVar) {
+                append("var ")
+            } else {
+                append("val ")
+            }
+
+            withSuffix(" ") { process(property.typeParameterList) }
+            withSuffix(".") {
+                property.receiverTypeReference?.let {
+                    printTypeReference(it, position = TypeReferencePosition.DECLARATION_RECEIVER)
+                }
+            }
+
+            append(property.name?.quoteIfNeeded())
+            withPrefix(": ") { process(property.typeReference) }
+            withPrefix(" ") { process(property.typeConstraintList) }
+
+            val hasInitializerOrDelegate = hasPrinted {
+                when {
+                    property.hasDelegate() -> append(" by ")
+                    property.hasInitializer() -> append(" = ")
+                }
+            }
+
+            if (hasInitializerOrDelegate) {
+                // A delegate has no stub to print from, unlike an initializer, whose value the metadata holds
+                if (property.hasDelegate()) {
+                    append(COMPILED_DEFAULT_INITIALIZER)
+                } else {
+                    process(property.initializer)
+                }
+            } else if (!property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+                append(" $DECOMPILED_CODE_COMMENT")
+            }
+
+            withIndent {
+                appendCollection(property.accessors, prefix = "\n", separator = "\n", skipIfEmpty = true) {
+                    process(it)
+                }
+            }
+        }
+
+        override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
+            printDeclarationModifierList(accessor.modifierList)
+            if (accessor.isGetter) {
+                append("get")
+            } else {
+                append("set")
+            }
+
+            accessor.parameterList?.accept(this)
+            withPrefix(": ") { process(accessor.typeReference) }
+            printBody(accessor)
+        }
+
+        override fun visitParameterList(list: KtParameterList) {
+            val parameters = list.parameters
+
+            // A folded parameter also carries the modifiers, annotations and initializer of the property it declares,
+            // so it is laid out the way that property would have been laid out in the class body
+            if (parameters.none(KtParameter::hasValOrVar)) {
+                appendCollection(parameters, prefix = "(", postfix = ")") { process(it) }
+                return
+            }
+
+            appendLine("(")
+            withIndent {
+                appendCollection(parameters, separator = "\n") {
+                    process(it)
+                    appendLine(",")
+                }
+            }
+
+            append(")")
+        }
+
+        override fun visitParameter(parameter: KtParameter) {
+            if (parameter.hasValOrVar()) {
+                printDeclarationModifierList(parameter.modifierList)
+                append(if (parameter.isMutable) "var " else "val ")
+            } else {
+                withSuffix(" ") { process(parameter.modifierList) }
+            }
+
+            append(parameter.name?.quoteIfNeeded())
+            append(": ")
+            parameter.typeReference?.accept(this)
+            if (parameter.hasDefaultValue()) {
+                withPrefix(" = ") { process(parameter.defaultValue) }
+            }
+        }
+
+        override fun visitTypeParameterList(list: KtTypeParameterList) {
+            appendCollection(list.parameters, prefix = "<", postfix = ">") {
+                process(it)
+            }
+        }
+
+        override fun visitTypeConstraintList(list: KtTypeConstraintList) {
+            append("where ")
+            appendCollection(list.constraints, separator = ", ") {
+                process(it)
+            }
+        }
+
+        override fun visitTypeConstraint(constraint: KtTypeConstraint) {
+            // There is no need to print annotations as they are prohibited in type constraints
+
+            constraint.subjectTypeParameterName?.accept(this)
+            append(" : ")
+            constraint.boundTypeReference?.accept(this)
+        }
+
+        override fun visitModifierList(list: KtModifierList) {
+            appendBlocks(
+                separator = " ",
+                { printAnnotations(list) },
+                { process(list.contextParameterList) },
+                { printModifiers(list) },
+            )
+        }
+
+        /**
+         * Prints the modifier list of a declaration, unlike [visitModifierList] which is also used for types.
+         *
+         * Annotations are printed one per line: a compiled declaration may have a lot of them, and their arguments
+         * are rendered with fully qualified names, so keeping everything on a single line makes the declaration
+         * itself hard to spot.
+         */
+        fun printDeclarationModifierList(list: KtModifierList?) {
+            if (list == null) return
+
+            withSuffix("\n") {
+                appendBlocks(
+                    separator = "\n",
+                    { printAnnotations(list, separator = "\n") },
+                    { process(list.contextParameterList) },
+                )
+            }
+
+            withSuffix(" ") { printModifiers(list) }
+        }
+
+        override fun visitContextParameterList(contextParameterList: KtContextParameterList) {
+            val contextElements = contextParameterList.contextParameters.ifEmpty {
+                contextParameterList.contextReceivers()
+            }
+
+            appendCollection(contextElements, prefix = "context(", postfix = ")") {
+                process(it)
+            }
+        }
+
+        override fun visitContextReceiver(contextReceiver: KtContextReceiver) {
+            contextReceiver.typeReference()?.let {
+                printTypeReference(it, position = TypeReferencePosition.CONTEXT_RECEIVER)
+            }
+        }
+
+        override fun visitReferenceExpression(expression: KtReferenceExpression) {
+            if (expression is KtSimpleNameExpression) {
+                append(expression.getReferencedName().quoteIfNeeded())
+            } else {
+                visitElement(expression)
+            }
+        }
+
+        fun printAnnotations(container: KtAnnotationsContainer, separator: String = " ") {
+            appendCollection(container.annotationEntries, separator = separator, skipIfEmpty = true) {
+                process(it)
+            }
+        }
+
+        override fun visitSuperTypeList(list: KtSuperTypeList) {
+            appendCollection(list.entries) {
+                process(it)
+            }
+        }
+
+        override fun visitSuperTypeListEntry(specifier: KtSuperTypeListEntry) {
+            specifier.typeReference?.accept(this)
+        }
+
+        override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
+            append('@')
+            annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget()?.let {
+                append(it.renderName)
+                append(':')
+            }
+
+            annotationEntry.typeReference?.accept(this)
+            process(annotationEntry.valueArgumentList)
+        }
+
+        override fun visitValueArgumentList(list: KtValueArgumentList) {
+            appendCollection(list.arguments, prefix = "(", postfix = ")") {
+                process(it)
+            }
+        }
+
+        override fun visitArgument(argument: KtValueArgument) {
+            withSuffix(" = ") { process(argument.getArgumentName()?.referenceExpression) }
+            process(argument.getArgumentExpression())
+        }
+
+        override fun visitTypeArgumentList(typeArgumentList: KtTypeArgumentList) {
+            appendCollection(typeArgumentList.arguments, prefix = "<", postfix = ">") {
+                appendBlocks(
+                    separator = " ",
+                    { it.projectionKind.token?.value?.let(::append) },
+                    { process(it.typeReference) },
+                )
+            }
+        }
+
+        override fun visitConstantExpression(expression: KtConstantExpression) {
+            append(expression.text)
+        }
+
+        override fun visitStringTemplateExpression(expression: KtStringTemplateExpression) {
+            append('"')
+            for (entry in expression.entries) {
+                append(entry.text)
+            }
+
+            append('"')
+        }
+
+        override fun visitPrefixExpression(expression: KtPrefixExpression) {
+            append(expression.operationReference.getReferencedName())
+            process(expression.baseExpression)
+        }
+
+        override fun visitBinaryExpression(expression: KtBinaryExpression) {
+            process(expression.left)
+            append(' ')
+            append(expression.operationReference.getReferencedName())
+            append(' ')
+            process(expression.right)
+        }
+
+        override fun visitParenthesizedExpression(expression: KtParenthesizedExpression) {
+            append('(')
+            process(expression.expression)
+            append(')')
+        }
+
+        override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
+            process(expression.receiverExpression)
+            append('.')
+            process(expression.selectorExpression)
+        }
+
+        override fun visitCallExpression(expression: KtCallExpression) {
+            process(expression.calleeExpression)
+            process(expression.typeArgumentList)
+            process(expression.valueArgumentList)
+        }
+
+        override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {
+            process(expression.receiverExpression)
+            append("::class")
+        }
+
+        override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression) {
+            appendCollection(expression.getInnerExpressions(), prefix = "[", postfix = "]") {
+                process(it)
+            }
+        }
+
+        override fun visitElement(element: PsiElement) {
+            append("/* !${element::class.simpleName}! */")
+            super.visitElement(element)
+        }
+
+        fun printModifiers(list: KtModifierList) {
+            val stub = list.stub as? KotlinModifierListStubImpl ?: return
+            if (!stub.hasAnyModifier()) return
+
+            var hadValue = false
+            for (modifier in KtTokens.MODIFIER_KEYWORDS_ARRAY) {
+                if (!stub.hasModifier(modifier)) continue
+                if (hadValue) {
+                    append(" ")
+                } else {
+                    hadValue = true
+                }
+
+                append(modifier.value)
+            }
+        }
+    }
+
+    // Psi for files is not guaranteed to present as it has to be set explicitly (see PsiFileStubImpl)
+    // On the other side, declarations build psi on demand, so they can be used directly to simplify the logic
+    val declarations = fileStub.getChildrenByType(KtFile.FILE_DECLARATION_TYPES, KtDeclaration.ARRAY_FACTORY).asList()
+    appendCollection(declarations, separator = "\n\n", postfix = "\n", skipIfEmpty = true) {
+        it.accept(visitor)
+    }
+}
+
+private enum class TypeReferencePosition {
+    REGULAR,
+    DECLARATION_RECEIVER,
+    FUNCTION_TYPE_RECEIVER,
+    CONTEXT_RECEIVER,
+    ;
+}

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // WITH_STDLIB
 
 // Note: this test passes in FIR but fails in FE 1.0 + IR

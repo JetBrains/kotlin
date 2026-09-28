@@ -117,7 +117,9 @@ fun Project.fixIntersectedSourceRootsAndSamples(
 
         // The order of source links is important
         // source links to temporary directories should have higher priority
-        //sourceSet.sourceLinks.set(sourceSet.sourceLinks.get().reversed())
+        val reversedSourceLinks = sourceSet.sourceLinks.reversed()
+        sourceSet.sourceLinks.clear()
+        sourceSet.sourceLinks.addAll(reversedSourceLinks)
 
         // work with files
         (getTasksByName("dokkaGenerateModuleHtml", false) + getTasksByName("dokkaGeneratePublicationHtml", false)).forEach {

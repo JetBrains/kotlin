@@ -9,6 +9,14 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 interface PostponedResolvedAtomMarker {
+    val expectedType: KotlinTypeMarker?
+    val analyzed: Boolean
+}
+
+/**
+ * A postponed atom for a lambda or a callable reference
+ */
+interface FunctionLikeAtomMarker : PostponedResolvedAtomMarker {
     /**
      * Generally, it's a collection of types that need to be "proper" to start the analysis of the atom (unless PCLA).
      * Used mostly to define if the atom is ready and to define the order among other atoms.
@@ -27,11 +35,13 @@ interface PostponedResolvedAtomMarker {
      * Might be `null` if the return type is unknown or irrelevant.
      */
     val outputType: KotlinTypeMarker?
-    val expectedType: KotlinTypeMarker?
-    val analyzed: Boolean
 }
 
-interface CollectionLiteralAtomMarker : PostponedResolvedAtomMarker
+/**
+ * A postponed atom whose resolution uses an expected type as an implicit static receiver:
+ * collection literals, context-sensitive resolution.
+ */
+interface ExpectedTypeAsStaticReceiverAtomMarker : PostponedResolvedAtomMarker
 
 // TODO: Merge with PostponedAtomWithRevisableExpectedType once K1 is dropped (KT-88318)
 interface PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables : PostponedAtomWithRevisableExpectedType {
@@ -39,7 +49,7 @@ interface PostponedAtomWithRevisableExpectedTypeAndRegisteredTypeVariables : Pos
     fun addRegisteredTypeVariables(typeVariables: Collection<TypeVariableMarker>)
 }
 
-interface PostponedAtomWithRevisableExpectedType : PostponedResolvedAtomMarker {
+interface PostponedAtomWithRevisableExpectedType : FunctionLikeAtomMarker {
     val revisedExpectedType: KotlinTypeMarker?
 
     fun reviseExpectedType(expectedType: KotlinTypeMarker)

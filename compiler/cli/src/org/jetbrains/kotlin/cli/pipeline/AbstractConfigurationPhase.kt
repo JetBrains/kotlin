@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.classloadersCache
 import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.config.phaser.Action
+import org.jetbrains.kotlin.diagnostics.FallbackDiagnostics
 import org.jetbrains.kotlin.ir.validation.IrValidationDiagnostics
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -57,6 +58,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             CommonBackendErrors,
             SerializationErrors,
             IrValidationDiagnostics,
+            FallbackDiagnostics,
         )
 
         for (filler in configurationUpdaters) {
@@ -79,8 +81,6 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
         printVersion = arguments.version
         // TODO(KT-73711): move script-related configuration to JVM CLI
         scriptMode = arguments.script
-        @Suppress("DEPRECATION")
-        replMode = arguments.repl
         setupCommonArguments(arguments, ::createMetadataVersion)
         val paths = computeKotlinPaths(this, arguments)?.also {
             kotlinPaths = it

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FIR_DUMP
 
 fun jso(block: dynamic.() -> Unit): dynamic = js("({})").apply(block)

@@ -62,4 +62,8 @@ internal class FirVariableAssignmentImpl(
     override fun replaceLValue(newLValue: FirExpression) {
         lValue = newLValue
     }
+
+    override fun replaceRValue(newRValue: FirExpression) {
+        rValue = newRValue
+    }
 }

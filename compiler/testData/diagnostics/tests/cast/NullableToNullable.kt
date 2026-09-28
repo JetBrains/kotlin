@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // From KT-13324: always succeeds
 val x = null as String?
 // From KT-260: sometimes succeeds

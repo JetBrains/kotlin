@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.generators.builtins.test
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.generateBuiltIns
-import org.jetbrains.kotlin.testFederation.AffectedByCoreLibs
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCoreLibs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
 
-@AffectedByCoreLibs
+@MustRunOnChangesInCoreLibs
 class GenerateBuiltInsTest {
     @Test
     fun testBuiltInsAreUpToDate() {

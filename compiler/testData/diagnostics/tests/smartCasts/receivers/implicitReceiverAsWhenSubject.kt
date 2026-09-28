@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DUMP_CFG
 fun Any.test_1(): Int = when (this) {
     is List<*> -> this.size

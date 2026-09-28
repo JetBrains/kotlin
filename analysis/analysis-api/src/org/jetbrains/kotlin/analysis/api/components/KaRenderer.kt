@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaRendererTypeApproximator
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForSource
@@ -40,54 +38,4 @@ public interface KaRenderer : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KaType.render(renderer: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES, position: Variance): String
-}
-
-/**
- * Renders the given [KaDeclarationSymbol] to a string. The particular rendering strategy is defined by the [renderer].
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.renderer' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.render(renderer)",
-        "org.jetbrains.kotlin.analysis.api.renderer.render",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES): String {
-    return with(session) {
-        render(
-            renderer = renderer,
-        )
-    }
-}
-
-/**
- * Renders the given [KaType] into a string. The particular rendering strategy is defined by the [renderer].
- *
- * [position] controls the way the given type is approximated using [KaTypeRenderer.typeApproximator].
- *
- * Specifically, when [KaRendererTypeApproximator.TO_DENOTABLE] is used, no approximation is performed for [Variance.INVARIANT],
- * a denotable subtype is rendered for [Variance.IN_VARIANCE], and a denotable supertype is rendered for [Variance.OUT_VARIANCE].
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.renderer' endpoint instead.",
-    replaceWith = ReplaceWith(
-        "this.render(renderer, position)",
-        "org.jetbrains.kotlin.analysis.api.renderer.render",
-    ),
-    level = DeprecationLevel.ERROR,
-)
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public fun KaType.render(renderer: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES, position: Variance): String {
-    return with(session) {
-        render(
-            renderer = renderer,
-            position = position,
-        )
-    }
 }

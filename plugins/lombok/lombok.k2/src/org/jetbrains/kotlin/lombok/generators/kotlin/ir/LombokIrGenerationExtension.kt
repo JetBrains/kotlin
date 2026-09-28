@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.generators.BuilderGeneratorKey
+import org.jetbrains.kotlin.lombok.generators.ConstructorGeneratorKey
 import org.jetbrains.kotlin.lombok.generators.EqualsAndHashCodeGeneratorKey
 import org.jetbrains.kotlin.lombok.generators.LombokDeclarationKey
 import org.jetbrains.kotlin.lombok.generators.ToStringGeneratorKey
@@ -41,6 +43,7 @@ class IrBodyBuilderVisitor(private val context: IrPluginContext) : IrVisitorVoid
         ToStringGeneratorKey::class to ToStringBodyBuilder,
         EqualsAndHashCodeGeneratorKey::class to EqualsAndHashCodeIrBodyBuilder,
         BuilderGeneratorKey::class to BuilderBodyBuilder,
+        ConstructorGeneratorKey::class to ConstructorBodyBuilder,
     )
 
     override fun visitElement(element: IrElement) {
@@ -69,8 +72,21 @@ class IrBodyBuilderVisitor(private val context: IrPluginContext) : IrVisitorVoid
                             build(generatorKey as BuilderGeneratorKey, declaration)
                         }
                     }
+                    is ConstructorBodyBuilder -> {
+                        with(bodyBuilder) {
+                            build(generatorKey as ConstructorGeneratorKey, declaration)
+                        }
+                    }
                 }
             }
+        } else {
+            declaration.acceptChildrenVoid(this)
+        }
+    }
+
+    override fun visitConstructor(declaration: IrConstructor) {
+        if ((declaration.origin as? GeneratedByPlugin)?.pluginKey == ConstructorGeneratorKey) {
+            ConstructorBodyBuilder.buildConstructorBody(context, declaration)
         } else {
             declaration.acceptChildrenVoid(this)
         }

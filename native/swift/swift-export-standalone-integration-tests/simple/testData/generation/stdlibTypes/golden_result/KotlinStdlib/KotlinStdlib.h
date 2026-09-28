@@ -163,8 +163,6 @@ NSString * kotlin_text_StringBuilder_substring__TypesOfArguments__Swift_Int32__(
 
 _Bool kotlin_text_StringBuilder_toCharArray__TypesOfArguments__ExportedKotlinPackages_kotlin_CharArray_Swift_Int32_Swift_Int32_Swift_Int32__(void * self, void * destination, int32_t destinationOffset, int32_t startIndex, int32_t endIndex);
 
-NSString * kotlin_text_StringBuilder_toString(void * self);
-
 _Bool kotlin_text_StringBuilder_trimToSize(void * self);
 
 NS_ASSUME_NONNULL_END

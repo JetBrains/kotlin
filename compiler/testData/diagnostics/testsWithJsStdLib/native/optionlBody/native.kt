@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNREACHABLE_CODE
 // unreachable code suppressed due to KT-9586
 

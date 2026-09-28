@@ -10,4 +10,4 @@ import org.jetbrains.kotlin.analysis.api.resolution.KaVariableAccessCall
 
 @KaImplementationDetail
 object KaBaseVariableReadAccess : KaVariableAccessCall.Kind.Read,
-    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess.Read
+    @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess.Read

@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.getRequiresMangling
 import org.jetbrains.kotlin.backend.jvm.hasMangledReturnType
-import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
+import org.jetbrains.kotlin.backend.jvm.ir.accessorShouldBeUsed
+import org.jetbrains.kotlin.backend.jvm.ir.shouldKeepAccessor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -60,7 +61,7 @@ internal class JvmPropertiesLowering(
         val property = simpleFunction.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
         expression.transformChildrenVoid()
 
-        if (shouldSubstituteAccessorWithField(property, simpleFunction) ||
+        if (!property.accessorShouldBeUsed(simpleFunction) ||
             isDefaultAccessorForCompanionPropertyBackingFieldOnCurrentClass(property, simpleFunction)
         ) {
             backendContext.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).apply {
@@ -158,17 +159,14 @@ internal class JvmPropertiesLowering(
             }
 
             if (!declaration.isConst) {
-                declaration.getter?.takeIf { !shouldSubstituteAccessorWithField(declaration, it) }?.let { add(it) }
-                declaration.setter?.takeIf { !shouldSubstituteAccessorWithField(declaration, it) }?.let { add(it) }
+                declaration.getter?.takeIf { declaration.shouldKeepAccessor(it) }?.let { add(it) }
+                declaration.setter?.takeIf { declaration.shouldKeepAccessor(it) }?.let { add(it) }
             }
 
             if (!declaration.isFakeOverride && declaration.annotations.isNotEmpty()) {
                 add(createSyntheticMethodForAnnotations(declaration))
             }
         }
-
-    private fun shouldSubstituteAccessorWithField(property: IrProperty, accessor: IrSimpleFunction?): Boolean =
-        accessor != null && !property.needsAccessor(accessor)
 
     private fun createSyntheticMethodForAnnotations(declaration: IrProperty): IrSimpleFunction =
         backendContext.createSyntheticMethodForProperty(

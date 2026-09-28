@@ -386,3 +386,5 @@ class ReplCompilationState<AnalyzerT : ReplCodeAnalyzerBase>(
  * Internal property for transferring line id information when using new repl infrastructure with legacy one
  */
 val ReplScriptCompilationConfigurationKeys.currentLineId by PropertiesCollection.key<LineId>(isTransient = true)
+
+val ReplScriptCompilationConfigurationKeys.isSnippetDefinition by PropertiesCollection.key<Boolean>(isTransient = true)

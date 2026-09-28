@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrOptimizationContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -30,7 +31,9 @@ import org.jetbrains.kotlin.ir.visitors.*
  * 4. Both have identical conversion flags (hasUnitConversion, hasSuspendConversion, hasVarargConversion, isRestrictedSuspension)
  */
 @PhasePrerequisites(MoveCallableFactoriesToDeclarationsLowering::class)
-class DeduplicateCallableReferenceFactoriesLowering(private val context: JsIrBackendContext) : ModuleLoweringPass {
+class DeduplicateCallableReferenceFactoriesLowering(@Suppress("unused") context: JsIrBackendContext) : ModuleLoweringPass {
+    internal constructor(context: JsIrOptimizationContext) : this(context.backendContext)
+
     private val canonicalCallableFactories = hashMapOf<CallableFunctionReferenceId, IrSimpleFunction>()
     private val duplicatingFactories = hashSetOf<IrSimpleFunction>()
 

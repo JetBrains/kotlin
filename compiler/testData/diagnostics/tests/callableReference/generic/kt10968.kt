@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // KT-10968 Callable reference: type inference by function return type
 

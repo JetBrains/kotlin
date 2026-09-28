@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class ResolutionCandidate<A>
 
 class ResolutionTask<B, C : B>(val candidate: ResolutionCandidate<B>)

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Test {
     <!UNNECESSARY_LATEINIT!>lateinit<!> var someRunnable: Runnable
     init {

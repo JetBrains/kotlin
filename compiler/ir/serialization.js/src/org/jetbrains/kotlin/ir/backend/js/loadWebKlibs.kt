@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 
@@ -33,6 +34,7 @@ fun loadWebKlibs(
     val result = KlibLoader {
         libraryPaths(configuration.libraries)
         platformChecker(platformChecker)
+        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
     }.load()

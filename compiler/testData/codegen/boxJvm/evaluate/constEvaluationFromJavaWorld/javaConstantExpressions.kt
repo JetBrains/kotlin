@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // Every Java constant below is written in a form which is *not* a plain literal: a narrowing cast,
 // an operator expression, a reference to another `static final` field (own class, other class,
 // static import) or a concatenation. The Kotlin side consumes each of them from a `const val` and

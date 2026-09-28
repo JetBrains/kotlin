@@ -71,7 +71,12 @@ abstract class KtParsingTestCase protected constructor(@NonNls dataPath: String,
 
     @Throws(IOException::class)
     protected fun loadFile(@NonNls @TestDataFile name: String): String {
-        return FileUtil.loadFile(File(myFullDataPath, name), CharsetToolkit.UTF8, true).trim { it <= ' ' }
+        return loadFile(File(myFullDataPath, name))
+    }
+
+    @Throws(IOException::class)
+    protected fun loadFile(file: File): String {
+        return FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim { it <= ' ' }
     }
 
     companion object {

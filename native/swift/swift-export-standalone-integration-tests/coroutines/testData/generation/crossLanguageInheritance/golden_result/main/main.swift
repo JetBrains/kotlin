@@ -39,21 +39,7 @@ open class AsyncAbstractBase: KotlinRuntime.KotlinBase {
     open func abstractGreet() async throws -> Swift.String {
         if Self.self == main.AsyncAbstractBase.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncAbstractBase_abstractGreet(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncAbstractBase_abstractGreet(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             fatalError("Cannot invoke the inherited implementation of abstract member 'main.AsyncAbstractBase.abstractGreet': a Swift subclass must override it and must not call super.")
@@ -62,39 +48,11 @@ open class AsyncAbstractBase: KotlinRuntime.KotlinBase {
     open func concreteGreet() async throws -> Swift.String {
         if Self.self == main.AsyncAbstractBase.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncAbstractBase_concreteGreet(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncAbstractBase_concreteGreet(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncAbstractBase_concreteGreet_direct(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncAbstractBase_concreteGreet_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
@@ -119,39 +77,11 @@ open class AsyncBase: KotlinRuntime.KotlinBase {
     open func count() async throws -> Swift.Int32 {
         if Self.self == main.AsyncBase.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncBase_count(self.__externalRCRef(), {
-                let originalBlock: (Swift.Int32) -> Swift.Void = continuation
-                return { (arg0: Swift.Int32) in
-                    let _arg0: Swift.Int32 = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncBase_count(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncBase_count_direct(self.__externalRCRef(), {
-                let originalBlock: (Swift.Int32) -> Swift.Void = continuation
-                return { (arg0: Swift.Int32) in
-                    let _arg0: Swift.Int32 = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncBase_count_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.Int32) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
@@ -160,59 +90,17 @@ open class AsyncBase: KotlinRuntime.KotlinBase {
     ) async throws -> Swift.String {
         if Self.self == main.AsyncBase.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncBase_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncBase_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncBase_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncBase_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
     public final func notOpen() async throws -> Swift.String {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncBase_notOpen(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncBase_notOpen(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     open func sync(
@@ -247,78 +135,22 @@ open class AsyncGreeterBase: KotlinRuntime.KotlinBase, main.AsyncGreeter, main._
     ) async throws -> Swift.String {
         if Self.self == main.AsyncGreeterBase.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncGreeterBase_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncGreeterBase_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncGreeterBase_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncGreeterBase_greet__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
     open func salutation() async throws -> Swift.String {
         if Self.self == main.AsyncGreeterBase.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncGreeterBase_salutation(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncGreeterBase_salutation(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncGreeterBase_salutation_direct(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncGreeterBase_salutation_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
@@ -342,21 +174,7 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
     }
     public final func overloaded() async throws -> Swift.String {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_overloaded(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_overloaded(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     open func overloaded(
@@ -364,39 +182,11 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
     ) async throws -> Swift.String {
         if Self.self == main.AsyncOverloaded.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg1, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg1, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg1, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg1, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
@@ -406,39 +196,11 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
     ) async throws -> Swift.String {
         if Self.self == main.AsyncOverloaded.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32__(self.__externalRCRef(), arg1, arg2, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32__(self.__externalRCRef(), arg1, arg2, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32___direct(self.__externalRCRef(), arg1, arg2, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_overloaded__TypesOfArguments__Swift_String_Swift_Int32___direct(self.__externalRCRef(), arg1, arg2, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
@@ -447,39 +209,11 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
     ) async throws -> Swift.String {
         if Self.self == main.AsyncOverloaded.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), arg, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_Int32___direct(self.__externalRCRef(), arg, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
@@ -488,39 +222,11 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
     ) async throws -> Swift.String {
         if Self.self == main.AsyncOverloaded.self {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_String__(self.__externalRCRef(), arg, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         } else {
             try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncOverloaded_same__TypesOfArguments__Swift_String___direct(self.__externalRCRef(), arg, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
         }
     }
@@ -529,61 +235,19 @@ open class AsyncOverloaded: KotlinRuntime.KotlinBase {
 extension main.AsyncDefaulter where Self : main.__AsyncDefaulter {
     public func describe() async throws -> Swift.String {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncDefaulter_describe(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncDefaulter_describe(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func tag() async throws -> Swift.String {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncDefaulter_tag(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncDefaulter_tag(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
 extension main.AsyncDefaulter {
     public func describe() async throws -> Swift.String {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncDefaulter_describe_direct(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncDefaulter_describe_direct(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
@@ -593,40 +257,12 @@ extension main.AsyncGreeter where Self : main.__AsyncGreeter {
         name: Swift.String
     ) async throws -> Swift.String {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncGreeter_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncGreeter_greet__TypesOfArguments__Swift_String__(self.__externalRCRef(), name, Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
     public func salutation() async throws -> Swift.String {
         try await withKotlinContinuation { continuation, exception, cancellation in
-            let _: Bool = AsyncGreeter_salutation(self.__externalRCRef(), {
-                let originalBlock: (Swift.String) -> Swift.Void = continuation
-                return { (arg0: Swift.String) in
-                    let _arg0: Swift.String = arg0
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), {
-                let originalBlock: (Swift.Optional<Swift.Error>) -> Swift.Void = exception
-                return { (arg0: Swift.UnsafeMutableRawPointer?) in
-                    let _arg0: Swift.Optional<Swift.Error> = { switch arg0 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }()
-                    let _result = originalBlock(_arg0)
-                    return { _result; return true }()
-                }
-            }(), cancellation.__externalRCRef())
+            let _: Bool = AsyncGreeter_salutation(self.__externalRCRef(), Unmanaged.passRetained((continuation as (Swift.String) -> Swift.Void) as AnyObject).toOpaque(), Unmanaged.passRetained((exception as (Swift.Optional<Swift.Error>) -> Swift.Void) as AnyObject).toOpaque(), cancellation.__externalRCRef())
         }
     }
 }
@@ -901,4 +537,22 @@ package func AsyncOverloaded_same__TypesOfArguments__Swift_String____reverse_swi
         try await _self.same(arg: arg)
     }
     return true
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int32) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Int32) -> Swift.Void)(_1)
+    return { _result; return true }()
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<Swift.Error>) -> Swift.Void)({ switch _1 { case nil: .none; case let res?: KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res)!); } }())
+    return { _result; return true }()
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.String) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.String) -> Swift.Void)(_1)
+    return { _result; return true }()
 }

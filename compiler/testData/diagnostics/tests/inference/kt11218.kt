@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_REFLECT
 
 inline fun <reified T : kotlin.Enum<T>> safeValueOf(type: String?): T? {

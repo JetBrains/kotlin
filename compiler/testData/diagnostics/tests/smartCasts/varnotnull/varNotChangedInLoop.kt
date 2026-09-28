@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 public fun foo() {
     var i: Int? = 1
     if (i != null) {

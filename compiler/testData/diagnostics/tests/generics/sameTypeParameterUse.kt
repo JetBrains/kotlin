@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNUSED_PARAMETER
 fun <R> foo(x: R, y: String) {}
 fun <R> foo(x: R, y: R) {

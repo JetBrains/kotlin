@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-71117
 open class A<H: Function2<*, *, <!REDUNDANT_PROJECTION!>out<!> Function0<String>>>(val f1: H, val f2: IntArray) {}
 

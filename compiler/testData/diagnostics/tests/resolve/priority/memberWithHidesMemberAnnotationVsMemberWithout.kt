@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // ISSUE: KT-50776
 interface Entities<Target> : MutableCollection<Target>, Sequence<Target>

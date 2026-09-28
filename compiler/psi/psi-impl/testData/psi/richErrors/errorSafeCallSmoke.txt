@@ -1,0 +1,66 @@
+KtFile: errorSafeCallSmoke.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(error)('error')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Foo')
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('test')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      VALUE_PARAMETER
+        PsiElement(IDENTIFIER)('x')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          UNION_TYPE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('String')
+            PsiWhiteSpace(' ')
+            PsiElement(OR)('|')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Foo')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ERROR_SAFE_ACCESS_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
+        PsiElement(ERROR_SAFE_ACCESS)('|.')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('length')
+      PsiWhiteSpace('\n    ')
+      ERROR_SAFE_ACCESS_EXPRESSION
+        ERROR_SAFE_ACCESS_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+          PsiElement(ERROR_SAFE_ACCESS)('|.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('length')
+        PsiElement(ERROR_SAFE_ACCESS)('|.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('inc')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

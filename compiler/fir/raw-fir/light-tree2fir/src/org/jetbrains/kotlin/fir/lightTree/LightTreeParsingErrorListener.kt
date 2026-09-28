@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree
 
+import com.intellij.lang.impl.PsiBuilderImpl
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -24,12 +25,25 @@ fun DiagnosticReporter.toKotlinParsingErrorListener(
         override val languageVersionSettings: LanguageVersionSettings get() = languageVersionSettings
         override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
     }
-    return KotlinLightParser.LightTreeParsingErrorListener { startOffset, endOffset, message ->
-        reportOn(
-            KtOffsetsOnlySourceElement(startOffset, endOffset),
-            FirSyntaxErrors.SYNTAX,
-            message.orEmpty(),
-            diagnosticContext,
-        )
+    return KotlinLightParser.LightTreeParsingErrorListener { node, syntaxErrorType ->
+        val source = KtOffsetsOnlySourceElement(node.startOffset, node.endOffset)
+        when (syntaxErrorType) {
+            KotlinLightParser.SyntaxErrorType.Syntax -> reportOn(
+                source,
+                FirSyntaxErrors.SYNTAX,
+                PsiBuilderImpl.getErrorMessage(node).orEmpty(),
+                diagnosticContext,
+            )
+            KotlinLightParser.SyntaxErrorType.TrailingWhitespaceRequired -> reportOn(
+                source,
+                FirSyntaxErrors.TRAILING_WHITESPACE_REQUIRED,
+                diagnosticContext,
+            )
+            KotlinLightParser.SyntaxErrorType.LeadingWhitespaceRequired -> reportOn(
+                source,
+                FirSyntaxErrors.LEADING_WHITESPACE_REQUIRED,
+                diagnosticContext,
+            )
+        }
     }
 }

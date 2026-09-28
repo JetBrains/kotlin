@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ParseLambdaWithSuspendModifier, +DiscriminateSuspendInOverloadResolution
 
 fun foo0(f: () -> Unit): String = ""

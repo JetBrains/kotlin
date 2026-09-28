@@ -101,6 +101,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("explicitBackingField.kt")
+  public void testExplicitBackingField() {
+    run("explicitBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldInitializer.kt")
+  public void testExplicitBackingFieldInitializer() {
+    run("explicitBackingFieldInitializer.kt");
+  }
+
+  @Test
   @TestMetadata("extensionFunction.kt")
   public void testExtensionFunction() {
     run("extensionFunction.kt");
@@ -140,6 +152,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   @TestMetadata("forLoopVariable.kt")
   public void testForLoopVariable() {
     run("forLoopVariable.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassFunction.kt")
+  public void testFullValueClassFunction() {
+    run("fullValueClassFunction.kt");
   }
 
   @Test

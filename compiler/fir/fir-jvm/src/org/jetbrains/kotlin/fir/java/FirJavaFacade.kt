@@ -44,13 +44,17 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirJavaFacadeForSource(
+/**
+ * A [FirJavaFacade] whose classes all belong to a module defined by the [moduleData].
+ * Whether a session sees Java sources or class files is decided by [classFinder].
+ */
+class FirJavaFacadeForModule(
     session: FirSession,
-    private val sourceModuleData: FirModuleData,
+    private val moduleData: FirModuleData,
     classFinder: JavaClassFinder,
 ) : FirJavaFacade(session, classFinder) {
     override fun getModuleDataForClass(javaClass: JavaClass): FirModuleData {
-        return sourceModuleData
+        return moduleData
     }
 }
 

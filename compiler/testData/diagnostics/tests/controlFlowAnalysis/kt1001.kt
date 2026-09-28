@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-1001 Argument 2 for @NotNull parameter of JetFlowInformationProvider.checkIsInitialized must not be null
 
 package kt1001

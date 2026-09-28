@@ -55,12 +55,7 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
             it.kotlinCompilerArgumentsLogLevel
                 .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
                 .finalizeValueOnRead()
-            it.produceUnpackagedKlib.set(project.kotlinPropertiesProvider.useNonPackedKlibs)
-            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-                it.outputs.dir(it.klibDirectory)
-            } else {
-                it.outputs.file(it.klibFile)
-            }
+            it.outputs.dir(it.klibDirectory)
         }
 
         project.launch {

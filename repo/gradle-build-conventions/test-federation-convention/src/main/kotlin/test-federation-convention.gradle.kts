@@ -14,7 +14,7 @@ tasks.withType<Test>().configureEach {
     val formattedChangedDomains = changedDomains.map { domains -> domains.toArgumentString() }
     val smokeTestConfig = smokeTestConfig
 
-    /* If the task itself is marked as 'isSmokeTest', then it always has to be fully executed */
+    /* Resolve the mode from the task configuration, overrides, and domain selection. */
     val testFederationMode: Provider<TestFederationMode> = testFederationMode
 
     inputs.property(TEST_FEDERATION_MODE_KEY, testFederationMode)
@@ -22,8 +22,8 @@ tasks.withType<Test>().configureEach {
     inputs.property(TEST_FEDERATION_NIGHTLY_KEY, areNightlyTestsEnabled)
 
     /*
-    We only use the exact set of domains as input to the test task if we're actually running in smoke test mode.
-    This will allow for safely re-using build caches of any 'full mode' run.
+    Use changed domains as a task input only when they select individual tests.
+    Full-mode runs do not use this selection, so their build cache entries can be reused across selections.
     */
     inputs.property(TEST_FEDERATION_CHANGED_DOMAINS_KEY, testFederationMode.zip(changedDomains) { mode, domains ->
         if (mode == TestFederationMode.Smoke) domains.toArgumentString() else "*"
@@ -47,7 +47,7 @@ tasks.withType<Test>().configureEach {
         logger.quiet("Domain Test Mode: '${testFederationMode.get()}'")
 
         /*
-        At this point: Assert that JUnit 5 is used, as 'Smoke Test' configurations use JUnit 5 features.
+        Require JUnit 5 unless the task is configured to skip runs that select only a subset of tests.
         */
         if (testFramework !is JUnitPlatformTestFramework && smokeTestConfig !is SmokeTestConfig.Disabled) {
             error(buildString {
@@ -60,15 +60,14 @@ tasks.withType<Test>().configureEach {
             })
         }
 
-        /* The test task was explicitly marked as 'isSmokeTest=false', therefore, won't further execute in smoke mode */
+        /* Skip a task configured as Disabled when it is not selected for a full test run. */
         if (smokeTestConfig is SmokeTestConfig.Disabled && testFederationMode.get() == TestFederationMode.Smoke) {
             throw StopExecutionException("The test task is disabled in Smoke Test mode")
         }
 
         /*
-        The test task is not using JUnit 5 and is scheduled for 'full mode' -> No further configuration required. Just run the vanilla task
-        (we allow non-JUnit 5 tests for 'full' test mode, but not for Smoke Test mode)
-        This effectively only allows non-JUnit 5 tests with SmokeTestConfig.Disabled
+        Run non-JUnit 5 tasks without further configuration in Full mode.
+        These tasks must be configured as Disabled so they are skipped when no full run is selected.
         */
         if (testFramework !is JUnitPlatformTestFramework && testFederationMode.get() == TestFederationMode.Full) {
             return@doFirst
@@ -87,8 +86,8 @@ tasks.withType<Test>().configureEach {
         environment(TEST_FEDERATION_NIGHTLY_ENV_KEY, areNightlyTestsEnabled.get())
 
         /*
-        We will only provide the 'affected domains' to the test task if we're actually running in smoke test mode.
-        This will allow for safely re-using build caches of any 'full mode' run.
+        Provide changed domains only when the runtime uses them to select tests.
+        Full-mode runs do not use this selection, so their build cache entries can be reused across selections.
         */
         if (testFederationMode.get() == TestFederationMode.Smoke) {
             systemProperty(TEST_FEDERATION_CHANGED_DOMAINS_KEY, formattedChangedDomains.get())
@@ -125,7 +124,7 @@ tasks.withType<Test>().configureEach {
 afterEvaluate {
     tasks.withType<Test>().configureEach {
         /*
-        When running in smoke test mode, a given test task might actually not provide any smoke test
+        A task that selects only a subset of tests may have no tests to run.
         */
         val defaultFailOnNoDiscoveredTests = failOnNoDiscoveredTests.get()
         failOnNoDiscoveredTests.value(testFederationMode.map { mode ->

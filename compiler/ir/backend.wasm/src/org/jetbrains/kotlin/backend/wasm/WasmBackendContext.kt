@@ -187,4 +187,6 @@ class WasmBackendContext(
     }
 
     val wasmUseStackSwitching = configuration.wasmUseStackSwitchingProposal
+
+    override var effectAnalysisFinished: Boolean = false
 }

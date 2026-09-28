@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 fun test() {
     val array = longArrayOf(1, 2, 3)

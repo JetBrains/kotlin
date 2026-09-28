@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // KOTLIN_SCRIPT_DEFINITION: org.jetbrains.kotlin.test.runners.codegen.TestScriptWithReceivers
 
 // receiver: abracadabra

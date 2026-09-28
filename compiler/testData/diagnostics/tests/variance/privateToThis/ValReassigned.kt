@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T> getT(): T = null!!
 
 class A<in I>(init: I) {

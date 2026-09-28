@@ -111,15 +111,22 @@ declare namespace JS_TESTS {
                 readonly "foo.Event": unique symbol;
             };
         }
-        class SomeServiceRequest implements foo.Service<any/* foo.SomeService */, foo.Event<any/* foo.SomeService */>/* foo.SomeEvent */> {
+        class SomeServiceRequest implements foo.Service<any/* foo.SomeService */, foo.Event<any/* foo.SomeService */>/* foo.SomeEvent */>, foo.IntermediateImplicitExportInterface {
             constructor();
-            readonly __doNotUseOrImplementIt: foo.Service<any, any>["__doNotUseOrImplementIt"];
+            withDefaultImpl(): string;
+            readonly __doNotUseOrImplementIt: foo.IntermediateImplicitExportInterface["__doNotUseOrImplementIt"] & foo.Service<any, any>["__doNotUseOrImplementIt"];
         }
         namespace SomeServiceRequest {
             /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
             namespace $metadata$ {
                 const constructor: abstract new () => SomeServiceRequest;
             }
+        }
+        interface IntermediateImplicitExportInterface {
+            withDefaultImpl(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.IntermediateImplicitExportInterface": unique symbol;
+            };
         }
     }
 }

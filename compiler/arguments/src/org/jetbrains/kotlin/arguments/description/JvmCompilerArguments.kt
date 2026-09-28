@@ -229,30 +229,14 @@ to force diagnostics to be reported.""".asReleaseDependent()
         )
     }
 
-    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
-        name = "Xvalhalla-support"
-        compilerName = "valhallaSupport"
-        description = ("Select which declarations are compiled to behave as experimental Project Valhalla value classes. " +
-                "Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a " +
-                "Valhalla-compatible JDK.").asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "{none|primitives|primitivesAndFullValueClasses|allValues}".asReleaseDependent()
-        argumentType = ValhallaSupportModeType()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_5_0,
-        )
-    }
-
-    compilerArgument {
-        name = "Xir-do-not-clear-binding-context"
-        compilerName = "doNotClearBindingContext"
-        description = "When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.".asReleaseDependent()
+        name = "Xvalhalla-value-classes"
+        description = ("Compile value classes to behave as experimental Project Valhalla value classes. Requires a " +
+                "Valhalla-compatible JDK, JVM target 27 or later and the '-Xjvm-enable-preview' flag.").asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_30,
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 
@@ -821,20 +805,6 @@ This works like '--enable-preview' in Java. All class files are marked as compil
         )
     }
 
-    compilerArgument {
-        name = "Xtype-enhancement-improvements-strict-mode"
-        compilerName = "typeEnhancementImprovementsInStrictMode"
-        description = """Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
-including the ability to read type-use annotations from class files.
-See KT-45671 for more details.""".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.TypeEnhancementImprovementsInStrictMode))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_0,
-        )
-    }
 
     compilerArgument {
         name = "Xvalidate-bytecode"
@@ -846,18 +816,6 @@ See KT-45671 for more details.""".asReleaseDependent()
         )
     }
 
-    compilerArgument {
-        name = "Xenhance-type-parameter-types-to-def-not-null"
-        description =
-            "Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_6_0,
-        )
-    }
 
     compilerArgument {
         name = "Xdebug"
@@ -986,6 +944,18 @@ The default value is 'inline'.""",
         name = "Xjava-direct"
         description = "Experimental direct java support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xdirect-java-actualization"
+        description = "Enable experimental direct Java actualization support.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.DirectJavaActualization))
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_5_0,

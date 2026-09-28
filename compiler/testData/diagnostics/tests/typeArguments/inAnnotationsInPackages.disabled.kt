@@ -1,6 +1,6 @@
 // ISSUE: KT-84167
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
+// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn26
 // DISABLE_NEXT_PHASE_SUGGESTION
 
 // FILE: part1/part2/part3/tests.kt

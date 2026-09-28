@@ -68,6 +68,7 @@ Frontend:
  - compiler/psi/parser
  - compiler/resolution
  - compiler/resolution.common
+ - compiler/resolution.common.js
  - compiler/resolution.common.jvm
  - compiler/serialization
  - compiler/serialization.common
@@ -112,8 +113,6 @@ Js:
  - js/js.config/src/org/jetbrains/kotlin/js/artifacts
  - js/js.config/src/org/jetbrains/kotlin/platform
  - js/js.config/src/org/jetbrains/kotlin/utils
- - js/js.frontend
- - js/js.frontend.common
  - js/js.parser
  - js/js.tests/ReadMe.md
  - js/js.tests/build.gradle.kts
@@ -126,6 +125,7 @@ Js:
  - js/js.translator/src
  - js/npm
  - js/typescript-export-standalone
+ - js/typescript-export-standalone-embeddable
 
 Native:
  - compiler/ir/backend.native
@@ -176,6 +176,7 @@ BuildToolsApi:
  - compiler/build-tools/kotlin-build-tools-api
  - compiler/build-tools/kotlin-build-tools-api-backports
  - compiler/build-tools/kotlin-build-tools-api-forward-tests
+ - compiler/build-tools/kotlin-build-tools-api-jps
  - compiler/build-tools/kotlin-build-tools-api-tests
  - compiler/build-tools/kotlin-build-tools-compat
  - compiler/build-tools/kotlin-build-tools-cri-impl
@@ -223,6 +224,7 @@ Gradle:
  - libraries/tools/kotlin-gradle-plugin-api
  - libraries/tools/kotlin-gradle-plugin-dsl-codegen
  - libraries/tools/kotlin-gradle-plugin-idea
+ - libraries/tools/kotlin-gradle-plugin-idea-browser-debug
  - libraries/tools/kotlin-gradle-plugin-idea-for-compatibility-tests
  - libraries/tools/kotlin-gradle-plugin-idea-proto
  - libraries/tools/kotlin-gradle-plugin-integration-tests
@@ -278,6 +280,7 @@ Unknown:
  - compiler/CLAUDE.md
  - compiler/ir/ReadMe.md
  - compiler/ir/code-rules.md
+ - compiler/test-coverage
  - dependencies
  - docs
  - generators
@@ -310,6 +313,7 @@ Unknown:
  - libraries/tools/kotlin-compose-compiler
  - libraries/tools/kotlin-dataframe
  - libraries/tools/kotlin-dist-for-jps-meta
+ - libraries/tools/kotlin-documentation-model
  - libraries/tools/kotlin-lombok
  - libraries/tools/kotlin-noarg
  - libraries/tools/kotlin-osgi-bundle

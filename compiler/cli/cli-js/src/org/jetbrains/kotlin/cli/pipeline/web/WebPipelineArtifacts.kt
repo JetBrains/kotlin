@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.cli.pipeline.web
 
 import org.jetbrains.kotlin.backend.common.IrModuleInfo
+import org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker
+import org.jetbrains.kotlin.backend.wasm.LoweredIrWithExtraArtifacts
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.WasmIrModuleConfiguration
 import org.jetbrains.kotlin.cli.pipeline.Fir2IrPipelineArtifact
@@ -127,6 +130,30 @@ data class WebIncrementalCachePipelineArtifact<M : ModuleArtifact>(
 data class WasmIntermediatePipelineArtifact(
     val backendIr: List<WasmIrModuleConfiguration>,
     val cacheGuard: IncrementalCacheGuard?,
+    override val configuration: CompilerConfiguration,
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): PipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
+
+data class WasmLinkedIrPipelineArtifact(
+    val allModules: List<IrModuleFragment>,
+    val backendContext: WasmBackendContext,
+    val isWasmStdlib: Boolean,
+    val irLinker: KotlinIrLinker,
+    override val configuration: CompilerConfiguration,
+) : PipelineArtifact() {
+    @CliPipelineInternals(OPT_IN_MESSAGE)
+    override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): PipelineArtifact {
+        return copy(configuration = newConfiguration)
+    }
+}
+
+data class WasmLoweredIrPipelineArtifact(
+    val loweredIr: LoweredIrWithExtraArtifacts,
+    val isWasmStdlib: Boolean,
     override val configuration: CompilerConfiguration,
 ) : PipelineArtifact() {
     @CliPipelineInternals(OPT_IN_MESSAGE)

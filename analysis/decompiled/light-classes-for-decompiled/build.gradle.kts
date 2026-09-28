@@ -6,8 +6,9 @@ plugins {
 
 dependencies {
     api(project(":compiler:psi:psi-api"))
-    api(project(":analysis:decompiled:decompiler-to-psi"))
+    api(project(":analysis:decompiled:decompiler"))
     api(project(":analysis:light-classes-base"))
+    implementation(project(":analysis:analysis-api"))
     implementation(intellijCore())
 }
 

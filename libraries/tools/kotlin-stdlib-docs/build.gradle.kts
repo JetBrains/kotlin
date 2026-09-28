@@ -83,6 +83,11 @@ buildscript {
              version.set(kotlinLanguageVersion)
              if (isLatest) {
                  olderVersionsDir.set(inputDirPrevious.resolve(moduleDirName))
+                 // kotlinlang.org serves this output from `/api/core/`, where an
+                 // `older/` path segment is stripped by a path-independent rewrite,
+                 // so anything published there becomes unreachable and the whole
+                 // version selector 404s (KT-89292).
+                 olderVersionsDirName.set("")
              }
          }
          if (isLatest) {

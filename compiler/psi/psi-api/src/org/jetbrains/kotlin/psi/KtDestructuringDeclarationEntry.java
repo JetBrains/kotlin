@@ -11,6 +11,7 @@ import com.intellij.psi.TokenType;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -60,7 +61,8 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
             replaceWith = @ReplaceWith(
                     expression = "this.setDestructuringDeclarationEntryTypeReference(typeRef)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.setDestructuringDeclarationEntryTypeReference"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.lombok.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
@@ -93,6 +96,7 @@ fun createJavaOrKotlinMemberFunction(
     symbol: FirNamedFunctionSymbol? = null,
     typeParameters: Collection<FirTypeParameter> = emptyList(),
     isOverride: Boolean = false,
+    source: KtSourceElement? = null,
 ): FirNamedFunctionSymbol {
     return if (owner.hasJavaOrigin) {
         owner.createJavaMethod(
@@ -105,6 +109,7 @@ fun createJavaOrKotlinMemberFunction(
             methodSymbol = symbol,
             methodTypeParameters = typeParameters,
             isOverride = isOverride,
+            source = source,
         ).symbol
     } else {
         extension.createMemberFunction(
@@ -123,6 +128,12 @@ fun createJavaOrKotlinMemberFunction(
             status {
                 this@status.isOverride = isOverride
             }
+
+            // `DeclarationBuildingContext.source` falls back to a fake element over the owner's source only while it
+            // stays uninitialized, so assigning `null` would strip the source rather than keep that fallback.
+            if (source != null) {
+                this.source = source
+            }
         }.symbol
     }
 }
@@ -138,6 +149,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     methodSymbol: FirNamedFunctionSymbol? = null,
     methodTypeParameters: Collection<FirTypeParameter> = emptyList(),
     isOverride: Boolean = false,
+    source: KtSourceElement? = null,
 ): FirJavaMethod {
     return buildJavaMethod {
         containingClassSymbol = this@createJavaMethod
@@ -152,6 +164,7 @@ fun FirClassSymbol<*>.createJavaMethod(
         }
         isFromSource = true
         typeParameters += methodTypeParameters
+        this.source = source
 
         for (valueParameter in valueParameters) {
             this.valueParameters += buildJavaValueParameter {
@@ -188,6 +201,26 @@ val FirClassSymbol<*>.isSupportedLombokTarget: Boolean
     get() = !isInterface && !isAnnotationClass
 
 /**
+ * Whether a constructor can be generated into [this] class at all.
+ *
+ * A Kotlin inner class cannot have one. A property initializer referencing a primary constructor parameter is
+ * inlined by fir2ir into every constructor that carries a delegating call, and in the generated one that
+ * parameter is unbound, so the JVM backend fails with "No mapping for symbol" (KT-88659). The only way out is
+ * to leave the delegating call off and build the body after fir2ir, which an inner class cannot do:
+ * `InnerClassesLowering` takes a super-delegating constructor without an `IrInstanceInitializerCall` for a
+ * `this(...)` delegation and passes the outer instance to a call with no receiver slot. Neither shape works.
+ *
+ * A local class follows it: `ANNOTATION_HAS_NO_EFFECT` has always been reported for one,
+ * `KotlinTarget.LOCAL_CLASS` never having been an allowed target, while the generator generated into it anyway.
+ * The noarg plugin supports neither kind either, and for the very same lowering.
+ *
+ * A Java class is unaffected: nothing is generated into its bytecode here - `javac` and Lombok itself do that -
+ * and the constructor built in FIR exists only so that Kotlin code can resolve the one Lombok really writes.
+ */
+val FirClassSymbol<*>.supportsGeneratedConstructor: Boolean
+    get() = hasJavaOrigin || (!isInner && !isLocal)
+
+/**
  * Whether [this] is a plain class, that is, neither an interface, nor an annotation class, nor an enum class, nor
  * an object. It is the only kind `@Builder` and `@EqualsAndHashCode` generate anything into, and it mirrors
  * `isClass` in Lombok's own `JavacHandlerUtil`, which both of its handlers consult before generating - unlike
@@ -202,8 +235,9 @@ val FirClassSymbol<*>.isSupportedLombokTarget: Boolean
  *  - an object is a single instance compared by identity and has no constructor to build it with, so both
  *    annotations only ever generated members that repeat what the object already does (KT-88507).
  *
- * A local class is a plain class: `@EqualsAndHashCode` supports one, and `@Builder` is stopped for it by
- * `isCompanionNeeded` instead, since a local class can't hold the companion object a `builder()` needs.
+ * A local class is a plain class: `@EqualsAndHashCode` supports one, and `@Builder` is stopped for it in
+ * `extractBuilderWithDeclarations` instead, a local class holding neither the companion object a `builder()`
+ * needs nor the builder class itself (KT-88848).
  */
 val FirClassSymbol<*>.isPlainClass: Boolean
     get() = classKind == ClassKind.CLASS

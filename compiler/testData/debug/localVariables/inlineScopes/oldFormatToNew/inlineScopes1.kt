@@ -27,7 +27,7 @@ fun box() {
     flaf()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:27 box:
 // library.kt:10 box: $i$f$flaf\1\27:int=0:int
 // library.kt:11 box: $i$f$flaf\1\27:int=0:int, flafVar\1:int=0:int

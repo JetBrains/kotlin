@@ -340,9 +340,11 @@ class ExpressionCodegen(
 
     // * Operator functions require non-null assertions on parameters even if they are private.
     // * Local function for lambda survives at this stage if it was used in 'invokedynamic'-based code.
+    // * Anonymous indy functions keep the LOCAL_FUNCTION origin and are marked by their lowering.
     // * Hidden constructors with mangled parameters require non-null assertions (see KT-53492)
     private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction): Boolean {
         if (irFunction is IrSimpleFunction && irFunction.isOperator || irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return true
+        if (irFunction.isIndyImplementationMethod) return true
         if (irFunction is IrConstructor && irFunction.hiddenConstructorMangledParams != null) return true
         return false
     }
@@ -1553,7 +1555,8 @@ class ExpressionCodegen(
             return IrCallGenerator.DefaultCallGenerator
         }
 
-        if (element.origin == JvmLoweredStatementOrigin.DEFAULT_STUB_CALL_TO_IMPLEMENTATION) {
+        val isDefaultStubCallToImplementation = element.origin == JvmLoweredStatementOrigin.DEFAULT_STUB_CALL_TO_IMPLEMENTATION
+        if (isDefaultStubCallToImplementation && sharesParameterLayoutWithEnclosingDefaultStub(element.symbol.owner)) {
             return IrInlineDefaultCodegen
         }
 
@@ -1590,9 +1593,21 @@ class ExpressionCodegen(
             mappings,
             sourceCompiler,
             reifiedTypeInliner,
-            markInlinedSuspensionPointAsUnitReturning
+            markInlinedSuspensionPointAsUnitReturning,
+            isDefaultStubCallToImplementation,
         )
     }
+
+    /**
+     * Whether [callee] and the enclosing `$default` stub use the same JVM parameter layout.
+     * [IrInlineDefaultCodegen] can reuse local slots only in this case; otherwise the general inliner has to coerce
+     * arguments, e.g. for nullable default-stub parameters of primitive-mapped type parameters. See KT-89206.
+     */
+    private fun sharesParameterLayoutWithEnclosingDefaultStub(callee: IrFunction): Boolean =
+        callee.parameters.size <= irFunction.parameters.size &&
+                callee.parameters.indices.all { index ->
+                    typeMapper.mapType(callee.parameters[index].type) == typeMapper.mapType(irFunction.parameters[index].type)
+                }
 
     private fun consumeReifiedOperationMarker(typeParameter: TypeParameterMarker) {
         require(typeParameter is IrTypeParameterSymbol)

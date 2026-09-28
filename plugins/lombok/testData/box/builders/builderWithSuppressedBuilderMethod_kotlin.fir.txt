@@ -1,0 +1,68 @@
+FILE: builderWithSuppressedBuilderMethod_kotlin.kt
+    @R|lombok/Builder|(toBuilder = Boolean(true) [evaluated = Boolean(true)], builderMethodName = String() [evaluated = String()]) public final class Suppressed : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Suppressed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public open fun toBuilder(): R|Suppressed.SuppressedBuilder|
+
+        public open class SuppressedBuilder : R|kotlin/Any| {
+            public open fun build(): R|Suppressed|
+
+            public open fun x(x: R|kotlin/Int|): R|Suppressed.SuppressedBuilder|
+
+            private final var x: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            private constructor(): R|Suppressed.SuppressedBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    @R|lombok/Builder|(builderMethodName = String(createBuilder) [evaluated = String(createBuilder)]) public final class Renamed : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Renamed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun createBuilder(): R|Renamed.RenamedBuilder|
+
+            private constructor(): R|Renamed.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public open class RenamedBuilder : R|kotlin/Any| {
+            public open fun build(): R|Renamed|
+
+            public open fun x(x: R|kotlin/Int|): R|Renamed.RenamedBuilder|
+
+            private final var x: R|kotlin/Int|
+                private get(): R|kotlin/Int|
+                private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+            private constructor(): R|Renamed.RenamedBuilder| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval copy: R|Suppressed| = R|/Suppressed.Suppressed|(Int(1)).R|/Suppressed.toBuilder|().R|/Suppressed.SuppressedBuilder.build|()
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(1), R|<local>/copy|.R|/Suppressed.x|)
+        lval built: R|Suppressed| = R|/Suppressed.Suppressed|(Int(2)).R|/Suppressed.toBuilder|().R|/Suppressed.SuppressedBuilder.x|(Int(3)).R|/Suppressed.SuppressedBuilder.build|()
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(3), R|<local>/built|.R|/Suppressed.x|)
+        R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(4), Q|Renamed|.R|/Renamed.Companion.createBuilder|().R|/Renamed.RenamedBuilder.x|(Int(4)).R|/Renamed.RenamedBuilder.build|().R|/Renamed.x|)
+        ^box String(OK)
+    }

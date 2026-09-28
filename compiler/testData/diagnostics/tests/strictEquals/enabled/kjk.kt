@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // SCOPE_DUMP: p.ThroughMissedJavaIF:equals, p.ThroughExplicitJavaIF:equals
 // SCOPE_DUMP: p.MissedIntersectJavaAC:equals, p.ExplicitIntersectJavaAC:equals
 // SCOPE_DUMP: p.MissedIntersectJavaAC_2:equals, p.ExplicitIntersectJavaAC_2:equals

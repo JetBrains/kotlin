@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 fun compareUInts(a: UInt, b: UInt) = a compareTo b
 fun compareULongs(a: ULong, b: ULong) = a compareTo b

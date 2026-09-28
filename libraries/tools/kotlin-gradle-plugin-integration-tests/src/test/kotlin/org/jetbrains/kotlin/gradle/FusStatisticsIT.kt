@@ -13,11 +13,14 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.jetbrains.kotlin.gradle.util.filterBackwardCompatibilityKotlinFusFiles
 import org.jetbrains.kotlin.gradle.util.filterKotlinFusFiles
@@ -675,6 +678,209 @@ class FusStatisticsIT : KGPBaseTest() {
             validateFusDirectory(":linkDebugFrameworkIosArm64") { fusDirectory ->
                 fusDirectory.assertFusReportDoesNotContain(
                     "ENABLED_SWIFT_EXPORT=true",
+                )
+            }
+        }
+    }
+
+    // Swift Export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("Swift Export - new Swift Export DSL is not configured")
+    @GradleTest
+    @SwiftExportGradlePluginTests
+    fun testNewSwiftExportDslNotConfigured(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+            }
+
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_CONFIGURED")
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES")
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED")
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES")
+            }
+        }
+    }
+
+    // Swift Export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("Swift Export - new Swift Export DSL configured")
+    @GradleTest
+    @SwiftExportGradlePluginTests
+    @OptIn(ExperimentalSwiftExportDsl::class)
+    fun testNewSwiftExportDslConfigured(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+                export.swift {
+                }
+            }
+
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_CONFIGURED", listOf("true")
+                )
+
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES")
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED")
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES")
+            }
+        }
+    }
+
+    // Swift Export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("Swift Export - overridden module options are reported")
+    @GradleTest
+    @SwiftExportGradlePluginTests
+    @OptIn(ExperimentalSwiftExportDsl::class)
+    fun testSwiftExportDslModuleOptionsOverridesIsReported(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    rootPackage.set("com.example")
+                }
+            }
+
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_CONFIGURED", listOf("true")
+                )
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES", listOf("moduleName", "rootPackage")
+                )
+
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED")
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES")
+            }
+        }
+    }
+
+    // Swift Export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("Swift Export - Xcode integration activation is reported")
+    @GradleTest
+    @SwiftExportGradlePluginTests
+    @OptIn(ExperimentalSwiftExportDsl::class)
+    fun testSwiftExportDslXcodeIntegrationActivationIsReported(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration()
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_CONFIGURED", listOf("true")
+                )
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES", listOf("moduleName")
+                )
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED", listOf("true")
+                )
+
+                fusDirectory.assertFusReportDoesNotContain("SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES")
+            }
+        }
+    }
+
+    // Swift Export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("Swift Export - overridden Xcode integration options are reported")
+    @GradleTest
+    @SwiftExportGradlePluginTests
+    @OptIn(ExperimentalSwiftExportDsl::class)
+    fun testSwiftExportDslXcodeIntegrationOverridesIsReported(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration {
+                        settings.put("key", "value")
+                        configure(project.dependencies.project(mapOf("path" to ":sub"))) {
+                            moduleName.set("Sub")
+                            rootPackage.set("com.example.sub")
+                            visibility.set(SwiftExportVisibility.EXPOSED)
+                        }
+                        configure("com.example:other:1.0") {
+                            visibility.set(SwiftExportVisibility.HIDDEN)
+                        }
+                    }
+                }
+            }
+
+            val subproject = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                    }
+                }
+            }
+
+            include(subproject, "sub")
+
+            validateFusDirectory("help") { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_CONFIGURED", listOf("true")
+                )
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_MODULE_OPTIONS_OVERRIDES", listOf("moduleName")
+                )
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_XCODE_INTEGRATION_ACTIVATED", listOf("true")
+                )
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    "SWIFT_EXPORT_DSL_XCODE_INTEGRATION_OVERRIDES",
+                    listOf("exposed", "hidden", "moduleName", "rootPackage", "settings")
                 )
             }
         }

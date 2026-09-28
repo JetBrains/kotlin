@@ -8,7 +8,6 @@ import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.projectStructureMetadataResolvedConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
@@ -140,7 +139,7 @@ internal class MetadataDependencyTransformationTaskInputs(
                 .allDependencies
                 .map { dependency ->
                     when (dependency) {
-                        is ProjectDependency -> dependency.compatAccessor(project).dependencyProject().path
+                        is ProjectDependency -> dependency.path
                         else -> "${dependency.name}:${dependency.group}:${dependency.version}"
                     }
                 }

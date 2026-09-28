@@ -60,13 +60,13 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun FirResolvedQualifier.reportTypeArguments() {
         /**
-         * Implementation before [LanguageFeature.ForbidUselessTypeArgumentsIn25] which missed some cases
+         * Implementation before [LanguageFeature.ForbidUselessTypeArgumentsIn26] which missed some cases
          * (see KT-84280, KT-84281) of [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS].
-         * TODO: KT-84254. Once [LanguageFeature.ForbidUselessTypeArgumentsIn25] becomes obsolete, remove this implementation fully.
+         * TODO: KT-84254. Once [LanguageFeature.ForbidUselessTypeArgumentsIn26] becomes obsolete, remove this implementation fully.
          *
          * @return true if [FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS] was reported.
          */
-        fun preForbidUselessTypeArgumentsIn25Implementation(): Boolean {
+        fun preForbidUselessTypeArgumentsIn26Implementation(): Boolean {
             if (!resolvedType.isUnit || isTypeAliasToClassWithCompanion) {
                 reporter.reportOn(source, FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "Object")
                 return true
@@ -74,10 +74,10 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             return false
         }
 
-        if (preForbidUselessTypeArgumentsIn25Implementation()) return
+        if (preForbidUselessTypeArgumentsIn26Implementation()) return
 
         val diagnostic = when {
-            LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled() -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS
+            LanguageFeature.ForbidUselessTypeArgumentsIn26.isEnabled() -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS
             else -> FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS_WARNING
         }
         reporter.reportOn(source, diagnostic, "Object")

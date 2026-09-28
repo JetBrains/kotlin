@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: Bar.java
 public class Bar implements Foo {
 public interface I extends Boo {

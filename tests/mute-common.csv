@@ -3,3 +3,10 @@ org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,KT-82305,
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11IrBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlinx.serialization.runners.SerializationJdk11FirLightTreeBoxTestGenerated.testSerializableOnJavaClass,KT-79735,FLAKY
 org.jetbrains.kotlin.analysis.low.level.api.fir.ContextCollectorSourceTestGenerated.SmartCasts.testCollectionLiteralWithLambda,KTI-3169,FLAKY
+
+org.jetbrains.kotlin.native.interop.gen.ModularCinteropUnitTests.KT-81695 repeated NS_ENUM with -fmodules - reference the same underlying typedef,KT-89568,STABLE
+org.jetbrains.kotlin.native.interop.gen.ModularCinteropUnitTests.KT-85705 multimodular import - xcode26 style enum definition plus forward declaration in another module,KT-89568,STABLE
+org.jetbrains.kotlin.native.interop.gen.ModularCinteropUnitTests.multimodular import - forward declaration to platform library type - is dereferenced to definition,KT-89568,STABLE
+org.jetbrains.kotlin.native.interop.gen.ForwardDeclarationsTests.KT-71435 objcnames classes Protocol,KT-89568,STABLE
+org.jetbrains.kotlin.native.interop.gen.ObjCMethodSignaturesTest.ObjC Direct,KT-89568,STABLE
+org.jetbrains.kotlin.native.interop.gen.ExternalSourceSymbolTests.KT49455 category marked generated_declaration - is indexed - without visitChildren pass,KT-89568,STABLE

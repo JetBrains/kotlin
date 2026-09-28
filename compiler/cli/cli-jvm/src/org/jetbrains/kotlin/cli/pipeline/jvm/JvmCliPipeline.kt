@@ -31,7 +31,8 @@ class JvmCliPipeline(override val defaultPerformanceManager: PerformanceManager)
                 FrontendFilesForPluginsGenerationPipelinePhase() then
                 JvmSerializeCommonMetadataPipelinePhase then
                 JvmFir2IrPipelinePhase then
-                JvmBackendPipelinePhase then
+                JvmLoweringsPipelinePhase then
+                JvmCodegenPipelinePhase then
                 JvmWriteOutputsPhase
 
     private fun createScriptPipeline(): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<K2JVMCompilerArguments>, JvmScriptPipelineArtifact> =
@@ -42,7 +43,7 @@ class JvmCliPipeline(override val defaultPerformanceManager: PerformanceManager)
         get() = buildFile == null &&
                 !version &&
                 !allowNoSourceFiles &&
-                (script || expression != null || @Suppress("DEPRECATION") repl || freeArgs.isEmpty())
+                (script || expression != null)
 
     override fun isKaptMode(arguments: K2JVMCompilerArguments): Boolean {
         return arguments.pluginOptions.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") }

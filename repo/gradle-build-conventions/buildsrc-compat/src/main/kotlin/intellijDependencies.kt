@@ -19,6 +19,7 @@ fun Project.jpsModelSerialization() = "com.jetbrains.intellij.platform:jps-model
 fun Project.jpsModelImpl() = "com.jetbrains.intellij.platform:jps-model-impl:$intellijVersion"
 fun Project.jpsBuildTest() = "com.jetbrains.intellij.idea:jps-build-test:$intellijVersion"
 fun Project.jpsBuild() = "com.jetbrains.intellij.platform:jps-build:$intellijVersion"
+fun Project.jpsBuildDependencyGraph() = "com.jetbrains.intellij.platform:jps-build-dependency-graph:$intellijVersion"
 fun Project.jpsBuildJavacRt() = "com.jetbrains.intellij.platform:jps-build-javac-rt:$intellijVersion"
 fun Project.testFramework() = "com.jetbrains.intellij.platform:test-framework:$intellijVersion"
 fun Project.devKitJps() = "com.jetbrains.intellij.devkit:devkit-jps:$intellijVersion"

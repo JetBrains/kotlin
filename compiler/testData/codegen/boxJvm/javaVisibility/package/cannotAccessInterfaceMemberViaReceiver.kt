@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // DUMP_IR
 // FILE: javapackage/PackagePrivateGrandparentInterface.java
 

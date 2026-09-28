@@ -17,6 +17,7 @@ kotlin {
             compilerOptions {
                 freeCompilerArgs.add("-Xname-based-destructuring=complete")
                 freeCompilerArgs.add("-Xcollection-literals")
+                freeCompilerArgs.add("-Xcontext-sensitive-resolution")
             }
         }
         commonTest {
@@ -27,6 +28,7 @@ kotlin {
             compilerOptions {
                 freeCompilerArgs.add("-Xname-based-destructuring=complete")
                 freeCompilerArgs.add("-Xcollection-literals")
+                freeCompilerArgs.add("-Xcontext-sensitive-resolution")
             }
         }
         jvm {

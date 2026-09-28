@@ -29,10 +29,9 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSA
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -112,13 +111,7 @@ abstract class KaptBaseIT : KGPBaseTest() {
 }
 
 /**
- * Note that some tests are disabled because kapt class loader cache holds a file descriptor open, which leads to problems on Windows.
- * If you get a failed test on the build server with the message:
- *
- *     java.io.IOException: Failed to delete temp directory Z:\BuildAgent\temp\buildTmp\[...].
- *     The following paths could not be deleted (see suppressed exceptions for details): [...]
- *
- * then override and disable the test here via `@Disabled`.
+ * Runs the whole [KaptIT] suite with the annotation processor classloaders cache enabled.
  */
 @DisplayName("Kapt with classloaders cache")
 class KaptClassLoadersCacheIT : KaptIT() {
@@ -130,41 +123,6 @@ class KaptClassLoadersCacheIT : KaptIT() {
     @Disabled("classloaders cache is incompatible with AP discovery in classpath")
     @GradleTest
     override fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testKt19179andKt37241(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testKt33847(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testRepeatableAnnotations(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
-    }
-
-    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
-    @GradleTest
-    override fun testMultipleProcessingPasses(gradleVersion: GradleVersion) {
     }
 
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
@@ -190,7 +148,7 @@ class KaptClassLoadersCacheIT : KaptIT() {
 
 @DisplayName("Kapt base checks")
 @OtherGradlePluginTests
-@AffectedByCompilerPlugins
+@MustRunOnChangesInCompilerPlugins
 open class KaptIT : KaptBaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
@@ -828,6 +786,78 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @DisplayName("KT-88583: the isolation hides the build process classpath on a fresh daemon and on a dirty daemon")
+    @GradleTest
+    open fun testIsolateProcessorsFromBuildClasspath(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            settingsGradle.appendText("\ninclude ':annotation-processor', ':example'\n")
+            addKgpToBuildScriptCompilationClasspath()
+
+            subProject("annotation-processor").apply {
+                projectPath.source("build.gradle") { "" }
+                javaSourcesDir().source("org/kotlin/probe/ClasspathProbeProcessor.java") { classpathProbeProcessorSource }
+                projectPath.source("src/main/resources/META-INF/services/javax.annotation.processing.Processor") {
+                    "org.kotlin.probe.ClasspathProbeProcessor"
+                }
+                // A pure Java annotation processor without any dependencies:
+                // nothing (not even kotlin-stdlib) is on the annotation processing classpath except the processor itself,
+                // so classes it observes besides JDK ones can only leak from the build process classpath.
+                buildScriptInjection {
+                    project.plugins.apply("java")
+                }
+            }
+
+            subProject("example").apply {
+                projectPath.source("build.gradle") { "" }
+                kotlinSourcesDir().source("Example.kt") {
+                    """
+                    class Example {
+                        fun greet(): String = "Hello"
+                    }
+                    """.trimIndent()
+                }
+                buildScriptInjection {
+                    project.plugins.apply("org.jetbrains.kotlin.jvm")
+                    project.plugins.apply("org.jetbrains.kotlin.kapt")
+                    project.dependencies.add("kapt", project.dependencies.project(mapOf("path" to ":annotation-processor")))
+                }
+            }
+
+            // Use a daemon unique to this copied test project, then keep reusing it across all three builds.
+            val daemonMarker = "-Duser.variant=kt88583${projectPath.parent.fileName}"
+            var hostProcess: String? = null
+
+            fun BuildResult.assertSameHost() {
+                val currentHost = parseHostProcess(output)
+                hostProcess?.let { assertEquals(it, currentHost) } ?: run { hostProcess = currentHost }
+            }
+
+            fun buildAndReadProbes(isolationEnabled: Boolean): Map<String, Boolean> {
+                lateinit var buildOutput: String
+                build("build", daemonMarker, "-P$ISOLATION_PROPERTY=$isolationEnabled") {
+                    assertTasksExecuted(":example:kaptKotlin")
+                    assertSameHost()
+                    buildOutput = output
+                }
+                return parseProbes(buildOutput)
+            }
+
+            assertEquals(ISOLATED_PROBES, buildAndReadProbes(isolationEnabled = true))
+            assertEquals(true, buildAndReadProbes(isolationEnabled = false)[JAVAC_PROBE])
+            assertEquals(ISOLATED_PROBES, buildAndReadProbes(isolationEnabled = true))
+        }
+    }
+
+    private fun parseProbes(output: String): Map<String, Boolean> =
+        Regex("""kapt-probe (\S+) visible: (true|false)""")
+            .findAll(output)
+            .associate { it.groupValues[1] to it.groupValues[2].toBoolean() }
+
+    /** The name of the process that hosts kapt. It proves which builds share one daemon. */
+    private fun parseHostProcess(output: String): String =
+        Regex("""kapt-probe-host (\S+)""").find(output)?.groupValues?.get(1)
+            ?: error("The annotation processor did not report the hosting process")
+
     @DisplayName("should not resolve 'kapt' configuration during build configuration phase")
     @GradleTest
     fun testKaptConfigurationLazyResolution(gradleVersion: GradleVersion) {
@@ -1423,5 +1453,82 @@ open class KaptIT : KaptBaseIT() {
                 assertFileExists(projectPath.resolve("build/tmp/kapt3/stubs/main/ClassWithDupProps.java"))
             }
         }
+    }
+
+    private companion object {
+        private const val ISOLATION_PROPERTY = "kapt.isolate.processors.from.build.classpath"
+
+        private const val JAVAC_PROBE = "com.sun.source.util.Trees"
+
+        /** With the isolation on, a processor sees only its own classes, JDK platform classes and javac. */
+        private val ISOLATED_PROBES = mapOf(
+            "build-process-classpath" to false,
+            "kotlin.Unit" to false,
+            JAVAC_PROBE to true,
+        )
+
+        //language=Java
+        private val classpathProbeProcessorSource = """
+            package org.kotlin.probe;
+
+            import java.lang.management.ManagementFactory;
+            import java.util.Set;
+            import javax.annotation.processing.AbstractProcessor;
+            import javax.annotation.processing.RoundEnvironment;
+            import javax.annotation.processing.SupportedAnnotationTypes;
+            import javax.lang.model.SourceVersion;
+            import javax.lang.model.element.TypeElement;
+            import javax.tools.Diagnostic;
+
+            @SupportedAnnotationTypes("*")
+            public class ClasspathProbeProcessor extends AbstractProcessor {
+                private boolean reported = false;
+
+                @Override
+                public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+                    if (reported) return false;
+                    reported = true;
+                    printMessage("kapt-probe-host " + ManagementFactory.getRuntimeMXBean().getName());
+                    report("build-process-classpath", buildProcessClasspathIsReachable());
+                    probe("kotlin.Unit");
+                    probe("com.sun.source.util.Trees");
+                    return false;
+                }
+
+                // The build process classpath is what KT-88583 is about: it is reachable exactly when the
+                // system classloader of the hosting process is somewhere in our own classloader chain.
+                private boolean buildProcessClasspathIsReachable() {
+                    ClassLoader system = ClassLoader.getSystemClassLoader();
+                    for (ClassLoader cl = getClass().getClassLoader(); cl != null; cl = cl.getParent()) {
+                        if (cl == system) return true;
+                    }
+                    return false;
+                }
+
+                private void probe(String className) {
+                    boolean visible;
+                    try {
+                        Class.forName(className, false, getClass().getClassLoader());
+                        visible = true;
+                    } catch (ClassNotFoundException e) {
+                        visible = false;
+                    }
+                    report(className, visible);
+                }
+
+                private void report(String what, boolean visible) {
+                    printMessage("kapt-probe " + what + " visible: " + visible);
+                }
+
+                private void printMessage(String message) {
+                    processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, message);
+                }
+
+                @Override
+                public SourceVersion getSupportedSourceVersion() {
+                    return SourceVersion.latestSupported();
+                }
+            }
+        """.trimIndent()
     }
 }

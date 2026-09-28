@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 <!REDUNDANT_MODIFIER!>abstract<!> sealed class Base {
 
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.arguments.dsl.types.*
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -383,6 +384,53 @@ private fun validateLanguageFeaturesConsistency(argument: KotlinCompilerArgument
                 "Unexpected type for argument '${argument.name}' that changes language features: ${argumentType::class.simpleName}. " +
                         "Allowed types: ${BooleanType::class.simpleName}, ${AnnotationDefaultTargetModeType::class.simpleName}, ${NameBasedDestructuringModeType::class.simpleName}."
             )
+        }
+    }
+
+    var enablingVersion: LanguageVersion? = null
+    for (additionalAnn in argument.additionalAnnotations) {
+        // Only [Enables] is taken into account.
+        // A [Disables] annotation describes an opt-out, its feature says nothing about the lifetime of such an argument.
+        if (additionalAnn !is Enables) continue
+
+        // `sinceVersion = null` means an experimental feature that always is not deprecated, so don't run the further checks.
+        val sinceVersion = additionalAnn.feature.sinceVersion ?: return
+
+        if (enablingVersion == null || sinceVersion > enablingVersion) enablingVersion = sinceVersion
+    }
+    if (enablingVersion == null) return
+
+    /**
+     * Check only that the deprecated/removed versions are specified, disregarding the concrete value, because an
+     * argument cannot be deprecated in an already published release, nor in one that does not exist yet. The only
+     * thing that can be suggested is the version of the compiler being built, of which at least the major and the
+     * minor components are meaningful. Version ordering is not checked here, [validateLifetime] does that.
+     */
+    fun throwUnspecifiedVersionError(deprecated: Boolean) {
+        val message = buildString {
+            append("Argument '${argument.name}' enables language features of a version that is already ")
+            append(if (deprecated) "deprecated" else "unsupported")
+            append(". Specify '${if (deprecated) "deprecated" else "removed"}Version = KotlinReleaseVersion.v")
+            val currentVersion = kotlin.KotlinVersion.CURRENT
+            append("${currentVersion.major}_${currentVersion.minor}_<patch>")
+            append("' for this argument, where <patch> is the actual patch version taken from the build server (0, 10, 20).")
+            append(" The minor version might be different if you are performing a cherry-pick on a release branch.")
+        }
+        error(message)
+    }
+
+    /**
+     * Check that the max version of a feature is not deprecated or removed. Otherwise, the argument should have a deprecated or removed version.
+     * A removed version alone is enough: removing an experimental flag without deprecating it first is legal.
+     */
+    val releaseVersionsMetadata = argument.releaseVersionsMetadata
+    if (releaseVersionsMetadata.removedVersion == null) {
+        if (enablingVersion.isUnsupported) {
+            throwUnspecifiedVersionError(deprecated = false)
+        }
+
+        if (releaseVersionsMetadata.deprecatedVersion == null && enablingVersion.isDeprecated) {
+            throwUnspecifiedVersionError(deprecated = true)
         }
     }
 }

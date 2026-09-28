@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_RESOURCES_FOLDER_NAME
-import org.jetbrains.kotlin.library.KlibMockDSL.Companion.mockKlib
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_INLINABLE_FUNCTIONS_FOLDER_NAME
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FOLDER_NAME
@@ -96,7 +95,6 @@ class KlibMockDSL(val currentDir: Path, val parent: KlibMockDSL?) {
                 bodies = random.nextBytes(100_000),
                 declarations = random.nextBytes(10_000),
                 debugInfo = random.nextBytes(10_000),
-                backendSpecificMetadata = null, // never written to the disk
                 fileEntries = random.nextBytes(1_000)
             )
         }
@@ -170,5 +168,5 @@ fun KlibMockDSL.irInlinableFunctions(init: KlibMockDSL.() -> Unit = {}): Unit = 
 
 fun KlibMockDSL.irModule(serializedIrModule: SerializedIrModule) {
     KlibIrComponentWriterImpl.ForMainIr(serializedIrModule.files).writeTo(rootDir)
-    serializedIrModule.fileWithPreparedInlinableFunctions?.let { KlibIrComponentWriterImpl.ForInlinableFunctionsIr(it).writeTo(rootDir) }
+    KlibIrComponentWriterImpl.ForInlinableFunctionsIr(serializedIrModule.filesWithPreparedInlinableFunctions).writeTo(rootDir)
 }

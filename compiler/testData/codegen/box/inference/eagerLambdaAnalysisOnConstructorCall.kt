@@ -1,5 +1,5 @@
 // LANGUAGE: +EagerLambdaAnalysis, +CallCompletionRefinementsFor25, +UnitConversionsOnArbitraryExpressions, +InferThrowableTypeParameterToUpperBound
-// IGNORE_BACKEND: JVM, JVM_IR, JVM_IR_SERIALIZE
+// IGNORE_BACKEND: JVM
 
 class Main {
    lateinit var result: String
@@ -16,4 +16,3 @@ class Main {
 fun box(): String {
    return Main { "OK" }.result
 }
-

@@ -1,5 +1,5 @@
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 data class XY(val x: Int, val y: Int)
 
 fun foo(list: List<XY>) {

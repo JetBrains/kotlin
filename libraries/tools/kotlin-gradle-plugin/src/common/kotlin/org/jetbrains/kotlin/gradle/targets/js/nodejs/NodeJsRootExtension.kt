@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
  */
 abstract class NodeJsRootExtension internal constructor(
     project: Project,
-    nodeJs: () -> NodeJsEnvSpec,
     rootDir: String,
 ) : BaseNodeJsRootExtension(
     project,
-    nodeJs,
     rootDir
 ), HasPlatformDisambiguator by JsPlatformDisambiguator {
     companion object : HasPlatformDisambiguator by JsPlatformDisambiguator {

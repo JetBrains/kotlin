@@ -19,7 +19,7 @@ fun box(): String {
     return o + k
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:6 box:
 // test.kt:12 box: p:kotlin.Triple=kotlin.Triple
 // test.kt:14 box: p:kotlin.Triple=kotlin.Triple, o:java.lang.String="O":java.lang.String

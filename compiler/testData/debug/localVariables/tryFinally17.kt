@@ -14,7 +14,7 @@ fun box(): String {
     return "FAIL"
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:8 box:
 // test.kt:9 box:
 // test.kt:10 box: x:java.lang.String="x":java.lang.String

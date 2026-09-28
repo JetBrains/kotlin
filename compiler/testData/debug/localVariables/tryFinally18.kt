@@ -28,7 +28,7 @@ fun box() {
     callSite(2, 2)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:27 box:
 // test.kt:17 callSite: a:int=1:int, b:int=2:int
 // test.kt:8 callSite: a:int=1:int, b:int=2:int, $i$f$analyze:int=0:int
@@ -52,7 +52,7 @@ fun box() {
 // test.kt:11 callSite: a:int=2:int, b:int=2:int, $i$f$analyze:int=0:int
 // test.kt:29 box:
 
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:27 box:
 
 // test.kt:17 callSite: a:int=1:int, b:int=2:int

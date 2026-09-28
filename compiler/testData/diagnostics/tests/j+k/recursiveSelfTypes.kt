@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: TSFBuilder.java
 public abstract class TSFBuilder<F extends CharSequence, B extends TSFBuilder<F,B>> {
     public B configure() { return null; }

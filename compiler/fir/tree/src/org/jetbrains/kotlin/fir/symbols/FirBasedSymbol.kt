@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
@@ -67,6 +65,22 @@ abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker 
     val resolvedAnnotationClassIds: List<ClassId>
         get() = fir.resolvedAnnotationClassIds(this)
 }
+
+/**
+ * The [FirControlFlowGraphReference] of the declaration of this symbol, or `null` if the declaration is not a
+ * [FirControlFlowGraphOwner], or is one which gets no graph of its own – a declaration without a body, or a local property, which is a
+ * statement of its container graph.
+ *
+ * A graph is built during [BODY_RESOLVE][FirResolvePhase.BODY_RESOLVE], which this property requests. Reading
+ * [FirControlFlowGraphOwner.controlFlowGraphReference] off the declaration directly answers `null` for a declaration which is not
+ * resolved yet instead, and in the Analysis API that is the case for every declaration nobody has asked about so far.
+ */
+val FirBasedSymbol<*>.resolvedControlFlowGraphReference: FirControlFlowGraphReference?
+    get() {
+        val owner = fir as? FirControlFlowGraphOwner ?: return null
+        lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        return owner.controlFlowGraphReference
+    }
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedCompilerRequiredAnnotations(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {

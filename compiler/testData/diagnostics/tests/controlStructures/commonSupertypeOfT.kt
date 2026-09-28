@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-6774 Cannot find equals() when comparing with null
 
 fun <T: Any> fn(t1: T, t2: T?) {

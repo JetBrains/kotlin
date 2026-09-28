@@ -1,5 +1,5 @@
 // LANGUAGE: -NameBasedDestructuring -DeprecateNameMismatchInShortDestructuringWithParentheses -EnableNameBasedDestructuringShortForm
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -CAST_NEVER_SUCCEEDS -UNUSED_PARAMETER -UNCHECKED_CAST
 
 fun <T> materialize() = null as T

@@ -86,12 +86,12 @@ private fun <Input, Output, Context> Action<Output, Context>.toPostAction(): Act
     }
 }
 
-fun <I : PipelineArtifact, O : PipelineArtifact> PipelinePhase<I, O>.executePhaseIsolatedWithActions(input: I): O? {
+fun <I : PipelineArtifact, O : PipelineArtifact> CompilerPhase<PipelineContext, I, O>.executePhaseIsolatedWithActions(input: I): O? {
     val phaseConfig = PhaseConfig()
-    val phaserState = PhaserState()
     val context = PipelineContext(input.configuration.perfManager, kaptMode = false)
-    runBefore(phaseConfig, phaserState, context, input)
-    val output = executePhase(input) ?: return null
-    runAfter(phaseConfig, phaserState, context, input, output)
-    return output
+    return try {
+        invokeToplevel(phaseConfig, context, input)
+    } catch (_: PipelineStepException) {
+        return null
+    }
 }

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.createSourceSession
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -219,12 +218,10 @@ class ScriptJvmK2CompilerImpl(
 
         val session = createSourceSession(
             moduleData,
-            AbstractProjectFileSearchScope.EMPTY,
             createIncrementalCompilationSymbolProviders = { null },
             state.extensionRegistrars,
             compilerConfiguration,
             context = state.sessionFactoryContext,
-            needRegisterJavaElementFinder = true,
             kmpModuleKind = KmpModuleKind.SingleModule,
             init = {},
         )
@@ -333,12 +330,10 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
     }
     return dummySessionForAnnotationResolution ?: (createSourceSession(
         moduleDataProvider.addNewScriptModuleData(Name.special("<raw-script>"), isDummy = true),
-        AbstractProjectFileSearchScope.EMPTY,
         createIncrementalCompilationSymbolProviders = { null },
         extensionRegistrars,
         compilerContext.environment.configuration,
         context = sessionFactoryContext,
-        needRegisterJavaElementFinder = true,
         kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
     ).apply {

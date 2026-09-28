@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_JSON_DIR
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
 

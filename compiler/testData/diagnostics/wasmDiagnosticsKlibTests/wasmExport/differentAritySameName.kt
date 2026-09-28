@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: A.kt
 @file:Suppress("OPT_IN_USAGE")
 package a

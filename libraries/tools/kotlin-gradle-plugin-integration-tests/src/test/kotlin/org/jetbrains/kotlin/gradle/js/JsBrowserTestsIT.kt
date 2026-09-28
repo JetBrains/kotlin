@@ -11,7 +11,6 @@ import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.ExperimentalJsTestDsl
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -187,7 +186,6 @@ class JsBrowserTestsIT : KGPBaseTest() {
                         }
                     }
 
-                    @OptIn(ExperimentalWasmDsl::class)
                     wasmJs {
                         browser {
                             @OptIn(ExperimentalJsTestDsl::class)

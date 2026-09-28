@@ -391,6 +391,12 @@ class Fir2IrVisitor(
         data: Any?,
     ): IrElement {
         val irSnippet = declarationStorage.getCachedIrReplSnippet(replSnippet)!!
+        return conversionScope.withCurrentReplSnippet(replSnippet.symbol) {
+            convertReplSnippet(replSnippet, irSnippet, data)
+        }
+    }
+
+    private fun convertReplSnippet(replSnippet: FirReplSnippet, irSnippet: IrReplSnippet, data: Any?): IrElement {
         irSnippet.parent = conversionScope.parentFromStack()
         declarationStorage.enterScope(irSnippet.symbol)
 
@@ -992,6 +998,14 @@ class Fir2IrVisitor(
 
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: Any?): IrElement {
         return literalExpression.toIrConst(literalExpression.resolvedType.toIrType())
+    }
+
+    override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: Any?): IrElement {
+        val preConverted = numericClassConversion.originalExpression.accept(this, data) as IrExpression
+
+        return with(adapterGenerator) {
+            preConverted.applyNumericClassCoercionIfNeeded(numericClassConversion)
+        }
     }
 
     // ==================================================================================

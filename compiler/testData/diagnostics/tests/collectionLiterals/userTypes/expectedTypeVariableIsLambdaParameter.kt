@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-80500
 
 fun <T> foo(x: T, y: (T) -> Unit): T = x

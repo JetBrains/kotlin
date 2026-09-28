@@ -3,14 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests
 
 import com.android.build.gradle.LibraryExtension
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.resources.overriddenGradleVersionForTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
@@ -124,6 +121,7 @@ class KotlinTargetResourcesPublicationImplTests {
         )
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `test targets that can publish resources`() {
         buildProjectWithMPP {
@@ -148,6 +146,7 @@ class KotlinTargetResourcesPublicationImplTests {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `test targets that can resolve resources`() {
         buildProjectWithMPP {
@@ -169,10 +168,8 @@ class KotlinTargetResourcesPublicationImplTests {
     }
 
     @Test
-    fun `test resolution - doesn't emit diagnostic with variant reselection - when Gradle version is above 7_6`() {
-        buildProjectWithMPP(
-            preApplyCode = { overriddenGradleVersionForTests = GradleVersion.version("7.6.1") }
-        ) {
+    fun `test resolution - doesn't emit diagnostic with variant reselection`() {
+        buildProjectWithMPP {
             kotlin {
                 linuxArm64()
                 resourcesPublicationExtension?.resolveResources(linuxArm64())

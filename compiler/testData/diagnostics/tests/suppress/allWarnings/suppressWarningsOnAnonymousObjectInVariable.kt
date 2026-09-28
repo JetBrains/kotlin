@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 @Suppress("warnings")
 val anonymous = object {
     fun foo(p: String?? = "" as String) {}

@@ -22,12 +22,10 @@ dependencies {
     compileOnly(project(":compiler:psi:psi-api"))
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
-    compileOnly(project(":core:compiler.common.js"))
     implementation(kotlinxCollectionsImmutable())
 
     api(intellijCore())
-    api(libs.intellij.asm)
-    api(libs.guava)
+    implementation(libs.intellij.asm)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -36,7 +34,6 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:psi:psi-api")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
-    testImplementation(project(":analysis:analysis-internal-utils"))
 }
 
 private val unstableNonPublicMarkers = listOf(

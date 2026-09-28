@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class SuperFoo {
     public fun bar(): String {
         if (this is Foo) {

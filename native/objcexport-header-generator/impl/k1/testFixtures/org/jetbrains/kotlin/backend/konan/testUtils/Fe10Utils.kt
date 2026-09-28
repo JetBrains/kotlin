@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.createPhaseConfig
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
@@ -59,16 +57,16 @@ fun createModuleDescriptor(
     dependencyKlibs: List<Path> = emptyList(),
 ): ModuleDescriptor {
 
-    val klibFactory = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
+    val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl()
 
-    val stdlibModuleDescriptor = klibFactory.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
+    val stdlibModuleDescriptor = moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
         library = loadKlib(kotlinNativeStdlibPath),
         languageVersionSettings = createLanguageVersionSettings(),
         storageManager = LockBasedStorageManager.NO_LOCKS,
     ).also { it.setDependencies(it) }
 
     val dependencyKlibDescriptors = dependencyKlibs.map { dependencyKlib ->
-        klibFactory.DefaultDeserializedDescriptorFactory.createDescriptorAndNewBuiltIns(
+        moduleDescriptorFactory.createDescriptorAndNewBuiltIns(
             library = loadKlib(dependencyKlib),
             languageVersionSettings = createLanguageVersionSettings(),
             storageManager = LockBasedStorageManager.NO_LOCKS,

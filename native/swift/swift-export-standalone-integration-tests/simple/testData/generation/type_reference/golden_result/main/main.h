@@ -13,12 +13,6 @@ int32_t DATA_CLASS_a_get(void * self);
 
 void * DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(void * self, int32_t a);
 
-_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t DATA_CLASS_hashCode(void * self);
-
-NSString * DATA_CLASS_toString(void * self);
-
 void * Demo_INNER_CLASS_init_allocate();
 
 _Bool Demo_INNER_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -177,15 +171,9 @@ int32_t ignored_ENUM_ordinal(void * self);
 
 int32_t ignored_VALUE_CLASS_a_get(void * self);
 
-_Bool ignored_VALUE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t ignored_VALUE_CLASS_hashCode(void * self);
-
 void * ignored_VALUE_CLASS_init_allocate();
 
 _Bool ignored_VALUE_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(void * __kt, int32_t a);
-
-NSString * ignored_VALUE_CLASS_toString(void * self);
 
 void * ignored_produce_ENUM();
 
@@ -207,13 +195,7 @@ _Bool namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__Swi
 
 int32_t namespace_deeper_DATA_OBJECT_a_get(void * self);
 
-_Bool namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
 void * namespace_deeper_DATA_OBJECT_get();
-
-int32_t namespace_deeper_DATA_OBJECT_hashCode(void * self);
-
-NSString * namespace_deeper_DATA_OBJECT_toString(void * self);
 
 void * namespace_deeper_Object_with_package_INNER_CLASS_init_allocate();
 

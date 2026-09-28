@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
 import org.jetbrains.kotlin.testFederation.testFederationDomains
 import org.jetbrains.kotlin.testFederation.toArgumentString
-import org.jetbrains.kotlin.tooling.core.withClosure
+import org.jetbrains.kotlin.tooling.core.closure
 import java.io.Serializable
 
 interface TestLifecycleTasksModel : Serializable {
@@ -45,6 +45,16 @@ interface TestLifecycleTasksModel : Serializable {
          * The test tasks are stored using their identityPath
          */
         val allDependencies: Set<String>
+
+        /**
+         * Direct dependencies of this lifecycle task
+         */
+        val dependencies: Set<String>
+
+        /**
+         * The earliest TeamCity quality gate expected to execute this lifecycle task.
+         */
+        val qualityGate: String
     }
 
     /**
@@ -79,6 +89,8 @@ internal data class TestLifecycleTaskModelImpl(
 internal data class TestLifecycleTaskImpl(
     override val path: String,
     override val allDependencies: Set<String>,
+    override val dependencies: Set<String>,
+    override val qualityGate: String,
 ) : TestLifecycleTasksModel.TestLifecycleTask
 
 internal data class TestTaskImpl(
@@ -98,7 +110,7 @@ class TestLifecycleTasksModelBuilder : ToolingModelBuilder {
 
     override fun buildAll(modelName: String, project: Project): Any {
         val testTasks = project.tasks.withType<AbstractTestTask>().toList()
-            .filter { testTask -> testTask.isRelevant() }
+            .filter { testTask -> testTask.isRelevantTest() }
             .map { testTask ->
                 TestTaskImpl(
                     testTask.identityPath.asString(),
@@ -118,23 +130,42 @@ class TestLifecycleTasksModelBuilder : ToolingModelBuilder {
         )
     }
 
-    private fun buildLifecycleTask(task: DefaultTask): TestLifecycleTaskImpl {
+    private fun buildLifecycleTask(task: TestLifecycleTask): TestLifecycleTaskImpl {
         val build = task.project.gradle
+
         return TestLifecycleTaskImpl(
             path = task.identityPath.asString(),
-            allDependencies = task.withClosure<Task> { current ->
+            dependencies = task.taskDependencies.getDependencies(task)
+                .mapNotNull { it.identityPathOrNull() }
+                .toSet(),
+            allDependencies = task.closure<Task> { current ->
                 if (current.project.gradle == build) {
                     current.taskDependencies.getDependencies(current).toList()
                 } else emptyList()
-            }.filterIsInstance<AbstractTestTask>()
-                .filter { it.isRelevant() }
-                .map { it.identityPath.asString() }.toSet()
+            }.filter { it.isRelevant() }.mapNotNull { it.identityPathOrNull() }.toSet(),
+            qualityGate = task.qualityGate.get().name,
         )
+    }
+
+
+    private fun Task.isRelevant(): Boolean {
+        if (this is AbstractTestTask) return isRelevantTest()
+        if (this is TestLifecycleTask) return true
+        return false
+    }
+
+    private fun Task.identityPathOrNull(): String? {
+        return when (this) {
+            is AbstractTestTask -> this.identityPath.toString()
+            is TestLifecycleTask -> this.identityPath.toString()
+            is DefaultTask -> this.identityPath.toString()
+            else -> null
+        }
     }
 
     @Suppress("RedundantIf")
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    private fun AbstractTestTask.isRelevant(): Boolean {
+    private fun AbstractTestTask.isRelevantTest(): Boolean {
         /*
         Tests might be created _by default_ without any test sources being present.
         Such tests can be ignored until a single test source is added.

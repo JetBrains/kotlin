@@ -17,6 +17,12 @@ void * _Nullable Producer_produce__reverse_swift(void * self);
 
 NSString * StringProducer_produce__reverse_swift(void * self);
 
+_Bool main_internal_functional_type_callee_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * pointerToClosure, void * _Nullable _1);
+
+_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Box__(void * pointerToClosure, void * _1);
+
+void * main_internal_functional_type_callee_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 void * AFactory_create(void * self);
 
 void * _Nullable A_foo_get(void * self);
@@ -119,13 +125,13 @@ void * __root___baz_get();
 
 NSDictionary<id, id> * __root___createMap__TypesOfArguments__Swift_Array_main_Pair___(NSArray<id> * pairs);
 
-NSArray<id> * __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(NSArray<id> * receiver, _Bool (^predicate)(void * _Nullable ));
+NSArray<id> * __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(NSArray<id> * receiver, void * predicate);
 
 void * _Nullable __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * _Nullable param1, void * _Nullable param2);
 
-_Bool __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(_Bool (^box)(void *));
+_Bool __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(void * box);
 
-_Bool __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(_Bool (^box)(void *));
+_Bool __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(void * box);
 
 void * __root___returnBFun();
 
@@ -139,7 +145,7 @@ _Bool __root___takeBoxStarProjection__TypesOfArguments__main_Box__(void * box);
 
 _Bool __root___takeBoxUpperBound__TypesOfArguments__main_Box__(void * box);
 
-_Bool __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__(void * (^box)(void));
+_Bool __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__(void * box);
 
 _Bool main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20main_B__(void * pointerToBlock, void * _1);
 

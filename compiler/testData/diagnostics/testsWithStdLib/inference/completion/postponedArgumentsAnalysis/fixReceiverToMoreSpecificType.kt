@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 fun <T : Any> xSelectButton2(items: (matcher: String) -> List<T>, handler: T.() -> Unit) {}

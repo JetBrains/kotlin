@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Generic<T>
 class Klass<T> {
     var mutableProperty: Generic<T> = Generic()

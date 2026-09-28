@@ -1,7 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects +AllowMultipleExpectsForSingleActual
 // ISSUE: KT-69909, KT-88307
 // WITH_STDLIB
-// IGNORE_IR_DESERIALIZATION_TEST: JVM_IR
+// IGNORE_IR_DESERIALIZATION_TEST: JVM
 
 // MODULE: common
 

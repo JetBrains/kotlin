@@ -32,6 +32,9 @@ abstract class FirCache<in K : Any, out V, in CONTEXT> {
      */
     @FirCacheInternals
     abstract val cachedValues: Collection<V>
+
+    @FirCacheInternals
+    abstract fun clear()
 }
 
 @Suppress("NOTHING_TO_INLINE")

@@ -2644,7 +2644,7 @@ object ECMA426BasedSourceMapParser {
 
     /** Parses one or more values separated by the specified character. */
     private inline fun <T> ParserStream.parseManySeparated(separator: Char, parser: () -> ParsingResult<T>): ParsingResult<List<T>> {
-        buildList {
+        mutableListOf<T>().apply {
             val first = withRollback(parser).ifFailure { return it }
             add(first)
 
@@ -2670,7 +2670,7 @@ object ECMA426BasedSourceMapParser {
 
     /** Parses one or more consecutive values. */
     private inline fun <T> ParserStream.parseMany(parser: () -> ParsingResult<T>): ParsingResult<List<T>> {
-        buildList {
+        mutableListOf<T>().apply {
             val first = withRollback(parser).ifFailure { return it }
             add(first)
 

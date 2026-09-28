@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 object AnObject {
     val ok = "OK"
     fun foo() = "OK"

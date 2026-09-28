@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithNoReference
 import org.jetbrains.kotlin.light.classes.symbol.codeReferences.SymbolLightPsiJavaCodeReferenceElementWithReference
-import org.jetbrains.kotlin.light.classes.symbol.toAnnotationMemberValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.utils.toAnnotationMemberValue
 import org.jetbrains.kotlin.psi.*
 
 internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
@@ -73,7 +73,6 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
 
     override fun <T : PsiAnnotationMemberValue?> setDeclaredAttributeValue(attributeName: String?, value: T?) = cannotModify()
 
-    @OptIn(KtExperimentalApi::class)
     private fun getAttributeValue(name: String?, useDefault: Boolean): PsiAnnotationMemberValue? {
         val attributeName = name ?: "value"
         parameterList.attributes

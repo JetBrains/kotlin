@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun case_1(vararg args: dynamic) {
     (<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.List<dynamic>")!>listOf(null) + args<!>).toTypedArray()

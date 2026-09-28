@@ -40,7 +40,7 @@ import kotlin.time.Instant
  *   - Comparing UUIDs to establish ordering or equality.
  *
  * Note that [Uuid] has value semantics, and it may become a value class in the future
- * (see (KEEP-0454)[https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md]
+ * (see [KEEP-0454](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)
  * for more details about multi-field value classes). It is not recommended
  * to rely on [Uuid] identity (i.e., abstain from comparing two [Uuid]s using `===`
  * or having an [kotlin.concurrent.atomics.AtomicReference] to it). Identity-based operations on [Uuid]
@@ -348,7 +348,7 @@ public class Uuid private constructor(
          * @sample samples.uuid.Uuids.fromByteArray
          */
         public fun fromByteArray(byteArray: ByteArray): Uuid {
-            require(byteArray.size == SIZE_BYTES) {
+            require(byteArray.size == Uuid.SIZE_BYTES) {
                 "Expected exactly $SIZE_BYTES bytes, but was ${byteArray.truncateForErrorMessage(32)} of size ${byteArray.size}"
             }
 

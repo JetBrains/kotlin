@@ -36,7 +36,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:35 box:
 // test.kt:20 compute:
 // test.kt:21 compute:
@@ -54,7 +54,7 @@ fun box() {
 // test.kt:36 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
 // test.kt:37 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:35 box:
 // test.kt:20 compute:
 // test.kt:21 compute:

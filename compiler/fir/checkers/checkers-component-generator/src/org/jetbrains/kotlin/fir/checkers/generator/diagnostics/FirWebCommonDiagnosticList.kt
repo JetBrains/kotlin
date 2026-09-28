@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -19,6 +20,7 @@ object WEB_COMMON_DIAGNOSTICS_LIST : DiagnosticList("FirWebCommonErrors") {
         val WRONG_JS_QUALIFIER by error<KtElement>()
         val JS_MODULE_PROHIBITED_ON_VAR by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val NESTED_JS_MODULE_PROHIBITED by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val INAPPLICABLE_EAGER_INITIALIZATION by deprecationError<KtElement>(ForbidNonTopLevelEagerInitialization)
     }
 
     val EXTERNALS by object : DiagnosticGroup("Externals") {

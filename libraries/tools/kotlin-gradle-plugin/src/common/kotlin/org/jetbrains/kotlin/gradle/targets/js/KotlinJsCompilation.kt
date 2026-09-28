@@ -57,13 +57,6 @@ open class KotlinJsCompilation @Inject internal constructor(
             buildNpmProjectName(targetModuleName, compilationName)
         }
 
-    @Deprecated(
-        "Use compilationName instead. Scheduled for removal in Kotlin 2.3.",
-        ReplaceWith("compilationName"),
-        level = DeprecationLevel.ERROR
-    )
-    val compilationPurpose: String get() = compilationName
-
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
 

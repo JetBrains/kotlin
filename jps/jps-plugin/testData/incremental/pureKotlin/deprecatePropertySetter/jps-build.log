@@ -1,0 +1,22 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/Util.class
+End of files
+Compiling files:
+  src/util.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/ClientSet.class
+End of files
+Compiling files:
+  src/clientSet.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+'var foo: Int' is deprecated. message.

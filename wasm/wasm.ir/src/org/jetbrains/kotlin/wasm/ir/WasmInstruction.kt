@@ -103,9 +103,12 @@ private open class WasmInstr4Located(
     immediate4: WasmImmediate,
 ) : WasmInstr4(operator, immediate1, immediate2, immediate3, immediate4)
 
-private val wasmInst0cache = mutableMapOf<WasmOp, WasmInstr0>()
+private val wasmInst0cache = Array(WasmOp.entries.size) { ordinal ->
+    WasmInstr0(WasmOp.entries[ordinal])
+}
+
 fun wasmInstrWithoutLocation(operator: WasmOp): WasmInstr =
-    wasmInst0cache.getOrPut(operator) { WasmInstr0(operator) }
+    wasmInst0cache[operator.ordinal]
 
 fun wasmInstrWithLocation(
     operator: WasmOp,

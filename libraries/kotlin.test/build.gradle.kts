@@ -112,7 +112,7 @@ kotlin {
                 )
                 val java9CompileOnly = configurations[frameworkJava9SourceSet.compileOnlyConfigurationName]
                 project.dependencies {
-                    java9CompileOnly(project)
+                    java9CompileOnly(project(project.path))
                 }
             }
             test.associateWith(getByName("JUnit"))
@@ -420,8 +420,8 @@ configurations {
             }
         }
         dependencies {
-            apiElements(project)
-            runtimeDeps(project)
+            apiElements(project(project.path))
+            runtimeDeps(project(project.path))
             when (framework) {
                 JvmTestFramework.JUnit -> {}
                 JvmTestFramework.JUnit5 -> {
@@ -452,7 +452,7 @@ configurations {
         extendsFrom(legacyConfigurationDeps.get())
     }
     dependencies {
-        legacyConfigurationDeps(project)
+        legacyConfigurationDeps(project(project.path))
     }
 
     val jvmMainApi = getByName("jvmMainApi")

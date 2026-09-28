@@ -165,6 +165,9 @@ internal object KtStubBasedElementTypes {
     val INTERSECTION_TYPE: KtNodeType = provider.intersectionTypeType
 
     @JvmField
+    val UNION_TYPE: KtNodeType = provider.unionTypeType
+
+    @JvmField
     val TYPE_PROJECTION: KtNodeType = provider.typeProjectionType
 
 

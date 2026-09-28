@@ -16,12 +16,11 @@ import kotlin.io.path.writeText
 
 
 /**
- * This task infers the currently affected [Domain]s by using the [featureBranchDiffService] and [affectedDomainsService]
- * The diff and 'affected' subystems are written into files in the project directory.
+ * Writes changed file paths and domain selections into files in the project directory.
+ * The selections distinguish domains containing changed files from domains whose full test runs are required for merging to master.
  *
- * This task will also communicate with TeamCity by setting the [TEST_FEDERATION_AFFECTED_DOMAINS_KEY] and
- * [TEST_FEDERATION_CHANGED_DOMAINS_KEY] parameters.
- * Once this task was executed, all builds on TeamCity in the same chain will be able to use the inferred subsystems.
+ * Publishes both selections as TeamCity parameters and adds a build tag for each domain selected for a full test run.
+ * On the default branch, both selections contain all domains.
  */
 @Suppress("unused") // declared as task in build.gradle.kts
 open class TestFederationInferAffectedDomainsTask : DefaultTask() {
@@ -86,9 +85,7 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
         })
 
         /*
-        Communicate with TeamCity:
-        - Set the TEST_FEDERATION_AFFECTED_SUBSYSTEMS_KEY parameter
-        - Add a build tag for each affected domain
+        Publish both domain selections to TeamCity and tag domains selected for a full test run.
          */
         println("##teamcity[setParameter name='$TEST_FEDERATION_AFFECTED_DOMAINS_KEY' value='${affectedDomains.toArgumentString()}']")
         println("##teamcity[setParameter name='$TEST_FEDERATION_CHANGED_DOMAINS_KEY' value='${changedDomains.toArgumentString()}']")
@@ -97,4 +94,3 @@ open class TestFederationInferAffectedDomainsTask : DefaultTask() {
         }
     }
 }
-

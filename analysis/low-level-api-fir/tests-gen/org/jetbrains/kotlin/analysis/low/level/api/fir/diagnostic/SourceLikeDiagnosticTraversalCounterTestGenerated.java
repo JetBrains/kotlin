@@ -251,6 +251,24 @@ public class SourceLikeDiagnosticTraversalCounterTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("explicitBackingField.kt")
+  public void testExplicitBackingField() {
+    run("explicitBackingField.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitBackingFieldScript.kts")
+  public void testExplicitBackingFieldScript() {
+    run("explicitBackingFieldScript.kts");
+  }
+
+  @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("funWithoutTypes.kt")
   public void testFunWithoutTypes() {
     run("funWithoutTypes.kt");

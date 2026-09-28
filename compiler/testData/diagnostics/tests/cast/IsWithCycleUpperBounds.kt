@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // check that there is no SOE on checking for instance
 interface Visitor<T>
 interface Acceptor<T>

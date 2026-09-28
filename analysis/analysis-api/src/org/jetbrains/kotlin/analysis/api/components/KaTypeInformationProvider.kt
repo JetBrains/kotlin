@@ -69,7 +69,7 @@ public interface KaTypeInformationProvider : KaSessionComponent {
      * type may not be nullable.
      */
     @KaNoContextParameterBridgeRequired
-    @Deprecated("Use `isNullable` instead", ReplaceWith("this.isNullable"))
+    @Deprecated("Use `isNullable` instead", ReplaceWith("this.isNullable"), level = DeprecationLevel.ERROR)
     public val KaType.canBeNull: Boolean
         get() = isNullable
 
@@ -373,6 +373,7 @@ public interface KaBuiltinFunctionTypeFamilies : org.jetbrains.kotlin.analysis.a
 @Deprecated(
     message = "Use 'org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds' instead.",
     replaceWith = ReplaceWith("KaStandardTypeClassIds", "org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds"),
+    level = DeprecationLevel.ERROR,
 )
 public object KaStandardTypeClassIds {
     /** The [Unit] class ID. */
@@ -418,8 +419,8 @@ public object KaStandardTypeClassIds {
     public val PRIMITIVES: Set<ClassId> get() = org.jetbrains.kotlin.analysis.api.types.KaStandardTypeClassIds.PRIMITIVES
 }
 
-@Deprecated("Use `KaStandardTypeClassIds` instead", ReplaceWith("KaStandardTypeClassIds"))
-@Suppress("DEPRECATION")
+@Deprecated("Use `KaStandardTypeClassIds` instead", ReplaceWith("KaStandardTypeClassIds"), level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public object DefaultTypeClassIds {
     /** The [Unit] class ID. */
     public val UNIT: ClassId get() = KaStandardTypeClassIds.UNIT
@@ -491,25 +492,6 @@ public val KaType.isDenotable: Boolean
 context(session: KaSession)
 public val KaType.isFunctionalInterface: Boolean
     get() = with(session) { isFunctionalInterface }
-
-/**
- * The [function type family][KaFunctionTypeFamily] of the given [KaType], or `null` if the type is not a function type.
- *
- * For example, `(Int) -> String` belongs to the [Function][KaBuiltinFunctionTypeFamilies.function] family,
- * while `suspend () -> Unit` belongs to the [SuspendFunction][KaBuiltinFunctionTypeFamilies.suspendFunction] family.
- *
- * @see KaBuiltinFunctionTypeFamilies
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith("this.functionTypeFamily", "org.jetbrains.kotlin.analysis.api.types.functionTypeFamily"),
-    level = DeprecationLevel.ERROR,
-)
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public val KaType.functionTypeFamily: KaFunctionTypeFamily?
-    get() = with(session) { functionTypeFamily }
 
 /**
  * Whether the [KaType] is a [kotlin.Function] type.
@@ -1062,31 +1044,3 @@ public fun KaType.isClassType(classId: ClassId): Boolean {
 context(session: KaSession)
 public val KaType.isPrimitive: Boolean
     get() = with(session) { isPrimitive }
-
-/**
- * The default initializer for the given [KaType], or `null` if the type is neither nullable, a primitive, nor a string.
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith("this.defaultInitializer", "org.jetbrains.kotlin.analysis.api.types.defaultInitializer"),
-    level = DeprecationLevel.ERROR,
-)
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public val KaType.defaultInitializer: String?
-    get() = with(session) { defaultInitializer }
-
-/**
- * Provides access to the built-in [function type families][KaFunctionTypeFamily].
- */
-@Deprecated(
-    message = "Use the 'org.jetbrains.kotlin.analysis.api.types' endpoint instead.",
-    replaceWith = ReplaceWith("builtinFunctionTypeFamilies", "org.jetbrains.kotlin.analysis.api.types.builtinFunctionTypeFamilies"),
-    level = DeprecationLevel.ERROR,
-)
-@KaExperimentalApi
-@KaContextParameterApi
-context(session: KaSession)
-public val builtinFunctionTypeFamilies: KaBuiltinFunctionTypeFamilies
-    get() = with(session) { builtinFunctionTypeFamilies }

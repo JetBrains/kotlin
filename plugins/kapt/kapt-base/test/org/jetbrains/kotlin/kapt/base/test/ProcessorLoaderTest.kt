@@ -5,9 +5,17 @@
 
 package org.jetbrains.kotlin.kapt.base.test
 
+import org.jetbrains.kotlin.kapt.base.KaptFlag
 import org.jetbrains.kotlin.kapt.base.KaptOptions
 import org.jetbrains.kotlin.kapt.base.ProcessorLoaderImpl
 import org.jetbrains.kotlin.kapt.base.util.WriterBackedKaptLogger
+import org.jetbrains.kotlin.kapt.base.util.findClassLoaderWithJavac
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -75,6 +83,53 @@ class ProcessorLoaderTest {
     }
 
     @Test
+    fun testIsolatedClassLoaderHidesBuildClasspath() {
+        val kaptOptions = with(KaptOptions.Builder()) {
+            flags.add(KaptFlag.ISOLATE_PROCESSORS_FROM_BUILD_CLASSPATH)
+            sourcesOutputDir = rootTempDirectory.newSourcesFolder()
+            classesOutputDir = rootTempDirectory.newClassesFolder()
+            stubsOutputDir = rootTempDirectory.newStubsFolder()
+            build()
+        }
+        ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).use { processorLoader ->
+            val classLoader = processorLoader.loadProcessors().classLoader
+
+            // Classes of the hosting process must not be visible to annotation processors (KT-88583).
+            assertThrows(ClassNotFoundException::class.java) { Class.forName("kotlin.Unit", false, classLoader) }
+            assertThrows(ClassNotFoundException::class.java) { Class.forName("org.junit.jupiter.api.Test", false, classLoader) }
+
+            // JDK platform classes and javac must stay visible and be shared with the hosting process.
+            assertSame(javax.annotation.processing.Processor::class.java, Class.forName("javax.annotation.processing.Processor", false, classLoader))
+            assertSame(javax.lang.model.element.TypeElement::class.java, Class.forName("javax.lang.model.element.TypeElement", false, classLoader))
+            assertSame(com.sun.tools.javac.util.Context::class.java, Class.forName("com.sun.tools.javac.util.Context", false, classLoader))
+            assertSame(com.sun.source.util.Trees::class.java, Class.forName("com.sun.source.util.Trees", false, classLoader))
+
+            // Resources are hidden and delegated the same way classes are.
+            assertNull(classLoader.getResource(OWN_CLASS_FILE))
+            assertFalse(classLoader.getResources(OWN_CLASS_FILE).hasMoreElements())
+            // javac resources have to be delegated where javac comes from a class path, which is the case on
+            // JDK 8 ('tools.jar'); on JDK 9+ 'jdk.compiler' encapsulates them, so there is nothing to delegate
+            // and both sides are null.
+            assertEquals(findClassLoaderWithJavac().getResource(JAVAC_RESOURCE), classLoader.getResource(JAVAC_RESOURCE))
+        }
+    }
+
+    @Test
+    fun testNonIsolatedClassLoaderSeesBuildClasspath() {
+        val kaptOptions = with(KaptOptions.Builder()) {
+            sourcesOutputDir = rootTempDirectory.newSourcesFolder()
+            classesOutputDir = rootTempDirectory.newClassesFolder()
+            stubsOutputDir = rootTempDirectory.newStubsFolder()
+            build()
+        }
+        ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).use { processorLoader ->
+            val classLoader = processorLoader.loadProcessors().classLoader
+            assertSame(Unit::class.java, Class.forName("kotlin.Unit", false, classLoader))
+            assertNotNull(classLoader.getResource(OWN_CLASS_FILE))
+        }
+    }
+
+    @Test
     fun testClasspathWithNonJars() {
         val kaptOptions = with(KaptOptions.Builder()) {
             processingClasspath.add(rootTempDirectory.newFile("do-not-load.gz"))
@@ -85,5 +140,12 @@ class ProcessorLoaderTest {
         }
         val loadedProcessors = ProcessorLoaderImpl(kaptOptions, WriterBackedKaptLogger(false)).loadProcessors()
         assertTrue(loadedProcessors.processors.isEmpty())
+    }
+
+    private companion object {
+        /** A resource of the hosting process, which must not be visible through an isolated classloader. */
+        private const val OWN_CLASS_FILE = "org/jetbrains/kotlin/kapt/base/test/ProcessorLoaderTest.class"
+
+        private const val JAVAC_RESOURCE = "com/sun/tools/javac/Main.class"
     }
 }

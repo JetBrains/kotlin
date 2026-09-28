@@ -30,35 +30,6 @@ internal interface KotlinAndroidSourceSetConfigurator {
     ) = Unit
 }
 
-internal fun KotlinAndroidSourceSetConfigurator.onlyIf(
-    condition: (target: KotlinAndroidTarget) -> Boolean
-): KotlinAndroidSourceSetConfigurator {
-    return KotlinAndroidSourceSetConfigurationWithCondition(this, condition)
-}
-
-/* Conditional implementation */
-private class KotlinAndroidSourceSetConfigurationWithCondition(
-    private val underlying: KotlinAndroidSourceSetConfigurator,
-    private val condition: (KotlinAndroidTarget) -> Boolean
-) : KotlinAndroidSourceSetConfigurator {
-    override fun configure(
-        target: KotlinAndroidTarget,
-        kotlinSourceSet: KotlinSourceSet,
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") androidSourceSet: DeprecatedAndroidSourceSet
-    ) {
-        if (condition(target)) underlying.configure(target, kotlinSourceSet, androidSourceSet)
-    }
-
-    override fun configureWithVariant(
-        target: KotlinAndroidTarget,
-        kotlinSourceSet: KotlinSourceSet,
-        @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") variant: DeprecatedAndroidBaseVariant
-    ) {
-        if (condition(target)) underlying.configureWithVariant(target, kotlinSourceSet, variant)
-    }
-}
-
-
 /* Composite implementation */
 
 internal fun KotlinAndroidSourceSetConfigurator(

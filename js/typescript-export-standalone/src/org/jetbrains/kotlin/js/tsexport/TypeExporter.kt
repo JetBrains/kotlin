@@ -161,11 +161,12 @@ internal class TypeExporter(
     context(_: KaSession)
     private fun exportClassType(type: KaClassType, inlineClassesShouldBeUnboxed: Boolean): ExportedType {
         val symbol = type.symbol
+        val isExplicitlyExported = symbol.isEffectivelyExported(config)
         val isJsImplicitExport = symbol.isJsImplicitExport()
-        if (isJsImplicitExport) {
+        if (isJsImplicitExport && !isExplicitlyExported) {
             transitivelyExportedClasses?.add(symbol)
         }
-        val isExported = isJsImplicitExport || symbol.isEffectivelyExported(config)
+        val isExported = isJsImplicitExport || isExplicitlyExported
         return when (symbol) {
             is KaNamedClassSymbol -> {
                 if (inlineClassesShouldBeUnboxed && symbol.isInline) {

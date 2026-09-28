@@ -164,7 +164,6 @@ private val KonanTarget.formattedHostName: String
     get() = when (this) {
         KonanTarget.LINUX_X64 -> "Linux (x86_64)"
         KonanTarget.MINGW_X64 -> "Windows (x86_64)"
-        KonanTarget.MACOS_X64 -> "macOS (x86_64)"
         KonanTarget.MACOS_ARM64 -> "macOS (arm64)"
         // Fallback for any future hosts, though the 'when' should be exhaustive
         else -> visibleName

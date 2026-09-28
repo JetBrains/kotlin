@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.scripting.test.assertEqualsTrimmed
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -23,7 +23,7 @@ import kotlin.test.assertEquals
 import kotlin.test.junit5.JUnit5Asserter.fail
 
 
-@SmokeTest
+@MustRunAlways
 class ScriptEvaluationTest {
     @Test
     fun testExceptionWithCause() {

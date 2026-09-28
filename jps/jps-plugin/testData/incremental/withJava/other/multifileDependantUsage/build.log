@@ -1,13 +1,9 @@
 ================ Step #1 =================
 
-After chunkBuildStarted. Marked as dirty by Kotlin:
-  src/partB.kt
-  src/usagePartB.kt
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/OuterClass$InnerClass.class
   out/production/module/OuterClass.class
-  out/production/module/UsagePartBKt.class
   out/production/module/Utils.class
   out/production/module/Utils__PartAKt.class
   out/production/module/Utils__PartBKt.class
@@ -15,6 +11,14 @@ End of files
 Compiling files:
   src/partA.kt
   src/partB.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UsagePartBKt.class
+End of files
+Compiling files:
   src/usagePartB.kt
 End of files
 Exit code: ABORT

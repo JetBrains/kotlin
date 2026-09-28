@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 inline fun <R> onlyLocal(crossinline p: () -> R) {
     inlineAll(p)

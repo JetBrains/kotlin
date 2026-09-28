@@ -49,6 +49,10 @@ fun main(args: Array<String>) {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
+            testClass<AbstractFirJvmPsiPluginBlackBoxCodegenTest> {
+                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
             testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }

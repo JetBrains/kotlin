@@ -1,5 +1,5 @@
 --- a/intersectionTypeInSamType.ir.txt
-+++ b/intersectionTypeInSamType.ir.jvm_ir.txt
++++ b/intersectionTypeInSamType.ir.jvm.txt
 @@ -196,7 +196,7 @@
              TYPE_ARG (of class) T: <root>.B
        CALL 'public final fun checkFoo (x: <root>.IFoo<in T of <root>.G1>): kotlin.Unit declared in <root>.G1' type=kotlin.Unit origin=null

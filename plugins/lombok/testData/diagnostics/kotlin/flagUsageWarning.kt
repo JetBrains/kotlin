@@ -16,6 +16,9 @@ import lombok.ToString
 import lombok.EqualsAndHashCode
 import lombok.Builder
 import lombok.experimental.SuperBuilder
+import lombok.NoArgsConstructor
+import lombok.AllArgsConstructor
+import lombok.RequiredArgsConstructor
 
 <!FLAG_USAGE_WARNING!>@Log<!> // Warning because `lombok.log.flagUsage` is applicable for all log annotations
 class LogExampleWarning
@@ -55,6 +58,17 @@ class BuilderExampleWarning(val x: Int)
 <!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@SuperBuilder<!>
 class SuperBuilderExampleWarning
 
+<!FLAG_USAGE_WARNING!>@NoArgsConstructor<!>
+class NoArgsConstructorExampleWarning
+
+// `@AllArgsConstructor` and `@RequiredArgsConstructor` aren't supported on Kotlin-origin classes
+// (ANNOTATION_IS_NOT_SUPPORTED), but their `flagUsage` config is a separate matter, as with `@SuperBuilder`.
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@AllArgsConstructor<!>
+class AllArgsConstructorExampleWarning(val x: Int)
+
+<!ANNOTATION_IS_NOT_SUPPORTED, FLAG_USAGE_WARNING!>@RequiredArgsConstructor<!>
+class RequiredArgsConstructorExampleWarning(val x: Int)
+
 class NotAnnotated
 
 // FILE: lombok.config
@@ -64,3 +78,6 @@ lombok.toString.flagUsage=warning
 lombok.equalsAndHashCode.flagUsage=warning
 lombok.builder.flagUsage=warning
 lombok.superBuilder.flagUsage=warning
+lombok.noArgsConstructor.flagUsage=warning
+lombok.allArgsConstructor.flagUsage=warning
+lombok.requiredArgsConstructor.flagUsage=warning

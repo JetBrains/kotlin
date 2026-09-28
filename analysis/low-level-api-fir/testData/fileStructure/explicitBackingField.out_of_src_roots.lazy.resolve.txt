@@ -1,0 +1,22 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] explicitBackingField.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val member: R|kotlin/Any|
+            private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/Int| = <Unresolved name: run>#(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Unit| {
+                }
+
+                ^ Int(1)
+            }
+            )
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val topLevel: R|kotlin/Any|
+        private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any| {
+            ^ F|/topLevel|
+        }

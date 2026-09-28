@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-76826
 // LANGUAGE: +InferenceEnhancementsIn23, +DontIgnoreUpperBoundViolatedOnImplicitArguments
 

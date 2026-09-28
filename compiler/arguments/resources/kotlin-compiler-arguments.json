@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 6,
+    "schemaVersion": 5,
     "releases": [
         {
             "name": "1.0.0",
@@ -769,6 +769,15 @@
                         "deprecatedVersion": null,
                         "removedVersion": null
                     }
+                },
+                {
+                    "name": "28",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": "2.5.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
                 }
             ]
         },
@@ -829,6 +838,15 @@
                     "name": "disable",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.2.0",
+                        "stabilizedVersion": null,
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "default",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
                         "stabilizedVersion": null,
                         "deprecatedVersion": null,
                         "removedVersion": null
@@ -1350,6 +1368,15 @@
                 },
                 {
                     "name": "27",
+                    "releaseVersionsMetadata": {
+                        "introducedVersion": "2.5.0",
+                        "stabilizedVersion": "2.5.0",
+                        "deprecatedVersion": null,
+                        "removedVersion": null
+                    }
+                },
+                {
+                    "name": "28",
                     "releaseVersionsMetadata": {
                         "introducedVersion": "2.5.0",
                         "stabilizedVersion": "2.5.0",
@@ -2601,6 +2628,51 @@
                         "deprecatedMessage": null
                     },
                     {
+                        "name": "Xallow-pre-17-runtime-jdk",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
                         "name": "Xallow-reified-type-in-catch",
                         "shortName": null,
                         "deprecatedName": null,
@@ -3452,7 +3524,7 @@
                             "introducedVersion": "2.1.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -3596,6 +3668,51 @@
                                 "valueInVersions": []
                             },
                             "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
+                        "name": "Xdo-not-normalize-nan-values-in-const-context",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Disables `NormalizeNaNValuesInConstContext` language feature.`",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
                                 "current": false,
                                 "valueInVersions": []
                             }
@@ -3957,51 +4074,6 @@
                             },
                             "defaultValue": {
                                 "current": null,
-                                "valueInVersions": []
-                            }
-                        },
-                        "deprecatedMessage": null
-                    },
-                    {
-                        "name": "Xequality-bounds",
-                        "shortName": null,
-                        "deprecatedName": null,
-                        "description": {
-                            "current": "Enable experimental support for `@EqualityBound` annotations in `equals` operators.",
-                            "valueInVersions": []
-                        },
-                        "delimiter": null,
-                        "affectsCompilationOutcome": true,
-                        "restrictedToCompilerPhase": null,
-                        "valueType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                            "isNullable": {
-                                "current": false,
-                                "valueInVersions": []
-                            },
-                            "defaultValue": {
-                                "current": false,
-                                "valueInVersions": []
-                            }
-                        },
-                        "valueDescription": {
-                            "current": null,
-                            "valueInVersions": []
-                        },
-                        "releaseVersionsMetadata": {
-                            "introducedVersion": "2.5.0",
-                            "stabilizedVersion": null,
-                            "deprecatedVersion": null,
-                            "removedVersion": null
-                        },
-                        "argumentType": {
-                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                            "isNullable": {
-                                "current": false,
-                                "valueInVersions": []
-                            },
-                            "defaultValue": {
-                                "current": false,
                                 "valueInVersions": []
                             }
                         },
@@ -4515,6 +4587,51 @@
                         "deprecatedMessage": null
                     },
                     {
+                        "name": "Xfull-value-classes",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable experimental language support for full value classes.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
                         "name": "Xheader-mode",
                         "shortName": null,
                         "deprecatedName": null,
@@ -4634,7 +4751,7 @@
                             "introducedVersion": "1.9.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -4679,7 +4796,7 @@
                             "introducedVersion": "1.3.50",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -4724,7 +4841,7 @@
                             "introducedVersion": "1.1.3",
                             "stabilizedVersion": null,
                             "deprecatedVersion": "2.4.20",
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
@@ -4993,7 +5110,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.0.20",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.5.0",
                             "removedVersion": null
                         },
                         "argumentType": {
@@ -5174,7 +5291,7 @@
                             "introducedVersion": "1.2.20",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -5219,7 +5336,7 @@
                             "introducedVersion": "1.1.60",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -5308,7 +5425,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.1.0",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.5.0",
                             "removedVersion": null
                         },
                         "argumentType": {
@@ -5810,7 +5927,7 @@
                             "introducedVersion": "2.2.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": "2.2.0",
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -5965,8 +6082,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
-                            "valueInVersions": []
+                            "current": "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.2.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion."
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
@@ -5978,13 +6101,25 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": "disable",
-                                "valueInVersions": []
+                                "current": "default",
+                                "valueInVersions": [
+                                    {
+                                        "minReleaseVersion": "2.2.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": "disable"
+                                    }
+                                ]
                             }
                         },
                         "valueDescription": {
-                            "current": "{check|full|disable}",
-                            "valueInVersions": []
+                            "current": "{check|full|disable|default}",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.2.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "{check|full|disable}"
+                                }
+                            ]
                         },
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.2.0",
@@ -5999,8 +6134,14 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": "disable",
-                                "valueInVersions": []
+                                "current": "default",
+                                "valueInVersions": [
+                                    {
+                                        "minReleaseVersion": "2.2.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": "disable"
+                                    }
+                                ]
                             }
                         },
                         "deprecatedMessage": null
@@ -6186,6 +6327,51 @@
                         "deprecatedMessage": null
                     },
                     {
+                        "name": "Xstrict-equality-for-structural-classes",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Report warnings on inapplicable equalities with data, value, and enum classes.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.5.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        },
+                        "argumentType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "deprecatedMessage": null
+                    },
+                    {
                         "name": "Xsuppress-api-version-greater-than-language-version-error",
                         "shortName": null,
                         "deprecatedName": null,
@@ -6322,7 +6508,7 @@
                             "introducedVersion": "2.1.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": "2.2.0",
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringListType",
@@ -6367,7 +6553,7 @@
                             "introducedVersion": "1.5.30",
                             "stabilizedVersion": null,
                             "deprecatedVersion": null,
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -6412,7 +6598,7 @@
                             "introducedVersion": "2.1.0",
                             "stabilizedVersion": null,
                             "deprecatedVersion": "2.2.20",
-                            "removedVersion": null
+                            "removedVersion": "2.5.0"
                         },
                         "argumentType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -6828,7 +7014,7 @@
                         "releaseVersionsMetadata": {
                             "introducedVersion": "2.0.20",
                             "stabilizedVersion": null,
-                            "deprecatedVersion": null,
+                            "deprecatedVersion": "2.5.0",
                             "removedVersion": null
                         },
                         "argumentType": {
@@ -7660,6 +7846,51 @@
                                 "deprecatedMessage": null
                             },
                             {
+                                "name": "Xdirect-java-actualization",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Enable experimental direct Java actualization support.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.5.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "deprecatedMessage": null
+                            },
+                            {
                                 "name": "Xdisable-standard-script",
                                 "shortName": null,
                                 "deprecatedName": null,
@@ -7779,7 +8010,7 @@
                                     "introducedVersion": "1.6.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.5.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -8049,7 +8280,7 @@
                                     "introducedVersion": "1.4.30",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.5.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -8294,7 +8525,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–27.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version.",
+                                    "current": "Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.\nThe supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–28.\nThis also sets the value of '-jvm-target' to be equal to the selected JDK version.",
                                     "valueInVersions": [
                                         {
                                             "minReleaseVersion": "1.0.0",
@@ -9708,7 +9939,7 @@
                                     "introducedVersion": "1.5.0",
                                     "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.5.0"
                                 },
                                 "argumentType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
@@ -10084,29 +10315,29 @@
                                 "deprecatedMessage": null
                             },
                             {
-                                "name": "Xvalhalla-support",
+                                "name": "Xvalhalla-value-classes",
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Select which declarations are compiled to behave as experimental Project Valhalla value classes. Use 'none' for a JDK that is not Valhalla-compatible (the default); any other mode requires a Valhalla-compatible JDK.",
+                                    "current": "Compile value classes to behave as experimental Project Valhalla value classes. Requires a Valhalla-compatible JDK, JVM target 27 or later and the '-Xjvm-enable-preview' flag.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
                                 "restrictedToCompilerPhase": null,
                                 "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
+                                        "current": false,
                                         "valueInVersions": []
                                     }
                                 },
                                 "valueDescription": {
-                                    "current": "{none|primitives|primitivesAndFullValueClasses|allValues}",
+                                    "current": null,
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
@@ -10116,13 +10347,13 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.ValhallaSupportModeType",
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
-                                        "current": true,
+                                        "current": false,
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": null,
+                                        "current": false,
                                         "valueInVersions": []
                                     }
                                 },
@@ -10589,7 +10820,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "The target version of the generated JVM bytecode (1.8 and 9–27), with 1.8 as the default.",
+                                    "current": "The target version of the generated JVM bytecode (1.8 and 9–28), with 1.8 as the default.",
                                     "valueInVersions": [
                                         {
                                             "minReleaseVersion": "1.0.0",
@@ -11440,6 +11671,51 @@
                                             },
                                             "defaultValue": {
                                                 "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "deprecatedMessage": null
+                                    },
+                                    {
+                                        "name": "Xenable-advanced-optimizations",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Enable experimental advanced optimization passes (e.g. effect analysis).",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.5.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        },
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
                                                 "valueInVersions": []
                                             }
                                         },

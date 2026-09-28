@@ -60,10 +60,9 @@ class PostponedArgumentsAnalyzer(
 
     fun analyze(
         c: PostponedArgumentsAnalyzerContext,
-        argument: ConePostponedResolvedAtom,
+        argument: ConeFunctionLikeAtom,
         candidate: Candidate,
         withPCLASession: Boolean,
-        precalculatedBoundsForCL: CollectionLiteralBounds?,
     ) {
         when (argument) {
             is ConeResolvedLambdaAtom ->
@@ -77,13 +76,24 @@ class PostponedArgumentsAnalyzer(
                 )
 
             is ConeResolvedCallableReferenceAtom -> processCallableReference(argument, candidate)
-            is ConeSimpleNameForContextSensitiveResolution ->
-                processSimpleNameForContextSensitiveResolution(argument, candidate)
-            is ConeContextSensitiveAlternativeForQualifierAtom ->
-                processSimpleNameForContextSensitiveResolutionIdeAlternative(argument, candidate)
-            is ConeCollectionLiteralAtom ->
-                processCollectionLiteral(argument, candidate, precalculatedBoundsForCL)
         }
+    }
+
+    fun analyze(atom: ConeContextSensitiveAlternativeForQualifierAtom, candidate: Candidate) {
+        processSimpleNameForContextSensitiveResolutionIdeAlternative(atom, candidate)
+    }
+
+    fun analyze(state: StateForAtomWithExpectedTypeAsStaticReceiver<*>, candidate: Candidate) {
+        when (state.atom) {
+            is ConeCollectionLiteralAtom -> processCollectionLiteral(state.narrowedTo(), candidate)
+            is ConeSimpleNameForContextSensitiveResolution -> processSimpleNameForContextSensitiveResolution(state.narrowedTo(), candidate)
+        }
+    }
+
+    private fun <A : ConeAtomWithExpectedTypeAsStaticReceiver> StateForAtomWithExpectedTypeAsStaticReceiver<*>.narrowedTo():
+            StateForAtomWithExpectedTypeAsStaticReceiver<A> {
+        @Suppress("UNCHECKED_CAST")
+        return this as StateForAtomWithExpectedTypeAsStaticReceiver<A>
     }
 
     private fun processCallableReference(atom: ConeResolvedCallableReferenceAtom, candidate: Candidate) {
@@ -149,26 +159,16 @@ class PostponedArgumentsAnalyzer(
     }
 
     private fun processSimpleNameForContextSensitiveResolution(
-        atom: ConeSimpleNameForContextSensitiveResolution,
+        state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeSimpleNameForContextSensitiveResolution>,
         topLevelCandidate: Candidate,
     ) {
-        atom.analyzed = true
+        state.atom.analyzed = true
 
-        val substitutor = topLevelCandidate.csBuilder.buildCurrentSubstitutor(emptyMap()).asCone()
-        val substitutedExpectedType = substitutor.safeSubstitute(topLevelCandidate.csBuilder, atom.expectedType).asCone()
-
-        if (!runContextSensitiveResolutionAndApplyResultsIfSuccessful(atom, topLevelCandidate, substitutedExpectedType)) {
-            ArgumentCheckingProcessor.resolveArgumentExpression(
-                topLevelCandidate.csBuilder,
-                atom.fallbackSubAtom,
-                atom.containingCallCandidate,
-                substitutedExpectedType,
-                CheckerSinkImpl(topLevelCandidate),
-                context = resolutionContext,
-                isReceiver = false,
-                isDispatch = false,
-            )
-        }
+        runContextSensitiveResolutionForAtom(
+            state,
+            context = resolutionContext,
+            outerCandidateContext = OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver(topLevelCandidate),
+        )
     }
 
     private fun processSimpleNameForContextSensitiveResolutionIdeAlternative(
@@ -200,48 +200,15 @@ class PostponedArgumentsAnalyzer(
         atom.originalExpression.replaceContextSensitiveAlternative(null)
     }
 
-    /**
-     * @return true if results were successfully applied
-     */
-    private fun runContextSensitiveResolutionAndApplyResultsIfSuccessful(
-        atom: ConeSimpleNameForContextSensitiveResolution,
-        topLevelCandidate: Candidate,
-        substitutedExpectedType: ConeKotlinType,
-    ): Boolean {
-        val originalExpression = atom.expression
-
-        val newExpression =
-            resolutionContext.bodyResolveComponents.runContextSensitiveResolutionForPropertyAccess(
-                originalExpression,
-                substitutedExpectedType
-            ) ?: return false
-
-        atom.containingCallCandidate.setUpdatedArgumentFromContextSensitiveResolution(originalExpression, newExpression)
-
-        ArgumentCheckingProcessor.resolveArgumentExpression(
-            topLevelCandidate.csBuilder,
-            ConeResolutionAtom.createRawAtom(newExpression),
-            atom.containingCallCandidate,
-            substitutedExpectedType,
-            CheckerSinkImpl(topLevelCandidate),
-            context = resolutionContext,
-            isReceiver = false,
-            isDispatch = false,
-        )
-
-        return true
-    }
-
     private fun processCollectionLiteral(
-        atom: ConeCollectionLiteralAtom,
+        state: StateForAtomWithExpectedTypeAsStaticReceiver<ConeCollectionLiteralAtom>,
         topLevelCandidate: Candidate,
-        precalculatedBounds: CollectionLiteralBounds?,
     ) {
-        atom.analyzed = true
+        state.atom.analyzed = true
 
-        val outerCallsContext = CollectionLiteralOuterCandidateContext(topLevelCandidate)
+        val outerCallsContext = OuterCandidateContextForAtomWithExpectedTypeAsStaticReceiver(topLevelCandidate)
 
-        runCollectionLiteralResolution(atom, precalculatedBounds, context = resolutionContext, outerCandidateContext = outerCallsContext)
+        runCollectionLiteralResolution(state, context = resolutionContext, outerCandidateContext = outerCallsContext)
     }
 
     fun analyzeLambda(

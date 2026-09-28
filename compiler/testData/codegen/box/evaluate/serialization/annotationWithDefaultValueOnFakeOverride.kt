@@ -1,5 +1,5 @@
 // ISSUE: KT-72356
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR, WASM_JS
+// IGNORE_BACKEND_MULTI_MODULE: JS_IR, WASM_JS
 // ^^^ These tests create modules that break FIR dump
 // FILE: A.kt
 annotation class A(val x: String = "12" + "3")

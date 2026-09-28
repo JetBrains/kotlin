@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // FILE: Signature.java
 package test;

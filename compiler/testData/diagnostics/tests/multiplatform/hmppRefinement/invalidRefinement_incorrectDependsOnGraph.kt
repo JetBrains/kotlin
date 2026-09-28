@@ -1,7 +1,7 @@
 // LANGUAGE: +ExpectRefinement
 // WITH_STDLIB
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 // The test itself that it doesn't represent the real world scenario and could be dropped in case of some problems with it
 

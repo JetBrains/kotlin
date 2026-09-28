@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: usage.kt
 val propertyToResolve: String
     get() = JavaClass.function()?.let { " ($it)" } ?: ""

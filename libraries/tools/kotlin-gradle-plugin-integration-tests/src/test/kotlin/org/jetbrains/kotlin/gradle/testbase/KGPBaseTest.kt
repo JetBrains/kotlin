@@ -41,7 +41,7 @@ abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions(fusReportDirectory = { workingDir.resolve("fus-report") })
 
     @TempDir
-    lateinit var workingDir: Path
+    open lateinit var workingDir: Path
 
     @AfterEach
     fun checkThatDefaultKonanHasNotBeenCreated() {

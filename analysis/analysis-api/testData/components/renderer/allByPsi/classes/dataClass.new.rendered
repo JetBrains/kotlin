@@ -1,0 +1,8 @@
+data class Simple(val x: Int, var y: String)
+
+data class WithBody(val x: Int) {
+  fun combine(other: WithBody): WithBody
+
+  val doubled: Int
+    get()
+}

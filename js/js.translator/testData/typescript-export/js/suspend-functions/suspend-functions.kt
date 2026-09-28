@@ -243,7 +243,7 @@ suspend fun acceptTest(test: Test) {
 }
 
 @JsExport
-interface HolderOfParentSuspendFun1<T> {
+interface HolderOfParentSuspendFun1<T> : IntermediateImplicitExportInterface {
     suspend fun parentSuspendFun1(someValue: String = "1"): T
 }
 
@@ -317,4 +317,14 @@ suspend fun assertIntermediateNotExportedInterface(holder: IntermediateNotExport
         NotExportedParent::class.js, ExportedChild::class.js -> "NotExportedParent Intermediate"
         else /* TypeScript */ -> "IntermediateTypeScriptSuspendFun1"
     })
+}
+
+// FILE: another_file.kt
+package foo
+
+// This check is needed for the kotlinx.coroutines Flow export
+@Suppress("INVISIBLE_REFERENCE")
+@JsImplicitExport(true)
+interface IntermediateImplicitExportInterface {
+    suspend fun withDefaultImpl() = "OK"
 }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-21402
 
 // KT-21402: Wrong overload resolution ambiguity when argument is lambda and parameter is type parameter with not function upper bound

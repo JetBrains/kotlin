@@ -14,7 +14,7 @@ suspend fun box() {
     A().foo1(42)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:4 <init>:
 // test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1

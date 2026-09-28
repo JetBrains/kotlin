@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
  * Checks cases like `part1<Int>.part2.Class`.
  *
  * TODO: KT-84254
- * It is recommended to get rid of this checker once [LanguageFeature.ForbidUselessTypeArgumentsIn25] is dropped
+ * It is recommended to get rid of this checker once [LanguageFeature.ForbidUselessTypeArgumentsIn26] is dropped
  * and return the corresponding logic to `FirTypeResolverImpl`. However, during the deprecation period, the checker is
  * arguably the more straightforward approach than storing deprecation information somewhere in the type reference.
  */
@@ -35,7 +35,7 @@ object TypeArgumentsInPackagesTypeRefChecker : FirResolvedTypeRefChecker(MppChec
                 // We always (since K2) reported an error on the last package part, hence continuing to do so
                 // while reporting warning on all other parts during the deprecation period
                 isLastPackagePart -> true
-                LanguageFeature.ForbidUselessTypeArgumentsIn25.isEnabled() -> true
+                LanguageFeature.ForbidUselessTypeArgumentsIn26.isEnabled() -> true
                 else -> false
             }
 

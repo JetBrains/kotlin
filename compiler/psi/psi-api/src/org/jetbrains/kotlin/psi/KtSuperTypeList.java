@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +57,8 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
             replaceWith = @ReplaceWith(
                     expression = "this.addSuperType(entry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addSuperType"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtSuperTypeListEntry addEntry(@NotNull KtSuperTypeListEntry entry) {
@@ -72,7 +74,8 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
             replaceWith = @ReplaceWith(
                     expression = "this.removeSuperType(entry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeSuperType"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void removeEntry(@NotNull KtSuperTypeListEntry entry) {

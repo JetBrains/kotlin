@@ -318,7 +318,7 @@ private fun KotlinFacetSettings.writeConfig(element: Element) {
     if (sourceSetNames.isNotEmpty()) {
         element.addContent(
             Element("sourceSets").apply {
-                sourceSetNames.map { addContent(Element("sourceSet").apply { addContent(it) }) }
+                sourceSetNames.forEach { addContent(Element("sourceSet").apply { addContent(it) }) }
             }
         )
     }
@@ -397,7 +397,7 @@ private fun saveElementsList(element: Element, elementsList: List<String>, rootE
                 if (singleModule != null) {
                     addContent(singleModule)
                 } else {
-                    elementsList.map { addContent(Element(elementName).apply { addContent(it) }) }
+                    elementsList.forEach { addContent(Element(elementName).apply { addContent(it) }) }
                 }
             }
         )

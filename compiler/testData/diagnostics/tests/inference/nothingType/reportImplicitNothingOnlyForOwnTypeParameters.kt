@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <R> runCatching(block: () -> R) = null <!CAST_NEVER_SUCCEEDS!>as<!> Result<R>
 
 class Result<out T> {

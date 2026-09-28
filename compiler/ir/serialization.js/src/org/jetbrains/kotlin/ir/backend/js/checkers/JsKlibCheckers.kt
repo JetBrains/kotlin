@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.library.SerializedIrFile
 
 object JsKlibCheckers {
     private val moduleChecker = listOf(JsKlibFileClashChecker)
@@ -39,7 +38,6 @@ object JsKlibCheckers {
         configuration: CompilerConfiguration,
         doCheckCalls: Boolean,
         doModuleLevelChecks: Boolean,
-        cleanFiles: List<SerializedIrFile> = listOf(),
         exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>> = mapOf(),
     ): IrVisitorVoid {
         return object : IrVisitorVoid() {
@@ -57,7 +55,7 @@ object JsKlibCheckers {
 
             override fun visitModuleFragment(declaration: IrModuleFragment) {
                 if (doModuleLevelChecks) {
-                    val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
+                    val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(declaration.files, exportedNames)
                     for (checker in exportedDeclarationsCheckers) {
                         checker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
                     }

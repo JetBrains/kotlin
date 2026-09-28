@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ContextParameters
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER)

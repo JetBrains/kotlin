@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-9051: Allow smart cast for captured variables if they are not modified
 
 fun foo(y: String?) {

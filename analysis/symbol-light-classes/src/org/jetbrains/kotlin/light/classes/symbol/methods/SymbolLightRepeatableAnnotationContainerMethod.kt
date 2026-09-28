@@ -6,23 +6,25 @@
 package org.jetbrains.kotlin.light.classes.symbol.methods
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
-import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForRepeatableAnnotationContainer
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
 
 internal class SymbolLightRepeatableAnnotationContainerMethod(
     private val annotationClassQualifier: String?,
-    containingClass: SymbolLightClassBase,
-) : SymbolLightMethodBase(
+    override val backingContainingClass: SymbolLightClassForRepeatableAnnotationContainer,
+) : SymbolLightMethodBaseImpl<KaNamedClassSymbol>(
     lightMemberOrigin = null,
-    containingClass = containingClass,
+    containingClass = backingContainingClass,
     methodIndex = METHOD_INDEX_BASE,
-    isJvmExposedBoxed = false,
+    generationMode = MethodGenerationMode.Regular(),
 ) {
     override fun getNameIdentifier(): PsiIdentifier? = null
     override fun isDeprecated(): Boolean = false
@@ -59,5 +61,8 @@ internal class SymbolLightRepeatableAnnotationContainerMethod(
         this === other || other is SymbolLightRepeatableAnnotationContainerMethod && other.containingClass == containingClass
 
     override fun hashCode(): Int = containingClass.hashCode()
-    override fun copy(): PsiElement = SymbolLightRepeatableAnnotationContainerMethod(annotationClassQualifier, containingClass)
+    override fun copy(): PsiElement = SymbolLightRepeatableAnnotationContainerMethod(annotationClassQualifier, backingContainingClass)
+
+    override val symbolPointer: KaSymbolPointer<KaNamedClassSymbol>
+        get() = backingContainingClass.symbolPointer
 }

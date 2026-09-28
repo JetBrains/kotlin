@@ -18,9 +18,7 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdentifierAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -70,9 +68,6 @@ abstract class MetadataDependencyTransformationTask
     //region Task Configuration State & Inputs
     @get:Nested
     internal val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
-
-    @get:Internal
-    internal val buildIdentifierCompatAccessor: Provider<BuildIdentifierAccessor.Factory> = project.variantImplementationFactoryProvider()
 
     @Suppress("unused") // task inputs for up-to-date checks
     @get:Nested
@@ -137,7 +132,7 @@ abstract class MetadataDependencyTransformationTask
     private fun MetadataDependencyResolution.KeepOriginalDependency.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> {
         return transformationParameters.resolvedMetadataConfiguration.getArtifacts(dependency).map {
             TransformedMetadataLibraryRecord(
-                moduleId = KmpModuleIdentifier.from(dependency, buildIdentifierCompatAccessor),
+                moduleId = KmpModuleIdentifier.from(dependency),
                 file = it.file.absolutePath,
                 sourceSetName = null
             )
@@ -145,7 +140,7 @@ abstract class MetadataDependencyTransformationTask
     }
 
     private fun MetadataDependencyResolution.ChooseVisibleSourceSets.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> {
-        val moduleId = KmpModuleIdentifier.from(dependency, buildIdentifierCompatAccessor)
+        val moduleId = KmpModuleIdentifier.from(dependency)
         val transformedLibraries = transformMetadataLibrariesForBuild(this, outputsDir, true)
         return transformedLibraries.flatMap { (sourceSetName, libraryFiles) ->
             libraryFiles.map { file ->

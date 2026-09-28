@@ -79,7 +79,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerJKlibTest() {
 
         useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
-            ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
+            ::PhasedPipelineChecker.bind(TestPhase.CODEGEN)
         )
         enableMetaInfoHandler()
         additionalK2ConfigurationForIrTextTest(FirParser.LightTree)

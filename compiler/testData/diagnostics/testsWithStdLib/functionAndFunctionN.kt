@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun takeAnyFun(function: Function<*>) {}
 
 fun test(block: () -> Unit) {

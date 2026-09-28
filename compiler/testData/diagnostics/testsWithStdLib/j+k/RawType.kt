@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FULL_JDK
 // FILE: JavaClass.java
 import java.util.ArrayList;

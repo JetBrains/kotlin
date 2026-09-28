@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: 1.kt
 fun <S> Array<S>.plus(): Array<S> {
     val result = Arrays.copyOf(this, 3)

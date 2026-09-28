@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInstanceExtension
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
@@ -27,9 +28,9 @@ import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.argument
-import org.jetbrains.kotlin.fir.expressions.isImplicitWhenSubjectVariable
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.symbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.isContextParameter
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -177,13 +178,23 @@ class RealVariable(
             stability.inherentInstability?.let { return it }
             if (stability.checkReceiver && dispatchReceiver?.hasFinalType(flow, session) == false)
                 return SmartcastStability.PROPERTY_WITH_GETTER
-            if (stability.checkModule && !(symbol.fir as FirVariable).isInCurrentOrFriendModule(session))
-                return SmartcastStability.ALIEN_PUBLIC_PROPERTY
+            if (
+                stability.checkModule &&
+                !(symbol.fir as FirVariable).isInCurrentOrFriendModule(session) &&
+                !isValueClassUnderlyingPropertyWithAllowedSmartcast(session)
+            ) return SmartcastStability.ALIEN_PUBLIC_PROPERTY
             // Members of unstable values should always be unstable, as the receiver could've changed.
             dispatchReceiver?.getStability(flow, session)?.takeIf { it != SmartcastStability.STABLE_VALUE }?.let { return it }
             // No need to check extension receiver, as properties with one cannot be stable by symbol stability.
         }
         return SmartcastStability.STABLE_VALUE
+    }
+
+    private fun isValueClassUnderlyingPropertyWithAllowedSmartcast(session: FirSession): Boolean {
+        if (!session.languageVersionSettings.supportsFeature(LanguageFeature.AllowSmartCastsOnValueClassUnderlyingProperties)) return false
+        val property = symbol.fir as? FirProperty ?: return false
+        val containingClass = symbol.getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
+        return containingClass.valueClassRepresentation?.containsPropertyWithName(property.name) == true
     }
 
     private fun hasFinalType(flow: Flow, session: FirSession): Boolean =
@@ -213,6 +224,7 @@ class RealVariable(
                     else -> PropertyStability.CAPTURED_VARIABLE
                 }
                 fir.isVar -> PropertyStability.MUTABLE_PROPERTY
+                fir.isLateInit -> PropertyStability.MUTABLE_PROPERTY
                 fir.isInstanceExtension -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.getter !is FirDefaultPropertyAccessor? -> PropertyStability.PROPERTY_WITH_GETTER
                 fir.visibility == Visibilities.Private -> PropertyStability.PRIVATE_OR_CONST_VAL
@@ -237,6 +249,7 @@ private fun ConeKotlinType.isFinal(session: FirSession): Boolean = when (this) {
     is ConeTypeParameterType -> toTypeParameterSymbol(session)?.resolvedBounds?.any { it.coneType.isFinal(session) } == true
 
     is ConeIntersectionType -> intersectedTypes.any { it.isFinal(session) }
+    is ConeUnionType -> primaryType.isFinal(session) // error classes are always final
     is ConeCapturedType -> constructor.supertypes?.any { it.isFinal(session) } == true
     is ConeIntegerLiteralType -> true
 

@@ -13,6 +13,8 @@ dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":compiler:cli"))
+    testImplementation(project(":compiler:incremental-compilation-impl"))
+    testImplementation(libs.intellij.asm)
     testImplementation(intellijCore())
     testImplementation(libs.kotlinx.benchmark.runtime)
 
@@ -46,6 +48,14 @@ benchmark {
         // Drop it and register each suite explicitly, so every benchmark belongs to exactly one
         // task and neither suite needs to exclude the other.
         remove(getByName("main"))
+
+        register("classpathSnapshot") {
+            include(".*ClasspathEntrySnapshotBenchmark.*")
+            iterationTime = 1
+            iterationTimeUnit = "sec"
+            warmups = 10
+            iterations = 30
+        }
 
         // The compiler frontend benchmarks: `org.jetbrains.kotlin.benchmarks.jmh.compilation.*`.
         register("compilation") {
@@ -88,8 +98,12 @@ benchmark {
  * tracked input of the task, so it gets built beforehand and the task re-runs when it changes.
  */
 fun JavaExec.addJarPathProperty(systemProperty: String, projectPath: String) {
+    addJarPathProperty(systemProperty, project.dependencies.project(projectPath))
+}
+
+fun JavaExec.addJarPathProperty(systemProperty: String, dependency: Dependency) {
     val jar = project.configurations
-        .detachedConfiguration(project.dependencies.project(projectPath))
+        .detachedConfiguration(dependency)
         .apply { isTransitive = false }
     jvmArgumentProviders.add(project.objects.newInstance(SystemPropertyClasspathProvider::class.java).apply {
         property.set(systemProperty)
@@ -101,6 +115,11 @@ fun JavaExec.addJarPathProperty(systemProperty: String, projectPath: String) {
 // looked up from a later one. Each task declares just the jars it uses, so running the compilation
 // benchmarks does not build kotlin-reflect, and vice versa.
 afterEvaluate {
+    tasks.named<JavaExec>("testClasspathSnapshotBenchmark") {
+        addJarPathProperty("classpathSnapshot.stdlib", ":kotlin-stdlib")
+        addJarPathProperty("classpathSnapshot.gradleApi", project.dependencies.gradleApi())
+    }
+
     tasks.named<JavaExec>("testCompilationBenchmark") {
         val ideaHomeForTests = project.configurations
             .detachedConfiguration(project.dependencies.project(":", configuration = "ideaHomeForTests"))

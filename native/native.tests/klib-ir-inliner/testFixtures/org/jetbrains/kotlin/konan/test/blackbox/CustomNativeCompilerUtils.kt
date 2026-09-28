@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.provisionedXcodeCompilerArgs
 import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.klib.CustomKlibCompiler
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts
@@ -26,13 +27,17 @@ interface CustomNativeCompilerSettings {
     val version: String
     val compiler: CustomKlibCompiler
     val nativeHome: File
+    val provisionedXcodeArgs: List<String>
 }
 
 val CustomNativeCompilerSettings.defaultLanguageVersion: LanguageVersion
     get() = LanguageVersion.fromFullVersionString(version)
         ?: testInfraError("Cannot deduce the default LV from the compiler version: $version")
 
-class CustomNativeCompilerSettingsImpl(lazyArtifacts: () -> CustomKlibCompilerArtifacts): CustomNativeCompilerSettings {
+class CustomNativeCompilerSettingsImpl(
+    override val provisionedXcodeArgs: List<String> = emptyList(),
+    lazyArtifacts: () -> CustomKlibCompilerArtifacts,
+) : CustomNativeCompilerSettings {
     private val artifacts: CustomKlibCompilerArtifacts by lazy(lazyArtifacts)
     override val version: String
         get() = artifacts.version
@@ -54,13 +59,15 @@ val customNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
             compilerClassPathPropertyName = "kotlin.internal.native.test.compat.customCompilerClasspath",
             runtimeDependenciesPropertyName = null, // After OSIP-740, make it non-nullable to always provide stdlib
             versionPropertyName = "kotlin.internal.native.test.compat.customCompilerVersion",
-            compilerDistPropertyName= "kotlin.internal.native.test.compat.customCompilerDist",
+            compilerDistPropertyName = "kotlin.internal.native.test.compat.customCompilerDist",
         )
     }
 }
 
 val currentCustomNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
-    CustomNativeCompilerSettingsImpl {
+    CustomNativeCompilerSettingsImpl(
+        provisionedXcodeArgs = provisionedXcodeCompilerArgs
+    ) {
         val propertyName = "kotlin.internal.native.test.nativeHome"
         readProperty(propertyName)?.let {
             val compilerDist = File(it)

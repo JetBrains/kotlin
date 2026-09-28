@@ -17,7 +17,7 @@ abstract class AbstractFirJsPlainObjectsPluginDiagnosticTest : AbstractJsDiagnos
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+                TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE with TestPhase.CODEGEN
             }
 
             configureForKotlinxJsPlainObjects()

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Please make sure that this test is consistent with the blackbox test "annotationsOnNonExistentAccessors.kt"
 
 import kotlin.reflect.KProperty

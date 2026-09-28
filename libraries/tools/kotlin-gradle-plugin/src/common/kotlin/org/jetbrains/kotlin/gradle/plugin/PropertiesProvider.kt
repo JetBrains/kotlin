@@ -13,8 +13,10 @@ import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
+import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CLASSLOADER_CACHE_TIMEOUT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_ARCHIVE_TASKS_FOR_CUSTOM_COMPILATIONS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS
@@ -49,7 +51,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_FILTER_RESOURCES_BY_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLICATION_FORMAT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
@@ -64,6 +65,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -471,6 +473,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = enumProvider<KotlinPublicationFormat>(KOTLIN_PUBLICATION_FORMAT)
             .orElse(KotlinPublicationFormat.LEGACY_MULTIPLE_PUBLICATIONS)
 
+    val allowIncompleteKotlinArchivePublication: Boolean
+        get() = booleanProperty(KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION) ?: false
+
     @Suppress("DEPRECATION")
     @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
     val runKotlinCompilerViaBuildToolsApi: Provider<Boolean>
@@ -485,8 +490,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val runKotlinMetadataCompilerViaBuildToolsApi: Provider<Boolean>
         get() = booleanProvider(KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
 
+    @Suppress("DEPRECATION")
+    // Uses [runKotlinCompilerViaBuildToolsApi] as the default value provider to avoid warnings when BTA is explicitly disabled
     val generateCompilerRefIndex: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(false)
+        get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(
+            runKotlinCompilerViaBuildToolsApi.zip(project.providers.provider { isCiBuild() }) { runsViaBta, isCi ->
+                runsViaBta && !isCi
+            }
+        )
 
     val allowLegacyMppDependencies: Boolean
         get() = booleanProperty(KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES) ?: false
@@ -699,23 +710,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val suppressXcodeIntegrationCheck: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_SUPPRESS_XCODE_INTEGRATION_CHECK) ?: false
 
-    /**
-     * Enable workaround for KT-64115, where both main compilation exploded klib and the same compressed klib
-     * could end up in the test compilation leading to the compiler warning.
-     *
-     * If we are using non-packed Klibs, there's no point in this workaround.
-     */
-    val enableKlibKt64115Workaround: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_KLIBS_KT64115_WORKAROUND_ENABLED) ?: !useNonPackedKlibs
-
     val enableFusMetricsCollection: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_COLLECT_FUS_METRICS_ENABLED) ?: true
 
     val archivesTaskOutputAsFriendModule: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_ARCHIVES_TASK_OUTPUT_AS_FRIEND_ENABLED) ?: true
-
-    val useNonPackedKlibs: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS) ?: true
 
     /**
      * When set [org.jetbrains.kotlin.gradle.cache.KotlinGradleTaskExecutionCacheWithMetrics]
@@ -744,14 +743,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Affects classpath snapshot transformation.
      *
-     * If enabled, we'd process the inlined local classes and use their contents
-     * to refine the abi hash of the containing inline functions.
-     */
-    val parseInlinedLocalClasses: Provider<Boolean> = booleanProvider(KOTLIN_PARSE_INLINED_LOCAL_CLASSES).orElse(true)
-
-    /**
-     * Affects classpath snapshot transformation.
-     *
      * If enabled, we'd additionally record the expanded types of top-level type aliases, which is required for correct
      * KMP incremental compilation of type alias-based actual declarations (KT-77546).
      *
@@ -771,6 +762,27 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val playwrightBrowsersPath: Provider<String>
         get() = property(PropertyNames.KOTLIN_PLAYWRIGHT_BROWSERS_PATH)
+
+    val nodeJsToolchainMode: NodeJsToolchainMode
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN).orNull
+            ?.let { NodeJsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) } ?: NodeJsToolchainMode.DISABLE
+
+    val nodeJsToolchainDefaultInstallPath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH)
+
+    val nodeJsToolchainDefaultDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL)
+
+    val nodeJsToolchainLocalPath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH)
+
+    /**
+     * Connection URL of the debug session hosted by the IDE, set when the browser tests are being debugged.
+     *
+     * @see org.jetbrains.kotlin.gradle.idea.debugger.IdeaKotlinJsBrowserDebugSession
+     */
+    val jsIdeDebugSessionUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_JS_IDE_DEBUG_SESSION_URL)
 
     /**
      * Temporary untested workaround for Isolated Project support.
@@ -855,6 +867,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN = property("kotlin.js.nodejs.toolchain")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_INSTALL_PATH = property("kotlin.js.nodejs.toolchain.default.install.path")
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL = property("kotlin.js.nodejs.toolchain.default.download.url")
+
+        val KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH = property("kotlin.js.nodejs.toolchain.local.path")
+        val KOTLIN_JS_IDE_DEBUG_SESSION_URL = property("kotlin.internal.js.ideDebugSessionUrl")
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")
         val KOTLIN_BUILD_REPORT_HTTP_URL = property("kotlin.build.report.http.url")
         val KOTLIN_BUILD_REPORT_JSON_DIR = property("kotlin.build.report.json.directory")
@@ -872,6 +890,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_DEPRECATED_TEST_PROPERTY = property("${KOTLIN_INTERNAL_NAMESPACE}.deprecatedTestProperty")
         val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = property("kotlin.publishJvmEnvironmentAttribute")
         val KOTLIN_PUBLICATION_FORMAT = property("kotlin.publicationFormat")
+        val KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION = property("kotlin.allowIncompleteKotlinArchivePublication")
         val KOTLIN_EXPERIMENTAL_TRY_NEXT = property("kotlin.experimental.tryNext")
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")
@@ -940,12 +959,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_INTERNAL_JVM_CLASSPATH_METADATA =
             property("$KOTLIN_INTERNAL_NAMESPACE.jvm.enableKmpClasspathMetadataForIncrementalCompilation")
         val KOTLIN_MONOTONOUS_COMPILE_SET_EXPANSION = property("$KOTLIN_INTERNAL_NAMESPACE.incremental.enableMonotonousCompileSetExpansion")
-        val KOTLIN_KLIBS_KT64115_WORKAROUND_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.enableWorkaroundForKT64115")
         val KOTLIN_COLLECT_FUS_METRICS_ENABLED = property("$KOTLIN_INTERNAL_NAMESPACE.collectFUSMetrics")
-        val KOTLIN_USE_NON_PACKED_KLIBS = property("$KOTLIN_INTERNAL_NAMESPACE.klibs.non-packed")
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
         val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
-        val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")
         val KOTLIN_EXPAND_TYPE_ALIASES_IN_CLASSPATH_SNAPSHOTS =
             property("$KOTLIN_INTERNAL_NAMESPACE.jvm.expandTypeAliasesInClasspathSnapshots")
         val KOTLIN_SWIFTPM_MACRO_COLLECTING_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.swiftPMCinteropMacroNamesCollectingMode")

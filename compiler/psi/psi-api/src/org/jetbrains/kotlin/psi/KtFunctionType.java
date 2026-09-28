@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -115,7 +116,8 @@ public class KtFunctionType extends KtElementImplStub<KotlinFunctionTypeStub> im
             replaceWith = @ReplaceWith(
                     expression = "contextParameterList",
                     imports = {}
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @Nullable

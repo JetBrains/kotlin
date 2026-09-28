@@ -1,7 +1,7 @@
 // LANGUAGE: +ExpectRefinement
 // WITH_STDLIB
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // MODULE: common
 expect internal val foo: Int
 

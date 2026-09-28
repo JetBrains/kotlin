@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // NamedFunctionDescriptor.substitute substitutes "overrides"
 // this test checks it does it properly
 

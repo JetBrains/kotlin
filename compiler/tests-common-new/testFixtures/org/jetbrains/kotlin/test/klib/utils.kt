@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.test.klib
 
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
@@ -15,7 +17,10 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSI
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.model.StringDirective
+import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.artifactsProvider
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.junit.jupiter.api.Assumptions
@@ -115,5 +120,18 @@ fun RegisteredDirectivesBuilder.setupCustomLVForKlibForwardCompatibilityTest(sec
                 - 2nd stage compiler default LV: $secondStageCompilerDefaultLanguageVersion
             """.trimIndent()
         )
+    }
+}
+
+/**
+ * Use this function to clear protobuf caches in frontend providers to reduce the
+ * memory footprint of frontend artifacts.
+ */
+fun TestServices.clearFrontendProviderCaches(module: TestModule) {
+    artifactsProvider.getArtifactSafe(module, FrontendKinds.FIR)?.let { output ->
+        output.partsForDependsOnModules.forEach {
+            @OptIn(FirSymbolProviderInternals::class)
+            it.session.symbolProvider.clearInsignificantCaches()
+        }
     }
 }

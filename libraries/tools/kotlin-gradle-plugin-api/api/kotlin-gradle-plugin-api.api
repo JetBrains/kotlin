@@ -108,6 +108,7 @@ public final class org/jetbrains/kotlin/gradle/dsl/JvmTarget : java/lang/Enum {
 	public static final field JVM_25 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_26 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_27 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
+	public static final field JVM_28 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final field JVM_9 Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun fromTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
 	public static final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/JvmTarget;
@@ -185,12 +186,14 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension$Defaul
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension;Lorg/gradle/api/Action;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector {
-	public abstract fun invoke (Ljava/lang/Object;)V
-	public abstract fun invoke (Ljava/lang/Object;Lorg/gradle/api/Action;)V
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler : java/lang/Enum {
+	public static final field NONE Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;
+	public static final field WEBPACK Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerToolOptions {
@@ -265,18 +268,16 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinCompile$DefaultImpls {
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinCompile;Lorg/gradle/api/Action;)V
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinDependencies : org/gradle/api/artifacts/dsl/Dependencies {
-	public abstract fun enforcedPlatform (Ljava/lang/Object;)V
-	public abstract fun getApi ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
-	public abstract fun getCompileOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
-	public abstract fun getImplementation ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
-	public abstract fun getRuntimeOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
-	public abstract fun getTestCompileOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
-	public abstract fun getTestImplementation ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
-	public abstract fun getTestRuntimeOnly ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinBackwardsDeploymentDependencyCollector;
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinDependencies : org/gradle/api/artifacts/dsl/Dependencies, org/gradle/api/plugins/jvm/PlatformDependencyModifiers {
+	public abstract fun getApi ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getCompileOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getImplementation ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getRuntimeOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getTestCompileOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getTestImplementation ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
+	public abstract fun getTestRuntimeOnly ()Lorg/gradle/api/artifacts/dsl/DependencyCollector;
 	public abstract fun kotlin (Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
 	public abstract fun kotlin (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/artifacts/Dependency;
-	public abstract fun platform (Ljava/lang/Object;)V
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinGradlePluginDsl : java/lang/annotation/Annotation {
@@ -1199,7 +1200,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinSourceS
 	public abstract fun getCustomSourceFilesExtensions ()Ljava/lang/Iterable;
 	public abstract fun getDependsOn ()Ljava/util/Set;
 	public abstract fun getGeneratedKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
-	public abstract synthetic fun getImplementationMetadataConfigurationName ()Ljava/lang/String;
 	public abstract fun getKotlin ()Lorg/gradle/api/file/SourceDirectorySet;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/plugin/LanguageSettingsBuilder;
 	public abstract fun getResources ()Lorg/gradle/api/file/SourceDirectorySet;
@@ -1588,6 +1588,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinToolTask
 public final class org/jetbrains/kotlin/gradle/tasks/KotlinToolTask$DefaultImpls {
 	public static fun toolOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinToolTask;Lkotlin/jvm/functions/Function1;)V
 	public static fun toolOptions (Lorg/jetbrains/kotlin/gradle/tasks/KotlinToolTask;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinWasmDevServer : org/gradle/api/Task {
+	public abstract fun getContentDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getHost ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPort ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/UsesKotlinJavaToolchain : org/gradle/api/Task {

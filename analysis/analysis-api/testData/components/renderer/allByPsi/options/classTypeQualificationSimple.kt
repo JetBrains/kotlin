@@ -1,0 +1,11 @@
+// CLASS_TYPE_QUALIFICATION: SIMPLE
+package test.pkg
+
+class Outer {
+    class Nested
+}
+
+fun accept(outer: Outer, nested: Outer.Nested, string: String) {}
+
+val nullableNested: Outer.Nested?
+    get() = null

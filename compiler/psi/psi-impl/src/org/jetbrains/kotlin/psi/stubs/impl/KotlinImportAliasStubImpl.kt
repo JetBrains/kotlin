@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 
-@OptIn(KtImplementationDetail::class)
 internal class KotlinImportAliasStubImpl(
     parent: StubElement<*>?,
     private val name: StringRef?,

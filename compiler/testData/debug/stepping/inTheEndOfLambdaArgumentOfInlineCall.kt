@@ -20,7 +20,7 @@ inline fun baz() {
 
 fun nop() {}
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:6 box
 // test.kt:13 box
 // test.kt:21 nop

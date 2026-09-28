@@ -2,6 +2,8 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:OptIn(KtImplementationDetail::class)
+
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
@@ -72,6 +74,14 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
         namePlaceholder.textRange.startOffset
 
     /**
+     * The property this backing field belongs to.
+     *
+     * Note: in broken code a backing field can be attached to a [KtDestructuringDeclaration] (KT-74793)
+     */
+    val property: KtProperty
+        get() = parent as KtProperty
+
+    /**
      * The `field` keyword introducing this backing field declaration, or `null` if it is absent in incomplete code.
      */
     open val fieldKeyword: PsiElement?
@@ -81,6 +91,7 @@ open class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifie
     @Deprecated(
         message = "Use typeReference instead",
         replaceWith = ReplaceWith("typeReference"),
+        level = DeprecationLevel.ERROR,
     )
     open val returnTypeReference: KtTypeReference?
         get() = typeReference

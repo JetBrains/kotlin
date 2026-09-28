@@ -84,6 +84,7 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
 
     val FUN_INTERFACES by object : DiagnosticGroup("Fun Interfaces") {
         val IMPLEMENTING_FUNCTION_INTERFACE by error<KtClassOrObject>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE by warning<KtClassOrObject>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val EXTERNAL by object : DiagnosticGroup("External") {

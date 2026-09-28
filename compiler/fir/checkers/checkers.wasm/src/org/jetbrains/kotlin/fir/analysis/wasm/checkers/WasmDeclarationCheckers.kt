@@ -28,6 +28,11 @@ object WasmBaseDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirWebCommonExternalPropertyAccessorChecker,
         )
+
+    override val propertyCheckers: Set<FirPropertyChecker>
+        get() = setOf(
+            FirWasmEagerInitializationChecker,
+        )
 }
 
 object WasmJsDeclarationCheckers : DeclarationCheckers() {

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FILE: 1.kt
 import java.util.Locale

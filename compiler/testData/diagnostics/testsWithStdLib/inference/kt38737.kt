@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 private const val dateRangeStart: String = "2020-01-01"
 private const val dateRangeEnd: String = "2020-05-01"
 

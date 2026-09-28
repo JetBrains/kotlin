@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class A {
     fun String.foo(from: String, to: String): Int {
         return 1

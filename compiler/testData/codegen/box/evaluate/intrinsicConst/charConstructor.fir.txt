@@ -2,12 +2,22 @@ FILE: charConstructor.kt
     public final fun <T> R|T|.id(): R|T| {
         ^id this@R|/id|
     }
+    public final const [EvaluatedValue=Int(66)] val x: R|kotlin/Int| = Int(66)
+        public get(): R|kotlin/Int|
     public final const [EvaluatedValue=Char(A)] val char1: R|kotlin/Char| = R|kotlin/Char|(Int(65))
+        public get(): R|kotlin/Char|
+    public final const [EvaluatedValue=Char(B)] val char2: R|kotlin/Char| = R|kotlin/Char|(R|/x|)
         public get(): R|kotlin/Char|
     public final fun box(): R|kotlin/String| {
         when () {
             !=(R|/char1|.R|/id|<R|kotlin/Char|>(), Char(A)) ->  {
                 ^box String(Fail 1)
+            }
+        }
+
+        when () {
+            !=(R|/char2|.R|/id|<R|kotlin/Char|>(), Char(B)) ->  {
+                ^box String(Fail 2)
             }
         }
 

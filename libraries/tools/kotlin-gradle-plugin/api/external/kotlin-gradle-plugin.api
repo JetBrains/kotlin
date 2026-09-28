@@ -202,11 +202,6 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun tvosX64 (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public fun tvosX64 (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public fun tvosX64 (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public fun wasm ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public fun wasm (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public fun wasm (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public fun wasm (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public fun wasm (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public fun wasmJs ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public fun wasmJs (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public fun wasmJs (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
@@ -613,11 +608,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPres
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions : org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithPresetFunctions {
-	public abstract fun wasm ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public abstract fun wasm (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public abstract fun wasm (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public abstract fun wasm (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public abstract fun wasm (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public abstract fun wasmJs ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public abstract fun wasmJs (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public abstract fun wasmJs (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
@@ -703,12 +693,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasm
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
 	public static fun tvosX64 (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTargetWithSimulatorTests;
-	public static fun wasm (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public static fun wasm (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public static fun wasm (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public static fun wasm (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public static fun wasm (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
-	public static synthetic fun wasm$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public static fun wasmJs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public static fun wasmJs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;
 	public static fun wasmJs (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetContainerWithWasmPresetFunctions;Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;

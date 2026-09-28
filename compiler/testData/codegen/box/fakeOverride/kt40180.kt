@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 
 // FILE: Base.java
 public class Base {

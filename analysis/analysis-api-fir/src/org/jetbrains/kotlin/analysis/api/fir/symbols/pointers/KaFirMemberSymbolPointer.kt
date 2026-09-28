@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,13 +8,9 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.KaBaseCachedSymbolPointer
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.containingDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaDeclarationContainerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.fir.FirSession
@@ -22,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal abstract class KaFirMemberSymbolPointer<S : KaSymbol>(
     private val ownerPointer: KaSymbolPointer<KaDeclarationContainerSymbol>,

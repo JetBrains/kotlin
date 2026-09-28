@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 inline fun <R> inlineFunWithAnnotation(crossinline p: () -> R) {
     inlineFun {

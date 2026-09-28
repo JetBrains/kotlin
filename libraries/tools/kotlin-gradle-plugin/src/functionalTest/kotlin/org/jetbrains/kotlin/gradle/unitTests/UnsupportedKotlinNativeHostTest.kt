@@ -149,7 +149,6 @@ class UnsupportedKotlinNativeHostTest {
         val expectedFormattedNames = setOf(
             "Linux (x86_64)",
             "Windows (x86_64)",
-            "macOS (x86_64)",
             "macOS (arm64)",
         )
 

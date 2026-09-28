@@ -52,22 +52,22 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
         element: FirElement,
     ) {
         if (source !is DeserializedContainerSource) return
+        val ktSource = element.source ?: return
 
         val incompatibility = source.incompatibility
         if (incompatibility != null) {
-            reporter.reportOn(element.source, FirErrors.INCOMPATIBLE_CLASS, source.presentableString, incompatibility)
+            reporter.reportOn(ktSource, FirErrors.INCOMPATIBLE_CLASS, source.presentableString, incompatibility)
         }
         if (source.preReleaseInfo.isInvisible) {
             reporter.reportOn(
-                element.source,
+                ktSource,
                 FirErrors.PRE_RELEASE_CLASS,
                 source.presentableString,
                 source.preReleaseInfo.poisoningFeatures
             )
-
         }
         if (source.abiStability == DeserializedContainerAbiStability.UNSTABLE) {
-            reporter.reportOn(element.source, FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS, source.presentableString)
+            reporter.reportOn(ktSource, FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS, source.presentableString)
         }
     }
 }

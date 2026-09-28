@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal class ComputeAllAtOnceAnnotationsBox(

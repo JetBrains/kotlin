@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class NumCharSeq<N : Number, M : CharSequence>(val n: N, val m: M)
 
 typealias Test<X, Y> = NumCharSeq<X, Y>

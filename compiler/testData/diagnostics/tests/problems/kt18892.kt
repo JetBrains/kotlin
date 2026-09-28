@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-18892
 
 // KT-18892: False negative USELESS_CAST for smartcasted variable with safe cast and safe call

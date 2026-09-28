@@ -26,6 +26,20 @@ private val temporaryExceptions: Set<String> = setOf(
     "Xfake-override-validator",
     "Xpurge-user-libs",
     "Xcommon-fragments-metadata-destination",
+    "Xinline-classes",
+    "Xnew-inference",
+    "Xunrestricted-builder-inference",
+    "Xtype-enhancement-improvements-strict-mode",
+    "Xenhance-type-parameter-types-to-def-not-null",
+    "Xsuppress-warning",
+    "Xuse-fir-experimental-checkers",
+    "Xuse-fir-lt",
+    "Xintellij-plugin-root",
+    "Xno-check-actual",
+    "Xignore-const-optimization-errors",
+    "Xir-do-not-clear-binding-context",
+    "Xdirect-java-actualization",
+    "Xrepl",
 )
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {

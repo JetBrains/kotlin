@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalWasmDsl::class)
-
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -139,6 +137,7 @@ class UklibFromKGPFragmentsTests {
         )
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `uklib fragments - all supported targets`() {
         buildProjectWithMPP(

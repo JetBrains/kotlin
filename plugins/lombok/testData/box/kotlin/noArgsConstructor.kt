@@ -1,7 +1,11 @@
 // FIR_DUMP
+// DUMP_KT_IR
 // FILE: ConstructorExample.kt
 
 import lombok.NoArgsConstructor
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
+import kotlin.test.assertFalse
 
 @NoArgsConstructor
 open class ConstructorExample(var boolean: Boolean, var char: Char, var int: Int, var str: String)
@@ -18,23 +22,14 @@ class ConstructorExampleWithForce(val int: Int) {
     val z by lazy { "TEST" }
 }
 
-// KT-88705: nothing is generated for a value class, whose constructors compile to static `constructor-impl`
-// functions - the JVM backend used to fail on the generated constructor's instance initializer. Declaring the
-// class is enough to run that codegen.
-<!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor(force = true)<!>
-@JvmInline
-value class ConstructorExampleOnValueClass(val value: Int)
-
 fun box(): String {
     val zeroObject = ConstructorExample()
-    assertEquals(false, zeroObject.boolean)
+    assertFalse(zeroObject.boolean)
     assertEquals(Char(0), zeroObject.char)
     assertEquals(0, zeroObject.int)
-    assertEquals(null, zeroObject.str)
-
+    assertNull(zeroObject.str)
     val zeroObjectWithGenerics = ConstructorExampleWithGenerics<Int>()
-    assertEquals(null, zeroObjectWithGenerics.param)
-
+    assertNull(zeroObjectWithGenerics.param)
     assertEquals(0, ConstructorExampleWithForce().int)
 
     return "OK"

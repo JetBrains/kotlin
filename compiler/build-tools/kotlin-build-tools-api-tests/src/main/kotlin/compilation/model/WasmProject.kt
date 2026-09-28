@@ -32,8 +32,10 @@ class WasmProject(
         dependencies: List<Dependency>,
         snapshotConfig: SnapshotConfig,
         stdlibClasspath: List<Path>?,
+        compileJavaSources: Boolean,
         moduleCompilationConfigAction: (WasmKlibCompilationOperation.Builder) -> Unit,
     ): WasmModule {
+        require(!compileJavaSources) { "Compiling Java sources is not supported for Kotlin/Wasm modules" }
         val moduleDirectory = projectDirectory.resolve(moduleName)
         val sanitizedModuleName = moduleName.replace(invalidModuleNameCharactersRegex, "_")
         val module = WasmModule(

@@ -1,0 +1,47 @@
+sealed class Sealed
+
+sealed class SealedWithParameter(x: Int) {
+  val x: Int
+}
+
+sealed class SealedPrivateConstructor(x: Int) {
+  val x: Int
+}
+
+sealed class SealedProtectedConstructor(x: Int) {
+  val x: Int
+}
+
+interface SealedInterface
+
+enum class Enum {
+  FIRST
+}
+
+enum class EnumPrivateConstructor(x: Int) {
+  FIRST;
+
+  val x: Int
+}
+
+object Object
+
+class WithCompanion {
+  companion object
+}
+
+class InternalConstructor internal constructor(x: Int) {
+  val x: Int
+}
+
+class PrivateConstructor private constructor(x: Int) {
+  val x: Int
+}
+
+open class ProtectedConstructor protected constructor(x: Int) {
+  val x: Int
+}
+
+class PublicConstructor(x: Int) {
+  val x: Int
+}

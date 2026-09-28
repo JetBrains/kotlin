@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-750 Type inference failed: Constraint violation
 fun main() {
   var i : Int? = Integer.valueOf(100)

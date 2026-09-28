@@ -4,7 +4,7 @@ public abstract interface Test /* Test*/ {
 
   public static final int y = 2 /* initializer type: int */ /* constant value 2 */;
 
-  public abstract void bar();//  bar()
+  public default void bar();//  bar()
 
   public static final class Companion /* Test.Companion*/ {
     private static final int x = 1 /* initializer type: int */;

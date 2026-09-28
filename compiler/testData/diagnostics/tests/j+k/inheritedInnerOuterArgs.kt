@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // `Inner<String>` inside `Derived<E>` denotes `Base<Integer, E>.Inner<String>`: the implicit outer
 // type arguments come from the *inherited* supertype, not from `Base`'s own declaration, whose
 // parameters `H1`/`H2` are not in scope at that point. A Java view which emits the declared

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-46120, KT-72140
 // LANGUAGE: -ForbidImplementationByDelegationWithDifferentGenericSignature
 

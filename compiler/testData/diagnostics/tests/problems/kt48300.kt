@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-48300
 
 // KT-48300: Report warnings when code resolves differently after disabling new inference compatibility mode

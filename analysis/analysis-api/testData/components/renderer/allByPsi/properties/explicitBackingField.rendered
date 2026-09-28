@@ -1,0 +1,10 @@
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.FIELD])
+annotation class Anno
+
+interface Base
+
+class Derived : Base
+
+val inferred: Base
+
+val names: List<String>

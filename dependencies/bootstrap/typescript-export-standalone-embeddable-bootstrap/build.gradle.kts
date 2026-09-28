@@ -1,0 +1,20 @@
+plugins {
+    id("common-configuration")
+    id("com.autonomousapps.dependency-analysis")
+}
+
+val resolvedBootstrap = configurations.resolvable("kotlinBuildToolsApiImplBootstrapClasspath") {
+    val dependency: Dependency =
+        project.dependencies.create("org.jetbrains.kotlin:typescript-export-standalone-embeddable:${bootstrapKotlinVersion}")
+    dependencies.addLater(providers.provider { dependency })
+}
+
+configurations.consumable("buildToolsApiImplElements") {
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+    }
+
+    outgoing.artifacts(resolvedBootstrap)
+}

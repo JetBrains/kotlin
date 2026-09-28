@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-70327
 // FILE: OuterClass.java
 public abstract class OuterClass<T extends OuterClass<T>.InnerClass> {

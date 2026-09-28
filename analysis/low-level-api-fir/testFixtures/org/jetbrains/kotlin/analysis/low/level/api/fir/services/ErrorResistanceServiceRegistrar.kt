@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import com.intellij.psi.impl.light.LightPsiClassBase
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiSearchScopeUtil
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.services.TestServices
 
 internal object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistrar() {
@@ -43,7 +42,6 @@ internal object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistra
         }
     }
 
-    @OptIn(TestInfrastructureInternals::class)
     override fun registerProjectModelServices(project: MockProject, disposable: Disposable, testServices: TestServices) {
         with(PsiElementFinder.EP.getPoint(project)) {
             registerExtension(BrokenLibraryElementFinder(project), disposable)

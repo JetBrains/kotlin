@@ -211,7 +211,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         }
         // Add the current method to the blacklist if it is concrete or final
         val targetMethod = targetFunction.jvmMethod
-        if (!irFunction.isFakeOverride || irFunction.modality == Modality.FINAL)
+        val targetPropertyIsJvmFieldAnnotated = targetFunction.correspondingPropertySymbol?.owner?.hasJvmFieldAnnotation() == true
+        if (!irFunction.isFakeOverride || (irFunction.modality == Modality.FINAL && !targetPropertyIsJvmFieldAnnotated))
             blacklist += targetMethod
 
         // Do not generate bridge methods for exposed methods, since we already generate bridges for
@@ -364,7 +365,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             if (override.isFakeOverride) continue
 
             val signature = override.jvmMethod
-            if (targetMethod != signature && signature !in blacklist) {
+            if (signature in blacklist) continue
+
+            val isOverrideOfJvmFieldAnnotatedProperty = targetPropertyIsJvmFieldAnnotated && override.modality != Modality.FINAL
+            if (targetMethod != signature || isOverrideOfJvmFieldAnnotatedProperty) {
                 val bridge = generated.getOrPut(signature) {
                     Bridge(override, signature, isErroneousSpecialBridge)
                 }
@@ -465,11 +469,25 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             copyParametersWithErasure(this@addBridge, bridge.overridden)
             copyBridgeAnnotationsIfNeeded(bridge.overridden, target, bridge.isErroneous)
 
+            val resolvedFakeOverride = target.resolveFakeOverride()
+            val resolvedCorrespondingProperty = resolvedFakeOverride?.correspondingPropertySymbol?.owner
+
             // If target is a throwing stub, bridge also should just throw UnsupportedOperationException.
             // Otherwise, it might throw ClassCastException when downcasting bridge argument to expected type.
             // See KT-49765
             body = if (target.isThrowingStub()) {
                 createThrowingStubBody(context, this)
+            } else if (resolvedCorrespondingProperty?.hasJvmFieldAnnotation() == true) {
+                // @JvmField properties do not get accessors on their own, so there is nothing to delegate to.
+                val backingField = resolvedCorrespondingProperty.backingField!!
+                context.createIrBuilder(symbol, startOffset, endOffset).run {
+                    val expr = when (resolvedFakeOverride) {
+                        resolvedCorrespondingProperty.getter -> irCastIfNeeded(irGetField(irGet(parameters[0]), backingField), returnType)
+                        resolvedCorrespondingProperty.setter -> irSetField(irGet(parameters[0]), backingField, irCastIfNeeded(irGet(parameters[1]), backingField.type))
+                        else -> error("resolved fake override must be either getter or setter")
+                    }
+                    irExprBody(expr)
+                }
             } else {
                 context.createIrBuilder(symbol, startOffset, endOffset).run {
                     irExprBody(delegatingCall(this@apply, target))

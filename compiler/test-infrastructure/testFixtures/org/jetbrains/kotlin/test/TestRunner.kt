@@ -208,7 +208,7 @@ class NonGroupingTestRunner(
         }
     }
 
-    private val allRanHandlers = mutableSetOf<AnalysisHandler<*>>()
+    private val allRanHandlers = mutableSetOf<Pair<AnalysisHandler<*>, TestPhase?>>()
 
     fun runTest(@TestDataFile testDataFileName: String, beforeDispose: (NonGroupingStageTestConfiguration) -> Unit = {}) {
         try {
@@ -278,8 +278,8 @@ class NonGroupingTestRunner(
             if (!shouldProcessNextModules) break
         }
 
-        for (handler in allRanHandlers) {
-            val wrapperFactory: (Throwable) -> WrappedException = { WrappedException.FromHandler(it, failedModule = null, handler) }
+        for ([handler, stepPhase] in allRanHandlers) {
+            val wrapperFactory: (Throwable) -> WrappedException = { WrappedException.FromHandler(it, failedModule = null, handler, stepPhase) }
             failuresInterceptor.withAssertionCatching(wrapperFactory) {
                 val thereWasAnException = failuresInterceptor.hasFailures
                 if (handler.shouldRun(thereWasAnException)) {
@@ -325,7 +325,7 @@ class NonGroupingTestRunner(
             },
             onHandlersResult = { step ->
                 checkTestInfrastructure(step is TestStep.NonGroupingStep.HandlersStep<*>) { "Step must be HandlersStep" }
-                allRanHandlers += step.handlers
+                step.handlers.mapTo(allRanHandlers) { it to step.stepPhase }
             }
         )
     }

@@ -9,7 +9,7 @@ fun box() {
 infix fun Int.foo(i: Int) {
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:5 box
 // test.kt:6 box
 // test.kt:5 box

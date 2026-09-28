@@ -100,8 +100,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     val outputFileProperty: Property<File>
         get() = _outputFileProperty
 
-    override val produceUnpackagedKlib: Property<Boolean> = objectFactory.property(Boolean::class.java).value(true).chainedDisallowChanges()
-
     override val klibOutput: Provider<File>
         get() = destinationDirectory.asFile
 

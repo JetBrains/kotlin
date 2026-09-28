@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn25
+// LANGUAGE_FEATURE_TOGGLED: ForbidUselessTypeArgumentsIn26
 
 // FILE: J.java
 

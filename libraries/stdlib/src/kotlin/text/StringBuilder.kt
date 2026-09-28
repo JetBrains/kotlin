@@ -489,7 +489,8 @@ public expect fun StringBuilder.toCharArray(destination: CharArray, destinationO
 @IgnorableReturnValue public expect fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
-@Deprecated("Use append(value: Any?) instead", ReplaceWith("append(value = obj)"), DeprecationLevel.WARNING)
+@Deprecated("Use append(value: Any?) instead", ReplaceWith("append(value = obj)"))
+@DeprecatedSinceKotlin(warningSince = "1.3", errorSince = "2.5")
 @kotlin.internal.InlineOnly
 @IgnorableReturnValue
 public inline fun StringBuilder.append(obj: Any?): StringBuilder = this.append(obj)

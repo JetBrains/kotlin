@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationRequested
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheRequested
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationRequested
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
@@ -162,27 +162,13 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
             // so there is a change that no VariantImplementationFactory will be found
-            val fusService = if (GradleVersion.current().baseVersion >= GradleVersion.version("8.9")) {
-                FlowActionBuildFusService.registerIfAbsentImpl(
-                    project,
-                    buildUidService,
-                    generalConfigurationMetricsProvider,
-                    buildFinishBuildService
-                )
-            } else if (GradleVersion.current().baseVersion >= GradleVersion.version("8.1")) {
-                ConfigurationMetricParameterFlowActionBuildFusService.registerIfAbsentImpl(
-                    project,
-                    buildUidService,
-                    generalConfigurationMetricsProvider,
-                )
-            } else {
-                CloseActionBuildFusService.registerIfAbsentImpl(
-                    project,
-                    buildUidService,
-                    generalConfigurationMetricsProvider,
-                    pluginVersion
-                )
-            }
+            val fusService = FlowActionBuildFusService.registerIfAbsentImpl(
+                project,
+                buildUidService,
+                generalConfigurationMetricsProvider,
+                buildFinishBuildService
+            )
+
             //DO NOT call buildService.get() before all parameters.configurationMetrics are set.
             // buildService.get() call will cause parameters calculation and configuration cache storage.
 

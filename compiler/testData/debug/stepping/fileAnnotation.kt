@@ -13,7 +13,7 @@ fun box(): String =
     foo() +
             C().k
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:13 box
 // test.kt:6 foo
 // test.kt:13 box

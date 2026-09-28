@@ -788,7 +788,7 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun expectMyClass(x: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(398,411): 'expectMyClass'
@@ -823,7 +823,7 @@ KtNameReferenceExpression(398,411): 'expectMyClass'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun expectMyClass(x: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(411,430): '(FOR_TYPE_MISMATCH)'
@@ -1204,13 +1204,13 @@ KtCallExpression(514,521): 'id(Bar)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.Bar
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.Bar
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -1218,13 +1218,13 @@ KtCallExpression(514,521): 'id(Bar)'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MyClass)
+        X -> (MyClass.Bar)
       }
       valueArgumentMapping = {
         Bar -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.Bar
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -1240,13 +1240,13 @@ KtNameReferenceExpression(514,516): 'id'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.Bar
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.Bar
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -1254,13 +1254,13 @@ KtNameReferenceExpression(514,516): 'id'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MyClass)
+        X -> (MyClass.Bar)
       }
       valueArgumentMapping = {
         Bar -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.Bar
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -1324,7 +1324,7 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun expectMyClass(x: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(528,541): 'expectMyClass'
@@ -1359,7 +1359,7 @@ KtNameReferenceExpression(528,541): 'expectMyClass'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun expectMyClass(x: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(541,558): '(ForTypeMismatch)'

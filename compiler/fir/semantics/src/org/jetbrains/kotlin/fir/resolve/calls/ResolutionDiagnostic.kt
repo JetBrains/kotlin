@@ -16,15 +16,9 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.isDisabled
-import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
@@ -121,6 +115,8 @@ class WrongNumberOfTypeArguments(
 
 object UnsuccessfulCallableReferenceArgument : ResolutionDiagnostic(INAPPLICABLE)
 
+object UnsuccessfulContextSensitiveResolutionArgument : ResolutionDiagnostic(INAPPLICABLE)
+
 /**
  * Wrapper for [ResolutionDiagnostic]s coming from expansions of nested collection literals.
  *
@@ -175,6 +171,8 @@ class InapplicableNullableReceiver(val actualType: ConeKotlinType) : ResolutionD
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 
 object LowerPriorityForDynamic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
+
+object LowerPriorityForNumericClassConversion : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(RESOLVED)
 

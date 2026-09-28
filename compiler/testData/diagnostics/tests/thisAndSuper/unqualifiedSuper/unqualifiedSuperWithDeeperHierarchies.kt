@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Check that it works with inherited members
 //
 //  DeeperBase  DeeperInterface

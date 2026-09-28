@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.psi.PsiElement;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,8 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
             replaceWith = @ReplaceWith(
                     expression = "this.addModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     void addModifier(@NotNull KtModifierKeywordToken modifier);
@@ -54,7 +56,8 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
             replaceWith = @ReplaceWith(
                     expression = "this.removeModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     void removeModifier(@NotNull KtModifierKeywordToken modifier);
@@ -68,7 +71,8 @@ public interface KtModifierListOwner extends PsiElement, KtAnnotated {
             replaceWith = @ReplaceWith(
                     expression = "this.addAnnotation(annotationEntry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addAnnotation"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     @NotNull

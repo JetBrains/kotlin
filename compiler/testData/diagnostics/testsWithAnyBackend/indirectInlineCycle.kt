@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // RENDER_ALL_DIAGNOSTICS_FULL_TEXT
 
 inline fun inlineFun1(crossinline p: () -> Unit) {

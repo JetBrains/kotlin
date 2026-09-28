@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class A
 val <X> X.prop: Int get() = 1
 fun <X> X.baz(): Int = 1

@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 // TODO: Consider rewriting this test without using threads, since the issue is not about threads at all.
 
 object RefreshQueue {

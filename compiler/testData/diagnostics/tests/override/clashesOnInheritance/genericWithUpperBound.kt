@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: JFooWithUpperBound.java
 public interface JFooWithUpperBound<T extends IBase> {
     T foo();

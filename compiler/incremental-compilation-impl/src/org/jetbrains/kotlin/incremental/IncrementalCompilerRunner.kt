@@ -392,7 +392,12 @@ abstract class IncrementalCompilerRunner<
         outputDirs.toSet().forEach {
             when {
                 it.isDirectory -> it.deleteDirectoryContents()
-                it.isFile -> "Expected a directory but found a regular file: ${it.path}"
+
+                it.isFile -> {
+                    // KT-88538: suppressing for now to avoid potential breaking changes
+                    @Suppress("RETURN_VALUE_NOT_USED_COERCION")
+                    "Expected a directory but found a regular file: ${it.path}"
+                }
                 else -> it.createDirectory()
             }
         }

@@ -26,10 +26,7 @@ stub infrastructure. It covers source stubs, binary (compiled) stubs, and the de
 |----------------------------------|-------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Stub interfaces & contracts      | `compiler/psi/psi-api` → `org.jetbrains.kotlin.psi.stubs`               | `StubInterfaces.kt`, `KotlinFileStubKind.kt`, `KotlinStubVersions.kt`; API registry `KtStubBasedElementTypes.kt`; base PSI `KtElementImplStub.java`                      |
 | Element-type & stub impls        | `compiler/psi/psi-impl` → `…psi.stubs.elements` / `…psi.stubs.impl`     | registry `KtStubElementTypes.java`, stub factories in `…psi.stubs.factories`, their registration in `…psi.stubs`, indexing glue `StubIndexService.kt`; stub data classes in `…psi.stubs.impl` (`KotlinPropertyStubImpl`, …), `StubUtils`, `KotlinStubOrigin`, `createConstantValue` |
-| Shared cls stub builders         | `analysis/decompiled/decompiler-to-stubs` → `…analysis.decompiler.stub` | Metadata(proto)→stub builders shared by all binary formats: `ClassClsStubBuilder`, `CallableClsStubBuilder`, `TypeClsStubBuilder`, `typeAliasClsStubBuilding`, `ClsContractBuilder`, …                                        |
-| JVM `.class` entry point         | `analysis/decompiled/decompiler-to-file-stubs`                          | `KotlinClsStubBuilder` (`ClsStubBuilder` for `.class`), plus the private `JvmClsAnnotationLoader`                                                                                                                             |
-| Decompiled PSI / text & builtins | `analysis/decompiled/decompiler-to-psi`                                 | `KotlinClassFileDecompiler`, `KotlinDecompiledFileViewProvider`, `KtDecompiledFile`, and the built-ins stub builder `KotlinBuiltInMetadataStubBuilder`                                                                        |
-| Native / KLIB                    | `analysis/decompiled/decompiler-native` → `…analysis.decompiler.konan`  | `KotlinKlibMetadataDecompiler` for `.knm` metadata (`KlibMetaFileType`)                                                                                                                                                       |
+| Decompiler                       | `analysis/decompiled/decompiler`                                        | Metadata(proto)→stub builders shared by all binary formats in `…analysis.decompiler.stub` (`ClassClsStubBuilder`, `CallableClsStubBuilder`, `TypeClsStubBuilder`, `ClsContractBuilder`, …); the per-format entry points `KotlinClsStubBuilder` (JVM `.class`), `KotlinBuiltInMetadataStubBuilder` (built-ins) and `KlibMetadataStubBuilder` (`…analysis.decompiler.konan`); the decompilers and `KtDecompiledFile` & co. |
 | Light classes over decompiled    | `analysis/decompiled/light-classes-for-decompiled`                      | Java-facing light classes built on decompiled declarations: `DecompiledLightClassesFactory`, `KtLightClassForDecompiledDeclaration`, `KtLightMethodForDecompiledDeclaration`, …                                               |
 | Stub tests                       | `analysis/stubs`                                                        | **Generated** tests (`tests-gen`) + engines/fixtures in `testFixtures`                                                                                                                                                        |
 
@@ -78,7 +75,7 @@ to locate declarations quickly.
 
 Built from binary artifacts without sources, by reading Kotlin metadata. All formats produce stubs implementing the same `StubInterfaces.kt`
 contracts via the shared builders in
-`decompiler-to-stubs` (`ClassClsStubBuilder`, `CallableClsStubBuilder`, `TypeClsStubBuilder`, …).
+`decompiler` (`ClassClsStubBuilder`, `CallableClsStubBuilder`, `TypeClsStubBuilder`, …).
 
 - **JVM `.class`** — entry point `KotlinClsStubBuilder.buildFileStub` → `doBuildFileStub`:
     1. Resolve the `KotlinJvmBinaryClass` and its `KotlinClassHeader`.
@@ -92,16 +89,16 @@ contracts via the shared builders in
       `KotlinClsStubBuilder.kt`, not a separately named class) walks the class with
       `KotlinJvmBinaryClass` member visitors, collecting member annotations, field initializers, and annotation default values; values are
       converted via `createConstantValue`.
-- **Built-ins** — `KotlinBuiltInMetadataStubBuilder` (`decompiler-to-psi`), `BUILTIN_STUB_VERSION`.
-- **Native / KLIB** — `KotlinKlibMetadataDecompiler` (`decompiler-native`,
-  `…analysis.decompiler.konan`), `KLIB_STUB_VERSION`, `.knm` (`KlibMetaFileType`).
+- **Built-ins** — `KotlinBuiltInMetadataStubBuilder`, `BUILTIN_STUB_VERSION`.
+- **Native / KLIB** — `KotlinKlibMetadataDecompiler` (`…analysis.decompiler.konan`),
+  `KLIB_STUB_VERSION`, `.knm` (`KlibMetaFileType`).
 
 ### 3) Decompiled PSI and light classes
 
 For navigation/quick-doc, the platform builds a read-only text + PSI view over binaries:
 
 - `KotlinClassFileDecompiler` / `KotlinDecompiledFileViewProvider` / `KtDecompiledFile`
-  (`decompiler-to-psi`) produce decompiled text-backed PSI.
+  (`decompiler`) produce decompiled text-backed PSI.
 - `light-classes-for-decompiled` builds Java light classes (`KtLightClassForDecompiledDeclaration`,
   `KtLightMethodForDecompiledDeclaration`, …) for Java interop.
 
@@ -142,11 +139,11 @@ and names.
 - `compiler/psi/psi-impl/.../psi/stubs/KotlinStubRegistryExtension.kt` — binds factories to element types.
 - `compiler/psi/psi-impl/.../psi/stubs/elements/` — `KtStubElementTypes`,
   `StubIndexService`; stub data classes in `…/psi/stubs/impl/`.
-- `analysis/decompiled/decompiler-to-stubs/...` — shared cls builders (`ClassClsStubBuilder`, `CallableClsStubBuilder`,
+- `analysis/decompiled/decompiler/.../stub/` — shared cls builders (`ClassClsStubBuilder`, `CallableClsStubBuilder`,
   `TypeClsStubBuilder`).
-- `analysis/decompiled/decompiler-to-file-stubs/.../KotlinClsStubBuilder.kt` — JVM `.class` entry.
-- `analysis/decompiled/decompiler-to-psi/...` — decompiled PSI + `KotlinBuiltInMetadataStubBuilder`.
-- `analysis/decompiled/decompiler-native/.../konan/KotlinKlibMetadataDecompiler.kt` — KLIB/Native.
+- `analysis/decompiled/decompiler/.../stub/file/KotlinClsStubBuilder.kt` — JVM `.class` entry.
+- `analysis/decompiled/decompiler/.../psi/` — decompiled PSI + `KotlinBuiltInMetadataStubBuilder`.
+- `analysis/decompiled/decompiler/.../konan/KotlinKlibMetadataDecompiler.kt` — KLIB/Native.
 
 ## FAQ
 
@@ -157,4 +154,4 @@ and names.
   `KLIB_STUB_VERSION` for Native/KLIB. (JS no longer produces stubs.)
 - **Where do I start debugging a missing stub element?** Source: the element's `Kt*ElementType`
   and its `shouldCreateStub`. Binary (JVM): `KotlinClsStubBuilder.doBuildFileStub`, then into the shared `ClassClsStubBuilder` /
-  `CallableClsStubBuilder` in `decompiler-to-stubs`. Compare against the generated stub tests in `analysis/stubs`.
+  `CallableClsStubBuilder` in `decompiler`. Compare against the generated stub tests in `analysis/stubs`.

@@ -104,7 +104,6 @@ org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructu
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProviderBase.getNotUnderContentRootModule(Project)
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.areCompilerPluginsSupported()
 org.jetbrains.kotlin.analysis.api.platform.projectStructure.asDebugString(Int)
-org.jetbrains.kotlin.analysis.api.platform.projectStructure.forcedSpecialModule
 org.jetbrains.kotlin.analysis.api.platform.resolution.KaResolutionActivityTracker.Companion.getInstance()
 org.jetbrains.kotlin.analysis.api.platform.restrictedAnalysis.KotlinRestrictedAnalysisService.Companion.getInstance(Project)
 org.jetbrains.kotlin.analysis.api.platform.statistics.KaStatisticsService.Companion.areStatisticsEnabled

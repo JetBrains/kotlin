@@ -6,5 +6,5 @@ $STDLIB_JS$
 $TEMP_DIR$
 -ir-output-name
 out
--Xsuppress-warning=non-existing-diagnostic
--Xsuppress-warning=UNINITIALIZED_VARIABLE
+-Xwarning-level=non-existing-diagnostic\:disabled
+-Xwarning-level=UNINITIALIZED_VARIABLE\:disabled

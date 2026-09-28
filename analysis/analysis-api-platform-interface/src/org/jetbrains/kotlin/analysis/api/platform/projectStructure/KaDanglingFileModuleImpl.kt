@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.platform.projectStructure
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.createSmartPointer
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
@@ -33,7 +33,6 @@ public class KaDanglingFileModuleImpl(
 ) : KaDanglingFileModule, KaModuleBase() {
     override val isCodeFragment: Boolean = files.any { it is KtCodeFragment }
 
-    @Suppress("DEPRECATION")
     private val fileRefs = files.map { it.createSmartPointer() }
 
     init {

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // In `two/User.java` the bare name `Box` must resolve to the star-imported real class `one.Box`
 // (JLS 7.5.2). A Kotlin `typealias two.Box` sits in `User`'s own package, so the higher-priority

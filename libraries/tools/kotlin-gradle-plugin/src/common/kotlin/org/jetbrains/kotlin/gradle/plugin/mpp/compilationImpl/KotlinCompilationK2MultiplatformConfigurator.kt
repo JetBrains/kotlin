@@ -70,13 +70,13 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
             compileTask.multiplatformStructure.fragments.set(compilation.project.provider {
                 if (!compileTask.compilerOptions.usesK2.get()) return@provider emptyList()
 
-                val mostCommonFragmentPerNativePlatforms = project.lazyFuture {
-                    val refinementGraph = buildMap<String, MutableSet<String>> {
-                        compileTask.multiplatformStructure.refinesEdges.get().forEach { edge ->
-                            getOrPut(edge.fromFragmentName) { mutableSetOf() }.add(edge.toFragmentName)
-                        }
+                val refinementGraph = buildMap<String, MutableSet<String>> {
+                    compileTask.multiplatformStructure.refinesEdges.get().forEach { edge ->
+                        getOrPut(edge.fromFragmentName) { mutableSetOf() }.add(edge.toFragmentName)
                     }
+                }
 
+                val mostCommonFragmentPerNativePlatforms = project.lazyFuture {
                     compilation.allKotlinSourceSets
                         .filter { it.internal.isSharedSourceSet() }
                         .filter { it.isNativeSourceSet.await() }
@@ -94,27 +94,32 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
                         .mapValues { (_, fragments) -> fragments.first() }
                 }
 
-                compilation.allKotlinSourceSets
-                    .groupBy { it.fragmentName() }
-                    .map { (fragmentName, sourceSets) ->
-                        val sourceFiles = sourceSets.map { it.defaultImpl.allKotlin.asFileTree }
-                            .reduce { acc, fileTree -> acc + fileTree }
-                        K2MultiplatformStructure.Fragment(
-                            fragmentName = fragmentName,
-                            sources = sourceFiles,
-                            dependencies = if (project.kotlinPropertiesProvider.separateKmpCompilation.get()) {
-                                compilation.project.retrieveFragmentDependencies(
-                                    sourceSets,
-                                    fragmentName,
-                                    mostCommonFragmentPerNativePlatforms,
-                                    compilation.kotlinSourceSets,
-                                )
-                            } else project.files(),
-                            friends = if (project.kotlinPropertiesProvider.separateKmpCompilation.get()) {
-                                project.files(sourceSets.map { compilation.project.retrieveFragmentFriends(it) })
-                            } else project.files(),
-                        )
-                    }
+                val sourceSetPerFragments = compilation.allKotlinSourceSets.groupBy { it.fragmentName() }
+                val friendSourceSetsPerFragment = calculateFriendSourceSets(refinementGraph, sourceSetPerFragments)
+
+                sourceSetPerFragments.map { (fragmentName, sourceSets) ->
+                    val sourceFiles = sourceSets.map { it.defaultImpl.allKotlin.asFileTree }
+                        .reduce { acc, fileTree -> acc + fileTree }
+                    K2MultiplatformStructure.Fragment(
+                        fragmentName = fragmentName,
+                        sources = sourceFiles,
+                        dependencies = if (project.kotlinPropertiesProvider.separateKmpCompilation.get()) {
+                            compilation.project.retrieveFragmentDependencies(
+                                sourceSets,
+                                fragmentName,
+                                mostCommonFragmentPerNativePlatforms,
+                                compilation.kotlinSourceSets,
+                            )
+                        } else project.files(),
+                        friends = if (project.kotlinPropertiesProvider.separateKmpCompilation.get()) {
+                            val friendDependencies = sourceSets.map {
+                                val friendSourceSets = friendSourceSetsPerFragment[fragmentName].orEmpty()
+                                compilation.project.retrieveFragmentFriends(it, friendSourceSets)
+                            }
+                            project.files(friendDependencies)
+                        } else project.files(),
+                    )
+                }
             })
 
             compileTask.multiplatformStructure.defaultFragmentName.set(compilation.defaultSourceSet.fragmentName())
@@ -155,11 +160,54 @@ internal object KotlinCompilationK2MultiplatformConfigurator : KotlinCompilation
         }.getOrThrow()
     }
 
+    /**
+     * [getVisibleSourceSetsFromAssociateCompilations] returns accumulated set of friend sourceset.
+     *       common
+     *       /     \
+     *     web     jvm
+     *    /   \
+     *   js  wasm
+     *
+     * So, for example, in this project structure it will return the following values:
+     *   commonTest -> [commonMain]
+     *      webTest -> [commonMain, webMain]
+     *       jsTest -> [commonMain, webMain, jsMain]
+     *     wasmTest -> [commonMain, webMain, jsMain]
+     *      jvmTest -> [commonMain, jvmMain]
+     *
+     * But the compiler expects dependencies in `-Xfragment-friend dependencies` to be unique and deduplicated.
+     * And this function aims to deduplicate dependency lists:
+     *   commonTest -> [commonMain]
+     *      webTest -> [webMain]
+     *       jsTest -> [jsMain]
+     *     wasmTest -> [jsMain]
+     *      jvmTest -> [jvmMain]
+     */
+    private fun calculateFriendSourceSets(
+        refinementGraph: Map<String, Set<String>>,
+        sourceSetPerFragments: Map<String, List<KotlinSourceSet>>,
+    ): Map<String, List<KotlinSourceSet>> {
+        val fullFriends = sourceSetPerFragments.mapValues { (_, sourceSets) ->
+            sourceSets.flatMap { getVisibleSourceSetsFromAssociateCompilations(it) }.distinct()
+        }
+        val result = mutableMapOf<String, List<KotlinSourceSet>>()
+
+        for (fragment in sourceSetPerFragments.keys) {
+            val friendSourceSets = fullFriends[fragment].orEmpty().toMutableList()
+            for (dependsOn in refinementGraph[fragment].orEmpty()) {
+                friendSourceSets -= fullFriends[dependsOn].orEmpty()
+            }
+            result[fragment] = friendSourceSets
+        }
+
+        return result
+    }
+
     private fun Project.retrieveFragmentFriends(
-        sourceSet: KotlinSourceSet
+        sourceSet: KotlinSourceSet,
+        friendSourceSets: List<KotlinSourceSet>,
     ): FileCollection = filesProvider {
         future {
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(sourceSet)
             val metadataTarget = multiplatformExtension.awaitMetadataTarget()
             val relatedCompilationOutputs = friendSourceSets.mapNotNull { friendSourceSet ->
                 val platformCompilations = friendSourceSet.internal.awaitPlatformCompilations()

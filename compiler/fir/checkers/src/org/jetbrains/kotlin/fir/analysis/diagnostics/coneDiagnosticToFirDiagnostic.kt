@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.K2Only
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -186,6 +187,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
             // see EagerResolveOfCallableReferences
             is UnsuccessfulCallableReferenceArgument -> null
             is UnsuccessfulCollectionLiteralArgument -> null
+            is UnsuccessfulContextSensitiveResolutionArgument -> null
 
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source, session)
@@ -785,7 +787,7 @@ private fun inapplicableNullableReceiver(
     }
 }
 
-private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, session: FirSession): KtSimpleDiagnostic? {
+private fun unexpectedTrailingLambdaOnNewLineOrNull(argument: FirExpression, session: FirSession): KtDiagnostic? {
     fun KtLightSourceElement.isTrailingLambdaOnNewLine(): Boolean {
         var parent = treeStructure.getParent(this.lighterASTNode) ?: return false
         if (parent.tokenType == KtNodeTypes.LABELED_EXPRESSION) {
@@ -913,7 +915,7 @@ private fun ConstraintSystemError.mapConstraintSystemError(
     //  see KT-82684)
     fun isUnreportedNotEnoughInformationForTypeParameter(): Boolean {
         return candidate.symbol is FirConstructorSymbol && candidate.callInfo.callSite is FirDelegatedConstructorCall
-                || source?.kind == KtFakeSourceElementKind.ErrorExpressionForTransformedArrayOf
+                || source?.kind == @OptIn(ArrayLiteralResolution::class) KtFakeSourceElementKind.ErrorExpressionForTransformedArrayOf
     }
 
     val typeContext = session.typeContext
@@ -1163,8 +1165,8 @@ internal fun KtDiagnosticFactory0.createOn(
     element: KtSourceElement?,
     session: FirSession,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
-): KtSimpleDiagnostic? {
-    return on(element.requireNotNull(), positioningStrategy, session.toDiagnosticContext())
+): KtDiagnostic? {
+    return onOrFallback(element, positioningStrategy, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1173,8 +1175,8 @@ internal fun <A> KtDiagnosticFactory1<A>.createOn(
     a: A,
     session: FirSession,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
-): KtDiagnosticWithParameters1<A>? {
-    return on(element.requireNotNull(), a, positioningStrategy, session.toDiagnosticContext())
+): KtDiagnostic? {
+    return onOrFallback(element, a, positioningStrategy, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1184,8 +1186,8 @@ internal fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     b: B,
     session: FirSession,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
-): KtDiagnosticWithParameters2<A, B>? {
-    return on(element.requireNotNull(), a, b, positioningStrategy, session.toDiagnosticContext())
+): KtDiagnostic? {
+    return onOrFallback(element, a, b, positioningStrategy, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1196,8 +1198,8 @@ internal fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     c: C,
     session: FirSession,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
-): KtDiagnosticWithParameters3<A, B, C>? {
-    return on(element.requireNotNull(), a, b, c, positioningStrategy, session.toDiagnosticContext())
+): KtDiagnostic? {
+    return onOrFallback(element, a, b, c, positioningStrategy, session.toDiagnosticContext())
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -1209,6 +1211,6 @@ internal fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     d: D,
     session: FirSession,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null,
-): KtDiagnosticWithParameters4<A, B, C, D>? {
-    return on(element.requireNotNull(), a, b, c, d, positioningStrategy, session.toDiagnosticContext())
+): KtDiagnostic? {
+    return onOrFallback(element, a, b, c, d, positioningStrategy, session.toDiagnosticContext())
 }

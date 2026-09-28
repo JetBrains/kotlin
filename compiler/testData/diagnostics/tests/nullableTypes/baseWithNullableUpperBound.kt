@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <NN: Any, NNN: NN> nonMisleadingNullable(
         nn: NN?,
         nnn: NNN?

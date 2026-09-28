@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo(x: () -> Int, y: Int) {}
 fun bar(x: String): Int = 1
 

@@ -21,31 +21,38 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.ModuleKind
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.js.config.dceUnusedProperties
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun eliminateDeadDeclarations(
+    allRoots: Iterable<IrDeclaration>,
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
-    moduleKind: ModuleKind,
-    removeUnusedAssociatedObjects: Boolean = true,
     dceDumpNameCache: DceDumpNameCache,
 ) {
-    val allRoots = buildRoots(modules, context, moduleKind)
-
     val printReachabilityInfo =
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.js.ir.dce.print.reachability.info")
 
-    val usefulDeclarationProcessor = JsUsefulDeclarationProcessor(context, printReachabilityInfo, removeUnusedAssociatedObjects)
+    val usefulDeclarationProcessor = JsUsefulDeclarationProcessor(context, printReachabilityInfo)
     val usefulDeclarations = usefulDeclarationProcessor.collectDeclarations(allRoots, dceDumpNameCache)
 
-    val uselessDeclarationsProcessor =
-        UselessDeclarationsRemover(removeUnusedAssociatedObjects, usefulDeclarations, context, context.dceRuntimeDiagnostic)
+    val uselessDeclarationsProcessor = UselessDeclarationsRemover(usefulDeclarations, context, context.dceRuntimeDiagnostic)
 
     modules.forEach { module ->
         module.files.forEach {
             it.acceptVoid(uselessDeclarationsProcessor)
             context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarationProcessor.usefulPolyfilledDeclarations)
+        }
+    }
+
+    if (context.configuration.dceUnusedProperties) {
+        val setFieldRemover = SetFieldRemover(context, usefulDeclarations)
+
+        modules.forEach { module ->
+            module.files.forEach {
+                it.transform(setFieldRemover, null)
+            }
         }
     }
 }
@@ -96,7 +103,7 @@ private fun IrDeclaration.addRootsTo(
     }
 }
 
-private fun buildRoots(
+internal fun buildRoots(
     modules: Iterable<IrModuleFragment>,
     context: JsIrBackendContext,
     moduleKind: ModuleKind

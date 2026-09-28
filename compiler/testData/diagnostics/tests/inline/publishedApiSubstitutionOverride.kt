@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 @PublishedApi
 internal interface History<T> {
     var isIgnoringPlatformChanges: Boolean

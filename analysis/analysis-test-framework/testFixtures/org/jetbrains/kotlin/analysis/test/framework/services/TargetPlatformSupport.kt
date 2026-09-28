@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,11 +15,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TargetPlatformProvider
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.getMetadataTargetPlatformOrNull
+import org.jetbrains.kotlin.test.services.*
 
 object TargetPlatformDirectives : SimpleDirectivesContainer() {
     val TARGET_PLATFORM by enumDirective<TargetPlatformEnum>(
@@ -57,7 +53,6 @@ class TargetPlatformProviderForAnalysisApiTests(val testServices: TestServices) 
     override fun getTargetPlatform(module: TestModule): TargetPlatform {
         val explicitlyDeclaredPlatforms = module.directives[TARGET_PLATFORM]
         val platforms = explicitlyDeclaredPlatforms.map { it.targetPlatform }
-        @OptIn(TestInfrastructureInternals::class)
         return when (platforms.size) {
             0 -> getTargetPlatformFromContext(module)
             1 -> platforms.single()

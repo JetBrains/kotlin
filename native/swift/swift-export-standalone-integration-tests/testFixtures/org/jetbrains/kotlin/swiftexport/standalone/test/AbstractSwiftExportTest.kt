@@ -78,7 +78,8 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     var extraSwiftCompilerOptions: List<String> = emptyList()
 
     private val binariesDir get() = testRunSettings.get<Binaries>().testBinariesDir
-    protected fun buildDir(testName: String) = binariesDir.resolve(testName)
+    private val testDataBaseDir get() = testRunSettings.get<TestRoots>().baseDir
+    protected fun buildDir(testPathFull: File) = binariesDir.resolve(testPathFull.relativeTo(testDataBaseDir))
     protected val targets: KotlinNativeTargets get() = testRunSettings.get()
     protected val testCompilationFactory = TestCompilationFactory()
     private val compiledSwiftCache = ThreadSafeCache<SwiftExportModule, TestCompilationArtifact.Swift.Module>()
@@ -133,7 +134,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         val modulesToExport = inputModuleByTestModule.values.toSet()
 
         val config = SwiftExportConfig(
-            outputPath = buildDir(testPathFull.name).resolve(testDir).toPath(),
+            outputPath = buildDir(testPathFull).resolve("swift_export_results").toPath(),
             stableDeclarationsOrder = true,
             distribution = Distribution(KonanHome.konanHomePath),
             konanTarget = targets.testTarget,
@@ -150,7 +151,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             .apply { swiftExportOutputs.collectKotlinBridgeFilesRecursively(into = this) }
 
         val kotlinFiles = originalTestCase.rootModules.flatMapToSet { module -> module.files.map { file -> file.location } }
-        val kotlinBinaryLibraryName = testPathFull.name + "Kotlin"
+        val kotlinBinaryLibraryName = computePackageName(testDataBaseDir, testPathFull).toString() + "Kotlin"
 
         // Inline cinterop modules flagged for reexport cannot be passed with -Xinclude to
         // binary compilation (the compiler rejects interop klibs via that flag). Expose their
@@ -245,7 +246,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         testPathFull: File,
     ): Set<TestCompilationArtifact.Swift.Module> {
         val compiledSwiftModule = compiledSwiftCache.computeIfAbsent(this) {
-            val swiftModuleDir = buildDir(testPathFull.name).resolve("SwiftModules").also { it.mkdirs() }
+            val swiftModuleDir = buildDir(testPathFull).resolve("SwiftModules").also { it.mkdirs() }
             return@computeIfAbsent compileSwiftModule(
                 swiftModuleDir = swiftModuleDir,
                 swiftModuleName = name,
@@ -264,7 +265,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         val deps = resolvedDependencies(allModules).flatMapToSet { it.compile(testPathFull, allModules) }
         val compiledSwiftModule = compiledSwiftCache.computeIfAbsent(this) {
             it as SwiftExportModule.BridgesToKotlin
-            val swiftModuleDir = buildDir(testPathFull.name).resolve("SwiftModules").also { it.mkdirs() }
+            val swiftModuleDir = buildDir(testPathFull).resolve("SwiftModules").also { it.mkdirs() }
             val umbrellaHeader = files.cHeaderBridges.toFile()
             val bridgeModuleFile = createModuleMap(
                 moduleName = it.bridgeName,

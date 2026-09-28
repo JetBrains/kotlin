@@ -1010,21 +1010,19 @@ KtNameReferenceExpression(811,812): 'Y'
     diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'Y'.>
 
 KtCallExpression(823,885): 'myRun {'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /myRun(b: () -> T): T
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MySealed.Y', but 'MySealed.X' was expected.>
 
 KtNameReferenceExpression(823,828): 'myRun'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
       /myRun(b: () -> T): T
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MySealed.Y', but 'MySealed.X' was expected.>
 
 KtLambdaArgument(829,885): '{'
   null
@@ -1059,7 +1057,7 @@ KtContainerNodeForControlStructureBody(846,869): 'return@myRun MySealed.X'
 KtReturnExpression(846,869): 'return@myRun MySealed.X'
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      <anonymous function>(): MySealed.X
+      <anonymous function>(): MySealed
     ]
 
 KtContainerNode(852,858): '@myRun'
@@ -1071,7 +1069,7 @@ KtLabelReferenceExpression(852,858): '@myRun'
   lookupLocally: false
   KaSimpleSymbolResolutionSuccess:
     symbols = [
-      <anonymous function>(): MySealed.X
+      <anonymous function>(): MySealed
     ]
 
 KtDotQualifiedExpression(859,869): 'MySealed.X'

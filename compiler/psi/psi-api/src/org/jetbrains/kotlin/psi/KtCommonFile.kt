@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(KtIdeApi::class, KtImplementationDetail::class)
+
 package org.jetbrains.kotlin.psi
 
 import com.intellij.extapi.psi.PsiFileBase
@@ -117,6 +119,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
         @Deprecated(
             message = "Use setPackageFqName(value) instead",
             replaceWith = ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
+            level = DeprecationLevel.ERROR,
         )
         @OptIn(KtNonPublicApi::class)
         set(value) {
@@ -131,6 +134,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Deprecated(
         message = "Use 'packageFqName' property instead",
         replaceWith = ReplaceWith("packageFqName"),
+        level = DeprecationLevel.ERROR,
     )
     val packageFqNameByTree: FqName
         get() = packageFqName
@@ -171,6 +175,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     @Deprecated(
         message = "Use 'isScript()' instead",
         replaceWith = ReplaceWith("isScript()"),
+        level = DeprecationLevel.ERROR,
     )
     val isScriptByTree: Boolean
         get() = isScript()

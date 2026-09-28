@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-30036
 
 // KT-30036: Different inference results for postponed arguments with expected type for old and new inference

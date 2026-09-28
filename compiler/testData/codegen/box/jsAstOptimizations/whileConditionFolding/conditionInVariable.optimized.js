@@ -4,9 +4,7 @@ function box() {
   var k = 0;
   var result = '';
   $l$loop: while (i < 3 && !(j > 2)) {
-    var tmp;
-    tmp = j - 1 | 0;
-    var a = tmp;
+    var a = j - 1 | 0;
     if (k > 2)
       break $l$loop;
     i = i + 1 | 0;

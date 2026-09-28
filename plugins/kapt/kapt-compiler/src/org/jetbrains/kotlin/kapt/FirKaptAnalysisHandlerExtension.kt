@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.kapt
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
@@ -25,12 +24,10 @@ import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
-import org.jetbrains.kotlin.kapt.base.util.getPackageNameJava9Aware
 import org.jetbrains.kotlin.kapt.base.util.info
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter
 import org.jetbrains.kotlin.kapt.stubs.KaptStubConverter.KaptStub
 import org.jetbrains.kotlin.kapt.util.CompilerConfigurationBackedKaptLogger
-import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.diagnostic.KaptError
 import org.jetbrains.kotlin.utils.kapt.MemoryLeakDetector
 import java.io.File
@@ -57,11 +54,6 @@ open class FirKaptAnalysisHandlerExtension(
             configuration,
         )
 
-        if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
-            logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
-            return false
-        }
-
         optionsBuilder.apply {
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
             val contentRoots = configuration.contentRoots
@@ -80,7 +72,8 @@ open class FirKaptAnalysisHandlerExtension(
         if (options.mode.generateStubs) {
             val updatedConfiguration = configuration.copy().apply {
                 skipBodies = true
-                useLightTree = false
+                // TODO: change to LightTree (KT-70784)
+                parserMode = ParserMode.Psi
 
                 /*
                  * Later the KAPT pipeline registers extensions once again, so the extensions storage
@@ -194,7 +187,7 @@ open class FirKaptAnalysisHandlerExtension(
     }
 
     private fun generateKotlinSourceStubs(kaptContext: KaptContextForStubGeneration) {
-        val converter = KaptStubConverter(kaptContext, generateNonExistentClass = true)
+        val converter = KaptStubConverter.create(kaptContext, generateNonExistentClass = true)
 
         val [stubGenerationTime, kaptStubs] = measureTimeMillis {
             converter.convert()
@@ -202,16 +195,14 @@ open class FirKaptAnalysisHandlerExtension(
 
         logger.info { "Java stub generation took $stubGenerationTime ms" }
         logger.info {
-            "Stubs for Kotlin classes: " + kaptStubs.joinToString {
-                if (options.stubGenerationScheme == StubGenerationScheme.DIRECT)
-                    it.directClassFilePathWithoutExtension + ".java"
-                else
-                    it.jtreeFile.sourcefile.name
-            }
+            "Stubs for Kotlin classes: " + kaptStubs.joinToString { it.sourceFileName() }
         }
 
-        saveStubs(kaptContext, kaptStubs)
-        saveIncrementalData(kaptContext, converter)
+        val [saveStubsTime] = measureTimeMillis { saveStubs(kaptContext, kaptStubs) }
+        logger.info { "Java stub saving took $saveStubsTime ms" }
+
+        val [saveIncrementalDataTime] = measureTimeMillis { saveIncrementalData(kaptContext) }
+        logger.info { "Incremental data saving took $saveIncrementalDataTime ms" }
     }
 
     protected open fun saveStubs(
@@ -225,28 +216,21 @@ open class FirKaptAnalysisHandlerExtension(
 
         val sourceFiles = mutableListOf<String>()
 
-        for (kaptStub in stubs) {
-            val stubFile = kaptStub.jtreeFile
-            val className: String
-            val packageName: String
-            val classFilePathWithoutExtension: String
-            if (options.stubGenerationScheme == StubGenerationScheme.DIRECT) {
-                className = kaptStub.directSimpleClassName
-                packageName = kaptStub.directPackageName
-                classFilePathWithoutExtension = kaptStub.directClassFilePathWithoutExtension
-            } else {
-                className = (stubFile.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
-                packageName = stubFile.getPackageNameJava9Aware()?.toString() ?: ""
-                classFilePathWithoutExtension = if (packageName.isEmpty()) {
-                    className
-                } else {
-                    "${packageName.replace('.', '/')}/$className"
-                }
-            }
+        val packagePaths = HashMap<String, String>()
+        val packageDirs = HashMap<String, File>()
 
-            val packageDir =
-                if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packageName.replace('.', '/'))
-            packageDir.mkdirs()
+        for (kaptStub in stubs) {
+            val className = kaptStub.simpleClassName()
+            val packageName = kaptStub.packageName()
+
+            val packagePath = packagePaths.getOrPut(packageName) { packageName.replace('.', '/') }
+            val classFilePathWithoutExtension = if (packageName.isEmpty()) className else "$packagePath/$className"
+
+            val packageDir = packageDirs.getOrPut(packageName) {
+                val dir = if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packagePath)
+                dir.mkdirs()
+                dir
+            }
 
             val sourceFile = File(packageDir, "$className.java")
 
@@ -262,12 +246,7 @@ open class FirKaptAnalysisHandlerExtension(
             }
 
             reportStubsOutputForIC(sourceFile)
-            sourceFile.writeText(
-                if (options.stubGenerationScheme == StubGenerationScheme.DIRECT)
-                    kaptStub.directFileContent
-                else
-                    kaptStub.jtreeFile.prettyPrint(kaptContext.context)
-            )
+            sourceFile.writeText(kaptStub.getText(kaptContext.context))
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
         }
@@ -275,10 +254,7 @@ open class FirKaptAnalysisHandlerExtension(
         logger.info { "Source files: ${sourceFiles}" }
     }
 
-    protected open fun saveIncrementalData(
-        kaptContext: KaptContextForStubGeneration,
-        converter: KaptStubConverter,
-    ) {
+    protected open fun saveIncrementalData(kaptContext: KaptContextForStubGeneration) {
         val incrementalDataOutputDir = options.incrementalDataOutputDir ?: return
 
         val reportOutputFiles = kaptContext.configuration.reportOutputFiles
@@ -300,7 +276,7 @@ open class FirKaptAnalysisHandlerExtension(
     }
 
     protected open fun createProcessorLoader(): ProcessorLoader =
-        EfficientProcessorLoader(options, logger)
+        ProcessorLoaderImpl(options, logger)
 
     private fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean? {
         if (classesOutputDir == null && configuration.outputJar != null) {

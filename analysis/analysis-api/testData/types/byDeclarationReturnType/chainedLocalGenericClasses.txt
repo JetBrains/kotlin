@@ -1,0 +1,50 @@
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: <local>/C
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: C
+      symbol: KaNamedClassSymbol(<local>/C)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(<local>/C)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+C<kotlin.Int>

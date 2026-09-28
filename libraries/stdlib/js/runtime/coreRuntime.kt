@@ -5,6 +5,8 @@
 
 package kotlin.js
 
+import kotlin.internal.Effects
+import kotlin.internal.EffectsKind
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.*
 
@@ -81,24 +83,27 @@ internal fun getBooleanHashCode(value: Boolean): Int {
     return if (value) 1231 else 1237
 }
 
+@OptIn(JsIntrinsic::class)
 @UsedFromCompilerGeneratedCode
 internal fun getBigIntHashCode(value: BigInt): Int {
-    val shiftNumber = BigInt(32)
-
+    val shift32 = BigInt(32)
+    val shift64 = BigInt(64)
     // In Kotlin the 0xffffffff literal has the Long type, which is boxed, so we use a Double literal instead
     val mask = BigInt(4294967295.0)
+    val bigintZero = BigInt(0)
 
-    var bigNumber = value.abs()
     var hashCode = 0
-    val signum = if (value.isNegative) -1 else 1
+    var bigNumber = value
+    val endValue = if (jsLt(value, bigintZero)) BigInt(-1) else bigintZero
 
-    while (!bigNumber.isZero) {
-        val chunk = (bigNumber and mask).toNumber().unsafeCast<Int>()
-        hashCode = 31 * hashCode + chunk
-        bigNumber = bigNumber shr shiftNumber
+    while (!jsEqeqeq(bigNumber, endValue)) {
+        val low = (bigNumber and mask).toNumber().unsafeCast<Int>()
+        val high = ((bigNumber shr shift32) and mask).toNumber().unsafeCast<Int>()
+        hashCode = hashCode xor low xor high
+        bigNumber = bigNumber shr shift64
     }
 
-    return hashCode * signum
+    return hashCode
 }
 
 @Suppress("MUST_BE_INITIALIZED")
@@ -261,6 +266,7 @@ internal fun <T> objectCreate(proto: T? = null): T =
 
 @Suppress("UNUSED_PARAMETER")
 @UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun createThis(ctor: Ctor, box: dynamic): dynamic {
     val self = js("Object.create(ctor.prototype)")
     boxApply(self, box)

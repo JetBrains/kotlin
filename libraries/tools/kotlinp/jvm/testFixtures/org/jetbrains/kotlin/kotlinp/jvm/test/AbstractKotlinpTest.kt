@@ -25,7 +25,7 @@ abstract class AbstractKotlinpTest : AbstractKotlinCompilerTest() {
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
-            targetBackend = TargetBackend.JVM_IR
+            targetBackend = TargetBackend.JVM
         }
 
         defaultDirectives {

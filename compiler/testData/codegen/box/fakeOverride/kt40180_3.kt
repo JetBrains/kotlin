@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 
 // FILE: B.java
 public abstract class B<E> extends A<E> implements L<E> {

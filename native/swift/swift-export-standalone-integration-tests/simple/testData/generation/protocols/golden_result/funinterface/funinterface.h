@@ -15,7 +15,9 @@ int32_t funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reverse_s
 
 int32_t funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift(void * self);
 
-void * funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__(int32_t (^function)(void));
+int32_t funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
+void * funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__(void * function);
 
 int32_t funinterface_FunctionalInterface_invoke(void * self);
 
@@ -25,23 +27,23 @@ _Bool funinterface_FunctorClass_init_initialize__TypesOfArguments__Swift_UnsafeM
 
 int32_t funinterface_FunctorClass_invoke(void * self);
 
-void * funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(int32_t (^function)(void));
+void * funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(void * function);
 
 int32_t funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke(void * self);
 
-void * funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__(int32_t (^function)(void));
+void * funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__(void * function);
 
 int32_t funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke(void * self);
 
-void * funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(int32_t (^function)(void));
+void * funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(void * function);
 
 int32_t funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke(void * self);
 
-void * funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__(int32_t (^function)(void));
+void * funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__(void * function);
 
 int32_t funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke(void * self);
 
-void * funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__(int32_t (^function)(void));
+void * funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__(void * function);
 
 int32_t funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke(void * self);
 

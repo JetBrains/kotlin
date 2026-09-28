@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun <X> select(vararg x: X): X = x[0]
 fun <E> myE(): Out<E>? =  null

@@ -14,8 +14,8 @@ import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 /**
- * Inferring the 'changed' or 'affected' files by a set of changes is done by building the diff since branching from master.
- * This effectively shows the same files changed as in typical review tools (such as space or GitHub)
+ * Lists files changed between the merge base with `origin/master` and `HEAD`.
+ * Uncommitted changes are not included.
  */
 internal val Project.featureBranchDiffService: Provider<FeatureBranchDiffBuildService>
     get() = gradle.sharedServices.registerIfAbsent("featureBranchDiffService", FeatureBranchDiffBuildService::class.java)

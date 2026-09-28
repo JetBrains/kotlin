@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -271,6 +272,10 @@ object NativeConfigurationKeys {
     // LLVM passes to run instead of LTO optimization pipeline.
     @JvmField
     val LLVM_LTO_PASSES = CompilerConfigurationKey.create<String>("LLVM_LTO_PASSES")
+
+    // A wrapper over the DAG of libraries that the compiler needs to build static caches for. It's saved in the compiler configuration for spawned static cache compilation to avoid recomputing the DAG.
+    @JvmField
+    val SERIALIZED_KLIB_DAG = CompilerConfigurationKey.create<SerializedKlibDAG>("SERIALIZED_KLIB_DAG")
 
 }
 
@@ -561,4 +566,8 @@ var CompilerConfiguration.llvmModulePasses: String?
 var CompilerConfiguration.llvmLtoPasses: String?
     get() = get(NativeConfigurationKeys.LLVM_LTO_PASSES)
     set(value) { put(NativeConfigurationKeys.LLVM_LTO_PASSES, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.serializedKlibDag: SerializedKlibDAG?
+    get() = get(NativeConfigurationKeys.SERIALIZED_KLIB_DAG)
+    set(value) { put(NativeConfigurationKeys.SERIALIZED_KLIB_DAG, requireNotNull(value) { "nullable values are not allowed" }) }
 

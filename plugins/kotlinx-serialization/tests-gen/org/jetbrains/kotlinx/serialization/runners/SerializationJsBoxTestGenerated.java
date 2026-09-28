@@ -160,6 +160,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   }
 
   @Test
+  @TestMetadata("externalSerializerWithConcreteSupertype.kt")
+  public void testExternalSerializerWithConcreteSupertype() {
+    run("externalSerializerWithConcreteSupertype.kt");
+  }
+
+  @Test
   @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
   public void testGeneratedClassifiersViaLibraryDependency() {
     run("generatedClassifiersViaLibraryDependency.kt");
@@ -175,6 +181,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   @TestMetadata("genericBaseClassSimple.kt")
   public void testGenericBaseClassSimple() {
     run("genericBaseClassSimple.kt");
+  }
+
+  @Test
+  @TestMetadata("genericWithClassUpperBoundMultiModule.kt")
+  public void testGenericWithClassUpperBoundMultiModule() {
+    run("genericWithClassUpperBoundMultiModule.kt");
   }
 
   @Test

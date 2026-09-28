@@ -22,10 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mock.Text
 import androidx.compose.runtime.mock.compositionTest
 import androidx.compose.runtime.mock.validate
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import kotlin.test.Test
 
-@SmokeTest
+@MustRunAlways
 class DefaultParamAbstractTests {
     @Test
     fun defaultParamInterfaceImpl() = compositionTest {

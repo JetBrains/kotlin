@@ -40,6 +40,60 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   }
 
   @Test
+  @TestMetadata("dataClassProperty.kt")
+  public void testDataClassProperty() {
+    run("dataClassProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("enumElement.kt")
+  public void testEnumElement() {
+    run("enumElement.kt");
+  }
+
+  @Test
+  @TestMetadata("javaClass.kt")
+  public void testJavaClass() {
+    run("javaClass.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnumClass.kt")
+  public void testJavaEnumClass() {
+    run("javaEnumClass.kt");
+  }
+
+  @Test
+  @TestMetadata("javaEnumEntry.kt")
+  public void testJavaEnumEntry() {
+    run("javaEnumEntry.kt");
+  }
+
+  @Test
+  @TestMetadata("javaMethod.kt")
+  public void testJavaMethod() {
+    run("javaMethod.kt");
+  }
+
+  @Test
+  @TestMetadata("javaTypeParameter.kt")
+  public void testJavaTypeParameter() {
+    run("javaTypeParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("javaValueParameter.kt")
+  public void testJavaValueParameter() {
+    run("javaValueParameter.kt");
+  }
+
+  @Test
+  @TestMetadata("kotlinIntersectionOverrideFromJava.kt")
+  public void testKotlinIntersectionOverrideFromJava() {
+    run("kotlinIntersectionOverrideFromJava.kt");
+  }
+
+  @Test
   @TestMetadata("mangledName.kt")
   public void testMangledName() {
     run("mangledName.kt");
@@ -97,5 +151,23 @@ public class LightClassUtilTestGenerated extends AbstractLightClassUtilTest {
   @TestMetadata("propertyWithImplicitAccessors.kt")
   public void testPropertyWithImplicitAccessors() {
     run("propertyWithImplicitAccessors.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyWithJvmNameOnGetterAndSetter.kt")
+  public void testPropertyWithJvmNameOnGetterAndSetter() {
+    run("propertyWithJvmNameOnGetterAndSetter.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterInFunctionWithJvmOverloads.kt")
+  public void testTypeParameterInFunctionWithJvmOverloads() {
+    run("typeParameterInFunctionWithJvmOverloads.kt");
+  }
+
+  @Test
+  @TestMetadata("typeParameterInProperty.kt")
+  public void testTypeParameterInProperty() {
+    run("typeParameterInProperty.kt");
   }
 }

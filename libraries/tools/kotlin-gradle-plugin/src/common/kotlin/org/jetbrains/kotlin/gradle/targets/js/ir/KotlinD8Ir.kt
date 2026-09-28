@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest

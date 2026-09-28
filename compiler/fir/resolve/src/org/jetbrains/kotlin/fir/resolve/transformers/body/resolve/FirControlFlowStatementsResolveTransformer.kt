@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.inference.TemporaryInferenceSessionHook
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessComputer
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.wrapIntoNumericClassConversionIfNeeded
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
     FirPartialBodyResolveTransformer(transformer) {
@@ -195,7 +197,11 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             else -> ResolutionMode.ContextIndependent
         }
 
-        return transformJump(returnExpression, mode)
+        return when (val transformed = transformJump(returnExpression, mode)) {
+            is FirReturnExpression if mode is ResolutionMode.WithExpectedType -> transformed
+                .also { it.replaceResult(it.result.wrapIntoNumericClassConversionIfNeeded(expectedTypeRef.coneType, session)) }
+            else -> transformed
+        }
     }
 
     override fun transformThrowExpression(

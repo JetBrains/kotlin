@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 fun test(a: Int, b: Int, flag: Boolean) =
     (if (flag) a..b else a downTo b).map { it + 1 }

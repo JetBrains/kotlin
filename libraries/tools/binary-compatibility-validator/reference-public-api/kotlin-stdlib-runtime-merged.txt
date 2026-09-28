@@ -57,6 +57,9 @@ public final class kotlin/ExceptionsKt {
 	public static final fun stackTraceToString (Ljava/lang/Throwable;)Ljava/lang/String;
 }
 
+public abstract interface annotation class kotlin/ExperimentalCollectionLiteralsApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExperimentalContextParameters : java/lang/annotation/Annotation {
 }
 
@@ -553,6 +556,9 @@ public final class kotlin/UnsignedKt {
 	public static final fun ulongDivide-eb3DHEI (JJ)J
 	public static final fun ulongRemainder-eb3DHEI (JJ)J
 	public static final fun ulongToDouble (J)D
+}
+
+public abstract interface annotation class kotlin/WillBecomeValue : java/lang/annotation/Annotation {
 }
 
 public final class kotlin/_Assertions {
@@ -3905,6 +3911,8 @@ public class kotlin/jvm/internal/AdaptedFunctionReference : java/io/Serializable
 	protected final field receiver Ljava/lang/Object;
 	public fun <init> (ILjava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (ILjava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> (I[Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> (I[Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getArity ()I
 	public fun getOwner ()Lkotlin/reflect/KDeclarationContainer;
@@ -4174,6 +4182,8 @@ public class kotlin/jvm/internal/FunctionReferenceImpl : kotlin/jvm/internal/Fun
 	public fun <init> (ILjava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (ILjava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 	public fun <init> (ILkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (I[Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
+	public fun <init> (I[Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Class;Ljava/lang/String;Ljava/lang/String;I)V
 }
 
 public class kotlin/jvm/internal/InlineMarker {

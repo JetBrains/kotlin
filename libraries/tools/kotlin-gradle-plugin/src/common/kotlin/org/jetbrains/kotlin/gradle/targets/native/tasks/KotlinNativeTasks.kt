@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.filterAndReportUnsupportedKotlinArchiveLibraries
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
-import org.jetbrains.kotlin.gradle.plugin.statistics.NativeCompilerOptionMetrics
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompilerArgumentMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -147,13 +147,6 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     abstract val baseName: String
 
-    override val produceUnpackagedKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
-
-    @Suppress("unused")
-    @Deprecated("KT-72387: used in KSP", level = DeprecationLevel.HIDDEN)
-    internal val produceUnpackedKlib: Property<Boolean>
-        get() = produceUnpackagedKlib
-
     @get:Input
     @get:Optional
     internal abstract val explicitApiMode: Property<ExplicitApiMode>
@@ -202,8 +195,7 @@ abstract class AbstractKotlinNativeCompile<
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
             val prefix = outputKind.prefix(konanTarget)
-            val suffix = if (produceUnpackagedKlib.get()) "" else outputKind.suffix(konanTarget)
-            val filename = "$prefix${baseName}$suffix".let {
+            val filename = "$prefix${baseName}".let {
                 when {
                     outputKind == FRAMEWORK ->
                         it.asValidFrameworkName
@@ -391,7 +383,7 @@ internal constructor(
             args.nodefaultlibs = sharedCompilationData != null
             args.nostdlib = true
             args.exportKDoc = exportKdoc.get()
-            args.nopack = produceUnpackagedKlib.get()
+            args.nopack = true
 
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
 
@@ -492,11 +484,13 @@ internal constructor(
                 val output = outputFile.get()
                 output.parentFile.mkdirs()
 
+                val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments)
+
                 buildFusService.orNull?.reportFusMetrics {
-                    NativeCompilerOptionMetrics.collectMetrics(compilerOptions, separateKmpCompilation.get(), it)
+                    CompilerArgumentMetrics.collectMetrics(arguments, buildArguments.toTypedArray(), logger, it)
                 }
 
-                ArgumentUtils.convertArgumentsToStringList(arguments)
+                buildArguments
             }
 
             nativeCompilerRunner.runTool(
@@ -742,10 +736,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
 
     @get:Internal
     val outputFileName: String
-        get() = with(LIBRARY) {
-            val suffix = if (produceUnpackagedKlib.get()) "" else suffix(konanTarget)
-            "$baseKlibName$suffix"
-        }
+        get() = baseKlibName
 
     @get:Input
     val moduleName: String = project.moduleName(baseKlibName)
@@ -864,8 +855,6 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     private val allHeadersHashesFile: Provider<RegularFile> =
         destinationDirectory.dir(interopName).map { it.file("cinterop-headers-hash.json") }
 
-    override val produceUnpackagedKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
-
     init {
         outputs.upToDateWhen {
             checkHeadersChanged()
@@ -904,9 +893,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
             addArg("-Xmodule-name", moduleName)
             addArgIfNotNull("-Xkonan-data-dir", kotlinNativeProvider.get().konanDataDir.orNull)
-            if (produceUnpackagedKlib.get()) {
-                add("-nopack")
-            }
+            add("-nopack")
             if (macroNamesCollectingMode.isPresent) {
                 addArg(MacroNamesCollectingMode.OPTION, macroNamesCollectingMode.get().value)
             }

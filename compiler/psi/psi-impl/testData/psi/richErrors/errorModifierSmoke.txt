@@ -1,0 +1,14 @@
+KtFile: errorModifierSmoke.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+    PsiWhiteSpace('\n')
+    MODIFIER_LIST
+      PsiElement(error)('error')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Foo')

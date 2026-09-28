@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T> listOf(): List<T> = null!!
 
 fun <T> materialize(): T = null!!

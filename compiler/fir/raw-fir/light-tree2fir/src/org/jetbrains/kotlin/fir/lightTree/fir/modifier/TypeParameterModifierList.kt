@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 
-class TypeParameterModifierList(varianceOrReificationModifiers: Long = ModifierFlag.NONE.value) : ModifierList(varianceOrReificationModifiers) {
+class TypeParameterModifierList<Node : Any>(
+    varianceOrReificationModifiers: Long = ModifierFlag.NONE.value
+) : ModifierList<Node>(varianceOrReificationModifiers) {
     fun hasReified(): Boolean = hasFlag(ModifierFlag.REIFICATION_REIFIED)
 }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See KT-9134: smart cast is not provided inside lambda call
 
 @Target(AnnotationTarget.EXPRESSION)

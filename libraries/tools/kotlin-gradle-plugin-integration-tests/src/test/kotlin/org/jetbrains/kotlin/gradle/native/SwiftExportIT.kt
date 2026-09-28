@@ -692,6 +692,7 @@ class SwiftExportIT : KGPBaseTest() {
 
     @DisplayName("embedSwiftExport overrides the version of an external dependency defined in Swift Export DSL with highest on classpath")
     @GradleTest
+    @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
     fun testSwiftExportDSLWithExternalDependencyVersionResolution(
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
@@ -809,6 +810,7 @@ class SwiftExportIT : KGPBaseTest() {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-86015: swiftPMDependencies cinterop klib is visible to Swift Export binary link task")
     @GradleTest
+    @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
     fun testMainCinteropKlibIsLinkedInSwiftExportBinary(
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
@@ -949,6 +951,7 @@ class SwiftExportIT : KGPBaseTest() {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-80632: a SwiftPM-import cinterop klib is reexported through Swift Export")
     @GradleTest
+    @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
     fun testSwiftPMImportCinteropIsReexportedThroughSwiftExport(
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,
@@ -1060,6 +1063,7 @@ class SwiftExportIT : KGPBaseTest() {
     @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
     @DisplayName("KT-80632: Swift Export without swiftPMDependencies emits no cinterop package dependency")
     @GradleTest
+    @Suppress("DEPRECATION") // Tests the deprecated legacy Swift Export DSL on purpose.
     fun testSwiftExportWithoutSwiftPMImportHasNoCinteropDependency(
         gradleVersion: GradleVersion,
         @TempDir testBuildDir: Path,

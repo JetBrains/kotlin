@@ -53,7 +53,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:37 box:
 // test.kt:38 box: m:int=2:int
 // library.kt:6 box: m:int=2:int, xg$iv:int=0:int, $i$f$g:int=0:int

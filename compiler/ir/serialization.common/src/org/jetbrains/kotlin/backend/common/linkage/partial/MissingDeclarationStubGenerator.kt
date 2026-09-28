@@ -14,9 +14,13 @@ import org.jetbrains.kotlin.ir.IrProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrErrorModuleFragment
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.createThisReceiverParameter
+import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -74,6 +78,14 @@ internal class MissingDeclarationStubGenerator(
         ).apply {
             setCommonParent()
             createThisReceiverParameter()
+        }.also { clazz ->
+            // Generate private default constructor.
+            with(generateConstructor(IrConstructorSymbolImpl())) {
+                isPrimary = true
+                visibility = DescriptorVisibilities.PRIVATE
+                setDeclarationsParent(clazz)
+                clazz.declarations += this
+            }
         }
     }
 

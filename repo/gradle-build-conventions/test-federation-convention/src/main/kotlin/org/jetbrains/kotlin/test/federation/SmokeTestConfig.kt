@@ -9,25 +9,25 @@ import java.io.Serializable
 
 sealed class SmokeTestConfig : Serializable {
     /**
-     * Never execute this task in 'Smoke Test' mode. These tests shall be skipped instead.
-     * This can be used if a task is known for not containing any useful smoke tests, or its execution might cause issues
-     * when running in smoke test mode.
+     * Skips this task unless it is selected for a full test run.
+     * Use this when running only a subset of the task's tests is not useful or is not supported.
+     *
+     * The task is skipped in [TestFederationMode.Smoke], not in [TestFederationMode.Full].
      */
     data object Disabled : SmokeTestConfig() {
         private fun readResolve(): Any = Disabled
     }
 
     /**
-     * This test task is enabled in 'Smoke Test Mode'.
-     * When executed in this mode, all tests, marked as `@SmokeTest` are guaranteed to be executed, alongside all tests
-     * marked as `@AffectedBy{XYZ}` (where `XYZ` would be a domain affected by the current set of changes within the branch.)
+     * Selects tests marked with `@MustRunAlways` or `@MustRunOnChangesInXYZ` for a changed domain,
+     * plus an optional automatic sample, when this task is not selected for a full test run.
+     * Other test filters, including nightly filters, still apply.
      *
-     * @param autoSmokeTestPercentage The percentage of tests to run automatically in smoke test mode.
-     *                                A value of 0 means no automatic smoke tests, while 100 means all tests are run automatically.
-     *                                A value of 5 would run 5% of the tests automatically, providing a balance between thoroughness and performance.
-     *                                This param can be used for test tasks where no particular test clearly stands out, but a certain subset of
-     *                                tests shall still be executed, providing necessary confidence.
+     * This selection applies in [TestFederationMode.Smoke]. A percentage of 100 makes the task use [TestFederationMode.Full].
      *
+     * @param autoSmokeTestPercentage The approximate percentage of tests to select automatically using a hash of each test's identity.
+     *                                A value of 0 selects no automatic sample; 100 selects all tests.
+     *                                The sample is in addition to the annotated tests, so the total can exceed this percentage.
      */
     data class Enabled(val autoSmokeTestPercentage: Int) : SmokeTestConfig() {
         init {
@@ -37,12 +37,14 @@ sealed class SmokeTestConfig : Serializable {
 
     companion object {
         /**
-         * Enabled by default, only tests marked up with `@SmokeTest` (and @AffectedBy{XYZ}) are executed ([Enabled.autoSmokeTestPercentage] is set to 0)
+         * Selects only tests marked with `@MustRunAlways` or `@MustRunOnChangesInXYZ` for a changed domain when no full run is selected.
+         * No automatic sample is selected. Other test filters still apply.
          */
         val Default = Enabled(0)
 
         /**
-         * The entire test task is can be considered a valid 'SmokeTest' and all tests will be executed.
+         * Selects all tests in this task by using [TestFederationMode.Full], regardless of domain selection or an explicit mode override.
+         * Other test filters, including nightly filters, still apply.
          */
         val RunAllTests = Enabled(100)
     }

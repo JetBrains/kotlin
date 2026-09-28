@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration
 
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplExceptionReporter
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.messages.ConsoleDiagnosticMessageHolder
-import org.jetbrains.kotlin.scripting.compiler.plugin.repl.reader.ConsoleReplCommandReader
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.reader.ReplCommandReader
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.writer.ConsoleReplWriter
 
 class ConsoleReplConfiguration : ReplConfiguration {
@@ -16,7 +16,8 @@ class ConsoleReplConfiguration : ReplConfiguration {
     override val exceptionReporter
         get() = ReplExceptionReporter
 
-    override val commandReader = ConsoleReplCommandReader()
+    override val commandReader
+        get(): ReplCommandReader = error("This is unreachable code, REPL is no longer supported in the command-line compiler")
 
     override val allowIncompleteLines: Boolean
         get() = true

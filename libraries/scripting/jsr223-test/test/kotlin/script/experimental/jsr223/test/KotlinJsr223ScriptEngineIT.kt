@@ -235,6 +235,19 @@ obj
     }
 
     @Test
+    fun testBindGenericJavaClass() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        engine.put("boundList", arrayListOf(1, 2))
+        engine.put("boundMap", hashMapOf("a" to 1))
+        // A generic runtime class has to be exposed with star-projected type arguments: a raw type
+        // reference makes the synthetic bindings snippet fail to compile, which breaks every eval on
+        // the engine, including snippets that don't touch the binding (KT-89220).
+        assertEquals(2, engine.eval("1 + 1"))
+        assertEquals(2, engine.eval("boundList.size"))
+        assertEquals(1, engine.eval("boundMap.size"))
+    }
+
+    @Test
     fun testRebindRemoval() {
         val engine = ScriptEngineManager().getEngineByExtension("kts")!!
         engine.put("z", 33)

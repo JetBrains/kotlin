@@ -1,6 +1,6 @@
 // ISSUE: KT-84380
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +ForbidUselessTypeArgumentsIn25
+// LANGUAGE: +ForbidUselessTypeArgumentsIn26
 
 fun <T, U> test() {
     class Outer<X> {

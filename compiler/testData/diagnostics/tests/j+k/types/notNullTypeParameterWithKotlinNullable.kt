@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible -PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: -DontMakeExplicitNullableJavaTypeArgumentsFlexible
 // FILE: SLRUMap.java
 
 import org.jetbrains.annotations.NotNull;

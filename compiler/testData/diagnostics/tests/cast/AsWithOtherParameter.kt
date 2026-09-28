@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See also: KT-6611 (cast can never succeed: Class<T> -> Class<Any>)
 
 class Class<T>(val name: String, val instance: T)

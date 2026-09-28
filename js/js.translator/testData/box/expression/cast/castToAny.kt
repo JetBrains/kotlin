@@ -14,7 +14,7 @@ fun box(): String {
     success("{ 0 } as Any") { { 0 } as Any }
     success("a as Any") { assertEquals<Any>(a, a as Any) }
     success("object{} as Any") { object{} as Any }
-    failsClassCast("nil as Any") { nil as Any }
+    failsNullPointer("nil as Any") { nil as Any }
 
     return "OK"
 }

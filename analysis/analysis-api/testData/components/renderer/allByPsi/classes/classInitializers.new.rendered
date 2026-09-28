@@ -1,0 +1,11 @@
+class WithInitializers(val size: Int) {
+  init
+
+  init
+
+  val name: String
+}
+
+object ObjectWithInitializer {
+  init
+}

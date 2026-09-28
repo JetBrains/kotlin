@@ -116,7 +116,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         var primaryConstructorParametersByName = mapOf<Name, FirValueParameterSymbol>()
         val primaryConstructorPropertiesByName = hashMapOf<Name, FirPropertySymbol>()
         var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
-        val isCustomEqualsSupported = LanguageFeature.CustomEqualsInValueClasses.isEnabled()
+        val isCustomEqualsSupported = !isFullValueClass && LanguageFeature.CustomEqualsInValueClasses.isEnabled()
 
         declaration.constructors(context.session).forEach { innerDeclaration ->
             when {
@@ -139,24 +139,25 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     }
                 }
 
-                is FirPropertySymbol -> {
-                    if (innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name])) {
-                        primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
-                    } else {
-                        when {
-                            innerDeclaration.delegate != null ->
-                                reporter.reportOn(
-                                    innerDeclaration.delegate!!.source,
-                                    FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS
-                                )
+                is FirPropertySymbol -> when {
+                    // Companion block members are static, so they aren't a part of the value class representation.
+                    innerDeclaration.isCompanionBlockMember -> return@processAllDeclarations
 
-                            innerDeclaration.hasBackingField &&
-                                    innerDeclaration.source?.kind !is KtFakeSourceElementKind -> {
-                                reporter.reportOn(
-                                    innerDeclaration.source, FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS
-                                )
-                            }
-                        }
+                    innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name]) -> {
+                        primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
+                    }
+
+                    innerDeclaration.delegate != null ->
+                        reporter.reportOn(
+                            innerDeclaration.delegate!!.source,
+                            FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS
+                        )
+
+                    innerDeclaration.hasBackingField &&
+                            innerDeclaration.source?.kind !is KtFakeSourceElementKind -> {
+                        reporter.reportOn(
+                            innerDeclaration.source, FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS
+                        )
                     }
                 }
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
@@ -149,6 +150,22 @@ interface KotlinBrowserTestRunnerDsl : BrowserTestRunnerTopLevelConfigDsl, Named
      */
     @DelicateKotlinGradlePluginApi(kind = DelicateKotlinGradlePluginApiKind.REPLACES_DEFAULTS)
     val customBrowserExecutable: RegularFileProperty
+
+    /**
+     * Directory where the browser will store its data (e.g., cookies, local storage, user settings, etc.)
+     * To have a persistent browser context change [browserDataDir] to your desired directory:
+     *
+     * ```
+     * browser {
+     *   chromium {
+     *      browserDataDir = layout.buildDirectory.dir("browser-data/chromium")
+     *   }
+     * }
+     * ```
+     *
+     * When not set, a new temporary directory will be used.
+     */
+    val browserDataDir: DirectoryProperty
 }
 
 /**

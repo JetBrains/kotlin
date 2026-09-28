@@ -9,27 +9,27 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.scopes.fileScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
-import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
+import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.toPsiVisibilityForMember
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -39,8 +39,21 @@ import javax.swing.Icon
 internal class SymbolLightClassForFacade(
     override val facadeClassFqName: FqName,
     override val files: Collection<KtFile>,
-    ktModule: KaModule,
-) : SymbolLightClassBase(ktModule, files.first().manager), KtLightClassForFacade {
+    override val symbolPointer: KaSymbolPointer<KaFileSymbol>,
+    override val useSiteModule: KaModule,
+) : SymbolLightClassBaseImpl<KaFileSymbol>(files.first().manager), KtLightClassForFacade {
+    constructor(
+        facadeClassFqName: FqName,
+        files: Collection<KtFile>,
+        useSiteModule: KaModule
+    ) : this(
+        facadeClassFqName,
+        files,
+        analyzeForLightClasses(useSiteModule) {
+            files.first().symbol.createPointer()
+        },
+        useSiteModule
+    )
 
     init {
         require(files.isNotEmpty())
@@ -53,13 +66,12 @@ internal class SymbolLightClassForFacade(
     }
 
     private fun <T> withFileSymbols(action: context(KaSession) (List<KaFileSymbol>) -> T): T =
-        analyzeForLightClasses(ktModule) {
+        analyzeForLightClasses(useSiteModule) {
             action(files.map { it.symbol })
         }
 
     private val firstFileInFacade: KtFile get() = files.first()
 
-    @OptIn(KaImplementationDetail::class)
     override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
@@ -69,10 +81,8 @@ internal class SymbolLightClassForFacade(
             } else {
                 GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
-                        ktModule = this.ktModule,
-                        annotatedSymbolPointer = analyzeForLightClasses(ktModule) {
-                            firstFileInFacade.symbol.createPointer()
-                        },
+                        useSiteModule = useSiteModule,
+                        annotatedSymbolPointer = symbolPointer,
                     )
                 )
             },
@@ -140,7 +150,7 @@ internal class SymbolLightClassForFacade(
         result
     }
 
-    override fun copy(): SymbolLightClassForFacade = SymbolLightClassForFacade(facadeClassFqName, files, ktModule)
+    override fun copy(): SymbolLightClassForFacade = SymbolLightClassForFacade(facadeClassFqName, files, symbolPointer, useSiteModule)
 
     private val packageClsFile = FakeFileForLightClass(
         firstFileInFacade,
@@ -164,6 +174,7 @@ internal class SymbolLightClassForFacade(
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getImplementsList(): LightEmptyImplementsList = object : LightEmptyImplementsList(manager) {
         override fun getParent(): PsiElement = this@SymbolLightClassForFacade
+        override fun getContainingFile(): PsiFile = this@SymbolLightClassForFacade.containingFile
         override fun getElementIcon(flags: Int): Icon? = null
     }
 

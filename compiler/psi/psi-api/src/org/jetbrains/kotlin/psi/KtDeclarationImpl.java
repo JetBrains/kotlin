@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +55,8 @@ public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDe
             replaceWith = @ReplaceWith(
                     expression = "this.addModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void addModifier(@NotNull KtModifierKeywordToken modifier) {
@@ -71,7 +73,8 @@ public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDe
             replaceWith = @ReplaceWith(
                     expression = "this.removeModifierKeyword(modifier)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public void removeModifier(@NotNull KtModifierKeywordToken modifier) {
@@ -89,7 +92,8 @@ public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDe
             replaceWith = @ReplaceWith(
                     expression = "this.addAnnotation(annotationEntry)",
                     imports = "org.jetbrains.kotlin.idea.base.psi.addAnnotation"
-            )
+            ),
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtAnnotationEntry addAnnotationEntry(@NotNull KtAnnotationEntry annotationEntry) {

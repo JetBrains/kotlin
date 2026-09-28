@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-54027
 
 // KT-54027: False "No cast needed" warning for sealed class instance returned from a lambda passed to generic map()

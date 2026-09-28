@@ -16,21 +16,21 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
-import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
+import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class SymbolLightSuspendContinuationParameter(
-    private val functionSymbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
+    override val symbolPointer: KaSymbolPointer<KaNamedFunctionSymbol>,
     private val containingMethod: SymbolLightMethodBase,
-) : SymbolLightParameterBase(containingMethod) {
+) : SymbolLightParameterBase<KaNamedFunctionSymbol>(containingMethod) {
     private inline fun <T> withFunctionSymbol(crossinline action: context(KaSession) (KaNamedFunctionSymbol) -> T): T {
-        return functionSymbolPointer.withSymbol(ktModule, action)
+        return symbolPointer.withSymbol(useSiteModule, action)
     }
 
     override fun getName(): String = SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -78,5 +78,5 @@ internal class SymbolLightSuspendContinuationParameter(
 
     override fun hashCode(): Int = name.hashCode() * 31 + containingMethod.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && functionSymbolPointer.isValid(ktModule)
+    override fun isValid(): Boolean = super.isValid() && symbolPointer.isValid(useSiteModule)
 }

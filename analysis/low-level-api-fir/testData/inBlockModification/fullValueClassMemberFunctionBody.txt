@@ -1,0 +1,7 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun sum(): R|kotlin/Int| {
+    ^sum R|/plus|(this@R|/Point|.R|/Point.x|, this@R|/Point|.R|/Point.y|)
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun sum(): R|kotlin/Int| { LAZY_BLOCK }

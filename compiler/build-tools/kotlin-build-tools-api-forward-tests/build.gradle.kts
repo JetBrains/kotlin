@@ -129,7 +129,7 @@ kotlin {
 
 val compatibilityTestsVersions = listOf(
     KotlinToolingVersion(2, 4, 0, null),
-    KotlinToolingVersion(2, 4, 20, "Beta1"),
+    KotlinToolingVersion(2, 4, 20, null),
 )
 
 val KotlinToolingVersion.sourceSetName get() = "shared" + this.toString().replace(".", "_").replace("-", "_")
@@ -189,7 +189,6 @@ val businessLogicTestSuits = setOf(
     "testKotlinLogger",
     "testDefaultOptions",
     "testDaemonOptions",
-    "testInternalInputsTracker",
     "testAbiValidation",
     "testRestrictedArguments",
     "testCompatibility",
@@ -274,12 +273,6 @@ testing {
                 }
             }
 
-            named<JvmTestSuite>("testInternalInputsTracker$apiVersion") {
-                dependencies {
-                    implementation(project(":compiler:build-tools:kotlin-build-tools-impl")) { isTransitive = false }
-                }
-            }
-
             named<JvmTestSuite>("testRestrictedArguments$apiVersion") {
                 dependencies {
                     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
@@ -326,7 +319,7 @@ testing {
                 projectTests {
                     testTask(
                         taskName = testTask.name,
-                        javaLauncher = JdkMajorVersion.JDK_1_8,
+                        javaLauncher = JdkMajorVersion.JDK_17_0,
                         skipInLocalBuild = false,
                         garbageCollector = GarbageCollector.Parallel
                     ) {

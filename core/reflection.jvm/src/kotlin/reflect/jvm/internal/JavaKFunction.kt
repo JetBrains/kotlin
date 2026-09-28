@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.runtime.structure.Java8ParameterNamesLoader
 import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -27,7 +28,7 @@ internal abstract class JavaKFunction(
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
         val allParameters = allParameters
-        if (!isBound) return@lazy allParameters
+        if (!isReceiverBound) return@lazy allParameters
         // For bound references, recreate all parameters except the bound one, with the correct indices.
         check(allParameters.isNotEmpty()) { "Bound function reference has no parameters: $container.$name" }
         List(allParameters.size - 1) { i ->
@@ -65,12 +66,13 @@ internal fun JavaKFunction.computeParameters(): List<KParameter> = buildList {
     val isInnerClassConstructor = member is Constructor<*> && member.declaringClass.isInner
     val knownTypeParameters = javaTypeParameters.zip(typeParameters).toMap()
 
+    val isEnumValuesValueOfMethod = member.isEnumValuesValueOfMethod()
     val unsubstitutedParameterKTypes =
         if (overriddenStorage.isFakeOverride && overriddenStorage.overridden.size == 1)
             overriddenStorage.overridden.single().parameters.filter { it.kind == KParameter.Kind.VALUE }.map { it.type }
         else
             genericParameterTypes.map { type ->
-                val nullability = if (member.isEnumValuesValueOfMethod()) TypeNullability.NOT_NULL else TypeNullability.FLEXIBLE
+                val nullability = if (isEnumValuesValueOfMethod) TypeNullability.NOT_NULL else TypeNullability.FLEXIBLE
                 type.toKType(knownTypeParameters, nullability)
             }
 
@@ -99,6 +101,7 @@ internal fun JavaKFunction.computeParameters(): List<KParameter> = buildList {
         if (i < 2 && member.declaringClass.isEnum && member is Constructor<*> && parameterKTypes.size == parameterTypes.size) continue
 
         val name = when {
+            isEnumValuesValueOfMethod -> StandardNames.DEFAULT_VALUE_PARAMETER.asString()
             names != null -> names.getOrNull(i + shift) ?: error("No parameter with index $i+$shift (name=$name type=$type) in $member")
             else -> "arg$i"
         }

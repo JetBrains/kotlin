@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.konan.library.KlibNativeManifestTransformer
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.irProviderName
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -65,6 +66,7 @@ fun loadNativeKlibs(
         libraryProviders(distributionLibrariesProvider)
         libraryPaths(configuration.konanLibraries)
         platformChecker(platformChecker)
+        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it) }
         manifestTransformer(KlibNativeManifestTransformer(nativeTarget))

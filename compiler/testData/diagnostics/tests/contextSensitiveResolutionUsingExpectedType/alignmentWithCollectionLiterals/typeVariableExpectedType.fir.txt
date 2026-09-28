@@ -1,0 +1,181 @@
+FILE: typeVariableExpectedType.kt
+    public sealed class MySealed : R|kotlin/Any| {
+        protected constructor(): R|MySealed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object Left : R|MySealed| {
+            private constructor(): R|MySealed.Left| {
+                super<R|MySealed|>()
+            }
+
+        }
+
+        public final object Right : R|MySealed| {
+            private constructor(): R|MySealed.Right| {
+                super<R|MySealed|>()
+            }
+
+        }
+
+    }
+    public abstract interface MyInterface : R|kotlin/Any| {
+    }
+    public sealed class MySecondSealed : R|MyInterface| {
+        protected constructor(): R|MySecondSealed| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object First : R|MySecondSealed| {
+            private constructor(): R|MySecondSealed.First| {
+                super<R|MySecondSealed|>()
+            }
+
+        }
+
+        public final object Second : R|MySecondSealed| {
+            private constructor(): R|MySecondSealed.Second| {
+                super<R|MySecondSealed|>()
+            }
+
+        }
+
+    }
+    public final fun <T> select(x: R|T|, y: R|T|): R|T| {
+        ^select R|<local>/x|
+    }
+    public final fun <T> select3(x: R|T|, y: R|T|, z: R|T|): R|T| {
+        ^select3 R|<local>/x|
+    }
+    public final fun <T> selectWithBound(x: R|T|, y: R|T|, upper: R|Inv<T>|): R|T| {
+        ^selectWithBound R|<local>/x|
+    }
+    public final fun <T : R|MyInterface|> selectI(x: R|T|, y: R|T|): R|T| {
+        ^selectI R|<local>/x|
+    }
+    public final class Inv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public sealed class MySealedGeneric<T> : R|kotlin/Any| {
+        protected constructor<T>(): R|MySealedGeneric<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object StringInheritor : R|MySealedGeneric<kotlin/String>| {
+            private constructor(): R|MySealedGeneric.StringInheritor| {
+                super<R|MySealedGeneric<kotlin/String>|>()
+            }
+
+        }
+
+    }
+    public final fun <T> takeF(x: R|MySealedGeneric<T>|): R|kotlin/Unit| {
+        ^takeF Q|kotlin/Unit|
+    }
+    public final fun <T> takeFAndT(x: R|MySealedGeneric<T>|, y: R|T|): R|kotlin/Unit| {
+        ^takeFAndT Q|kotlin/Unit|
+    }
+    public final enum class MyEnum : R|kotlin/Enum<MyEnum>| {
+        private constructor(): R|MyEnum| {
+            super<R|kotlin/Enum<MyEnum>|>()
+        }
+
+        public final static enum entry X: R|MyEnum|
+        public final static enum entry Y: R|MyEnum|
+        public final static fun values(): R|kotlin/Array<MyEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum>|
+
+    }
+    public final fun nullableEnum(): R|MyEnum?| {
+        ^nullableEnum Q|MyEnum|.R|/MyEnum.Y|
+    }
+    public final fun test(b: R|kotlin/Boolean|, invA: R|Inv<MySealed>|): R|kotlin/Unit| {
+        lval p: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Left|, Q|MySealed.Right|)
+        lval q: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Right|, Q|MySealed.Left|)
+        lval r: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Left|, Q|MySealed.Right|)
+        lval s: R|MySealed| = R|/select|<R|MySealed|>(Q|MySealed.Left|, Q|MySealed.Right|)
+        lval p2: R|MySealed| = when () {
+            R|<local>/b| ->  {
+                Q|MySealed.Left|
+            }
+            else ->  {
+                Q|MySealed.Right|
+            }
+        }
+
+        lval q2: R|MySealed| = when () {
+            R|<local>/b| ->  {
+                Q|MySealed.Right|
+            }
+            else ->  {
+                Q|MySealed.Left|
+            }
+        }
+
+        lval r2: R|MySealed| = when () {
+            R|<local>/b| ->  {
+                Q|MySealed.Left|
+            }
+            else ->  {
+                Q|MySealed.Right|
+            }
+        }
+
+        lval s2: R|MySealed| = when () {
+            R|<local>/b| ->  {
+                Q|MySealed.Left|
+            }
+            else ->  {
+                Q|MySealed.Right|
+            }
+        }
+
+        lval i1: R|MyInterface| = R|/select|<R|MySecondSealed|>(Q|MySecondSealed.First|, Q|MySecondSealed.Second|)
+        lval i2: R|MySecondSealed| = R|/selectI|<R|MySecondSealed|>(Q|MySecondSealed.Second|, Q|MySecondSealed.First|)
+        lval i3: R|MyInterface| = when () {
+            R|<local>/b| ->  {
+                Q|MySecondSealed.First|
+            }
+            else ->  {
+                Q|MySecondSealed.Second|
+            }
+        }
+
+        lval t1: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySealed.Left|, Int(1), Q|MySealed.Right|)
+        lval t2: R|it(kotlin/Comparable<it(kotlin/String & MyEnum)> & java/io/Serializable)| = R|/select3|<R|it(kotlin/Comparable<it(kotlin/String & MyEnum)> & java/io/Serializable)|>(String(), Q|MyEnum|.R|/MyEnum.X|, Q|MyEnum|.R|/MyEnum.Y|)
+        lval t3: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySealed.Right|, Q|MySealed.Left|, String())
+        lval t4: R|kotlin/Any| = R|/select3|<R|kotlin/Any|>(Q|MySecondSealed.First|, Int(1), Q|MySecondSealed.Second|)
+        lval t: R|MySealed| = R|/selectWithBound|<R|MySealed|>(Q|MySealed.Left|, Q|MySealed.Right|, R|<local>/invA|)
+        lval u: R|MySealed| = R|/selectWithBound|<R|MySealed|>(Q|MySealed.Right|, Q|MySealed.Right|, R|<local>/invA|)
+        R|/takeF|<R|kotlin/String|>(Q|MySealedGeneric.StringInheritor|)
+        R|/takeFAndT|<R|kotlin/String|>(Q|MySealedGeneric.StringInheritor|, String())
+        lval v: R|MyEnum| = when () {
+            R|<local>/b| ->  {
+                Q|MyEnum|.R|/MyEnum.X|
+            }
+            else ->  {
+                Q|MyEnum|.R|/MyEnum.Y|
+            }
+        }
+
+        lval w: R|MyEnum| = R|/nullableEnum|() ?: Q|MyEnum|.R|/MyEnum.X|
+        lval x: R|MyEnum| = R|/nullableEnum|() ?: Q|MyEnum|.R|/MyEnum.X|
+        lval y: R|MyEnum?| = when () {
+            R|<local>/b| ->  {
+                Q|MyEnum|.R|/MyEnum.Y|
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }

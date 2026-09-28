@@ -36,8 +36,8 @@ internal class ValueClassAwareCaller<out M : Member?>(
     override val parameterTypes: List<Type>
         get() = caller.parameterTypes
 
-    override val isBoundInstanceCallWithValueClasses: Boolean
-        get() = caller is CallerImpl.Method.BoundInstance
+    override val isBoundInstanceCallWithValueClasses: Boolean =
+        caller is CallerImpl.Method.Instance && callable.isReceiverBound
 
     private class BoxUnboxData(
         val argumentRange: IntRange,
@@ -63,14 +63,14 @@ internal class ValueClassAwareCaller<out M : Member?>(
         }
 
         val shift = when {
-            caller is CallerImpl.Method.BoundStatic && !caller.isCallByToValueClassMangledMethod -> {
-                // Bound reference to a static method is only possible for a top level extension function/property,
+            caller is CallerImpl.Method.Static && callable.isReceiverBound && !caller.isCallByToValueClassMangledMethod -> {
+                // Bound receiver to a static method is only possible for a top level extension function/property,
                 // and in that case the number of expected arguments is one less than usual, hence -1
                 -1
             }
 
             callable.isConstructor ->
-                if (caller is BoundCaller) -1 else 0
+                if (callable.isReceiverBound) -1 else 0
 
             callable.parameters.any { it.kind == KParameter.Kind.INSTANCE } -> {
                 // If we have an unbound reference to the value class member,
@@ -84,13 +84,10 @@ internal class ValueClassAwareCaller<out M : Member?>(
             else -> 0
         }
 
-        val kotlinParameterTypes = makeKotlinParameterTypes(callable, caller.member)
+        val kotlinParameterTypes = makeKotlinParameterTypes(callable)
 
-        val paramsWithAllocatedDefaultMaskBitsCount = if (callable.allParameters.any { it.kind == KParameter.Kind.EXTENSION_RECEIVER }) {
-            kotlinParameterTypes.size - 1
-        } else {
-            kotlinParameterTypes.size
-        }
+        val paramsWithAllocatedDefaultMaskBitsCount = kotlinParameterTypes.size + callable.rawBoundContextArguments.size -
+                (if (callable.allParameters.any { it.kind == KParameter.Kind.EXTENSION_RECEIVER }) 1 else 0)
 
         // If the default argument is set,
         // (paramsWithAllocatedDefaultMaskBitsCount + Int.SIZE_BITS - 1) / Int.SIZE_BITS masks and one marker are added to the end of the argument.
@@ -160,7 +157,7 @@ private fun Caller<*>.checkParametersSize(expectedArgsSize: Int, callable: Refle
     }
 }
 
-private fun makeKotlinParameterTypes(callable: ReflectKCallable<*>, member: Member?): List<KType> {
+private fun makeKotlinParameterTypes(callable: ReflectKCallable<*>): List<KType> {
     val result = mutableListOf<KType>()
     val container = callable.container
     if (!callable.isConstructor && container is KClass<*> && container.isValue) {
@@ -168,6 +165,7 @@ private fun makeKotlinParameterTypes(callable: ReflectKCallable<*>, member: Memb
     }
     val isInnerClassConstructor = callable.isConstructor && (container as? KClass<*>)?.isInner == true
     for (parameter in callable.allParameters) {
+        if (parameter.kind == KParameter.Kind.CONTEXT && callable.isContextBound) continue
         if (parameter.kind != KParameter.Kind.INSTANCE || isInnerClassConstructor) {
             result.add(parameter.type)
         }

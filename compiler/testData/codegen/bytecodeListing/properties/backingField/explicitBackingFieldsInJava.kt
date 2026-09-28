@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // LANGUAGE: +ExplicitBackingFields
 // MODULE: ModuleA
 // FILE: AI.kt

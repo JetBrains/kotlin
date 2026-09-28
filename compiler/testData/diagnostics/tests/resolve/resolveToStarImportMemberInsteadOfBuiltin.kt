@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // https://youtrack.jetbrains.com/issue/KT-48157
 
 import TestEnum.*

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: JavaScriptParser.java
 public class JavaScriptParser<F extends JSPsiTypeParser> {}
 // FILE: JSPsiTypeParser.java

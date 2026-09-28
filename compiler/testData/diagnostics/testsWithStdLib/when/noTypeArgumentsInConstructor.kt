@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import java.util.*
 
 fun <T> nullable(x: T): T? = x

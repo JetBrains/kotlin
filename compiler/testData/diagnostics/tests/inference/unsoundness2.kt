@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun main(args: Array<String>) {
     val zero = coerce<Int, String>(0)

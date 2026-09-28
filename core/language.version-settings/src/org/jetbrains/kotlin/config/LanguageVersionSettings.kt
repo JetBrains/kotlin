@@ -529,7 +529,6 @@ enum class LanguageFeature(
     ReportDeprecatedCompanionInDelegation(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-408"),
     ReportDeprecationsOfOuterImportedClasses(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-397"),
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
-    ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
     FixesForIntersectionTypesIn25(sinceVersion = KOTLIN_2_5, issue = "KT-86629"),
     ProhibitScriptTopLevelInnerClasses(sinceVersion = KOTLIN_2_5, issue = "KT-87291"),
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-398"),
@@ -545,6 +544,7 @@ enum class LanguageFeature(
     NoWhenBranchMatchedExceptionWithMessage(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-86518"),
     NameBasedDestructuring(sinceVersion = KOTLIN_2_5, "KT-19627"),
     JsAllowExportingAnnotationClasses(sinceVersion = KOTLIN_2_5, "KT-85599"),
+    DnnTypeForUnboundedReifiedTypeParameters(KOTLIN_2_5, "KTLC-360", sinceApiVersion = ApiVersion.KOTLIN_2_5),
     JsAllowExportingStarProjection(sinceVersion = KOTLIN_2_5, "KT-83462"),
     AllowReturnsResultOfContract(sinceVersion = KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_4, issue = "KT-85948", forcesPreReleaseBinaries = true),
     UnnamedLocalVariables(sinceVersion = KOTLIN_2_5, issue = "KT-74809"),
@@ -566,14 +566,17 @@ enum class LanguageFeature(
     ForbidNonLiteralStringArgumentsForCompilerRequiredAnnotationParameters(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, issue = "KT-87072"),
     JsAllowExportTypealiases(sinceVersion = KOTLIN_2_5, "KT-49795"),
     IntrinsicConstEvaluation(sinceVersion = KOTLIN_2_5, issue = "KT-49303"),
+    NormalizeNaNValuesInConstContext(sinceVersion = KOTLIN_2_5, issue = "KT-88081"),
 
     // 2.6
 
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),
     ExplicitContextArguments(sinceVersion = KOTLIN_2_6, issue = "KT-81684"),
     ForbidJavaClassPropertyReferences(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-375"),
+    ForbidNonTopLevelEagerInitialization(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KT-89476"),
     ReportSubclassCantCallCompanionProtectedNonStaticWithGenerics(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-412"),
     ConcurrentMapPurelyImplemented(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-416"),
+    ForbidUselessTypeArgumentsIn26(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-390"),
     EnforceNamedArgumentsOnJavaAnnotationInAccessors(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-418"),
     JsIntegerDivisionCheck(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-17719"),
 
@@ -613,7 +616,6 @@ enum class LanguageFeature(
     AllowExpectValueClassesWithNoPrimaryConstructor(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-85824", enabledInLatestLVTests = false),
     AllowMultipleExpectsForSingleActual(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-88307", enabledInLatestLVTests = false),
 
-    PreciseSimplificationToFlexibleLowerConstraint(sinceVersion = null, "KT-78621", enabledInLatestLVTests = false), // TODO: consider dropping in 2.5 timeframe (KT-84664)
     DiscriminateSuspendInOverloadResolution(sinceVersion = null, "KT-23610", enabledInLatestLVTests = false), // Postponed because of KT-82869
 
     // Experimental features
@@ -626,7 +628,8 @@ enum class LanguageFeature(
     ProhibitAllMultipleDefaultsInheritedFromSupertypes(sinceVersion = null, enabledInProgressiveMode = false, issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, "KT-73894", enabledInLatestLVTests = false),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
-    StrictEquals(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-83683", enabledInLatestLVTests = true),
+    StrictEqualsForStructuralClasses(sinceVersion = null, issue = "KT-89201", enabledInLatestLVTests = false),
+    StrictEquals(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_2_5, issue = "KT-83683", testOnly = true, enabledInLatestLVTests = true),
     CallableReferencesToContextual(sinceVersion = null, issue = "KT-54594", enabledInLatestLVTests = true),
     JavaSamConversionEqualsHashCode(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-19318", enabledInLatestLVTests = false),
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308", enabledInLatestLVTests = false),
@@ -649,6 +652,7 @@ enum class LanguageFeature(
     EnableNameBasedDestructuringShortForm(sinceVersion = null, issue = "KT-19627", enabledInLatestLVTests = true),
     LocalTypeAliases(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-81404", enabledInLatestLVTests = false),
     ErrorAboutDataClassCopyVisibilityChange(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-11914", enabledInLatestLVTests = false), // Was postponed in KT-89123
+    ForbidUsingParameterWithDefaultValueTypesWithInaccessibleContent(sinceVersion = null, enabledInProgressiveMode = false, issue = "KTLC-422", enabledInLatestLVTests = false), // Postponed indefinitely
 
     // We don't want to turn it on by default (so to show an error instead of a warning) until there will be a possibility to export declarations from libraries
     JsExposedNotExportedSuperInterfaceApiByExportedOne(sinceVersion = null, issue = "KT-83009", enabledInLatestLVTests = false),
@@ -685,7 +689,9 @@ enum class LanguageFeature(
             checkEnabledNotEarlierThan(NameBasedDestructuring)
         }
     },
+    AllowSmartCastsOnValueClassUnderlyingProperties(sinceVersion = null, "KT-88589", enabledInLatestLVTests = true),
     JsExportingSuspendLambdas(sinceVersion = null, "KT-80188", enabledInLatestLVTests = false),
+    LateinitVals(sinceVersion = null, "KT-28413", forcesPreReleaseBinaries = true, enabledInLatestLVTests = false),
 
     InferThrowableTypeParameterToUpperBound(sinceVersion = null, issue = "KT-82961", enabledInLatestLVTests = true),
     EagerLambdaAnalysis(sinceVersion = null, issue = "KT-51107", enabledInLatestLVTests = true) {

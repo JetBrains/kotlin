@@ -13,9 +13,6 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
-import org.jetbrains.kotlin.gradle.plugin.internal.ProjectByPath
-import org.jetbrains.kotlin.gradle.plugin.internal.ProjectDependencyAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.compatAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfigurationName
@@ -67,10 +64,8 @@ interface SwiftExportAdvancedConfiguration {
 
 internal fun ObjectFactory.SwiftExportExtension(
     dependencies: DependencyHandler,
-    projectDependencyAccessor: Provider<ProjectDependencyAccessor.Factory>,
-    projectByPath: ProjectByPath,
 ): SwiftExportExtension =
-    newInstance(SwiftExportExtension::class.java, dependencies, projectDependencyAccessor, projectByPath)
+    newInstance(SwiftExportExtension::class.java, dependencies)
 
 /**
  * An *experimental* plugin DSL extension to configure Swift Export.
@@ -104,14 +99,32 @@ abstract class SwiftExportExtension @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val dependencyHandler: DependencyHandler,
-    private val projectDependencyAccessor: Provider<ProjectDependencyAccessor.Factory>,
-    private val projectByPath: ProjectByPath,
 ) : SwiftExportedModuleMetadata {
+    /**
+     * Whether this DSL was configured in this project.
+     *
+     * True if a DSL function set it directly, or if [moduleName] or [flattenPackage] is present. Those are
+     * plain [Property] instances with no invocation hook, so presence is checked instead. Only meaningful
+     * once the DSL is finalised.
+     *
+     * Unlike [org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension.isSwiftExportRequested], this
+     * also catches a Groovy script reaching the extension directly through the Gradle extension container.
+     *
+     * One gap: an empty `swiftExport { }` block sets nothing, and
+     * [isSwiftExportXcodeIntegrationActivated] turns on Xcode integration for Apple targets regardless,
+     * so that block looks the same as no block at all.
+     */
+    internal val isConfigured: Boolean
+        get() = wasConfigured || moduleName.isPresent || flattenPackage.isPresent
+
+    private var wasConfigured = false
+
     /**
      * Configure Link task.
      */
     @ExperimentalSwiftExportDsl
     fun linkTask(configure: KotlinNativeLink.() -> Unit = {}) {
+        wasConfigured = true
         forAllSwiftExportBinaries {
             linkTaskProvider.configure { linkTask ->
                 configure(linkTask)
@@ -132,6 +145,7 @@ abstract class SwiftExportExtension @Inject constructor(
      */
     @ExperimentalSwiftExportDsl
     fun configure(configure: SwiftExportAdvancedConfiguration.() -> Unit = {}) {
+        wasConfigured = true
         advancedConfiguration.configure()
     }
 
@@ -148,6 +162,7 @@ abstract class SwiftExportExtension @Inject constructor(
      */
     @ExperimentalSwiftExportDsl
     fun export(dependency: Any, configure: SwiftExportedModuleMetadata.() -> Unit = {}) {
+        wasConfigured = true
         when (dependency) {
             is Provider<*> -> {
                 addDependencyToExportConfiguration(dependency.map { dep ->
@@ -198,7 +213,7 @@ abstract class SwiftExportExtension @Inject constructor(
             when (dep) {
                 is Project -> SwiftExportedDependency.Project(objectFactory, dep.path)
                 is ProjectDependency -> {
-                    val projectPath = dep.compatAccessor(projectDependencyAccessor, projectByPath).dependencyProject().path
+                    val projectPath = dep.path
 
                     SwiftExportedDependency.Project(objectFactory, projectPath)
                 }

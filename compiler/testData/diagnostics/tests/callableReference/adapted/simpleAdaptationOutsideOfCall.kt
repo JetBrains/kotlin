@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun baz(options: String = ""): String = ""
 
 fun runForString(x: () -> String) {}

@@ -1,6 +1,4 @@
 // LANGUAGE: +ContextParameters +CallableReferencesToContextual
-// IGNORE_BACKEND: JVM_IR
-// ^KT-86452
 context(_: String) fun foo() {}
 context(_: String, b: Boolean) fun foo2() {}
 

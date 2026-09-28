@@ -1,4 +1,6 @@
 // ISSUE: KT-87563
+// MUTE_LL_FIR: inconsistent resolution behavior, but it doesn't make sense to fix unless IDEA-393430 is fixed
+// because it's SO on Java code that's reproducable without Kotlin.
 
 // FILE: X1.java
 

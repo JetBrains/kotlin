@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-2225 Object expression delegation parameter should be checked with data flow info
 
 interface A {

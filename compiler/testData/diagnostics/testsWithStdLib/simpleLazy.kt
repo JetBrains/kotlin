@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //val x = lazy { "Hello" }.getValue(null, throw null)
 val x by lazy { "Hello" }
 

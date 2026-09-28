@@ -1,0 +1,12 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] val x: R|kotlin/Number|
+    private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/Int| = Int(1)
+    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Number| {
+        [ResolvedTo(BODY_RESOLVE)] lval i: R|kotlin/Int| = F|/x|
+        ^ R|<local>/i|
+    }
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsReferredViaField=true] val x: R|kotlin/Number|
+    private final [ResolvedTo(BODY_RESOLVE)] backing field field: R|kotlin/Int| = Int(1)
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Number| { LAZY_BLOCK }

@@ -5,16 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.IrBasedFunctionFactory.Companion.isFunctionInterfaceFile
 import org.jetbrains.kotlin.ir.UNDEFINED_COLUMN_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_LINE_NUMBER
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.Name
 
@@ -107,7 +102,6 @@ object PartialLinkageSources {
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private inline fun <R> determineFor(
         declaration: IrDeclaration,
         onMissingDeclaration: R,
@@ -120,12 +114,10 @@ object PartialLinkageSources {
             onMissingDeclaration
         else {
             val packageFragment = declaration.getPackageFragment()
-            val packageFragmentDescriptor = with(packageFragment.symbol) { if (hasDescriptor) descriptor else null }
-
             when {
-                packageFragmentDescriptor is FunctionInterfacePackageFragment -> onSyntheticBuiltInFunction
+                packageFragment.isFunctionInterfaceFile -> onSyntheticBuiltInFunction
                 packageFragment is IrFile -> onIrBased(packageFragment)
-                packageFragment is IrExternalPackageFragment && packageFragmentDescriptor != null -> onLazyIrBased(packageFragment)
+                packageFragment is IrExternalPackageFragment -> onLazyIrBased(packageFragment)
                 else -> onError()
             }
         }

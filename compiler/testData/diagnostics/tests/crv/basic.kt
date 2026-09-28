@@ -1,5 +1,5 @@
 // LANGUAGE: +NameBasedDestructuring +DeprecateNameMismatchInShortDestructuringWithParentheses +EnableNameBasedDestructuringShortForm
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 // DIAGNOSTICS: -VARIABLE_NEVER_READ -ASSIGNED_VALUE_IS_NEVER_READ -CAN_BE_VAL_LATEINIT
 

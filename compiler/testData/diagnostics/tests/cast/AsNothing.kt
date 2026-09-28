@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Nothing can be cast to Nothing
 fun foo(x: String) {
     x <!CAST_NEVER_SUCCEEDS!>as<!> Nothing

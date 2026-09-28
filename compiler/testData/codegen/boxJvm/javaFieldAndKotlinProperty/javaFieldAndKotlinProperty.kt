@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // Field VS property: case 4.1
 // See KT-50082
 // DUMP_IR

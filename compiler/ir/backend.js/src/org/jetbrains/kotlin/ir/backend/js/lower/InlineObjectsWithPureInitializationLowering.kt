@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.JsIrOptimizationContext
 import org.jetbrains.kotlin.ir.backend.js.hasPureInitialization
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.objectInstanceField
 import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceGetter
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 @PhasePrerequisites(PurifyObjectInstanceGettersLowering::class)
 open class InlineObjectsWithPureInitializationLowering(val context: JsCommonBackendContext) : BodyLoweringPass {
+    internal constructor(context: JsIrOptimizationContext) : this(context.backendContext)
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {

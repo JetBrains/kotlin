@@ -20,7 +20,7 @@ fun foo(): String {
 fun box(): String =
     foo()
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:21 box
 // test.kt:7 foo
 // test.kt:8 foo

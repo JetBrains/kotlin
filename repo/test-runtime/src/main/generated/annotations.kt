@@ -5,140 +5,208 @@ package org.jetbrains.kotlin.testFederation
 import org.junit.jupiter.api.Tag
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.CompilerInfrastructure].
-* Such tests will run, additionally, for all commits affecting the CompilerInfrastructure domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.CompilerInfrastructure] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:CompilerInfrastructure")
-annotation class AffectedByCompilerInfrastructure
+@Tag("contract:CompilerInfrastructure")
+annotation class MustRunOnChangesInCompilerInfrastructure
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.Frontend].
-* Such tests will run, additionally, for all commits affecting the Frontend domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.Frontend] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:Frontend")
-annotation class AffectedByFrontend
+@Tag("contract:Frontend")
+annotation class MustRunOnChangesInFrontend
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.CommonBackend].
-* Such tests will run, additionally, for all commits affecting the CommonBackend domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.CommonBackend] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:CommonBackend")
-annotation class AffectedByCommonBackend
+@Tag("contract:CommonBackend")
+annotation class MustRunOnChangesInCommonBackend
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.Jvm].
-* Such tests will run, additionally, for all commits affecting the Jvm domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.Jvm] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:Jvm")
-annotation class AffectedByJvm
+@Tag("contract:Jvm")
+annotation class MustRunOnChangesInJvm
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.Wasm].
-* Such tests will run, additionally, for all commits affecting the Wasm domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.Wasm] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:Wasm")
-annotation class AffectedByWasm
+@Tag("contract:Wasm")
+annotation class MustRunOnChangesInWasm
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.Js].
-* Such tests will run, additionally, for all commits affecting the Js domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.Js] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:Js")
-annotation class AffectedByJs
+@Tag("contract:Js")
+annotation class MustRunOnChangesInJs
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.Native].
-* Such tests will run, additionally, for all commits affecting the Native domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.Native] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:Native")
-annotation class AffectedByNative
+@Tag("contract:Native")
+annotation class MustRunOnChangesInNative
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.CoreLibs].
-* Such tests will run, additionally, for all commits affecting the CoreLibs domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.CoreLibs] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:CoreLibs")
-annotation class AffectedByCoreLibs
+@Tag("contract:CoreLibs")
+annotation class MustRunOnChangesInCoreLibs
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.AnalysisApi].
-* Such tests will run, additionally, for all commits affecting the AnalysisApi domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.AnalysisApi] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:AnalysisApi")
-annotation class AffectedByAnalysisApi
+@Tag("contract:AnalysisApi")
+annotation class MustRunOnChangesInAnalysisApi
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.BuildToolsApi].
-* Such tests will run, additionally, for all commits affecting the BuildToolsApi domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.BuildToolsApi] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:BuildToolsApi")
-annotation class AffectedByBuildToolsApi
+@Tag("contract:BuildToolsApi")
+annotation class MustRunOnChangesInBuildToolsApi
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.SwiftExport].
-* Such tests will run, additionally, for all commits affecting the SwiftExport domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.SwiftExport] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:SwiftExport")
-annotation class AffectedBySwiftExport
+@Tag("contract:SwiftExport")
+annotation class MustRunOnChangesInSwiftExport
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.CompilerPlugins].
-* Such tests will run, additionally, for all commits affecting the CompilerPlugins domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.CompilerPlugins] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:CompilerPlugins")
-annotation class AffectedByCompilerPlugins
+@Tag("contract:CompilerPlugins")
+annotation class MustRunOnChangesInCompilerPlugins
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.Gradle].
-* Such tests will run, additionally, for all commits affecting the Gradle domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.Gradle] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:Gradle")
-annotation class AffectedByGradle
+@Tag("contract:Gradle")
+annotation class MustRunOnChangesInGradle
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.Maven].
-* Such tests will run, additionally, for all commits affecting the Maven domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.Maven] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:Maven")
-annotation class AffectedByMaven
+@Tag("contract:Maven")
+annotation class MustRunOnChangesInMaven
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.IntelliJ].
-* Such tests will run, additionally, for all commits affecting the IntelliJ domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.IntelliJ] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:IntelliJ")
-annotation class AffectedByIntelliJ
+@Tag("contract:IntelliJ")
+annotation class MustRunOnChangesInIntelliJ
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.BuildInfrastructure].
-* Such tests will run, additionally, for all commits affecting the BuildInfrastructure domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.BuildInfrastructure] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:BuildInfrastructure")
-annotation class AffectedByBuildInfrastructure
+@Tag("contract:BuildInfrastructure")
+annotation class MustRunOnChangesInBuildInfrastructure
 
 /**
-* Will mark tests as 'affected by' the given domain [Domain.Unknown].
-* Such tests will run, additionally, for all commits affecting the Unknown domain.
+* Requires the annotated tests to run and pass before merging to master when [Domain.Unknown] contains changed files.
+* The tests still run whenever all tests in their own domain must run.
+* Other test filters, including [NightlyTest], still apply.
+*
+* ### Extra: Contract tests
+* Use this annotation for tests that check behavior another domain relies on.
 */
-@Tag("affectedBy:Unknown")
-annotation class AffectedByUnknown
+@Tag("contract:Unknown")
+annotation class MustRunOnChangesInUnknown
 
-fun affectedByAnnotationOf(domain: Domain) = when (domain) {
-    Domain.CompilerInfrastructure -> AffectedByCompilerInfrastructure::class
-    Domain.Frontend -> AffectedByFrontend::class
-    Domain.CommonBackend -> AffectedByCommonBackend::class
-    Domain.Jvm -> AffectedByJvm::class
-    Domain.Wasm -> AffectedByWasm::class
-    Domain.Js -> AffectedByJs::class
-    Domain.Native -> AffectedByNative::class
-    Domain.CoreLibs -> AffectedByCoreLibs::class
-    Domain.AnalysisApi -> AffectedByAnalysisApi::class
-    Domain.BuildToolsApi -> AffectedByBuildToolsApi::class
-    Domain.SwiftExport -> AffectedBySwiftExport::class
-    Domain.CompilerPlugins -> AffectedByCompilerPlugins::class
-    Domain.Gradle -> AffectedByGradle::class
-    Domain.Maven -> AffectedByMaven::class
-    Domain.IntelliJ -> AffectedByIntelliJ::class
-    Domain.BuildInfrastructure -> AffectedByBuildInfrastructure::class
-    Domain.Unknown -> AffectedByUnknown::class
+fun mustRunOnChangesInAnnotationOf(domain: Domain) = when (domain) {
+    Domain.CompilerInfrastructure -> MustRunOnChangesInCompilerInfrastructure::class
+    Domain.Frontend -> MustRunOnChangesInFrontend::class
+    Domain.CommonBackend -> MustRunOnChangesInCommonBackend::class
+    Domain.Jvm -> MustRunOnChangesInJvm::class
+    Domain.Wasm -> MustRunOnChangesInWasm::class
+    Domain.Js -> MustRunOnChangesInJs::class
+    Domain.Native -> MustRunOnChangesInNative::class
+    Domain.CoreLibs -> MustRunOnChangesInCoreLibs::class
+    Domain.AnalysisApi -> MustRunOnChangesInAnalysisApi::class
+    Domain.BuildToolsApi -> MustRunOnChangesInBuildToolsApi::class
+    Domain.SwiftExport -> MustRunOnChangesInSwiftExport::class
+    Domain.CompilerPlugins -> MustRunOnChangesInCompilerPlugins::class
+    Domain.Gradle -> MustRunOnChangesInGradle::class
+    Domain.Maven -> MustRunOnChangesInMaven::class
+    Domain.IntelliJ -> MustRunOnChangesInIntelliJ::class
+    Domain.BuildInfrastructure -> MustRunOnChangesInBuildInfrastructure::class
+    Domain.Unknown -> MustRunOnChangesInUnknown::class
 }

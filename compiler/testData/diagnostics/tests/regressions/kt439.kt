@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-439 Support labeled function literals in call arguments
 
 fun main1(args : Array<String>) {

@@ -361,11 +361,14 @@ internal val KtTypeParameter.containingDeclaration: KtDeclaration?
  * The property is supposed to be used only in the pair with
  * [getNonLocalContainingOrThisElement] or [getNonLocalContainingOrThisDeclaration].
  *
+ * Property accessors and explicit backing fields are lazily resolvable, but they are resolved together with the owning property,
+ * so the property is the unit of resolution for them.
+ *
  * @see getNonLocalContainingOrThisElement
  */
 internal val KtElement.isAutonomousElement: Boolean
     get() = when (this) {
-        is KtPropertyAccessor, is KtParameter, is KtTypeParameter -> false
+        is KtPropertyAccessor, is KtBackingField, is KtParameter, is KtTypeParameter -> false
         else -> true
     }
 

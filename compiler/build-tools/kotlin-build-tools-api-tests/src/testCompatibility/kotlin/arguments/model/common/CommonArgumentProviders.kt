@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments.model.common
 
-import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.OPT_IN
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_ANNOTATION_DEFAULT_TARGET
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_PHASES_TO_VALIDATE
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_PHASES_TO_VALIDATE_AFTER
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_PHASES_TO_VALIDATE_BEFORE
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_SUPPRESS_WARNING
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_VERBOSE_PHASES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_VERIFY_IR
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_WARNING_LEVEL
@@ -144,14 +142,6 @@ internal val commonCompilerArguments: List<CommonArgumentTestDescriptor<*>> = li
         argumentRawValues = listOf(listOf("phase1", "phase2", "phase3").joinToString(",")),
         valueString = { value -> value?.joinToString(",") },
         expectedArgumentStringsFor = { value -> listOf("-Xdisable-phases=$value") },
-    ),
-    CommonArgumentTestDescriptor(
-        argumentName = "Xsuppress-warning",
-        argument = @OptIn(DeprecatedCompilerArgument::class) X_SUPPRESS_WARNING,
-        argumentValues = listOf(listOf("warning1", "warning2", "warning3")),
-        argumentRawValues = listOf(listOf("warning1", "warning2", "warning3").joinToString(",")),
-        valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-Xsuppress-warning=$value") },
     ),
     CommonArgumentTestDescriptor(
         argumentName = "Xannotation-default-target",

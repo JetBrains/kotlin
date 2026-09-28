@@ -10,7 +10,6 @@ import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
@@ -785,33 +784,18 @@ private fun configureTestTaskDyldSearchPaths(
         .split(DUMP_FILE_ARGS_SEPARATOR).filter { it.isNotEmpty() }
         .joinToString(":")
 
-    // lazyMapWithCC fails with ClassNotFound exception in Gradle 7.6.3
-    if (GradleVersion.current().baseVersion < GradleVersion.version("8.0")) {
-        task.doFirst {
-            it as KotlinNativeTest
-            it.processOptions.environment.put(
-                frameworksDyldEnv,
-                extractFrameworkSearchPaths()
-            )
-            it.processOptions.environment.put(
-                librariesDyldEnv,
-                extractLibrariesSearchPaths()
-            )
+    task.processOptions.environment.put(
+        frameworksDyldEnv,
+        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
+            extractFrameworkSearchPaths()
         }
-    } else {
-        task.processOptions.environment.put(
-            frameworksDyldEnv,
-            syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
-                extractFrameworkSearchPaths()
-            }
-        )
-        task.processOptions.environment.put(
-            librariesDyldEnv,
-            syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
-                extractLibrariesSearchPaths()
-            }
-        )
-    }
+    )
+    task.processOptions.environment.put(
+        librariesDyldEnv,
+        syntheticImportProjectGenerationTaskForCinteropsAndLdDump.lazyMapWithCC {
+            extractLibrariesSearchPaths()
+        }
+    )
 }
 
 internal fun Project.locateOrRegisterRegenerateLinkageImportProjectTask(): TaskProvider<GenerateSyntheticLinkageImportProject> {

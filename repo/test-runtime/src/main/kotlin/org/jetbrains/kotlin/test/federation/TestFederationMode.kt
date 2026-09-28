@@ -6,17 +6,14 @@
 package org.jetbrains.kotlin.testFederation
 
 /**
- * Running tests inside the test federation knows two modes:
- * ## [Full]
- * All tests are executed. This happens if the tests belong to a [Subsystem] which was marked as 'affected'
+ * Controls which tests Test Federation selects for a test task.
+ * Other test filters, including nightly filters, still apply in both modes.
  *
- * ## [Smoke]
- * Not all tests are executed.
- * All tests marked as '@SmokeTest' will be executed.
- * All contracts to affected [Subsystem]s will be executed.
- * For example,
- * If the current subsystem is [Subsystem.Gradle], but changes identified the [Subsystem.Compiler] as 'affected', then all tests marked as
- * `@CompilerContract` will be executed in addition to all smoke tests.
+ * [Full] selects all tests in the task. It is used when all tests in one of the task's domains are required for merging to master,
+ * when Test Federation is disabled, when the task is configured to run all tests, or when this mode is explicitly configured.
+ *
+ * [Smoke] selects tests marked with `@MustRunAlways`, tests marked with `@MustRunOnChangesInXYZ` for a changed domain,
+ * and any automatically selected sample. The task's configuration can disable the task in this mode.
  */
 enum class TestFederationMode {
     Full, Smoke;

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo() {
     fun convert(vararg paths: String): Array<String> = paths.toList().toTypedArray()
 

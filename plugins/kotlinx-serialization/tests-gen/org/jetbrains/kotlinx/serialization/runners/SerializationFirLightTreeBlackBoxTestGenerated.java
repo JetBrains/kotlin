@@ -163,6 +163,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("externalSerializerWithConcreteSupertype.kt")
+    public void testExternalSerializerWithConcreteSupertype() {
+      run("externalSerializerWithConcreteSupertype.kt");
+    }
+
+    @Test
     @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
     public void testGeneratedClassifiersViaLibraryDependency() {
       run("generatedClassifiersViaLibraryDependency.kt");
@@ -178,6 +184,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     @TestMetadata("genericBaseClassSimple.kt")
     public void testGenericBaseClassSimple() {
       run("genericBaseClassSimple.kt");
+    }
+
+    @Test
+    @TestMetadata("genericWithClassUpperBoundMultiModule.kt")
+    public void testGenericWithClassUpperBoundMultiModule() {
+      run("genericWithClassUpperBoundMultiModule.kt");
     }
 
     @Test
@@ -516,6 +528,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     @TestMetadata("externalSerializers.kt")
     public void testExternalSerializers() {
       run("externalSerializers.kt");
+    }
+
+    @Test
+    @TestMetadata("genericWithClassUpperBound.kt")
+    public void testGenericWithClassUpperBound() {
+      run("genericWithClassUpperBound.kt");
     }
 
     @Test

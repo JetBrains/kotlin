@@ -152,19 +152,21 @@ KtNameReferenceExpression(188,189): 'L'
     ]
 
 KtCallExpression(195,210): 'foo(UNRESOLVED)'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /foo(a: MyEnum): kotlin.Unit
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /foo>
 
 KtNameReferenceExpression(195,198): 'foo'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /foo(a: MyEnum): kotlin.Unit
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /foo>
 
 KtValueArgumentList(198,210): '(UNRESOLVED)'
   null

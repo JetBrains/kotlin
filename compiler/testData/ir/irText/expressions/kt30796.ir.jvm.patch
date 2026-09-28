@@ -1,5 +1,5 @@
 --- a/kt30796.ir.txt
-+++ b/kt30796.ir.jvm_ir.txt
++++ b/kt30796.ir.jvm.txt
 @@ -3,7 +3,7 @@
      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
      BLOCK_BODY

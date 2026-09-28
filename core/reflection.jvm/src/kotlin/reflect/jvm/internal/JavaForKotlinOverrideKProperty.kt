@@ -39,6 +39,8 @@ internal abstract class JavaForKotlinOverrideKProperty<out V>(
     protected val setterMethod: ReflectKFunction?,
     protected val overriddenProperty: ReflectKProperty<*>,
 ) : ReflectKCallableImpl<V>(overriddenStorage), ReflectKProperty<V> {
+    override val rawBoundContextArguments: List<Any?> get() = emptyList()
+
     override val signature: String get() = overriddenProperty.signature
     override val name: String get() = overriddenProperty.name
 
@@ -57,7 +59,7 @@ internal abstract class JavaForKotlinOverrideKProperty<out V>(
     }
 
     override val parameters: List<KParameter> by lazy(PUBLICATION) {
-        if (isBound) computeParameters(this, includeReceivers = false)
+        if (isReceiverBound) computeParameters(this, includeReceivers = false)
         else allParameters
     }
 
@@ -94,7 +96,7 @@ internal abstract class JavaForKotlinOverrideKProperty<out V>(
         }
 
         override val parameters: List<KParameter> by lazy(PUBLICATION) {
-            if (isBound) property.computeParameters(this, includeReceivers = false)
+            if (isReceiverBound) property.computeParameters(this, includeReceivers = false)
             else allParameters
         }
 
@@ -118,7 +120,7 @@ internal abstract class JavaForKotlinOverrideKProperty<out V>(
         }
 
         override val parameters: List<KParameter> by lazy(PUBLICATION) {
-            if (isBound) {
+            if (isReceiverBound) {
                 val propertyParameters = property.computeParameters(this, includeReceivers = false)
                 propertyParameters + DefaultSetterValueParameter(property, propertyParameters.size)
             } else allParameters

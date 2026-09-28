@@ -6,7 +6,7 @@
 // FULL_JDK
 
 // CHECK_BYTECODE_TEXT
-// 2 java/lang/invoke/LambdaMetafactory
+// 1 java/lang/invoke/LambdaMetafactory
 
 import java.util.stream.Collectors
 

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 typealias SuspendFn = suspend () -> Unit
 
 val test1: suspend () -> Unit = {}

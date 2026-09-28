@@ -51,7 +51,7 @@ fun makeModuleFile(
     javaSourceRoots: Iterable<JvmSourceRoot>,
     classpath: Iterable<File>,
     friendDirs: Iterable<File>,
-    isIncrementalMode: Boolean = true
+    isIncrementalMode: Boolean = true,
 ): File {
     val builder = KotlinModuleXmlBuilder()
     builder.addModule(
@@ -93,7 +93,7 @@ private fun sanitizeJavaIdentifier(string: String) =
 fun makeCompileServices(
     incrementalCaches: Map<TargetId, IncrementalCache>,
     lookupTracker: LookupTracker,
-    compilationCanceledStatus: CompilationCanceledStatus?
+    compilationCanceledStatus: CompilationCanceledStatus?,
 ): Services =
     with(Services.Builder()) {
         register(LookupTracker::class.java, lookupTracker)
@@ -111,6 +111,12 @@ fun updateIncrementalCache(
     javaChangesTracker: JavaClassesTrackerImpl?,
     jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
 ) {
+    // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName, and
+    // `ChangesCollector.protoDataChanges()` keeps the last proto recorded under it, and the platform proto has precedence.
+    jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
+        cache.saveMetadataToCache(moduleName, metadata, changesCollector)
+    }
+
     for (generatedFile in generatedFiles) {
         when {
             generatedFile is GeneratedJvmClass -> cache.saveFileToCache(generatedFile, changesCollector)
@@ -125,17 +131,13 @@ fun updateIncrementalCache(
         cache.saveJavaClassProto(source, serializedJavaClass, changesCollector)
     }
 
-    jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
-        cache.saveMetadataToCache(moduleName, metadata)
-    }
-
     cache.clearCacheForRemovedClasses(changesCollector)
 }
 
 fun LookupStorage.update(
     lookupTracker: LookupTracker,
     filesToCompile: Iterable<File>,
-    removedFiles: Iterable<File>
+    removedFiles: Iterable<File>,
 ) {
     if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 
@@ -147,7 +149,7 @@ fun LookupStorage.update(
 data class DirtyData(
     val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
     val dirtyClassesFqNames: Collection<FqName> = emptyList(),
-    val dirtyClassesFqNamesForceRecompile: Collection<FqName> = emptyList()
+    val dirtyClassesFqNamesForceRecompile: Collection<FqName> = emptyList(),
 )
 
 /**
@@ -167,7 +169,7 @@ fun ChangesCollector.getChangedSymbols(reporter: ICReporter): DirtyData {
  */
 fun ChangesCollector.getChangedAndImpactedSymbols(
     caches: Iterable<IncrementalCacheCommon>,
-    reporter: ICReporter
+    reporter: ICReporter,
 ): DirtyData {
     return changes().getChangedAndImpactedSymbols(caches, reporter)
 }
@@ -179,7 +181,7 @@ fun ChangesCollector.getChangedAndImpactedSymbols(
  */
 fun List<ChangeInfo>.getChangedAndImpactedSymbols(
     caches: Iterable<IncrementalCacheCommon>,
-    reporter: ICReporter
+    reporter: ICReporter,
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
@@ -223,7 +225,7 @@ fun mapLookupSymbolsToFiles(
     lookupStorage: LookupStorage,
     lookupSymbols: Iterable<LookupSymbol>,
     reporter: ICReporter,
-    excludes: Set<File> = emptySet()
+    excludes: Set<File> = emptySet(),
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
 
@@ -240,7 +242,7 @@ fun mapClassesFqNamesToFiles(
     caches: Iterable<IncrementalCacheCommon>,
     classesFqNames: Iterable<FqName>,
     reporter: ICReporter,
-    excludes: Set<File> = emptySet()
+    excludes: Set<File> = emptySet(),
 ): Set<File> {
     val fqNameToAffectedFiles = HashMap<FqName, MutableSet<File>>()
 
@@ -262,7 +264,7 @@ fun mapClassesFqNamesToFiles(
 
 fun isSealed(
     fqName: FqName,
-    caches: Iterable<IncrementalCacheCommon>
+    caches: Iterable<IncrementalCacheCommon>,
 ): Boolean = caches.any { cache -> cache.isSealed(fqName) ?: false }
 
 /**
@@ -272,17 +274,17 @@ fun isSealed(
  */
 fun findSealedSupertypes(
     fqName: FqName,
-    caches: Iterable<IncrementalCacheCommon>
+    caches: Iterable<IncrementalCacheCommon>,
 ): Collection<FqName> {
     if (isSealed(fqName, caches)) {
         return listOf(fqName)
     }
-    return caches.flatMap { cache -> cache.getSupertypesOf(fqName).filter { cache.isSealed(it) ?: false }}
+    return caches.flatMap { cache -> cache.getSupertypesOf(fqName).filter { cache.isSealed(it) ?: false } }
 }
 
 fun withSubtypes(
     typeFqName: FqName,
-    caches: Iterable<IncrementalCacheCommon>
+    caches: Iterable<IncrementalCacheCommon>,
 ): Set<FqName> {
     val typesToProccess = LinkedHashSet(listOf(typeFqName))
     val proccessedTypes = hashSetOf<FqName>()

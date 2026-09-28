@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
-import org.jetbrains.kotlin.buildtools.internal.trackers.ImportTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -34,7 +32,6 @@ import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -75,7 +72,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
@@ -157,6 +154,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         executionContext: ExecutionContext,
     ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
+        checkSupportedWithDaemon()
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
 
         val daemonLogOptions = DaemonLogOptions(
@@ -189,7 +187,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
 
         (
-            val daemon = compileService, val sessionId
+            val daemon = compileService, val sessionId,
         ) =
             KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId,
@@ -219,16 +217,29 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
 
         val metricsReporter = getMetricsReporter()
-        val exitCode = daemon.compile(
-            sessionId,
-            arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
-            daemonCompileOptions,
-            BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
-            DaemonCompilationResults(
-                loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
-            ),
-            compilationId
-        ).get()
+        val memoryUsageBeforeBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
+
+        val exitCode = try {
+            daemon.compile(
+                sessionId,
+                arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
+                daemonCompileOptions,
+                BtaCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER)),
+                DaemonCompilationResults(
+                    loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
+                ),
+                compilationId
+            ).get()
+        } finally {
+            val memoryUsageAfterBuild = runCatching { daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get() }.getOrNull()
+
+            if (memoryUsageAfterBuild == null || memoryUsageBeforeBuild == null) {
+                loggerAdapter.kotlinLogger.debug("Unable to calculate memory usage")
+            } else {
+                metricsReporter.addMetric(DAEMON_INCREASED_MEMORY, memoryUsageAfterBuild - memoryUsageBeforeBuild)
+                metricsReporter.addMetric(DAEMON_MEMORY_USAGE, memoryUsageAfterBuild)
+            }
+        }
 
         try {
             daemon.releaseCompileSession(sessionId)
@@ -244,6 +255,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             populateMetricsCollector(metricsReporter)
         }
     }
+
+    //TODO: Will be removed with daemon support for JPS
+    protected open fun checkSupportedWithDaemon() {}
 
     protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
         if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
@@ -262,7 +276,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract fun shouldCompileIncrementally(): Boolean
 
-    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter, executionContext: ExecutionContext): CompilationResult {
+    protected open fun compileInProcess(
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
+    ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         val arguments = createAndPrepareCompilerArguments()
 
@@ -295,10 +312,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             get(LOOKUP_TRACKER)?.let { tracker: CompilerLookupTracker ->
                 register(LookupTracker::class.java, LookupTrackerAdapter(tracker))
             }
-            get(IMPORT_TRACKER)?.let { tracker: CompilerImportTracker ->
-                register(ImportTracker::class.java, ImportTrackerAdapter(tracker))
-            }
             executionContext.classloadersCache?.let { register(PluginsLoader::class.java, it.asPluginsLoader()) }
+            registerPlatformServices(loggerAdapter.kotlinLogger)
         }.build()
         logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         val metricsReporter = getMetricsReporter()
@@ -312,6 +327,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         return compilationResult
     }
+
+    protected open fun Services.Builder.registerPlatformServices(logger: KotlinLogger) {}
 
     protected fun getLookupTrackerAdapter(): LookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
         LookupTrackerAdapter(tracker)
@@ -335,13 +352,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     companion object {
         val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
-
-        /*
-        * Tracks imports during compilation.
-        * This option partially addresses [KT-84450](https://youtrack.jetbrains.com/issue/KT-84450)
-        * and is not intended to work in all cases for now.
-        * */
-        val IMPORT_TRACKER: Option<CompilerImportTracker?> = Option("IMPORT_TRACKER", null)
 
         val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> =
             Option("COMPILER_ARGUMENTS_LOG_LEVEL", default = CompilerArgumentsLogLevel.DEBUG)

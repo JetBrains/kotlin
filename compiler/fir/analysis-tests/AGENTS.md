@@ -52,6 +52,8 @@ Diagnostic assertions are placed inline around the code that should produce them
 | `.inference.mmd` | General type inference logs via Mermaid format                      | `DUMP_INFERENCE_LOGS: MERMAID` directive present  |
 | `.latestLV.kt`   | Test expectations for latest language version when they differ from stable | `LATEST_LV_DIFFERENCE` directive present     |
 
+Diagnostic messages rendered into `.fir.diag.txt` must follow the [Diagnostic Message Style Guide](../../../docs/diagnostic_message_style_guide.md).
+
 ## Latest Language Version Differences
 
 When a language feature has `sinceVersion` set to a future Kotlin version (e.g., `KOTLIN_2_5`), it is disabled at the stable language version but enabled at the latest language version. This causes different compiler behavior depending on which LV the test runs with.

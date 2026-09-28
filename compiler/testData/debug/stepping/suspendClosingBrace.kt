@@ -17,7 +17,7 @@ suspend fun box() {
     foo(true)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // GeneratedCodeMarkers.kt:... box
 // GeneratedCodeMarkers.kt:... box
 // test.kt:14 box

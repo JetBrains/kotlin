@@ -103,6 +103,9 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         // We use dev distribution for tests as it provides a full set of testing utilities,
         // which might not be available in user distribution.
         add("-Xllvm-variant=dev")
+
+        add(provisionedXcodeCompilerArgs)
+
         binaryOptions.options.let { options ->
             when {
                 // Explicitly mentioned runtimeAssertionsMode overrides default test infra behaviour.
@@ -540,6 +543,7 @@ class CInteropCompilation(
             if (noDefaultLibs) {
                 add("-no-default-libs")
             }
+            addAll(provisionedXcodeCInteropArgs)
             dependencies.forEach {
                 add("-l")
                 add(it.artifact.path)

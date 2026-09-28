@@ -13,19 +13,9 @@ inline fun <T, R> mapJList(values: Iterable<T>?, f: (T) -> R?): JavacList<R> {
 
     var result = JavacList.nil<R>()
     for (item in values) {
-        f(item)?.let { result = result.append(it) }
+        f(item)?.let { result = result.prepend(it) }
     }
-    return result
-}
-
-inline fun <T, R> mapJListIndexed(values: Iterable<T>?, f: (Int, T) -> R?): JavacList<R> {
-    if (values == null) return JavacList.nil()
-
-    var result = JavacList.nil<R>()
-    values.forEachIndexed { index, item ->
-        f(index, item)?.let { result = result.append(it) }
-    }
-    return result
+    return result.reverse()
 }
 
 inline fun <T> mapPairedValuesJList(valuePairs: List<Any>?, f: (String, Any) -> T?): JavacList<T> {
@@ -57,6 +47,3 @@ fun pairedListToMap(valuePairs: List<Any>?): Map<String, Any?> {
 operator fun <T : Any> JavacList<T>.plus(other: JavacList<T>): JavacList<T> {
     return this.appendList(other)
 }
-
-fun <T : JCTree> List<Pair<T, String>>.getJavacList(): JavacList<T> =
-    mapJList(this) { it.first }

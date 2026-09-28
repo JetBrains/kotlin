@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // STRING_CONCAT: indy-with-constants
 // There are 65000 `0` symbols each encoded with 1 byte + 3 surrogate pairs which encoded with 6 bytes (3 byte first part + 3 byte second),
 // first pair should be splitted in test

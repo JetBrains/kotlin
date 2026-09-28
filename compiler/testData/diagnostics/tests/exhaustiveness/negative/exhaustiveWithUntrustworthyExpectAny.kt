@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // LANGUAGE: +MultiPlatformProjects +DataFlowBasedExhaustiveness
 

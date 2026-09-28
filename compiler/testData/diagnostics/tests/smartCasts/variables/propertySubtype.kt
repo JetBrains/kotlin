@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class MyClass(var p: Any)
 
 fun bar(s: Any): Int {

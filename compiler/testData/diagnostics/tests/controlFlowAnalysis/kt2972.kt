@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-2972 Wrong "unused value" warning when finally is present
 
 import java.io.Closeable

@@ -25,6 +25,16 @@ val fatJarContents = configurations.create("fatJarContents") {
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
     }
 }
+val compilerSources = configurations.create("compilerSources") {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+        attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 val fatJarContentsStripMetadata = configurations.create("fatJarContentsStripMetadata")
 val fatJarContentsStripServices = configurations.create("fatJarContentsStripServices")
 val fatJarContentsStripVersions = configurations.create("fatJarContentsStripVersions")
@@ -105,6 +115,7 @@ val distLibraryProjects = listOfNotNull(
 
 val distCompilerPluginProjects = listOf(
     ":kotlin-allopen-compiler-plugin",
+    ":kotlin-atomicfu-compiler-plugin",
     ":plugins:parcelize:parcelize-compiler",
     ":plugins:parcelize:parcelize-runtime",
     ":kotlin-noarg-compiler-plugin",
@@ -144,9 +155,11 @@ dependencies {
     compilerVersion(project(":compiler:compiler.version"))
     proguardLibraries(project(":compiler:compiler.version"))
     CompilerModules.compilerModules
-        .filter { it != ":compiler:compiler.version" } // Version will be added directly to the final jar excluding proguard and relocation
         .forEach {
-            fatJarContents(project(it)) { isTransitive = false }
+            compilerSources(project(it)) { isTransitive = false }
+            if (it != ":compiler:compiler.version") { // Version will be added directly to the final jar excluding proguard and relocation
+                fatJarContents(project(it)) { isTransitive = false }
+            }
         }
 
     libraries(kotlinStdlib("jdk8"))
@@ -196,7 +209,6 @@ dependencies {
     buildNumber(project(":prepare:build.version", configuration = "buildVersion"))
 
     fatJarContents(commonDependency("javax.inject"))
-    fatJarContents(variantOf(libs.jline) { classifier("jdk8") })
     fatJarContents(commonDependency("org.fusesource.jansi", "jansi"))
     fatJarContents(protobufFull())
     fatJarContents(commonDependency("com.google.code.findbugs", "jsr305"))
@@ -314,7 +326,6 @@ val proguard = tasks.register<CacheableProguardTask>("proguard") {
             !org/apache/log4j/net/SMTP*,
             !org/apache/log4j/or/jms/MessageRenderer*,
             !org/jdom/xpath/Jaxen*,
-            !org/jline/builtins/ssh/**,
             !org/mozilla/javascript/xml/impl/xmlbeans/**,
             !net/sf/cglib/**,
             !META-INF/maven**,
@@ -355,7 +366,7 @@ val proguard = tasks.register<CacheableProguardTask>("proguard") {
 }
 
 val pack: TaskProvider<out DefaultTask> = if (kotlinBuildProperties.proguard) proguard else packCompiler
-val distDir = rootProject.extra["distDir"] as String
+val distDir = "$rootDir/dist"
 
 val jar = runtimeJar {
     dependsOn(pack)
@@ -381,13 +392,7 @@ val jar = runtimeJar {
 }
 
 sourcesJar {
-    from {
-        CompilerModules.compilerModules.map {
-            project(it).run { commonMainKotlinSourceSet()?.kotlin ?: mainSourceSet.allSource }
-        }
-    }
-
-    dependsOn(":compiler:fir:checkers:generateCheckersComponents", ":compiler:ir.tree:generateTree")
+    addEmbeddedSources("compilerSources")
 }
 
 javadocJar()

@@ -1,0 +1,27 @@
+@Target(AnnotationTarget.TYPE)
+annotation class A
+
+@Target(AnnotationTarget.TYPE)
+annotation class B
+
+fun plain(f: () -> Unit) {}
+
+fun annotated(f: @A () -> Unit) {}
+
+fun annotatedTwice(f: @A @B (Int) -> String) {}
+
+fun nullable(f: (() -> Unit)?) {}
+
+fun annotatedAndNullable(f: (@A () -> Unit)?) {}
+
+fun annotatedWithReceiver(f: @A String.(Int) -> Unit) {}
+
+fun annotatedFunctionTypeReceiver(f: (@A () -> Unit).(Int) -> Unit) {}
+
+fun annotatedSuspend(f: @A suspend () -> Unit) {}
+
+fun annotatedNested(f: (@A () -> Unit) -> Unit) {}
+
+fun annotatedAsReturnType(): @A () -> Unit = {}
+
+fun annotatedClassType(f: @A List<Int>) {}

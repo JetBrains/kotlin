@@ -97,6 +97,8 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
             val friendDependencies = mutableMapOf<HmppCliModule, List<String>>()
 
             if (SEPARATE_KMP_COMPILATION in module.directives) {
+                val allModuleDependencies = mutableMapOf<HmppCliModule, List<String>>()
+                val allFriendDependencies = mutableMapOf<HmppCliModule, List<String>>()
                 for ([testModule, cliModule] in hmppModules) {
                     val dependencies = mutableListOf<String>()
                     val friends = mutableListOf<String>()
@@ -118,8 +120,20 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
                         dependencies.add(standardLibrariesPathProvider.webStdlibForTests().canonicalPath)
                     }
 
-                    moduleDependencies[cliModule] = dependencies
-                    friendDependencies[cliModule] = friends
+                    allModuleDependencies[cliModule] = dependencies
+                    allFriendDependencies[cliModule] = friends
+
+                    fun List<String>.deduplicateDependencies(allDeps: Map<HmppCliModule, List<String>>): List<String> {
+                        val result = this.toMutableList()
+                        for ([dependencyModule, _, _] in testModule.dependsOnDependencies) {
+                            val dependencyCliModule = hmppModules.getValue(dependencyModule)
+                            result -= allDeps.getValue(dependencyCliModule)
+                        }
+                        return result
+                    }
+
+                    moduleDependencies[cliModule] = dependencies.deduplicateDependencies(allModuleDependencies)
+                    friendDependencies[cliModule] = friends.deduplicateDependencies(allFriendDependencies)
                 }
             }
 
@@ -134,9 +148,11 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
         if (FirDiagnosticsDirectives.WITH_EXPERIMENTAL_CHECKERS in module.directives) {
             configuration.useFirExperimentalCheckers = true
         }
+        // TODO: KT-89415
         when (module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)) {
-            FirParser.Psi -> configuration.useLightTree = false
-            FirParser.LightTree -> configuration.useLightTree = true
+            FirParser.Psi -> configuration.parserMode = ParserMode.Psi
+            FirParser.LightTree -> configuration.parserMode = ParserMode.LightTree
+            FirParser.KmpTree -> configuration.parserMode = ParserMode.KmpTree
             null -> {}
         }
         configuration.allowNoSourceFiles = true

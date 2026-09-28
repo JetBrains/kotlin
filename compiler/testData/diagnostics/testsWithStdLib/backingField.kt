@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 var myProperty = listOf(1, 2, 3)
     get() {
         return field + field

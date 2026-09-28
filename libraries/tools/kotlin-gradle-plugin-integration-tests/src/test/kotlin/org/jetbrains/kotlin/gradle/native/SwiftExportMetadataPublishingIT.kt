@@ -9,7 +9,6 @@ import kotlinx.serialization.json.int
 import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.export.ExperimentalExportDsl
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.*
@@ -25,7 +24,7 @@ import kotlin.test.assertNull
  */
 @DisplayName("Tests for Swift Export metadata publication with the export DSL")
 @SwiftExportGradlePluginTests
-@OptIn(ExperimentalExportDsl::class, ExperimentalSwiftExportDsl::class)
+@OptIn(ExperimentalSwiftExportDsl::class)
 class SwiftExportMetadataPublishingIT : KGPBaseTest() {
 
     @DisplayName("swiftExport metadata is published into the root component when module name and root package are defined")

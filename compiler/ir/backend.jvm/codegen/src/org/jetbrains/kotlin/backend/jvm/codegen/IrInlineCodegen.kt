@@ -46,11 +46,16 @@ class IrInlineCodegen(
     private val sourceCompiler: SourceCompilerForInline,
     private val reifiedTypeInliner: ReifiedTypeInliner,
     private val markInlinedSuspensionPointAsUnitReturning: Boolean,
+    // Whether this is the call to the underlying function in a `$default` stub, which
+    // could not be handled because the two disagree on the JVM parameter layout. See KT-89206.
+    private val isDefaultStubCallToImplementation: Boolean,
 ) : IrInlineCallGenerator {
 
     private val inlineArgumentsInPlace = canInlineArgumentsInPlace()
     private val invocationParamBuilder = ParametersBuilder.newBuilder()
     private val maskValues = ArrayList<Int>()
+    private val varIndicesOfMaskableParameters = ArrayList<Int>()
+    private var nextParameterVarIndex = 0
     private var maskStartIndex = -1
     private var methodHandleInDefaultMethodIndex = -1
     private val initialFrameSize = codegen.frameMap.currentSize
@@ -106,6 +111,17 @@ class IrInlineCodegen(
         codegen: ExpressionCodegen,
         blockInfo: BlockInfo,
     ) {
+        val thisParameterVarIndex = nextParameterVarIndex
+        nextParameterVarIndex += parameterType.size
+
+        if (irValueParameter.kind != DispatchReceiver &&
+            irValueParameter.kind != ExtensionReceiver &&
+            irValueParameter.origin != IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER &&
+            irValueParameter.origin != IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+        ) {
+            varIndicesOfMaskableParameters.add(thisParameterVarIndex)
+        }
+
         val inlineLambda = argumentExpression.unwrapRichInlineLambda()
         if (inlineLambda != null) {
             val lambdaInfo = IrExpressionLambdaImpl(codegen, inlineLambda)
@@ -160,10 +176,12 @@ class IrInlineCodegen(
                     //         .let {}
                     //   * Inline parameters.
                     //   * Continuation argument.
+                    //   * An unchanged `$default` stub parameter whose slot already has a local variable table entry.
                     val argValue = if (
                         (irValueParameter.parent as IrDeclaration).isInlineOnly() && irValueParameter.kind != IrParameterKind.ExtensionReceiver ||
                         irValueParameter.isInlineParameter() ||
-                        irValueParameter.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
+                        irValueParameter.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
+                        isDefaultStubCallToImplementation
                     ) {
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     } else {
@@ -191,9 +209,7 @@ class IrInlineCodegen(
                     assert(constantValue is Int) { "Mask should be of Integer type, but $constantValue" }
                     maskValues.add(constantValue as Int)
                     if (maskStartIndex == -1) {
-                        maskStartIndex = invocationParamBuilder.listAllParams().sumOf<ParameterInfo> {
-                            if (it is CapturedParamInfo) 0 else it.type.size
-                        }
+                        maskStartIndex = thisParameterVarIndex
                     }
                 } else {
                     assert(constantValue == null) { "Additional method handle for default argument should be null, but " + constantValue!! }
@@ -257,7 +273,7 @@ class IrInlineCodegen(
         if (maskStartIndex != -1) {
             val parameters = invocationParamBuilder.buildParameters()
             val infos = expandMaskConditionsAndUpdateVariableNodes(
-                node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
+                node, varIndicesOfMaskableParameters, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
                 parameters.parameters.filter { it.functionalArgument === DefaultValueOfInlineParameter }
                     .mapTo<_, _, MutableCollection<Int>>(mutableSetOf()) { parameters.getDeclarationSlot(it) }
             )
@@ -334,6 +350,7 @@ class IrInlineCodegen(
             maskStartIndex,
             maskStartIndex + maskValues.size,
             skipLineNumbers = codegen.isNoLineNumberScope,
+            skipParameterLocalVariables = isDefaultStubCallToImplementation,
         ) //with captured
 
         val remapper = LocalVarRemapper(parameters, initialFrameSize)

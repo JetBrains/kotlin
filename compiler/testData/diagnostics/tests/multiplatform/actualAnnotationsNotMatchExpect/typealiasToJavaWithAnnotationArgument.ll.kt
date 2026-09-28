@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // Not a real LL divergence, it's just tiered runners reporting errors from `BACKEND`
 // LL_FIR_DIVERGENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // This test is for the case when expect annotation is FirAnnotationCall and actual annotation is not FirAnnotationCall
 // MODULE: common
 expect annotation class Ann(val p: Int)

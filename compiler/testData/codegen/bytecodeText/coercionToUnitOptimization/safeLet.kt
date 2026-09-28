@@ -1,6 +1,3 @@
-// TODO KT-36650 Don't generate CHECKCAST on null values in JVM_IR
-// TODO KT-36654 Generate more compact bytecode for safe call in JVM_IR
-
 fun test(ss: List<String?>) {
     val shortStrings = hashSetOf<String>()
     val longStrings = hashSetOf<String>()

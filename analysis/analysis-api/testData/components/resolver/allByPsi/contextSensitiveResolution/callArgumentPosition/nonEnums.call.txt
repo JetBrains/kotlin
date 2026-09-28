@@ -1062,13 +1062,13 @@ KtCallExpression(514,521): 'id(Bar)'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.Bar
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.Bar
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -1076,13 +1076,13 @@ KtCallExpression(514,521): 'id(Bar)'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MyClass)
+        X -> (MyClass.Bar)
       }
       valueArgumentMapping = {
         Bar -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.Bar
           symbol = x: X
           contextParameters = []
           callableId = null)
@@ -1097,13 +1097,13 @@ KtNameReferenceExpression(514,516): 'id'
       extensionReceiver = null
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = MyClass
+        returnType = MyClass.Bar
         symbol = /id(x: X): X
         valueParameters = [
           KaVariableSignature:
             name = x
             receiverType = null
-            returnType = MyClass
+            returnType = MyClass.Bar
             symbol = x: X
             contextParameters = []
             callableId = null
@@ -1111,13 +1111,13 @@ KtNameReferenceExpression(514,516): 'id'
         contextParameters = []
         callableId = /id
       typeArgumentsMapping = {
-        X -> (MyClass)
+        X -> (MyClass.Bar)
       }
       valueArgumentMapping = {
         Bar -> (KaVariableSignature:
           name = x
           receiverType = null
-          returnType = MyClass
+          returnType = MyClass.Bar
           symbol = x: X
           contextParameters = []
           callableId = null)

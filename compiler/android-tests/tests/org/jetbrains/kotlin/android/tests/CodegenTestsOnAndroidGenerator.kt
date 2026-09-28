@@ -19,12 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.additionalIrCheckers
-import org.jetbrains.kotlin.config.disableIrCheckers
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -342,7 +337,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     continue
                 }
 
-                if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM_IR, file) ||
+                if (!InTextDirectivesUtils.isPassingTarget(TargetBackend.JVM, file) ||
                     InTextDirectivesUtils.isIgnoredTarget(
                         TargetBackend.ANDROID, file, /*includeAny=*/ true, *IGNORE_BACKEND_DIRECTIVE_PREFIXES
                     )

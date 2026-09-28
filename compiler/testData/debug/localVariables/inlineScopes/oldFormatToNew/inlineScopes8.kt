@@ -65,7 +65,7 @@ fun box() {
     foo()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:64 box:
 // library.kt:20 box: $i$f$foo\1\64:int=0:int
 // library.kt:21 box: $i$f$foo\1\64:int=0:int, array\1:java.lang.Integer[]=java.lang.Integer[]

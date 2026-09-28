@@ -224,10 +224,11 @@ KtNameReferenceExpression(343,353): 'EnumValue1'
     ]
 
 KtBinaryExpression(358,377): 'i + InheritorObject'
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /OperatorHolder.plus>
 
 KtNameReferenceExpression(358,359): 'i'
   isImplicitReferenceToCompanion: false
@@ -242,10 +243,11 @@ KtOperationReferenceExpression(360,361): '+'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /OperatorHolder.plus(<dispatch receiver>: OperatorHolder, enumArg: MyEnum): kotlin.Unit
     ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /OperatorHolder.plus>
 
 KtNameReferenceExpression(362,377): 'InheritorObject'
   isImplicitReferenceToCompanion: false

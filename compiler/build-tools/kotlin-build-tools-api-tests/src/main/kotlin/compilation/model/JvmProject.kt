@@ -28,6 +28,7 @@ class JvmProject(
         dependencies: List<Dependency>,
         snapshotConfig: SnapshotConfig,
         stdlibClasspath: List<Path>?,
+        compileJavaSources: Boolean,
         moduleCompilationConfigAction: (JvmCompilationOperation.Builder) -> Unit,
     ): JvmModule {
         val moduleDirectory = projectDirectory.resolve(moduleName)
@@ -44,7 +45,8 @@ class JvmProject(
             moduleCompilationConfigAction = moduleCompilationConfigAction,
             stdlibLocation = stdlibClasspath ?: listOf(
                 currentKotlinStdlibLocation // compile against the provided stdlib
-            )
+            ),
+            compileJavaSources = compileJavaSources,
         )
         initModule(module, moduleName)
         return module

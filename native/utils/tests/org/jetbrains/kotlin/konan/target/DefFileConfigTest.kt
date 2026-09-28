@@ -44,7 +44,7 @@ class DefFileConfigTest {
 
             for (expected: List<String>? in stringListValues) {
                 val properties = Properties()
-                expected?.let { properties.setProperty(propertyName, it.joinToString(separator = " ")) }
+                if (expected != null) properties.setProperty(propertyName, expected.joinToString(separator = " "))
 
                 val actual: List<String> = DefFileConfig(properties).readProperty()
                 assertEquals(expected.orEmpty(), actual, "Incorrect value for \"$propertyName\" property: $expected vs $actual")
@@ -69,7 +69,7 @@ class DefFileConfigTest {
 
             for (expected: String? in stringValues) {
                 val properties = Properties()
-                expected?.let { properties.setProperty(propertyName, it) }
+                if (expected != null) properties.setProperty(propertyName, expected)
 
                 val actual: String? = DefFileConfig(properties).readProperty()
                 assertEquals(expected ?: defaultValue, actual, "Incorrect value for \"$propertyName\" property: $expected vs $actual")
@@ -89,7 +89,7 @@ class DefFileConfigTest {
 
             for (expected: Boolean? in booleanValues) {
                 val properties = Properties()
-                expected?.let { properties.setProperty(propertyName, it.toString()) }
+                if (expected != null) properties.setProperty(propertyName, expected.toString())
 
                 val actual: Boolean = DefFileConfig(properties).readProperty()
                 assertEquals(expected ?: false, actual, "Incorrect value for \"$propertyName\" property: $expected vs $actual")

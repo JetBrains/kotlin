@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See also KT-7186 and forEachSafe.kt
 // Custom `forEach` has no contract but the lambda is inline (not crossinline) so smart cast is safe
 

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
@@ -595,6 +596,7 @@ private fun loadLibraries(cinteropArguments: CInteropArguments, target: KonanTar
                 }
         )
         platformChecker(KlibPlatformChecker.Native(target.name))
+        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
         manifestTransformer(KlibNativeManifestTransformer(target))
     }.load()

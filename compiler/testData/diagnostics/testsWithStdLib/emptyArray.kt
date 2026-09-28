@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 val x: Array<String> = emptyArray()
 
 val y: Array<String>

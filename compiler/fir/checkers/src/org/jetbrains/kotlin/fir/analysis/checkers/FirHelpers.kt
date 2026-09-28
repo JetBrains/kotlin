@@ -9,11 +9,7 @@ import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
@@ -23,6 +19,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.Plain
 import org.jetbrains.kotlin.fir.analysis.checkers.RecursionType.ViaTypeParameters
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.lexer.KtTokens.VAL_VAR
@@ -431,6 +429,8 @@ val CheckerContext.secondToLastContainer: FirElement?
 
 fun CheckerContext.nthLastContainer(n: Int): FirElement? = containingElements.let { it.getOrNull(it.size - n) }
 
+val CheckerContext.isInsideAnnotationCall: Boolean get() = callsOrAssignments.any { it is FirAnnotationCall }
+
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkTypeMismatch(
     lValueOriginalType: ConeKotlinType,
@@ -678,7 +678,7 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
     val annotated =
         if (container is FirBackingField) {
             when {
-                !container.propertySymbol.hasBackingField -> container.propertyIfBackingField
+                !container.propertySymbol.hasAnnotatableBackingField -> container.propertyIfBackingField
                 container.propertySymbol.getContainingClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS -> {
                     @OptIn(AnnotationTargetListForDeprecation::class)
                     return TargetLists.T_MEMBER_PROPERTY_IN_ANNOTATION
@@ -716,15 +716,23 @@ fun getActualTargetList(container: FirAnnotationContainer, session: FirSession):
                     if (annotated.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
                         TargetLists.T_VALUE_PARAMETER_WITH_VAL
                     } else {
-                        TargetLists.T_MEMBER_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionMember = false)
+                        TargetLists.T_MEMBER_PROPERTY(
+                            backingField = annotated.hasAnnotatableBackingField,
+                            delegate = annotated.delegate != null,
+                            isCompanionMember = false,
+                        )
                     }
                 annotated.isCompanionBlockMember -> TargetLists.T_MEMBER_PROPERTY(
-                    backingField = annotated.hasBackingField,
+                    backingField = annotated.hasAnnotatableBackingField,
                     delegate = annotated.delegate != null,
-                    isCompanionMember = true
+                    isCompanionMember = true,
                 )
                 else ->
-                    TargetLists.T_TOP_LEVEL_PROPERTY(annotated.hasBackingField, annotated.delegate != null, isCompanionExtension = annotated.isCompanionExtension)
+                    TargetLists.T_TOP_LEVEL_PROPERTY(
+                        backingField = annotated.hasAnnotatableBackingField,
+                        delegate = annotated.delegate != null,
+                        isCompanionExtension = annotated.isCompanionExtension,
+                    )
             }
         }
         is FirValueParameter -> {
@@ -945,6 +953,10 @@ fun ConeKotlinType.forEachClassId(f: (ClassId) -> Unit) {
         is ConeDefinitelyNotNullType -> original.forEachClassId(f)
         is ConeCapturedType -> constructor.supertypes?.forEach { it.forEachClassId(f) }
         is ConeIntersectionType -> intersectedTypes.forEach { it.forEachClassId(f) }
+        is ConeUnionType -> {
+            primaryType.forEachClassId(f)
+            richErrorTypes.forEach { it.forEachClassId(f) }
+        }
         is ConeTypeParameterType -> lookupTag.symbol.resolvedBounds.forEach { it.coneType.forEachClassId(f) }
         is ConeClassLikeType -> fullyExpandedType().classId.let(f)
         is ConeStubTypeForTypeVariableInSubtyping,
@@ -1257,3 +1269,13 @@ internal fun FirDeclaration.containsErrorTypes(): Boolean {
 
     return hasErrorType
 }
+
+context(context: CheckerContext)
+internal fun isInConstContext(): Boolean {
+    if (context.findClosest<FirPropertySymbol> { it.isConst } != null) return true
+    if (context.callsOrAssignments.any { it is FirAnnotation }) return true
+    return false
+}
+
+val ConeKotlinType.isTypealiasToAny: Boolean
+    get() = abbreviatedType != null && isAny

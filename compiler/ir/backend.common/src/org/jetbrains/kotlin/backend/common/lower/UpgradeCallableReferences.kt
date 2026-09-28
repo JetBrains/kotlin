@@ -42,6 +42,8 @@ open class UpgradeCallableReferences(
         irFunction.transform(UpgradeTransformer(), irFunction)
     }
 
+    protected open fun getSamConversionArgument(argument: IrExpression): IrExpression = argument
+
     private data class AdaptedBlock(
         val function: IrSimpleFunction,
         val reference: IrFunctionReference,
@@ -197,7 +199,7 @@ open class UpgradeCallableReferences(
         override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclarationParent): IrExpression {
             if (upgradeSamConversions && expression.operator == IrTypeOperator.SAM_CONVERSION) {
                 expression.transformChildren(this, data)
-                val argument = expression.argument
+                val argument = getSamConversionArgument(expression.argument)
                 if (argument !is IrRichFunctionReference) return expression
                 return argument.apply {
                     startOffset = expression.startOffset
@@ -473,8 +475,8 @@ open class UpgradeCallableReferences(
                         for ([parameter, forwardParameter] in referencedFunction.parameters.zip(forwardOrder)) {
                             val rawArgument = builder.irGet(forwardParameter)
                             // If referencedFunction is a fake override, its dispatch receiver type is some supertype of the containing class.
-                            // We take the conainting class type instead to prevent a crash in synthetic property lowering.
-                            val castType = if (parameter.kind == IrParameterKind.DispatchReceiver) {
+                            // We take the containing class type instead to prevent a crash in synthetic accessor lowering.
+                            val castType = if (parameter.kind == IrParameterKind.DispatchReceiver && referencedFunction.isFakeOverride) {
                                 referencedFunction.parentAsClass.defaultType
                             } else {
                                 parameter.type

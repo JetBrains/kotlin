@@ -1,0 +1,463 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(RAW_FIR)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(RAW_FIR)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(COMPANION_GENERATION)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(SUPER_TYPES)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(TYPES)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Result] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(STATUS)] val code: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Result] get(): R|kotlin/Int|
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Success : Result {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.value] value: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Success.code] code: Int): R|pack/Success| {
+            LAZY_super<Result>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: String = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): String
+
+        public? open? override [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val code: Int = R|<local>/code|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Success] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] object Empty : Result {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            LAZY_super<Result>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] val code: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Empty] get(): Int { LAZY_BLOCK }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassSealed.kt
+    public sealed value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=null)] class Result : R|kotlin/Any| {
+        protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Result] constructor(): R|pack/Result| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] val code: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Result] get(): R|kotlin/Int|
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(value, kotlin/String), (code, kotlin/Int)])] class Success : R|pack/Result| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Success] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Success.value] value: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Success.code] code: R|kotlin/Int|): R|pack/Success| {
+            super<R|pack/Result|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/String| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Success] get(): R|kotlin/String|
+
+        public open override [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val code: R|kotlin/Int| = R|<local>/code|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Success] get(): R|kotlin/Int|
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[])] object Empty : R|pack/Result| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Empty] constructor(): R|pack/Empty| {
+            super<R|pack/Result|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] val code: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Empty] get(): R|kotlin/Int| {
+                ^ Int(0)
+            }
+
+    }

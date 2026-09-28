@@ -1,4 +1,3 @@
-@file:OptIn(ExperimentalWasmDsl::class)
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
@@ -955,6 +954,7 @@ class UklibInterprojectResolutionTests {
         )
     }
 
+    @OptIn(ExperimentalWasmDsl::class)
     @Test
     fun `circular dependency between projects with associated compilation doesn't duplicate klibs in test compilations`() {
         val root = buildProject()

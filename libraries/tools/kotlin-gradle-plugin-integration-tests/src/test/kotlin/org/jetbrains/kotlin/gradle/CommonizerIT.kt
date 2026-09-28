@@ -1100,14 +1100,14 @@ open class CommonizerIT : KGPBaseTest() {
                 getCommonizerDependencies("nativeMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper")
                     assertTargetOnAllDependencies(
-                        CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
+                        CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_ARM64, MINGW_X64)
                     )
                 }
 
                 getCommonizerDependencies("nativeTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                     assertDependencyFilesMatches(".*nativeHelper", ".*nativeTestHelper")
                     assertTargetOnAllDependencies(
-                        CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_X64, MINGW_X64)
+                        CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, LINUX_X64, LINUX_ARM64, MACOS_ARM64, MINGW_X64)
                     )
                 }
 
@@ -1120,7 +1120,7 @@ open class CommonizerIT : KGPBaseTest() {
                             IOS_SIMULATOR_ARM64,
                             LINUX_X64,
                             LINUX_ARM64,
-                            MACOS_X64
+                            MACOS_ARM64
                         )
                     )
                 }
@@ -1134,7 +1134,7 @@ open class CommonizerIT : KGPBaseTest() {
                             IOS_SIMULATOR_ARM64,
                             LINUX_X64,
                             LINUX_ARM64,
-                            MACOS_X64
+                            MACOS_ARM64
                         )
                     )
                 }
@@ -1157,12 +1157,12 @@ open class CommonizerIT : KGPBaseTest() {
                 if (isMac) {
                     getCommonizerDependencies("appleMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MACOS_X64))
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MACOS_ARM64))
                     }
 
                     getCommonizerDependencies("appleTest").withoutNativeDistributionDependencies(konanDataDirProperty).apply {
                         assertDependencyFilesMatches(".*nativeHelper", ".*unixHelper", ".*appleHelper", ".*nativeTestHelper")
-                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MACOS_X64))
+                        assertTargetOnAllDependencies(CommonizerTarget(IOS_X64, IOS_ARM64, IOS_SIMULATOR_ARM64, MACOS_ARM64))
                     }
 
                     getCommonizerDependencies("iosMain").withoutNativeDistributionDependencies(konanDataDirProperty).apply {

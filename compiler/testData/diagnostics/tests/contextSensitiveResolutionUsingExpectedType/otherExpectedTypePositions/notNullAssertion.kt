@@ -27,7 +27,7 @@ fun testNotNullAssertion() {
 fun testIndexAccess(): Int? {
     val map = mapOf<MyClass, Int>(MyClass.myClassProp to 1,  <!ARGUMENT_TYPE_MISMATCH!>MyClass.stringProp to 2<!>, MyClass.NestedInheritor to 3, MyClass.getNestedInheritor() to 4)
     return map[myClassProp]
-    return map[<!ARGUMENT_TYPE_MISMATCH!>stringProp<!>]
+    return <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>map[stringProp]<!>
     return map[NestedInheritor]
     return map[<!UNRESOLVED_REFERENCE!>getNestedInheritor<!>()]
 }

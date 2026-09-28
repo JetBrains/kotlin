@@ -3,6 +3,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
     id("java-test-fixtures")
+    id("test-coverage-convention")
     id("require-explicit-types")
 }
 
@@ -14,6 +15,7 @@ dependencies {
     implementation(project(":compiler:psi:psi-impl"))
     implementation(project(":compiler:psi:psi-frontend-utils"))
     implementation(project(":compiler:psi:parser"))
+    implementation(project(":compiler:multiplatform-parsing"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)
@@ -29,16 +31,11 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:raw-fir.common")))
 
     testCompileOnly(kotlinTest("junit"))
-
-    testFixturesCompileOnly(intellijCore())
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -53,11 +50,12 @@ kotlin {
 }
 
 projectTests {
-    testTask {
-        workingDir = rootDir
-    }
+    testTask()
 
-    testGenerator("org.jetbrains.kotlin.fir.lightTree.TestGeneratorForLightTree2FirKt")
+    testGenerator("org.jetbrains.kotlin.fir.lightTree.TestGeneratorForLightTree2FirKt", generateTestsInBuildDirectory = true)
+
+    testData(project(":compiler:fir:raw-fir").isolated, "testData")
+    testData(project(":compiler").isolated, "testData")
 }
 
 testsJar()

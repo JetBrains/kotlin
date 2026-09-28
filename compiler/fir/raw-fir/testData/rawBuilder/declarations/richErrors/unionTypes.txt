@@ -1,0 +1,9 @@
+FILE: unionTypes.kt
+    public final? error class Foo : R|kotlin/Any| {
+        public? [ContainingClassKey=Foo] constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? fun foo(a: String | Foo, b: String? | Foo, c: (String | Foo)?, d: List<String | Foo>): R|kotlin/Unit| {
+    }

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-336 Can't infer type parameter for ArrayList in a generic function (Exception in type inference)
 // KT-335 Type inference fails on Collections.sort
 

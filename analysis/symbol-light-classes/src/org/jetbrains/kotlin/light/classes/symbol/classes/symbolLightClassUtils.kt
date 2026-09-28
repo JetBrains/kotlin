@@ -7,15 +7,17 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
-import com.intellij.psi.*
-import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiReferenceList
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
-import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.scopes.combinedDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.scopes.staticDeclaredMemberScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
@@ -31,49 +33,43 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.findEntry
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.mangleInternalName
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.config.jvmDefaultMode
-import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getIntroducedAtVersionFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
-import org.jetbrains.kotlin.light.classes.symbol.isJvmField
-import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod.Companion.createPropertyAccessors
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod.Companion.createSimpleMethods
+import org.jetbrains.kotlin.light.classes.symbol.utils.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.utils.copy
+import org.jetbrains.kotlin.light.classes.symbol.utils.isJvmField
+import org.jetbrains.kotlin.light.classes.symbol.utils.mapType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.*
 
-internal fun createSymbolLightClassNoCache(classOrObject: KtClassOrObject, ktModule: KaModule): KtLightClass? = when {
-    classOrObject.isObjectLiteral() -> SymbolLightClassForAnonymousObject(classOrObject, ktModule)
-    classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
-    else -> createLightClassNoCache(classOrObject, ktModule)
-}
-
-internal fun createLightClassNoCache(
-    ktClassOrObject: KtClassOrObject,
-    ktModule: KaModule,
-): SymbolLightClassBase = when (ktClassOrObject) {
-    is KtClass if ktClassOrObject.isAnnotation() -> SymbolLightClassForAnnotationClass(ktClassOrObject, ktModule)
-    is KtClass if ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
-    else -> SymbolLightClassForClassOrObject(ktClassOrObject, ktModule)
+context(_: KaSession)
+internal fun createSymbolLightClassNoCache(classOrObject: KaClassSymbol, useSiteModule: KaModule): KtLightClass? = when (classOrObject) {
+    is KaAnonymousObjectSymbol -> when (val containingSymbol = classOrObject.containingSymbol) {
+        is KaEnumEntrySymbol -> lightClassForEnumEntryInitializer(containingSymbol)
+        else -> SymbolLightClassForAnonymousObject(classOrObject, useSiteModule)
+    }
+    is KaNamedClassSymbol -> createLightClassNoCache(
+        classOrObject,
+        useSiteModule,
+    )
 }
 
 internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTracker> {
@@ -88,34 +84,35 @@ internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTra
 
 internal fun createLightClassNoCache(
     classSymbol: KaNamedClassSymbol,
-    ktModule: KaModule,
-    manager: PsiManager,
+    useSiteModule: KaModule,
 ): SymbolLightClassBase = when (classSymbol.classKind) {
     KaClassKind.INTERFACE -> SymbolLightClassForInterface(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 
     KaClassKind.ANNOTATION_CLASS -> SymbolLightClassForAnnotationClass(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 
     else -> SymbolLightClassForClassOrObject(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 }
 
-private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
-    if (ktEnumEntry.body == null) return null
+context(_: KaSession)
+private fun lightClassForEnumEntryInitializer(enumEntrySymbol: KaEnumEntrySymbol): KtLightClass? {
+    if (enumEntrySymbol.initializer == null) return null
 
-    val symbolLightClass = ktEnumEntry.containingClass()?.toLightClass() as? SymbolLightClassForClassOrObject ?: return null
-    val targetField = symbolLightClass.ownFields.firstOrNull {
-        it is SymbolLightFieldForEnumEntry && it.kotlinOrigin == ktEnumEntry
+    val symbolLightClass =
+        (enumEntrySymbol.containingSymbol as? KaClassSymbol)?.asPsiClass() as? SymbolLightClassForClassOrObject ?: return null
+    val enumEntryPsi = enumEntrySymbol.realPsi as? KtEnumEntry
+    val enumEntrySymbolPointer = enumEntrySymbol.createPointer()
+    val targetField = symbolLightClass.ownFields.firstOrNull { psiField ->
+        psiField is SymbolLightFieldForEnumEntry &&
+                (psiField.kotlinOrigin == enumEntryPsi || psiField.symbolPointer.pointsToTheSameSymbolAs(enumEntrySymbolPointer))
     } ?: return null
 
     return (targetField as? SymbolLightFieldForEnumEntry)?.initializingClass as? KtLightClass
@@ -264,7 +261,6 @@ internal fun <T : KaFunctionSymbol> createMethodsJvmOverloadsAware(
  * - A default value inherited from an *overridden* function is intentionally ignored: `@JvmOverloads` has no effect on
  *   an override, the overloads belong to the base declaration.
  */
-@OptIn(KaContextParameterApi::class)
 context(_: KaSession)
 internal fun defaultParameterValueMask(declaration: KaFunctionSymbol): BitSet {
     val valueParameters = declaration.valueParameters
@@ -482,10 +478,11 @@ internal fun createField(
     if (declaration.name.isSpecial) return null
     if (!hasBackingField(declaration)) return null
 
+    val backingFieldSymbol = declaration.backingFieldSymbol ?: return null
     val fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString())
-
     return SymbolLightFieldForProperty(
         propertySymbol = declaration,
+        backingFieldSymbol = backingFieldSymbol,
         fieldName = fieldName,
         containingClass = lightClass,
         lightMemberOrigin = null,
@@ -494,7 +491,9 @@ internal fun createField(
 }
 
 private fun hasBackingField(property: KaPropertySymbol): Boolean {
-    if (property is KaSyntheticJavaPropertySymbol) return true
+    // Backing field for KaSyntheticJavaPropertySymbol is always `null`.
+    // Thus, there is no point in proceeding further as `SymbolLightFieldForProperty` expects a non-null backing field pointer.
+    if (property is KaSyntheticJavaPropertySymbol) return false
 
     requireWithAttachment(
         property is KaKotlinPropertySymbol,
@@ -505,7 +504,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
         }
     )
 
-    if (property.origin.cannotHasBackingField() || property.isStatic) return false
+    if (property.origin.cannotHaveBackingField() || property.isStatic) return false
     if (property.isLateInit || property.isDelegated || property.primaryConstructorParameter != null) return true
     val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
     if (hasBackingFieldByPsi == false) {
@@ -520,7 +519,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
     return hasBackingFieldByPsi ?: property.hasBackingField
 }
 
-private fun KaSymbolOrigin.cannotHasBackingField(): Boolean =
+private fun KaSymbolOrigin.cannotHaveBackingField(): Boolean =
     this == KaSymbolOrigin.SOURCE_MEMBER_GENERATED ||
             this == KaSymbolOrigin.DELEGATED ||
             this == KaSymbolOrigin.INTERSECTION_OVERRIDE ||
@@ -618,27 +617,18 @@ internal fun createInheritanceList(
 context(session: KaSession)
 internal fun createInnerClasses(
     declarationContainer: KaDeclarationContainerSymbol,
-    manager: PsiManager,
     containingClass: SymbolLightClassBase,
     classOrObject: KtClassOrObject?,
 ): List<SymbolLightClassBase> {
     val result = SmartList<SymbolLightClassBase>()
 
-    declarationContainer.staticDeclaredMemberScope.classifiers.filterIsInstance<KaNamedClassSymbol>().mapNotNullTo(result) {
-        val classOrObjectDeclaration = it.sourcePsiSafe<KtClassOrObject>()
-        if (classOrObjectDeclaration != null) {
-            classOrObjectDeclaration.toLightClass() as? SymbolLightClassBase
-        } else {
-            createLightClassNoCache(it, ktModule = containingClass.ktModule, manager)
-        }
+    declarationContainer.staticDeclaredMemberScope.classifiers.filterIsInstance<KaNamedClassSymbol>().mapNotNullTo(result) { symbol ->
+        symbol.asPsiClass() as? SymbolLightClassBase
     }
-
-    val languageVersionSettings = classOrObject?.let { it.kaModule as? KaSourceModule }?.languageVersionSettings
-        ?: LanguageVersionSettingsImpl.DEFAULT
 
     if (containingClass is SymbolLightClassForInterface &&
         classOrObject?.hasInterfaceDefaultImpls == true &&
-        languageVersionSettings.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
+        containingClass.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
     ) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }
@@ -722,7 +712,6 @@ internal fun addPropertyBackingFields(
     }
     val containerIsObject = containerSymbol is KaClassSymbol && containerSymbol.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KaPropertySymbol) {
-        @OptIn(KaExperimentalApi::class)
         val isStatic = forceIsStaticTo ?: (containerIsObject || propertySymbol.isCompanion)
         createAndAddField(
             lightClass = lightClass,
@@ -849,7 +838,8 @@ internal fun computeJavaMethodName(symbol: KaCallableSymbol, defaultName: String
     return mangleInternalName(defaultName, module.stableModuleName ?: module.name)
 }
 
-private val KaAnnotatedSymbol.jvmNameFromAnnotation: String?
+/** The name provided by [JvmName], if any. */
+internal val KaAnnotatedSymbol.jvmNameFromAnnotation: String?
     get() = stringArgumentFromAnnotation(JvmStandardClassIds.Annotations.JvmName)
 
 private fun KaAnnotatedSymbol.stringArgumentFromAnnotation(classId: ClassId): String? {
@@ -963,3 +953,18 @@ internal inline fun <reified T : KaClassSymbol> KtClassOrObject.createSymbolPoin
 
 internal inline val SymbolLightClassBase.isKotlinValueClass: Boolean
     get() = this is SymbolLightClassForClassOrObject && isKotlinValueClass
+
+/**
+ * The `-jvm-default` mode the module of the light class is compiled with, or the default mode if the module has no
+ * language settings (e.g., a library).
+ */
+internal val SymbolLightClassBase.jvmDefaultMode: JvmDefaultMode
+    get() {
+        val languageVersionSettings = when (val module = useSiteModule) {
+            is KaSourceModule -> module.languageVersionSettings
+            is KaScriptModule -> module.languageVersionSettings
+            else -> LanguageVersionSettingsImpl.DEFAULT
+        }
+
+        return languageVersionSettings.jvmDefaultMode
+    }

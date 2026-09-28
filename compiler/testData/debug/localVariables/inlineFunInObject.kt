@@ -37,7 +37,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:31 box:
 // test.kt:3 box: $i$f$foo\1\31:int=0:int
 // test.kt:3 <init>:
@@ -72,7 +72,7 @@ fun box() {
 // test.kt:23 box: $i$f$bar\2\35:int=0:int
 // test.kt:38 box:
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:31 box:
 // test.kt:3 box: $i$f$foo:int=0:int
 // test.kt:3 <init>:

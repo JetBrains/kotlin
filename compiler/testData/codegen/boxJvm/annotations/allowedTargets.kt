@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WITH_REFLECT
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 @JvmInline
 value class Some(val x: Other)

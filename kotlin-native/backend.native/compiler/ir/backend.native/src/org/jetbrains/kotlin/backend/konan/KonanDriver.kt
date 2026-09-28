@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.uniqueName
@@ -37,8 +38,7 @@ private val softDeprecatedTargets = setOf(
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
-interface CompilationSpawner {
-    fun spawn(configuration: CompilerConfiguration)
+fun interface CompilationSpawner {
     fun spawn(arguments: List<String>, setupConfiguration: CompilerConfiguration.() -> Unit)
 }
 
@@ -67,6 +67,7 @@ class KonanDriver(
                 configuration.makePerFileCache -> {
                     val result = KlibLoader {
                         libraryPaths(libPath)
+                        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
                         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
                         configuration.zipFileSystemAccessor?.let(::zipFileSystemAccessor)
                     }.load()
@@ -155,7 +156,7 @@ class KonanDriver(
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {
         if (environment.getSourceFiles().isEmpty()) {
             // Note: The order of libraries is not important.
-            val libraries = config.resolvedLibraries.getFullList()
+            val libraries = config.loadedKlibs.all
             val moduleName = config.moduleId
             if (libraries.any { it.uniqueName == moduleName }) {
                 val kexeModuleName = "${moduleName}_kexe"

@@ -1,6 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-58539
-// IGNORE_HMPP: JVM_IR, JS_IR
+// IGNORE_HMPP: JVM, JS_IR
 // WITH_AND_WITHOUT_PLUGIN
 
 // MODULE: common

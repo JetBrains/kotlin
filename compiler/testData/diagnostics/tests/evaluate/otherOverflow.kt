@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 val a1: Int = 32000.toShort() * 32000.toShort() * 32000.toShort()
 val a2: Int = 128.toByte() * 128.toByte() * 128.toByte() * 128.toByte() * 128.toByte()
 

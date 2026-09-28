@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // This test is for the case when expect annotation is FirAnnotationCall and actual annotation is not FirAnnotationCall
 // MODULE: common
 expect annotation class Ann(val p: Int)

@@ -46,7 +46,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift")
 internal external fun InterfaceWithDeprecatedMembers_deprecatedWarningFunction__reverse_swift(self: kotlin.native.internal.NativePtr): Boolean

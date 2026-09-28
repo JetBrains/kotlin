@@ -6,11 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
-import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
-import org.jetbrains.kotlin.ir.backend.js.originalCallableReference
-import org.jetbrains.kotlin.ir.backend.js.originalFileForExternalDeclaration
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
@@ -74,7 +70,9 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
  * Cross-module references are not movable at this point, they remain at the consumer site.
  * Deduplication is happening next in [DeduplicateCallableReferenceFactoriesLowering].
  */
-class MoveCallableFactoriesToDeclarationsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
+class MoveCallableFactoriesToDeclarationsLowering(@Suppress("unused") context: JsIrBackendContext) : DeclarationTransformer {
+    internal constructor(context: JsIrOptimizationContext) : this(context.backendContext)
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         val callableReferenceFactory = declaration as? IrSimpleFunction ?: return null
         if (callableReferenceFactory.origin != JsStatementOrigins.FACTORY_ORIGIN) return null

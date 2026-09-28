@@ -52,6 +52,8 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         resourceFiles: List<TestFile>,
         testServices: TestServices,
     ): Path {
+        allowTestsOnlyLanguageFeatures()
+
         val allowedLibraryPlatforms = module.directives[Directives.LIBRARY_PLATFORMS].map { it.targetPlatform }
         val compilationErrorExpected = Directives.COMPILATION_ERRORS in module.directives
                 || (allowedLibraryPlatforms.isNotEmpty() && module.targetPlatform(testServices) !in allowedLibraryPlatforms)
@@ -204,6 +206,10 @@ abstract class JvmTestModuleCompiler : CliTestModuleCompiler() {
             }
 
             addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
+        }
+
+        module.directives.singleOrZeroValue(LanguageSettingsDirectives.JVM_DEFAULT_MODE)?.let { jvmDefaultMode ->
+            add(K2JVMCompilerArguments::jvmDefaultStable.cliArgument(jvmDefaultMode.description))
         }
 
         if (LanguageSettingsDirectives.JVM_EXPOSE_BOXED in module.directives) {

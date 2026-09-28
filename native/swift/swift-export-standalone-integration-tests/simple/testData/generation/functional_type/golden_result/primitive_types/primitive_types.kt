@@ -1,16 +1,23 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 
-import kotlin.native.internal.ExportedBridge
+import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
+import kotlin.native.internal.ExportedBridge
+
+@ImportedBridge("primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__")
+internal external fun primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__(pointerToClosure: kotlin.native.internal.NativePtr, _1: Byte): Byte
+
+@ImportedBridge("primitive_types_internal_functional_type_callee_SwiftU2EUInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32__")
+internal external fun primitive_types_internal_functional_type_callee_SwiftU2EUInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32__(pointerToClosure: kotlin.native.internal.NativePtr, _1: UInt): UInt
 
 @ExportedBridge("__root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__")
 public fun __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U29202D_U20Swift_Int8__(block: kotlin.native.internal.NativePtr): Byte {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(Byte)->Byte>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Byte ->
             val _arg0 = arg0
-            val _result = kotlinFun(_arg0)
+            val _result = primitive_types_internal_functional_type_callee_SwiftU2EInt8__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int8__(closureBox.objcPtr(), _arg0)
             _result
         }
     }
@@ -21,10 +28,11 @@ public fun __root___consume_block_with_byte_id__TypesOfArguments__U28Swift_Int8U
 @ExportedBridge("__root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt32U29202D_U20Swift_UInt32__")
 public fun __root___consume_block_with_uint_id__TypesOfArguments__U28Swift_UInt32U29202D_U20Swift_UInt32__(block: kotlin.native.internal.NativePtr): UInt {
     val __block = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(UInt)->UInt>(block);
+        val closurePtr = block;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: UInt ->
             val _arg0 = arg0
-            val _result = kotlinFun(_arg0)
+            val _result = primitive_types_internal_functional_type_callee_SwiftU2EUInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_UInt32__(closureBox.objcPtr(), _arg0)
             _result
         }
     }

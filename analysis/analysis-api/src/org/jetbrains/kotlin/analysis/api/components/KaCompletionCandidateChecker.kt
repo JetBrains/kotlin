@@ -57,7 +57,6 @@ public interface KaCompletionExtensionCandidateChecker : KaLifetimeOwner {
  */
 @KaIdeApi
 @KaExperimentalApi
-@OptIn(KaImplementationDetail::class)
 public sealed class KaExtensionApplicabilityResult : KaLifetimeOwner {
     @KaIdeApi
     @KaExperimentalApi

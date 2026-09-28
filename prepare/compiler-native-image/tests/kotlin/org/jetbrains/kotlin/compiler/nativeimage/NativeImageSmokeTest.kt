@@ -5,28 +5,4 @@
 
 package org.jetbrains.kotlin.compiler.nativeimage
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
-import java.io.File
-
-class NativeImageSmokeTest {
-    @TempDir
-    lateinit var workingDir: File
-
-    private val runner = NativeImageCompilerRunner(System.getProperty("java.home"))
-
-    @Test
-    fun testSmoke() {
-        val source = File("testData/projects/smoke/Smoke.kt").absoluteFile
-        val outDir = File(workingDir, "out").apply { mkdirs() }
-
-        val [exitCode, output] = runner.run(
-            workingDir = workingDir,
-            arguments = listOf(source.absolutePath, "-d", outDir.absolutePath),
-            classpath = emptyList(),
-        )
-
-        assertEquals(0, exitCode, "compilation failed:\n$output")
-    }
-}
+class NativeImageSmokeTest : AbstractCompilerSmokeTest(NativeImageCompilerRunner(System.getProperty("java.home")))

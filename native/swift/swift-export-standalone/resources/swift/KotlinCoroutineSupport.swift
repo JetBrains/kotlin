@@ -17,7 +17,8 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
     fileprivate init(_ currentTask: UnsafeCurrentTask) {
         let __kt = __root___SwiftJob_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___SwiftJob_init_initialize(__kt, setTask(currentTask))
+        let cancellationCallback: () -> Void = setTask(currentTask)
+        __root___SwiftJob_init_initialize(__kt, Unmanaged.passRetained(cancellationCallback as AnyObject).toOpaque())
     }
 
     package override init(
@@ -36,7 +37,8 @@ package final class KotlinTask: KotlinRuntime.KotlinBase {
     }
 
     fileprivate func setTask(_ task: UnsafeCurrentTask) {
-        __root___SwiftJob_setCallback(self.__externalRCRef(), setTask(task))
+        let cancellationCallback: () -> Void = setTask(task)
+        __root___SwiftJob_setCallback(self.__externalRCRef(), Unmanaged.passRetained(cancellationCallback as AnyObject).toOpaque())
     }
 
     fileprivate func clear() {
@@ -364,7 +366,7 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
     public func next() async throws -> Element? {
         let conformsTo = self.conformsTo
         let result: Element? = try await withKotlinContinuation { continuation, exception, cancellation in
-            let _continuation: (Bool, UnsafeMutableRawPointer?) -> Int32 = { arg0, arg1 in
+            let _continuation: (Bool, UnsafeMutableRawPointer?) -> Void = { arg0, arg1 in
                 if arg0 {
                     let element = arg1.flatMap {
                         KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: $0, conformsTo: conformsTo)
@@ -373,13 +375,16 @@ internal final class KotlinFlowIterator<Element>: KotlinRuntime.KotlinBase, Asyn
                 } else {
                     continuation(.none)
                 }
-                return 0
             }
-            let _exception: (UnsafeMutableRawPointer?) -> Int32 = { arg0 in
-                exception(arg0.map { KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: $0)!) });
-                return 0
+            let _exception: (UnsafeMutableRawPointer?) -> Void = { arg0 in
+                exception(arg0.map { KotlinRuntimeSupport.swiftError(fromKotlinThrowable: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: $0)!) })
             }
-            let _: () = _kotlin_swift_SwiftFlowIterator_next(self.__externalRCRef(), _continuation, _exception, cancellation.__externalRCRef())
+            let _: () = _kotlin_swift_SwiftFlowIterator_next(
+                self.__externalRCRef(),
+                Unmanaged.passRetained(_continuation as AnyObject).toOpaque(),
+                Unmanaged.passRetained(_exception as AnyObject).toOpaque(),
+                cancellation.__externalRCRef()
+            )
         }
         return result
     }
@@ -392,4 +397,37 @@ public func asyncSequence<Element>(
     for flow: any KotlinTypedFlow<Element>
 ) -> KotlinFlowSequence<Element> {
     return flow.asAsyncSequence()
+}
+
+// MARK: - Reverse bridges
+
+/// Hand-written counterparts of the generated functional type callee bridges, reaching the Swift closures
+/// handed to Kotlin by this module.
+
+@_cdecl("_kotlin_swift_invokeCancellationCallback")
+package func _kotlin_swift_invokeCancellationCallback(_ pointerToClosure: UnsafeMutableRawPointer) {
+    let closure = Unmanaged<AnyObject>.fromOpaque(pointerToClosure)
+        .takeUnretainedValue() as! () -> Void
+    closure()
+}
+
+@_cdecl("_kotlin_swift_invokeFlowContinuation")
+package func _kotlin_swift_invokeFlowContinuation(
+    _ pointerToClosure: UnsafeMutableRawPointer,
+    _ hasValue: Bool,
+    _ value: UnsafeMutableRawPointer?
+) {
+    let closure = Unmanaged<AnyObject>.fromOpaque(pointerToClosure)
+        .takeUnretainedValue() as! (Bool, UnsafeMutableRawPointer?) -> Void
+    closure(hasValue, value)
+}
+
+@_cdecl("_kotlin_swift_invokeFlowException")
+package func _kotlin_swift_invokeFlowException(
+    _ pointerToClosure: UnsafeMutableRawPointer,
+    _ error: UnsafeMutableRawPointer?
+) {
+    let closure = Unmanaged<AnyObject>.fromOpaque(pointerToClosure)
+        .takeUnretainedValue() as! (UnsafeMutableRawPointer?) -> Void
+    closure(error)
 }

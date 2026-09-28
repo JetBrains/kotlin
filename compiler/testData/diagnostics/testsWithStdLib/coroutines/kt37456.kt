@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 import kotlin.reflect.KSuspendFunction1
 
 fun <T> runBlocking(block: suspend () -> T): T = null!!

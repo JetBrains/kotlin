@@ -70,6 +70,18 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   }
 
   @Test
+  @TestMetadata("fullValueClassGetterBody.kt")
+  public void testFullValueClassGetterBody() {
+    run("fullValueClassGetterBody.kt");
+  }
+
+  @Test
+  @TestMetadata("fullValueClassMemberFunctionBody.kt")
+  public void testFullValueClassMemberFunctionBody() {
+    run("fullValueClassMemberFunctionBody.kt");
+  }
+
+  @Test
   @TestMetadata("functionWithDefaultParameters.kt")
   public void testFunctionWithDefaultParameters() {
     run("functionWithDefaultParameters.kt");
@@ -166,6 +178,12 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   }
 
   @Test
+  @TestMetadata("memberGetterWithTypeWithBodyNearExplicitBackingField.kt")
+  public void testMemberGetterWithTypeWithBodyNearExplicitBackingField() {
+    run("memberGetterWithTypeWithBodyNearExplicitBackingField.kt");
+  }
+
+  @Test
   @TestMetadata("memberGetterWithTypeWithoutBody.kt")
   public void testMemberGetterWithTypeWithoutBody() {
     run("memberGetterWithTypeWithoutBody.kt");
@@ -205,6 +223,12 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   @TestMetadata("memberPropertyWithTypeInErrorDelegate.kt")
   public void testMemberPropertyWithTypeInErrorDelegate() {
     run("memberPropertyWithTypeInErrorDelegate.kt");
+  }
+
+  @Test
+  @TestMetadata("memberPropertyWithTypeInExplicitBackingFieldInitializer.kt")
+  public void testMemberPropertyWithTypeInExplicitBackingFieldInitializer() {
+    run("memberPropertyWithTypeInExplicitBackingFieldInitializer.kt");
   }
 
   @Test
@@ -406,6 +430,12 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   }
 
   @Test
+  @TestMetadata("topLevelGetterWithTypeWithBodyNearExplicitBackingField.kt")
+  public void testTopLevelGetterWithTypeWithBodyNearExplicitBackingField() {
+    run("topLevelGetterWithTypeWithBodyNearExplicitBackingField.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelGetterWithTypeWithBodyNearField.kt")
   public void testTopLevelGetterWithTypeWithBodyNearField() {
     run("topLevelGetterWithTypeWithBodyNearField.kt");
@@ -457,6 +487,12 @@ public class OutOfContentRootInBlockModificationTestGenerated extends AbstractOu
   @TestMetadata("topLevelPropertyWithTypeInErrorDelegate.kt")
   public void testTopLevelPropertyWithTypeInErrorDelegate() {
     run("topLevelPropertyWithTypeInErrorDelegate.kt");
+  }
+
+  @Test
+  @TestMetadata("topLevelPropertyWithTypeInExplicitBackingFieldInitializer.kt")
+  public void testTopLevelPropertyWithTypeInExplicitBackingFieldInitializer() {
+    run("topLevelPropertyWithTypeInExplicitBackingFieldInitializer.kt");
   }
 
   @Test

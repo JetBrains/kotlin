@@ -95,13 +95,7 @@ public func deprecatedClassFun(
 public func funExtFun(
     _ receiver: @escaping () -> Swift.Void
 ) -> Swift.Bool {
-    return __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__({
-        let originalBlock: () -> Swift.Void = receiver
-        return {
-            let _result = originalBlock()
-            return { _result; return true }()
-        }
-    }())
+    return __root___funExtFun__TypesOfArgumentsE__U2829202D_U20Swift_Void__(Unmanaged.passRetained((receiver as () -> Swift.Void) as AnyObject).toOpaque())
 }
 public func genericExtFun(
     _ receiver: main.GenericClass
@@ -128,13 +122,7 @@ public func getErrorDeprecatedSetterProp(
 public func getFunExtProp(
     _ receiver: @escaping () -> Swift.Void
 ) -> Swift.Int32 {
-    return __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__({
-        let originalBlock: () -> Swift.Void = receiver
-        return {
-            let _result = originalBlock()
-            return { _result; return true }()
-        }
-    }())
+    return __root___funExtProp_get__TypesOfArgumentsE__U2829202D_U20Swift_Void__(Unmanaged.passRetained((receiver as () -> Swift.Void) as AnyObject).toOpaque())
 }
 public func getGenericExtProp(
     _ receiver: main.GenericClass
@@ -562,4 +550,10 @@ package func foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar____revers
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.foo.Foo.Type.self) as! any ExportedKotlinPackages.foo.Foo
     let _result: Swift.String = _self.doubleReceiverExtFun(main.Bar.__createClassWrapper(externalRCRef: receiver))
     return _result
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Void)()
+    return { _result; return true }()
 }

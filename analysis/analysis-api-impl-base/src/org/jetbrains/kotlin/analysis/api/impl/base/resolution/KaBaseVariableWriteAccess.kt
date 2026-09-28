@@ -11,4 +11,4 @@ import org.jetbrains.kotlin.psi.KtExpression
 
 @KaImplementationDetail
 class KaBaseVariableWriteAccess(override val value: KtExpression?) : KaVariableAccessCall.Kind.Write,
-    @Suppress("DEPRECATION") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess.Write
+    @Suppress("DEPRECATION_ERROR") org.jetbrains.kotlin.analysis.api.resolution.KaSimpleVariableAccess.Write

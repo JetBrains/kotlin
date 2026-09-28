@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.lombok.generators.kotlin
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
-import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
-import org.jetbrains.kotlin.fir.plugin.createCompanionObject
-import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
@@ -30,6 +29,8 @@ import org.jetbrains.kotlin.lombok.generators.hasJavaOrigin
 import org.jetbrains.kotlin.lombok.generators.isSupportedLombokTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 /**
  * Annotations on primary constructor val/var params with @Target(FIELD) end up in the
@@ -37,6 +38,26 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
  */
 fun FirPropertySymbol.findAnnotationOnPropertyOrField(classId: ClassId, session: FirSession): FirAnnotation? =
     getAnnotationByClassId(classId, session) ?: backingFieldSymbol?.getAnnotationByClassId(classId, session)
+
+/**
+ * The properties [this] Kotlin class promotes from its primary constructor's value parameters, keyed by name.
+ *
+ * A builder field of a Kotlin class is a primary constructor value parameter, but not every annotation that
+ * shapes it lives there: `@Builder.Default` is `@Target(FIELD)`, so on a `val`/`var` parameter it lands on the
+ * promoted property's backing field (see [findAnnotationOnPropertyOrField]), and `@Singular` may be written
+ * with a `@field:` use-site target just the same. A parameter declared without `val`/`var` promotes nothing
+ * and is simply absent here, which is what makes it a builder field that carries no such annotation at all.
+ *
+ * Matched by name rather than through `correspondingValueParameterFromPrimaryConstructor`, which reads the
+ * property's initializer and so would force body resolution from inside a generation callback. A promoted
+ * property always carries its parameter's name, and no two declarations of a class can share one.
+ */
+@OptIn(DirectDeclarationsAccess::class)
+fun FirRegularClass.promotedPropertiesByName(): Map<Name, FirPropertySymbol> =
+    declarations.asSequence()
+        .filterIsInstance<FirProperty>()
+        .filter { it.fromPrimaryConstructor == true }
+        .associateBy({ it.name }, { it.symbol })
 
 /**
  * Builds `@JvmStatic` annotation call. If `JvmStatic` symbol can't be found (stdlib is missing), then an error reference is generated.
@@ -59,34 +80,6 @@ fun FirCallableSymbol<*>.buildJvmStaticAnnotationCallOrError(session: FirSession
         }
         containingDeclarationSymbol = this@buildJvmStaticAnnotationCallOrError
     }
-}
-
-/**
- * Initializes a companion object for the given class symbol if certain conditions are met.
- *
- * This method verifies if a companion object or other object is already present in the given class.
- * If no companion object exists and the conditions are satisfied, a new companion object is created
- * and returned. It ignores local classes and anonymous objects.
- *
- * @param owner The class symbol for which the companion object might be initialized.
- * @param context The context for nested class generation, providing additional information
- *                for the generation process.
- * @param extractKey A lambda function to extract the generated declaration key, which determines
- *                   whether a companion object should be created.
- *                   The key is used further to detect if a default constructor should be generated for a provided owner ([needsConstructorIfGeneratedCompanion]).
- *                   If so, the key is used for the constructor being generated ([createConstructorIfGeneratedCompanion])
- * @return The symbol of the created companion object with the extracted key, or `null` if no companion object is created.
- */
-fun FirExtension.initializeCompanionObjectIfNeeded(
-    owner: FirClassSymbol<*>,
-    context: NestedClassGenerationContext,
-    extractKey: () -> GeneratedDeclarationKey?,
-): FirRegularClassSymbol? {
-    if (!isCompanionNeeded(owner, context)) return null
-
-    val key = extractKey() ?: return null
-
-    return createCompanionObject(owner, key).symbol
 }
 
 fun isCompanionNeeded(
@@ -113,27 +106,17 @@ fun isCompanionNeeded(
         return false
     }
 
-    var companionAlreadyExists = false
+    // A companion object of any name rules one out - the members go into that one instead - and so does a nested
+    // classifier that merely takes the name `Companion` without being a companion object at all: the generated
+    // one would clash with it, and the class was left with a `REDECLARATION` it could not fix short of renaming
+    // that classifier (KT-88276). `FirLombokCompanionObjectChecker` reports what is left ungenerated because
+    // of it.
+    var companionNameIsTaken = false
     context.declaredScope?.processAllClassifiers {
-        companionAlreadyExists = companionAlreadyExists || (it as? FirClassLikeSymbol)?.isCompanion == true
+        val classLikeSymbol = it as? FirClassLikeSymbol ?: return@processAllClassifiers
+        companionNameIsTaken = companionNameIsTaken ||
+                classLikeSymbol.isCompanion ||
+                classLikeSymbol.name == DEFAULT_NAME_FOR_COMPANION_OBJECT
     }
-    if (companionAlreadyExists) {
-        return false
-    }
-
-    return true
-}
-
-inline fun <reified T : GeneratedDeclarationKey> FirClassSymbol<*>.needsConstructorIfGeneratedCompanion(): Boolean {
-    return extractKeyIfGeneratedCompanion<T>() != null
-}
-
-inline fun <reified T : GeneratedDeclarationKey> FirExtension.createConstructorIfGeneratedCompanion(owner: FirClassSymbol<*>): FirConstructorSymbol? {
-    return owner.extractKeyIfGeneratedCompanion<T>()?.let {
-        createDefaultPrivateConstructor(owner, it).symbol
-    }
-}
-
-inline fun <reified T : GeneratedDeclarationKey> FirClassSymbol<*>.extractKeyIfGeneratedCompanion(): T? {
-    return (origin as? FirDeclarationOrigin.Plugin?)?.key as? T
+    return !companionNameIsTaken
 }

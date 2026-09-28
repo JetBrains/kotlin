@@ -152,12 +152,4 @@ internal class KaResolverBridge(
 
     @Suppress("OVERRIDE_DEPRECATION")
     override fun KtReference.isImplicitReferenceToCompanion(): Boolean = proxy.isImplicitReferenceToCompanion(this)
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override val KtReference.usesContextSensitiveResolution: Boolean
-        get() = proxy.usesContextSensitiveResolution(this)
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
-        get() = proxy.usesContextSensitiveResolution(this)
 }

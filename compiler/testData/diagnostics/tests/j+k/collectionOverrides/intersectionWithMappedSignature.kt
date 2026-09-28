@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FULL_JDK
 // SCOPE_DUMP: B1:remove, B2:remove
 // FILE: Java1.java

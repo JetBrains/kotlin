@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE:+ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor, -ProhibitOpenValDeferredInitialization
 // DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 open class Foo {

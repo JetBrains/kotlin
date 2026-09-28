@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
-import org.jetbrains.kotlin.analysis.api.impl.base.util.unexpectedElementError
 import org.jetbrains.kotlin.analysis.api.symbols.KaPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.exceptions.unexpectedElementError
 
 internal object FirReferenceResolveHelper {
     fun FirResolvedTypeRef.toTargetSymbol(session: FirSession, symbolBuilder: KaSymbolByFirBuilder): KaSymbol? {

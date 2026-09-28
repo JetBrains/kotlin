@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See KT-5385: no smart cast in a literal without given type arguments
 
 interface Foo

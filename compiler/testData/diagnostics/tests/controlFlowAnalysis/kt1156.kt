@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-1156 Throwing exception on the right side of elvis operator marks code unreachable
 
 

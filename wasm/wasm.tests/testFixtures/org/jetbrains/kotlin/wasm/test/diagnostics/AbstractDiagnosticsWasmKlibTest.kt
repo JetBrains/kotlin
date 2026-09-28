@@ -49,7 +49,7 @@ abstract class AbstractWasmDiagnosticTestBase(
         }
 
         defaultDirectives {
-            LATEST_PHASE_IN_PIPELINE with TestPhase.BACKEND
+            LATEST_PHASE_IN_PIPELINE with TestPhase.CODEGEN
             DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
         useFailureSuppressors(

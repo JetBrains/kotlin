@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateAttri
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibStateDecompressed
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.UKLIB_API_ELEMENTS_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.maybeCreateUklibApiElements
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.uklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
 import org.jetbrains.kotlin.gradle.utils.registerKlibArtifact
 
 internal val KotlinNativeKlibArtifact = KotlinTargetArtifact { target, _, _ ->
@@ -87,13 +85,9 @@ internal fun createKlibArtifact(
     klibProducingTask: TaskProvider<out ProducesKlib>,
 ) {
     val apiElementsName = compilation.target.apiElementsConfigurationName
-    val packedArtifactFile = if (compilation.target.project.kotlinPropertiesProvider.useNonPackedKlibs) {
-        // the default artifact should be compressed
-        val packTask = compilation.maybeCreateKlibPackingTask(classifier, klibProducingTask)
-        packTask.map { it.archiveFile.get().asFile }
-    } else {
-        klibProducingTask.map { it.klibFile }
-    }
+    val packTask = compilation.maybeCreateKlibPackingTask(classifier, klibProducingTask)
+    // the default artifact should be compressed
+    val packedArtifactFile = packTask.map { it.archiveFile.get().asFile }
     compilation.project.configurations.getByName(apiElementsName)
         .outgoing
         .registerKlibArtifact(packedArtifactFile, compilation.compilationName, classifier)

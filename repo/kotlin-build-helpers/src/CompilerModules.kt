@@ -32,6 +32,7 @@ object CompilerModules {
         ":compiler:compiler.version",
         ":compiler:resolution.common",
         ":compiler:resolution.common.jvm",
+        ":compiler:resolution.common.js",
         ":compiler:backend.common.jvm",
         ":compiler:plugin-api",
         ":core:metadata",
@@ -58,7 +59,6 @@ object CompilerModules {
         ":kotlin-util-klib-metadata",
         ":compiler:build-tools:kotlin-build-statistics",
         ":js:js.config",
-        ":js:js.frontend.common",
         ":js:js.ast", // used by js fir checkers and js backend
         ":wasm:wasm.config",
         ":native:base",
@@ -67,9 +67,9 @@ object CompilerModules {
     )
 
     /**
-     * Modules of K2 (FIR) frontend
+     * Modules of K2 (FIR) frontend (shared between compiler and AA)
      */
-    val firCompilerModules = arrayOf(
+    val firCommonCompilerModules = arrayOf(
         ":compiler:fir:cones",
         ":compiler:fir:providers",
         ":compiler:fir:semantics",
@@ -83,7 +83,6 @@ object CompilerModules {
         ":compiler:fir:fir-native",
         ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:raw-fir:psi2fir",
-        ":compiler:fir:raw-fir:light-tree2fir",
         ":compiler:fir:checkers",
         ":compiler:fir:checkers:checkers.jvm",
         ":compiler:fir:checkers:checkers.js",
@@ -95,6 +94,14 @@ object CompilerModules {
         ":compiler:fir:fir2ir:jvm-backend",  // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
         ":compiler:fir:fir2ir", // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
         ":compiler:java-direct",
+    )
+
+    /**
+     * Modules of K2 (FIR) frontend (all)
+     */
+    val firCompilerModules = firCommonCompilerModules + arrayOf(
+        ":compiler:fir:raw-fir:light-tree2fir",
+        ":compiler:fir:raw-fir:mp-parsing2fir",
         ":compiler:multiplatform-parsing",
     )
 
@@ -113,7 +120,6 @@ object CompilerModules {
         ":core:deserialization",
         ":compiler:frontend:cfg",
         ":compiler:ir.psi2ir",
-        ":js:js.frontend",
         ":native:frontend.native",
         ":wasm:wasm.frontend",
     )
@@ -242,11 +248,7 @@ object CompilerModules {
         ":analysis:analysis-api-fir-diagnostics",
         ":analysis:analysis-api-impl-base",
         ":analysis:analysis-internal-utils",
-        ":analysis:decompiled:decompiler-js",
-        ":analysis:decompiled:decompiler-native",
-        ":analysis:decompiled:decompiler-to-file-stubs",
-        ":analysis:decompiled:decompiler-to-psi",
-        ":analysis:decompiled:decompiler-to-stubs",
+        ":analysis:decompiled:decompiler",
         ":analysis:decompiled:light-classes-for-decompiled",
         ":analysis:low-level-api-fir",
         ":analysis:stubs",

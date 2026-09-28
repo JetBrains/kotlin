@@ -79,6 +79,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.typeParameterListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.typeParameterType
 org.jetbrains.kotlin.KotlinElementTypeProvider.typeProjectionType
 org.jetbrains.kotlin.KotlinElementTypeProvider.typeReferenceType
+org.jetbrains.kotlin.KotlinElementTypeProvider.unionTypeType
 org.jetbrains.kotlin.KotlinElementTypeProvider.userTypeType
 org.jetbrains.kotlin.KotlinElementTypeProvider.valueArgumentListType
 org.jetbrains.kotlin.KotlinElementTypeProvider.valueArgumentNameType
@@ -132,6 +133,7 @@ org.jetbrains.kotlin.KtNodeTypes:DYNAMIC_TYPE
 org.jetbrains.kotlin.KtNodeTypes:ELSE
 org.jetbrains.kotlin.KtNodeTypes:ENUM_ENTRY
 org.jetbrains.kotlin.KtNodeTypes:ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION
+org.jetbrains.kotlin.KtNodeTypes:ERROR_SAFE_ACCESS_EXPRESSION
 org.jetbrains.kotlin.KtNodeTypes:ESCAPE_STRING_TEMPLATE_ENTRY
 org.jetbrains.kotlin.KtNodeTypes:EXPRESSION_CODE_FRAGMENT
 org.jetbrains.kotlin.KtNodeTypes:FILE
@@ -200,6 +202,7 @@ org.jetbrains.kotlin.KtNodeTypes:TYPE_PARAMETER
 org.jetbrains.kotlin.KtNodeTypes:TYPE_PARAMETER_LIST
 org.jetbrains.kotlin.KtNodeTypes:TYPE_PROJECTION
 org.jetbrains.kotlin.KtNodeTypes:TYPE_REFERENCE
+org.jetbrains.kotlin.KtNodeTypes:UNION_TYPE
 org.jetbrains.kotlin.KtNodeTypes:USER_TYPE
 org.jetbrains.kotlin.KtNodeTypes:VALUE_ARGUMENT
 org.jetbrains.kotlin.KtNodeTypes:VALUE_ARGUMENT_LIST
@@ -213,6 +216,7 @@ org.jetbrains.kotlin.KtNodeTypes:WHEN_CONDITION_IS_PATTERN
 org.jetbrains.kotlin.KtNodeTypes:WHEN_ENTRY
 org.jetbrains.kotlin.KtNodeTypes:WHEN_ENTRY_GUARD
 org.jetbrains.kotlin.KtNodeTypes:WHILE
+org.jetbrains.kotlin.analysis.decompiler.psi.KotlinLabelProviderService.getLabelForKotlinJavaScriptMetaFileType()
 org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.LineAndColumn:constructor(int, int, String)
 org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils.LineAndColumnRange:constructor(LineAndColumn, LineAndColumn)
 org.jetbrains.kotlin.idea.references.KtReference
@@ -531,6 +535,7 @@ org.jetbrains.kotlin.psi.KtVisitor:visitDotQualifiedExpression(KtDotQualifiedExp
 org.jetbrains.kotlin.psi.KtVisitor:visitDoubleColonExpression(KtDoubleColonExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitDynamicType(KtDynamicType, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitEnumEntry(KtEnumEntry, D)
+org.jetbrains.kotlin.psi.KtVisitor:visitErrorSafeQualifiedExpression(KtErrorSafeQualifiedExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitEscapeStringTemplateEntry(KtEscapeStringTemplateEntry, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitExpression(KtExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitExpressionWithLabel(KtExpressionWithLabel, D)
@@ -596,6 +601,7 @@ org.jetbrains.kotlin.psi.KtVisitor:visitTypeParameterList(KtTypeParameterList, D
 org.jetbrains.kotlin.psi.KtVisitor:visitTypeProjection(KtTypeProjection, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitTypeReference(KtTypeReference, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitUnaryExpression(KtUnaryExpression, D)
+org.jetbrains.kotlin.psi.KtVisitor:visitUnionType(KtUnionType, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitUserType(KtUserType, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitValueArgumentList(KtValueArgumentList, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitWhenConditionInRange(KtWhenConditionInRange, D)
@@ -641,6 +647,7 @@ org.jetbrains.kotlin.psi.KtVisitorVoid:visitDotQualifiedExpression(KtDotQualifie
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitDoubleColonExpression(KtDoubleColonExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitDynamicType(KtDynamicType)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitEnumEntry(KtEnumEntry)
+org.jetbrains.kotlin.psi.KtVisitorVoid:visitErrorSafeQualifiedExpression(KtErrorSafeQualifiedExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitEscapeStringTemplateEntry(KtEscapeStringTemplateEntry)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitExpression(KtExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitExpressionWithLabel(KtExpressionWithLabel)
@@ -705,6 +712,7 @@ org.jetbrains.kotlin.psi.KtVisitorVoid:visitTypeParameterList(KtTypeParameterLis
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitTypeProjection(KtTypeProjection)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitTypeReference(KtTypeReference)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitUnaryExpression(KtUnaryExpression)
+org.jetbrains.kotlin.psi.KtVisitorVoid:visitUnionType(KtUnionType)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitUserType(KtUserType)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitValueArgumentList(KtValueArgumentList)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitWhenConditionInRange(KtWhenConditionInRange)
@@ -745,6 +753,7 @@ org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitDotQualifiedExpressionV
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitDoubleColonExpressionVoid(KtDoubleColonExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitDynamicTypeVoid(KtDynamicType, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitEnumEntryVoid(KtEnumEntry, P)
+org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitErrorSafeQualifiedExpressionVoid(KtErrorSafeQualifiedExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitEscapeStringTemplateEntryVoid(KtEscapeStringTemplateEntry, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitExpressionVoid(KtExpression, P)
 org.jetbrains.kotlin.psi.KtVisitorVoidWithParameter:visitExpressionWithLabelVoid(KtExpressionWithLabel, P)

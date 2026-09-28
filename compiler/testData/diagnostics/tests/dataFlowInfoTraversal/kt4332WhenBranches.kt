@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-4332 when/smartcast underperforms
 
 fun testWhen(t: String?, x: String?): Int {

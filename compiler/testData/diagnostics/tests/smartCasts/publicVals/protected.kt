@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 public open class X {
     protected val x : String? = null
     public fun fn(): Int {

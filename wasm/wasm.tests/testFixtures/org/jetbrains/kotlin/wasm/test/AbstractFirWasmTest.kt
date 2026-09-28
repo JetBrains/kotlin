@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.*
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -142,7 +142,7 @@ open class AbstractFirWasmJsSteppingSplitTest : AbstractFirWasmJsSteppingTest(
     testGroupOutputDirPrefix = "debug/firSteppingSplit/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = listOf(IGNORE_BACKEND_MULTI_MODULE)
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

@@ -218,19 +218,21 @@ KtBlockExpression(366,534): '{'
   null
 
 KtCallExpression(372,532): 'receiveMyClass('
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
 
 KtNameReferenceExpression(372,386): 'receiveMyClass'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  KaSimpleSymbolResolutionSuccess:
-    symbols = [
+  KaSimpleSymbolResolutionError:
+    candidateSymbols = [
       /receiveMyClass(m: MyClass): kotlin.Unit
     ]
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass.NestedInheritor' was expected.>
 
 KtValueArgumentList(386,532): '('
   null

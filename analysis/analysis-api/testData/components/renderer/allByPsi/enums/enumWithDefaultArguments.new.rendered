@@ -1,0 +1,11 @@
+enum class PseudoInsn(val signature: String = ...) {
+  AS_NOT_NULL,
+  FAKE_ALWAYS_FALSE_IFEQ,
+  FAKE_ALWAYS_TRUE_IFEQ,
+  FIX_STACK_BEFORE_JUMP,
+  RESTORE_STACK_IN_TRY_CATCH,
+  SAVE_STACK_BEFORE_TRY,
+  STORE_NOT_NULL;
+
+  fun emit()
+}

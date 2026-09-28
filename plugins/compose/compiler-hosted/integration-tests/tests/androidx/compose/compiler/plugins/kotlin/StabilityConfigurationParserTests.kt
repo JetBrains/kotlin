@@ -143,7 +143,6 @@ class SingleStabilityConfigurationTest : AbstractIrTransformTest() {
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
             listOf("$PATH_TO_CONFIG_FILES/config1.conf")
         )
-        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
     }
 
     @Test
@@ -153,12 +152,12 @@ class SingleStabilityConfigurationTest : AbstractIrTransformTest() {
             import java.time.Instant
 
             @Composable
-            fun SkippableComposable(list: List<String>) {
+            fun StableComposable(list: List<String>) {
                 use(list)
             }
 
             @Composable
-            fun UnskippableComposable(instant: Instant) {
+            fun UnstableComposable(instant: Instant) {
                 use(instant)
             }
         """.trimIndent(),

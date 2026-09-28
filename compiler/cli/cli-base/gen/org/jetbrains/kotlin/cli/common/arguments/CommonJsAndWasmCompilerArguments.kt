@@ -21,6 +21,16 @@ sealed class CommonJsAndWasmCompilerArguments : CommonKlibBasedCompilerArguments
         }
 
     @Argument(
+        value = "-Xenable-advanced-optimizations",
+        description = "Enable experimental advanced optimization passes (e.g. effect analysis).",
+    )
+    var enableAdvancedOptimizations: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xfriend-modules",
         valueDescription = "<path>",
         description = "Paths to friend modules.",

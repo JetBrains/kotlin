@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-37060
 
 // KT-37060: not-null assertion breaks inference of lambda parameter types

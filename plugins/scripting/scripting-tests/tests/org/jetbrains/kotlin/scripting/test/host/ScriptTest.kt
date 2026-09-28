@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.io.TempDir
@@ -42,7 +42,7 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
-@SmokeTest
+@MustRunAlways
 class ScriptTest {
     @Test
     fun testStandardScriptWithParams() {

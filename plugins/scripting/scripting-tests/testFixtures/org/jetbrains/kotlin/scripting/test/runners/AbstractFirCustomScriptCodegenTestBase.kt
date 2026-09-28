@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrPrettyKotlinDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep

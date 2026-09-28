@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.canSeeInternalsOf
@@ -40,8 +41,14 @@ class FirModuleDescriptor private constructor(
         return moduleData.canSeeInternalsOf(targetModule.moduleData)
     }
 
-    override val platform: TargetPlatform
-        get() = moduleData.platform
+    override val platform: TargetPlatform?
+        get() = when (moduleData) {
+            // `TargetPlatform` makes sense only for source modules.
+            // So for dependency modules it should be `null`.
+            // Especially considering that `FirBinaryDependenciesModuleData.platform` throws an exception.
+            is FirBinaryDependenciesModuleData -> null
+            else -> moduleData.platform
+        }
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         val symbolProvider = session.symbolProvider

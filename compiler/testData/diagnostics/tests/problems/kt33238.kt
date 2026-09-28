@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-33238
 
 // KT-33238: False positive USELESS_CAST in delegate init block with internal type value cast to public type

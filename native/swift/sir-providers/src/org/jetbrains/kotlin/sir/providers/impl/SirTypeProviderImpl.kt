@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider.ErrorTypeStrategy
 import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.source.KotlinType
 import org.jetbrains.kotlin.sir.providers.utils.KotlinCoroutineSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
@@ -86,6 +87,7 @@ public class SirTypeProviderImpl(
 
                             // Intercept Flow<T> for typed generic wrapping in covariant position
                             if (kaType.classId in FLOW_CLASS_IDS) {
+                                val protocol = kaType.symbol.toSir().primaryDeclaration as SirProtocol
                                 val elementArg = kaType.typeArguments.singleOrNull()
                                 if (elementArg is KaTypeArgumentWithVariance) {
                                     val elementType = elementArg.type
@@ -96,7 +98,7 @@ public class SirTypeProviderImpl(
                                         else -> elementType.translateType(ctx)
                                     }
                                     if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
-                                        return@withSessions SirTypedFlowType(
+                                        return@withSessions SirType.Origin.ReifiedType.Flow(
                                             typedProtocol = when (kaType.classId) {
                                                 SHARED_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedSharedFlow
                                                 MUTABLE_SHARED_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlow
@@ -104,9 +106,19 @@ public class SirTypeProviderImpl(
                                                 MUTABLE_STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow
                                                 else -> KotlinCoroutineSupportModule.kotlinTypedFlow
                                             },
+                                            typedStruct = when (kaType.classId) {
+                                                SHARED_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedSharedFlowImpl
+                                                MUTABLE_SHARED_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedMutableSharedFlowImpl
+                                                STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedStateFlowImpl
+                                                MUTABLE_STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlowImpl
+                                                else -> KotlinCoroutineSupportModule.kotlinTypedFlowImpl
+                                            },
                                             elementType = translatedElement,
-                                            flowType = resolveFlowProtocolType(kaType)
-                                        ).optionalIfNeeded(kaType)
+                                            erasedType = SirExistentialType(
+                                                protocols = listOf(protocol to emptyList()),
+                                                origin = KotlinType(kaType)
+                                            ),
+                                        ).reifiedType.optionalIfNeeded(kaType)
                                     }
                                 }
                             }
@@ -218,6 +230,10 @@ public class SirTypeProviderImpl(
             }
         }
 
+        val origin = origin
+        if (origin is SirType.Origin.ReifiedType) {
+            origin.erasedType.handleImports(processTypeImports)
+        }
         when (this) {
             is SirNominalType -> {
                 generateSequence(this) { it.parent }.forEach { type ->
@@ -228,9 +244,6 @@ public class SirTypeProviderImpl(
             is SirExistentialType -> this.protocols.forEach { [protocol, typeArguments] ->
                 protocol.extractImport()
                 typeArguments.forEach { it.handleImports(processTypeImports) }
-                if (this is SirTypedFlowType) {
-                    flowType.handleImports(processTypeImports)
-                }
             }
             is SirFunctionalType -> {
                 contextTypes.forEach { it.handleImports(processTypeImports) }
@@ -246,8 +259,6 @@ public class SirTypeProviderImpl(
             }
             is SirErrorType -> {}
             SirUnsupportedType -> {}
-            is SirArrayType, is SirDictionaryType, is SirOptionalType ->
-                TODO("already covered by NominalType, exhaustive check is faulty here")
         }
         return this
     }
@@ -298,11 +309,4 @@ public class SirTypeProviderImpl(
 
         val COLLECTION_CLASS_IDS = setOf(StandardClassIds.Set, StandardClassIds.Map, StandardClassIds.List)
     }
-}
-
-context(sir: SirSession)
-private fun resolveFlowProtocolType(kaType: KaType): SirExistentialType {
-    return (kaType.symbol?.toSir()?.primaryDeclaration as? SirProtocol)
-        ?.let { SirExistentialType(it) }
-        ?: SirExistentialType(KotlinCoroutineSupportModule.kotlinFlow)
 }

@@ -40,7 +40,8 @@ class ClassList : SkipWhenBaseOnly() {
         bh.consume(data.toList())
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun copyManual(bh: Blackhole) {
         skipWhenBaseOnly()
         val list = ArrayList<Value>(data.size)
@@ -68,7 +69,8 @@ class ClassList : SkipWhenBaseOnly() {
         bh.consume(data.filter { it.value % 2 == 0 })
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun mapWithLambda(bh: Blackhole) {
         bh.consume(data.map { it.toString() })
     }

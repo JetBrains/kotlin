@@ -1,10 +1,10 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_MULTI_MODULE: JS_IR, JS_IR_ES6
 // ^^^^^^
 // The Mutli Module tests are compiling the main module as a dependency module.
 // Since we use ES modules in those tests, there is no re-exports from the dependencies,
 // so it's failing with a runtime error, that there is no expected exported function
 
-// DONT_TARGET_EXACT_BACKEND: JVM, JVM_IR, NATIVE, WASM_WASI
+// DONT_TARGET_EXACT_BACKEND: JVM, NATIVE, WASM_WASI
 
 // RUN_THIRD_PARTY_OPTIMIZER
 // WASM_DCE_EXPECTED_OUTPUT_SIZE: wasm 33_955
@@ -15,8 +15,8 @@
 // ES_MODULES
 // WITH_STDLIB
 // JS_DROP_REGION_COMMENTS
-// JS_DCE_EXPECTED_OUTPUT_SIZE: JS_IR      3_055
-// JS_DCE_EXPECTED_OUTPUT_SIZE: JS_IR_ES6  3_164
+// JS_DCE_EXPECTED_OUTPUT_SIZE: JS_IR      3_000
+// JS_DCE_EXPECTED_OUTPUT_SIZE: JS_IR_ES6  2_892
 
 // FILE: test.kt
 

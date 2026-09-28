@@ -347,6 +347,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformLiteralExpression(literalExpression, data)
     }
 
+    open fun transformNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: D): FirStatement {
+        return transformElement(numericClassConversion, data)
+    }
+
+    final override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: D): FirStatement {
+        return transformNumericClassConversion(numericClassConversion, data)
+    }
+
     open fun transformFunctionCall(functionCall: FirFunctionCall, data: D): FirStatement {
         return transformElement(functionCall, data)
     }
@@ -1201,6 +1209,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): FirTypeRef {
         return transformIntersectionTypeRef(intersectionTypeRef, data)
+    }
+
+    open fun transformUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: D): FirTypeRef {
+        return transformElement(unionTypeRef, data)
+    }
+
+    final override fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: D): FirTypeRef {
+        return transformUnionTypeRef(unionTypeRef, data)
     }
 
     open fun transformThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: D): FirStatement {

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_REFLECT
 import kotlin.jvm.internal.*

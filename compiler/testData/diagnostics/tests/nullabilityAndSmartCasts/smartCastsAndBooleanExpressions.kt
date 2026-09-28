@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun foo(b: Boolean?, c: Boolean) {
     if (b != null && b) {}
     if (b == null || b) {}

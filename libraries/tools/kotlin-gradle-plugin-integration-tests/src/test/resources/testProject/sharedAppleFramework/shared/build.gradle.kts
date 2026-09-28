@@ -5,12 +5,11 @@ plugins {
 kotlin {
     jvm()
 
-    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-    val macosX64 = macosX64()
+    val macosArm64 = macosArm64()
     val iosX64 = iosX64()
     val iosSimulatorArm64 = iosSimulatorArm64()
     val iosArm64 = iosArm64()
-    configure(listOf(macosX64, iosX64, iosSimulatorArm64, iosArm64))  {
+    configure(listOf(macosArm64, iosX64, iosSimulatorArm64, iosArm64))  {
         binaries {
             framework {
                 baseName = "sdk"

@@ -1,5 +1,5 @@
 // LANGUAGE: +NullableNothingInReifiedPosition
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 // ISSUE: KT-71528
 
 fun useStringArray(arr: Array<out String?>): String? {

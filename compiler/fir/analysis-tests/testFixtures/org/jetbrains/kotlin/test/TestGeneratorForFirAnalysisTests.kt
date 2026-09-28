@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.canFreezeIDE
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
-import java.io.File
 
 fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
@@ -119,6 +118,10 @@ fun main(args: Array<String>) {
                     )
                 }
             }
+            // TODO: uncomment after OSIP-1363 is done
+            //testClass<AbstractPhasedJvmDiagnosticMultiplatformParsingTest> {
+            //    phasedModel(allowKts = false)
+            //}
             testClass<AbstractPhasedJvmDiagnosticLightTreeTest> {
                 phasedModel(allowKts = false)
             }

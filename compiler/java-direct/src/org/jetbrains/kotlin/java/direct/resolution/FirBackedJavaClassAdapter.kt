@@ -14,16 +14,11 @@ import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
-import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -121,20 +116,16 @@ internal class FirBackedJavaClassAdapter(
         }
 
     /**
-     * Resolved supertype chain, mirroring `FirJavaElementFinder.resolveSupertypesOnAir`: prefer
-     * already-resolved `superTypeRefs`, otherwise resolve on-air. Each cone type is exposed as a
+     * Resolved supertype chain, read through [supertypeRefsForJavaResolution] — the same
+     * prefer-resolved-then-on-air answer the resolution side uses. Each cone type is exposed as a
      * [FirBackedJavaClassifierType] so its arguments can be read back. Guarded by
      * [cycleGuardedSupertypeWalk]; symbol resolution funnels through [cycleSafeClassLikeSymbol].
      */
     override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val fir = firRegularClass ?: return@lazy emptyList()
         session.cycleGuardedSupertypeWalk(resolvedClassId, default = emptyList()) {
-            val refs = if (fir.superTypeRefs.all { it is FirResolvedTypeRef }) {
-                fir.superTypeRefs
-            } else {
-                fir.resolveSupertypesOnAir(session)
-            }
-            refs.mapNotNull { (it as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType }
+            fir.supertypeRefsForJavaResolution(session)
+                .mapNotNull { (it as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType }
                 .map { FirBackedJavaClassifierType(it, session) }
         }
     }
@@ -228,18 +219,6 @@ internal class FirBackedJavaTypeParameter(
 
     override fun hashCode(): Int = firTypeParameterSymbol.hashCode()
     override fun toString(): String = "FirBackedJavaTypeParameter(${firTypeParameterSymbol.name})"
-}
-
-/**
- * Resolves this class's supertypes on-air with a fresh, throwaway [SupertypeComputationSession]
- * and [ScopeSession] against the shared, long-lived [session]. Mirrors
- * `FirJavaElementFinder.resolveSupertypesOnAir`.
- */
-private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
-    val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
-    return visitor.withFile(session.firProvider.getFirClassifierContainerFile(this.symbol)) {
-        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs, resolveRecursively = true)
-    }
 }
 
 /**

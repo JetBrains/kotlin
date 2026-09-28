@@ -26,11 +26,10 @@ class SerializedIrFile(
     val bodies: ByteArray,
     val declarations: ByteArray,
     val debugInfo: ByteArray?,
-    val backendSpecificMetadata: ByteArray?,
     val fileEntries: ByteArray?,
 )
 
 class SerializedIrModule(
     val files: Collection<SerializedIrFile>,
-    val fileWithPreparedInlinableFunctions: SerializedIrFile?,
+    val filesWithPreparedInlinableFunctions: Collection<SerializedIrFile>,
 )

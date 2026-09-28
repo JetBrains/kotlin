@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.ConfigurationOnDemandNotSupported
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.util.*
 import kotlin.test.Test
 
-@OptIn(ExperimentalWasmDsl::class)
 class ConfigurationOnDemandSupportValidationTest {
 
     @Test

@@ -35,7 +35,7 @@ abstract class AbstractJvmIrTextTest(val parser: FirParser) : AbstractKotlinComp
 
         useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
-            ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
+            ::PhasedPipelineChecker.bind(TestPhase.CODEGEN)
         )
         enableMetaInfoHandler()
     }

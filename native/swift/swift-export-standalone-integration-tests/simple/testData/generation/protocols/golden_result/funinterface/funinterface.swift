@@ -155,68 +155,32 @@ extension ExportedKotlinPackages.funinterface {
     public static func _123functionalInterfaceWithLeadingNumbers(
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock: () -> Swift.Int32 = function
-            return {
-                let _result = originalBlock()
-                return _result
-            }
-        }()), conformsTo: ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers.Type.self) as! any ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArguments__U2829202D_U20Swift_Int32__(Unmanaged.passRetained((function as () -> Swift.Int32) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers.Type.self) as! any ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers
     }
     public static func _123xmlFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation(
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock: () -> Swift.Int32 = function
-            return {
-                let _result = originalBlock()
-                return _result
-            }
-        }()), conformsTo: ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation.Type.self) as! any ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(Unmanaged.passRetained((function as () -> Swift.Int32) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation.Type.self) as! any ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation
     }
     public static func _functionalInterfaceWithLeadingUnderscore(
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock: () -> Swift.Int32 = function
-            return {
-                let _result = originalBlock()
-                return _result
-            }
-        }()), conformsTo: ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore.Type.self) as! any ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArguments__U2829202D_U20Swift_Int32__(Unmanaged.passRetained((function as () -> Swift.Int32) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore.Type.self) as! any ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore
     }
     public static func functionalInterface(
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface.FunctionalInterface {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock: () -> Swift.Int32 = function
-            return {
-                let _result = originalBlock()
-                return _result
-            }
-        }()), conformsTo: ExportedKotlinPackages.funinterface.FunctionalInterface.Type.self) as! any ExportedKotlinPackages.funinterface.FunctionalInterface
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swift_Int32__(Unmanaged.passRetained((function as () -> Swift.Int32) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.funinterface.FunctionalInterface.Type.self) as! any ExportedKotlinPackages.funinterface.FunctionalInterface
     }
     public static func functionalInterfaceWithAlreadyLowercaseLeadingFromFunction(
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock: () -> Swift.Int32 = function
-            return {
-                let _result = originalBlock()
-                return _result
-            }
-        }()), conformsTo: ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading.Type.self) as! any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfArguments__U2829202D_U20Swift_Int32__(Unmanaged.passRetained((function as () -> Swift.Int32) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading.Type.self) as! any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading
     }
     public static func xmlFunctionalInterfaceWithLeadingAbbreviation(
         function: @escaping () -> Swift.Int32
     ) -> any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__({
-            let originalBlock: () -> Swift.Int32 = function
-            return {
-                let _result = originalBlock()
-                return _result
-            }
-        }()), conformsTo: ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation.Type.self) as! any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfArguments__U2829202D_U20Swift_Int32__(Unmanaged.passRetained((function as () -> Swift.Int32) as AnyObject).toOpaque()), conformsTo: ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation.Type.self) as! any ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation
     }
 }
 @_cdecl("funinterface_FunctionalInterface_invoke__reverse_swift")
@@ -258,5 +222,11 @@ package func funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke__reve
 package func funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading.Type.self) as! any ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading
     let _result: Swift.Int32 = _self.callAsFunction()
+    return _result
+}
+
+@_cdecl("funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func funinterface_internal_functional_type_callee_SwiftU2EInt32__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Int32 {
+    let _result: Swift.Int32 = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Int32)()
     return _result
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.native
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.internal.attributes.setAttributeTo
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
@@ -29,9 +28,7 @@ internal val ConfigureFrameworkExportSideEffect = KotlinTargetSideEffect<KotlinN
             usesPlatformOf(target)
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-                KlibPackaging.setAttributeTo(project, attributes, false)
-            }
+            KlibPackaging.setAttributeTo(project, attributes, false)
             description = "Dependencies to be exported in framework ${framework.name} for target ${target.targetName}"
         }
     }

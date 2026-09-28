@@ -1,6 +1,6 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM
 // const and JvmField in one interface isn't supported, yet
 // WITH_STDLIB
 interface I {

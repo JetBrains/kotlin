@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirCraParameterKind
 import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.findArgumentByName
+import org.jetbrains.kotlin.fir.declarations.isArrayOfOrArrayDotOfCall
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
@@ -98,10 +99,10 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         session: FirSession,
     ): Diagnostic? {
 
-        fun checkArgumentList(args: FirArgumentList): KtDiagnosticFactory0? {
+        fun checkArguments(args: List<FirExpression>): KtDiagnosticFactory0? {
             var usedNonConst = false
 
-            for (arg in args.arguments.map { it.unwrapArgument() }) {
+            for (arg in args.map { it.unwrapArgument() }) {
                 val [err, sourceForReport] = checkAnnotationArgumentWithSubElements(arg, session) ?: continue
                 if (err != FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) usedNonConst = true
                 reporter.reportOn(sourceForReport, err)
@@ -111,8 +112,9 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
         }
 
         when (expression) {
-            is FirCollectionLiteral -> return checkArgumentList(expression.argumentList)
-                ?.let { Diagnostic(it, expression.source) }
+            is FirCollectionLiteral -> return checkArguments(expression.arguments)?.let { Diagnostic(it, expression.source) }
+            is FirFunctionCall if (expression.isArrayOfOrArrayDotOfCall()) ->
+                return checkArguments(expression.unwrapArgumentsOfArrayOfCall())?.let { Diagnostic(it, expression.source) }
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
                     val unwrappedArg = arg.unwrapArgument()
@@ -130,11 +132,19 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                     is FirEvaluatorResult.KClassLiteralOfTypeParameterError -> Diagnostic(FirErrors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR, evaluationResult.source)
                     is FirEvaluatorResult.NotConstValInConstExpression -> Diagnostic(FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, evaluationResult.source)
                     is FirEvaluatorResult.ControlFlowNotSupportedError -> Diagnostic(FirErrors.ANNOTATION_ARGUMENT_WITH_CONTROL_FLOW_NOT_SUPPORTED, evaluationResult.source)
+                    is FirEvaluatorResult.DivisionByZero -> {
+                        reporter.reportOn(evaluationResult.source, FirErrors.DIVISION_BY_ZERO)
+                        Diagnostic(FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST, evaluationResult.source)
+                    }
+                    is FirEvaluatorResult.TrimMarginBlankPrefix -> {
+                        reporter.reportOn(evaluationResult.source, FirErrors.TRIM_MARGIN_BLANK_PREFIX)
+                        Diagnostic(FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST, evaluationResult.source)
+                    }
                     is FirEvaluatorResult.ResolutionError -> {
                         //try to go deeper if we are not sure about this function call
                         //to report non-constant val in not fully resolved calls
-                        val args = (expression as? FirFunctionCall)?.argumentList ?: return null
-                        checkArgumentList(args)?.let { Diagnostic(it, evaluationResult.source)}
+                        val args = (expression as? FirFunctionCall)?.arguments ?: return null
+                        checkArguments(args)?.let { Diagnostic(it, evaluationResult.source)}
                     }
                     else -> Diagnostic(
                         FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST,
@@ -254,8 +264,16 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
                     reporter.reportOn(ann.source, errorFactory)
                 }
             }
-            if (unwrappedErrorExpression is FirCollectionLiteral) {
-                checkArgumentsInsideAnnotationCall(unwrappedErrorExpression.arguments, reportAnnotationsOnAnnotationArguments)
+            when (unwrappedErrorExpression) {
+                is FirCollectionLiteral -> {
+                    checkArgumentsInsideAnnotationCall(unwrappedErrorExpression.arguments, reportAnnotationsOnAnnotationArguments)
+                }
+                is FirFunctionCall if (unwrappedErrorExpression.isArrayOfOrArrayDotOfCall()) -> {
+                    checkArgumentsInsideAnnotationCall(
+                        unwrappedErrorExpression.unwrapArgumentsOfArrayOfCall(),
+                        reportAnnotationsOnAnnotationArguments,
+                    )
+                }
             }
         }
     }
@@ -299,5 +317,9 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     ) {
         if (annotationClassId != StandardClassIds.Annotations.ContextFunctionTypeParams) return
         source.requireFeatureSupport(LanguageFeature.ContextReceivers)
+    }
+
+    private fun FirFunctionCall.unwrapArgumentsOfArrayOfCall(): List<FirExpression> {
+        return arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: [it] }
     }
 }

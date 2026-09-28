@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-58142
 interface XTrackableLoading {
     val <X> Property<LoadingValue<X>>.liveLoaded: X

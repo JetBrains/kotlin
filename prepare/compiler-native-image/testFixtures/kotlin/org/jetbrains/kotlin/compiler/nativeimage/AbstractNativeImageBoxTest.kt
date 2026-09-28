@@ -5,18 +5,6 @@
 
 package org.jetbrains.kotlin.compiler.nativeimage
 
-import java.io.File
+abstract class AbstractNativeImageBoxTest : AbstractCompilerBoxTest(NativeImageCompilerRunner())
 
-abstract class AbstractNativeImageBoxTest : AbstractNativeImageCodegenTest() {
-    private val runner: NativeImageCompilerRunner by lazy { NativeImageCompilerRunner(javaHome) }
-
-    override fun runCompiler(
-        arguments: List<String>,
-        classpath: List<File>,
-    ): Pair<Int, String> = runner.run(
-        workingDir = workingDir,
-        arguments = arguments,
-        classpath = classpath,
-        jvmArgs = listOf("-Dkotlinc.test.allow.testonly.language.features=true"),
-    )
-}
+abstract class AbstractReachabilityMetadataBoxTest : AbstractCompilerBoxTest(TracingAgentCompilerRunner())

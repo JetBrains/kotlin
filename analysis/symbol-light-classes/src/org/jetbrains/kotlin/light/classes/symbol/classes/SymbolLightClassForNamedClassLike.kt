@@ -5,48 +5,47 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiField
+import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.scopes.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
-import org.jetbrains.kotlin.light.classes.symbol.isConstOrJvmField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.utils.getParentForLocalDeclaration
+import org.jetbrains.kotlin.light.classes.symbol.utils.isConstOrJvmField
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<KaNamedClassSymbol> {
     constructor(
-        ktModule: KaModule,
+        useSiteModule: KaModule,
         classSymbol: KaNamedClassSymbol,
-        manager: PsiManager,
     ) : super(
-        ktModule = ktModule,
+        useSiteModule = useSiteModule,
         classSymbol = classSymbol,
-        manager = manager,
     )
 
     protected constructor(
         classOrObjectDeclaration: KtClassOrObject?,
         classSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
-        ktModule: KaModule,
-        manager: PsiManager,
+        useSiteModule: KaModule,
     ) : super(
         classOrObjectDeclaration = classOrObjectDeclaration,
-        classSymbolPointer = classSymbolPointer,
-        ktModule = ktModule,
-        manager = manager
+        symbolPointer = classSymbolPointer,
+        useSiteModule = useSiteModule,
     )
 
     protected val isLocal: Boolean get() = withClassSymbol { it.isLocal }
 
     override fun getParent(): PsiElement? {
         if (isLocal) {
-            return classOrObjectDeclaration?.let(::getParentForLocalDeclaration)
+            return classOrObjectDeclaration?.let { getParentForLocalDeclaration(it, useSiteModule) }
         }
 
         return containingClass ?: containingFile
@@ -124,11 +123,11 @@ internal abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForC
 
     internal fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
-            GranularModifiersBox.computeVisibilityForClass(ktModule, classSymbolPointer, isTopLevel)
+            GranularModifiersBox.computeVisibilityForClass(useSiteModule, symbolPointer, isTopLevel)
         }
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
-            GranularModifiersBox.computeSimpleModality(ktModule, classSymbolPointer)
+            GranularModifiersBox.computeSimpleModality(useSiteModule, symbolPointer)
         }
 
         PsiModifier.STATIC -> {

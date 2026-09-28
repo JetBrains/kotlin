@@ -377,14 +377,7 @@ public func customFilter(
     _ receiver: [(any KotlinRuntimeSupport._KotlinBridgeable)?],
     predicate: @escaping ((any KotlinRuntimeSupport._KotlinBridgeable)?) -> Swift.Bool
 ) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?] {
-    return __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.map { it in it as! NSObject? ?? NSNull() }, {
-        let originalBlock: (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool = predicate
-        return { (arg0: Swift.UnsafeMutableRawPointer?) in
-            let _arg0: Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable> = { switch arg0 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-            let _result = originalBlock(_arg0)
-            return _result
-        }
-    }()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+    return __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(receiver.map { it in it as! NSObject? ?? NSNull() }, Unmanaged.passRetained((predicate as (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool) as AnyObject).toOpaque()) as! Swift.Array<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
 }
 public func foo(
     param1: (any KotlinRuntimeSupport._KotlinBridgeable)?,
@@ -395,26 +388,12 @@ public func foo(
 public func produceBoxStar(
     box: @escaping (main.Box) -> Swift.Void
 ) -> Swift.Void {
-    return { __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__({
-        let originalBlock: (main.Box) -> Swift.Void = box
-        return { (arg0: Swift.UnsafeMutableRawPointer) in
-            let _arg0: main.Box = main.Box.__createClassWrapper(externalRCRef: arg0)
-            let _result = originalBlock(_arg0)
-            return { _result; return true }()
-        }
-    }()); return () }()
+    return { __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(Unmanaged.passRetained((box as (main.Box) -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
 public func produceBoxUpperBound(
     box: @escaping (main.Box) -> Swift.Void
 ) -> Swift.Void {
-    return { __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__({
-        let originalBlock: (main.Box) -> Swift.Void = box
-        return { (arg0: Swift.UnsafeMutableRawPointer) in
-            let _arg0: main.Box = main.Box.__createClassWrapper(externalRCRef: arg0)
-            let _result = originalBlock(_arg0)
-            return { _result; return true }()
-        }
-    }()); return () }()
+    return { __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(Unmanaged.passRetained((box as (main.Box) -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
 public func returnBFun() -> main.BFun {
     return {
@@ -452,13 +431,7 @@ public func takeBoxUpperBound(
 public func takeBoxUpperBoundClosure(
     box: @escaping () -> main.Box
 ) -> Swift.Void {
-    return { __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__({
-        let originalBlock: () -> main.Box = box
-        return {
-            let _result = originalBlock()
-            return _result.__externalRCRef()
-        }
-    }()); return () }()
+    return { __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__(Unmanaged.passRetained((box as () -> main.Box) as AnyObject).toOpaque()); return () }()
 }
 @_documentation(visibility: internal)
 extension main.A where Self : main.__A {
@@ -629,4 +602,22 @@ package func StringProducer_produce__reverse_swift(_ `self`: Swift.UnsafeMutable
     let _self = main.StringProducer.__createClassWrapper(externalRCRef: `self`)!
     let _result: Swift.String = _self.produce()
     return _result
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+package func main_internal_functional_type_callee_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer?) -> Swift.Bool {
+    let _result: Swift.Bool = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>) -> Swift.Bool)({ switch _1 { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }())
+    return _result
+}
+
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Box__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Box__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! (main.Box) -> Swift.Void)(main.Box.__createClassWrapper(externalRCRef: _1))
+    return { _result; return true }()
+}
+
+@_cdecl("main_internal_functional_type_callee_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func main_internal_functional_type_callee_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.UnsafeMutableRawPointer {
+    let _result: main.Box = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> main.Box)()
+    return _result.__externalRCRef()
 }

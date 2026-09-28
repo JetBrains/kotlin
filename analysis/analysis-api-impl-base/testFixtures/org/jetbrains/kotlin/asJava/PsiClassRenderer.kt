@@ -214,6 +214,7 @@ class PsiClassRenderer private constructor(
     private fun PsiMethod.renderMethod() =
         renderModifiers() +
                 (if (isVarArgs) "/* vararg */ " else "") +
+                (if (isDefaultConstructor) "/* default ctor */ " else "") +
                 typeParameters.renderTypeParams() +
                 (returnType?.renderType() ?: "") + " " +
                 name +
@@ -337,9 +338,7 @@ class PsiClassRenderer private constructor(
 
         val resultBuffer = StringBuffer(annotationsBuffer.joinToString(separator = ""))
         for (modifier in PsiModifier.MODIFIERS.filter(::hasModifierProperty)) {
-            if (modifier == PsiModifier.DEFAULT) {
-                resultBuffer.append(PsiModifier.ABSTRACT).append(" ")
-            } else if (modifier != PsiModifier.FINAL || !(this is PsiClass && this.isEnum)) {
+            if (modifier != PsiModifier.FINAL || !(this is PsiClass && this.isEnum)) {
                 resultBuffer.append(modifier).append(" ")
             }
         }

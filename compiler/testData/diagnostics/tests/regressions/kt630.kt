@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-630 Bad type inference
 
 fun <T : Any> T?.sure() : T = this!!

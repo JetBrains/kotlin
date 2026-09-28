@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.analysis.api.visibility.isVisibleInClass as isVisibl
 /**
  * Routes the legacy [KaVisibilityChecker] surface through the new public `context(session: KaSession)` visibility endpoints, which in turn
  * reach the [org.jetbrains.kotlin.analysis.api.internals.KaInternalsVisibilityChecker] proxy.
- *
- * The deprecated [KaVisibilityChecker.isVisible] member is intentionally not overridden: it keeps its interface default body, which composes
- * [createUseSiteVisibilityChecker] (and therefore routes through the new endpoint as well).
  */
 internal class KaVisibilityCheckerBridge(
     override val analysisSessionProvider: () -> KaSession,

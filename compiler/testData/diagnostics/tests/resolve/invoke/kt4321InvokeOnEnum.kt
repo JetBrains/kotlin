@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-4321 invoke() on enum doesn't work
 
 import DOMElementTestClasses.cls2

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun baz(s: String?): String {
     if (s == null) return ""
     // if explicit type String is given for t, problem disappears

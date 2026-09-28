@@ -86,6 +86,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val IGNORE_WITH_INLINE_ANONYMOUS_FUNCTIONS by enumDirective<TargetBackend>(
+        description = "Ignore failures of a test with the $GENERATE_INLINE_ANONYMOUS_FUNCTIONS directive",
+        applicability = DirectiveApplicability.Global
+    )
+
     val DISABLE_ES6_ARROWS by directive(
         description = "Translate lambdas to ordinary anonymous functions instead of ES6 arrows",
         applicability = DirectiveApplicability.Global
@@ -250,6 +255,11 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
     val CHECK_OPTIMIZED_JS by directive(
         description = "Forces EXPECT_GENERATED_JS directive handler to check optimized JS output files instead of dev ones",
         applicability = DirectiveApplicability.Any,
+    )
+
+    val ENABLE_UNUSED_PROPERTY_DCE by directive(
+        description = "Enabled DCE of unused properties, and effect analysis",
+        applicability = DirectiveApplicability.Any
     )
 
     @OptIn(SensitiveDirectiveAPI::class)

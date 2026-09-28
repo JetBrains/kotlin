@@ -11,6 +11,19 @@ package kotlin
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
+/**
+ * Represents an object that may hold resources, like open files or network connections, until [close] is called.
+ *
+ * Instances should normally be managed with [use], which closes the object after the operation completes, including when the operation
+ * throws an exception.
+ *
+ * Java types implementing [java.lang.AutoCloseable] can be used as Kotlin [AutoCloseable] resources, and Kotlin
+ * implementations can be used in Java's try-with-resources statement.
+ *
+ * @sample samples.misc.AutoCloseables.naive
+ * @sample samples.misc.AutoCloseables.idempotent
+ * @see [java.lang.AutoCloseable]
+ */
 @SinceKotlin("2.0")
 public actual typealias AutoCloseable = java.lang.AutoCloseable
 

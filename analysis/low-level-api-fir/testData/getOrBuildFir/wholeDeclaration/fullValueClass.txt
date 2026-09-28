@@ -1,0 +1,32 @@
+KT element: KtClass
+FIR element: FirRegularClassImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+    public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=/Point.y] y: R|kotlin/Int|): R|Point| {
+        LAZY_super<R|kotlin/Any|>
+    }
+
+    public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+    public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClass.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/Int)])] class Point : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Point] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/Point.x] x: R|kotlin/Int|, [ResolvedTo(TYPES)] [CorrespondingProperty=/Point.y] y: R|kotlin/Int|): R|Point| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Point] get(): Int
+
+    }

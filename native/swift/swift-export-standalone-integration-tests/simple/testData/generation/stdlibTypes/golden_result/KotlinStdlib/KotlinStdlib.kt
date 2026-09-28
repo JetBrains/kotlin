@@ -11,7 +11,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift")
 internal external fun kotlin_CharSequence_get__TypesOfArguments__Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, index: Int): Char
@@ -692,13 +691,6 @@ public fun kotlin_text_StringBuilder_toCharArray__TypesOfArguments__ExportedKotl
     val __endIndex = endIndex
     val _result = run { __self.toCharArray(__destination, __destinationOffset, __startIndex, __endIndex) }
     return run { _result; true }
-}
-
-@ExportedBridge("kotlin_text_StringBuilder_toString")
-public fun kotlin_text_StringBuilder_toString(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
-    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
-    val _result = run { __self.toString() }
-    return _result.objcPtr()
 }
 
 @ExportedBridge("kotlin_text_StringBuilder_trimToSize")

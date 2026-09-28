@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.SOURCE_MAP_EMBED_SOURCES
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives.ENABLE_UNUSED_PROPERTY_DCE
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
@@ -85,6 +86,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         register(SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC, JSConfigurationKeys.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC)
         register(JS_DROP_REGION_COMMENTS, JSConfigurationKeys.GENERATE_REGION_COMMENTS, isInverted = true)
         register(EXPORT_WITH_UNKNOWN_TYPE_INSTEAD_ANY, JSConfigurationKeys.EXPORT_UNTYPED_AS_UNKNOWN)
+        register(ENABLE_UNUSED_PROPERTY_DCE, JSConfigurationKeys.DCE_UNUSED_PROPERTIES)
     }
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {

@@ -166,4 +166,45 @@ class InfrastructureOutputFilterTest {
             filteredOutput
         )
     }
+
+    /**
+     * If the test process terminates abnormally, the test runner may relaunch the whole test suite.
+     * For example, `xcodebuild` does this and prints "Restarting after unexpected exit, crash, or test timeout".
+     * The interrupted test must be reported as failed, and the output of the relaunched suite must still be parsed.
+     */
+    @Test
+    fun relaunchedTestSuiteTCMessages() {
+        val testOutput = """
+            1
+            ##teamcity[testSuiteStarted name='sample.test.Foo']
+            2
+            ##teamcity[testStarted name='crashed']
+            3
+            ##teamcity[testSuiteStarted name='sample.test.Foo']
+            ##teamcity[testStarted name='passed']
+            ##teamcity[testFinished name='passed']
+            ##teamcity[testSuiteFinished name='sample.test.Foo']
+            4
+            
+        """.trimIndent()
+
+        val (filteredOutput, testReport) = TCTestOutputFilter.filter(testOutput)
+        testReport ?: throw AssertionError("Test report expected")
+
+        assertTrue(!testReport.isEmpty())
+        assertEquals(listOf("sample.test.Foo.passed"), testReport.passedTests.map(TestName::toString))
+        assertEquals(listOf("sample.test.Foo.crashed"), testReport.failedTests.map(TestName::toString))
+        assertTrue(testReport.ignoredTests.isEmpty())
+
+        assertEquals(
+            """
+                |1
+                |2
+                |3
+                |4
+                |
+            """.trimMargin(),
+            filteredOutput
+        )
+    }
 }

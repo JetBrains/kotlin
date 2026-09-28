@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // JLS 9.7.4 (`@C int @A [] @B [] f`, transliterated here as `@Elem String @Outer [] @Inner []`): each
 // annotation belongs to one level — the one written before the type name annotates the element type,
 // the leftmost bracket pair is the outermost array — and the vararg `...` is simply the rightmost

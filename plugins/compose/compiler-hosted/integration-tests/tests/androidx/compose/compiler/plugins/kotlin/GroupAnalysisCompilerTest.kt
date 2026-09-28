@@ -383,6 +383,41 @@ class GroupAnalysisCompilerTest(
         """
     )
 
+    /**
+     * This is a regression test against a bug that made stack trace mapping collection fail
+     * whenever a captured boolean variable was passed through a suspend inline function.
+     * For more details, see https://issuetracker.google.com/issues/555304803.
+     */
+    @Test
+    fun booleanCapturePassedThroughSuspendInlineFunction() = groups(
+        """
+            @Composable
+            fun Test(bool1: Boolean, bool2: Boolean, string: String) {
+                LaunchedEffect(Unit) {
+                    disposingComposition {
+                         suspendContent {
+                            println(bool1)
+                            println(bool2)
+                            println(string)
+                        }
+                    }
+                }
+            }
+        """,
+        """
+            suspend inline fun disposingComposition(f: suspend () -> Unit) {
+                f()
+            }
+
+            suspend inline fun suspendContent(noinline content: @Composable () -> Unit) {
+                waitForInit()
+            }
+
+            suspend fun waitForInit() {
+            }
+        """
+    )
+
     @Test
     fun inlineWithConditional() = groups(
         """

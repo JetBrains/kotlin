@@ -41,7 +41,8 @@ class IntList : SkipWhenBaseOnly() {
         bh.consume(data.toList())
     }
 
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun copyManual(bh: Blackhole) {
         skipWhenBaseOnly()
         val list = ArrayList<Int>(data.size)

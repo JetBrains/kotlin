@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class A {
     operator fun invoke(f: () -> Unit): Int = 1
 }

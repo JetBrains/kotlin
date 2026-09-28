@@ -56,6 +56,8 @@ FILE: ubyteOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(4)] val plus6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UByte.plus|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(3)] val plus7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.plus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(4294967295)] val minus1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.minus|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val minus2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UByte.minus|(R|/twoVal|)
@@ -68,6 +70,8 @@ FILE: ubyteOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(0)] val minus6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UByte.minus|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(4294967295)] val minus7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.minus|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(2)] val times1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.times|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(4)] val times2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UByte.times|(R|/twoVal|)
@@ -80,6 +84,8 @@ FILE: ubyteOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(4)] val times6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UByte.times|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(2)] val times7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.times|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val div1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.div|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(1)] val div2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UByte.div|(R|/twoVal|)
@@ -92,6 +98,8 @@ FILE: ubyteOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(1)] val div6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UByte.div|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(0)] val div7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.div|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(0)] val floorDiv1: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.floorDiv|(R|/twoVal|)
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UInt(1)] val floorDiv2: R|kotlin/UInt| = R|/twoVal|.R|kotlin/UByte.floorDiv|(R|/twoVal|)
@@ -116,6 +124,8 @@ FILE: ubyteOperations.kt
         public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=ULong(0)] val rem6: R|kotlin/ULong| = R|/twoVal|.R|kotlin/UByte.rem|(R|/ulongVal|)
         public get(): R|kotlin/ULong|
+    public final const [EvaluatedValue=UInt(1)] val rem7: R|kotlin/UInt| = R|/oneVal|.R|kotlin/UByte.rem|(R|/twoVal|)
+        public get(): R|kotlin/UInt|
     public final const [EvaluatedValue=UByte(1)] val mod1: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UByte.mod|(R|/twoVal|)
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(0)] val mod2: R|kotlin/UByte| = R|/twoVal|.R|kotlin/UByte.mod|(R|/twoVal|)
@@ -136,6 +146,8 @@ FILE: ubyteOperations.kt
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(8)] val and4: R|kotlin/UByte| = UInt(12).R|kotlin/UInt.toUByte|().R|kotlin/UByte.and|(UInt(10).R|kotlin/UInt.toUByte|())
         public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UByte(0)] val and5: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UByte.and|(R|/twoVal|)
+        public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(3)] val or1: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UByte.or|(R|/twoVal|)
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(2)] val or2: R|kotlin/UByte| = R|/twoVal|.R|kotlin/UByte.or|(R|/twoVal|)
@@ -144,6 +156,8 @@ FILE: ubyteOperations.kt
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(14)] val or4: R|kotlin/UByte| = UInt(12).R|kotlin/UInt.toUByte|().R|kotlin/UByte.or|(UInt(10).R|kotlin/UInt.toUByte|())
         public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UByte(3)] val or5: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UByte.or|(R|/twoVal|)
+        public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(3)] val xor1: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UByte.xor|(R|/twoVal|)
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(0)] val xor2: R|kotlin/UByte| = R|/twoVal|.R|kotlin/UByte.xor|(R|/twoVal|)
@@ -151,6 +165,8 @@ FILE: ubyteOperations.kt
     public final const [EvaluatedValue=UByte(1)] val xor3: R|kotlin/UByte| = R|/threeVal|.R|kotlin/UByte.xor|(R|/twoVal|)
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(6)] val xor4: R|kotlin/UByte| = UInt(12).R|kotlin/UInt.toUByte|().R|kotlin/UByte.xor|(UInt(10).R|kotlin/UInt.toUByte|())
+        public get(): R|kotlin/UByte|
+    public final const [EvaluatedValue=UByte(3)] val xor5: R|kotlin/UByte| = R|/oneVal|.R|kotlin/UByte.xor|(R|/twoVal|)
         public get(): R|kotlin/UByte|
     public final const [EvaluatedValue=UByte(255)] val inv1: R|kotlin/UByte| = R|/zeroVal|.R|kotlin/UByte.inv|()
         public get(): R|kotlin/UByte|
@@ -276,6 +292,12 @@ FILE: ubyteOperations.kt
         }
 
         when () {
+            !=(R|/plus7|.R|/id|<R|kotlin/UInt|>(), UInt(3)) ->  {
+                ^box String(Fail plus7)
+            }
+        }
+
+        when () {
             !=(R|/minus1|.R|/id|<R|kotlin/UInt|>(), UInt(4294967295)) ->  {
                 ^box String(Fail minus1)
             }
@@ -308,6 +330,12 @@ FILE: ubyteOperations.kt
         when () {
             !=(R|/minus6|.R|/id|<R|kotlin/ULong|>(), ULong(0)) ->  {
                 ^box String(Fail minus6)
+            }
+        }
+
+        when () {
+            !=(R|/minus7|.R|/id|<R|kotlin/UInt|>(), UInt(4294967295)) ->  {
+                ^box String(Fail minus7)
             }
         }
 
@@ -348,6 +376,12 @@ FILE: ubyteOperations.kt
         }
 
         when () {
+            !=(R|/times7|.R|/id|<R|kotlin/UInt|>(), UInt(2)) ->  {
+                ^box String(Fail times7)
+            }
+        }
+
+        when () {
             !=(R|/div1|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
                 ^box String(Fail div1)
             }
@@ -380,6 +414,12 @@ FILE: ubyteOperations.kt
         when () {
             !=(R|/div6|.R|/id|<R|kotlin/ULong|>(), ULong(1)) ->  {
                 ^box String(Fail div6)
+            }
+        }
+
+        when () {
+            !=(R|/div7|.R|/id|<R|kotlin/UInt|>(), UInt(0)) ->  {
+                ^box String(Fail div7)
             }
         }
 
@@ -456,6 +496,12 @@ FILE: ubyteOperations.kt
         }
 
         when () {
+            !=(R|/rem7|.R|/id|<R|kotlin/UInt|>(), UInt(1)) ->  {
+                ^box String(Fail rem7)
+            }
+        }
+
+        when () {
             !=(R|/mod1|.R|/id|<R|kotlin/UByte|>(), UInt(1).R|kotlin/UInt.toUByte|()) ->  {
                 ^box String(Fail mod1)
             }
@@ -516,6 +562,12 @@ FILE: ubyteOperations.kt
         }
 
         when () {
+            !=(R|/and5|.R|/id|<R|kotlin/UByte|>(), UInt(0).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail and5)
+            }
+        }
+
+        when () {
             !=(R|/or1|.R|/id|<R|kotlin/UByte|>(), UInt(3).R|kotlin/UInt.toUByte|()) ->  {
                 ^box String(Fail or1)
             }
@@ -540,6 +592,12 @@ FILE: ubyteOperations.kt
         }
 
         when () {
+            !=(R|/or5|.R|/id|<R|kotlin/UByte|>(), UInt(3).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail or5)
+            }
+        }
+
+        when () {
             !=(R|/xor1|.R|/id|<R|kotlin/UByte|>(), UInt(3).R|kotlin/UInt.toUByte|()) ->  {
                 ^box String(Fail xor1)
             }
@@ -560,6 +618,12 @@ FILE: ubyteOperations.kt
         when () {
             !=(R|/xor4|.R|/id|<R|kotlin/UByte|>(), UInt(6).R|kotlin/UInt.toUByte|()) ->  {
                 ^box String(Fail xor4)
+            }
+        }
+
+        when () {
+            !=(R|/xor5|.R|/id|<R|kotlin/UByte|>(), UInt(3).R|kotlin/UInt.toUByte|()) ->  {
+                ^box String(Fail xor5)
             }
         }
 

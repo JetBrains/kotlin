@@ -15,7 +15,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:5 box:
 // test.kt:11 box: map:java.util.Map=java.util.Collections$SingletonMap
 // test.kt:9 box: map:java.util.Map=java.util.Collections$SingletonMap

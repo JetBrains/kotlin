@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Here we want just to check return type
 // Should be () -> Int
 fun foo() = { 42 }

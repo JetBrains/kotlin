@@ -21,7 +21,7 @@ annotation class WithMuteInDatabase
 private val ExtensionContext.testClassNullable get() = testClass.orElseGet { null }
 private val ExtensionContext.testMethodNullable get() = testMethod.orElseGet { null }
 
-class MuteInCondition : ExecutionCondition {
+internal class MuteInCondition : ExecutionCondition {
     override fun evaluateExecutionCondition(
         context: ExtensionContext
     ): ConditionEvaluationResult {
@@ -43,7 +43,7 @@ class MuteInCondition : ExecutionCondition {
     }
 }
 
-class MuteInTestWatcher : TestWatcher {
+internal class MuteInTestWatcher : TestWatcher {
     override fun testFailed(
         context: ExtensionContext,
         cause: Throwable
@@ -69,7 +69,7 @@ class MuteInTestWatcher : TestWatcher {
 
 private fun getMethodKey(testMethod: Method, displayName: String): String = testMethod.name + if (displayName == "${testMethod.name}()") "" else "[${displayName}]"
 
-class MuteInInvocationInterceptor : InvocationInterceptor {
+internal class MuteInInvocationInterceptor : InvocationInterceptor {
     override fun interceptTestTemplateMethod(
         invocation: InvocationInterceptor.Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,

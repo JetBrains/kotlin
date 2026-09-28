@@ -140,6 +140,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_ALLOW_HOLDSIN_CONTRACT", KotlinReleaseVersion(2, 2, 20))
 
     /**
+     * Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ALLOW_PRE_17_RUNTIME_JDK: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_PRE_17_RUNTIME_JDK", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Allow 'catch' parameters to have reified types.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -332,6 +342,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DISABLE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
+     * Disables `NormalizeNaNValuesInConstContext` language feature.`
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_DO_NOT_NORMALIZE_NAN_VALUES_IN_CONST_CONTEXT: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DO_NOT_NORMALIZE_NAN_VALUES_IN_CONST_CONTEXT", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Disable automatic sorting of source files.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -405,16 +425,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_ENABLE_ADDITIONAL_IR_CHECKERS", KotlinReleaseVersion(2, 4, 20))
 
     /**
-     * Enable experimental support for `@EqualityBound` annotations in `equals` operators.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_EQUALITY_BOUNDS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_EQUALITY_BOUNDS", KotlinReleaseVersion(2, 5, 0))
-
-    /**
      * Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
@@ -477,6 +487,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_FIR_AGGRESSIVE_PRUNING", KotlinReleaseVersion(2, 4, 20))
 
     /**
+     * Enable experimental language support for full value classes.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_FULL_VALUE_CLASSES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_FULL_VALUE_CLASSES", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Enable header compilation mode.
      * In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
      * compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
@@ -507,9 +527,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Ignore all compilation exceptions while optimizing some constant expressions.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS", KotlinReleaseVersion(1, 9, 0))
 
@@ -517,9 +540,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental inline classes.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_INLINE_CLASSES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_INLINE_CLASSES", KotlinReleaseVersion(1, 3, 50))
 
@@ -577,9 +603,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental multi-dollar interpolation.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_MULTI_DOLLAR_INTERPOLATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_MULTI_DOLLAR_INTERPOLATION", KotlinReleaseVersion(2, 0, 20))
 
@@ -610,9 +639,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable the new experimental generic type inference algorithm.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_NEW_INFERENCE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NEW_INFERENCE", KotlinReleaseVersion(1, 2, 20))
 
@@ -630,9 +662,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental non-local break and continue.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_NON_LOCAL_BREAK_CONTINUE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NON_LOCAL_BREAK_CONTINUE", KotlinReleaseVersion(2, 1, 0))
 
@@ -757,7 +792,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_REPORT_PERF", KotlinReleaseVersion(1, 2, 50))
 
     /**
-     * Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
+     * Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
@@ -785,6 +820,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_SKIP_PRERELEASE_CHECK: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_SKIP_PRERELEASE_CHECK", KotlinReleaseVersion(1, 4, 0))
+
+    /**
+     * Report warnings on inapplicable equalities with data, value, and enum classes.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES", KotlinReleaseVersion(2, 5, 0))
 
     /**
      * Suppress error about API version greater than language version.
@@ -818,10 +863,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      *
      * Deprecated in Kotlin version 2.2.0.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    @DeprecatedCompilerArgument
+    @RemovedCompilerArgument
     public val X_SUPPRESS_WARNING: CommonCompilerArgument<List<String>> =
         CommonCompilerArgument("X_SUPPRESS_WARNING", KotlinReleaseVersion(2, 1, 0))
 
@@ -829,9 +876,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @RemovedCompilerArgument
     public val X_UNRESTRICTED_BUILDER_INFERENCE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_UNRESTRICTED_BUILDER_INFERENCE", KotlinReleaseVersion(1, 5, 30))
 
@@ -841,10 +891,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      *
      * Deprecated in Kotlin version 2.2.20.
+     *
+     * Removed in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    @DeprecatedCompilerArgument
+    @RemovedCompilerArgument
     public val X_USE_FIR_EXPERIMENTAL_CHECKERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_EXPERIMENTAL_CHECKERS", KotlinReleaseVersion(2, 1, 0))
 
@@ -924,9 +976,12 @@ public interface CommonCompilerArguments : CommonToolArguments {
      * Enable experimental language support for when guards.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     *
+     * Deprecated in Kotlin version 2.5.0.
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @DeprecatedCompilerArgument
     public val X_WHEN_GUARDS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_WHEN_GUARDS", KotlinReleaseVersion(2, 0, 20))
 

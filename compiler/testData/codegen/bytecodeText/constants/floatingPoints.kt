@@ -13,4 +13,4 @@ val i = 0.0 / 0.0
 // 1 LDC 13.0
 // 1 LDC 14.0
 // 2 LDC Infinity
-// 3 LDC NaN
+// 0 LDC NaN

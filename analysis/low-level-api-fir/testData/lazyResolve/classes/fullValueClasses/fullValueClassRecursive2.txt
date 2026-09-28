@@ -1,0 +1,377 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] fullValueClassRecursive2.kt
+    public final? value [ResolvedTo(RAW_FIR)] class First : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.second] second: Second, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.value] value: Int): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final? value [ResolvedTo(RAW_FIR)] class First : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.second] second: Second, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.value] value: Int): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class First : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.second] second: Second, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.value] value: Int): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final? value [ResolvedTo(COMPANION_GENERATION)] class First : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.second] second: Second, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.value] value: Int): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final? value [ResolvedTo(SUPER_TYPES)] class First : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.second] second: Second, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.value] value: Int): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final? value [ResolvedTo(TYPES)] class First : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.second] second: Second, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/First.value] value: Int): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final value [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(second, pack/Second), (value, kotlin/Int)])] class First : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=First] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.second] second: R|pack/Second|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.value] value: R|kotlin/Int|): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(second, pack/Second), (value, kotlin/Int)])] class First : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=First] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.second] second: R|pack/Second|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.value] value: R|kotlin/Int|): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final value [ResolvedTo(CONTRACTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(second, pack/Second), (value, kotlin/Int)])] class First : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=First] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.second] second: R|pack/Second|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.value] value: R|kotlin/Int|): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(second, pack/Second), (value, kotlin/Int)])] class First : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=First] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.second] second: R|pack/Second|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.value] value: R|kotlin/Int|): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final value [ResolvedTo(CONSTANT_EVALUATION)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(second, pack/Second), (value, kotlin/Int)])] class First : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=First] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.second] second: R|pack/Second|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.value] value: R|kotlin/Int|): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(second, pack/Second), (value, kotlin/Int)])] class First : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=First] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.second] second: R|pack/Second|, [ResolvedTo(TYPES)] [CorrespondingProperty=pack/First.value] value: R|kotlin/Int|): R|pack/First| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val second: Second = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Second
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=First] get(): Int
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] fullValueClassRecursive2.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(second, pack/Second), (value, kotlin/Int)])] class First : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=First] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/First.second] second: R|pack/Second|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/First.value] value: R|kotlin/Int|): R|pack/First| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|pack/Second| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=First] get(): R|pack/Second|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=First] get(): R|kotlin/Int|
+
+    }
+    public final? value [ResolvedTo(RAW_FIR)] class Second : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.first] first: First, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=pack/Second.value] value: Int): R|pack/Second| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val first: First = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): First
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] get(): Int
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassRecursive2.kt
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(second, pack/Second), (value, kotlin/Int)])] class First : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=First] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/First.second] second: R|pack/Second|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/First.value] value: R|kotlin/Int|): R|pack/First| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|pack/Second| = R|<local>/second|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=First] get(): R|pack/Second|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=First] get(): R|kotlin/Int|
+
+    }
+    public final value [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(first, pack/First), (value, kotlin/Int)])] class Second : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Second] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Second.first] first: R|pack/First|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=pack/Second.value] value: R|kotlin/Int|): R|pack/Second| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|pack/First| = R|<local>/first|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Second] get(): R|pack/First|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Second] get(): R|kotlin/Int|
+
+    }

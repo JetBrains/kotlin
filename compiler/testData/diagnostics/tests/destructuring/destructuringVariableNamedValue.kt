@@ -1,6 +1,6 @@
 // ISSUE: KT-83920
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +NameBasedDestructuring
 
 data class Box(val key: String, val value: String)

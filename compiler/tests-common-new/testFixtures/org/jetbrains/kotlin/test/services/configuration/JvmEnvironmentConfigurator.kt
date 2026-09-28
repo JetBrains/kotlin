@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmLoweringsPipelinePhase
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
@@ -325,7 +325,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             )
         )
         configuration.outputDirectory = outputDir
-        configuration.put(JvmBackendPipelinePhase.customClassBuilderFactory, ClassBuilderFactories.TEST)
+        configuration.put(JvmLoweringsPipelinePhase.customClassBuilderFactory, ClassBuilderFactories.TEST)
 
         configuration.addSourcesForDependsOnClosure(module, testServices)
     }

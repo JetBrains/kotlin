@@ -22,15 +22,8 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.incremental.storage.*
-import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
-import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
@@ -52,6 +45,7 @@ open class IncrementalJsCache(
     override val dirtyOutputClassesMap = registerMap(DirtyClassesFqNameMap(DIRTY_OUTPUT_CLASSES.storageFile, icContext))
     private val translationResults = registerMap(TranslationResultMap(TRANSLATION_RESULT_MAP.storageFile, protoData, icContext))
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, icContext))
+    private val irInlineTranslationResults = registerMap(IrTranslationResultMap(INLINE_FUNCTIONS.storageFile, icContext))
 
     private val dirtySources = hashSetOf<File>()
 
@@ -95,9 +89,16 @@ open class IncrementalJsCache(
         }
 
         for ([srcFile, irData] in incrementalResults.irFileData) {
-            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val fileMetadata, val debugInfos = debugInfo, val fileEntries) = irData
+            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val debugInfos = debugInfo, val fileEntries) = irData
             irTranslationResults.put(
-                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos, fileEntries
+            )
+        }
+
+        for ([srcFile, irData] in incrementalResults.irInlineFileData) {
+            (val fileData, val types, val signatures, val strings, val declarations, val bodies, val fqn, val debugInfos = debugInfo, val fileEntries) = irData
+            irInlineTranslationResults.put(
+                srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos, fileEntries
             )
         }
     }
@@ -111,6 +112,7 @@ open class IncrementalJsCache(
         dirtySources.forEach {
             translationResults.remove(it, changesCollector)
             irTranslationResults.remove(it)
+            irInlineTranslationResults.remove(it)
         }
         removeAllFromClassStorage(dirtyOutputClassesMap.getDirtyOutputClasses(), changesCollector)
         dirtySources.clear()
@@ -133,6 +135,16 @@ open class IncrementalJsCache(
 
                 if (file !in dirtySources) {
                     put(file, irTranslationResults[file]!!)
+                }
+            }
+        }
+
+    fun nonDirtyIrInlineParts(): Map<File, IrTranslationResultValue> =
+        hashMapOf<File, IrTranslationResultValue>().apply {
+            for (file in irInlineTranslationResults.keys) {
+
+                if (file !in dirtySources) {
+                    put(file, irInlineTranslationResults[file]!!)
                 }
             }
         }
@@ -195,7 +207,6 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.declarations)
         output.writeArray(value.bodies)
         output.writeArray(value.fqn)
-        output.writeArray(value.fileMetadata)
         output.writeOptionalArray(value.debugInfo)
         output.writeOptionalArray(value.fileEntries)
     }
@@ -239,12 +250,11 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val declarations = input.readArray()
         val bodies = input.readArray()
         val fqn = input.readArray()
-        val fileMetadata = input.readArray()
         val debugInfos = input.readOptionalArray()
         val fileEntries = input.readOptionalArray()
 
         return IrTranslationResultValue(
-            fileData, types, signatures, strings, declarations, bodies, fqn, fileMetadata, debugInfos, fileEntries
+            fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos, fileEntries
         )
     }
 }
@@ -278,35 +288,12 @@ private class IrTranslationResultMap(
         newDeclarations: ByteArray,
         newBodies: ByteArray,
         fqn: ByteArray,
-        newFileMetadata: ByteArray,
         debugInfos: ByteArray?,
         fileEntries: ByteArray?,
     ) {
         this[sourceFile] =
             IrTranslationResultValue(
-                newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, newFileMetadata, debugInfos, fileEntries
+                newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, debugInfos, fileEntries
             )
-    }
-}
-
-private class ProtoDataProvider(private val serializerProtocol: SerializerExtensionProtocol) {
-    operator fun invoke(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData> {
-        val classes = hashMapOf<ClassId, ProtoData>()
-        val proto = ProtoBuf.PackageFragment.parseFrom(metadata, serializerProtocol.extensionRegistry)
-        val nameResolver = NameResolverImpl(proto.strings, proto.qualifiedNames)
-
-        proto.class_List.forEach {
-            val classId = nameResolver.getClassId(it.fqName)
-            classes[classId] = ClassProtoData(it, nameResolver)
-        }
-
-        proto.`package`.apply {
-            val packageNameId = getExtensionOrNull(serializerProtocol.packageFqName)
-            val packageFqName = packageNameId?.let { FqName(nameResolver.getPackageFqName(it)) } ?: FqName.ROOT
-            val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalizeAsciiOnly() + "Kt"))
-            classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
-        }
-
-        return classes
     }
 }

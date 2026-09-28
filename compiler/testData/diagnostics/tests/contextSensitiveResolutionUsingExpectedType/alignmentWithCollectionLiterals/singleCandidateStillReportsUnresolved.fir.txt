@@ -1,0 +1,34 @@
+FILE: singleCandidateStillReportsUnresolved.kt
+    public final enum class MyEnum3 : R|kotlin/Enum<MyEnum3>| {
+        private constructor(): R|MyEnum3| {
+            super<R|kotlin/Enum<MyEnum3>|>()
+        }
+
+        public final static enum entry X: R|MyEnum3|
+        public final static enum entry Y: R|MyEnum3|
+        public final static fun values(): R|kotlin/Array<MyEnum3>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|MyEnum3| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<MyEnum3>|
+            public static get(): R|kotlin/enums/EnumEntries<MyEnum3>|
+
+    }
+    public final fun bar(x: R|MyEnum3|): R|kotlin/Unit| {
+    }
+    public final fun barTwo(x: R|MyEnum3|, y: R|MyEnum3|): R|kotlin/Unit| {
+    }
+    public final fun <T> id(x: R|T|): R|T| {
+        ^id R|<local>/x|
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(<Unresolved name: Z>#)
+        R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(R|/id|<R|MyEnum3|>(<Unresolved name: Z>#))
+        R|/bar|(Q|MyEnum3|.R|/MyEnum3.X|)
+        R|/barTwo<Inapplicable(INAPPLICABLE): /barTwo>#|(Q|MyEnum3|.R|/MyEnum3.X|, <Unresolved name: Z>#)
+        R|/barTwo<Inapplicable(INAPPLICABLE): /barTwo>#|(<Unresolved name: Z>#, <Unresolved name: Z>#)
+        lval a: R|kotlin/Unit| = R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(<Unresolved name: Z>#)
+        lval b: R|kotlin/Unit| = R|/bar<Inapplicable(INAPPLICABLE): /bar>#|(<Unresolved name: Z>#)
+    }

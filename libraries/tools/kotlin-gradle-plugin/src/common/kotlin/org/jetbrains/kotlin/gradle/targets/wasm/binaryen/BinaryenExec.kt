@@ -8,19 +8,15 @@ package org.jetbrains.kotlin.gradle.targets.wasm.binaryen
 import org.gradle.api.file.*
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.supportsPerKlibCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.platform.wasm.BinaryenConfig
 import java.io.File
 import javax.inject.Inject
@@ -41,16 +37,11 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     @get:IgnoreEmptyDirectories
     abstract val inputFiles: ConfigurableFileCollection
 
-    @Internal
-    @Deprecated("Use binaryenArguments instead. Scheduled for removal in Kotlin 2.5.")
-    var binaryenArgs: MutableList<String> = BinaryenConfig.binaryenArgs.toMutableList()
-
-    @Suppress("DEPRECATION")
     @get:Input
     val binaryenArguments: ListProperty<String> = project.objects.listProperty(String::class.java).value(
         inputFiles.elements.map {
             if (it.count() == 1) {
-                binaryenArgs
+                BinaryenConfig.binaryenArgs
             } else {
                 BinaryenConfig.binaryenMultimoduleArgs
             }
@@ -80,47 +71,23 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
      *         }
      *     }
      *
-     *     @OptIn(ExperimentalWasmDsl::class)
      *     it.perFileBinaryenArguments.putAll(perFileArguments)
      * }
      * ```
      */
-    @ExperimentalWasmDsl
     @get:Input
     abstract val perFileBinaryenArguments: MapProperty<File, List<String>>
-
-    @Deprecated("Use inputFiles instead. Scheduled for removal in Kotlin 2.5.", replaceWith = ReplaceWith("inputFiles"))
-    @get:Internal
-    val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
-    @Deprecated("BinaryenExec can now work with multiple files, so outputFileName is not used anymore.  Scheduled for removal in Kotlin 2.5.")
-    @get:Input
-    @get:Optional
-    abstract val outputFileName: Property<String>
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Use outputDirectory instead. Scheduled for removal in Kotlin 2.5.", replaceWith = ReplaceWith("outputDirectory"))
-    @Internal
-    val outputFileProperty: Provider<RegularFile> = outputDirectory.zip(outputFileName) { dir: Directory, fileName: String ->
-        dir.file(fileName)
-    }
-
     override fun exec() {
-        @Suppress("DEPRECATION")
-        if (inputFileProperty.isPresent) {
-            inputFiles.from(inputFileProperty)
-        }
-
         val workQueue = workerExecutor.noIsolation()
 
         inputFiles.forEach { inputFile ->
             workQueue.submit(BinaryenWorkAction::class.java) {
                 it.executable.set(this@BinaryenExec.executable)
                 it.workingDir.set(inputFile.parentFile)
-                @OptIn(ExperimentalWasmDsl::class)
                 it.args.set(
                     binaryenArguments.get() + (perFileBinaryenArguments.get()[inputFile] ?: emptyList())
                 )
@@ -131,7 +98,6 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
     }
 
     companion object {
-        @ExperimentalWasmDsl
         fun register(
             compilation: KotlinJsIrCompilation,
             name: String,
@@ -156,16 +122,5 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
                 it.configuration()
             }
         }
-
-        @ExperimentalWasmDsl
-        @Deprecated(
-            "Use register instead",
-            ReplaceWith("register(compilation, name, configuration)")
-        )
-        fun create(
-            compilation: KotlinJsIrCompilation,
-            name: String,
-            configuration: BinaryenExec.() -> Unit = {},
-        ): TaskProvider<BinaryenExec> = register(compilation, name, configuration)
     }
 }

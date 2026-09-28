@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-78304
 // DIAGNOSTICS: -UNCHECKED_CAST
 // LANGUAGE: +ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds

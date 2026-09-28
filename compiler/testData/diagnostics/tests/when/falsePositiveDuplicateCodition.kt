@@ -1,5 +1,5 @@
 // ISSUE: KT-85244
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 fun isInt(a: Number, b: Number) = when (a) {
     is Int -> true

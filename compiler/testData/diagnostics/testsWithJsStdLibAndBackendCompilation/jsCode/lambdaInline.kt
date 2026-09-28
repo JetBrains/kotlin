@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-68975, KT-66181
 // See counterpart test without IR inliner in js/js.translator/testData/box/jsCode/lambdaInline.kt
 external fun p(s: String, n: () -> String): String

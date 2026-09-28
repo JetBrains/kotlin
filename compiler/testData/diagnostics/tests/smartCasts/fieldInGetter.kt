@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 val x: Int? = 0
     get() {
         if (field != null) return field.hashCode()

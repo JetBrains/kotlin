@@ -32,22 +32,18 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
-    private val currentModule: ModuleDescriptor?,
     val symbolTable: SymbolTable,
     val errorCallback: (String) -> Unit,
     val deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
     constructor(
-        currentModule: ModuleDescriptor?,
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
         deserializedSymbolPostProcessor: (IrSymbol, IdSignature, IrFileSymbol) -> IrSymbol = { s, _, _ -> s },
     ) : this(
-        currentModule,
         symbolTable,
         errorCallback = { configuration.report(PartialLinkageDiagnostics.IR_LINKER_ERROR, it) },
         deserializedSymbolPostProcessor
@@ -199,16 +195,11 @@ abstract class KotlinIrLinker(
     }
 
     protected open fun createTypeSystemContext(irBuiltIns: IrBuiltIns): IrTypeSystemContext = IrTypeSystemContextImpl(irBuiltIns)
-    protected open fun platformSpecificSymbol(symbol: IrSymbol): Boolean = false
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? =
         deserializeOrResolveDeclaration(symbol)
 
     private fun deserializeOrResolveDeclaration(symbol: IrSymbol): IrDeclaration? {
-        if (!symbol.isPublicApi && symbol.hasDescriptor && !platformSpecificSymbol(symbol) &&
-            symbol.descriptor.module !== currentModule
-        ) return null
-
         if (!symbol.isBound) {
             try {
                 if (!findDeserializedDeclarationForSymbol(symbol)) return null
@@ -383,6 +374,14 @@ enum class DeserializationStrategy(
     WITH_INLINE_BODIES(false, false, false, false, true)
 }
 
-/** This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment]. */
+/**
+ * This is an auxiliary attribute that is used to store [KotlinLibrary] instance for deserialized [IrModuleFragment].
+ *
+ * It is stamped by [KotlinIrLinker] for every module fragment created during IR linkage. Code that creates a synthetic
+ * module fragment for an already deserialized library module must stamp the new fragment manually.
+ *
+ * The attribute stays `null` for module fragments that the linker did not create: the fragment of the module being
+ * compiled, fragments on backends that have no klibs at all (JVM), and the single fragment that the frontend creates
+ * for all binary dependencies at once, see `DependencyListForCliModule.Builder`.
+ */
 var IrModuleFragment.kotlinLibrary: KotlinLibrary? by irAttribute(copyByDefault = false)
-    private set

@@ -149,27 +149,10 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: main.DATA_CLASS,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
     public func copy(
         a: Swift.Int32
     ) -> main.DATA_CLASS {
         return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func hashCode() -> Swift.Int32 {
-        return DATA_CLASS_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return DATA_CLASS_toString(self.__externalRCRef())
     }
 }
 public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
@@ -191,27 +174,10 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: main.DATA_CLASS_WITH_REF,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
     public func copy(
         o: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_REF {
         return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), o.__externalRCRef()))
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func hashCode() -> Swift.Int32 {
-        return DATA_CLASS_WITH_REF_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return DATA_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
 public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
@@ -242,25 +208,8 @@ public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: main.DATA_OBJECT_WITH_PACKAGE,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
     public func foo() -> Swift.Int32 {
         return DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
-    }
-    public func hashCode() -> Swift.Int32 {
-        return DATA_OBJECT_WITH_PACKAGE_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return DATA_OBJECT_WITH_PACKAGE_toString(self.__externalRCRef())
     }
 }
 public final class GENERIC_CLASS: KotlinRuntime.KotlinBase {
@@ -308,23 +257,6 @@ public final class INLINE_CLASS: KotlinRuntime.KotlinBase {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
-    public static func ==(
-        this: main.INLINE_CLASS,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return INLINE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func hashCode() -> Swift.Int32 {
-        return INLINE_CLASS_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return INLINE_CLASS_toString(self.__externalRCRef())
-    }
 }
 public final class INLINE_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     public var i: main.DATA_CLASS_WITH_REF {
@@ -344,23 +276,6 @@ public final class INLINE_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-    }
-    public static func ==(
-        this: main.INLINE_CLASS_WITH_REF,
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        this.equals(other: other)
-    }
-    public func equals(
-        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
-    ) -> Swift.Bool {
-        return INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func hashCode() -> Swift.Int32 {
-        return INLINE_CLASS_WITH_REF_hashCode(self.__externalRCRef())
-    }
-    public func toString() -> Swift.String {
-        return INLINE_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
 public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
@@ -496,37 +411,19 @@ public var block: main.closure {
         }()
     }
     set {
-        return { __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__({
-            let originalBlock: () -> Swift.Void = newValue
-            return {
-                let _result = originalBlock()
-                return { _result; return true }()
-            }
-        }()); return () }()
+        return { __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((newValue as () -> Swift.Void) as AnyObject).toOpaque()); return () }()
     }
 }
 public func consume_closure(
     block: @escaping main.closure
 ) -> Swift.Void {
-    return { __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__({
-        let originalBlock: () -> Swift.Void = block
-        return {
-            let _result = originalBlock()
-            return { _result; return true }()
-        }
-    }()); return () }()
+    return { __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque()); return () }()
 }
 public func deeper_closure_typealiase(
     block: @escaping main.deeper_closure_typealias
 ) -> main.deeper_closure_typealias {
     return {
-        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__({
-        let originalBlock: () -> Swift.Void = block
-        return {
-            let _result = originalBlock()
-            return { _result; return true }()
-        }
-    }()), options: .asBestFittingWrapper)!
+        let pointerToBlock = KotlinRuntime.KotlinBase(__externalRCRefUnsafe: __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(Unmanaged.passRetained((block as () -> Swift.Void) as AnyObject).toOpaque()), options: .asBestFittingWrapper)!
         return { return { main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock.__externalRCRef()!); return () }() }
     }()
 }
@@ -585,4 +482,9 @@ extension ExportedKotlinPackages.typealiases {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
+}
+@_cdecl("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+package func main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(_ pointerToClosure: Swift.UnsafeMutableRawPointer) -> Swift.Bool {
+    let _result: Swift.Void = (Unmanaged<AnyObject>.fromOpaque(pointerToClosure).takeUnretainedValue() as! () -> Swift.Void)()
+    return { _result; return true }()
 }

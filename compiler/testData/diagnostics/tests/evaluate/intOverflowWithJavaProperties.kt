@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: Test.java
 public class Test {
     public static int i1 = Integer.MAX_VALUE;

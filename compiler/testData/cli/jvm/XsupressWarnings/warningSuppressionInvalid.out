@@ -1,8 +1,5 @@
-warning: [DEPRECATED_CLI_ARG] The argument '-Xsuppress-warning' is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
-error: [ERROR_SEVERITY_CHANGED] Diagnostic "CONFLICTING_PROJECTION" is an error. Changing the severity of errors is prohibited
-error: [MISSING_DIAGNOSTIC_NAME] Warning with name "NON_EXISTING_DIAGNOSTIC" does not exist
-error: [MISSING_DIAGNOSTIC_NAME] Warning with name ""UNCHECKED_CAST"" does not exist
-error: [MISSING_DIAGNOSTIC_NAME] Warning with name "" does not exist
-error: [MISSING_DIAGNOSTIC_NAME] Warning with name "null" does not exist
-error: [MISSING_DIAGNOSTIC_NAME] Warning with name "USELESS_.+" does not exist
+error: [COMPILER_ARGUMENTS_ERROR] Invalid argument for -Xwarning-level=UNCHECKED_CAST
+error: [COMPILER_ARGUMENTS_ERROR] -Xwarning-level is duplicated for warning CONFLICTING_PROJECTION
+error: [COMPILER_ARGUMENTS_ERROR] Invalid argument for -Xwarning-level=NON_EXISTING_DIAGNOSTIC
+error: [COMPILER_ARGUMENTS_ERROR] -Xwarning-level is duplicated for warning UNCHECKED_CAST
 COMPILATION_ERROR

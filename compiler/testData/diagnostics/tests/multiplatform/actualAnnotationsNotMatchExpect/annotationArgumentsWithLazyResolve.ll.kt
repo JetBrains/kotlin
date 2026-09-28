@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // Not a real LL divergence, it's just tiered runners reporting errors from `BACKEND`
 // LL_FIR_DIVERGENCE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Test for ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT diagnostic when annotations arguments are lazily resolved.
 
 // MODULE: common

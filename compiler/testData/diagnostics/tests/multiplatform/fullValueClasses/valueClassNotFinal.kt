@@ -1,5 +1,5 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +MultiPlatformProjects, +FullValueClasses
 // LANGUAGE: -StrictEquals
 //  ^^^ KT-88389

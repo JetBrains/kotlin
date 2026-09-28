@@ -13,7 +13,7 @@
     />
 
     <applicationService serviceInterface="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider"
-        serviceImplementation="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl"/>
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.BuiltinsVirtualFileProviderCliImpl"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">

@@ -9,7 +9,7 @@ inline fun f(s: String = "OK"): String =
 fun box(): String =
     f()
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:10 box
 // test.kt:6 box
 // test.kt:7 box

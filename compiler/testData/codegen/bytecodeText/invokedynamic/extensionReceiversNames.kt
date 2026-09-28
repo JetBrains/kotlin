@@ -1,5 +1,5 @@
 // LANGUAGE: +LightweightLambdas
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 fun <T> block(t: T, f: T.() -> Unit) {
     f.invoke(t)

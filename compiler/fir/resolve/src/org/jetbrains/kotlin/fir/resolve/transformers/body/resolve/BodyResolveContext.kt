@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -80,9 +81,6 @@ class BodyResolveContext(
 
     val topContainerForTypeResolution: FirDeclaration?
         get() = containers.lastOrNull { it is FirTypeParameterRefsOwner && it !is FirAnonymousFunction }
-
-    @set:PrivateForInline
-    var containingRegularClass: FirRegularClass? = null
 
     val containerIfAny: FirDeclaration?
         get() = containers.lastOrNull()
@@ -196,19 +194,6 @@ class BodyResolveContext(
             f()
         } finally {
             containers.removeLast()
-        }
-    }
-
-    @PrivateForInline
-    private inline fun <T> withContainerRegularClass(declaration: FirRegularClass, f: () -> T): T {
-        val oldContainingClass = containingRegularClass
-        containers.add(declaration)
-        containingRegularClass = declaration
-        return try {
-            f()
-        } finally {
-            containers.removeLast()
-            containingRegularClass = oldContainingClass
         }
     }
 
@@ -533,7 +518,7 @@ class BodyResolveContext(
         storeClassOrTypealiasIfNotNested(regularClass, holder.session)
         return withSwitchedTowerDataModeForStaticNestedClass(regularClass) {
             withScopesForClass(regularClass) {
-                withContainerRegularClass(regularClass, f)
+                withContainer(regularClass, f)
             }
         }
     }

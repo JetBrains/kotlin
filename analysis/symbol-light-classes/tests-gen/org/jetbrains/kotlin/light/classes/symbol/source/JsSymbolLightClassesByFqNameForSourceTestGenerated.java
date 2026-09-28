@@ -662,6 +662,36 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("CompanionBlockInInterface.kt")
+    public void testCompanionBlockInInterface() {
+      run("CompanionBlockInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceInlineWithDefaultArgument.kt")
+    public void testCompanionBlockInInterfaceInlineWithDefaultArgument() {
+      run("CompanionBlockInInterfaceInlineWithDefaultArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultDisable.kt")
+    public void testCompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultDisable() {
+      run("CompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility.kt")
+    public void testCompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility() {
+      run("CompanionBlockInInterfaceInlineWithDefaultArgumentJvmDefaultNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionBlockInInterfaceWithDefaultImpls.kt")
+    public void testCompanionBlockInInterfaceWithDefaultImpls() {
+      run("CompanionBlockInInterfaceWithDefaultImpls.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionBlockInsideValueClass.kt")
     public void testCompanionBlockInsideValueClass() {
       run("CompanionBlockInsideValueClass.kt");

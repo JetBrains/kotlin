@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.artifacts.maybeCreateKlibPackingTask
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
@@ -51,17 +50,13 @@ private fun Project.getAllCInteropOutputFiles(compilation: KotlinNativeCompilati
             } else null
         }
 
-    if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-        // this part of import isn't ready for working with unpackaged klibs: KTIJ-31053
-        return project.filesProvider {
-            cinteropTasks.map { interopTask ->
-                compilation.maybeCreateKlibPackingTask(
-                    interopTask.get().settings.classifier,
-                    interopTask.map { it.klibDirectory.get() },
-                )
-            }
+    // this part of import isn't ready for working with unpackaged klibs: KTIJ-31053
+    return project.filesProvider {
+        cinteropTasks.map { interopTask ->
+            compilation.maybeCreateKlibPackingTask(
+                interopTask.get().settings.classifier,
+                interopTask.map { it.klibDirectory.get() },
+            )
         }
     }
-    return project.filesProvider { cinteropTasks.map { it.get().klibFile } }
-        .builtBy(*cinteropTasks.toTypedArray())
 }

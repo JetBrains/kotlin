@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class A {
     val lambda: () -> Unit = TODO()
     val memberInvoke: B = TODO()

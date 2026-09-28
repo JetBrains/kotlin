@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 /*
     Here element has type Captured(*) because of resolution for `iterator()` on this.
     and where we resolve `destination.add(element)` we approximate element to `Any` with smart cast to `R`.

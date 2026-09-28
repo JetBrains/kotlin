@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T> foo(resources: List<T>) {
     resources.map { runCatching { it } }.mapNotNull { it.getOrNull() }
 }

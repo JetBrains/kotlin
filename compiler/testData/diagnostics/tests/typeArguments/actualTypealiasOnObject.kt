@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +MultiPlatformProjects, +ForbidUselessTypeArgumentsIn25,  +ProperSupportOfInnerClassesInCallableReferenceLHS
+// LANGUAGE: +MultiPlatformProjects, +ForbidUselessTypeArgumentsIn26,  +ProperSupportOfInnerClassesInCallableReferenceLHS
 //                                                                      ^ otherwise, different positioning for one of the diagnostics
 // ISSUE: KT-84280, KT-84380
 

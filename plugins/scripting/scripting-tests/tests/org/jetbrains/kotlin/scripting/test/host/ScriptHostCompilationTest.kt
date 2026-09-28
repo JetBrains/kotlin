@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.Disabled
 import java.io.File
@@ -44,7 +44,7 @@ import kotlin.test.*
 
 private const val testDataPath = "plugins/scripting/scripting-tests/testData/host/cliCompilation"
 
-@SmokeTest
+@MustRunAlways
 class ScriptHostCompilationTest {
     private val testRootDisposable: Disposable = TestDisposable("${ScriptHostCompilationTest::class.simpleName}.testRootDisposable")
 

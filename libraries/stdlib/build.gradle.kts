@@ -1,6 +1,7 @@
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
@@ -8,7 +9,10 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
@@ -50,6 +54,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xcontext-parameters")
     freeCompilerArgs.add("-Xname-based-destructuring=complete")
     freeCompilerArgs.add("-Xcollection-literals")
+    freeCompilerArgs.add("-Xcontext-sensitive-resolution")
     addReturnValueCheckerInfo()
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
@@ -263,11 +268,63 @@ kotlin {
         }
     }
     js {
+        val testCompilation = compilations.getByName("test")
+        val mainCompilation = compilations.getByName("main") {
+            compileTaskProvider.configure {
+                compilerOptions.mainCompilationOptions()
+                compilerOptions.freeCompilerArgs.addAll(
+                    listOfNotNull(
+                        "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
+                        diagnosticNamesArg,
+                    )
+                )
+            }
+        }
+
+        val latestJsCompilation = compilations.create("latestJsTest") {
+            associateWith(mainCompilation)
+            // Sources are configured in the `sourceSets` block below (see `jsLatestJsTest`).
+            // Don't `dependsOn(jsTest)` here: that would make `jsTest` a shared (non-leaf) source set
+            // and break its dependency resolution (e.g., kotlin.test) in the IDE.
+            binaries.executable(this)
+            binaries.configureEach {
+                linkTask.configure {
+                    compilerOptions {
+                        target.set("es2020")
+                        moduleKind.set(JsModuleKind.MODULE_COMMONJS) // Mocha adapter doesn't support ES modules yet
+                    }
+                }
+            }
+        }
+
+        fun KotlinJsSubTargetDsl.latestTargetRunRegistering(): KotlinJsPlatformTestRun {
+            return testRuns.create("latestTarget") {
+                setExecutionSourceFrom(latestJsCompilation)
+                executionTask.configure {
+                    val devBinary = latestJsCompilation.binaries
+                        .matching { it.mode == KotlinJsBinaryMode.DEVELOPMENT }
+                        .single()
+
+                    inputFileProperty.set(devBinary.mainFileSyncPath)
+                }
+            }
+        }
+
+
         if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            browser {}
+            browser {
+                val latestJsRun = latestTargetRunRegistering()
+
+                testTask {
+                    dependsOn(latestJsRun.executionTask)
+                }
+            }
         }
         nodejs {
+            val latestJsRun = latestTargetRunRegistering()
+
             testTask {
+                dependsOn(latestJsRun.executionTask)
                 useMocha {
                     timeout = "10s"
                 }
@@ -283,19 +340,6 @@ kotlin {
             )
         }
 
-        compilations {
-            val main = getByName("main") {
-                compileTaskProvider.configure {
-                    compilerOptions.mainCompilationOptions()
-                    compilerOptions.freeCompilerArgs.addAll(
-                        listOfNotNull(
-                            "-Xir-module-name=$KOTLIN_JS_STDLIB_NAME",
-                            diagnosticNamesArg,
-                        )
-                    )
-                }
-            }
-        }
     }
 
     fun <T> T.commonWasmTargetConfiguration()
@@ -491,6 +535,11 @@ kotlin {
             kotlin.srcDir("${jsDir}/test")
         }
 
+        named("jsLatestJsTest") {
+            dependsOn(commonTest.get())
+            kotlin.srcDirs(jsTest.kotlin.srcDirs)
+        }
+
         val nativeWasmMain = create("nativeWasmMain") {
             dependsOn(commonNonJvmMain)
             kotlin.srcDir("native-wasm/src")
@@ -638,6 +687,7 @@ kotlin {
             }
             compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=complete")
             compilerOptions.freeCompilerArgs.add("-Xcollection-literals")
+            compilerOptions.freeCompilerArgs.add("-Xcontext-sensitive-resolution")
         }
     }
 }
@@ -864,6 +914,7 @@ tasks {
         }
         named("compileTestDevelopmentExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
             compilerOptions.freeCompilerArgs.add("-Xwasm-enable-array-range-checks")
+            compilerOptions.freeCompilerArgs.add("-Xwasm-enable-asserts")
         }
         named("compileTestProductionExecutableKotlinWasm$wasmTarget", KotlinJsIrLink::class) {
             enabled = false  // Causes out-of-memory in CI: KTI-2150

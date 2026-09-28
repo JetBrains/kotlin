@@ -70,14 +70,16 @@ class WeakRefBenchmark : SkipWhenBaseOnly() {
     }
 
     // Access alive reference.
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun aliveReference(bh: Blackhole) {
         skipWhenBaseOnly()
         bh.consume(aliveRef.stress())
     }
 
     // Access dead reference.
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun deadReference(bh: Blackhole) {
         skipWhenBaseOnly()
         bh.consume(deadRef.stress())

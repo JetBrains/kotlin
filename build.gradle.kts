@@ -1,7 +1,6 @@
+import TestLifecycleTask.QualityGate
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.gradle.ext.ProjectSettings
-import org.jetbrains.gradle.ext.TaskTriggersConfig
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
@@ -93,7 +92,6 @@ val jpsBootstrap = configurations.create("jpsBootstrap")
 
 val commonBuildDir = File(rootDir, "build")
 val distDir = "$rootDir/dist"
-extra["distDir"] = distDir
 val distKotlinHomeDir = "$distDir/kotlinc"
 extra["distKotlinHomeDir"] = distKotlinHomeDir
 val distLibDir = "$distKotlinHomeDir/lib"
@@ -138,6 +136,7 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-api",
     ":kotlin-gradle-plugin-annotations",
     ":kotlin-gradle-plugin-idea",
+    ":kotlin-gradle-plugin-idea-browser-debug",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin-tcs-android",
     ":compose-compiler-gradle-plugin",
@@ -192,9 +191,10 @@ val publishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> = 
     configure { extendsFrom(publishedMark) }
 }
 val localPublishedMark: NamedDomainObjectProvider<DependencyScopeConfiguration> = configurations.dependencyScope("localPublishedMark")
-val localPublishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> = configurations.resolvable("localPublishedMarkClasspath").apply {
-    configure { extendsFrom(localPublishedMark) }
-}
+val localPublishedMarkElements: NamedDomainObjectProvider<ResolvableConfiguration> =
+    configurations.resolvable("localPublishedMarkClasspath").apply {
+        configure { extendsFrom(localPublishedMark) }
+    }
 dependencies {
     allprojects.forEach { p ->
         add(publishedMark.name, project(p.path, configuration = "publishedMark"))
@@ -258,8 +258,7 @@ tasks {
         dependsOnAll("publish", coreLibsPublishable)
     }
 
-    // === Build: BootstrapTest ===
-    val coreLibsTest = testLifecycleTask("coreLibsTest") {
+    val coreLibsTest = testLifecycleTask("coreLibsTest", QualityGate.Master) {
         dependsOnAll(
             task = "check",
             projects = coreLibsBuildable + listOf(
@@ -271,38 +270,55 @@ tasks {
         )
     }
 
-    // === Build: GradlePluginTests ===
-    testLifecycleTask("gradlePluginTest") {
+    testLifecycleTask("gradlePluginTest", QualityGate.Master) {
         gradlePluginProjects.forEach {
             dependsOn("$it:check")
         }
     }
 
-    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
-    testLifecycleTask("gradlePluginIntegrationTest") {
+    testLifecycleTask("gradlePluginIntegrationSmokeTest", QualityGate.None) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAllParallelTests")
+    }
+
+    testLifecycleTask("gradlePluginIntegrationMasterTest", QualityGate.Master) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpDaemonsTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJvmTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpMppTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpOtherTestsGroupedByGradleVersion")
+    }
+
+
+    // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ==/
+    register("gradlePluginIntegrationTest") {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
-    // === Build: JvmMiscTests ===
-    testLifecycleTask("jvmCompilerTest") {
+    testLifecycleTask("gradlePluginIntegrationNightlyTest", QualityGate.Nightly) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTests")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftExportTests")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTests")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
+    }
+
+    testLifecycleTask("jvmCompilerTest", QualityGate.Master) {
         dependsOn(":compiler:tests-common-new:test")
         dependsOn(":compiler:container:test")
         dependsOn(":compiler:tests-java8:test")
         dependsOn(":compiler:tests-spec:test")
     }
 
-    // === Build: JvmCodegenTests ===
-    testLifecycleTask("jvmCodegenTest") {
+    testLifecycleTask("jvmCodegenTest", QualityGate.Master) {
         dependsOn(":compiler:fir:fir2ir:aggregateTests")
     }
 
-    // === could be dropped ===
-    testLifecycleTask("testsForBootstrapBuildTest") {
+    testLifecycleTask("testsForBootstrapBuildTest", QualityGate.Master) {
         dependsOn(":compiler:tests-common-new:test")
     }
 
-    // === intermediate task ===
-    val jvmCompilerIntegrationTest = testLifecycleTask("jvmCompilerIntegrationTest") {
+    val jvmCompilerIntegrationTest = testLifecycleTask("jvmCompilerIntegrationTest", QualityGate.Master) {
         dependsOn(
             ":kotlin-compiler-embeddable:test",
             ":kotlin-compiler-client-embeddable:test"
@@ -310,20 +326,36 @@ tasks {
     }
 
     // === Used by Native Image builds (in a separate TC project) ===
-    testLifecycleTask("nativeImageCompilerTest") {
+    testLifecycleTask("nativeImageCompilerTest", QualityGate.None) {
         dependsOn(":kotlin-compiler-native-image:nativeImageBoxTest")
         dependsOn(":kotlin-compiler-native-image:nativeImageSmokeTest")
     }
 
-    // === Build: JSCompilerTestsES5 ===
-    testLifecycleTask("jsCompilerTest") {
+    testLifecycleTask("jsCompilerTest", QualityGate.Master) {
         dependsOn(":js:js.tests:jsTest")
         dependsOn(":js:js.parser:test")
         dependsOn(":compiler:ir.serialization.js:test")
     }
 
-    // === Build: WasmCompilerSmokeTestsK2_LINUX ===
-    testLifecycleTask("wasmFirCompilerTest") {
+    testLifecycleTask("jsES6Test", QualityGate.Master) {
+        dependsOn(":js:js.tests:jsES6Test")
+    }
+
+    // TODO(KT-72720): Promote to QualityGate.Nightly
+    testLifecycleTask("jsES5InlineAnonymousFunctionsTest", QualityGate.Undefined) {
+        dependsOn(":js:js.tests:jsES5InlineAnonymousFunctionsTest")
+    }
+
+    // TODO(KT-72720): Promote to QualityGate.Nightly
+    testLifecycleTask("jsES6InlineAnonymousFunctionsTest", QualityGate.Undefined) {
+        dependsOn(":js:js.tests:jsES6InlineAnonymousFunctionsTest")
+    }
+
+    testLifecycleTask("jsKlibCompatibilityTest", QualityGate.Master) {
+        dependsOn(":js:js.tests:klib-compatibility:testMinimalInAggregate")
+    }
+
+    testLifecycleTask("wasmFirCompilerTest", QualityGate.Master) {
         dependsOn(":wasm:wasm.tests:test")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild.get() || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
@@ -331,13 +363,72 @@ tasks {
         }
     }
 
+    testLifecycleTask("wasmJsBoxTest", QualityGate.Master) {
+        dependsOn(":wasm:wasm.tests:wasmJsBoxTest")
+    }
+
+    testLifecycleTask("wasmJsBoxWithJscOnWindows", QualityGate.Undefined) {
+        dependsOn(":wasm:wasm.tests:wasmJsBoxWithJscOnWindows")
+    }
+
+    testLifecycleTask("wasmJsSplittingTest", QualityGate.Master) {
+        dependsOn(":wasm:wasm.tests:wasmJsSplittingTest")
+    }
+
+    testLifecycleTask("wasmJsMultiModuleTest", QualityGate.Nightly) {
+        dependsOn(":wasm:wasm.tests:wasmJsMultiModuleTest")
+    }
+
+    testLifecycleTask("wasmWasiBoxTest", QualityGate.Master) {
+        dependsOn(":wasm:wasm.tests:wasmWasiBoxTest")
+    }
+
+    testLifecycleTask("wasmIcTest", QualityGate.Master) {
+        dependsOn(":wasm:wasm.tests:wasmIcTest")
+    }
+
+    testLifecycleTask("wasmMiscTest", QualityGate.Master) {
+        dependsOn(":wasm:wasm.tests:wasmMiscTest")
+    }
+
+    testLifecycleTask("wasmFirCompilerExtraTest", QualityGate.Nightly) {
+        dependsOn(":wasm:wasm.tests:wasmFirCompilerExtraTest")
+    }
+
+    testLifecycleTask("wasmKlibCompatibilityTest", QualityGate.Master) {
+        dependsOn(":wasm:wasm.tests:klib-compatibility:testMinimalInAggregate")
+    }
+
+    testLifecycleTask("commonBackendTest", QualityGate.Master) {
+        dependsOn(":compiler:ir.backend.common:test")
+    }
+
+    testLifecycleTask("codegenTarget8Jvm11Test", QualityGate.Master) {
+        dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm11Test")
+    }
+
+    testLifecycleTask("codegenTarget8Jvm17Test", QualityGate.Master) {
+        dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm17Test")
+    }
+
+    testLifecycleTask("codegenTarget11Jvm11Test", QualityGate.Master) {
+        dependsOn(":compiler:tests-different-jdk:codegenTarget11Jvm11Test")
+    }
+
+    testLifecycleTask("codegenTarget17Jvm17Test", QualityGate.Master) {
+        dependsOn(":compiler:tests-different-jdk:codegenTarget17Jvm17Test")
+    }
+
+    testLifecycleTask("androidCodegenTest", QualityGate.Master) {
+        dependsOn(":compiler:android-tests:test")
+    }
+
     // These tests run Native compiler and will be run in many different compilation modes that the compiler supports:
     // - different optimization modes
     // - different cache policies
     // - different GCs
     // ...
-    // === Build: NativeCompilerTest ===
-    testLifecycleTask("nativeCompilerTest") {
+    testLifecycleTask("nativeCompilerTest", QualityGate.Master) {
         dependsOn(":compiler:ir.serialization.native:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:nativeTest")
         dependsOn(":plugins:plugin-sandbox:nativeTest")
@@ -351,10 +442,14 @@ tasks {
         dependsOn(":native:native.tests:litmus-tests:check")
     }
 
+    testLifecycleTask("nativeCompilerTestXCTestEnabled", QualityGate.Master) {
+        dependsOn(":native:native.tests:test")
+        dependsOn(":native:native.tests:codegen-box:test")
+    }
+
     // Similar to nativeCompilerTest, but should be executed only on macOS host as these tests
     // technically or semantically depend on Xcode SDK.
-    // === Build: NativeCompilerTest ===
-    testLifecycleTask("nativeAppleSpecificTests") {
+    testLifecycleTask("nativeAppleSpecificTests", QualityGate.Master) {
         dependsOn(":native:objcexport-header-generator:check")
         dependsOn(":native:swift:swift-export-embeddable:check")
         dependsOn(":native:swift:swift-export-standalone:check")
@@ -362,9 +457,12 @@ tasks {
         dependsOn(":native:swift:sir-light-classes:check")
     }
 
+    testLifecycleTask("swiftExportTest", QualityGate.Master) {
+        dependsOn("native:swift:sirAllTests")
+    }
+
     // These are unit tests of Native compiler
-    // === Build: NativeCompilerUnitTest ===
-    testLifecycleTask("nativeCompilerUnitTest") {
+    testLifecycleTask("nativeCompilerUnitTest", QualityGate.Master) {
         dependsOn(":native:kotlin-native-utils:check")
         dependsOn(":native:unsafe-mem:check")
         if (kotlinBuildProperties.isKotlinNativeEnabled.get()) {
@@ -380,28 +478,38 @@ tasks {
         }
     }
 
-    // === Build: KlibIrInlinerTest ===
-    testLifecycleTask("klibIrTest") {
+    testLifecycleTask("nativeHostRuntimeTest", QualityGate.Master) {
+        dependsOn(":kotlin-native:runtime:hostRuntimeTests")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTest_firstStage", QualityGate.Master) {
+        dependsOn(":native:native.tests:klib-compatibility:testMinimalInAggregate_firstStage")
+    }
+
+    testLifecycleTask("nativeKlibCompatibilityTest_secondStage", QualityGate.Master) {
+        dependsOn(":native:native.tests:klib-compatibility:testMinimalInAggregate_secondStage")
+    }
+
+    testLifecycleTask("klibIrTest", QualityGate.Master) {
         dependsOn(":tools:binary-compatibility-validator:check")
         dependsOn(":native:native.tests:klib-ir-inliner:check")
     }
 
-    // === Build: FirCompilerTests ===
-    testLifecycleTask("compilerFrontendTest") {
+    testLifecycleTask("compilerFrontendTest", QualityGate.Master) {
         dependsOn(":compiler:fir:raw-fir:psi2fir:test")
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
+        dependsOn(":compiler:fir:raw-fir:mp-parsing2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
     }
 
-    // === Build: FirCompilerNightlyTests ===
-    testLifecycleTask("nightlyFirCompilerTest") {
+    testLifecycleTask("nightlyFirCompilerTest", QualityGate.Nightly) {
         dependsOn(":compiler:fir:fir2ir:nightlyTests")
         dependsOn(":compiler:fastJarFSLongTests")
     }
 
     // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
-    val scriptingTest = testLifecycleTask("scriptingJvmTest") {
+    val scriptingTest = testLifecycleTask("scriptingJvmTest", QualityGate.Master) {
         dependsOn(":kotlin-scripting-compiler:test")
         dependsOn(":kotlin-scripting-common:test")
         dependsOn(":kotlin-scripting-jvm:test")
@@ -414,16 +522,16 @@ tasks {
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
         dependsOn(":kotlin-scripting-jsr223-test:test")
+        dependsOn(":examples:scripting-jsr223-daemon:test")
+        dependsOn(":examples:scripting-jsr223-bta:test")
     }
 
-    // === intermediate task ===
-    val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest") {
+    val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest", QualityGate.Master) {
         dependsOn(":compiler:incremental-compilation-impl:test")
         dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
-    // === intermediate task ===
-    val compilerPluginTest = testLifecycleTask("compilerPluginTest") {
+    val compilerPluginTest = testLifecycleTask("compilerPluginTest", QualityGate.Master) {
         dependsOn(":kotlin-allopen-compiler-plugin:test")
         dependsOn(":kotlin-assignment-compiler-plugin:test")
         dependsOn(":kotlin-atomicfu-compiler-plugin:test")
@@ -441,9 +549,23 @@ tasks {
         dependsOn(scriptingTest)
     }
 
+    testLifecycleTask("composePluginTest", QualityGate.Master) {
+        dependsOn(":plugins:compose-compiler-plugin:test")
+        dependsOn(":plugins:compose-compiler-plugin:compiler:test")
+        dependsOn(":plugins:compose-compiler-plugin:group-mapping:test")
+        dependsOn(":plugins:compose-compiler-plugin:compiler-hosted:test")
+        dependsOn(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils:jvmTest")
+        dependsOn(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:jvmTest")
+        dependsOn(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes:test")
+        dependsOn(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:test")
+    }
+
+    testLifecycleTask("jklibTest", QualityGate.Master) {
+        dependsOn(":compiler:jklib.tests:test")
+    }
+
     // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
-    // === Build: MiscCompilerTests ===
-    testLifecycleTask("miscCompilerTest") {
+    testLifecycleTask("miscCompilerTest", QualityGate.Master) {
         dependsOn(":compiler:test")
         dependsOn(":compiler:tests-integration:test")
         dependsOn(":compiler:java-direct:test")
@@ -464,8 +586,7 @@ tasks {
         dependsOn(":core:language.version-settings:test")
     }
 
-    // === intermediate task ===
-    val toolsTest = testLifecycleTask("toolsTest") {
+    val toolsTest = testLifecycleTask("toolsTest", QualityGate.Master) {
         dependsOn(":tools:kotlinp-jvm:test")
         dependsOn(":native:kotlin-klib-commonizer:test")
         dependsOn(":native:kotlin-klib-commonizer-api:test")
@@ -479,16 +600,14 @@ tasks {
         dependsOn(":libraries:tools:abi-validation:abi-tools-tests:check")
     }
 
-    // === intermediate task ===
-    val examplesTest = testLifecycleTask("examplesTest") {
+    val examplesTest = testLifecycleTask("examplesTest", QualityGate.Master) {
         dependsOn(dist)
         project(":examples").subprojects.forEach { p ->
             dependsOn("${p.path}:check")
         }
     }
 
-    // === Build: MiscTests ===
-    testLifecycleTask("miscTest") {
+    testLifecycleTask("miscTest", QualityGate.Master) {
         dependsOn(coreLibsTest)
         dependsOn(toolsTest)
         dependsOn(examplesTest)
@@ -503,47 +622,52 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-dsl-codegen:test")
     }
 
-    // === Build: BuildToolsApiTests ===
-    testLifecycleTask("buildToolsApiTest") {
+    testLifecycleTask("buildToolsApiTest", QualityGate.Master) {
         dependsOn(":compiler:build-tools:kotlin-build-tools-api:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:check")
         dependsOn(":compiler:build-tools:kotlin-build-tools-api-forward-tests:check")
     }
 
-    // === Build: AnalysisApiTests ===
-    testLifecycleTask("frontendApiTests") {
+    testLifecycleTask("buildToolsApiKotlinVersionCheck", QualityGate.None) {
+        dependsOn(":compiler:build-tools:kotlin-build-tools-api-tests:checkCompatibilityCoverage")
+    }
+
+    testLifecycleTask("frontendApiTests", QualityGate.Master) {
         dependsOn(":analysis:analysisAllTests")
     }
 
     // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
-    // === Build: JpsTests ===
-    testLifecycleTask("jps-tests") {
+    testLifecycleTask("jps-tests", QualityGate.Master) {
         dependsOn(dist)
         dependsOn(":jps:jps-plugin:test")
     }
 
-    // === Build: KaptCompilerTests ===
-    testLifecycleTask("kaptTests") {
+    testLifecycleTask("kaptTests", QualityGate.Master) {
         dependsOn(":kotlin-annotation-processing:test")
         dependsOn(":kotlin-annotation-processing:testJdk11")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
     }
 
-    // === Build: ParcelizeTests ===
-    testLifecycleTask("parcelizeTests") {
+    testLifecycleTask("parcelizeTests", QualityGate.Master) {
         dependsOn(":plugins:parcelize:parcelize-compiler:test")
     }
 
-    // === Build: CodebaseTests ===
-    testLifecycleTask("codebaseTests") {
+    testLifecycleTask("codebaseTests", QualityGate.Master) {
         dependsOn(":repo:auto-code-review:test")
         dependsOn(":repo:codebase-tests:test")
     }
 
-    // === Build: StatisticsPluginTests ===
-    testLifecycleTask("statisticsTests") {
+    testLifecycleTask("artifactsTest", QualityGate.Master) {
+        dependsOn(":repo:artifacts-tests:test")
+    }
+
+    testLifecycleTask("statisticsTests", QualityGate.Master) {
         dependsOn(":kotlin-gradle-statistics:test")
+    }
+
+    testLifecycleTask("validateIdePluginDependencies", QualityGate.Master) {
+        dependsOn(":tools:ide-plugin-dependencies-validator:checkIdeDependenciesConfiguration")
     }
 
     val test = register("test") {
@@ -569,6 +693,14 @@ tasks {
         idePluginPublishingLatch {
             dependsOnKotlinGradlePluginPublish()
         }
+    }
+
+    register("publishKotlinDistForIde") {
+        dependsOn(":prepare:ide-plugin-dependencies:kotlin-dist-for-ide:publish")
+    }
+
+    register("publishNativeEmbeddable") {
+        dependsOn(":kotlin-native:prepare:kotlin-native-compiler-embeddable:publish")
     }
 
     fun registerSpecialPublishingTasks(nameSuffix: String, artifactProjectList: List<String>, latch: Project.(() -> Unit) -> Unit) {
@@ -618,6 +750,9 @@ tasks {
             "-Ddeploy-snapshot-url=file://${rootProject.projectDir.resolve("build/repo")}",
             "-Dlocal-bootstrap-url=file://${rootProject.projectDir.resolve("build/repo")}",
         )
+        inputs.files(publishedMarkElements.get().incoming.artifactView { lenient(true) }.files)
+            .withPathSensitivity(PathSensitivity.NONE)
+            .withPropertyName("publishedMarks")
 
         val jdkToolchain1_8 = getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
         doFirst {
@@ -716,22 +851,6 @@ configure<IdeaModel> {
                 "intellij",
             )
         )
-    }
-
-    project {
-        // Patched IntelliJ classes are consumed as fat-JAR artifacts of the ':dependencies:intellij-*' projects,
-        // so on a clean checkout the IDE cannot resolve IntelliJ PSI references until those JARs are built.
-        // Build them (together with sources for navigation) right after every Gradle import.
-        (this as ExtensionAware).configure<ProjectSettings> {
-            (this as ExtensionAware).configure<TaskTriggersConfig> {
-                afterSync(
-                    ":dependencies:intellij-java-psi-api:jar",
-                    ":dependencies:intellij-java-psi-api:sourcesJar",
-                    ":dependencies:intellij-core-implementation:jar",
-                    ":dependencies:intellij-core-implementation:sourcesJar",
-                )
-            }
-        }
     }
 }
 

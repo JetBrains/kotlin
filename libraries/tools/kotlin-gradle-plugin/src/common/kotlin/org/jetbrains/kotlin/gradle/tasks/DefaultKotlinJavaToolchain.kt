@@ -20,7 +20,6 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.utils.*
@@ -155,22 +154,12 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
             providedJvm.set(
                 objects.providerWithLazyConvention {
-                    if (GradleVersion.current() < GradleVersion.version("8.8")) {
-                        // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
-                        @Suppress("DEPRECATION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                        Jvm.discovered(
-                            jdkHomeLocation,
-                            null,
-                            jdkVersion
-                        )
-                    } else {
-                        @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                        Jvm.discovered(
-                            jdkHomeLocation,
-                            null,
-                            jdkVersion.majorVersion.toInt()
-                        )
-                    }
+                    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+                    Jvm.discovered(
+                        jdkHomeLocation,
+                        null,
+                        jdkVersion.majorVersion.toInt()
+                    )
                 }
             )
 
@@ -273,22 +262,12 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
         private fun mapToJvm(javaLauncher: JavaLauncher): Jvm {
             val metadata = javaLauncher.metadata
-            return if (GradleVersion.current() < GradleVersion.version("8.8")) {
-                @Suppress("DEPRECATION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                // https://youtrack.jetbrains.com/issue/KT-69386/Migrate-to-non-internal-org.gradle.internal.jvm.Jvm-API
-                Jvm.discovered(
-                    metadata.installationPath.asFile,
-                    null,
-                    JavaVersion.toVersion(metadata.languageVersion.asInt())
-                )
-            } else {
-                @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-                Jvm.discovered(
-                    metadata.installationPath.asFile,
-                    null,
-                    metadata.languageVersion.asInt()
-                )
-            }
+            @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+            return Jvm.discovered(
+                metadata.installationPath.asFile,
+                null,
+                metadata.languageVersion.asInt()
+            )
         }
     }
 }

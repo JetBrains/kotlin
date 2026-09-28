@@ -280,70 +280,76 @@ KtNameReferenceExpression(188,189): 'L'
       typeArgumentsMapping = {}
 
 KtCallExpression(195,210): 'foo(UNRESOLVED)'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /foo(a: MyEnum): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(a: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = MyEnum
+              symbol = a: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          UNRESOLVED -> (KaVariableSignature:
             name = a
             receiverType = null
             returnType = MyEnum
             symbol = a: MyEnum
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /foo
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        UNRESOLVED -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /foo>
 
 KtNameReferenceExpression(195,198): 'foo'
-  KaSimpleCallResolutionSuccess:
-    call = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = kotlin.Unit
-        symbol = /foo(a: MyEnum): kotlin.Unit
-        valueParameters = [
-          KaVariableSignature:
+  KaSimpleCallResolutionError:
+    candidateCalls = [
+      KaSimpleFunctionCall:
+        contextArgumentMapping = {}
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(a: MyEnum): kotlin.Unit
+          valueParameters = [
+            KaVariableSignature:
+              name = a
+              receiverType = null
+              returnType = MyEnum
+              symbol = a: MyEnum
+              contextParameters = []
+              callableId = null
+          ]
+          contextParameters = []
+          callableId = /foo
+        typeArgumentsMapping = {}
+        valueArgumentMapping = {
+          UNRESOLVED -> (KaVariableSignature:
             name = a
             receiverType = null
             returnType = MyEnum
             symbol = a: MyEnum
             contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = /foo
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {
-        UNRESOLVED -> (KaVariableSignature:
-          name = a
-          receiverType = null
-          returnType = MyEnum
-          symbol = a: MyEnum
-          contextParameters = []
-          callableId = null)
-      }
+            callableId = null)
+        }
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(INAPPLICABLE): /foo>
 
 KtValueArgumentList(198,210): '(UNRESOLVED)'
   null

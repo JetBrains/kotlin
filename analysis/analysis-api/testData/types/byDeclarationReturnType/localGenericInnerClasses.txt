@@ -1,0 +1,106 @@
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: <local>/A.B.C
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: A
+      symbol: KaNamedClassSymbol(<local>/A)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: AA
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: AA
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+    KaResolvedClassTypeQualifier:
+      name: B
+      symbol: KaNamedClassSymbol(<local>/B)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: BB
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: BB
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+    KaResolvedClassTypeQualifier:
+      name: C
+      symbol: KaNamedClassSymbol(<local>/C)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(<local>/C)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false
+
+Rendered type:
+A<AA>.B<BB>.C<kotlin.Int>

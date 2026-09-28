@@ -170,6 +170,8 @@ fun checkRepeatedAnnotation(
 
 /**
  * If [this] is an argument expression provided for a vararg parameter, returns its elements.
+ *
+ * Only allowed to be called on evaluated arguments from [FirAnnotation.argumentMapping]s.
  */
 fun FirExpression.unwrapVarargValue(): List<FirExpression> {
     return when (this) {

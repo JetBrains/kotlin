@@ -5,10 +5,11 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
+import org.jetbrains.kotlin.mainKts.MainKtsDependencyResolver
 import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
-import org.jetbrains.kotlin.testFederation.SmokeTest
+import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Disabled
@@ -17,10 +18,16 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.util.*
+import kotlin.io.path.createTempDirectory
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.shouldResolveDependencies
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
@@ -60,7 +67,7 @@ const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
 val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "Hi from main", "sharedVar == 5")
 
 
-@SmokeTest
+@MustRunAlways
 class MainKtsTest {
 
     @Test
@@ -85,6 +92,48 @@ class MainKtsTest {
             resErr is ResultWithDiagnostics.Failure &&
                     resErr.reports.any { it.message.contains("Unresolved reference") && it.message.contains("hamcrest") }
         )
+    }
+
+
+
+    @Test
+    fun testResolveInImportedScript() {
+        assertSucceeded(evalFile(File("$TEST_DATA_ROOT/import-resolve-junit.main.kts")))
+    }
+
+    @Test
+    fun testResolutionKeepsDependenciesItDidNotResolve() {
+        // JvmDependencyFromClassLoader carries a classloader, not classpath entries, and must survive resolution.
+        val fromClassLoader = JvmDependencyFromClassLoader { MainKtsTest::class.java.classLoader }
+        val artifact = File("$TEST_DATA_ROOT/empty.main.kts")
+
+        val configuration = ScriptCompilationConfiguration {
+            dependencies.append(fromClassLoader, DependencyCoordinates(listOf(artifact.path)))
+        }
+
+        val result = MainKtsDependencyResolver()
+            .invoke(ScriptConfigurationRefinementContext("".toScriptSource(), configuration, null))
+
+        val refined = (result as ResultWithDiagnostics.Success).value[ScriptCompilationConfiguration.dependencies].orEmpty()
+        assertTrue(refined.none { it is DependencyCoordinates }, "resolved coordinates should be consumed: $refined")
+        assertTrue(refined.contains(fromClassLoader), "the classloader dependency should survive: $refined")
+        assertTrue(refined.toClassPathOrEmpty().contains(artifact), "resolved artifact should be on the classpath: $refined")
+    }
+
+    @Test
+    fun testResolutionLeftToTheHost() {
+        val coordinates = DependencyCoordinates(listOf("junit:junit:4.11"))
+        val configuration = ScriptCompilationConfiguration {
+            hostConfiguration(ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) { shouldResolveDependencies(false) })
+            dependencies.append(coordinates)
+        }
+
+        val result = MainKtsDependencyResolver()
+            .invoke(ScriptConfigurationRefinementContext("".toScriptSource(), configuration, null))
+
+        val refined = (result as ResultWithDiagnostics.Success).value[ScriptCompilationConfiguration.dependencies].orEmpty()
+        assertEquals(listOf(coordinates), refined.filterIsInstance<DependencyCoordinates>())
+        assertTrue(refined.toClassPathOrEmpty().isEmpty(), "nothing should have been resolved: $refined")
     }
 
     @Test
@@ -181,6 +230,26 @@ class MainKtsTest {
         // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
         // TODO: third error is due to the early IR backend error, consider processing it in makeCompiledScript$makeOtherScripts
         assertFailedAny("Unable to handle recursive script dependencies", "is already bound", "Duplicate JVM class name", res = res)
+    }
+
+    @Test
+    fun testKt89247() {
+        val cacheDir = createTempDirectory("main.kts.test.cache").toFile()
+        try {
+            val script = File("$TEST_DATA_ROOT/kt89247/main.main.kts")
+            // the second run is served from the compilation cache, and the dependencies of the imported script should
+            // be restored from the cached jar as well
+            repeat(2) { run ->
+                var res: ResultWithDiagnostics<EvaluationResult>? = null
+                val out = captureOut {
+                    res = evalFile(script, cacheDir = cacheDir)
+                }.lines()
+                assertSucceeded(res!!)
+                assertEquals(listOf("Ok"), out, "run $run, script result: ${res.valueOrNull()?.returnValue}")
+            }
+        } finally {
+            cacheDir.deleteRecursively()
+        }
     }
 
     @Test

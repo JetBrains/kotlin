@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.defaultType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ComputeAllAtOnceAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
@@ -27,16 +26,17 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClas
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
+import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 
 internal class SymbolLightFieldForObject private constructor(
     containingClass: SymbolLightClassForClassLike<*>,
     private val name: String,
     lightMemberOrigin: LightMemberOrigin?,
-    private val objectSymbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
+    override val symbolPointer: KaSymbolPointer<KaNamedClassSymbol>,
     override val kotlinOrigin: KtObjectDeclaration?,
     private val isCompanion: Boolean,
-) : SymbolLightField(containingClass, lightMemberOrigin) {
+) : SymbolLightField<KaNamedClassSymbol>(containingClass, lightMemberOrigin) {
     internal constructor(
         objectSymbol: KaNamedClassSymbol,
         name: String,
@@ -48,12 +48,12 @@ internal class SymbolLightFieldForObject private constructor(
         name = name,
         lightMemberOrigin = lightMemberOrigin,
         kotlinOrigin = objectSymbol.sourcePsiSafe(),
-        objectSymbolPointer = objectSymbol.createPointer(),
+        symbolPointer = objectSymbol.createPointer(),
         isCompanion = isCompanion,
     )
 
     private inline fun <T> withObjectDeclarationSymbol(crossinline action: context(KaSession) (KaNamedClassSymbol) -> T): T =
-        objectSymbolPointer.withSymbol(ktModule, action)
+        symbolPointer.withSymbol(useSiteModule, action)
 
     override fun getName(): String = name
 
@@ -79,7 +79,7 @@ internal class SymbolLightFieldForObject private constructor(
 
     private fun computeCompanionModifiers(modifier: String): Map<String, Boolean>? {
         if (modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS) return null
-        return GranularModifiersBox.computeVisibilityForClass(ktModule, objectSymbolPointer, isTopLevel = false)
+        return GranularModifiersBox.computeVisibilityForClass(useSiteModule, symbolPointer, isTopLevel = false)
     }
 
     private val _isDeprecated: Boolean by lazyPub {
@@ -107,16 +107,16 @@ internal class SymbolLightFieldForObject private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightFieldForObject || other.ktModule != ktModule) return false
+        if (other !is SymbolLightFieldForObject || other.useSiteModule != useSiteModule) return false
         if (kotlinOrigin != null || other.kotlinOrigin != null) {
             return other.kotlinOrigin == kotlinOrigin
         }
 
         return other.containingClass == containingClass &&
-                compareSymbolPointers(other.objectSymbolPointer, objectSymbolPointer)
+                compareSymbolPointers(other.symbolPointer, symbolPointer)
     }
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 
-    override fun isValid(): Boolean = kotlinOrigin?.isValid ?: objectSymbolPointer.isValid(ktModule)
+    override fun isValid(): Boolean = kotlinOrigin?.isValid ?: symbolPointer.isValid(useSiteModule)
 }

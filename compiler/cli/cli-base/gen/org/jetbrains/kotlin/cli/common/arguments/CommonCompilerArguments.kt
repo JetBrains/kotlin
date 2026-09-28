@@ -151,6 +151,16 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         }
 
     @Argument(
+        value = "-Xallow-pre-17-runtime-jdk",
+        description = "Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+    )
+    var allowPre17RuntimeJdk: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xallow-reified-type-in-catch",
         description = "Allow 'catch' parameters to have reified types.",
     )
@@ -356,17 +366,6 @@ Additionally enables measurements for User and CPU time for all targets. Note th
         }
 
     @Argument(
-        value = "-Xdirect-java-actualization",
-        description = "Enable experimental direct Java actualization support.",
-    )
-    @Enables(LanguageFeature.DirectJavaActualization)
-    var directJavaActualization: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xdisable-default-scripting-plugin",
         description = "Don't enable the scripting plugin by default.",
     )
@@ -393,6 +392,17 @@ Only has effect if '-Xverify-ir' is not 'none'.""",
         description = "Disable backend phases.",
     )
     var disablePhases: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xdo-not-normalize-nan-values-in-const-context",
+        description = "Disables `NormalizeNaNValuesInConstContext` language feature.`",
+    )
+    @Disables(LanguageFeature.NormalizeNaNValuesInConstContext)
+    var doNotNormalizeNanValuesInConstContext: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -481,17 +491,6 @@ It may only be used with specific checkers that are not enabled by default, and 
         description = "Enable incremental compilation.",
     )
     var incrementalCompilation: Boolean? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xequality-bounds",
-        description = "Enable experimental support for `@EqualityBound` annotations in `equals` operators.",
-    )
-    @Enables(LanguageFeature.StrictEquals)
-    var equalityBounds: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -625,6 +624,18 @@ The argument should be used only if the new compilation scheme is enabled with -
         }
 
     @Argument(
+        value = "-Xfull-value-classes",
+        description = "Enable experimental language support for full value classes.",
+    )
+    @Enables(LanguageFeature.FullValueClasses)
+    @Enables(LanguageFeature.AllowSmartCastsOnValueClassUnderlyingProperties)
+    var fullValueClasses: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xheader-mode",
         description = """Enable header compilation mode.
 In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
@@ -650,40 +661,6 @@ with bodies.""",
         set(value) {
             checkFrozen()
             field = value
-        }
-
-    @Argument(
-        value = "-Xignore-const-optimization-errors",
-        description = "Ignore all compilation exceptions while optimizing some constant expressions.",
-    )
-    var ignoreConstOptimizationErrors: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xinline-classes",
-        description = "Enable experimental inline classes.",
-    )
-    @Enables(LanguageFeature.InlineClasses)
-    var inlineClasses: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @all:Deprecated("")
-    @Argument(
-        value = "-Xintellij-plugin-root",
-        valueDescription = "<path>",
-        description = "Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.",
-        deprecatedVersion = "2.4.20",
-    )
-    var intellijPluginRoot: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(
@@ -739,9 +716,11 @@ with bodies.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xmulti-dollar-interpolation",
         description = "Enable experimental multi-dollar interpolation.",
+        deprecatedVersion = "2.5.0",
     )
     @Enables(LanguageFeature.MultiDollarInterpolation)
     var multiDollarInterpolation: Boolean = false
@@ -796,30 +775,6 @@ with bodies.""",
         }
 
     @Argument(
-        value = "-Xnew-inference",
-        description = "Enable the new experimental generic type inference algorithm.",
-    )
-    @Enables(LanguageFeature.NewInference)
-    @Enables(LanguageFeature.SamConversionPerArgument)
-    @Enables(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
-    @Enables(LanguageFeature.DisableCompatibilityModeForNewInference)
-    var newInference: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xno-check-actual",
-        description = "Do not check for the presence of the 'actual' modifier in multiplatform projects.",
-    )
-    var noCheckActual: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xno-inline",
         description = "Disable method inlining.",
     )
@@ -829,9 +784,11 @@ with bodies.""",
             field = value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xnon-local-break-continue",
         description = "Enable experimental non-local break and continue.",
+        deprecatedVersion = "2.5.0",
     )
     @Enables(LanguageFeature.BreakContinueInInlineLambdas)
     var nonLocalBreakContinue: Boolean = false
@@ -941,18 +898,6 @@ with bodies.""",
             field = value
         }
 
-    @all:Deprecated("REPL is deprecated.")
-    @Argument(
-        value = "-Xrepl",
-        description = "Run Kotlin REPL.",
-        deprecatedVersion = "2.2.0",
-    )
-    var repl: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xreport-all-warnings",
         description = "Report all warnings even if errors are found.",
@@ -985,10 +930,10 @@ with bodies.""",
 
     @Argument(
         value = "-Xreturn-value-checker",
-        valueDescription = "{check|full|disable}",
-        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.",
+        valueDescription = "{check|full|disable|default}",
+        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
     )
-    var returnValueChecker: String = "disable"
+    var returnValueChecker: String = "default"
         set(value) {
             checkFrozen()
             field = value
@@ -1035,46 +980,21 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xstrict-equality-for-structural-classes",
+        description = "Report warnings on inapplicable equalities with data, value, and enum classes.",
+    )
+    @Enables(LanguageFeature.StrictEqualsForStructuralClasses)
+    var strictEqualityForStructuralClasses: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xsuppress-version-warnings",
         description = "Suppress warnings about outdated, inconsistent, or experimental language or API versions.",
     )
     var suppressVersionWarnings: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @all:Deprecated("Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).")
-    @Argument(
-        value = "-Xsuppress-warning",
-        valueDescription = "<WARNING_NAME>",
-        description = "Suppress specified warning module-wide.",
-        deprecatedVersion = "2.2.0",
-    )
-    var suppressedDiagnostics: Array<String> = emptyArray()
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xunrestricted-builder-inference",
-        description = "Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.",
-    )
-    @Enables(LanguageFeature.UnrestrictedBuilderInference)
-    var unrestrictedBuilderInference: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @all:Deprecated("")
-    @Argument(
-        value = "-Xuse-fir-experimental-checkers",
-        description = "Enable experimental frontend IR checkers that are not yet ready for production.",
-        deprecatedVersion = "2.2.20",
-    )
-    var useFirExperimentalCheckers: Boolean = false
         set(value) {
             checkFrozen()
             field = value
@@ -1139,9 +1059,11 @@ with bodies.""",
             field = value
         }
 
+    @all:Deprecated("")
     @Argument(
         value = "-Xwhen-guards",
         description = "Enable experimental language support for when guards.",
+        deprecatedVersion = "2.5.0",
     )
     @Enables(LanguageFeature.WhenGuards)
     var whenGuards: Boolean = false

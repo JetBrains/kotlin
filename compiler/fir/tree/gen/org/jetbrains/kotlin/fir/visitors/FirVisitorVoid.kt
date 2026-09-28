@@ -347,6 +347,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(literalExpression)
     }
 
+    final override fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion, data: Nothing?) {
+        visitNumericClassConversion(numericClassConversion)
+    }
+
+    open fun visitNumericClassConversion(numericClassConversion: FirNumericClassConversion) {
+        visitElement(numericClassConversion)
+    }
+
     final override fun visitFunctionCall(functionCall: FirFunctionCall, data: Nothing?) {
         visitFunctionCall(functionCall)
     }
@@ -1201,6 +1209,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef) {
         visitElement(intersectionTypeRef)
+    }
+
+    final override fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: Nothing?) {
+        visitUnionTypeRef(unionTypeRef)
+    }
+
+    open fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef) {
+        visitElement(unionTypeRef)
     }
 
     final override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?) {

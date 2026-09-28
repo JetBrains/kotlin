@@ -1,33 +1,18 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.sir.providers.utils
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotated
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.KaNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.base.KaConstantValue
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
-import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeAliasSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.contextParameters
-import org.jetbrains.kotlin.analysis.api.symbols.typeParameters
-import org.jetbrains.kotlin.analysis.api.types.KaClassType
-import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
-import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -230,16 +215,20 @@ private suspend fun SequenceScope<KaClassLikeSymbol>.allRequiredOptInClassIds(sy
 /**
  * Recursively resolves the upper bound, returning `null` for no (a.k.a `Any?`) or multiple upper bounds.
  */
-public tailrec fun KaTypeParameterSymbol.resolveUpperBound(): KaType? {
+context(session: KaSession)
+public tailrec fun KaTypeParameterSymbol.resolveUpperBound(
+    isMarkedNullable: Boolean = false,
+): KaType? {
     val type = upperBounds.singleOrNull()
-    if (type !is KaTypeParameterType) return type
-    return type.symbol.resolveUpperBound()
+    if (type !is KaTypeParameterType) return if (isMarkedNullable) type?.withNullability(true) else type
+    return type.symbol.resolveUpperBound(isMarkedNullable || type.isMarkedNullable)
 }
 
 /**
  * Returns the upper bound in case `this` is a `KaTypeParameterType`.
  */
+context(session: KaSession)
 public fun KaType.resolveUpperBound(): KaType? {
     if (this !is KaTypeParameterType) return this
-    return this.symbol.resolveUpperBound()
+    return symbol.resolveUpperBound(isMarkedNullable)
 }

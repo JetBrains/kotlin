@@ -23,7 +23,7 @@ fun box() {
     bar(2)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:21 box:
 // test.kt:22 box: m:int=1:int
 // library.kt:11 box: m:int=1:int, xBar$iv:int=1:int, $i$f$bar:int=0:int

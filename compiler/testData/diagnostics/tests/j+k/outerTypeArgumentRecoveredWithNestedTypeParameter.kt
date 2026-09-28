@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // A recovered implicit outer type argument which contains a type parameter instead of being one:
 // `Mid<E> extends Outer<Box<E>>` makes `Inner` written in `Mid`'s body denote `Outer<Box<E>>.Inner`,
 // so `get()` returns `Box<E>`, and `unwrap()` a `String` for a `Mid<String>`. The `E` one level down

@@ -108,11 +108,6 @@ internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Arr
 @UsedFromCompilerGeneratedCode
 internal fun jsIsFunction(a: dynamic): Boolean = jsTypeOf(a) === "function"
 
-// TODO: Remove after bootstrap update
-@BoxedLongApi
-@Deprecated("Moved to kotlin.js.internal.boxedLong package", level = DeprecationLevel.HIDDEN)
-internal fun isLongArray(a: dynamic): Boolean = kotlin.js.internal.boxedLong.isLongArray(a)
-
 internal fun jsGetPrototypeOf(jsClass: dynamic) = js("Object").getPrototypeOf(jsClass)
 
 internal fun jsIsType(obj: dynamic, jsClass: dynamic): Boolean {

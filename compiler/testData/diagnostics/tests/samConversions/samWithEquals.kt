@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // DISABLE_JAVA_FACADE
 // IGNORE_LIGHT_TREE
 // Does not work in light tree mode due to lack of Java element finder there

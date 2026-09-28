@@ -27,7 +27,6 @@ import kotlin.native.internal.objc.BindReverseBridgeToMethod
 import kotlin.native.internal.ImportedBridge
 import kotlinx.cinterop.*
 import kotlin.native.internal.ExportedBridge
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ImportedBridge("AFactory_create__reverse_swift")
 internal external fun AFactory_create__reverse_swift(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
@@ -100,6 +99,15 @@ public fun StringProducer_produce__reverse(self: StringProducer): kotlin.String 
     val _result = StringProducer_produce__reverse_swift(__self)
     return interpretObjCPointer<kotlin.String>(_result)
 }
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+internal external fun main_internal_functional_type_callee_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Box__")
+internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Box__(pointerToClosure: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean
+
+@ImportedBridge("main_internal_functional_type_callee_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+internal external fun main_internal_functional_type_callee_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToClosure: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
 
 @ExportedBridge("AFactory_create")
 public fun AFactory_create(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
@@ -459,10 +467,11 @@ public fun __root___createMap__TypesOfArguments__Swift_Array_main_Pair___(pairs:
 public fun __root___customFilter__TypesOfArgumentsE__Swift_Array_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_U29202D_U20Swift_Bool__(`receiver`: kotlin.native.internal.NativePtr, predicate: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = interpretObjCPointer<kotlin.collections.List<kotlin.Any?>>(`receiver`)
     val __predicate = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(predicate);
+        val closurePtr = predicate;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: kotlin.Any? ->
             val _arg0 = if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EBool__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(closureBox.objcPtr(), _arg0)
             _result
         }
     }
@@ -481,10 +490,11 @@ public fun __root___foo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSup
 @ExportedBridge("__root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__")
 public fun __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(box: kotlin.native.internal.NativePtr): Boolean {
     val __box = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(box);
+        val closurePtr = box;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Box<*> ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Box__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -495,10 +505,11 @@ public fun __root___produceBoxStar__TypesOfArguments__U28main_BoxU29202D_U20Swif
 @ExportedBridge("__root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__")
 public fun __root___produceBoxUpperBound__TypesOfArguments__U28main_BoxU29202D_U20Swift_Void__(box: kotlin.native.internal.NativePtr): Boolean {
     val __box = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(box);
+        val closurePtr = box;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         { arg0: Box<*> ->
             val _arg0 = kotlin.native.internal.ref.createRetainedExternalRCRef(arg0)
-            val _result = kotlinFun(_arg0)
+            val _result = main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Box__(closureBox.objcPtr(), _arg0)
             run<Unit> { _result }
         }
     }
@@ -550,9 +561,10 @@ public fun __root___takeBoxUpperBound__TypesOfArguments__main_Box__(box: kotlin.
 @ExportedBridge("__root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__")
 public fun __root___takeBoxUpperBoundClosure__TypesOfArguments__U2829202D_U20main_Box__(box: kotlin.native.internal.NativePtr): Boolean {
     val __box = run {
-        val kotlinFun = convertBlockPtrToKotlinFunction<()->kotlin.native.internal.NativePtr>(box);
+        val closurePtr = box;
+        val closureBox = interpretObjCPointer<kotlin.Any>(closurePtr).also { objc_release(closurePtr) };
         {
-            val _result = kotlinFun()
+            val _result = main_internal_functional_type_callee_mainU2EBox__TypesOfArguments__Swift_UnsafeMutableRawPointer__(closureBox.objcPtr())
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Box<kotlin.Any?>
         }
     }

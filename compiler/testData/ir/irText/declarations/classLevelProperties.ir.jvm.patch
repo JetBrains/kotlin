@@ -1,5 +1,5 @@
 --- a/classLevelProperties.ir.txt
-+++ b/classLevelProperties.ir.jvm_ir.txt
++++ b/classLevelProperties.ir.jvm.txt
 @@ -108,9 +108,9 @@
                        CALL 'public final fun <get-test7> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
                          ARG <this>: GET_VAR 'p0: <root>.C declared in <root>.C.<get-test7>.test7' type=<root>.C origin=null

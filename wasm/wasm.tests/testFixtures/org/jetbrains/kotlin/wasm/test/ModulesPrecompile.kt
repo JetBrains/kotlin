@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.backend.wasm.compileWasmIrToBinary
-import org.jetbrains.kotlin.backend.wasm.linkWasmIr
+import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArgumentsConfigurator
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.toLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.testEnvironment
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmIrLoadingPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.web.wasm.WasmSingleModuleBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
+import org.jetbrains.kotlin.cli.pipeline.web.wasm.*
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH
+import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_WASM_JS_STDLIB_KLIB_PATH
 import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -29,9 +30,9 @@ import java.io.File
 private val outputDir: File
     get() = File(System.getProperty("kotlin.wasm.test.root.out.dir") ?: testInfraError("Please set output dir path"))
 private val stdlibPath =
-    File(System.getProperty("kotlin.wasm-js.stdlib.path") ?: testInfraError("Please set stdlib path")).canonicalPath
+    File(System.getProperty(KOTLIN_WASM_JS_STDLIB_KLIB_PATH) ?: testInfraError("Please set stdlib path")).canonicalPath
 private val kotlinTestPath =
-    File(System.getProperty("kotlin.wasm-js.kotlin.test.path") ?: testInfraError("Please set kotlin-test path")).canonicalPath
+    File(System.getProperty(KOTLIN_WASM_JS_KOTLIN_TEST_KLIB_PATH) ?: testInfraError("Please set kotlin-test path")).canonicalPath
 
 const val precompiledStdlibOutputName: String = "kotlin-kotlin-stdlib"
 const val precompiledKotlinTestOutputName: String = "kotlin-kotlin-test"
@@ -106,11 +107,14 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
             this.includes = includes
         }
 
-        val loadedIr = WasmIrLoadingPipelinePhase.executePhase(input)
-        val parametersForCompile = WasmSingleModuleBackendPipelinePhase.compileNonIncrementally(loadedIr).backendIr.first()
-
-        val linkedModule = linkWasmIr(parametersForCompile)
-        val compileResult = compileWasmIrToBinary(parametersForCompile, linkedModule)
+        val compileResult = (WasmIrLoadingPipelinePhase then
+                WasmIrLinkingPipelinePhase then
+                WasmIrLoweringPipelinePhase then
+                WasmSingleModuleBackendIrGenerationPipelinePhase then
+                WasmOutputGenerationPipelinePhase)
+            .executePhaseIsolatedWithActions(input)!!
+            .result
+            .single()
         compileResult.writeTo(outputDir, outputName, debugMode)
     }
 

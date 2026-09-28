@@ -151,6 +151,10 @@ fun Project.enableMppResourcesPublication(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_RESOURCES_PUBLICATION, enabled.toString())
 }
 
+fun Project.allowIncompleteKotlinArchivePublication(allowed: Boolean = true) {
+    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION, allowed.toString())
+}
+
 internal fun Project.setUklibPublicationStrategy(strategy: KmpPublicationStrategy = KmpPublicationStrategy.UklibPublicationInASingleComponentWithKMPPublication) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_PUBLICATION_STRATEGY, strategy.propertyName)
 }
@@ -200,10 +204,6 @@ fun Project.enableSecondaryJvmClassesVariant(enabled: Boolean = true) {
 fun Project.enableBtaJvm(enabled: Boolean = true) {
     @Suppress("DEPRECATION")
     project.propertiesExtension.set(KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API, enabled)
-}
-
-fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
-    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, enabled.toString())
 }
 
 fun Project.enableEagerUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {

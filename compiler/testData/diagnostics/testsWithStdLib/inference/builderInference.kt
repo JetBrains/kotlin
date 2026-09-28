@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <T> foo(block: MutableList<T>.() -> Unit): T = null!!
 
 fun takeString(s: String) {}

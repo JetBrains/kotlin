@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.incremental
 
 
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.backend.wasm.*
+import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICMultimodule
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICSingleModule
+import org.jetbrains.kotlin.backend.wasm.WasmCompilerWithICWholeWorld
 import org.jetbrains.kotlin.backend.wasm.ic.*
 import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.cli.create
@@ -15,6 +19,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.executePhaseIsolatedWithActions
 import org.jetbrains.kotlin.cli.pipeline.web.WasmIntermediatePipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebIncrementalCachePipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.wasm.*
@@ -48,6 +53,7 @@ import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase
 import org.jetbrains.kotlin.wasm.test.WasmCompilerInvocationTestConfiguration
 import org.jetbrains.kotlin.wasm.test.WasmIcTest
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
+import org.jetbrains.kotlin.wasm.config.wasmUseStackSwitchingProposal
 import java.io.File
 
 @Suppress("OPT_IN_USAGE")
@@ -270,13 +276,8 @@ abstract class WasmAbstractInvalidationTest(
                     verifyCacheUpdateStats(stepId, preparedIcCachesArtifact.dirtyFileLastStats, testInfo + removedModulesInfo)
                 }
 
-                val [parametersList] = incrementalBuildingPhase.executePhase(preparedIcCachesArtifact)!!
-
-                parametersList.forEach { parameters ->
-                    val linkedModule = linkWasmIr(parameters)
-                    val compilationResult = compileWasmIrToBinary(parameters, linkedModule)
-                    writeCompilationResult(compilationResult, buildDir, parameters.baseFileName)
-                }
+                (incrementalBuildingPhase then WasmOutputGenerationPipelinePhase then WasmWriteOutputsPipelinePhase)
+                    .executePhaseIsolatedWithActions(preparedIcCachesArtifact)
             }
 
             when (wasmCompilationMode) {
@@ -322,7 +323,7 @@ abstract class WasmAbstractInvalidationTest(
                     }
         
                     if (!boxTestPassed)
-                        process.exit(1);
+                        quit(1);
                     """.trimIndent()
 
                 val runnerFile = File(buildDir, "test.mjs")
@@ -384,11 +385,13 @@ abstract class WasmAbstractInvalidationTest(
                 )
             }
 
-            WasmVM.NodeJs.run(
+            // V8 is required to run stack switching tests
+            WasmVM.V8.run(
                 "./test.mjs",
                 emptyList(),
                 workingDirectory = buildDir,
                 useNewExceptionHandling = false,
+                useStackSwitching = configuration.wasmUseStackSwitchingProposal,
             )
         }
     }

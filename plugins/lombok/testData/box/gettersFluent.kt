@@ -24,9 +24,11 @@ public class FluentTest {
 
 // FILE: test.kt
 
+import kotlin.test.assertEquals
+
 fun box(): String {
     val obj = FluentTest()
-    assertEquals(obj.age(), 10)
+    assertEquals(10, obj.age())
 
     obj.primitiveBoolean()
 

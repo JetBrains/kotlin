@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-@OptIn(ExperimentalWasmDsl::class)
 class NodeJsEnvironmentConfigurator(subTarget: KotlinJsIrSubTarget) :
     JsEnvironmentConfigurator<NodeJsExec>(subTarget) {
 

@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 //todo: check with lightweightlambdas and without it
 
 // FILE: IC.kt

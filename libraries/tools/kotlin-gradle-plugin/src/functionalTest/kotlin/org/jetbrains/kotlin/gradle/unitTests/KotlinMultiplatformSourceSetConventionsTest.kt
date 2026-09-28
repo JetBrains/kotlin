@@ -130,7 +130,6 @@ class KotlinMultiplatformSourceSetConventionsTest {
                 js("nodeJs") {
                     nodejs()
                 }
-                @OptIn(ExperimentalWasmDsl::class)
                 wasmJs {
                     nodejs()
                 }

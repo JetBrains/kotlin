@@ -6,11 +6,9 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
@@ -29,7 +27,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.utils.addToStdlib.countOccurrencesOf
 import org.junit.jupiter.api.io.TempDir
-import org.junit.jupiter.params.ParameterizedTest
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.writeText
@@ -280,7 +277,6 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                 js {
                     browser()
                 }
-                @OptIn(ExperimentalWasmDsl::class)
                 wasmJs {
                     browser()
                 }

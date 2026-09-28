@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers
 
+import org.gradle.api.Project
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
@@ -15,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectCheckerContext
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
-import org.jetbrains.kotlin.gradle.plugin.internal.getComponentOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetSoftwareComponent
 import org.jetbrains.kotlin.gradle.utils.isPluginApplied
 
@@ -46,5 +48,17 @@ internal object AndroidPublicationNotConfiguredChecker : KotlinGradleProjectChec
                 )
             )
         }
+    }
+
+    private fun MavenPublication.getComponentOrNull(project: Project): SoftwareComponent? {
+        if (this !is MavenPublicationInternal) return null
+        // Wrap in runCatching to avoid potential
+        val componentResult = runCatching { component.orNull }
+        if (componentResult.isFailure) {
+            project.logger.warn("Can't get component for $this", componentResult.exceptionOrNull()!!)
+            return null
+        }
+
+        return componentResult.getOrNull()
     }
 }

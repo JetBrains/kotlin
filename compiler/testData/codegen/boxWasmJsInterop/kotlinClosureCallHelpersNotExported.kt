@@ -60,7 +60,7 @@ fun box(): String {
 // FILE: entry.mjs
 import "./test.mjs"
 import * as moduleExports from "./index.mjs"
-import { importObject } from './index.import-object.mjs'
+import * as importObjectModule from "./index.import-object.mjs"
 
 function check(list) {
     const allowedList = ['startUnitTests', 'box'];
@@ -69,11 +69,18 @@ function check(list) {
     }
 }
 
+function checkImportObjectModule() {
+    if ('setWasmExports' in importObjectModule) {
+        throw 'index.import-object.mjs unexpectedly exports setWasmExports';
+    }
+}
+
 const wasmBuffer = read('index.wasm', 'binary');
 const wasmModule = new WebAssembly.Module(wasmBuffer);
-const wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
+const wasmInstance = new WebAssembly.Instance(wasmModule, importObjectModule.importObject);
 const wasmExportsList = Object.keys(wasmInstance.exports).filter((v) => !/^__(it|vt|fn|rt).+/.test(v));
 check(wasmExportsList);
 
 const exportsList = Object.keys(moduleExports).filter((v) => !v.startsWith('__ALL_EXPORTS'));
 check(exportsList);
+checkImportObjectModule();

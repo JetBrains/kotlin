@@ -668,7 +668,6 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @ExperimentalWasmDsl
     val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsMain: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**
@@ -692,7 +691,6 @@ interface KotlinMultiplatformSourceSetConventions {
      *
      * @since 2.0.20
      */
-    @ExperimentalWasmDsl
     val NamedDomainObjectContainer<KotlinSourceSet>.wasmJsTest: NamedDomainObjectProvider<KotlinSourceSet>
 
     /**

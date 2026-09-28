@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_STDLIB
 const val x = 1L / (1L shl 32)
 const val y = 1UL / (1UL shl 32)

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun test() {
     val p: Array<String> = arrayOf("a")
     foo(*p)

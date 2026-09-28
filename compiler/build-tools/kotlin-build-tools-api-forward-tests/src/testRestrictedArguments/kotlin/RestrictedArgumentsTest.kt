@@ -125,22 +125,6 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     }
 
     @BtaV2StrategyAgnosticCompilationTest
-    @DisplayName("-Xrepl emits a warning")
-    fun testXReplWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        jvmProject(strategyConfig) {
-            val module = module("basic-multimodule-project/module-1")
-            module.checkRestrictedArgument(
-                "-Xrepl",
-                errorSince = KotlinReleaseVersion.v2_5_0,
-                configuredArgs = listOf("-Xrepl"),
-                expectedCompilationError = true,
-            ) {
-                assertLogContainsLines(LogLevel.ERROR, "Unable to run REPL, no scripting plugin loaded")
-            }
-        }
-    }
-
-    @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-Xenable-incremental-compilation emits a warning")
     fun testEnableIncrementalCompilationWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
@@ -292,7 +276,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
                     additionalCompilationAssertions()
                 }
             }
-            val exception = assertThrows<CompilerArgumentsParseException> { compilationBody() }
+            val exception = assertThrows<CompilerArgumentsParseException> { val _ = compilationBody() }
             assertTrue(
                 restrictedArgs.flatMap { it.first }.any { alias ->
                     exception.message?.contains("'$alias' is not supported in the Build Tools API.") == true

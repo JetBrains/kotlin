@@ -88,6 +88,12 @@ public class SourceLikeClassIdTestGenerated extends AbstractSourceLikeClassIdTes
   }
 
   @Test
+  @TestMetadata("fullValueClass.kt")
+  public void testFullValueClass() {
+    run("fullValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("invalidForJvmClassName.kt")
   public void testInvalidForJvmClassName() {
     run("invalidForJvmClassName.kt");

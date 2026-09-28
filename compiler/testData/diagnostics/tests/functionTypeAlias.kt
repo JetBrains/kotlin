@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 private typealias A = String.(Int) -> Int
 
 private fun b(a: A) {

@@ -29,7 +29,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS JVM_IR +USE_INLINE_SCOPES_NUMBERS
+// EXPECTATIONS JVM +USE_INLINE_SCOPES_NUMBERS
 // test.kt:28 box:
 // test.kt:13 compute:
 // test.kt:14 compute:
@@ -42,7 +42,7 @@ fun box() {
 // test.kt:29 box: result:java.lang.String="b":java.lang.String
 // test.kt:30 box: result:java.lang.String="b":java.lang.String, localX:java.lang.String="OK":java.lang.String
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:28 box:
 // test.kt:13 compute:
 // test.kt:14 compute:

@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.invokeCInterop
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.provisionedXcodeCInteropArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.klib.customNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.klib.defaultLanguageVersion
-import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -53,6 +53,9 @@ class ObjCInteropFacade(
     private val targets: KotlinNativeTargets = settings.get()
     private val classLoader: ClassLoader = customClassLoader
         ?: settings.get<KotlinNativeClassLoader>().classLoader
+
+    private val provisionedXcodeArgs: List<String> =
+        if (customClassLoader == null) provisionedXcodeCInteropArgs else emptyList()
 
     override fun shouldTransform(module: TestModule): Boolean {
         return module.files.any { it.name.endsWith(".def") }
@@ -114,6 +117,7 @@ class ObjCInteropFacade(
             add("-o")
             add(expectedArtifact.klibFile.canonicalPath)
             add("-no-default-libs")
+            addAll(provisionedXcodeArgs)
             addAll(freeCInteropArgs)
             staticLibraries.forEach {
                 add("-libraryPath")

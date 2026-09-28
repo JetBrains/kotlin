@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class A<T> {
     fun <S> foo(s: S): S = s
     fun <U> bar(s: U): List<T> = null!!

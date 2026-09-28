@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-74459
-// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent -ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks
+// LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent -ForbidLambdaParameterWithMissingDependencyType -AllowEagerSupertypeAccessibilityChecks -ForbidUsingParameterWithDefaultValueTypesWithInaccessibleContent
 // MODULE: base
 // FILE: base.kt
 
@@ -23,14 +23,14 @@ fun foo(s: String) {
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Short<!>(s) { null }
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Short<!>(s) { <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>() }
 
-    Impl(s)
+    <!MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE!>Impl<!>(s)
     <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, null)
     <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>())
     <!MISSING_DEPENDENCY_CLASS!>Impl<!>(s, null) { null }
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Impl<!>(s, f = { null })
     <!MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE!>Impl<!>(s, f = { <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>() })
 
-    impl(s)
+    <!MISSING_DEPENDENCY_CLASS_IN_PARAMETER_WITH_DEFAULT_VALUE!>impl<!>(s)
     <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, null)
     <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>Derived<!>())
     <!MISSING_DEPENDENCY_CLASS!>impl<!>(s, null) { null }

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // LANGUAGE: -ForbidSyntheticPropertiesWithoutBaseJavaGetter
 // LANGUAGE: -DontCreateSyntheticPropertiesWithoutBaseJavaGetter
 // ISSUE: KT-59550 (related)

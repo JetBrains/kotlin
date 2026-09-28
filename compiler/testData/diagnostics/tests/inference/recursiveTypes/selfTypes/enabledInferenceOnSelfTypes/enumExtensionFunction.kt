@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-59012
 
 fun <G : Enum<G>, T : G> Enum<G>.foo(): T = TODO()

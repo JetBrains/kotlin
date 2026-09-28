@@ -1,6 +1,6 @@
 // WITH_REFLECT
 // FULL_JDK
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 import java.lang.NullPointerException
 import java.lang.reflect.InvocationTargetException

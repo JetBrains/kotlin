@@ -1,0 +1,104 @@
+KaUsualClassType:
+  abbreviation: KaUsualClassType:
+    abbreviation: null
+    annotations: []
+    classId: A.B.TA
+    qualifiers: [
+      KaResolvedClassTypeQualifier:
+        name: A
+        symbol: KaNamedClassSymbol(A)
+        typeArguments: []
+      KaResolvedClassTypeQualifier:
+        name: B
+        symbol: KaNamedClassSymbol(A.B)
+        typeArguments: []
+      KaResolvedClassTypeQualifier:
+        name: TA
+        symbol: KaTypeAliasSymbol(A.B.TA)
+        typeArguments: [
+          KaUsualClassType:
+            abbreviation: null
+            annotations: []
+            classId: kotlin/Int
+            qualifiers: [
+              KaResolvedClassTypeQualifier:
+                name: Int
+                symbol: KaNamedClassSymbol(kotlin/Int)
+                typeArguments: []
+            ]
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+            isMarkedNullable: false
+            isNullable: false
+            hasFlexibleNullability: false
+        ]
+    ]
+    symbol: KaTypeAliasSymbol(A.B.TA)
+    typeArguments: [
+      KaUsualClassType:
+        abbreviation: null
+        annotations: []
+        classId: kotlin/Int
+        qualifiers: [
+          KaResolvedClassTypeQualifier:
+            name: Int
+            symbol: KaNamedClassSymbol(kotlin/Int)
+            typeArguments: []
+        ]
+        symbol: KaNamedClassSymbol(kotlin/Int)
+        typeArguments: []
+        isMarkedNullable: false
+        isNullable: false
+        hasFlexibleNullability: false
+    ]
+    isMarkedNullable: true
+    isNullable: true
+    hasFlexibleNullability: false
+  annotations: []
+  classId: kotlin/collections/List
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: List
+      symbol: KaNamedClassSymbol(kotlin/collections/List)
+      typeArguments: [
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/Int
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: Int
+              symbol: KaNamedClassSymbol(kotlin/Int)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(kotlin/collections/List)
+  typeArguments: [
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/Int
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: Int
+          symbol: KaNamedClassSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/Int)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+A.B.TA<kotlin.Int>?

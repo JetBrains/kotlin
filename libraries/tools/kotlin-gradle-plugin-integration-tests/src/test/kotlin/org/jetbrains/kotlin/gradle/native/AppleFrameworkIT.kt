@@ -141,14 +141,14 @@ class AppleFrameworkIT : KGPBaseTest() {
             val environmentVariables = EnvironmentalVariables(
                 "CONFIGURATION" to "debug",
                 "SDK_NAME" to "macosx",
-                "ARCHS" to "x86_64",
+                "ARCHS" to "arm64",
                 "EXPANDED_CODE_SIGN_IDENTITY" to "-",
                 "TARGET_BUILD_DIR" to testBuildDir.toString(),
                 "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
                 "BUILT_PRODUCTS_DIR" to projectPath.resolve("shared/build/builtProductsDir").toString(),
             )
             build(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = environmentVariables) {
-                assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeMacosX64")
+                assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeMacosArm64")
                 assertSymlinkInProjectExists("shared/build/xcode-frameworks/debug/macosx/sdk.framework/Headers")
                 assertSymlinkExists(testBuildDir.resolve("build/xcode-derived/sdk.framework/Headers"))
             }

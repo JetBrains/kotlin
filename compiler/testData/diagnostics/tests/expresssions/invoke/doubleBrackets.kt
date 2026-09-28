@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun String.k(): () -> String = { -> this }
 
 fun test() = "hello".k()()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,9 +15,11 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.PackageIndex
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiJavaModuleModificationTracker
 import com.intellij.psi.impl.file.impl.JavaFileManager
@@ -30,7 +32,6 @@ import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import com.intellij.util.messages.impl.PluginListenerDescriptor
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAccessibilityChecker
 import org.jetbrains.kotlin.analysis.api.platform.java.KotlinJavaModuleAnnotationsProvider
@@ -47,10 +48,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJa
 import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.registerJavaPsiFacade
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
-import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProviderCliImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.DummyFileAttributeService
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -66,6 +64,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.picocontainer.PicoContainer
 import java.nio.file.Path
@@ -84,6 +83,14 @@ object StandaloneProjectFactory {
             compilerConfiguration,
             applicationEnvironmentMode,
         )
+
+        // JAR/klib files used in the Standalone Analysis API session remain open because of a global ZIP cache in IntelliJ.
+        // Unless the cache releases all file descriptors, concurrent sessions may fail to delete archives (esp. on Windows).
+        // Alive sessions aren't affected as the cache opens archives again when needed.
+        Disposer.register(projectDisposable) {
+            @Suppress("UnstableApiUsage")
+            ZipHandler.clearFileAccessorCache()
+        }
 
         registerApplicationExtensionPoints(applicationEnvironment)
 
@@ -108,6 +115,7 @@ object StandaloneProjectFactory {
         }
     }
 
+    @OptIn(KtPlatformInterface::class)
     private fun registerApplicationServices(applicationEnvironment: KotlinCoreApplicationEnvironment) {
         val application = applicationEnvironment.application
         if (application.getServiceIfCreated(KotlinStandaloneIndexCache::class.java) != null) {
@@ -126,12 +134,10 @@ object StandaloneProjectFactory {
                     BuiltinsVirtualFileProvider::class.java,
                     BuiltinsVirtualFileProviderCliImpl()
                 )
-                registerService(FileAttributeService::class.java, DummyFileAttributeService::class.java)
             }
         }
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun registerProjectServices(project: MockProject) {
         // TODO: rewrite KtResolveExtensionProviderForTest to avoid KtResolveExtensionProvider access before initialized project
         @Suppress("UnstableApiUsage")
@@ -449,7 +455,6 @@ object StandaloneProjectFactory {
         }
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun KaLibraryModule.getJavaRoots(environment: CoreApplicationEnvironment): List<JavaRoot> {
         val binaryRootsAsVirtualFiles = getVirtualFilesForLibraryRoots(binaryRoots, environment) + binaryVirtualFiles
         return binaryRootsAsVirtualFiles.map { root ->

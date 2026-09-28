@@ -1,6 +1,6 @@
 // LANGUAGE: +NullableNothingInReifiedPosition
 // ISSUE: KT-54227
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 
 fun box(): String {
     val arr = arrayOf(null, null)

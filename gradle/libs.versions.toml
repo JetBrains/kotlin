@@ -1,7 +1,7 @@
 [versions]
-kotlin-release = "2.4.20-RC"
+kotlin-release = "2.4.20"
 dexMemberList = "4.1.1"
-dokka = "2.2.0"
+dokka = "2.3.0-Beta"
 gradle-custom-user-data = "2.4.0"
 develocity = "4.3.3"
 develocity-plugin-adapter = "1.2.1"
@@ -30,8 +30,8 @@ gson = "2.11.0"
 jetbrains-ideaExt = "1.4.1"
 jackson = "2.21.1"
 jgit = "7.3.0.202506031305-r"
-jline = "3.30.16"
 jsoup = "1.17.2"
+jetbrains-markdown = "0.7.3"
 junit4 = "4.13.2"
 junit5 = "5.14.4"
 junit-platform = "1.14.4"
@@ -96,11 +96,11 @@ yarn = "1.22.22"
 # This is also the version of bouncycastle that is used by KGP
 bouncycastle = "1.84"
 kotlin-before-bta-v2 = "2.2.21"
+jacoco = "0.8.14"
 bytebuddy = "1.18.9"
 playwright = "1.61.0"
 fileLeakDetector = "1.21"
 jmh = "0.7.3"
-jacoco = "0.8.14"
 
 analysis-api-kotlin = "2.3.21"
 
@@ -163,8 +163,8 @@ guava-failureaccess = { module = "com.google.guava:failureaccess", version.ref =
 vavr = { module = "io.vavr:vavr", version.ref = "vavr" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
 jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
-jline = { module = "org.jline:jline", version.ref = "jline" }
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrains-markdown" }
 junit4 = { module = "junit:junit", version.ref = "junit4" }
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit5" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit5" }

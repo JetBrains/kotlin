@@ -10,7 +10,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:8 box:
 // test.kt:5 blockFun: blockArg:kotlin.jvm.functions.Function1=TestKt$<lambda>
 // test.kt:9 box$lambda$0: $this$blockFun:java.lang.String="OK":java.lang.String

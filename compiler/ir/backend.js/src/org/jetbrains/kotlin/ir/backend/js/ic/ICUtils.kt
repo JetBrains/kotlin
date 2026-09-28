@@ -66,17 +66,6 @@ internal inline fun <K, V> buildMapUntil(to: Int, builderAction: MutableMap<K, V
     return newHashMapWithExpectedSize<K, V>(to).apply { repeat(to) { builderAction(it) } }
 }
 
-internal fun findStdlib(
-    mainFragment: IrModuleFragment,
-    allFragments: Map<KotlinLibraryFile, IrModuleFragment>
-): Pair<KotlinLibraryFile, IrModuleFragment> {
-    val stdlibDescriptor = mainFragment.descriptor.builtIns.builtInsModule
-    val [stdlibFile, stdlibIr] = allFragments.entries.find {
-        it.value.descriptor === stdlibDescriptor
-    } ?: notFoundIcError("stdlib fragment")
-    return stdlibFile to stdlibIr
-}
-
 internal class StopwatchIC {
     private var lapStart: Long = 0
     private var lapDescription: String? = null

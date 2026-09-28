@@ -1,5 +1,5 @@
-// IGNORE_BACKEND: JVM_IR
-// FIR_STATUS: FIR+JVM_IR generates TABLESWITCH for nested 'when' only, doesn't look critical.
+// IGNORE_BACKEND: JVM
+// FIR_STATUS: FIR+JVM generates TABLESWITCH for nested 'when' only, doesn't look critical.
 
 // 2 (TABLE|LOOKUP)SWITCH
 

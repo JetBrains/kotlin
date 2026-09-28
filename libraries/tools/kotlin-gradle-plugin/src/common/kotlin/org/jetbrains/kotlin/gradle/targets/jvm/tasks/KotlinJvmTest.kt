@@ -11,6 +11,7 @@ import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.testing.TestMetadataEvent
 
 @CacheableTask
 abstract class KotlinJvmTest : Test() {
@@ -46,6 +47,10 @@ abstract class KotlinJvmTest : Test() {
                             override fun getClassDisplayName(): String? = test.classDisplayName?.replace('$', '.')
                         }
                         testResultProcessor.started(myTest, event)
+                    }
+
+                    override fun published(testId: Any?, keyValueEvent: TestMetadataEvent) {
+                        testResultProcessor.published(testId, keyValueEvent)
                     }
                 }
             )

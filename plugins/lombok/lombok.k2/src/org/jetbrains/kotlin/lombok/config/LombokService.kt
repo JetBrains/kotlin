@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.AbstractLog
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Accessors
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.AllArgsConstructor
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Value
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.With
 import java.io.File
 
-@OptIn(SymbolInternals::class)
 class LombokService(session: FirSession, configFile: File?) : FirExtensionSessionComponent(session) {
     companion object {
         fun getFactory(configFile: File?): Factory {
@@ -49,68 +47,68 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     private val cachesFactory = session.firCachesFactory
 
     private val accessorsCache: Cache<Accessors?> = cachesFactory.createCache { symbol ->
-        Accessors.getOrNull(symbol.fir, session)
+        Accessors.getOrNull(symbol, session)
     }
 
     private val getterCache: Cache<Getter?> = cachesFactory.createCache { symbol ->
-        Getter.getOrNull(symbol.fir, session)
+        Getter.getOrNull(symbol, session)
     }
 
     private val setterCache: Cache<Setter?> = cachesFactory.createCache { symbol ->
-        Setter.getOrNull(symbol.fir, session)
+        Setter.getOrNull(symbol, session)
     }
 
     private val withCache: Cache<With?> = cachesFactory.createCache { symbol ->
-        With.getOrNull(symbol.fir, session)
+        With.getOrNull(symbol, session)
     }
 
     private val noArgsConstructorCache: Cache<NoArgsConstructor?> = cachesFactory.createCache { symbol ->
-        NoArgsConstructor.getOrNull(symbol.fir, session)
+        NoArgsConstructor.getOrNull(symbol, session)
     }
 
     private val allArgsConstructorCache: Cache<AllArgsConstructor?> = cachesFactory.createCache { symbol ->
-        AllArgsConstructor.getOrNull(symbol.fir, session)
+        AllArgsConstructor.getOrNull(symbol, session)
     }
 
     private val requiredArgsConstructorCache: Cache<RequiredArgsConstructor?> = cachesFactory.createCache { symbol ->
-        RequiredArgsConstructor.getOrNull(symbol.fir, session)
+        RequiredArgsConstructor.getOrNull(symbol, session)
     }
 
     private val dataCache: Cache<Data?> = cachesFactory.createCache { symbol ->
-        Data.getOrNull(symbol.fir, session)
+        Data.getOrNull(symbol, session)
     }
 
     private val valueCache: Cache<Value?> = cachesFactory.createCache { symbol ->
-        Value.getOrNull(symbol.fir, session)
+        Value.getOrNull(symbol, session)
     }
 
     private val builderCache: Cache<Builder?> = cachesFactory.createCache { symbol ->
-        Builder.getOrNull(symbol.fir, session)
+        Builder.getOrNull(symbol, session)
     }
 
     private val superBuilderCache: Cache<SuperBuilder?> = cachesFactory.createCache { symbol ->
-        SuperBuilder.getOrNull(symbol.fir, session)
+        SuperBuilder.getOrNull(symbol, session)
     }
 
     private val singularCache: Cache<Singular?> = cachesFactory.createCache { symbol ->
-        Singular.getOrNull(symbol.fir, session)
+        Singular.getOrNull(symbol, session)
     }
 
     private val logsCache: Cache<List<AbstractLog>> = cachesFactory.createCache { symbol ->
         listOfNotNull(
-            Log.getOrNull(symbol.fir, session),
-            Slf4jLog.getOrNull(symbol.fir, session),
-            Log4jLog.getOrNull(symbol.fir, session),
-            CommonsLog.getOrNull(symbol.fir, session),
-            FloggerLog.getOrNull(symbol.fir, session),
-            JBossLog.getOrNull(symbol.fir, session),
-            Log4j2Log.getOrNull(symbol.fir, session),
-            XSlf4jLog.getOrNull(symbol.fir, session),
+            Log.getOrNull(symbol, session),
+            Slf4jLog.getOrNull(symbol, session),
+            Log4jLog.getOrNull(symbol, session),
+            CommonsLog.getOrNull(symbol, session),
+            FloggerLog.getOrNull(symbol, session),
+            JBossLog.getOrNull(symbol, session),
+            Log4j2Log.getOrNull(symbol, session),
+            XSlf4jLog.getOrNull(symbol, session),
         )
     }
 
     private val toStringCache: Cache<ToString?> = cachesFactory.createCache { symbol ->
-        ToString.getOrNull(symbol.fir, session)
+        ToString.getOrNull(symbol, session)
     }
 
     val config: GlobalConfig by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -118,7 +116,7 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     }
 
     private val equalsAndHashCodeCache: Cache<EqualsAndHashCode?> = cachesFactory.createCache { symbol ->
-        EqualsAndHashCode.getOrNull(symbol.fir, session)
+        EqualsAndHashCode.getOrNull(symbol, session)
     }
 
     fun getAccessors(symbol: FirBasedSymbol<*>): Accessors? = accessorsCache.getValue(symbol)

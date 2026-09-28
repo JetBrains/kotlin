@@ -527,7 +527,7 @@ KtBlockExpression(587,737): '{'
   NO_CANDIDATES
 
 KtCallExpression(593,735): 'receiveMyClass('
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -562,10 +562,11 @@ KtCallExpression(593,735): 'receiveMyClass('
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(m: MyClass): Unit>
     isInBestCandidates = true
 
 KtNameReferenceExpression(593,607): 'receiveMyClass'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -600,6 +601,7 @@ KtNameReferenceExpression(593,607): 'receiveMyClass'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun receiveMyClass(m: MyClass): Unit>
     isInBestCandidates = true
 
 KtValueArgumentList(607,735): '('
@@ -1733,4 +1735,20 @@ KtWhenEntry(1583,1617): 'else -> NestedInheritorOfOpenClass'
   NO_CANDIDATES
 
 KtNameReferenceExpression(1591,1617): 'NestedInheritorOfOpenClass'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = OpenClass.NestedInheritorOfOpenClass
+        symbol = <constructor>(): OpenClass.NestedInheritorOfOpenClass
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false

@@ -1,6 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
-// TARGET_BACKEND: JVM_IR
-// IGNORE_HMPP: JVM_IR
+// TARGET_BACKEND: JVM
+// IGNORE_HMPP: JVM
 
 // MODULE: lib
 // FILE: Derived.java

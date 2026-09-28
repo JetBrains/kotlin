@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KaFirValueParamete
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KaBaseEmptyAnnotationList
-import org.jetbrains.kotlin.analysis.api.impl.base.util.requireIsInstance
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 
 internal class KaFirValueParameterSymbol private constructor(
     override val backingPsi: KtParameter?,

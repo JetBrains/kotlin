@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.gradle.internal.diagnostics.GradleCompatibilityCheck
 import org.jetbrains.kotlin.gradle.internal.diagnostics.KotlinCompilerEmbeddableCheck.checkCompilerEmbeddableInClasspath
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.CompilerDiagnosticsProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DefaultCompilerDiagnosticsProblemsReporter
@@ -206,46 +205,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
 
         factories.putIfAbsent(
-            ProjectIsolationStartParameterAccessor.Factory::class,
-            DefaultProjectIsolationStartParameterAccessor.Factory()
-        )
-
-        factories.putIfAbsent(
-            CompatibilityConventionRegistrar.Factory::class,
-            DefaultCompatibilityConventionRegistrar.Factory()
-        )
-
-        factories.putIfAbsent(
-            ConfigurationCacheStartParameterAccessor.Factory::class,
-            DefaultConfigurationCacheStartParameterAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            MavenPublicationComponentAccessor.Factory::class,
-            DefaultMavenPublicationComponentAccessorFactory()
-        )
-
-        factories.putIfAbsent(
-            JavaExecTaskParametersCompatibility.Factory::class,
-            DefaultJavaExecTaskParametersCompatibility.Factory()
-        )
-
-        factories.putIfAbsent(
-            CopySpecAccessor.Factory::class,
-            DefaultCopySpecAccessor.Factory(),
-        )
-
-        factories.putIfAbsent(
-            BuildIdentifierAccessor.Factory::class,
-            DefaultBuildIdentifierAccessor.Factory(),
-        )
-
-        factories.putIfAbsent(
-            ProjectDependencyAccessor.Factory::class,
-            DefaultProjectDependencyAccessor.Factory()
-        )
-
-        factories.putIfAbsent(
             BuildNeededDependentTasksWiringProvider.Factory::class,
             DefaultBuildNeededDependentTaskWiringProvider.Factory()
         )
@@ -263,9 +222,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         project.whenJsOrMppEnabled {
             KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
             KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-            if (project.kotlinPropertiesProvider.useNonPackedKlibs) {
-                KlibPackaging.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-            }
+            KlibPackaging.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
         }
 
         project.whenMppEnabled {

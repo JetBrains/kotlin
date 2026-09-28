@@ -1,7 +1,7 @@
 // LANGUAGE: +ExpectRefinement
 // IGNORE_FIR_DIAGNOSTICS
 // WITH_STDLIB
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // MODULE: common
 expect internal fun foo()
 expect class Foo {

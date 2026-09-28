@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPlatformActualizer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
@@ -26,10 +26,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -214,7 +215,6 @@ private class CompilationPeerCollectingVisitor(
         }
     }
 
-    @OptIn(SymbolInternals::class)
     private fun processResolvable(element: FirResolvable) {
         val reference = element.calleeReference
         if (reference !is FirResolvedNamedReference) {

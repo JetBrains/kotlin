@@ -9,7 +9,7 @@ fun box() {
     println("unreachable")
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:7 box
 // test.kt:8 box
 

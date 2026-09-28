@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isJs
@@ -85,7 +86,7 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
             rootModuleName = moduleName,
             configuration = configuration,
             projectEnvironment = environment,
-            librariesScope = environment.getSearchScopeForProjectLibraries(),
+            librariesClasspath = JvmClasspath.ProjectLibraries(),
             libraryList = libraryList,
             isCommonSource = { false },
             isScript = { false },

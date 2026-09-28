@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 
 // No kotlin-reflect.jar in this test
 // WITH_STDLIB

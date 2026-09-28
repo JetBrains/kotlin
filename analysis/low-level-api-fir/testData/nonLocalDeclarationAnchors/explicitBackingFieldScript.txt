@@ -1,0 +1,16 @@
+/* anchor (KtScript) --> */
+
+/* anchor (KtProperty) --> */val prop: Any
+    /* anchor (KtBackingField) --> */field: Int = run {
+        fun local() {}
+        1
+    }/* <-- */
+    /* anchor (KtPropertyAccessor) --> */get() = field/* <-- *//* <-- */
+
+/* anchor (KtClass) --> */class A {
+    /* anchor (KtProperty) --> */val member: Any
+        /* anchor (KtBackingField) --> */@Ann field: Int = 1/* <-- *//* <-- */
+}/* <-- */
+
+/* anchor (KtClass) --> */annotation class Ann/* <-- */
+/* <-- */

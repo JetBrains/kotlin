@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/reflectFindAnnotationOnDefaultMethodParameter.kt
             ARG <this>: GET_VAR 'val impl: <root>.box.<no name provided> declared in <root>.box' type=<root>.box.<no name provided> origin=null
           ARG p0: CONST String type=kotlin.String value="m"
           ARG p1: VARARG type=@[FlexibleNullability] @[FlexibleArrayElementVariance] kotlin.Array<out @[FlexibleNullability] java.lang.Class<*>?>? varargElementType=@[FlexibleNullability] java.lang.Class<*>?
-            CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<T of kotlin.jvm.<get-java>>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<kotlin.String> origin=GET_PROPERTY
+            CALL 'public final fun <get-java> <T> (<this>: kotlin.reflect.KClass<{T of kotlin.jvm.<get-java> & Any}>): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<kotlin.String> origin=GET_PROPERTY
               TYPE_ARG T: kotlin.String
               ARG <this>: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.String>
       VAR name:parameter type:@[FlexibleNullability] java.lang.reflect.Parameter? [val]

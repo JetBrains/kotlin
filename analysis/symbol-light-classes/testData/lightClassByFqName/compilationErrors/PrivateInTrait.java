@@ -1,11 +1,11 @@
 public abstract interface PrivateInTrait /* PrivateInTrait*/ {
   private @org.jetbrains.annotations.Nullable() java.lang.String bar(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.String);//  bar(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.String)
 
-  private abstract @org.jetbrains.annotations.NotNull() java.lang.String getNn();//  getNn()
+  private default @org.jetbrains.annotations.NotNull() java.lang.String getNn();//  getNn()
 
-  private abstract @org.jetbrains.annotations.Nullable() java.lang.String getN();//  getN()
+  private default @org.jetbrains.annotations.Nullable() java.lang.String getN();//  getN()
 
-  private abstract void setNn(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNn(@org.jetbrains.annotations.NotNull() java.lang.String)
+  private default void setNn(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNn(@org.jetbrains.annotations.NotNull() java.lang.String)
 
   public static final class DefaultImpls /* PrivateInTrait.DefaultImpls*/ {
     private static @org.jetbrains.annotations.Nullable() java.lang.String bar(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() PrivateInTrait, @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.String);//  bar(@org.jetbrains.annotations.NotNull() PrivateInTrait, @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.Nullable() java.lang.String)

@@ -38,6 +38,8 @@ abstract class FirReturnExpression : FirJump<FirFunction>() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceResult(newResult: FirExpression)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirReturnExpression
 
     abstract fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirReturnExpression

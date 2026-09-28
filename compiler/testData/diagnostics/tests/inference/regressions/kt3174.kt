@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-3174 Call resolver doesn't understand type is not-nullable after ?. safe call
 package a
 

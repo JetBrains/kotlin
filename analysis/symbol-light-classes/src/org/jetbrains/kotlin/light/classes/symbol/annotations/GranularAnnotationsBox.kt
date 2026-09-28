@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import org.jetbrains.kotlin.light.classes.symbol.utils.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -108,6 +108,7 @@ internal class GranularAnnotationsBox(
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.IntroducedAt,
             StandardClassIds.Annotations.EqualityBound,
+            StandardClassIds.Annotations.NumericClass,
         ).associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
     }
 }

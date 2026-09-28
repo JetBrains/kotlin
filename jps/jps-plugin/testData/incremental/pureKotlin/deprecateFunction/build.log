@@ -1,0 +1,22 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/Util.class
+End of files
+Compiling files:
+  src/util.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/test/Client.class
+End of files
+Compiling files:
+  src/client.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+'fun foo(param: String): Int' is deprecated. message.

@@ -1,0 +1,35 @@
+================ Step #1 =================
+
+Compiling files:
+  src/anotherSealedSubclass.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/BigBar.class
+  out/production/module/ExhaustiveWhenKt.class
+  out/production/module/IBar.class
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/ShinyNewBar.class
+  out/production/module/SmallBar.class
+End of files
+Compiling files:
+  src/anotherSealedSubclass.kt
+  src/exhaustiveWhen.kt
+  src/sealedInterface.kt
+  src/sealedSubclasses.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+
+================ Step #2 =================
+
+Compiling files:
+  src/anotherSealedSubclass.kt
+  src/exhaustiveWhen.kt
+  src/sealedInterface.kt
+  src/sealedSubclasses.kt
+End of files
+Exit code: OK
+------------------------------------------

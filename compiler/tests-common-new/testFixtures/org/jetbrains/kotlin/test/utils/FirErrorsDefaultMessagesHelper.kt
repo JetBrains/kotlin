@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
 import org.jetbrains.kotlin.test.checkTestInfrastructure
@@ -87,6 +88,8 @@ private val duplicateIdExclusions = listOf(
     IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.name,
     JsKlibErrors.EXPORTING_JS_NAME_CLASH.name,
     CliDiagnostics.KOTLIN_PACKAGE_USAGE.name,
+    FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION.warningFactory.name,
+    FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION.errorFactory.name,
 )
 
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(

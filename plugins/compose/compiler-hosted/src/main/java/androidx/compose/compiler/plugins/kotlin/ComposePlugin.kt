@@ -50,6 +50,9 @@ object ComposeConfiguration {
         CompilerConfigurationKey<String>("Directory to save compose build metrics")
     val REPORTS_DESTINATION_KEY =
         CompilerConfigurationKey<String>("Directory to save compose build reports")
+    // TODO(b/485865131): This key must be deleted once `com.android.tools.compose.aa` no longer
+    //  relies on it.
+    @Suppress("unused")
     val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable optimization to treat remember as an intrinsic")
     val NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY =
@@ -61,6 +64,9 @@ object ComposeConfiguration {
     )
     val DECOYS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Generate decoy methods in IR transform")
+    // TODO(b/485865131): This key must be deleted once `com.android.tools.compose.aa` no longer
+    //  relies on it.
+    @Suppress("unused")
     val STRONG_SKIPPING_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable strong skipping mode")
     val STABILITY_CONFIG_PATH_KEY =
@@ -150,15 +156,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = true
         )
-        val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION = CliOption(
-            "intrinsicRemember",
-            "<true|false>",
-            "Include source information in generated code. Deprecated. Use ${
-                useFeatureFlagInsteadMessage(FeatureFlag.IntrinsicRemember)
-            }",
-            required = false,
-            allowMultipleOccurrences = false
-        )
         val NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION = CliOption(
             optionName = "nonSkippingGroupOptimization",
             valueDescription = "<true|false>",
@@ -180,23 +177,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             "generateDecoys",
             "<true|false>",
             "Generate decoy methods in IR transform",
-            required = false,
-            allowMultipleOccurrences = false
-        )
-        val STRONG_SKIPPING_OPTION = CliOption(
-            "strongSkipping",
-            "<true|false>",
-            "Enable strong skipping mode. " +
-                    "Deprecated. ${useFeatureFlagInsteadMessage(FeatureFlag.StrongSkipping)}",
-            required = false,
-            allowMultipleOccurrences = false
-        )
-        val EXPERIMENTAL_STRONG_SKIPPING_OPTION = CliOption(
-            "experimentalStrongSkipping",
-            "<true|false>",
-            "Deprecated. ${
-                useFeatureFlagInsteadMessage(FeatureFlag.StrongSkipping)
-            }",
             required = false,
             allowMultipleOccurrences = false
         )
@@ -240,12 +220,9 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         SOURCE_INFORMATION_ENABLED_OPTION,
         METRICS_DESTINATION_OPTION,
         REPORTS_DESTINATION_OPTION,
-        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
         NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION,
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION,
         DECOYS_ENABLED_OPTION,
-        EXPERIMENTAL_STRONG_SKIPPING_OPTION,
-        STRONG_SKIPPING_OPTION,
         STABLE_CONFIG_PATH_OPTION,
         TRACE_MARKERS_OPTION,
         FEATURE_FLAG_OPTION,
@@ -295,17 +272,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.REPORTS_DESTINATION_KEY,
             value
         )
-        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION -> {
-            oldOptionDeprecationWarning(
-                configuration,
-                INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
-                FeatureFlag.IntrinsicRemember
-            )
-            configuration.put(
-                ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-                value == "true"
-            )
-        }
         NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_OPTION -> {
             oldOptionDeprecationWarning(
                 configuration,
@@ -325,28 +291,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.DECOYS_ENABLED_KEY,
             value == "true"
         )
-        EXPERIMENTAL_STRONG_SKIPPING_OPTION -> {
-            oldOptionDeprecationWarning(
-                configuration,
-                EXPERIMENTAL_STRONG_SKIPPING_OPTION,
-                FeatureFlag.StrongSkipping
-            )
-            configuration.put(
-                ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
-                value == "true"
-            )
-        }
-        STRONG_SKIPPING_OPTION -> {
-            oldOptionDeprecationWarning(
-                configuration,
-                EXPERIMENTAL_STRONG_SKIPPING_OPTION,
-                FeatureFlag.StrongSkipping
-            )
-            configuration.put(
-                ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
-                value == "true"
-            )
-        }
         STABLE_CONFIG_PATH_OPTION -> configuration.appendList(
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
             value
@@ -411,8 +355,6 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
  * @param default True if the feature is enabled by default or false if it is not.
  */
 enum class FeatureFlag(val featureName: String, val default: Boolean) {
-    StrongSkipping("StrongSkipping", default = true),
-    IntrinsicRemember("IntrinsicRemember", default = true),
     OptimizeNonSkippingGroups("OptimizeNonSkippingGroups", default = true),
     PausableComposition("PausableComposition", default = true),
     ;
@@ -640,10 +582,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
             val sourceInformationEnabled = configuration.getBoolean(
                 ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY,
             )
-            val intrinsicRememberEnabled = configuration.get(
-                ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-                FeatureFlag.IntrinsicRemember.default
-            )
             val nonSkippingGroupOptimizationEnabled = configuration.get(
                 ComposeConfiguration.NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY,
                 FeatureFlag.OptimizeNonSkippingGroups.default
@@ -656,11 +594,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 ComposeConfiguration.REPORTS_DESTINATION_KEY,
                 ""
             ).ifBlank { null }
-
-            val strongSkippingEnabled = configuration.get(
-                ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
-                FeatureFlag.StrongSkipping.default
-            )
 
             val stabilityConfigPaths = configuration.getList(
                 ComposeConfiguration.STABILITY_CONFIG_PATH_KEY
@@ -687,8 +620,6 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
 
             // Compatibility with older features configuration options
             // New features should not create a explicit option
-            featureFlags.setFeature(FeatureFlag.IntrinsicRemember, intrinsicRememberEnabled)
-            featureFlags.setFeature(FeatureFlag.StrongSkipping, strongSkippingEnabled)
             featureFlags.setFeature(
                 FeatureFlag.OptimizeNonSkippingGroups,
                 nonSkippingGroupOptimizationEnabled

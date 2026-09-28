@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 object O {
     // tailrec since `O` is a singleton
     tailrec fun foo(i: Int): Int = if (i < 0) 0 else O.foo(i - 1)

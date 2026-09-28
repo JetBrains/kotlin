@@ -11,9 +11,7 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
-import org.gradle.internal.extensions.core.extra
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -75,13 +73,13 @@ class KT56143CinteropConfigurationAttributes {
         project.evaluate()
 
         val variantADependencies = project.locateOrCreateCInteropDependencyConfiguration(
-            project.variantA.compilations.main as KotlinNativeCompilation
+            project.variantA.compilations.main
         )
         assertEquals("a", variantADependencies.attributes.getAttribute(targetAttribute))
         assertEquals("compilation:a", variantADependencies.attributes.getAttribute(compilationAttribute))
 
         val variantBDependencies = project.locateOrCreateCInteropDependencyConfiguration(
-            project.variantB.compilations.main as KotlinNativeCompilation
+            project.variantB.compilations.main
         )
         assertEquals("b", variantBDependencies.attributes.getAttribute(targetAttribute))
         assertEquals("compilation:b", variantBDependencies.attributes.getAttribute(compilationAttribute))
@@ -89,20 +87,11 @@ class KT56143CinteropConfigurationAttributes {
 
     @Test
     fun `test - all cinterop configurations contain default attributes`() {
-        testCinteropDefaultAttributes(true)
+        testCinteropDefaultAttributes()
     }
 
-    @Test
-    fun `test - all cinterop configurations contain default attributes (with disabled non-packed klibs)`() {
-        testCinteropDefaultAttributes(false)
-    }
-
-    private fun testCinteropDefaultAttributes(nonPackedKlibsEnabled: Boolean) {
-        val project = buildProject {
-            if (!nonPackedKlibsEnabled) {
-                project.extra.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, "false")
-            }
-        }
+    private fun testCinteropDefaultAttributes() {
+        val project = buildProject {}
         project.evaluate()
 
         fun checkConfigurationAttributes(configuration: HasAttributes, usesNonPackedKlib: Boolean, nonPackedKlibsEnabled: Boolean) {
@@ -136,7 +125,7 @@ class KT56143CinteropConfigurationAttributes {
         }
 
         project.multiplatformExtension.targets.forEach { target ->
-            val nonPackedKlibsAffectThisConfiguration = nonPackedKlibsEnabled && target is KotlinNativeTarget
+            val nonPackedKlibsAffectThisConfiguration = target is KotlinNativeTarget
             val cinteropApiElements = project.locateOrCreateCInteropApiElementsConfiguration(target)
             checkConfigurationAttributes(cinteropApiElements, false, nonPackedKlibsAffectThisConfiguration)
             val nonPackedVariant = cinteropApiElements.outgoing.variants.findByName(NON_PACKED_KLIB_VARIANT_NAME)

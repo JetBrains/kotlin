@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes.CHARACTER_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.FLOAT_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.INTEGER_CONSTANT
 import org.jetbrains.kotlin.KtStubBasedElementTypes.NULL
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.utils.extractRadix
 
@@ -158,6 +159,7 @@ fun hasIllegallyPositionedUnderscore(text: String, isFloatingPoint: Boolean): Bo
 /**
  * Converts the given [ConstantValueKind] to the corresponding [com.intellij.psi.tree.IElementType].
  */
+@KtImplementationDetail
 fun ConstantValueKind.toConstantExpressionElementType(): KtNodeType {
     return when (this) {
         ConstantValueKind.NULL -> NULL

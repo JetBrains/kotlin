@@ -1,0 +1,16 @@
+================ Step #1 =================
+
+Compiling files:
+  src/A.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/use/UseAKt.class
+End of files
+Compiling files:
+  src/useA.kt
+End of files
+Exit code: OK
+------------------------------------------

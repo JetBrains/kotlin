@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// This test checks that JVM-specific static initialization behavior is preserved in JVM_IR.
 
 var testObjectInit = false
 var testClassCompanionInit = false

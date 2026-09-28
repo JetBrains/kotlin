@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // KT-6118 Redundant type cast can be not redundant?
 
 fun foo(o: Any) {

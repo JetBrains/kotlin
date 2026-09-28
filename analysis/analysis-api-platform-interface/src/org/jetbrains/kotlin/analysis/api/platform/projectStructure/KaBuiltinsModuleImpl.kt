@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtPlatformInterface
 
 /**
  * The default implementation of the builtins module.
@@ -21,6 +22,7 @@ public class KaBuiltinsModuleImpl(
     override val targetPlatform: TargetPlatform,
     override val project: Project,
 ) : KaBuiltinsModule, KaModuleBase() {
+    @OptIn(KtPlatformInterface::class)
     override val baseContentScope: GlobalSearchScope
         get() = BuiltinsVirtualFileProvider.getInstance().createBuiltinsScope(project)
 

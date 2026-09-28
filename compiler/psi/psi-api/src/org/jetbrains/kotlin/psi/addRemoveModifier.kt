@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.psi.*
 @Deprecated(
     message = "Use setModifierList(newModifierList) instead",
     replaceWith = ReplaceWith("this.setModifierList(newModifierList)", "org.jetbrains.kotlin.idea.base.psi.setModifierList"),
+    level = DeprecationLevel.ERROR,
 )
 fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
     KtPsiMutationService.getInstance().setModifierList(this, newModifierList)
@@ -22,6 +23,7 @@ fun KtModifierListOwner.setModifierList(newModifierList: KtModifierList) {
 @Deprecated(
     message = "Use owner.addModifierKeyword(modifier) instead",
     replaceWith = ReplaceWith("owner.addModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.addModifierKeyword"),
+    level = DeprecationLevel.ERROR,
 )
 fun addModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
     KtPsiMutationService.getInstance().addModifierKeyword(owner, modifier)
@@ -30,6 +32,7 @@ fun addModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
 @Deprecated(
     message = "Use owner.addAnnotation(annotationEntry) instead",
     replaceWith = ReplaceWith("owner.addAnnotation(annotationEntry)", "org.jetbrains.kotlin.idea.base.psi.addAnnotation"),
+    level = DeprecationLevel.ERROR,
 )
 fun addAnnotationEntry(owner: KtModifierListOwner, annotationEntry: KtAnnotationEntry): KtAnnotationEntry =
     KtPsiMutationService.getInstance().addAnnotation(owner, annotationEntry)
@@ -37,6 +40,7 @@ fun addAnnotationEntry(owner: KtModifierListOwner, annotationEntry: KtAnnotation
 @Deprecated(
     message = "Use owner.removeModifierKeyword(modifier) instead",
     replaceWith = ReplaceWith("owner.removeModifierKeyword(modifier)", "org.jetbrains.kotlin.idea.base.psi.removeModifierKeyword"),
+    level = DeprecationLevel.ERROR,
 )
 fun removeModifier(owner: KtModifierListOwner, modifier: KtModifierKeywordToken) {
     KtPsiMutationService.getInstance().removeModifierKeyword(owner, modifier)
@@ -56,5 +60,6 @@ fun sortModifiers(modifiers: List<KtModifierKeywordToken>): List<KtModifierKeywo
 @Deprecated(
     message = "Use `KtTokens.MODIFIER_KEYWORDS_ARRAY` directly",
     replaceWith = ReplaceWith("KtTokens.MODIFIER_KEYWORDS_ARRAY", "org.jetbrains.kotlin.lexer.KtTokens"),
+    level = DeprecationLevel.ERROR,
 )
 val MODIFIERS_ORDER: List<KtModifierKeywordToken> get() = MODIFIER_KEYWORDS_ARRAY.asList()

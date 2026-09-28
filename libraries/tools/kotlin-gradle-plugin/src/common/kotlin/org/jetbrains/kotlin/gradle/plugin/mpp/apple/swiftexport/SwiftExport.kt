@@ -11,6 +11,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.kotlinSecondaryVariantsDataSharing
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.consumeSwiftExportMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.configureSwiftExportMetadataArtifactView
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -20,12 +23,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportClasspathResolvableConfiguration
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.exportedSwiftExportApiConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportAvailable
-import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationCompat
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportConfigurationCompat
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -72,13 +75,13 @@ internal fun Project.registerSwiftExportTask(
         target = target,
         configuration = buildConfiguration,
         swiftApiModuleName = swiftApiModuleName,
-        exportConfiguration = target.exportedSwiftExportApiConfiguration(
-            buildType,
-            mainCompilation.internal.configurations.compileDependencyConfiguration
-        ),
+        exportConfiguration = swiftExportConfiguration.exportConfiguration.get(),
+        apiConfiguration = swiftExportConfiguration.apiConfiguration.orNull,
+        shouldResolvePublishedMetadata = swiftExportConfiguration.shouldResolveMetadata,
         mainCompilation = mainCompilation,
         swiftApiFlattenPackage = swiftExportConfiguration.rootPackage,
         exportedModules = swiftExportConfiguration.exportedModules,
+        dependencyOptionsOverrides = swiftExportConfiguration.dependencyOptionsOverrides,
         customSetting = swiftExportConfiguration.settings
     )
 
@@ -166,9 +169,12 @@ private fun Project.registerSwiftExportRun(
     configuration: String,
     swiftApiModuleName: Provider<String>,
     exportConfiguration: Configuration,
+    apiConfiguration: Configuration?,
+    shouldResolvePublishedMetadata: Boolean,
     mainCompilation: KotlinNativeCompilation,
     swiftApiFlattenPackage: Provider<String>,
     exportedModules: Provider<Set<SwiftExportedDependency>>,
+    dependencyOptionsOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
     val swiftExportTaskName = lowerCamelCaseName(
@@ -179,26 +185,43 @@ private fun Project.registerSwiftExportRun(
     val outputs = layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration")
     val files = outputs.map { it.dir("files") }
     val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
-    val configurationProvider = provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) }
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
         task.group = taskGroup
-
-        task.inputs.files(exportConfiguration)
-        task.inputs.files(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         // Input
         task.swiftExportClasspath.from(SwiftExportClasspathResolvableConfiguration)
         task.parameters.konanTarget.set(target.konanTarget)
         task.parameters.bridgeModuleName.set("SharedBridge")
         task.parameters.swiftExportSettings.set(customSetting)
-        task.parameters.swiftModules.set(
-            collectModules(
-                configurationProvider,
-                exportedModules
+
+        // The exported modules are resolved from these Configuration-Cache-safe holders at execution time (see
+        // SwiftExportTask.run), not here. Up-to-date checking is provided by the raw configurations wired as task
+        // inputs above.
+        task.exportConfiguration.set(provider { LazyResolvedConfigurationWithArtifacts(exportConfiguration) })
+        task.exportConfigurationFiles.from(exportConfiguration)
+        if (apiConfiguration != null) {
+            task.apiConfiguration.set(provider { LazyResolvedConfigurationWithArtifacts(apiConfiguration) })
+            task.apiConfigurationFiles.from(apiConfiguration)
+        }
+        if (shouldResolvePublishedMetadata) {
+            task.metadataConfiguration.set(provider {
+                LazyResolvedConfigurationWithArtifacts(
+                    exportConfiguration,
+                    configureArtifactView = configureSwiftExportMetadataArtifactView(),
+                )
+            })
+            task.metadataConfigurationFiles.from(
+                exportConfiguration.incoming.artifactView(configureSwiftExportMetadataArtifactView()).files
             )
-        )
+            task.sharedMetadata.set(
+                provider { kotlinSecondaryVariantsDataSharing.consumeSwiftExportMetadata(exportConfiguration) }
+            )
+        }
+        task.exportedModules.set(exportedModules)
+        task.dependencyOptionsOverrides.set(dependencyOptionsOverrides)
+        task.mainCompilationOutputFiles.from(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)
         task.mainModuleInput.moduleName.set(swiftApiModuleName)

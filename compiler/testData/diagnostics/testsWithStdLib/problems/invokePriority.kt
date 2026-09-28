@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class A {
     fun bar() {
         val foo: String.() -> Unit = {} // (1)

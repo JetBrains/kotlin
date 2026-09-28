@@ -20,6 +20,8 @@ public class TestJavaUsage {
 
 // FILE: test.kt
 
+import kotlin.test.assertFalse
+
 fun usage(testJava: TestJava): Boolean {
     return testJava.canEqual(1)
 }
@@ -31,5 +33,7 @@ class KotlinChild : TestJava() {
 }
 
 fun box(): String {
-    return if (usage(TestJava())) "FAIL" else "OK"
+    assertFalse(usage(TestJava()))
+
+    return "OK"
 }

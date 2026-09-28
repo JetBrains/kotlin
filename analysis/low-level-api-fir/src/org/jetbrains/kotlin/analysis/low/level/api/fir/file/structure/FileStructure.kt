@@ -226,44 +226,30 @@ internal class FileStructure private constructor(
      * Returns all [FileStructureElement]s which may contain diagnostics reported on [element] or on its children: structure elements of all
      * declarations inside [element], and structure elements of all [containers][containersOf] of [element].
      *
-     * The outer containers come last and are computed lazily, as they are the most expensive structure elements: a consumer which stops early
-     * never computes them.
+     * The structure elements are computed lazily and in the post-order: the deepest declaration comes first and the [KtFile] last. A
+     * consumer which stops early never computes the outer containers, which are the most expensive ones.
+     *
+     * Creating a structure element resolves its declaration, so this is the resolution order as well. It is intentionally bottom-up:
+     * all nested declarations have to be fully resolved before the outer one (KT-65562).
      */
     private fun getStructureElementsFor(element: KtElement): Sequence<FileStructureElement> {
         val closestContainer = getContainerKtElement(element, findNonLocalContainer(element))
 
-        // Sic! These structure elements are created eagerly, the closest container first and the inner ones in the document order. Creating a
-        // structure element triggers the resolution of its declaration, and checkers depend on the resolution order:
-        //
-        // - The checker context of a nested declaration is built from the file downwards, so the file has to be resolved first.
-        // - Class checkers may inspect related declarations reached through a member scope. 'FirOverrideChecker', for instance, compares the
-        //   default values of an override with the ones of the base declaration, and reports on the base default value expression. An
-        //   unresolved expression has no source, which makes the checker throw.
-        // - Declarations may have interdependent implicit types.
-        //
-        // A single structure element may have several anchors (a class and its super class type reference, for instance), hence the set.
-        //
-        // TODO(KT-88111): compute the inner structure elements lazily as well
-        val innerElements = LinkedHashSet<FileStructureElement>()
-        structureElementForContainerOrNull(closestContainer)?.let(innerElements::add)
+        val innerElements = collectInnerAnchorsFor(element, closestContainer)
+            .asSequence()
+            .mapNotNull(::structureElementForOrNull)
 
-        for (anchor in collectInnerAnchorsFor(element, closestContainer)) {
-            structureElementForOrNull(anchor)?.let(innerElements::add)
-        }
+        // 'containersOf' starts with the closest container itself, which comes right after everything nested in the requested element.
+        val outerElements = containersOf(closestContainer).mapNotNull(::structureElementForContainerOrNull)
 
-        // Diagnostics are collected from bottom to top, so that all nested declarations are fully resolved before the outer one (KT-65562).
-        // The closest container is already handled above, so only the outer ones are left. They may repeat an inner structure element, as a
-        // super type call anchors the primary constructor while its own container is the class.
-        val outerElements = containersOf(closestContainer)
-            .drop(1)
-            .mapNotNull(::structureElementForContainerOrNull)
-            .filter { it !in innerElements }
-
-        return innerElements.toList().asReversed().asSequence() + outerElements
+        // A single structure element may be reached through several anchors, and an outer container may repeat an inner one, as a super
+        // type call anchors the primary constructor while its own container is the class.
+        return (innerElements + outerElements).distinct()
     }
 
     /**
-     * Collects elements inside [element] which anchor their own [FileStructureElement], in the document order.
+     * Collects elements inside [element] which anchor their own [FileStructureElement], in the post-order: an element comes after
+     * everything nested in it.
      *
      * Nothing is collected if the [closestContainer] cannot have inner structure elements, as every declaration inside such a container is
      * local and thus belongs to the container itself. Apart from being an optimization, this avoids a pointless traversal over the whole
@@ -282,12 +268,12 @@ internal class FileStructure private constructor(
             }
 
             override fun visitDeclaration(dcl: KtDeclaration) {
-                anchors += dcl
-
                 // Go down only in the case of container declaration
                 if (dcl.canHaveInnerStructureElements) {
                     dcl.acceptChildren(this)
                 }
+
+                anchors += dcl
             }
 
             override fun visitModifierList(list: KtModifierList) {

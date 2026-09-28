@@ -29,11 +29,11 @@ import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.testFederation.AffectedByCommonBackend
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCommonBackend
 import org.jetbrains.kotlin.utils.bind
 
 @OptIn(UnspecifiedTargetBackend::class)
-@AffectedByCommonBackend
+@MustRunOnChangesInCommonBackend
 abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
     protected val targetPlatform: TargetPlatform,
     targetBackend: TargetBackend
@@ -80,7 +80,7 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
         setupDefaultDirectivesForIrTextTest()
         useFailureSuppressors(
             ::BlackBoxCodegenSuppressor,
-            ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
+            ::PhasedPipelineChecker.bind(TestPhase.CODEGEN)
         )
         enableMetaInfoHandler()
         facadeStep(converter)

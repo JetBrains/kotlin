@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 fun test() {
     val array = doubleArrayOf(1.0, 2.0, 3.0)

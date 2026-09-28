@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// TARGET_BACKEND: JVM_IR
 
 // Regression test for java-direct explicit-import resolution: an explicitly imported *nested*
 // class used as a supertype must be resolved with the full package/class split even on the

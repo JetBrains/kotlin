@@ -38,6 +38,8 @@ where advanced options include:
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
   -Xcache-directory=<path>   Path to the cache directory.
+  -Xenable-advanced-optimizations
+                             Enable experimental advanced optimization passes (e.g. effect analysis).
   -Xfriend-modules=<path>    Paths to friend modules.
   -Xfriend-modules-disabled  Disable internal declaration export.
   -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file.
@@ -92,6 +94,7 @@ where advanced options include:
                              Allow contracts on some operators and accessors, and allow checks for erased types.
   -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
+  -Xallow-pre-17-runtime-jdk Temporarily allow running Kotlin compiler with JDK older than JDK 17. This option will not work starting Kotlin 2.5.20-Beta1. See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.
   -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
   -Xallow-returns-result-of  Allows to use `returnsResultOf()` in `contract {}` block of function body. This contract provides additional information for return value checker. Enabling this feature will force compiler to produce pre-release binaries, because this functions with this contract cannot be read correctly by Kotlin 2.3 and lower.
   -Xannotation-default-target=first-only|first-only-warn|param-property
@@ -128,13 +131,14 @@ where advanced options include:
                              For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
                              Additionally enables measurements for User and CPU time for all targets. Note that this could cause performance degradation on Linux
                                machines, so use this mode with caution.
-  -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xdisable-default-scripting-plugin
                              Don't enable the scripting plugin by default.
   -Xdisable-ir-checkers=<checker1>,<checker2>
                              A list of IR checkers to disable, specified by a simple name of the checker class. A name of an annotation can also be used to match all tagged checkers.
                              Only has effect if '-Xverify-ir' is not 'none'.
   -Xdisable-phases           Disable backend phases.
+  -Xdo-not-normalize-nan-values-in-const-context
+                             Disables `NormalizeNaNValuesInConstContext` language feature.`
   -Xdont-sort-source-files   Disable automatic sorting of source files.
   -Xdont-warn-on-error-suppression
                              Don't report warnings when errors are suppressed. This only affects K2.
@@ -149,7 +153,6 @@ where advanced options include:
                              It may only be used with specific checkers that are not enabled by default, and which are prepared to be enabled this way. Only has effect if '-Xverify-ir' is not 'none'.
   -Xenable-incremental-compilation
                              Enable incremental compilation.
-  -Xequality-bounds          Enable experimental support for `@EqualityBound` annotations in `equals` operators.
   -Xescaping-functions=<+|-><fq.name>
                              Add (+) or remove (-) a callable whose functional arguments are analyzed for escaping mutable variables. Callables are specified by their fully qualified name.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
@@ -173,6 +176,7 @@ where advanced options include:
   -Xfragment-sources=<fragment name>:<path>
                              Add sources to a specific fragment of a multiplatform compilation.
   -Xfragments=<fragment name> Declare all known fragments of a multiplatform compilation.
+  -Xfull-value-classes       Enable experimental language support for full value classes.
   -Xheader-mode              Enable header compilation mode.
                              In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
                              compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
@@ -183,17 +187,13 @@ where advanced options include:
                              Generates output based on what it is used for:
                              -Xheader-mode-type=compilation: Skips the IR generation for modules that don't have inline functions.
                              -Xheader-mode-type=any: Can be used for any downstream dependency which doesn't require linking.
-  -Xignore-const-optimization-errors
-                             Ignore all compilation exceptions while optimizing some constant expressions.
-  -Xinline-classes           Enable experimental inline classes.
-  -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
-                             The option is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases.
   -Xintrinsic-const-evaluation Enables `IntrinsicConstEvaluation` language feature.`
   -Xlist-phases              List backend phases.
   -Xlocal-type-aliases       Enable experimental language support for local type aliases.
   -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.
   -Xmetadata-version         Change the metadata version of the generated binary files.
   -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. It enables the features that are already on by default in every supported language version.
   -Xmulti-platform           Enable language support for multiplatform projects.
   -Xname-based-destructuring=only-syntax|name-mismatch|complete
                              Enables the following destructuring features:
@@ -201,10 +201,9 @@ where advanced options include:
                              -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
                              -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;
   -Xnested-type-aliases      Enable experimental language support for nested type aliases.
-  -Xnew-inference            Enable the new experimental generic type inference algorithm.
-  -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xno-inline                Disable method inlining.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. It enables the features that are already on by default in every supported language version.
   -Xphases-to-dump           Dump the backend's state both before and after these phases.
   -Xphases-to-dump-after     Dump the backend's state after these phases.
   -Xphases-to-dump-before    Dump the backend's state before these phases.
@@ -216,26 +215,18 @@ where advanced options include:
   -Xprofile-phases           Profile backend phases.
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
-  -Xrepl                     Run Kotlin REPL.
-                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. REPL is deprecated.
   -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.
-  -Xreturn-value-checker={check|full|disable}
-                             Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion.
+  -Xreturn-value-checker={check|full|disable|default}
+                             Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.
   -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
   -Xstdlib-compilation       Enables special features which are relevant only for stdlib compilation.
+  -Xstrict-equality-for-structural-classes
+                             Report warnings on inapplicable equalities with data, value, and enum classes.
   -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
-  -Xsuppress-warning=<WARNING_NAME>
-                             Suppress specified warning module-wide.
-                             The option is deprecated since Kotlin 2.2.0. It will be removed in one of the future releases. Use '-Xwarning-level=<WARNING_NAME>:disabled' instead (and the same for other warnings).
-  -Xunrestricted-builder-inference
-                             Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
-  -Xuse-fir-experimental-checkers
-                             Enable experimental frontend IR checkers that are not yet ready for production.
-                             The option is deprecated since Kotlin 2.2.20. It will be removed in one of the future releases.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
                              The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases.
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
@@ -249,6 +240,7 @@ where advanced options include:
                              - `disabled` level suppresses reporting of a warning (similar to -nowarn but more granular)
                              - `warning` level overrides -nowarn and -Werror for this specific warning (the warning will be reported/won't be considered as an error)
   -Xwhen-guards              Enable experimental language support for when guards.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. It enables the features that are already on by default in every supported language version.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

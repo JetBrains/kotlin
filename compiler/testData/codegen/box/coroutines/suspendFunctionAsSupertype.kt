@@ -1,3 +1,5 @@
+// DIAGNOSTICS: -IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE
+// ^^^ Kotlin/JS partially forbids implementing suspend function interfaces and report this diagnostic
 // WITH_STDLIB
 
 import kotlin.coroutines.*

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 abstract class Parent<K>
 abstract class DefaultParent<K, X> : Parent<K>()
 abstract class TableDerived<K : A> : DefaultParent<K, Int>() {

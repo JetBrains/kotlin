@@ -1,0 +1,35 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/Enum.class
+  out/production/module/META-INF/module.kotlin_module
+End of files
+Compiling files:
+  src/Enum.kt
+End of files
+Exit code: OK
+------------------------------------------
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/UseKt$WhenMappings.class
+  out/production/module/UseKt.class
+End of files
+Compiling files:
+  src/use.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Unresolved reference: C
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/Enum.class
+End of files
+Compiling files:
+  src/Enum.kt
+  src/use.kt
+End of files
+Exit code: OK
+------------------------------------------

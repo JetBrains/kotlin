@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.lexer;
 
 import com.intellij.psi.tree.IElementType;
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
@@ -27,7 +28,8 @@ public class KtToken extends IElementType {
     public final int tokenId;
 
     @kotlin.Deprecated(
-            message = "Use the 'KtToken(String, int)' constructor instead"
+            message = "Use the 'KtToken(String, int)' constructor instead",
+            level = DeprecationLevel.ERROR
     )
     @Deprecated
     public KtToken(@NotNull @NonNls String debugName) {

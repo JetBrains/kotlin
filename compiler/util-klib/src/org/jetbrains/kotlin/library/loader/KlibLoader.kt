@@ -44,7 +44,9 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
     private val libraryProviders = ArrayList<KlibLibraryProvider>()
     private val libraryPaths = ArrayList<String>()
     private var platformChecker: KlibPlatformChecker? = null
+    private var minPermittedAbiVersion: KotlinAbiVersion? = null
     private var maxPermittedAbiVersion: KotlinAbiVersion? = null
+    private var minSupportedCompilerVersionHint: String? = null
     private var zipFileSystemAccessor: ZipFileSystemAccessor? = null
     private var manifestTransformer: KlibManifestTransformer? = null
 
@@ -78,6 +80,11 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
                 platformChecker = checker
             }
 
+            override fun minPermittedAbiVersion(abiVersion: KotlinAbiVersion, compilerVersion: String?) {
+                minPermittedAbiVersion = abiVersion
+                minSupportedCompilerVersionHint = compilerVersion
+            }
+
             override fun maxPermittedAbiVersion(abiVersion: KotlinAbiVersion) {
                 maxPermittedAbiVersion = abiVersion
             }
@@ -102,7 +109,9 @@ class KlibLoader(init: KlibLoaderSpec.() -> Unit) {
         return KlibLoaderImpl(
             libraryProviders = libraryProviders,
             platformChecker = platformChecker,
+            minPermittedAbiVersion = minPermittedAbiVersion,
             maxPermittedAbiVersion = maxPermittedAbiVersion,
+            minSupportedCompilerVersionHint = minSupportedCompilerVersionHint,
             zipFileSystemAccessor = zipFileSystemAccessor ?: ZipFileSystemInPlaceAccessor,
             manifestTransformer = manifestTransformer
         ).loadLibraries()
@@ -119,6 +128,7 @@ interface KlibLoaderSpec {
     fun libraryPaths(vararg paths: Path)
 
     fun platformChecker(checker: KlibPlatformChecker)
+    fun minPermittedAbiVersion(abiVersion: KotlinAbiVersion, compilerVersion: String?)
     fun maxPermittedAbiVersion(abiVersion: KotlinAbiVersion)
     fun zipFileSystemAccessor(accessor: ZipFileSystemAccessor)
 
@@ -128,7 +138,9 @@ interface KlibLoaderSpec {
 private class KlibLoaderImpl(
     private val libraryProviders: List<KlibLibraryProvider>,
     private val platformChecker: KlibPlatformChecker?,
+    private val minPermittedAbiVersion: KotlinAbiVersion?,
     private val maxPermittedAbiVersion: KotlinAbiVersion?,
+    private val minSupportedCompilerVersionHint: String?,
     private val zipFileSystemAccessor: ZipFileSystemAccessor,
     private val manifestTransformer: KlibManifestTransformer?,
 ) {
@@ -266,16 +278,20 @@ private class KlibLoaderImpl(
             return LibraryStatus.FailedToLoad(ProblematicLibrary(rawPath, platformCheckMismatch))
         }
 
-        if (maxPermittedAbiVersion != null && library.hasAbi) {
+        if ((minPermittedAbiVersion != null || maxPermittedAbiVersion != null) && library.hasAbi) {
             val libraryAbiVersion: KotlinAbiVersion? = library.versions.abiVersion
-            if (libraryAbiVersion == null || !libraryAbiVersion.isAtMost(maxPermittedAbiVersion)) {
+            if (libraryAbiVersion == null
+                || (minPermittedAbiVersion != null && !libraryAbiVersion.isAtLeast(minPermittedAbiVersion))
+                || (maxPermittedAbiVersion != null && !libraryAbiVersion.isAtMost(maxPermittedAbiVersion))
+            ) {
                 return LibraryStatus.FailedToLoad(
                     ProblematicLibrary(
                         libraryPath = rawPath,
                         problemCase = IncompatibleAbiVersion(
                             libraryVersions = library.versions,
-                            minPermittedAbiVersion = null,
-                            maxPermittedAbiVersion = maxPermittedAbiVersion
+                            minPermittedAbiVersion = minPermittedAbiVersion,
+                            maxPermittedAbiVersion = maxPermittedAbiVersion,
+                            minSupportedCompilerVersionHint = minSupportedCompilerVersionHint,
                         )
                     )
                 )

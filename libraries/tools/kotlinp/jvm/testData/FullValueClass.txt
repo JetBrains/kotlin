@@ -1,0 +1,92 @@
+// AbstractRegular.class
+// ------------------------------------------
+public abstract class AbstractRegular : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// AbstractValue.class
+// ------------------------------------------
+public abstract value class AbstractValue : kotlin/Any {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
+// FinalValue.class
+// ------------------------------------------
+public final value class FinalValue : kotlin/Any {
+
+  // signature: <init>(II)V
+  public constructor(x: kotlin/Int, y: kotlin/Int)
+
+  // signature: equals(Ljava/lang/Object;)Z
+  // must-use return value
+  public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+  // signature: hashCode()I
+  // must-use return value
+  public open /* synthesized */ fun hashCode(): kotlin/Int
+
+  // signature: toString()Ljava/lang/String;
+  // must-use return value
+  public open /* synthesized */ fun toString(): kotlin/String
+
+  // field: x:I
+  // getter: getX()I
+  public final val x: kotlin/Int
+    public final get
+
+  // field: y:I
+  // getter: getY()I
+  public final val y: kotlin/Int
+    public final get
+
+  // module name: test-module
+}
+// SealedRegular.class
+// ------------------------------------------
+public sealed class SealedRegular : kotlin/Any {
+
+  // signature: <init>()V
+  protected constructor()
+
+  // module name: test-module
+}
+// SealedValue.class
+// ------------------------------------------
+public sealed value class SealedValue : kotlin/Any {
+
+  // signature: <init>()V
+  protected constructor()
+
+  // module name: test-module
+}
+// ValueObject.class
+// ------------------------------------------
+public final value object ValueObject : kotlin/Any {
+
+  // signature: <init>()V
+  private constructor()
+
+  // signature: equals(Ljava/lang/Object;)Z
+  // must-use return value
+  public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+  // signature: hashCode()I
+  // must-use return value
+  public open /* synthesized */ fun hashCode(): kotlin/Int
+
+  // signature: toString()Ljava/lang/String;
+  // must-use return value
+  public open /* synthesized */ fun toString(): kotlin/String
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

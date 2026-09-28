@@ -4,4 +4,5 @@ warning: the argument '-Xvalue-classes' was removed in Kotlin 2.4.20. It has no 
 warning: the argument '-Xg0' was removed in Kotlin 2.4.20. It has no effect.
 warning: the argument '-no-endorsed-libs' was removed in Kotlin 2.4.20. It has no effect.
 warning: the argument '-library-version' was removed in Kotlin 2.4.20. It has no effect.
+warning: the argument '-Xnew-inference' was removed in Kotlin $ABI_VERSION$. It has no effect. It enables the features that are already on by default in every supported language version.
 OK

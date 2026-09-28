@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ResolveEqualsRhsInDependentContextWithCompletion
 // FIR_DUMP
 // DUMP_CFG: FLOW

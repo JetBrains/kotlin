@@ -59,6 +59,10 @@ class TypeCheckersDiagnosticComponent(
         checkers.allIntersectionTypeRefCheckers.check(intersectionTypeRef, data)
     }
 
+    override fun visitUnionTypeRef(unionTypeRef: FirUnionTypeRef, data: CheckerContext) {
+        checkers.allUnionTypeRefCheckers.check(unionTypeRef, data)
+    }
+
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: CheckerContext) {
         checkers.allTypeRefCheckers.check(implicitTypeRef, data)
     }

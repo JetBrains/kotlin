@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutorBuilder
 import org.jetbrains.kotlin.analysis.api.types.KaType
 
-@OptIn(KaImplementationDetail::class)
 internal class KaFirSubstitutorBuilder(override val token: KaLifetimeToken) : KaSubstitutorBuilder {
     private val backingMapping = mutableMapOf<KaTypeParameterSymbol, KaType>()
 

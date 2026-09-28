@@ -3,33 +3,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+_Bool main_internal_functional_type_callee_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * pointerToClosure);
+
 void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * o);
 
-_Bool DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t DATA_CLASS_WITH_REF_hashCode(void * self);
-
 void * DATA_CLASS_WITH_REF_o_get(void * self);
-
-NSString * DATA_CLASS_WITH_REF_toString(void * self);
 
 int32_t DATA_CLASS_a_get(void * self);
 
 void * DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(void * self, int32_t a);
 
-_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t DATA_CLASS_hashCode(void * self);
-
-NSString * DATA_CLASS_toString(void * self);
-
-_Bool DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
 int32_t DATA_OBJECT_WITH_PACKAGE_foo(void * self);
-
-int32_t DATA_OBJECT_WITH_PACKAGE_hashCode(void * self);
-
-NSString * DATA_OBJECT_WITH_PACKAGE_toString(void * self);
 
 int32_t DATA_OBJECT_WITH_PACKAGE_value_get(void * self);
 
@@ -47,21 +31,9 @@ void * ENUM_INSIDE_ENUM_init_allocate();
 
 _Bool ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-_Bool INLINE_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t INLINE_CLASS_WITH_REF_hashCode(void * self);
-
 void * INLINE_CLASS_WITH_REF_i_get(void * self);
 
-NSString * INLINE_CLASS_WITH_REF_toString(void * self);
-
 int32_t INLINE_CLASS_a_get(void * self);
-
-_Bool INLINE_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t INLINE_CLASS_hashCode(void * self);
-
-NSString * INLINE_CLASS_toString(void * self);
 
 _Bool OBJECT_WITH_GENERIC_INHERITANCE_hasNext(void * self);
 
@@ -119,11 +91,11 @@ _Bool __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutable
 
 void * __root___block_get();
 
-_Bool __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(_Bool (^newValue)(void));
+_Bool __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(void * newValue);
 
-_Bool __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(_Bool (^block)(void));
+_Bool __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(void * block);
 
-void * __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(_Bool (^block)(void));
+void * __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(void * block);
 
 int32_t __root___increment__TypesOfArguments__Swift_Int32__(int32_t integer);
 

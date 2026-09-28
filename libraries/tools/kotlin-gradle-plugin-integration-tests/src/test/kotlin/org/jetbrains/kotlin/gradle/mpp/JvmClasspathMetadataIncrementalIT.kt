@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.kotlin.dsl.creating
-import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.appendText
 import kotlin.io.path.deleteExisting
 
 @MppGradlePluginTests
@@ -205,6 +202,91 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
                 println("KMP output: ${foo()}")
             }
             """.trimIndent()
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-89044: adding an overload to an expect class with an actual typealias recompiles common call sites")
+    fun testExpectClassOverloadAddedViaActualTypealias(gradleVersion: GradleVersion) {
+        project(
+            projectName = "empty", gradleVersion = gradleVersion, buildOptions = defaultBuildOptions.copy(jvmClasspathMetadata = true)
+        ) {
+            setupExpectTypealiasOverloadProject()
+
+            build("jvmRun", "-DmainClass=MainKt") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertOutputContains("KMP output: Any")
+            }
+
+            kotlinSourcesDir("commonMain").resolve("base.kt").modify { content ->
+                content.replace("fun foo(x: Any): String", "fun foo(x: Any): String\n    fun foo(x: Int): String")
+            }
+            kotlinSourcesDir("jvmMain").resolve("b1.kt").modify { content ->
+                content.replace(
+                    "fun foo(x: Any): String = \"Any\"",
+                    "fun foo(x: Any): String = \"Any\"\n    fun foo(x: Int): String = \"Int\""
+                )
+            }
+
+            build("jvmRun", "-DmainClass=MainKt") {
+                assertTasksExecuted(":compileKotlinJvm")
+                assertCompiledKotlinSources(
+                    expectedSources = relativeToProject(
+                        listOf(
+                            kotlinSourcesDir("commonMain").resolve("base.kt"),
+                            kotlinSourcesDir("commonMain").resolve("result.kt"),
+                            kotlinSourcesDir("jvmMain").resolve("actual.kt"),
+                            kotlinSourcesDir("jvmMain").resolve("b1.kt"),
+                        )
+                    ), output = output
+                )
+                assertOutputContains("KMP output: Int")
+            }
+        }
+    }
+
+    private fun TestProject.setupExpectTypealiasOverloadProject() {
+        addKgpToBuildScriptCompilationClasspath()
+        buildScriptInjection {
+            project.applyMultiplatform {
+                jvm()
+            }
+        }
+        kotlinSourcesDir("commonMain").apply {
+            source("base.kt") {
+                """
+                expect class A1() {
+                    fun foo(x: Any): String
+                }
+                """.trimIndent()
+            }
+            source("result.kt") {
+                """
+                fun result1(): String = A1().foo(42)
+                """.trimIndent()
+            }
+        }
+
+        kotlinSourcesDir("jvmMain").apply {
+            source("b1.kt") {
+                """
+                class B1 {
+                    fun foo(x: Any): String = "Any"
+                }
+                """.trimIndent()
+            }
+            source("actual.kt") {
+                """
+                actual typealias A1 = B1
+                """.trimIndent()
+            }
+            source("main.kt") {
+                $$"""
+                fun main() {
+                    println("KMP output: ${result1()}")
+                }
+                """.trimIndent()
+            }
         }
     }
 

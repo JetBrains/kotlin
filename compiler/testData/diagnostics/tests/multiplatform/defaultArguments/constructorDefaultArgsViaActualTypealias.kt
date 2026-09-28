@@ -1,5 +1,5 @@
 // IGNORE_FIR_DIAGNOSTICS
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // MODULE: m1-common
 // FILE: common.kt
 expect class DefaultArgsInConstructor(p1: String = "common", p2: String = "common", p3: String)

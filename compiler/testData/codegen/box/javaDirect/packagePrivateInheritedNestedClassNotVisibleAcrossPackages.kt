@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 // `a.Base` declares a package-private nested `Renderer`, which is NOT accessible from package
 // `b` (JLS 6.6.1), so it must not shadow the same-named top-level `b.Renderer` in `Widget`'s own

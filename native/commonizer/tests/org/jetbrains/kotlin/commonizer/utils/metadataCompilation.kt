@@ -21,16 +21,16 @@ import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.*
 import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
 import org.jetbrains.kotlin.commonizer.CompiledDependency
-import org.jetbrains.kotlin.commonizer.cli.CliLoggerAdapter
+import org.jetbrains.kotlin.commonizer.cli.CliLogger
 import org.jetbrains.kotlin.commonizer.konan.DefaultModulesProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeLibrary
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
-import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinAbiVersion.Companion.FIRST_SUPPORTED_COMPILER_VERSION
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.name.Name
@@ -66,6 +66,7 @@ fun loadStdlibMetadata() = loadStdlibMetadata(KotlinTestUtils.newConfiguration()
 fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
     val kotlinLoaderResult = KlibLoader {
         libraryPaths(stdlibPath())
+        minPermittedAbiVersion(KotlinAbiVersion.FIRST_SUPPORTED, FIRST_SUPPORTED_COMPILER_VERSION)
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
     }.load()
         .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = true) }
@@ -73,7 +74,7 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
         .eliminateLibrariesWithDuplicatedUniqueNames(configuration)
 
     val stdlib = kotlinLoaderResult.librariesStdlibFirst.firstOrNull() ?: error("No stdlib found")
-    val dummyLogger = CliLoggerAdapter(CommonizerLogLevel.Quiet, 2)
+    val dummyLogger = CliLogger(CommonizerLogLevel.Quiet, 2)
     val stdlibModuleProvider = DefaultModulesProvider.forDependencies(listOf(NativeLibrary(stdlib)), dummyLogger)
 
     return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))

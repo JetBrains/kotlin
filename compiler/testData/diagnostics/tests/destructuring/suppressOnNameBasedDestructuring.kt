@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +NameBasedDestructuring +EnableNameBasedDestructuringShortForm +LocalVariableTargetedAnnotationOnDestructuring
 
 data class HasDeprecation(@Deprecated("") val x: String)

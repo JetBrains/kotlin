@@ -895,11 +895,6 @@ public abstract class org/jetbrains/kotlin/analysis/api/platform/projectStructur
 	protected abstract fun getNotUnderContentRootModule (Lcom/intellij/openapi/project/Project;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaNotUnderContentRootModule;
 }
 
-public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/KotlinProjectStructureProviderBaseKt {
-	public static final fun getForcedSpecialModule (Lorg/jetbrains/kotlin/psi/KtCodeFragment;)Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileModule;
-	public static final fun setForcedSpecialModule (Lorg/jetbrains/kotlin/psi/KtCodeFragment;Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaDanglingFileModule;)V
-}
-
 public final class org/jetbrains/kotlin/analysis/api/platform/projectStructure/UtilsKt {
 	public static final fun areCompilerPluginsSupported (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;)Z
 	public static final fun asDebugString (Lorg/jetbrains/kotlin/analysis/api/projectStructure/KaModule;I)Ljava/lang/String;

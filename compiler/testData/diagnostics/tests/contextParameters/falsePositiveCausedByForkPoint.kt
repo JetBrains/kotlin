@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-84155
 context(f: Foo<Int>) // same result if you change it to Foo<String> or even Foo<Unit>

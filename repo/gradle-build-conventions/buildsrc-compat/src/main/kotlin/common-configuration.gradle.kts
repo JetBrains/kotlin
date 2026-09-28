@@ -1,4 +1,8 @@
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
+import org.gradle.api.attributes.LibraryElements
+import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -191,7 +195,9 @@ fun Project.configureKotlinCompilationOptions() {
                         "-Xexplicit-backing-fields".takeUnless { skipNewLanguageFeatures }, // KT-14663
                         "-Xname-based-destructuring=complete".takeUnless { skipNewLanguageFeatures },
                         "-Xcollection-literals".takeUnless { skipNewLanguageFeatures },
+                        "-Xcontext-sensitive-resolution".takeUnless { skipNewLanguageFeatures },
                         "-Xexplicit-context-arguments".takeUnless { skipNewLanguageFeatures },
+                        "-Xallow-pre-17-runtime-jdk", // KT-88174
                         // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
                         // But this produces a warning
                         // "The argument ... is redundant for the current language version ..."
@@ -284,6 +290,46 @@ private fun Project.skipArgumentForOlderKotlinCompilerVersion(): Boolean {
 }
 
 fun Project.configureArtifacts() {
+    plugins.withType<JavaPlugin> {
+        extensions.configure<JavaPluginExtension> {
+            withSourcesJar()
+        }
+    }
+
+    plugins.withId("java-test-fixtures") {
+        val testFixtures = extensions.getByType<JavaPluginExtension>().sourceSets.getByName("testFixtures")
+        val testFixturesSourcesJar = tasks.register<Jar>("testFixturesSourcesJar") {
+            archiveClassifier.set("test-fixtures-sources")
+            from(testFixtures.allSource)
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+        val testFixturesCapabilities = configurations.getByName("testFixturesApiElements").outgoing.capabilities
+        configurations.findByName("testFixturesSourcesElements") ?: configurations.create("testFixturesSourcesElements") {
+            isCanBeConsumed = true
+            isCanBeResolved = false
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category::class.java, Category.DOCUMENTATION))
+                attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType::class.java, DocsType.SOURCES))
+                attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements::class.java, LibraryElements.JAR))
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
+            }
+            testFixturesCapabilities.forEach { outgoing.capability(it) }
+            outgoing.artifact(testFixturesSourcesJar)
+        }
+    }
+
+    tasks.withType<Jar>().matching { it.name == "sourcesJar" || it.name == "testFixturesSourcesJar" }.configureEach {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    tasks.withType<AbstractArchiveTask>().configureEach {
+        if (name == "kotlinSourcesJar") {
+            enabled = false
+            archiveClassifier.set("unused-kotlin-sources")
+            archiveFileName.set("unused-kotlin-sources.jar")
+        }
+    }
+
     tasks.withType<Javadoc>().configureEach {
         enabled = false
     }

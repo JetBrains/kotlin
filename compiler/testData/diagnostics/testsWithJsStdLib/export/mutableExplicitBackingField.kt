@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // LANGUAGE: +ExplicitBackingFields
 // WITH_STDLIB

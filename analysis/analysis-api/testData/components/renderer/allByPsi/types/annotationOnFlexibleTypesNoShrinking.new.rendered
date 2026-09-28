@@ -1,0 +1,5 @@
+fun annotatedString(j: JavaDeclaration): (@Ann String..@Ann String?)
+
+fun annotatedList(j: JavaDeclaration): (MutableList<(@Ann String..@Ann String?)>..List<(@Ann String..@Ann String?)>?)
+
+fun annotatedMutableList(j: JavaDeclaration): (@Ann MutableList<(@Ann String..@Ann String?)>..@Ann List<(@Ann String..@Ann String?)>?)

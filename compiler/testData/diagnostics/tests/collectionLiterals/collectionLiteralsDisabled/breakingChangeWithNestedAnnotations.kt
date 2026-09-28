@@ -13,7 +13,7 @@ annotation class Foo(val arr: Array<String> = [])
 
 fun main() {
     fun Foo(lst: List<String>) = behaviorChanged.Foo()
-    @Bar(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Foo(<!UNSUPPORTED_FEATURE!>[]<!>)<!>)
+    @Bar(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Foo([])<!>)
     42
 }
 

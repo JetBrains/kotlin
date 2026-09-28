@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // See also KT-7186 and varCapturedInInlineClosure.kt
 // Standard library `forEach` calls lambda in-place by contract so smart cast is safe
 

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // Tail calls are not allowed to be Nothing typed. See KT-15051
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

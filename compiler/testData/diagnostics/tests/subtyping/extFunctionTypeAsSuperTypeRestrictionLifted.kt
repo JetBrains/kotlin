@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +FunctionalTypeWithExtensionAsSupertype
 class A : Double.() -> Unit {
     override fun invoke(p1: Double) {}

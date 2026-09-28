@@ -18,18 +18,12 @@ import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
-import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.PipelineArtifact
-import org.jetbrains.kotlin.cli.pipeline.PipelineContext
-import org.jetbrains.kotlin.cli.pipeline.PipelineStepException
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmConfigurationPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFir2IrPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
-import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.cli.pipeline.jvm.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.config.isFromCommonModule
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -63,7 +57,8 @@ open class IncrementalFirJvmCompilerRunner(
     private val frontendPhases = JvmFrontendPipelinePhase then
             FrontendFilesForPluginsGenerationPipelinePhase() then
             JvmFir2IrPipelinePhase
-    private val backendPhases = JvmBackendPipelinePhase then
+    private val backendPhases = JvmLoweringsPipelinePhase then
+            JvmCodegenPipelinePhase then
             JvmWriteOutputsPhase
 
     override fun runCompiler(

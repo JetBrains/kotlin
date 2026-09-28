@@ -1,0 +1,33 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(bool1: Boolean, bool2: Boolean, string: String) {
+    LaunchedEffect(Unit) {
+        disposingComposition {
+             suspendContent {
+                println(bool1)
+                println(bool2)
+                println(string)
+            }
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(ZZLjava/lang/String;Landroidx/compose/runtime/Composer;I)V
+        Root { key: <key>, line: 5 }
+}
+
+TestKt$Test$1$1 {
+    file: Test.kt
+    invokeSuspend$lambda$0$0(ZZLjava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: <key>, line: 9 }
+}

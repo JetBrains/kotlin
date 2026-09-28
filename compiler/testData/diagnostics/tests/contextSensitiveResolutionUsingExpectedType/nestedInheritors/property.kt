@@ -17,7 +17,7 @@ val ClassMemberAlias = MyClass.NestedInheritor
 fun testIfElse(i: Int) {
     receiveMyClass(
         if (i == 0) NestedInheritor
-        else if (i == 1) <!ARGUMENT_TYPE_MISMATCH!>myClassProp<!>
+        else if (i == 1) myClassProp
         else if (i == 2) <!ARGUMENT_TYPE_MISMATCH!>stringProp<!>
         else ClassMemberAlias
     )

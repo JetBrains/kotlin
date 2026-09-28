@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun testReturn() {
     <!UNREACHABLE_CODE!>return<!> todo()
 }

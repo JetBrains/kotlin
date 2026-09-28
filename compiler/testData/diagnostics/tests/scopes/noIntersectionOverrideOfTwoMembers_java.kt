@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // SCOPE_DUMP: C:foo;x, Explicit:foo;x, Implicit:foo;x
 
 interface A {

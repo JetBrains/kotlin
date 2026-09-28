@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 interface IFoo {
     fun foo(i: Int): Int
     infix fun bar(i: Int): Int

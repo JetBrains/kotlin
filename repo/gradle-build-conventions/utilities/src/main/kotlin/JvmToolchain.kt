@@ -85,7 +85,7 @@ fun Project.getNativeImageToolchainLauncherFor(
     val service = project.extensions.getByType<JavaToolchainService>()
     return service.launcherFor {
         this.languageVersion.set(JavaLanguageVersion.of(jdkVersion.majorVersion))
-        this.nativeImageCapable.set(true)
+        this.vendor.set(JvmVendorSpec.GRAAL_VM)
     }
 }
 

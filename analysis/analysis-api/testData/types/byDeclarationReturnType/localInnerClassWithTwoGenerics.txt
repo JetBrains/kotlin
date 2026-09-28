@@ -1,0 +1,147 @@
+KaUsualClassType:
+  abbreviation: null
+  annotations: []
+  classId: <local>/C.D
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: C
+      symbol: KaNamedClassSymbol(<local>/C)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: CC1
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: CC1
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: CC2
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: CLASS
+            modality: FINAL
+            name: CC2
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+      ]
+    KaResolvedClassTypeQualifier:
+      name: D
+      symbol: KaNamedClassSymbol(<local>/D)
+      typeArguments: [
+        KaTypeParameterType:
+          abbreviation: null
+          annotations: []
+          name: FOO1
+          symbol: KaTypeParameterSymbol:
+            anchorPsi: KtTypeParameter
+            annotations: []
+            isActual: false
+            isExpect: false
+            isExternal: false
+            isReified: false
+            location: LOCAL
+            modality: FINAL
+            name: FOO1
+            origin: SOURCE
+            psi: KtTypeParameter
+            realPsi: KtTypeParameter
+            upperBounds: []
+            variance: INVARIANT
+            visibility: LOCAL
+          isMarkedNullable: false
+          isNullable: true
+          hasFlexibleNullability: false
+        KaUsualClassType:
+          abbreviation: null
+          annotations: []
+          classId: kotlin/String
+          qualifiers: [
+            KaResolvedClassTypeQualifier:
+              name: String
+              symbol: KaNamedClassSymbol(kotlin/String)
+              typeArguments: []
+          ]
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+          isMarkedNullable: false
+          isNullable: false
+          hasFlexibleNullability: false
+      ]
+  ]
+  symbol: KaNamedClassSymbol(<local>/D)
+  typeArguments: [
+    KaTypeParameterType:
+      abbreviation: null
+      annotations: []
+      name: FOO1
+      symbol: KaTypeParameterSymbol:
+        anchorPsi: KtTypeParameter
+        annotations: []
+        isActual: false
+        isExpect: false
+        isExternal: false
+        isReified: false
+        location: LOCAL
+        modality: FINAL
+        name: FOO1
+        origin: SOURCE
+        psi: KtTypeParameter
+        realPsi: KtTypeParameter
+        upperBounds: []
+        variance: INVARIANT
+        visibility: LOCAL
+      isMarkedNullable: false
+      isNullable: true
+      hasFlexibleNullability: false
+    KaUsualClassType:
+      abbreviation: null
+      annotations: []
+      classId: kotlin/String
+      qualifiers: [
+        KaResolvedClassTypeQualifier:
+          name: String
+          symbol: KaNamedClassSymbol(kotlin/String)
+          typeArguments: []
+      ]
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+      isMarkedNullable: false
+      isNullable: false
+      hasFlexibleNullability: false
+  ]
+  isMarkedNullable: true
+  isNullable: true
+  hasFlexibleNullability: false
+
+Rendered type:
+C<CC1, CC2>.D<FOO1, kotlin.String>?

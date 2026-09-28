@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // JET-72 Type inference doesn't work when iterating over ArrayList
 
 import java.util.ArrayList

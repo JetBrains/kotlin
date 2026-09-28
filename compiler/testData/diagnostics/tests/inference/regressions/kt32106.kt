@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Query<out T : Any> private constructor(
     private val result: T?,
     private val error: Throwable?,

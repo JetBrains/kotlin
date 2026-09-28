@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
@@ -21,12 +20,12 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens.INNER_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.SEALED_KEYWORD
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
-import org.jetbrains.kotlin.light.classes.symbol.cachedValue
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
+import org.jetbrains.kotlin.light.classes.symbol.utils.cachedValue
+import org.jetbrains.kotlin.light.classes.symbol.utils.toPsiVisibilityForMember
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import java.util.*
@@ -35,14 +34,14 @@ internal class SymbolLightConstructor private constructor(
     constructorSymbol: KaConstructorSymbol,
     containingClass: SymbolLightClassBase,
     methodIndex: Int,
-    isJvmExposedBoxed: Boolean,
+    generationMode: MethodGenerationMode,
     valueParameterPickMask: BitSet? = null,
 ) : SymbolLightMethod<KaConstructorSymbol>(
     functionSymbol = constructorSymbol,
     lightMemberOrigin = null,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    isJvmExposedBoxed = isJvmExposedBoxed,
+    generationMode = generationMode,
     valueParameterPickMask = valueParameterPickMask,
 ) {
     private val _name: String? = containingClass.name
@@ -71,8 +70,8 @@ internal class SymbolLightConstructor private constructor(
             ),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
-                    ktModule = ktModule,
-                    annotatedSymbolPointer = functionSymbolPointer,
+                    useSiteModule = useSiteModule,
+                    annotatedSymbolPointer = symbolPointer,
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
                 additionalAnnotationsProvider = JvmExposeBoxedAdditionalAnnotationsProvider,
@@ -87,7 +86,7 @@ internal class SymbolLightConstructor private constructor(
 
         else -> withFunctionSymbol { symbol ->
             // A constructor cannot be renamed, so the JVM backend makes it private instead of mangling its name
-            val visibility = if (!isJvmExposedBoxed &&
+            val visibility = if (!isJvmExposeBoxed &&
                 hasManglingValueClassInParameterPosition(symbol, valueParameterPickMask = valueParameterPickMask)
             ) {
                 PsiModifier.PRIVATE
@@ -120,32 +119,41 @@ internal class SymbolLightConstructor private constructor(
 
                 if (isHiddenOrSynthetic(constructor)) continue
 
-                val exposeBoxedMode = jvmExposeBoxedMode(constructor)
+                val exposeBoxedMode = constructor.jvmExposeBoxedMode()
                 createMethodsJvmOverloadsAware(
                     declaration = constructor,
                     methodIndexBase = METHOD_INDEX_BASE,
                 ) { methodIndex, valueParameterPickMask, hasValueClassInParameterType ->
-                    if (exposeBoxedMode != JvmExposeBoxedMode.NONE &&
-                        (hasValueClassInParameterType || destinationClassIsValueClass) &&
-                        // Private declarations are inaccessible from Java, so they are never exposed as boxed
-                        !isEffectivelyPrivate(constructor)
-                    ) {
-                        result += SymbolLightConstructor(
-                            constructorSymbol = constructor,
-                            containingClass = lightClass,
-                            methodIndex = methodIndex,
-                            valueParameterPickMask = valueParameterPickMask,
-                            isJvmExposedBoxed = true,
-                        )
-                    }
+                    val isBoxedConstructorRequired = exposeBoxedMode != JvmExposeBoxedMode.NONE &&
+                            (hasValueClassInParameterType || destinationClassIsValueClass) &&
+                            // Private declarations are inaccessible from Java, so they are never exposed as boxed
+                            !constructor.isEffectivelyPrivate()
 
-                    if (!destinationClassIsValueClass) {
+                    val generationMode = when {
+                        isBoxedConstructorRequired -> MethodGenerationMode.Boxed(isRegularMethodRequired = !destinationClassIsValueClass)
+
+                        // Only the boxed constructor of a value class can be generated
+                        destinationClassIsValueClass -> null
+
+                        // Explicit mode without a boxed constructor -> the regular constructor retains @JvmExposeBoxed
+                        else -> MethodGenerationMode.Regular(isAffectedByJvmExposeBoxed = exposeBoxedMode == JvmExposeBoxedMode.EXPLICIT)
+                    } ?: return@createMethodsJvmOverloadsAware
+
+                    result += SymbolLightConstructor(
+                        constructorSymbol = constructor,
+                        containingClass = lightClass,
+                        methodIndex = methodIndex,
+                        valueParameterPickMask = valueParameterPickMask,
+                        generationMode = generationMode,
+                    )
+
+                    if (generationMode is MethodGenerationMode.Boxed && generationMode.isRegularMethodRequired) {
                         result += SymbolLightConstructor(
                             constructorSymbol = constructor,
                             containingClass = lightClass,
                             methodIndex = methodIndex,
                             valueParameterPickMask = valueParameterPickMask,
-                            isJvmExposedBoxed = false,
+                            generationMode = MethodGenerationMode.Regular(),
                         )
                     }
                 }
@@ -157,14 +165,14 @@ internal class SymbolLightConstructor private constructor(
                     !destinationClassIsValueClass -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
-                            isJvmExposedBoxed = false,
+                            generationMode = MethodGenerationMode.Regular(),
                         )
                     }
 
-                    jvmExposeBoxedMode(primaryConstructor) != JvmExposeBoxedMode.NONE && !isEffectivelyPrivate(primaryConstructor) -> {
+                    primaryConstructor.jvmExposeBoxedMode() != JvmExposeBoxedMode.NONE && !primaryConstructor.isEffectivelyPrivate() -> {
                         result += lightClass.noArgConstructor(
                             primaryConstructor = primaryConstructor,
-                            isJvmExposedBoxed = true,
+                            generationMode = MethodGenerationMode.Boxed(isRegularMethodRequired = false),
                         )
                     }
                 }
@@ -209,45 +217,37 @@ internal class SymbolLightConstructor private constructor(
                 else -> PsiModifier.PUBLIC
             }
 
-            return noArgConstructor(
-                visibility,
-                classOrObject,
-                METHOD_INDEX_FOR_DEFAULT_CTOR,
-                isJvmExposedBoxed = false,
-                functionSymbolPointer = null,
+            return SymbolLightDefaultNoArgConstructor(
+                lightMemberOrigin = classOrObject?.let {
+                    LightMemberOriginForDeclaration(
+                        originalElement = it,
+                        originKind = JvmDeclarationOriginKind.OTHER,
+                    )
+                },
+                containingClass = this,
+                visibility = visibility,
+                methodIndex = METHOD_INDEX_FOR_DEFAULT_CTOR,
+                generationMode = MethodGenerationMode.Regular(),
             )
         }
 
         private fun SymbolLightClassBase.noArgConstructor(
             primaryConstructor: KaConstructorSymbol,
-            isJvmExposedBoxed: Boolean,
-        ): KtLightMethod = noArgConstructor(
-            visibility = primaryConstructor.visibility.asJavaVisibilityModifier(),
-            declaration = primaryConstructor.sourcePsiSafe(),
-            methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
-            isJvmExposedBoxed = isJvmExposedBoxed,
-            functionSymbolPointer = primaryConstructor.createPointer(),
-        )
-
-        private fun SymbolLightClassBase.noArgConstructor(
-            visibility: String,
-            declaration: KtDeclaration?,
-            methodIndex: Int,
-            isJvmExposedBoxed: Boolean,
-            functionSymbolPointer: KaSymbolPointer<KaConstructorSymbol>?,
-        ): KtLightMethod = SymbolLightNoArgConstructor(
-            lightMemberOrigin = declaration?.let {
-                LightMemberOriginForDeclaration(
-                    originalElement = it,
-                    originKind = JvmDeclarationOriginKind.OTHER,
-                )
-            },
-            containingClass = this,
-            visibility = visibility,
-            methodIndex = methodIndex,
-            isJvmExposedBoxed = isJvmExposedBoxed,
-            functionSymbolPointer = functionSymbolPointer,
-        )
+            generationMode: MethodGenerationMode,
+        ): KtLightMethod =
+            SymbolLightNoArgConstructor(
+                lightMemberOrigin = primaryConstructor.sourcePsiSafe<KtDeclaration>()?.let {
+                    LightMemberOriginForDeclaration(
+                        originalElement = it,
+                        originKind = JvmDeclarationOriginKind.OTHER,
+                    )
+                },
+                containingClass = this,
+                visibility = primaryConstructor.visibility.asJavaVisibilityModifier(),
+                methodIndex = METHOD_INDEX_FOR_NO_ARG_OVERLOAD_CTOR,
+                generationMode = generationMode,
+                symbolPointer = primaryConstructor.createPointer(),
+            )
     }
 }
 

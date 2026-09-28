@@ -1,0 +1,25 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(bool1: Boolean, bool2: Boolean, string: String) {
+    LaunchedEffect(Unit) {
+        disposingComposition {
+             suspendContent {
+                println(bool1)
+                println(bool2)
+                println(string)
+            }
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+    1:1:void TestKt.Test(boolean,boolean,java.lang.String,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
+    1:1:kotlin.Unit TestKt$Test$1$1.invokeSuspend$lambda$0$0(boolean,boolean,java.lang.String,androidx.compose.runtime.Composer,int):9:9 -> m$<key>

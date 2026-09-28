@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
+import org.jetbrains.kotlin.gradle.plugin.statistics.CompilerArgumentMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.DisableNativeCacheSettings
@@ -506,6 +507,11 @@ constructor(
 
             val arguments = createCompilerArguments()
             val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments) + additionalOptions
+
+            // 'additionalOptions' is appended after serialization, so only the flat list is the complete picture.
+            buildFusService.orNull?.reportFusMetrics {
+                CompilerArgumentMetrics.collectMetrics(arguments, buildArguments.toTypedArray(), logger, it)
+            }
 
             nativeCompilerRunner.runTool(
                 KotlinNativeToolRunner.ToolArguments(

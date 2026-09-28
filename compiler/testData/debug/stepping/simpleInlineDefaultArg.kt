@@ -11,7 +11,7 @@ fun box(): String {
     return ifoo()
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:11 box
 // test.kt:6 box
 // test.kt:4 box

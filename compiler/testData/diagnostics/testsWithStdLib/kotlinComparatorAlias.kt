@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun test_1() {
     val comp = Comparator<Int> { x, y -> 1 }
 }

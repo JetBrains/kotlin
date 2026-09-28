@@ -2,7 +2,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___buildString__TypesOfArguments__ExportedKotlinPackages_kotlin_text_StringBuilder__")
 public fun __root___buildString__TypesOfArguments__ExportedKotlinPackages_kotlin_text_StringBuilder__(sb: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {

@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
 
 // FILE: Consumer.java
 public interface Consumer<T> {

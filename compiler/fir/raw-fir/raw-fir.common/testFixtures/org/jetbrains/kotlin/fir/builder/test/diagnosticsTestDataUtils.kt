@@ -18,8 +18,8 @@ const val COMPILER_DIAGNOSTICS_TEST_DATA_DIRECTORY: String = "compiler/testData/
  * The function is specifically designed to work with compiler diagnostic test data, covering special cases.
  */
 fun File.toStrippedCompilerDiagnosticsTestDataFiles(): List<Pair<String, String>>? {
-    when (this.path.replace("\\", "/")) {
-        "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt" -> {
+    when {
+        path.replace("\\", "/").endsWith("compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt") -> {
             // The regex in `stripDiagnosticMarkup` fails to correctly strip diagnostics from this file.
             return null
         }

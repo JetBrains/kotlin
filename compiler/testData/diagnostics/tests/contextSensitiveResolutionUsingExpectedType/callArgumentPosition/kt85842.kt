@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 
 enum class E {
     X, Y
@@ -19,7 +19,10 @@ fun test() {
 
     val b = when {
         true -> fun(): E = E.X
-        else -> id(id { Y })
+        // A type variable for CSR doesn't really have no constraints and no shallow dependencies,
+        // thus it cannot be resolved until the variable is fixed.
+        // But on the other hand, both CLs and CSRs block type variable fixation.
+        else -> id(id { <!UNRESOLVED_REFERENCE!>Y<!> })
     }
 
     val c: () -> (() -> SC) = { { ObjRef } }

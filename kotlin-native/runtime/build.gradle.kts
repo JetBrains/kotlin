@@ -679,6 +679,7 @@ val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class)
             "-Xcontext-parameters",
             "-Xname-based-destructuring=complete",
             "-Xcollection-literals",
+            "-Xcontext-sensitive-resolution",
             "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",

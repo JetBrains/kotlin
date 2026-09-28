@@ -1,5 +1,5 @@
 // LANGUAGE: +ContextParameters
-// TARGET_BACKEND: JVM_IR, JS_IR
+// TARGET_BACKEND: JVM, JS_IR
 // todo: temporarily disabled for K/N, see KT-76793
 
 import kotlinx.atomicfu.*

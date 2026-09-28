@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.types.classId
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
+import org.jetbrains.kotlin.light.classes.symbol.utils.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.structure.impl.NotEvaluatedConstAware
 import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_CLASS_ID
@@ -46,10 +46,11 @@ internal class SymbolLightFieldForProperty private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     private val isStatic: Boolean,
     override val kotlinOrigin: KtCallableDeclaration?,
-    private val backingFieldSymbolPointer: KaSymbolPointer<KaBackingFieldSymbol>?,
-) : SymbolLightField(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
+    override val symbolPointer: KaSymbolPointer<KaBackingFieldSymbol>,
+) : SymbolLightField<KaBackingFieldSymbol>(containingClass, lightMemberOrigin), NotEvaluatedConstAware {
     internal constructor(
         propertySymbol: KaPropertySymbol,
+        backingFieldSymbol: KaBackingFieldSymbol,
         fieldName: String,
         containingClass: SymbolLightClassBase,
         lightMemberOrigin: LightMemberOrigin?,
@@ -61,11 +62,11 @@ internal class SymbolLightFieldForProperty private constructor(
         lightMemberOrigin = lightMemberOrigin,
         isStatic = isStatic,
         kotlinOrigin = propertySymbol.sourcePsiSafe<KtCallableDeclaration>(),
-        backingFieldSymbolPointer = propertySymbol.backingFieldSymbol?.createPointer(),
+        symbolPointer = backingFieldSymbol.createPointer(),
     )
 
     private inline fun <T> withPropertySymbol(crossinline action: context(KaSession) (KaPropertySymbol) -> T): T {
-        return propertySymbolPointer.withSymbol(ktModule, action)
+        return propertySymbolPointer.withSymbol(useSiteModule, action)
     }
 
     private val _returnedType: PsiType by lazyPub {
@@ -211,14 +212,14 @@ internal class SymbolLightFieldForProperty private constructor(
                 computer = ::computeModifiers,
             ),
             annotationsBox = GranularAnnotationsBox(
-                annotationsProvider = (backingFieldSymbolPointer)?.let { pointer ->
-                    SymbolAnnotationsProvider(ktModule = ktModule, annotatedSymbolPointer = pointer)
-                } ?: EmptyAnnotationsProvider,
+                annotationsProvider = SymbolAnnotationsProvider(useSiteModule = useSiteModule, annotatedSymbolPointer = (symbolPointer)),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
                         when {
                             propertySymbol.isDelegated -> NullabilityAnnotation.NON_NULLABLE
-                            !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
+                            !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(
+                                propertySymbol.returnType
+                            )
                             else -> NullabilityAnnotation.NOT_REQUIRED
                         }
                     }
@@ -284,7 +285,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is SymbolLightFieldForProperty || other.ktModule != ktModule || other.fieldName != fieldName) return false
+        if (other !is SymbolLightFieldForProperty || other.useSiteModule != useSiteModule || other.fieldName != fieldName) return false
         if (kotlinOrigin != null || other.kotlinOrigin != null) {
             return kotlinOrigin == other.kotlinOrigin
         }
@@ -295,5 +296,5 @@ internal class SymbolLightFieldForProperty private constructor(
 
     override fun hashCode(): Int = kotlinOrigin?.hashCode() ?: fieldName.hashCode()
 
-    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: propertySymbolPointer.isValid(ktModule)
+    override fun isValid(): Boolean = super.isValid() && kotlinOrigin?.isValid ?: propertySymbolPointer.isValid(useSiteModule)
 }

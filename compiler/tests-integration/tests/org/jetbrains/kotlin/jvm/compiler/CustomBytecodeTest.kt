@@ -86,7 +86,7 @@ class CustomBytecodeTest : AbstractKotlinCompilerIntegrationTest() {
                     fun Any.f(a: String, b: Int, c: Double, d: Any, e: Long) {
                         object : Runnable {
                             override fun run() {
-                                a + b + c + d + e + this@f + this@Klass
+                                val _ = a + b + c + d + e + this@f + this@Klass
                             }
                         }.run()
                     }

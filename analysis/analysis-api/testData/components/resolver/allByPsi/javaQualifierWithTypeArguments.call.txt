@@ -7,19 +7,19 @@ KtPackageDirective(0,0): ''
 KtImportList(0,0): ''
   null
 
-KtNamedFunction(6,105): '// FILE: main.kt'
+KtNamedFunction(8,107): '// FILE: main.kt'
   null
 
-KtParameterList(31,33): '()'
+KtParameterList(33,35): '()'
   null
 
-KtBlockExpression(34,105): '{'
+KtBlockExpression(36,107): '{'
   null
 
-KtProperty(39,67): 'val p = JavaClass<Int>.field'
+KtProperty(41,69): 'val p = JavaClass<Int>.field'
   null
 
-KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
+KtDotQualifiedExpression(49,69): 'JavaClass<Int>.field'
   KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -39,7 +39,7 @@ KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
         callableId = /JavaClass.field
       typeArgumentsMapping = {}
 
-KtCallExpression(47,61): 'JavaClass<Int>'
+KtCallExpression(49,63): 'JavaClass<Int>'
   KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
@@ -61,7 +61,7 @@ KtCallExpression(47,61): 'JavaClass<Int>'
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
-KtNameReferenceExpression(47,56): 'JavaClass'
+KtNameReferenceExpression(49,58): 'JavaClass'
   KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
@@ -83,22 +83,22 @@ KtNameReferenceExpression(47,56): 'JavaClass'
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
-KtTypeArgumentList(56,61): '<Int>'
+KtTypeArgumentList(58,63): '<Int>'
   null
 
-KtTypeProjection(57,60): 'Int'
+KtTypeProjection(59,62): 'Int'
   null
 
-KtTypeReference(57,60): 'Int'
+KtTypeReference(59,62): 'Int'
   null
 
-KtUserType(57,60): 'Int'
+KtUserType(59,62): 'Int'
   null
 
-KtNameReferenceExpression(57,60): 'Int'
+KtNameReferenceExpression(59,62): 'Int'
   null
 
-KtNameReferenceExpression(62,67): 'field'
+KtNameReferenceExpression(64,69): 'field'
   KaSimpleCallResolutionSuccess:
     call = KaSimpleVariableAccessCall:
       contextArguments = []
@@ -118,10 +118,10 @@ KtNameReferenceExpression(62,67): 'field'
         callableId = /JavaClass.field
       typeArgumentsMapping = {}
 
-KtProperty(71,103): 'val m = JavaClass<Long>.method()'
+KtProperty(73,105): 'val m = JavaClass<Long>.method()'
   null
 
-KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
+KtDotQualifiedExpression(81,105): 'JavaClass<Long>.method()'
   KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -141,7 +141,7 @@ KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtCallExpression(79,94): 'JavaClass<Long>'
+KtCallExpression(81,96): 'JavaClass<Long>'
   KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
@@ -163,7 +163,7 @@ KtCallExpression(79,94): 'JavaClass<Long>'
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
-KtNameReferenceExpression(79,88): 'JavaClass'
+KtNameReferenceExpression(81,90): 'JavaClass'
   KaSimpleCallResolutionError:
     candidateCalls = [
       KaSimpleFunctionCall:
@@ -185,22 +185,22 @@ KtNameReferenceExpression(79,88): 'JavaClass'
     ]
     diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
-KtTypeArgumentList(88,94): '<Long>'
+KtTypeArgumentList(90,96): '<Long>'
   null
 
-KtTypeProjection(89,93): 'Long'
+KtTypeProjection(91,95): 'Long'
   null
 
-KtTypeReference(89,93): 'Long'
+KtTypeReference(91,95): 'Long'
   null
 
-KtUserType(89,93): 'Long'
+KtUserType(91,95): 'Long'
   null
 
-KtNameReferenceExpression(89,93): 'Long'
+KtNameReferenceExpression(91,95): 'Long'
   null
 
-KtCallExpression(95,103): 'method()'
+KtCallExpression(97,105): 'method()'
   KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -220,7 +220,7 @@ KtCallExpression(95,103): 'method()'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtNameReferenceExpression(95,101): 'method'
+KtNameReferenceExpression(97,103): 'method'
   KaSimpleCallResolutionSuccess:
     call = KaSimpleFunctionCall:
       contextArgumentMapping = {}
@@ -240,5 +240,5 @@ KtNameReferenceExpression(95,101): 'method'
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
 
-KtValueArgumentList(101,103): '()'
+KtValueArgumentList(103,105): '()'
   null

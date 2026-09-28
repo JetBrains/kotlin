@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 open class MyBase protected constructor() {
     protected constructor(x: Nothing?): this()
 }

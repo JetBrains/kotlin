@@ -870,9 +870,9 @@ KtReturnExpression(824,846): 'return map[stringProp]'
 KtArrayAccessExpression(831,846): 'map[stringProp]'
   KaSimpleSymbolResolutionError:
     candidateSymbols = [
-      kotlin/collections/Map.get(<dispatch receiver>: kotlin.collections.Map<K, V>, key: K): V?
+      kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
     ]
-    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
+    diagnostic = ERROR<TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR: Type inference failed. The value of the type parameter 'K' must be mentioned in input types (argument types, receiver type, or expected type). Try to specify it explicitly.>
 
 KtNameReferenceExpression(831,834): 'map'
   isImplicitReferenceToCompanion: false

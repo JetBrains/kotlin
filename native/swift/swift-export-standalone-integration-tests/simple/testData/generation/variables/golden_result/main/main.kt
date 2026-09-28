@@ -2,7 +2,6 @@
 
 import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
 @ExportedBridge("__root___BOOLEAN_CONST_get")
 public fun __root___BOOLEAN_CONST_get(): Boolean {

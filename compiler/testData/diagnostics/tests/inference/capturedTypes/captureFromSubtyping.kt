@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 fun <V, R, M : MutableMap<in R, out V>> mapKeysTo(destination: M): Inv3<R, V, M> {
     val foo = associateByTo(destination)
 

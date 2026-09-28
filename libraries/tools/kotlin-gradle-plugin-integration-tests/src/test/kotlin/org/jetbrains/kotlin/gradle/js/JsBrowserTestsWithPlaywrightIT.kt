@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.js
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -30,11 +31,22 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
 import java.net.URI
+import java.nio.file.Path
 import javax.inject.Inject
+import kotlin.io.path.exists
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertContains
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalJsTestDsl::class)
 @OsCondition(
@@ -326,6 +338,32 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `verify mocha is served from the test bundle instead of over HTTP`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest") {
+                val bundleDir = projectPath.resolve("build/kotlinJsTest/dist")
+                assertFileExists(bundleDir.resolve("mocha.js"))
+                assertFileExists(bundleDir.resolve("mocha.css"))
+
+                val testHtml = bundleDir.resolve("test.html").readText()
+                assertEquals(
+                    listOf("mocha.css", "mocha.js"),
+                    MOCHA_ASSET_REFERENCE.findAll(testHtml).map { it.groupValues[1] }.toList(),
+                    "test.html must reference the mocha assets served next to it",
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `verify each browser runner executes the tests`(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -556,6 +594,32 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `browserDataDir is used as the browser profile directory`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions
+        ) {
+            jsProject { project ->
+                chromium {
+                    it.browserDataDir.set(project.layout.buildDirectory.dir("my-chromium-profile"))
+                }
+            }
+
+            val profileDir = projectPath.resolve("build/my-chromium-profile")
+
+            build(":jsBrowserTest") {
+                assertOutputContains("dummy test")
+                assertDirectoryExists(profileDir, "Expected the browser to create the configured browserDataDir at $profileDir")
+                assertTrue(
+                    profileDir.listDirectoryEntries().isNotEmpty(),
+                    "Expected the browser to store its profile data in the configured browserDataDir, but $profileDir is empty"
+                )
+            }
+        }
+    }
+
+    @GradleTest
     fun `default browser is used`(gradleVersion: GradleVersion) {
         project(
             "empty",
@@ -599,6 +663,120 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
             }
         }
     }
+
+    /**
+     * The Playwright browser install is the first consumer of the Node.js toolchain, so the toolchain is
+     * verified end-to-end through the browser tests.
+     *
+     * Every test gets its own `kotlin.user.home`, because the toolchain shares the installations
+     * machine-wide through it - otherwise a distribution provisioned by another test would be reused,
+     * and provisioning itself would never be exercised.
+     */
+    @GradleTest
+    fun `Node js toolchain in download mode provisions Node js and reuses it in the next build`(
+        gradleVersion: GradleVersion,
+        @TempDir kotlinUserHome: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = kotlinUserHome)
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest", nodeJsToolchain("DOWNLOAD")) {
+                assertTasksExecuted(":kotlinInstallPlaywrightChromium", ":jsBrowserTest")
+                assertOutputContains("dummy test")
+                kotlinUserHome.nodeJsInstallationsDir.assertSingleNodeJsInstallation()
+            }
+
+            // the installation is shared machine-wide, so the next build must not download it again
+            build(":jsBrowserTest", nodeJsToolchain("DOWNLOAD")) {
+                assertOutputDoesNotContain("Downloading Node.js")
+                kotlinUserHome.nodeJsInstallationsDir.assertSingleNodeJsInstallation()
+            }
+        }
+    }
+
+    @GradleTest
+    fun `Node js toolchain provisions nothing while the tasks are being configured`(
+        gradleVersion: GradleVersion,
+        @TempDir kotlinUserHome: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = kotlinUserHome)
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            // a dry run configures the whole task graph of ':jsBrowserTest', but executes none of it
+            build(":jsBrowserTest", "--dry-run", nodeJsToolchain("DOWNLOAD")) {
+                val installationsDir = kotlinUserHome.nodeJsInstallationsDir
+                assertFalse(
+                    installationsDir.exists(),
+                    "Expected no Node.js to be provisioned at configuration time, but '$installationsDir' exists",
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `Node js toolchain in system path mode runs the browser tests without downloading Node js`(
+        gradleVersion: GradleVersion,
+        @TempDir kotlinUserHome: Path,
+    ) {
+        assumeTrue(isNodeJsOnPath(), "Requires a pre-installed Node.js available on the PATH")
+
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = kotlinUserHome)
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest", nodeJsToolchain("SYSTEM_PATH")) {
+                assertTasksExecuted(":kotlinInstallPlaywrightChromium", ":jsBrowserTest")
+                assertOutputContains("dummy test")
+                val installationsDir = kotlinUserHome.nodeJsInstallationsDir
+                assertFalse(
+                    installationsDir.exists(),
+                    "Expected the pre-installed Node.js to be used, but '$installationsDir' has been provisioned",
+                )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `Node js toolchain is disabled by default and the legacy Node js setup task is used`(
+        gradleVersion: GradleVersion,
+        @TempDir kotlinUserHome: Path,
+    ) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = kotlinUserHome)
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":jsBrowserTest") {
+                assertNotNull(task(":kotlinNodeJsSetup"), "Expected the legacy Node.js setup task to be used")
+                val installationsDir = kotlinUserHome.nodeJsInstallationsDir
+                assertFalse(
+                    installationsDir.exists(),
+                    "Expected the Node.js toolchain to be disabled, but '$installationsDir' has been provisioned",
+                )
+            }
+        }
+    }
 }
 
 // expected report for gradle >=9.3
@@ -629,14 +807,15 @@ private fun TestProject.jsProject(
         }
     """.trimIndent(),
     testFileName: String = "DummyTest.kt",
-    testConfigure: KotlinJsBrowserTestDsl.() -> Unit,
+    testConfigure: KotlinJsBrowserTestDsl.(Project) -> Unit,
 ) {
     addKgpToBuildScriptCompilationClasspath()
     buildScriptInjection {
+        val currentProject = project
         project.applyMultiplatform {
             js().browser {
                 test.apply {
-                    testConfigure()
+                    testConfigure(currentProject)
                 }
             }
             sourceSets.commonTest.dependencies {
@@ -689,4 +868,44 @@ private abstract class PostProcessTestsBundle : DefaultTask() {
             }
         }
     }
+}
+
+private val MOCHA_ASSET_REFERENCE = Regex("""(?:href|src)="([^"]*mocha\.(?:js|css))"""")
+
+
+private fun nodeJsToolchain(mode: String) = "-Pkotlin.js.nodejs.toolchain=$mode"
+
+/**
+ * The directory the Node.js toolchain shares all its installations through.
+ */
+private val Path.nodeJsInstallationsDir: Path get() = resolve("toolchains/nodejs")
+
+/**
+ * Asserts exactly one complete Node.js distribution has been provisioned, and returns its directory.
+ */
+private fun Path.assertSingleNodeJsInstallation(): Path {
+    assertDirectoryExists(this, "Expected a Node.js distribution to be provisioned into '$this'")
+
+    val installations = listDirectoryEntries("node-v*")
+    assertEquals(
+        1,
+        installations.size,
+        "Expected exactly one provisioned Node.js installation in '$this', but got ${installations.map { it.name }}",
+    )
+
+    val installation = installations.single()
+    val nodeExecutable = if (OS.WINDOWS.isCurrentOs) {
+        installation.resolve("node.exe")
+    } else {
+        installation.resolve("bin/node")
+    }
+    assertFileExists(nodeExecutable, "Expected '$installation' to be a complete Node.js installation")
+
+    return installation
+}
+
+private fun isNodeJsOnPath(): Boolean = try {
+    ProcessBuilder("node", "--version").start().waitFor() == 0
+} catch (_: Exception) {
+    false
 }

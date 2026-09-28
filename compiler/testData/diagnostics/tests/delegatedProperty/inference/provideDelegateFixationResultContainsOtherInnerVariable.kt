@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 interface A<T> {
     operator fun getValue(x: Any?, y: Any?): T = TODO()

@@ -15,17 +15,18 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.utils.basicIsEquivalentTo
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal abstract class SymbolLightMemberBase<T : PsiMember>(
     override val lightMemberOrigin: LightMemberOrigin?,
-    private val containingClass: SymbolLightClassBase,
-) : KtLightElementBase(containingClass), PsiMember, KtLightMember<T> {
-    val ktModule: KaModule get() = containingClass.ktModule
+    protected open val backingContainingClass: SymbolLightClassBase,
+) : KtLightElementBase(backingContainingClass), PsiMember, KtLightMember<T> {
+    val useSiteModule: KaModule get() = containingClass.useSiteModule
 
     override fun hasModifierProperty(name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
-    override fun getContainingClass(): SymbolLightClassBase = containingClass
+    override fun getContainingClass(): SymbolLightClassBase = backingContainingClass
 
     abstract override fun getNameIdentifier(): PsiIdentifier?
 

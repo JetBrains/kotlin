@@ -33,7 +33,6 @@ fun Project.releasedNativeDistributionConfiguration(version: String): Configurat
             dependencies {
                 // declared to be included in verification-metadata.xml
                 "implicitDependencies"("org.jetbrains.kotlin:kotlin-native-prebuilt:$version:macos-aarch64@tar.gz")
-                "implicitDependencies"("org.jetbrains.kotlin:kotlin-native-prebuilt:$version:macos-x86_64@tar.gz")
                 "implicitDependencies"("org.jetbrains.kotlin:kotlin-native-prebuilt:$version:linux-x86_64@tar.gz")
                 "implicitDependencies"("org.jetbrains.kotlin:kotlin-native-prebuilt:$version:windows-x86_64@zip")
                 it("org.jetbrains.kotlin:kotlin-native-prebuilt:$version:${HostManager.platformName()}@${ArchiveType.HOST_DEFAULT}")

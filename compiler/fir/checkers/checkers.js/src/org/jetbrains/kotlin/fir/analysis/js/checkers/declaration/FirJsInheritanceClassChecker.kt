@@ -73,13 +73,19 @@ sealed class FirJsInheritanceClassChecker(mppKind: MppCheckerKind) : FirClassChe
             }
         }
 
-        if (
-            LanguageFeature.JsAllowImplementingFunctionInterface.isDisabled() &&
-            declaration.superConeTypes.any {
-                it.isBuiltinFunctionalTypeOrSubtype(session) && !it.isSuspendFunctionTypeOrSubtype(session)
+        if (LanguageFeature.JsAllowImplementingFunctionInterface.isDisabled()) {
+            val superTypes = declaration.superConeTypes
+
+            if (superTypes.any {
+                    it.isBuiltinFunctionalTypeOrSubtype(session) && !it.isSuspendFunctionTypeOrSubtype(session)
+                }
+            ) {
+                reporter.reportOn(declaration.source, FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE)
             }
-        ) {
-            reporter.reportOn(declaration.source, FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE)
+
+            if (superTypes.any { it.isSuspendFunctionTypeOrSubtype(session) }) {
+                reporter.reportOn(declaration.source, FirJsErrors.IMPLEMENTING_SUSPEND_FUNCTION_INTERFACE)
+            }
         }
     }
 

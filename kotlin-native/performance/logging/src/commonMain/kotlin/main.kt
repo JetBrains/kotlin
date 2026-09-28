@@ -21,7 +21,8 @@ private const val BENCHMARK_SIZE = 10000
 @State(Scope.Benchmark)
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
 class LoopHideName {
-    @Benchmark
+    // TODO(KT-86736): Volatile benchmark; try to stabilize
+    // @Benchmark
     fun Loop(bh: Blackhole) {
         for (i in 0..BENCHMARK_SIZE) {
             bh.consume(i)

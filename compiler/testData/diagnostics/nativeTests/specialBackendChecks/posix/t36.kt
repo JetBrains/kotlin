@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // WITH_PLATFORM_LIBS
 import kotlinx.cinterop.*
 import platform.posix.*

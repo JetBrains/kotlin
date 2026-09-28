@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jvm.compiler.AllJavaSourcesInProjectScope
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectFileSearchScope
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.MODULE_NAME
@@ -55,10 +54,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJklibStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
-import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
@@ -223,7 +222,8 @@ object JKlibIrCompilationPhase :
 
         val configureJavaClassFinder = null
         val implicitsResolutionFilter = null
-        val packagePartProvider = projectEnvironment.getPackagePartProvider(dependencyScope.toAbstractProjectFileSearchScope())
+        // The package parts of the dependencies live in the classpath roots; `dependencyScope` only additionally excludes `.java` files.
+        val packagePartProvider = projectEnvironment.getPackagePartProvider(JvmClasspath.ProjectLibraries())
         val trace = NoScopeRecordCliBindingTrace(projectContext.project)
         val dependenciesContainer = createContainerForLazyResolveWithJava(
             platform,
@@ -264,7 +264,7 @@ object JKlibIrCompilationPhase :
         storageManager: StorageManager,
         builtIns: JvmBuiltIns,
     ): Map<KotlinLibrary, ModuleDescriptorImpl> {
-        val klibFactories = KlibMetadataFactories(
+        val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl(
             { builtIns },
             JavaFlexibleTypeDeserializer,
             // We need to wire the JvmBuiltInsCustomizer instance to the KlibMetadataFactories. This allows resolving APIs that are not part
@@ -308,7 +308,7 @@ object JKlibIrCompilationPhase :
         )
 
         val dependencyDescriptorsByKlib = sortedDependencies.associateWith { klib ->
-            val descriptor = klibFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            val descriptor = moduleDescriptorFactory.createDescriptorOptionalBuiltIns(
                 klib,
                 configuration.languageVersionSettings,
                 storageManager,

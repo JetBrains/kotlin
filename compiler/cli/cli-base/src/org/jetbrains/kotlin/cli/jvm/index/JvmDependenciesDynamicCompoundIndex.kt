@@ -30,9 +30,13 @@ class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: 
     private val indices = arrayListOf<JvmDependenciesIndex>()
     private val lock = ReentrantReadWriteLock()
 
+    @Volatile
+    private var currentVersion: Int = 0
+
     fun addIndex(index: JvmDependenciesIndex) {
         lock.write {
             indices.add(index)
+            currentVersion++
         }
     }
 
@@ -43,6 +47,8 @@ class JvmDependenciesDynamicCompoundIndex(private val shouldOnlyFindFirstClass: 
         }
 
     override val indexedRoots: Sequence<JavaRoot> get() = indices.asSequence().flatMap { it.indexedRoots }
+
+    override val version: Int get() = currentVersion
 
     override fun findClassVirtualFiles(
         classId: ClassId,

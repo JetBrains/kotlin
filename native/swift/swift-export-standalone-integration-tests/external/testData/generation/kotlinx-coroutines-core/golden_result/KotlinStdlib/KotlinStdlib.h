@@ -3,11 +3,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__(void * pointerToClosure, int64_t _1, int32_t _2, int32_t _3, int32_t _4, int32_t _5);
+
+void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32__(void * pointerToClosure, int64_t _1, int32_t _2, int32_t _3, int32_t _4);
+
+void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32__(void * pointerToClosure, int64_t _1, int32_t _2, int32_t _3);
+
+void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32__(void * pointerToClosure, int64_t _1, int32_t _2);
+
+void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(void * pointerToClosure, void * _Nullable _1, void * _2);
+
+void * _Nullable KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinStdlibU2E_ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(void * pointerToClosure, void * _1);
+
 void * _Nullable kotlin_Throwable_cause_get__reverse_swift(void * self);
 
 NSString * _Nullable kotlin_Throwable_message_get__reverse_swift(void * self);
-
-NSString * kotlin_Throwable_toString__reverse_swift(void * self);
 
 _Bool kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection____reverse_swift(void * self, void * elements);
 
@@ -155,11 +165,15 @@ void * kotlin_coroutines_Continuation_context_get__reverse_swift(void * self);
 
 _Bool kotlin_coroutines_Continuation_resumeWith__TypesOfArguments__ExportedKotlinPackages_kotlin_Result____reverse_swift(void * self, void * result);
 
+void * _Nullable kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable initial, void * operation);
+
 void * _Nullable kotlin_coroutines_CoroutineContext_Element_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift(void * self, void * key);
 
 void * kotlin_coroutines_CoroutineContext_Element_key_get__reverse_swift(void * self);
 
 void * kotlin_coroutines_CoroutineContext_Element_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift(void * self, void * key);
+
+void * _Nullable kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift(void * self, void * _Nullable initial, void * operation);
 
 void * _Nullable kotlin_coroutines_CoroutineContext_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key____reverse_swift(void * self, void * key);
 
@@ -168,6 +182,8 @@ void * kotlin_coroutines_CoroutineContext_minusKey__TypesOfArguments__anyU20Kotl
 void * kotlin_coroutines_CoroutineContext_plus__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_coroutines_CoroutineContext____reverse_swift(void * self, void * context);
 
 void * kotlin_sequences_Sequence_iterator__reverse_swift(void * self);
+
+void * _Nullable KotlinStdlib_internal_functional_type_caller_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element__(void * pointerToBlock, void * _Nullable _1, void * _2);
 
 void * _Nullable kotlin_Array_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 
@@ -225,19 +241,13 @@ void * kotlin_Result_Companion_get();
 
 void * kotlin_Result_Companion_success__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value);
 
-_Bool kotlin_Result_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
 void * _Nullable kotlin_Result_exceptionOrNull(void * self);
 
 void * _Nullable kotlin_Result_getOrNull(void * self);
 
-int32_t kotlin_Result_hashCode(void * self);
-
 _Bool kotlin_Result_isFailure_get(void * self);
 
 _Bool kotlin_Result_isSuccess_get(void * self);
-
-NSString * kotlin_Result_toString(void * self);
 
 void * kotlin_RuntimeException_init_allocate();
 
@@ -271,10 +281,6 @@ NSString * _Nullable kotlin_Throwable_message_get_direct(void * self);
 
 _Bool kotlin_Throwable_printStackTrace(void * self);
 
-NSString * kotlin_Throwable_toString(void * self);
-
-NSString * kotlin_Throwable_toString_direct(void * self);
-
 _Bool kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable element);
 
 _Bool kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(void * self, void * elements);
@@ -287,17 +293,11 @@ int32_t kotlin_collections_Collection_size_get(void * self);
 
 void * kotlin_collections_IndexedValue_copy__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable value);
 
-_Bool kotlin_collections_IndexedValue_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t kotlin_collections_IndexedValue_hashCode(void * self);
-
 int32_t kotlin_collections_IndexedValue_index_get(void * self);
 
 void * kotlin_collections_IndexedValue_init_allocate();
 
 _Bool kotlin_collections_IndexedValue_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * __kt, int32_t index, void * _Nullable value);
-
-NSString * kotlin_collections_IndexedValue_toString(void * self);
 
 void * _Nullable kotlin_collections_IndexedValue_value_get(void * self);
 
@@ -437,7 +437,7 @@ void * kotlin_coroutines_AbstractCoroutineContextElement_key_get(void * self);
 
 void * kotlin_coroutines_AbstractCoroutineContextElement_key_get_direct(void * self);
 
-_Bool kotlin_coroutines_AbstractCoroutineContextKey_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key_U28anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element___(void * __kt, void * baseKey, void * _Nullable (^safeCast)(void *));
+_Bool kotlin_coroutines_AbstractCoroutineContextKey_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key_U28anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Element___(void * __kt, void * baseKey, void * safeCast);
 
 void * kotlin_coroutines_ContinuationInterceptor_Key_get();
 
@@ -459,9 +459,9 @@ void * kotlin_coroutines_Continuation_context_get(void * self);
 
 _Bool kotlin_coroutines_Continuation_resumeWith__TypesOfArguments__ExportedKotlinPackages_kotlin_Result__(void * self, void * result);
 
-void * _Nullable kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable initial, void * _Nullable (^operation)(void * _Nullable , void *));
+void * _Nullable kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable initial, void * operation);
 
-void * _Nullable kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable initial, void * _Nullable (^operation)(void * _Nullable , void *));
+void * _Nullable kotlin_coroutines_CoroutineContext_Element_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable initial, void * operation);
 
 void * _Nullable kotlin_coroutines_CoroutineContext_Element_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * self, void * key);
 
@@ -473,7 +473,7 @@ void * kotlin_coroutines_CoroutineContext_Element_minusKey__TypesOfArguments__an
 
 void * kotlin_coroutines_CoroutineContext_Element_minusKey__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key___direct(void * self, void * key);
 
-void * _Nullable kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable initial, void * _Nullable (^operation)(void * _Nullable , void *));
+void * _Nullable kotlin_coroutines_CoroutineContext_fold__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U28Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable__U20anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_ElementU29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable initial, void * operation);
 
 void * _Nullable kotlin_coroutines_CoroutineContext_get__TypesOfArguments__anyU20KotlinStdlib__ExportedKotlinPackages_kotlin_coroutines_CoroutineContext_Key__(void * self, void * key);
 
@@ -579,10 +579,6 @@ void * kotlin_time_Duration_div__TypesOfArguments__Swift_Double__(void * self, d
 
 double kotlin_time_Duration_div__TypesOfArguments__ExportedKotlinPackages_kotlin_time_Duration__(void * self, void * other);
 
-_Bool kotlin_time_Duration_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
-
-int32_t kotlin_time_Duration_hashCode(void * self);
-
 int64_t kotlin_time_Duration_inWholeDays_get(void * self);
 
 int64_t kotlin_time_Duration_inWholeHours_get(void * self);
@@ -613,13 +609,13 @@ void * kotlin_time_Duration_times__TypesOfArguments__Swift_Int32__(void * self, 
 
 void * kotlin_time_Duration_times__TypesOfArguments__Swift_Double__(void * self, double scale);
 
-void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable (^action)(int64_t, int32_t, int32_t, int32_t, int32_t));
+void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * action);
 
-void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable (^action)(int64_t, int32_t, int32_t, int32_t));
+void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * action);
 
-void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable (^action)(int64_t, int32_t, int32_t));
+void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * action);
 
-void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable (^action)(int64_t, int32_t));
+void * _Nullable kotlin_time_Duration_toComponents__TypesOfArguments__U28Swift_Int64_U20Swift_Int32U29202D_U20Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * action);
 
 double kotlin_time_Duration_toDouble__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(void * self, void * unit);
 
@@ -628,8 +624,6 @@ int32_t kotlin_time_Duration_toInt__TypesOfArguments__ExportedKotlinPackages_kot
 NSString * kotlin_time_Duration_toIsoString(void * self);
 
 int64_t kotlin_time_Duration_toLong__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit__(void * self, void * unit);
-
-NSString * kotlin_time_Duration_toString(void * self);
 
 NSString * kotlin_time_Duration_toString__TypesOfArguments__ExportedKotlinPackages_kotlin_time_DurationUnit_Swift_Int32__(void * self, void * unit, int32_t decimals);
 

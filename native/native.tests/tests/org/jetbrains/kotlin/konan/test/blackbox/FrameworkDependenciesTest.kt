@@ -60,16 +60,15 @@ class FrameworkDependenciesTest : AbstractNativeSimpleTest() {
 
         val otoolResult = runOtoolAndStripOutput(compilation.resultingArtifact)
 
-        assertEqualsToFile(otoolFile(noDefaultLibs), otoolResult)
+        assertEqualsToFile(otoolFile(), otoolResult)
     }
 
     private val testDataDir: File = getAbsoluteFile("native/native.tests/testData/CInterop/frameworkDependencies")
     private val defFile: File = testDataDir.resolve("xctest.def")
     private val ktFile: File = testDataDir.resolve("main.kt")
 
-    private fun otoolFile(noDefaultLibs: Boolean): File {
-        val suffix = if (noDefaultLibs) "no-default-libs" else "with-default-libs"
-        return testDataDir.resolve("otoolResult.$suffix.txt")
+    private fun otoolFile(): File {
+        return testDataDir.resolve("otoolResult.txt")
     }
 
     private val macosPlatformPath: String by lazy {

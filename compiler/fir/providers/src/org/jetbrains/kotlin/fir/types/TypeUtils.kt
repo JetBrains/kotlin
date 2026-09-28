@@ -181,6 +181,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withArguments(arguments), upperBound.withArguments(arguments), isTrivial)
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, typeArguments = arguments, attributes = attributes, lookupTag = lookupTag)
         is ConeIntersectionType,
+        is ConeUnionType,
         is ConeTypeVariableType,
         is ConeStubType,
         is ConeIntegerLiteralType,
@@ -196,7 +197,7 @@ inline fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection
     return withArguments(Array(typeArguments.size) { replacement(typeArguments[it]) })
 }
 
-@OptIn(DynamicTypeConstructor::class)
+@OptIn(DynamicTypeConstructor::class, DelicateUnionConstructor::class)
 fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
     if (this.attributes == attributes) {
         return this
@@ -216,6 +217,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         // TODO: Consider correct application of attributes to ConeIntersectionType
         // Currently, ConeAttributes.union works a bit strange, because it lefts only `other` parts
         is ConeIntersectionType -> this
+        is ConeUnionType -> ConeUnionType(primaryType, richErrorTypes, attributes)
         // Attributes for stub types are not supported, and it's not obvious if it should
         is ConeStubType -> this
         is ConeIntegerLiteralType -> this
@@ -234,6 +236,7 @@ fun <T : ConeKotlinType> T.withAbbreviation(attribute: AbbreviatedTypeAttribute)
     return withAttributes(clearedAttributes.add(attribute))
 }
 
+// TODO(KT-89614) check usages and consider migrating to withNullabilityOfCanBeNull
 fun <T : ConeKotlinType> T.withNullabilityOf(
     otherType: ConeKotlinType,
     typeContext: ConeTypeContext
@@ -241,6 +244,21 @@ fun <T : ConeKotlinType> T.withNullabilityOf(
     if (hasFlexibleMarkedNullability && otherType.hasFlexibleMarkedNullability) return this
 
     return withNullability(otherType.isMarkedNullable, typeContext)
+}
+
+/**
+ * Version of [withNullabilityOf] that uses [canBeNull] instead of [isMarkedNullable].
+ *
+ * If [otherType] is a [ConeTypeParameterType] with nullable bounds, a [ConeCapturedType] with nullable supertypes, etc,
+ * this function would make [this] nullable, whereas [withNullability] would not.
+ */
+fun <T : ConeKotlinType> T.withNullabilityOfCanBeNull(
+    otherType: ConeKotlinType,
+    typeContext: ConeTypeContext
+): T {
+    if (hasFlexibleMarkedNullability && otherType.hasFlexibleMarkedNullability) return this
+
+    return withNullability(otherType.canBeNull(typeContext.session), typeContext)
 }
 
 fun <T : ConeKotlinType> T.withNullability(
@@ -292,6 +310,15 @@ fun <T : ConeKotlinType> T.withNullability(
             false -> if (intersectedTypes.any { !it.isMarkedOrFlexiblyNullable }) this else this.mapTypes {
                 it.withNullability(false, typeContext, preserveAttributes = preserveAttributes)
             }
+        }
+
+        is ConeUnionType -> {
+            @OptIn(DelicateUnionConstructor::class)
+            ConeUnionType(
+                primaryType.withNullability(nullable, typeContext, preserveAttributes = preserveAttributes),
+                richErrorTypes,
+                attributes
+            )
         }
 
         is ConeStubTypeForTypeVariableInSubtyping -> ConeStubTypeForTypeVariableInSubtyping(constructor, nullable)
@@ -684,6 +711,7 @@ internal fun ConeKotlinType.captureFromExpressionInternal(): ConeKotlinType? {
                 is ConeIntegerLiteralType,
                 is ConeStubType,
                 is ConeTypeVariableType,
+                is ConeUnionType, // TODO(KT-89099) support captruing for union types
                     -> null
             }
         }
@@ -1047,6 +1075,7 @@ fun ConeKotlinType.canBeNull(
         }
         is ConeStubType -> isMarkedNullable || constructor.variable.defaultType.canBeNull(session, considerTypeVariableBounds, visited)
         is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session, considerTypeVariableBounds, visited) }
+        is ConeUnionType -> primaryType.canBeNull(session, considerTypeVariableBounds, visited)
         is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session, considerTypeVariableBounds, visited) } == true
         is ConeErrorType -> nullable != false
         is ConeLookupTagBasedType -> isMarkedNullable || fullyExpandedType(session).isMarkedNullable

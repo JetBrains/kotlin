@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class G<T>
 
 fun <Q> f(q: Q) = q is G<*>

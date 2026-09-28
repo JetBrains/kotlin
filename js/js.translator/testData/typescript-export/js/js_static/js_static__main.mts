@@ -14,6 +14,13 @@ export async function box(): Promise<string> {
     WithIgnoredCompanion.mutable = "CHANGED"
     assert(WithIgnoredCompanion.mutable === "CHANGED")
     assert(await WithIgnoredCompanion.staticSuspend() === "STATIC SUSPEND")
+    await WithIgnoredCompanion.staticUnit()
+    try {
+        await WithIgnoredCompanion.staticFailure()
+        throw "Expected staticFailure() to reject"
+    } catch (error) {
+        assert(String(error).includes("STATIC FAILURE"))
+    }
     assert(await WithIgnoredCompanion.staticSuspendWithDefault() === "DEFAULT STATIC SUSPEND")
     assert(await WithIgnoredCompanion.staticSuspendWithDefault("PROVIDED VALUE") === "PROVIDED VALUE")
     assert(await WithIgnoredCompanion.staticSuspendWithSeveralDefaults() === "A2Z")

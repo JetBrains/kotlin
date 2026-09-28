@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 //KT-2856 Fix the getOrElse signature to be able to return any supertype of V
 package d
 

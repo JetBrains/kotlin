@@ -1,8 +1,8 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: -ForbidExposureOfPrivateTypesInNonPrivateInlineFunctionsInKlibs
 // IGNORE_FIR_DIAGNOSTICS
 // DIAGNOSTICS: -NOTHING_TO_INLINE
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 
 private fun interface I {
     fun foo(): Int

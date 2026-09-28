@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 val a1: Float = 1F
 val a2: Float = 1.0F
 val a3: Float = 1e-1F

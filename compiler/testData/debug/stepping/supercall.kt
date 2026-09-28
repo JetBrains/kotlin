@@ -14,7 +14,7 @@ fun box() {
     a.f(false)
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS JVM
 // test.kt:13 box
 // test.kt:3 <init>
 // test.kt:13 box

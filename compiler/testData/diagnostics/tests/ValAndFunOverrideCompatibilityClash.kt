@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 class Foo1() : java.util.ArrayList<Int>()
 
 open class Bar() {

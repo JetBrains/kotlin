@@ -25,10 +25,11 @@ internal sealed class KlibIrComponentWriterImpl : KlibComponentWriter {
         }
     }
 
-    class ForInlinableFunctionsIr(private val inlinableFunctionsFile: SerializedIrFile) : KlibIrComponentWriterImpl() {
+    class ForInlinableFunctionsIr(private val inlinableFunctionsFiles: Collection<SerializedIrFile>) : KlibIrComponentWriterImpl() {
         override fun writeTo(root: Path) {
+            if (inlinableFunctionsFiles.isEmpty()) return
             writeIrFiles(
-                irFiles = listOf(inlinableFunctionsFile),
+                irFiles = inlinableFunctionsFiles,
                 layout = KlibIrComponentLayout.createForInlinableFunctionsIr(root)
             )
         }

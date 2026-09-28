@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +CompanionBlocks +CompanionExtensions +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt

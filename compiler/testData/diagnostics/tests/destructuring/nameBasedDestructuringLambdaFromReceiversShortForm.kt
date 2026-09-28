@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +NameBasedDestructuring, +EnableNameBasedDestructuringShortForm
 // WITH_STDLIB
 package test.destructuring.objects

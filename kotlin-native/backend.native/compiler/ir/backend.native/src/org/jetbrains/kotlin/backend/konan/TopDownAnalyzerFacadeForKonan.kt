@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -29,9 +30,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 
 @OptIn(K1Deprecation::class)
 internal object TopDownAnalyzerFacadeForKonan {
-
-    private val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
-
     fun analyzeFiles(files: Collection<KtFile>, context: FrontendContext): AnalysisResult {
         val config = context.config
         val moduleName = Name.special("<${config.moduleId}>")
@@ -53,13 +51,14 @@ internal object TopDownAnalyzerFacadeForKonan {
         builtIns.builtInsModule = module
         val moduleContext = MutableModuleContextImpl(module, projectContext)
 
-        val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved2(
+        val moduleDescriptorFactory = K1KlibMetadataModuleDescriptorFactoryImpl()
+        val resolvedModuleDescriptors = KlibResolvedModuleDescriptorsFactoryImpl(moduleDescriptorFactory).createResolved2(
                 // Note: The order of libraries is not important except for stdlib, which should go the first.
-                libraries = config.resolvedLibraries.getFullList(),
+                libraries = config.loadedKlibs.all,
                 storageManager = projectContext.storageManager,
                 builtIns = module.builtIns,
                 languageVersionSettings = config.languageVersionSettings,
-                friendModuleFiles = config.friendModuleFiles, // TODO(KT-61096): Read friend paths from `LoadedNativeKlibs.friends`
+                friendModuleFiles = config.loadedKlibs.friends.map { it.path }.toSet(),
                 refinesModuleFiles = config.refinesModuleFiles,
                 includedLibraryFiles = config.loadedKlibs.included.map { it.path }.toSet(),
                 additionalDependencyModules = listOf(module),
