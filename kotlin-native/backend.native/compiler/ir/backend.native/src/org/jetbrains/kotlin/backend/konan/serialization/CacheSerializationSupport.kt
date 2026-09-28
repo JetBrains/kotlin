@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as Pr
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.ClassLayoutBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -411,18 +410,13 @@ internal abstract class IdSignatureAwareSerializer<T : FileAwareSerializedData> 
     fun serialize(items: List<T>): ByteArray {
         val stringSerializer = IrStringSerializer()
 
-        val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
-        val protoIdSignatureArray = arrayListOf<ProtoIdSignature>()
-
-        val idSignatureSerializer = IdSignatureSerializer(
+        val signatureSerializer = IdSignatureSerializer(
             stringSerializer = stringSerializer,
             debugInfoSerializer = stringSerializer,
-            protoIdSignatureMap,
-            protoIdSignatureArray,
         )
-        items.forEach { idSignatureSerializer.protoIdSignature(signatureOf(it)) }
+        items.forEach { signatureSerializer.protoIdSignature(signatureOf(it)) }
 
-        val signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, false).writeIntoMemory()
+        val signatures = signatureSerializer.toIrArrayWriter(useVarIntInDataArrays = false).writeIntoMemory()
         val signatureStrings = stringSerializer.toIrStringWriter(false).writeIntoMemory()
         val stringTable = buildStringTable {
             items.forEach { writeStrings(it, this) }
@@ -434,7 +428,7 @@ internal abstract class IdSignatureAwareSerializer<T : FileAwareSerializedData> 
             val file = item.file
             stream.writeInt(stringTable.indices[file.fqName]!!)
             stream.writeInt(stringTable.indices[file.path]!!)
-            stream.writeInt(protoIdSignatureMap[signatureOf(item)]!!)
+            stream.writeInt(signatureSerializer[signatureOf(item)]!!)
             stream.writeExtraPayload(stringTable, item)
         }
         return IrArrayWriter(listOf(signatures, signatureStrings, stream.buf), false).writeIntoMemory()
