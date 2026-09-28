@@ -126,6 +126,31 @@ open class TypeParameterCanEqual<T>(val a: Int) {
     open fun canEqual(other: T): Boolean = other != null
 }
 
+// Neither an extension nor an overload declared before the user's own `canEqual` may be called by `equals` instead.
+@EqualsAndHashCode
+open class ExtensionCanEqual(val a: Int) {
+    fun Int.canEqual(other: Any?): Boolean = false
+}
+
+@EqualsAndHashCode
+open class OverloadBeforeUserDeclaredCanEqual(val a: Int) {
+    fun canEqual(x: Int): Boolean = x == a
+    open fun canEqual(other: Any): Boolean = other is OverloadBeforeUserDeclaredCanEqual
+}
+
+@EqualsAndHashCode
+open class GenericFunctionCanEqual(val a: Int) {
+    open fun <T> canEqual(other: T): Boolean = other is GenericFunctionCanEqual
+}
+
+// A private `canEqual` is not inherited, so the generated one does not override it.
+open class PrivateCanEqualBase {
+    private fun canEqual(other: Any?): Boolean = false
+}
+
+@EqualsAndHashCode
+class ChildOfPrivateCanEqual(val a: Int) : PrivateCanEqualBase()
+
 @EqualsAndHashCode
 class WithComputedProperties(val real: String) {
     val computedProp: String get() = "computed"
@@ -276,6 +301,12 @@ fun box(): String {
     val typeParam1 = TypeParameterCanEqual<String>(1)
     val typeParam2 = TypeParameterCanEqual<String>(1)
     assertEquals(typeParam1, typeParam2)
+
+    assertEquals(ExtensionCanEqual(1), ExtensionCanEqual(1))
+    assertEquals(OverloadBeforeUserDeclaredCanEqual(1), OverloadBeforeUserDeclaredCanEqual(1))
+    assertEquals(GenericFunctionCanEqual(1), GenericFunctionCanEqual(1))
+    assertEquals(ChildOfPrivateCanEqual(1), ChildOfPrivateCanEqual(1))
+    assertNotEquals(ChildOfPrivateCanEqual(1), ChildOfPrivateCanEqual(2))
 
     assertEquals(WithComputedProperties("X"), WithComputedProperties("X"))
 

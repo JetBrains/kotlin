@@ -13,14 +13,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
@@ -36,7 +33,6 @@ import org.jetbrains.kotlin.lombok.config.lombokService
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -139,22 +135,18 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         // The checker reports the partial-override error or the "both already exist" warning.
         if (hasUserDeclaredEqualsOrHashCode(declaredScope)) return null
 
-        // If the user already wrote their own matching-shape `canEqual`, generating another one would clash on
-        // the JVM (`CONFLICTING_JVM_DECLARATIONS`) - so it is never (re)generated in that case. `equals` must
-        // still call it though, hence `hasCanEqualMember` staying true below.
+        // A user-declared `canEqual` is called by `equals` as is: generating one on top would clash with it on the JVM.
         val hasUserDeclaredCanEqual = hasUserDeclaredCanEqual(declaredScope)
 
-        // Lombok's own rule: skip `canEqual` only for a class that can have no subclass worth rejecting anyway -
-        // final and with nothing but `Any` to chain to. Note that a non-trivial superclass alone already forces
-        // generation, finality notwithstanding.
-        val generatesCanEqual = !hasUserDeclaredCanEqual &&
+        // Lombok skips `canEqual` only for a final class with nothing but `Any` to chain to.
+        val needsCanEqual = !hasUserDeclaredCanEqual &&
                 !(classSymbol.looksFinal && !classSymbol.hasNonTrivialSuperclass(session))
-        val hasCanEqualMember = generatesCanEqual || hasUserDeclaredCanEqual
 
-        // The whole ancestor chain matters, not just the immediate superclass: Kotlin's override check considers
-        // every ancestor, so a generated `canEqual` two or more levels below the one that first declared it still
-        // needs `override`, or it fails to compile with "hides member of supertype".
-        val canEqualIsOverride = generatesCanEqual && classSymbol.hasCanEqualInHierarchy(session)
+        // The generated `canEqual(other: Any?)` can only override a superclass `canEqual` taking exactly `Any?`. Any
+        // other one with the same JVM signature would clash with it, so nothing is generated and the checker reports.
+        val superclassCanEqual = runIf(needsCanEqual) { classSymbol.findSuperclassCanEqual(session) }
+        val generatesCanEqual = needsCanEqual &&
+                superclassCanEqual?.valueParameterSymbols?.single()?.isAnyOrJavaObjectType != false
 
         val key by lazy(LazyThreadSafetyMode.NONE) {
             val propertyInfos = computePropertiesToInclude(annotation, declaredScope)
@@ -166,7 +158,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
                     classSymbol,
                     session,
                 ),
-                hasCanEqual = hasCanEqualMember,
+                hasCanEqual = generatesCanEqual || hasUserDeclaredCanEqual,
             )
         }
 
@@ -198,7 +190,7 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
                 returnTypeRef = session.builtinTypes.booleanType,
                 visibility = Visibilities.Protected,
                 modality = Modality.OPEN,
-                isOverride = canEqualIsOverride,
+                isOverride = superclassCanEqual != null,
                 createKey = { key },
             )
         }
@@ -211,45 +203,11 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
      * `getCallableNamesForClass`, itself callable as early as the SUPERTYPES stage, at which point requesting a
      * lazy resolve to STATUS - even for this class's own declaration - is a phase contract violation.
      *
-     * A `null` raw modality is safe to read as final here because a *class* (as opposed to a member) has no
-     * context-dependent default: unlike a member, which can inherit openness, a class with no explicit modality
-     * modifier is always final, so nothing about this needs the class's status to actually be resolved.
+     * A `null` raw modality is read as final: a class with no modality modifier is final by default.
      */
     @OptIn(SymbolInternals::class)
     private val FirRegularClassSymbol.looksFinal: Boolean
         get() = fir.status.modality.let { it == null || it == Modality.FINAL }
-
-    /**
-     * Whether [this] (or any of its ancestors, up to but excluding [Any]) already declares a `canEqual(other:
-     * Any?): Boolean`, hand-written or itself Lombok-generated.
-     */
-    private tailrec fun FirClassSymbol<*>.hasCanEqualInHierarchy(session: FirSession): Boolean {
-        val superClassSymbol = getSuperClassSymbolOrAny(session) ?: return false
-        if (superClassSymbol.classId == StandardClassIds.Any) return false
-        if (superClassSymbol.declaresCanEqual(session)) return true
-        return superClassSymbol.hasCanEqualInHierarchy(session)
-    }
-
-    private fun FirClassSymbol<*>.declaresCanEqual(session: FirSession): Boolean {
-        var found = false
-        // TYPES, not the default STATUS: this runs from within this very class's own STATUS-phase status
-        // computation, and a phase cannot request a lazy resolve into itself for another declaration - only into
-        // a strictly earlier one. Matching a `canEqual(other: Any?)` shape only needs value parameter types,
-        // which TYPES already resolves.
-        //
-        // `isAnyOrJavaObjectType`, not a bare `resolvedReturnType` access: a Java superclass only "peeked into"
-        // this way (e.g. a `canEqual(Object other)` declared in Java) may still have an unresolved
-        // `FirJavaTypeRef` parameter type at this point, and `resolvedReturnType` throws on that.
-        processAllDeclaredCallables(session, memberRequiredPhase = FirResolvePhase.TYPES) { callable ->
-            if (!found &&
-                callable is FirNamedFunctionSymbol &&
-                callable.hasCanEqualShape
-            ) {
-                found = true
-            }
-        }
-        return found
-    }
 
     private fun hasUserDeclaredEqualsOrHashCode(declaredScope: FirClassDeclaredMemberScope?): Boolean {
         var found = false
@@ -267,30 +225,13 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
         return found
     }
 
-    /**
-     * Whether the user already declared their own matching-shape `canEqual` in this very class - as opposed to
-     * one generated here, or one from an ancestor (see [hasCanEqualInHierarchy]). Generating another one on top
-     * would clash with it on the JVM (`CONFLICTING_JVM_DECLARATIONS`).
-     */
     private fun hasUserDeclaredCanEqual(declaredScope: FirClassDeclaredMemberScope?): Boolean {
         var found = false
-
-        declaredScope?.processAllFunctions {
-            if (it.hasCanEqualShape) found = true
+        declaredScope?.processFunctionsByName(LombokNames.CAN_EQUAL) {
+            found = found || it.hasCanEqualJvmSignature
         }
-
         return found
     }
-
-    /**
-     * Whether [this] has the shape `@EqualsAndHashCode` generates for `canEqual`: `canEqual(other: Any?): Boolean`
-     * (or `canEqual(Object)` for an unenhanced Java declaration), with no receiver or context parameters. An
-     * unrelated overload - e.g. `canEqual(x: Int)` - merely shares the name and is never considered.
-     */
-    private val FirNamedFunctionSymbol.hasCanEqualShape: Boolean
-        get() = name == LombokNames.CAN_EQUAL &&
-                !hasReceiverOrContextParameters &&
-                valueParameterSymbols.singleOrNull()?.isAnyOrJavaObjectType == true
 
     private fun computePropertiesToInclude(
         annotation: ConeLombokAnnotations.EqualsAndHashCode,

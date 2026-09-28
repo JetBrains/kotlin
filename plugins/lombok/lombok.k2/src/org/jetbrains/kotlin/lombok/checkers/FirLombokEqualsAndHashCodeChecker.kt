@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.lombok.LombokNames
 import org.jetbrains.kotlin.lombok.config.CallSuperMode
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CALL_SUPER
 import org.jetbrains.kotlin.lombok.config.lombokService
+import org.jetbrains.kotlin.lombok.generators.findSuperclassCanEqual
+import org.jetbrains.kotlin.lombok.generators.hasCanEqualJvmSignature
 import org.jetbrains.kotlin.lombok.generators.hasNonTrivialSuperclass
 import org.jetbrains.kotlin.lombok.generators.isAnyOrJavaObjectType
 import org.jetbrains.kotlin.lombok.generators.isEqualsAndHashCode
@@ -63,6 +66,21 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
                     LombokFirDiagnostics.EQUALS_OR_HASH_CODE_FUNCTIONS_ARE_FINAL_IN_SUPERCLASS,
                     superClassSymbol.name,
                 )
+            }
+
+            // The generated `canEqual` overrides the superclass one, so it must be open and take exactly `Any?`. The
+            // generator skips the latter case to avoid a JVM clash; the former would fail at runtime with "overrides
+            // final method".
+            if (!declaredMemberScope.hasUserDeclaredCanEqual()) {
+                declaration.symbol.findSuperclassCanEqual(context.session)
+                    ?.takeIf { it.isFinal || !it.valueParameterSymbols.single().isAnyOrJavaObjectType }
+                    ?.let { superclassCanEqual ->
+                        reporter.reportOn(
+                            source,
+                            LombokFirDiagnostics.CAN_EQUAL_FUNCTION_IS_NOT_OVERRIDABLE_IN_SUPERCLASS,
+                            superclassCanEqual.callableId.classId!!.shortClassName,
+                        )
+                    }
             }
         }
 
@@ -117,6 +135,14 @@ object FirLombokEqualsAndHashCodeChecker : FirRegularClassChecker(MppCheckerKind
             found = found || !it.origin.isEqualsAndHashCode && it.hasGeneratedEqualsOrHashCodeShape
         }
 
+        return found
+    }
+
+    private fun FirContainingNamesAwareScope.hasUserDeclaredCanEqual(): Boolean {
+        var found = false
+        processFunctionsByName(LombokNames.CAN_EQUAL) {
+            found = found || !it.origin.isEqualsAndHashCode && it.hasCanEqualJvmSignature
+        }
         return found
     }
 

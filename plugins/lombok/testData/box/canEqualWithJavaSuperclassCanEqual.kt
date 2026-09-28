@@ -12,12 +12,8 @@ public class JavaBase {
 
 import lombok.EqualsAndHashCode
 
-// `callSuper = true` here used to crash the compiler: deciding whether the generated `canEqual` needs `override`
-// walks the whole ancestor chain, and `JavaBase`'s own `canEqual(Object other)` still had an unresolved Java
-// parameter type at that point ("Unexpected returnTypeRef. Expected is FirResolvedTypeRef, but was
-// FirJavaTypeRef"). `JavaBase` doesn't override `equals`/`hashCode` itself, so with `callSuper = true` the
-// generated ones chain to identity-based `Object` semantics - expected, and unrelated to `canEqual` - so only
-// reflexive equality is asserted here.
+// Used to crash the compiler: the Java `canEqual` parameter type was not resolved yet when checking whether the
+// generated `canEqual` overrides it. `JavaBase` inherits identity-based `equals`, so only reflexivity is asserted.
 @EqualsAndHashCode(callSuper = true)
 open class DerivedFromJavaWithCallSuper(val x: Int) : JavaBase()
 
