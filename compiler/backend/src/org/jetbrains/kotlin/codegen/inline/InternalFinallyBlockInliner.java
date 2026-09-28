@@ -75,8 +75,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
     public static void processInlineFunFinallyBlocks(
             @NotNull MethodNode inlineFun,
             int lambdaTryCatchBlockNodes,
-            int finallyParamOffset,
-            boolean properFinallySplit
+            int finallyParamOffset
     ) {
         int index = 0;
         List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo = new ArrayList<>();
@@ -90,14 +89,13 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         }
 
         if (hasFinallyBlocks(inlineFunTryBlockInfo)) {
-            new InternalFinallyBlockInliner(inlineFun, inlineFunTryBlockInfo, localVars, finallyParamOffset, properFinallySplit)
+            new InternalFinallyBlockInliner(inlineFun, inlineFunTryBlockInfo, localVars, finallyParamOffset)
                     .processInlineFunFinallyBlocks();
         }
     }
 
     @NotNull
     private final MethodNode inlineFun;
-    private final boolean properFinallySplit;
 
 
     //lambdaTryCatchBlockNodes is number of TryCatchBlockNodes that was inlined with lambdas into function
@@ -106,12 +104,10 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             @NotNull MethodNode inlineFun,
             @NotNull List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo,
             @NotNull List<LocalVarNodeWrapper> localVariableInfo,
-            int finallyParamOffset,
-            boolean properFinallySplit
+            int finallyParamOffset
     ) {
         super(finallyParamOffset);
         this.inlineFun = inlineFun;
-        this.properFinallySplit = properFinallySplit;
         for (TryCatchBlockNodeInfo block : inlineFunTryBlockInfo) {
             getTryBlocksMetaInfo().addNewInterval(block);
         }
@@ -270,7 +266,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 nestedUnsplitBlocksWithoutFinally.addAll(clusterBlocks);
 
                 updateExceptionTable(
-                        properFinallySplit ? nestedUnsplitBlocksWithoutFinally : clusterBlocks, newFinallyStart, newFinallyEnd,
+                        nestedUnsplitBlocksWithoutFinally, newFinallyStart, newFinallyEnd,
                         tryCatchBlockInlinedInFinally, labelsInsideFinallyOldToNew, insertedBlockEnd
                 );
                 nestedUnsplitBlocksWithoutFinally.clear();
