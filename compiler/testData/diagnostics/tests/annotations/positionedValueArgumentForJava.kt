@@ -21,9 +21,9 @@ class A {
     fun test() = TestAnn(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
 }
 
-@MyAlias("message")
+@MyAlias(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
 class B {
-    @get:MyAlias("message") <!DEPRECATED_JAVA_ANNOTATION!>@get:deprecated<!>
+    @get:MyAlias(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>) <!DEPRECATED_JAVA_ANNOTATION!>@get:deprecated<!>
     val x: Int = 10
     fun test() = MyAlias(<!POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION!>"message"<!>)
 }
