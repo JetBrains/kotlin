@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.test.services.configuration.useNewExceptionHandling
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.testInfraError
+import org.jetbrains.kotlin.utils.readUnsignedLeb128
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.jetbrains.kotlin.wasm.test.tools.WASI_BOX_ENTRY_EXPORT
 import org.jetbrains.kotlin.wasm.test.tools.WASI_UNIT_TESTS_ENTRY_EXPORT
@@ -109,27 +110,7 @@ private class WasmBinaryReader(
         return result
     }
 
-    /**
-     * Deliberately not [org.jetbrains.kotlin.utils.readUnsignedLeb128]: that shared decoder does not reject a fifth
-     * byte whose value exceeds the 4 bits a 32-bit LEB128 has room for in it. Such a byte just gets OR'd in and
-     * shifted by 28, and `UInt.shl` does not throw on overflow — it silently drops any bit that lands at position 32
-     * or beyond, so e.g. the 5-byte sequence `80 80 80 80 10` decodes there to `0u` instead of failing. Reusing it
-     * here would let a corrupted section-size byte silently misread as zero rather than surfacing the corruption,
-     * which is the one thing this reader exists to catch — hence the extra `shift == 28` check below.
-     */
-    fun readVarUInt32(): Long {
-        var result = 0L
-        for (shift in 0..28 step 7) {
-            val byte = readByte()
-            val value = byte and 0x7F
-            if (shift == 28 && value > 0x0F) {
-                error("Invalid unsigned 32-bit LEB128 number")
-            }
-            result = result or (value.toLong() shl shift)
-            if (byte and 0x80 == 0) return result
-        }
-        error("Invalid unsigned 32-bit LEB128 number")
-    }
+    fun readVarUInt32(): Long = readUnsignedLeb128({ readByte().toByte() }).toLong()
 
     fun readExportNames(sectionSize: Long): Set<String> {
         require(sectionSize <= MAX_WASM_EXPORT_SECTION_SIZE) {

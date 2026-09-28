@@ -223,7 +223,7 @@ class WasiLauncherScriptTest {
         )
 
         val error = assertThrows(TestInfrastructureException::class.java) { assertDriverOwnsStartTestExport(dir) }
-        assertTrue("Invalid unsigned 32-bit LEB128 number" in error.message.orEmpty(), error.message.orEmpty())
+        assertTrue("InvalidLeb128Number" in error.message.orEmpty(), error.message.orEmpty())
     }
 
     @Test
