@@ -40,10 +40,10 @@ fun typeOperators(a: Any) {
         is Float -> return
     }
 
-    foo() as? Int
+    foo() <!RETURN_VALUE_NOT_USED!>as?<!> Int
     foo() as Int
-    foo() is Int
-    foo() !is Long
+    foo() <!RETURN_VALUE_NOT_USED!>is<!> Int
+    foo() <!RETURN_VALUE_NOT_USED!>!is<!> Long
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationUseSiteTargetFile, comparisonExpression,

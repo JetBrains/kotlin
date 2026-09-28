@@ -208,10 +208,15 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
                 val op = typeOperatorCall.operation
                 // Unlike AS, these operations don't have a side effect unless they are used.
                 if (op == FirOperation.IS || op == FirOperation.NOT_IS || op == FirOperation.SAFE_AS) {
+                    // If the operator itself is used somewhere (in when, for example), the data will be Used here.
                     checkExpression(typeOperatorCall, data)
                 }
             }
-            typeOperatorCall.arguments.forEach { it.accept(this, data) }
+            typeOperatorCall.arguments.forEach {
+                // If the operator itself is unused, it will be reported by a code a few lines above.
+                // Operator's arguments are always used.
+                it.accept(this, UsageState.Used)
+            }
         }
 
         override fun visitReturnExpression(returnExpression: FirReturnExpression, data: UsageState) {
