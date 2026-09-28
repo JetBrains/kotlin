@@ -220,8 +220,7 @@ internal class JvmPropertiesLowering(
             val getter = property.getter
             val baseName = if (getter != null) {
                 val needsMangling =
-                    getter.nonDispatchParameters.any { it.type.getRequiresMangling() } ||
-                            (config.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
+                    getter.nonDispatchParameters.any { it.type.getRequiresMangling() } || getter.hasMangledReturnType
                 val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
                 defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)
             } else JvmAbi.getterName(property.name.asString())
