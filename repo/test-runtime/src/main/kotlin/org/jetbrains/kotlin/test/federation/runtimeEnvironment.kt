@@ -17,8 +17,12 @@ const val TEST_FEDERATION_DOMAINS_KEY = "test.federation.domains"
 const val TEST_FEDERATION_DOMAINS_ENV_KEY = "TEST_FEDERATION_DOMAINS"
 
 /**
- * Use this property to shrink dynamic variants of your tests unless the `AllTests` subset is requested.
+ * Use this property to shrink dynamic variants of your tests unless the AllTests subset is requested.
+ *
+ * WARNING: Using this property makes AllTests != SmokeTests + ContractTests + PlainTests
+ * (AllTests executes more tests than the union of all other subsets)
  */
+@DelicateTestFederationApi
 val testFederationAllTestsRequested: Boolean
     get() = AllTests in testFederationSubsets
 

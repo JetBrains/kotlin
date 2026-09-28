@@ -206,6 +206,8 @@ We define the following test subsets:
   - selects tests included in `testFederation { smokeTests { ... } }` DSL
 - `ContractTestsFor<Domain>`
   - selects tests annotated with `@MustRunOnChangesIn<Domain>`
+- `PlainTests`:
+  - selects "the rest" (any test not selected by `SmokeTests` and `ContractTestsFor<Domain>`)
 
 Test Federation requests `AllTests` when all tests in the task's domain must run, and `SmokeTests` plus the
 relevant `ContractTestsFor<Domain>` subsets otherwise.
@@ -214,6 +216,54 @@ Test subsets may overlap. For example, the same test may declare both `@MustRunO
 selected by both `ContractTestsForJs` and `ContractTestsForWasm`.
 
 Other test filters, such as `@NightlyTest`, still apply regardless of the requested subsets.
+
+```mermaid
+---
+config:
+  flowchart:
+    htmlLabels: true
+  themeCSS: |
+    .nodeLabel { text-align: left; }
+    .nodeLabel .annotation { color: darkgoldenrod !important; }
+---
+flowchart LR
+    classDef code fill:white,stroke:black,color:midnightblue
+    classDef allTests fill:teal,stroke:teal,color:white
+    classDef smokeTests fill:darkgray,stroke:darkgray,color:white
+    classDef contractTestsForJs fill:darkorchid,stroke:darkorchid,color:white
+    classDef contractTestsForWasm fill:darkmagenta,stroke:darkmagenta,color:white
+    classDef plainTests fill:dodgerblue,stroke:dodgerblue,color:white
+
+    SmokeTests("SmokeTests")
+    ContractTestsForJs("ContractTestsForJs")
+    ContractTestsForWasm("ContractTestsForWasm")
+    PlainTests("PlainTests")
+
+    FooTest["<span class='annotation'>@MustRunAlways</span>\nclass FooTest"]
+    BarTest["<span class='annotation'>@MustRunOnChangesInJs</span>\nclass BarTest"]
+    QuxTest["<span class='annotation'>@MustRunOnChangesInJs</span>\n<span class='annotation'>@MustRunOnChangesInWasm</span>\nclass QuxTest"]
+    CorgeTest["class CorgeTest"]
+
+    AllTests("AllTests")
+
+    SmokeTests --- FooTest
+    ContractTestsForJs --- BarTest
+    ContractTestsForJs & ContractTestsForWasm --- QuxTest
+    PlainTests --- CorgeTest
+
+    FooTest --- AllTests
+    BarTest --- AllTests
+    QuxTest --- AllTests
+    CorgeTest --- AllTests
+
+
+    class FooTest,BarTest,QuxTest,CorgeTest code
+    class AllTests allTests
+    class SmokeTests smokeTests
+    class ContractTestsForJs contractTestsForJs
+    class ContractTestsForWasm contractTestsForWasm
+    class PlainTests plainTests
+```
 
 ### Customizing test subsets
 
@@ -294,29 +344,28 @@ Changes to `domains.yaml` might require an update of the dump file. Update it fr
 Alternatively, run `scripts/update-domains.sh` or use the `Update domains.dump.txt` run configuration in IntelliJ.
 Use `Update all project dumps` to refresh all project dumps at once.
 
-### Running tests for specified changed domains
+### Running specific test subsets
 
-To run a test task in `Smoke` mode as if `Js` were changed:
-
-```shell
-./gradlew :some:module:test \
-  -Ptest.federation.enabled=true \
-  -Ptest.federation.mode=Smoke \
-  -Ptest.federation.changed.domains="Js"
+Run all tests (both ways are equivalent):
+```bash
+./gradlew test
+./gradlew test -Ptest.federation.subsets=AllTests -Ptest.federation.enabled=true
 ```
 
-This runs `@MustRunAlways` tests, `@MustRunOnChangesInJs` tests, and tests selected by `testFederation { smokeTests { includeAutoSamples() } }`.
-Use `-Ptest.federation.mode=Full` to run all tests in the task. Other test filters still apply.
+Run only smoke tests:
+```bash
+./gradlew test -Ptest.federation.subsets=SmokeTests -Ptest.federation.enabled=true
+```
 
-`test.federation.changed.domains` accepts:
+Run only contracts for JVM:
+```bash
+./gradlew test -Ptest.federation.subsets=ContractTestsForJvm -Ptest.federation.enabled=true
+```
 
-- a single domain (for example, `CompilerPlugins`)
-- several domains separated by semicolons (for example, `Wasm;Js`)
-- all domains (`*`)
-- no domains (`<none>`)
-
-For other properties and their values, see
-[runtimeEnvironment.kt](test-runtime/src/main/kotlin/org/jetbrains/kotlin/test/federation/runtimeEnvironment.kt).
+Run smoke tests + contracts for JVM:
+```bash
+./gradlew test -Ptest.federation.subsets=SmokeTests,ContractTestsForJvm -Ptest.federation.enabled=true
+```
 
 ## Extra: Domains and code structure
 
