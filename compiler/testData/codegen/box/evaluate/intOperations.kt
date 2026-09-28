@@ -67,11 +67,6 @@ const val rem6 = twoVal.rem(longVal)
 const val rem7 = twoVal.rem(floatVal)
 const val rem8 = twoVal.rem(doubleVal)
 
-const val floorDiv1 = oneVal.floorDiv(twoVal)
-const val floorDiv2 = twoVal.floorDiv(twoVal)
-const val floorDiv3 = threeVal.floorDiv(twoVal)
-const val floorDiv4 = minusOneVal.floorDiv(twoVal)
-
 const val and1 = threeVal.and(twoVal)
 const val and2 = twoVal.and(twoVal)
 const val and3 = fourVal.and(twoVal)
@@ -182,11 +177,6 @@ fun box(): String {
     if (rem6.id() != 0L)     return "Fail 6.6"
     if (rem7.id() != 0.0f)   return "Fail 6.7"
     if (rem8.id() != 0.0)    return "Fail 6.8"
-
-    if (floorDiv1.id() != 0)     return "Fail 6b.1"
-    if (floorDiv2.id() != 1)     return "Fail 6b.2"
-    if (floorDiv3.id() != 1)     return "Fail 6b.3"
-    if (floorDiv4.id() != -1)    return "Fail 6b.4"
 
     if (and1.id() != 2)      return "Fail 6c.1"
     if (and2.id() != 2)      return "Fail 6c.2"

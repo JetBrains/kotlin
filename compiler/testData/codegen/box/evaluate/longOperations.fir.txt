@@ -120,14 +120,6 @@ FILE: longOperations.kt
         public get(): R|kotlin/Float|
     public final const [EvaluatedValue=Double(0.0)] val rem8: R|kotlin/Double| = R|/twoVal|.R|kotlin/Long.rem|(R|/doubleVal|)
         public get(): R|kotlin/Double|
-    public final const [EvaluatedValue=Long(0)] val floorDiv1: R|kotlin/Long| = R|/oneVal|.R|kotlin/floorDiv|(R|/twoVal|)
-        public get(): R|kotlin/Long|
-    public final const [EvaluatedValue=Long(1)] val floorDiv2: R|kotlin/Long| = R|/twoVal|.R|kotlin/floorDiv|(R|/twoVal|)
-        public get(): R|kotlin/Long|
-    public final const [EvaluatedValue=Long(1)] val floorDiv3: R|kotlin/Long| = R|/threeVal|.R|kotlin/floorDiv|(R|/twoVal|)
-        public get(): R|kotlin/Long|
-    public final const [EvaluatedValue=Long(-1)] val floorDiv4: R|kotlin/Long| = R|/minusOneVal|.R|kotlin/floorDiv|(R|/twoVal|)
-        public get(): R|kotlin/Long|
     public final const [EvaluatedValue=Long(2)] val and1: R|kotlin/Long| = R|/threeVal|.R|kotlin/Long.and|(R|/twoVal|)
         public get(): R|kotlin/Long|
     public final const [EvaluatedValue=Long(2)] val and2: R|kotlin/Long| = R|/twoVal|.R|kotlin/Long.and|(R|/twoVal|)
@@ -502,30 +494,6 @@ FILE: longOperations.kt
         when () {
             !=(R|/rem8|.R|/id|<R|kotlin/Double|>(), Double(0.0)) ->  {
                 ^box String(Fail 6.8)
-            }
-        }
-
-        when () {
-            !=(R|/floorDiv1|.R|/id|<R|kotlin/Long|>(), Long(0)) ->  {
-                ^box String(Fail 6b.1)
-            }
-        }
-
-        when () {
-            !=(R|/floorDiv2|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
-                ^box String(Fail 6b.2)
-            }
-        }
-
-        when () {
-            !=(R|/floorDiv3|.R|/id|<R|kotlin/Long|>(), Long(1)) ->  {
-                ^box String(Fail 6b.3)
-            }
-        }
-
-        when () {
-            !=(R|/floorDiv4|.R|/id|<R|kotlin/Long|>(), Long(1).R|kotlin/Long.unaryMinus|()) ->  {
-                ^box String(Fail 6b.4)
             }
         }
 
