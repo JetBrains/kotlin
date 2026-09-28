@@ -29,7 +29,10 @@ class SerializedIrFile(
     val fileEntries: ByteArray?,
 )
 
+class SerializedSignatureIndex(val signatureIndex: ByteArray)
+
 class SerializedIrModule(
+    val signatureIndex: SerializedSignatureIndex?,
     val files: Collection<SerializedIrFile>,
     val filesWithPreparedInlinableFunctions: Collection<SerializedIrFile>,
 )

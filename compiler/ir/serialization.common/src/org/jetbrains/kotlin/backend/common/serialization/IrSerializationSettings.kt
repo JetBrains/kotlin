@@ -12,7 +12,11 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.klibRelativePathBases
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.targetPlatform
 import org.jetbrains.kotlin.ir.IrFileEntry
+import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isNative
+import org.jetbrains.kotlin.platform.isWasm
 
 /**
  * Various settings used during serialization of IR modules and IR files.
@@ -25,6 +29,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
  *   stored in [IrFileEntry.name] before serializing this path to the IR file proto. If the list is empty, then computation of
  *   relative paths is not performed.
  * @property shouldCheckSignaturesOnUniqueness Whether to run checks on uniqueness of generated signatures.
+ * @property collectDataForSignatureIndex Whether it's necessary to track (collect) all the necessary signatures for signature index.
  */
 data class IrSerializationSettings(
     val languageVersionSettings: LanguageVersionSettings,
@@ -32,6 +37,7 @@ data class IrSerializationSettings(
     val bodiesOnlyForInlines: Boolean,
     val sourceBaseDirs: Collection<String>,
     val shouldCheckSignaturesOnUniqueness: Boolean,
+    val collectDataForSignatureIndex: Boolean,
     val abiCompatibilityLevel: KlibAbiCompatibilityLevel,
 ) {
     constructor(
@@ -41,6 +47,7 @@ data class IrSerializationSettings(
         bodiesOnlyForInlines: Boolean = publicAbiOnly,
         sourceBaseDirs: Collection<String> = configuration.klibRelativePathBases,
         shouldCheckSignaturesOnUniqueness: Boolean = configuration.get(KlibConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, true),
+        collectDataForSignatureIndex: Boolean = configuration.targetPlatform?.let { it.isJs() || it.isWasm() || it.isNative() } == true,
         abiCompatibilityLevel: KlibAbiCompatibilityLevel = configuration.klibAbiCompatibilityLevel,
     ) : this(
         languageVersionSettings = languageVersionSettings,
@@ -49,5 +56,7 @@ data class IrSerializationSettings(
         sourceBaseDirs = sourceBaseDirs,
         shouldCheckSignaturesOnUniqueness = shouldCheckSignaturesOnUniqueness,
         abiCompatibilityLevel = abiCompatibilityLevel,
+        collectDataForSignatureIndex = collectDataForSignatureIndex,
     )
 }
+
