@@ -80,7 +80,7 @@ ALWAYS_INLINE void slowPathImpl(mm::ThreadData& threadData) noexcept {
     auto action = safePointAction.load(std::memory_order_seq_cst);
     if (action != nullptr) {
         if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
-            kotlin::mm::KotlinFrameAnchor kotlinFrameAnchor = mm::KotlinFrameAnchor::getKotlinFrameAnchor();
+            kotlin::mm::KotlinFrameAnchor kotlinFrameAnchor = mm::captureCallerFrameAnchor();
             threadData.setLastFrame(kotlinFrameAnchor);
         }
         action(threadData);

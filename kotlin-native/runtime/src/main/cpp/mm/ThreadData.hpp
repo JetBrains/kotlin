@@ -32,12 +32,15 @@ struct KotlinFrameAnchor {
 
     KotlinFrameAnchor() = default;
     KotlinFrameAnchor(uint64_t* fp, uint64_t* pc) : fp(fp), pc(pc) {}
-
-    ALWAYS_INLINE static KotlinFrameAnchor getKotlinFrameAnchor() {
-        uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
-        return KotlinFrameAnchor{(uint64_t*) fp[0], (uint64_t*) fp[1]};
-    }
 };
+
+// Captures the immediate caller's {fp, pc} by reading this function's own
+// frame record (ALWAYS_INLINE so __builtin_frame_address(0) resolves to
+// the caller's frame once inlined, not a separate frame of its own).
+ALWAYS_INLINE inline KotlinFrameAnchor captureCallerFrameAnchor() {
+    uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
+    return KotlinFrameAnchor{(uint64_t*) fp[0], (uint64_t*) fp[1]};
+}
 
 // `ThreadData` is supposed to be thread local singleton.
 // Pin it in memory to prevent accidental copying.
@@ -90,9 +93,9 @@ public:
         allocator_.clearForTests();
     }
 
-    void pushStackMapAnchor(uint64_t* fp, uint64_t* pc) noexcept {
-        RuntimeLogInfo({logging::Tag::kLogging}, "Pushing new anchor: fp=%p pc=%p", fp, pc);
-        frameAnchors_.emplace_back(fp, pc);
+    void pushStackMapAnchor(const KotlinFrameAnchor& anchor) noexcept {
+        RuntimeLogInfo({logging::Tag::kLogging}, "Pushing new anchor: fp=%p pc=%p", anchor.fp, anchor.pc);
+        frameAnchors_.emplace_back(anchor);
     }
 
     void pushLastStackMapAnchor() noexcept {

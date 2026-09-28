@@ -207,9 +207,8 @@ THREAD_LOCAL_VARIABLE Worker* g_worker = nullptr;
 void waitInNativeState(pthread_cond_t* cond, pthread_mutex_t* mutex) {
     kotlin::compactObjectPoolInCurrentThread();
     if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
-        uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
-        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(
-                reinterpret_cast<uint64_t*>(fp[0]), reinterpret_cast<uint64_t*>(fp[1]));
+        mm::KotlinFrameAnchor anchor = mm::captureCallerFrameAnchor();
+        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor);
     }
 
     CallWithThreadState<ThreadState::kNative>(pthread_cond_wait, cond, mutex);

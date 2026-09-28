@@ -227,8 +227,8 @@ extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
     if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
-        mm::KotlinFrameAnchor anchor = mm::KotlinFrameAnchor::getKotlinFrameAnchor();
-        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor.fp, anchor.pc);
+        mm::KotlinFrameAnchor anchor = mm::captureCallerFrameAnchor();
+        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor);
     }
     mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
     if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
@@ -407,10 +407,8 @@ extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debu
 }
 
 extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_delta_main() {
-    uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
-    uint64_t* pc = reinterpret_cast<uint64_t*>(*(fp + 1)); // return address is the callsite
-    uint64_t* callerFp = reinterpret_cast<uint64_t*>(*fp);
-    mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(callerFp, pc);
+    mm::KotlinFrameAnchor anchor = mm::captureCallerFrameAnchor();
+    mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor);
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
 }
 
