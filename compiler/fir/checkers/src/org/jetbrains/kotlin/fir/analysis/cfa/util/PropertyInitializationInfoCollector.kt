@@ -88,7 +88,7 @@ class PropertyInitializationInfoCollector(
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
         return when {
-            expectedReceiver != null ->
+            expectedReceiver != null && node.fir.symbol !in localProperties ->
                 dataForNode
             node.fir.initializer == null && node.fir.delegate == null ->
                 dataForNode.removeRange(node.fir.symbol)
