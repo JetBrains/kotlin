@@ -11,8 +11,14 @@ import kotlinx.metadata.klib.KlibMetadataVersion
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
+import kotlin.metadata.KmAnnotation
+import kotlin.metadata.KmType
 
 class KlibMetadataVersionWriteExtension(val version: KlibMetadataVersion) : WriteContextExtension
+
+class KlibTypeWriteExtension(val processType: (KmType) -> Unit) : WriteContextExtension
+
+class KlibAnnotationWriteExtension(val processAnnotation: (KmAnnotation) -> Unit) : WriteContextExtension
 
 class KlibModuleFragmentWriter(
     stringTable: ApproximatingStringTable,

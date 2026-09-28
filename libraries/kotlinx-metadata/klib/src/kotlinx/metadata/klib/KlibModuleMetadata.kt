@@ -54,6 +54,16 @@ interface KlibModuleFragmentWriteStrategy {
      */
     fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment> = parts
 
+    /**
+     * Allows pre-processing [KmType] before serializing it.
+     */
+    fun processType(type: KmType) {}
+
+    /**
+     * Allows pre-processing [KmAnnotation] before serializing it.
+     */
+    fun processAnnotation(annotation: KmAnnotation) {}
+
     companion object {
         val DEFAULT = object : KlibModuleFragmentWriteStrategy {}
     }
@@ -181,10 +191,19 @@ class KlibModuleMetadata(
 
         val packageFragmentNames: List<String> = groupedFragments.map { it.key }
         val emptyPackageFragmentNames: List<String> = groupedFragments.filter { it.value.all(KmModuleFragment::isEmpty) }.map { it.key }
-        val versionExt = KlibMetadataVersionWriteExtension(metadataVersion)
+
+        val writeExtensions = if (writeStrategy != KlibModuleFragmentWriteStrategy.DEFAULT)
+            listOf(
+                KlibTypeWriteExtension(writeStrategy::processType),
+                KlibAnnotationWriteExtension(writeStrategy::processAnnotation),
+                KlibMetadataVersionWriteExtension(metadataVersion),
+            )
+        else
+            listOf(KlibMetadataVersionWriteExtension(metadataVersion))
+
         val groupedProtos = groupedFragments.mapValues { [_, fragments] ->
             fragments.map { mf ->
-                val c = WriteContext(ApproximatingStringTable(), listOf(versionExt))
+                val c = WriteContext(ApproximatingStringTable(), writeExtensions)
                 KlibModuleFragmentWriter(c.strings as ApproximatingStringTable, c.contextExtensions).also { it.writeModuleFragment(mf) }.write()
             }
         }
