@@ -2030,7 +2030,7 @@ internal class CodeGeneratorVisitor(
 
     private inner class ClassScope(val clazz:IrClass) : InnerScopeImpl() {
         val isExported
-            get() = clazz.isExported()
+            get() = clazz.isExported
         var offsetInBits = 0L
         val members = mutableListOf<DIDerivedTypeRef>()
         @Suppress("UNCHECKED_CAST")
