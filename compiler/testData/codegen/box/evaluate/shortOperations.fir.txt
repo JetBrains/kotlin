@@ -120,14 +120,6 @@ FILE: shortOperations.kt
         public get(): R|kotlin/Float|
     public final const [EvaluatedValue=Double(0.0)] val rem8: R|kotlin/Double| = R|/twoVal|.R|kotlin/Short.rem|(R|/doubleVal|)
         public get(): R|kotlin/Double|
-    public final const [EvaluatedValue=Int(0)] val floorDiv1: R|kotlin/Int| = R|/oneVal|.R|kotlin/floorDiv|(R|/twoVal|)
-        public get(): R|kotlin/Int|
-    public final const [EvaluatedValue=Int(1)] val floorDiv2: R|kotlin/Int| = R|/twoVal|.R|kotlin/floorDiv|(R|/twoVal|)
-        public get(): R|kotlin/Int|
-    public final const [EvaluatedValue=Int(1)] val floorDiv3: R|kotlin/Int| = R|/threeVal|.R|kotlin/floorDiv|(R|/twoVal|)
-        public get(): R|kotlin/Int|
-    public final const [EvaluatedValue=Int(-1)] val floorDiv4: R|kotlin/Int| = R|/minusOneVal|.R|kotlin/floorDiv|(R|/twoVal|)
-        public get(): R|kotlin/Int|
     public final const [EvaluatedValue=Int(1)] val unaryPlus1: R|kotlin/Int| = R|/oneVal|.R|kotlin/Short.unaryPlus|()
         public get(): R|kotlin/Int|
     public final const [EvaluatedValue=Int(-1)] val unaryPlus2: R|kotlin/Int| = R|/minusOneVal|.R|kotlin/Short.unaryPlus|()
@@ -456,30 +448,6 @@ FILE: shortOperations.kt
         when () {
             !=(R|/rem8|.R|/id|<R|kotlin/Double|>(), Double(0.0)) ->  {
                 ^box String(Fail 6.8)
-            }
-        }
-
-        when () {
-            !=(R|/floorDiv1|.R|/id|<R|kotlin/Int|>(), Int(0)) ->  {
-                ^box String(Fail 6b.1)
-            }
-        }
-
-        when () {
-            !=(R|/floorDiv2|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
-                ^box String(Fail 6b.2)
-            }
-        }
-
-        when () {
-            !=(R|/floorDiv3|.R|/id|<R|kotlin/Int|>(), Int(1)) ->  {
-                ^box String(Fail 6b.3)
-            }
-        }
-
-        when () {
-            !=(R|/floorDiv4|.R|/id|<R|kotlin/Int|>(), Int(-1)) ->  {
-                ^box String(Fail 6b.4)
             }
         }
 

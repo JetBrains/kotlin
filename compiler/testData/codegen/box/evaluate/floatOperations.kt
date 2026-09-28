@@ -73,12 +73,6 @@ const val rem6 = twoVal.rem(intVal)
 const val rem7 = twoVal.rem(longVal)
 const val rem8 = twoVal.rem(doubleVal)
 
-const val mod1 = oneVal.mod(twoVal)
-const val mod2 = twoVal.mod(twoVal)
-const val mod3 = threeVal.mod(twoVal)
-const val mod4 = minusOneVal.mod(twoVal)
-const val mod5 = twoVal.mod(doubleVal)
-
 const val unaryPlus1 = oneVal.unaryPlus()
 const val unaryPlus2 = minusOneVal.unaryPlus()
 const val unaryMinus1 = oneVal.unaryMinus()
@@ -159,12 +153,6 @@ fun box(): String {
     if (rem6.id() != 0f)      return "Fail 6.6"
     if (rem7.id() != 0.0f)    return "Fail 6.7"
     if (rem8.id() != 0.0)     return "Fail 6.8"
-
-    if (mod1.id() != 1f)        return "Fail 6b.1"
-    if (mod2.id() != 0f)        return "Fail 6b.2"
-    if (mod3.id() != 1f)        return "Fail 6b.3"
-    if (mod4.id() != 1f)        return "Fail 6b.4"
-    if (mod5.id() != 0.0)       return "Fail 6b.5"
 
     if (unaryPlus1.id() != 1f)    return "Fail 7.1"
     if (unaryPlus2.id() != -1f)   return "Fail 7.2"

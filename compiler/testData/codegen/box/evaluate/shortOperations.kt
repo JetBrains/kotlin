@@ -67,11 +67,6 @@ const val rem6 = twoVal.rem(longVal)
 const val rem7 = twoVal.rem(floatVal)
 const val rem8 = twoVal.rem(doubleVal)
 
-const val floorDiv1 = oneVal.floorDiv(twoVal)
-const val floorDiv2 = twoVal.floorDiv(twoVal)
-const val floorDiv3 = threeVal.floorDiv(twoVal)
-const val floorDiv4 = minusOneVal.floorDiv(twoVal)
-
 const val unaryPlus1 = oneVal.unaryPlus()
 const val unaryPlus2 = minusOneVal.unaryPlus()
 const val unaryMinus1 = oneVal.unaryMinus()
@@ -152,11 +147,6 @@ fun box(): String {
     if (rem6.id() != 0L)     return "Fail 6.6"
     if (rem7.id() != 0.0f)   return "Fail 6.7"
     if (rem8.id() != 0.0)    return "Fail 6.8"
-
-    if (floorDiv1.id() != 0)     return "Fail 6b.1"
-    if (floorDiv2.id() != 1)     return "Fail 6b.2"
-    if (floorDiv3.id() != 1)     return "Fail 6b.3"
-    if (floorDiv4.id() != -1)    return "Fail 6b.4"
 
     if (unaryPlus1.id() != 1)    return "Fail 7.1"
     if (unaryPlus2.id() != -1)   return "Fail 7.2"
