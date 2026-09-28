@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationSharedData
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.swiftExportMetadataTaskOrNull
 import org.jetbrains.kotlin.gradle.targets.metadata.locateOrRegisterGenerateProjectStructureMetadataTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropMetadataDirectoryPath
@@ -75,6 +76,16 @@ internal fun TaskProvider<AssembleKotlinArchiveTask>.fillKotlinArchivePsmContent
     val psmTask = project.locateOrRegisterGenerateProjectStructureMetadataTask()
     configure { task ->
         task.projectStructureMetadataFile.fileProvider(psmTask.map { it.resultFile })
+    }
+}
+
+/**
+ * Stores the Swift Export metadata json at [KarLayout.SWIFT_EXPORT_METADATA_FILE_PATH] if the project has one.
+ */
+internal fun TaskProvider<AssembleKotlinArchiveTask>.fillKotlinArchiveSwiftExportMetadataContent(project: Project) {
+    val serializeTask = project.swiftExportMetadataTaskOrNull() ?: return
+    configure { task ->
+        task.swiftExportMetadataFile.set(serializeTask.map { it.metadataFile.get() })
     }
 }
 

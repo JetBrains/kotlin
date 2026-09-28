@@ -32,7 +32,7 @@ internal fun Project.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfigu
     swiftExportConfiguration: SwiftExportConfiguration,
 ): TaskProvider<SerializeSwiftExportMetadata> {
     // The consumable configuration can only be registered once, so guard the whole function rather than the task.
-    val existingTask = project.locateTask<SerializeSwiftExportMetadata>(SerializeSwiftExportMetadata.TASK_NAME)
+    val existingTask = swiftExportMetadataTaskOrNull()
     if (existingTask != null) return existingTask
 
     val swiftExportMetadata = project.locateOrRegisterTask<SerializeSwiftExportMetadata>(
@@ -59,7 +59,7 @@ internal abstract class SerializeSwiftExportMetadata : DefaultTask() {
     protected abstract val rootPackage: Property<String>
 
     @get:OutputFile
-    protected val metadataFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/swiftExportMetadata")
+    internal val metadataFile: Provider<RegularFile> = project.layout.buildDirectory.file("kotlin/swiftExportMetadata")
 
     fun configureWith(swiftExportConfiguration: SwiftExportConfiguration) {
         moduleName.set(swiftExportConfiguration.moduleName)
@@ -68,8 +68,8 @@ internal abstract class SerializeSwiftExportMetadata : DefaultTask() {
 
     @TaskAction
     fun serialize() {
-        metadataFile.get().asFile.outputStream().use { file ->
-            swiftExportMetadata().serializeSwiftExportMetadata(file)
+        metadataFile.get().asFile.outputStream().use { output ->
+            swiftExportMetadata().serializeSwiftExportMetadata(output)
         }
     }
 
@@ -82,3 +82,12 @@ internal abstract class SerializeSwiftExportMetadata : DefaultTask() {
         const val TASK_NAME = "serializeSwiftExportMetadata"
     }
 }
+
+/**
+ * Null when the `export { swift { } }` DSL is not configured.
+ * [org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SetUpSwiftExportAction] registers the task right after
+ * the targets are finalised, so callers at [org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations]
+ * can rely on it.
+ */
+internal fun Project.swiftExportMetadataTaskOrNull(): TaskProvider<SerializeSwiftExportMetadata>? =
+    locateTask(SerializeSwiftExportMetadata.TASK_NAME)
