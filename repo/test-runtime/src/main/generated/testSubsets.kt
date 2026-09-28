@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.testFederation
 
 enum class TestSubset {
     AllTests,
+    PlainTests,
     SmokeTests,
     ContractTestsForCompilerInfrastructure,
     ContractTestsForFrontend,
@@ -48,6 +49,7 @@ fun contractTestsSubsetOf(domain: Domain): TestSubset = when (domain) {
 
 fun contractTagOf(subset: TestSubset): String? = when (subset) {
     TestSubset.AllTests -> null
+    TestSubset.PlainTests -> null
     TestSubset.SmokeTests -> null
     TestSubset.ContractTestsForCompilerInfrastructure -> "contract:CompilerInfrastructure"
     TestSubset.ContractTestsForFrontend -> "contract:Frontend"

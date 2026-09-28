@@ -96,6 +96,7 @@ private object DomainSourcesGenerator {
                 this += "|"
                 this += "|enum class TestSubset {"
                 this += "|    AllTests,"
+                this += "|    PlainTests,"
                 this += "|    SmokeTests,"
                 for (domain in domains) {
                     this += "|    ContractTestsFor${domain.name},"

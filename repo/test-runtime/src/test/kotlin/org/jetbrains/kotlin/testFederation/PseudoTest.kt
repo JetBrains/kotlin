@@ -34,8 +34,8 @@ class PseudoTest {
         if (autoSmokeTestPercentage == 0) {
             val subsets = testFederationSubsets
             assertTrue(
-                TestSubset.AllTests in subsets,
-                "Expected 'AllTests' in requested subsets, but was: $subsets"
+                TestSubset.PlainTests in subsets,
+                "Expected 'PlainTests' in requested subsets, but was: $subsets"
             )
         }
     }
@@ -50,8 +50,8 @@ class PseudoTest {
     @Test
     fun `js contract test`() {
         val subsets = testFederationSubsets
-        if (TestSubset.ContractTestsForJs !in subsets && autoSmokeTestPercentage == 0 && TestSubset.AllTests !in subsets) {
-            error("Expected 'ContractTestsForJs' or 'AllTests' in requested subsets, but was: $subsets")
+        if (TestSubset.ContractTestsForJs !in subsets && autoSmokeTestPercentage == 0 && TestSubset.PlainTests !in subsets) {
+            error("Expected 'ContractTestsForJs' or 'PlainTests' in requested subsets, but was: $subsets")
         }
     }
 
@@ -59,8 +59,8 @@ class PseudoTest {
     @Test
     fun `wasm contract test`() {
         val subsets = testFederationSubsets
-        if (TestSubset.ContractTestsForWasm !in subsets && autoSmokeTestPercentage == 0 && TestSubset.AllTests !in subsets) {
-            error("Expected 'ContractTestsForWasm' or 'AllTests' in requested subsets, but was: $subsets")
+        if (TestSubset.ContractTestsForWasm !in subsets && autoSmokeTestPercentage == 0 && TestSubset.PlainTests !in subsets) {
+            error("Expected 'ContractTestsForWasm' or 'PlainTests' in requested subsets, but was: $subsets")
         }
     }
 
@@ -68,8 +68,8 @@ class PseudoTest {
     @Test
     fun `gradle contract test`() {
         val subsets = testFederationSubsets
-        if (TestSubset.ContractTestsForGradle !in subsets && autoSmokeTestPercentage == 0 && TestSubset.AllTests !in subsets) {
-            error("Expected 'ContractTestsForGradle' or 'AllTests' in requested subsets, but was: $subsets")
+        if (TestSubset.ContractTestsForGradle !in subsets && autoSmokeTestPercentage == 0 && TestSubset.PlainTests !in subsets) {
+            error("Expected 'ContractTestsForGradle' or 'PlainTests' in requested subsets, but was: $subsets")
         }
     }
 
