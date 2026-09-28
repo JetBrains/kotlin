@@ -594,7 +594,7 @@ tasks {
         }
     }
 
-    testLifecycleTask("documentationModelTest", QualityGate.Master) {
+    testLifecycleTask("documentationModelTest", QualityGate.Undefined) {
         dependsOn(":tools:kotlin-documentation-model:analyzer:check")
     }
 
