@@ -61,8 +61,6 @@ internal object StaticInitializersOptimization {
         val beforeCallThreadLocal = mutableMapOf<IrSimpleFunction, CustomBitSet>()
     }
 
-    private val invalidContainerId = 0
-
     private class InterproceduralAnalysis(val context: NativeBackendContext, val callGraph: CallGraph,
                                           val rootSet: Set<IrSimpleFunction>) {
         fun analyze(): AnalysisResult {
@@ -435,11 +433,11 @@ internal object StaticInitializersOptimization {
                     val argumentsResult = arguments.fold(data) { set, arg -> arg.second.accept(this, set) }
                     updateResultForFunction(actualCallee, argumentsResult)
                     val container = actualCallee.calledInitializer
-                    val containerId = initializedContainers.containerIds[container] ?: invalidContainerId
-                    if (analysisGoal == AnalysisGoal.CollectCallSites &&
+                    if (analysisGoal == AnalysisGoal.CollectCallSites && container != null &&
                             // Only extract initializer calls from non-virtual functions.
                             !actualCallee.isOverridable
                     ) {
+                        val containerId = initializedContainers.containerIds[container]!!
                         // The initializer won't be optimized away from the function.
                         if (!initializedContainers.beforeCallGlobal[actualCallee]!!.get(containerId)) {
                             if (argumentsResult.get(containerId) || containersWithInitializedGlobals.get(containerId))
