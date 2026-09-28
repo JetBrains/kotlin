@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
 import org.jetbrains.kotlin.testFederation.MustRunAlways
 import org.jetbrains.kotlin.utils.PathUtil
-import org.junit.jupiter.api.Disabled
 import java.io.File
 import java.nio.file.Files
 import kotlin.reflect.KClass
@@ -87,7 +86,6 @@ class ScriptHostCompilationTest {
     }
 
     @Test
-    @Disabled("KT-87856")
     fun testScriptWithRequire() {
         val out = checkRun("hello.req1.kts", scriptDef = TestScriptWithRequire::class)
         assertEquals("Hello from required!", out)
@@ -112,7 +110,11 @@ class ScriptHostCompilationTest {
             this.messageCollector = collector
             if (scriptDef != null) {
                 val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
-                    configurationDependencies(JvmDependency(classpath))
+                    // an empty dependency would make the host classloader parentless, so the definition's annotation classes
+                    // would not be loadable during the configuration refinement
+                    if (classpath.isNotEmpty()) {
+                        configurationDependencies(JvmDependency(classpath))
+                    }
                 }
                 add(
                     ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
