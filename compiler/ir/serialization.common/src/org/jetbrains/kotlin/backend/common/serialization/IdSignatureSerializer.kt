@@ -13,14 +13,18 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.library.impl.IrArrayWriter
+import org.jetbrains.kotlin.library.impl.IrStringWriter
 import java.util.ArrayList
 
 class IdSignatureSerializer(
     private val stringSerializer: IrStringSerializer,
     private val debugInfoSerializer: IrStringSerializer,
-    private val protoIdSignatureMap: MutableMap<IdSignature, Int>,
-    private val protoIdSignatureArray: ArrayList<ProtoIdSignature>,
 ) {
+    // The same signature could be used multiple times in a file
+    // so use this index to store signature only once.
+    private val protoIdSignatureMap: MutableMap<IdSignature, Int> = mutableMapOf()
+    private val protoIdSignatureArray: ArrayList<ProtoIdSignature> = arrayListOf()
 
     private fun serializePublicSignature(signature: IdSignature.CommonSignature): ProtoCommonIdSignature {
         val proto = ProtoCommonIdSignature.newBuilder()
@@ -110,4 +114,9 @@ class IdSignatureSerializer(
             protoIdSignatureArray.size - 1
         }
     }
+
+    operator fun get(idSig: IdSignature): Int? = protoIdSignatureMap[idSig]
+
+    fun toIrArrayWriter(useVarIntInDataArrays: Boolean): IrArrayWriter =
+        IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }, useVarIntInDataArrays)
 }
