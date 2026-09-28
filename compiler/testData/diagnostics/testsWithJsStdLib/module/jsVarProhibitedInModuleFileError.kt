@@ -10,6 +10,10 @@ external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> moduleVar: I
 
 external val moduleVal: Int
 
+// Unlike on Wasm, a qualifier does not help: the imported value is copied into a local variable.
+@JsQualifier("qualified")
+external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> qualifiedVar: Int
+
 external object Obj {
     var memberVar: Int
 }
@@ -33,6 +37,13 @@ external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> nonModuleVar
 package bothFile
 
 external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> bothVar: Int
+
+// FILE: moduleWithQualifierFile.kt
+@file:JsModule("moduleWithQualifierFile")
+@file:JsQualifier("a.b")
+package moduleWithQualifierFile
+
+external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> qualifiedFileVar: Int
 
 // FILE: qualifierFile.kt
 @file:JsQualifier("qualifierFile")

@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers.declaration
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.js.checkers.isEitherModuleOrNonModule
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonVarInJsModuleFileChecker
-import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 
 object FirJsVarInJsModuleFileChecker : FirWebCommonVarInJsModuleFileChecker() {
-    override val moduleAnnotations: List<ClassId>
-        get() = listOf(JsStandardClassIds.Annotations.JsModule, JsStandardClassIds.Annotations.JsNonModule)
-
-    override fun isExternalLike(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
-        return symbol.isNativeObject(session)
+    context(context: CheckerContext)
+    override fun isNonWritableModuleImport(property: FirProperty): Boolean {
+        // An own module annotation is already covered by JS_MODULE_PROHIBITED_ON_VAR and NESTED_JS_MODULE_PROHIBITED.
+        if (property.symbol.isEitherModuleOrNonModule(context.session)) return false
+        // The imported value is copied into a local variable, so a write never reaches the module,
+        // no matter whether a qualifier is applied.
+        return context.containingFileSymbol?.isEitherModuleOrNonModule(context.session) == true
     }
 }

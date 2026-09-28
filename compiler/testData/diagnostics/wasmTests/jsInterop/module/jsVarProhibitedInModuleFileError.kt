@@ -11,6 +11,10 @@ external <!JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE_ERROR!>var<!> moduleVar: I
 
 external val moduleVal: Int
 
+// A qualified declaration is referenced through its qualifier, so writing to it does reach the module.
+@JsQualifier("qualified")
+external var qualifiedVar: Int
+
 external object Obj {
     var memberVar: Int
 }
@@ -21,6 +25,13 @@ external class Cls {
 
 <!JS_MODULE_PROHIBITED_ON_VAR, NESTED_JS_MODULE_PROHIBITED!>@JsModule("annotated")
 external var annotatedVar: Int<!>
+
+// FILE: moduleWithQualifierFile.kt
+@file:JsModule("moduleWithQualifierFile")
+@file:JsQualifier("a.b")
+package moduleWithQualifierFile
+
+external var qualifiedFileVar: Int
 
 // FILE: qualifierFile.kt
 @file:JsQualifier("qualifierFile")

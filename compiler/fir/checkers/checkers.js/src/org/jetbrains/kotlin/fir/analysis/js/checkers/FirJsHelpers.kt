@@ -61,6 +61,11 @@ fun sanitizeName(name: String): String {
     return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
 }
 
+internal fun FirBasedSymbol<*>.isEitherModuleOrNonModule(session: FirSession): Boolean {
+    return hasAnnotation(JsStandardClassIds.Annotations.JsModule, session) ||
+            hasAnnotation(JsStandardClassIds.Annotations.JsNonModule, session)
+}
+
 fun FirBasedSymbol<*>.isLibraryObject(session: FirSession): Boolean {
     return hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsLibrary, session)
 }

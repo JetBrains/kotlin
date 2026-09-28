@@ -16,14 +16,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
+import org.jetbrains.kotlin.fir.analysis.js.checkers.isEitherModuleOrNonModule
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsModule
-import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsNonModule
 
 object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -60,9 +58,5 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
     private fun FirDeclaration.isEitherModuleOrNonModule(session: FirSession): Boolean {
         return symbol.isEitherModuleOrNonModule(session)
-    }
-
-    private fun FirBasedSymbol<*>.isEitherModuleOrNonModule(session: FirSession): Boolean {
-        return hasAnnotation(JsModule, session) || hasAnnotation(JsNonModule, session)
     }
 }
