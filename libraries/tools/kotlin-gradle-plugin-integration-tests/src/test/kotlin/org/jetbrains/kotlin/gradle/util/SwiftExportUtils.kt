@@ -20,11 +20,15 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinPublicationFormat
+import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.testbase.EnvironmentalVariables
 import org.jetbrains.kotlin.gradle.testbase.EnvironmentalVariablesOverride
 import org.jetbrains.kotlin.gradle.testbase.GradleProject
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
+import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.compileStubSourceWithSourceSetName
 import org.jetbrains.kotlin.gradle.testbase.plugins
@@ -81,6 +85,37 @@ internal fun KGPBaseTest.publishMultiplatformLibrary(
         project.applyMultiplatform(configure)
     }
 }.publish(publisherConfiguration = PublisherConfiguration(version = libraryVersion))
+
+/**
+ * A library named `producer` with an iosArm64 target, published in [publicationFormat], optionally with the Swift
+ * Export DSL configured.
+ */
+@OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalSwiftExportDsl::class)
+internal fun KGPBaseTest.swiftExportKotlinArchiveProducer(
+    gradleVersion: GradleVersion,
+    publicationFormat: KotlinPublicationFormat = KotlinPublicationFormat.KOTLIN_ARCHIVE,
+    withSwiftExport: Boolean = true,
+): TestProject = project("empty", gradleVersion) {
+    plugins { kotlin("multiplatform") }
+    settingsBuildScriptInjection {
+        settings.rootProject.name = "producer"
+    }
+    buildScriptInjection {
+        project.applyMultiplatform {
+            iosArm64()
+            sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+            publishing {
+                this.publicationFormat.set(publicationFormat)
+            }
+        }
+        if (withSwiftExport) {
+            export.swift {
+                moduleName.set("Foo")
+                rootPackage.set("org.bar.foo")
+            }
+        }
+    }
+}
 
 internal fun swiftCompile(workingDir: File, libDir: File, source: File, target: String) = runProcess(
     listOf(
@@ -379,5 +414,34 @@ internal fun PublishedProject.assertSwiftExportMetadataVariantMissingInRootCompo
     assertNull(
         rootComponentVariants().find { it.name == SWIFT_EXPORT_METADATA_ELEMENTS },
         "The root component should not declare a $SWIFT_EXPORT_METADATA_ELEMENTS variant"
+    )
+}
+
+/**
+ * Under the Kotlin Archive format the variant is replaced by the archive, so it has the `-published` suffix
+ * and the compression attribute.
+ */
+internal fun PublishedProject.assertSwiftExportMetadataKarVariantExistsInRootComponent() {
+    assertEquals(
+        Variant(
+            name = "$SWIFT_EXPORT_METADATA_ELEMENTS-published",
+            attributes = mapOf(
+                "org.gradle.category" to "library",
+                "org.gradle.usage" to "swiftExportMetadata",
+                "org.jetbrains.kotlin.kar.compression.method" to "xz",
+            ),
+            availableAt = null,
+            files = listOf(
+                VariantFile(
+                    name = "$name.kar.xz",
+                    url = "$name-$version.kar.xz",
+                )
+            ),
+        ).prettyPrinted,
+        rootComponentVariants().single { it.name == "$SWIFT_EXPORT_METADATA_ELEMENTS-published" }.prettyPrinted
+    )
+    assertNull(
+        rootComponentVariants().find { it.name == SWIFT_EXPORT_METADATA_ELEMENTS },
+        "Under the Kotlin Archive format only the -published variant must be declared"
     )
 }

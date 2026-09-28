@@ -65,10 +65,10 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         )
         locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration(swiftExportConfiguration)
 
-        // Published dependencies expose their metadata through the `swiftExportMetadataElements` variant registered
-        // above. Same-build subprojects additionally share it as a secondary variant on each apple target's
-        // `apiElements`, so that a consuming project in the same build can read it at execution time without relying on
-        // the module cache (which a not-yet-published subproject has no entry in).
+        // Published dependencies expose their metadata through the root publication's Swift Export metadata variant.
+        // Same-build subprojects additionally share it as a secondary variant on each apple target's `apiElements`, so
+        // that a consuming project in the same build can read it at execution time without relying on the module cache
+        // (which a not-yet-published subproject has no entry in).
         val metadata = project.provider {
             SwiftExportMetadata(
                 moduleName = swiftExportConfiguration.moduleName.orNull,
