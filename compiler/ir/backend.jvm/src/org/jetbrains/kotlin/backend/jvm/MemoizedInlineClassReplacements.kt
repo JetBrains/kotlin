@@ -264,7 +264,7 @@ class MemoizedInlineClassReplacements(
                     defaultValue = null,
                     name = if (parameter.kind == IrParameterKind.ExtensionReceiver) {
                         // The function's name will be mangled, so preserve the old receiver name.
-                        Name.identifier(function.extensionReceiverName(context.config))
+                        Name.identifier(function.extensionReceiverName())
                     } else parameter.name
                 ).also {
                     // Assuming that constructors and non-override functions are always replaced with the unboxed
@@ -300,7 +300,7 @@ class MemoizedInlineClassReplacements(
                     IrParameterKind.ExtensionReceiver -> {
                         parameter.copyTo(
                             this,
-                            name = Name.identifier(function.extensionReceiverName(context.config)),
+                            name = Name.identifier(function.extensionReceiverName()),
                             origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
                             kind = IrParameterKind.Regular,
                         )
