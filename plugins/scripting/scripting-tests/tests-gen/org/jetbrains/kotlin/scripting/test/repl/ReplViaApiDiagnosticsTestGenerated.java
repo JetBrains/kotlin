@@ -136,6 +136,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("smartcast_on_property_from_previous_snippet.repl.kts")
+  public void testSmartcast_on_property_from_previous_snippet_repl() {
+    run("smartcast_on_property_from_previous_snippet.repl.kts");
+  }
+
+  @Test
   @TestMetadata("unsafe_cast_assignment_within_class.repl.kts")
   public void testUnsafe_cast_assignment_within_class_repl() {
     run("unsafe_cast_assignment_within_class.repl.kts");
@@ -163,5 +169,11 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   @TestMetadata("unsafe_cast_in_loop.repl.kts")
   public void testUnsafe_cast_in_loop_repl() {
     run("unsafe_cast_in_loop.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("val_reassignment_across_snippets.repl.kts")
+  public void testVal_reassignment_across_snippets_repl() {
+    run("val_reassignment_across_snippets.repl.kts");
   }
 }
