@@ -42,8 +42,7 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val isCallAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS)
     val isReceiverAssertionsDisabled: Boolean =
-        configuration.getBoolean(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS) ||
-                !languageVersionSettings.supportsFeature(LanguageFeature.NullabilityAssertionOnExtensionReceiver)
+        configuration.getBoolean(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS)
     val isParamAssertionsDisabled: Boolean = configuration.getBoolean(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS)
 
     val assertionsMode: JVMAssertionsMode = configuration.get(JVMConfigurationKeys.ASSERTIONS_MODE, JVMAssertionsMode.DEFAULT)
