@@ -45,13 +45,13 @@ MODULE_FRAGMENT
         BLOCK_BODY
           CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.C.foo' type=androidx.compose.runtime.Composer? origin=null
-            ARG key: CONST Int type=kotlin.Int value=890632959
+            ARG key: CONST Int type=kotlin.Int value=1202073481
             ARG sourceInformation: CONST String type=kotlin.String value="C(foo)N(a)-1@-2:versionOverloads.kt#lvnus6"
           WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
               then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                ARG key: CONST Int type=kotlin.Int value=890632959
+                ARG key: CONST Int type=kotlin.Int value=1202073481
                 ARG dirty1: GET_VAR '$changed: kotlin.Int declared in example.C.foo' type=kotlin.Int origin=null
                 ARG dirty2: CONST Int type=kotlin.Int value=-1
                 ARG info: CONST String type=kotlin.String value="example.C.foo (versionOverloads.kt:-1)"
@@ -95,7 +95,7 @@ MODULE_FRAGMENT
         BLOCK_BODY
           CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.C.foo' type=androidx.compose.runtime.Composer? origin=null
-            ARG key: CONST Int type=kotlin.Int value=602662024
+            ARG key: CONST Int type=kotlin.Int value=-657987332
             ARG sourceInformation: CONST String type=kotlin.String value="C(foo)N(a,b)-1@-2:versionOverloads.kt#lvnus6"
           WHEN type=kotlin.Unit origin=IF
             BRANCH
@@ -111,7 +111,7 @@ MODULE_FRAGMENT
             BRANCH
               if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
               then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-                ARG key: CONST Int type=kotlin.Int value=602662024
+                ARG key: CONST Int type=kotlin.Int value=-657987332
                 ARG dirty1: GET_VAR '$changed: kotlin.Int declared in example.C.foo' type=kotlin.Int origin=null
                 ARG dirty2: CONST Int type=kotlin.Int value=-1
                 ARG info: CONST String type=kotlin.String value="example.C.foo (versionOverloads.kt:-1)"
@@ -216,13 +216,13 @@ MODULE_FRAGMENT
       BLOCK_BODY
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.bar' type=androidx.compose.runtime.Composer? origin=null
-          ARG key: CONST Int type=kotlin.Int value=1582449543
+          ARG key: CONST Int type=kotlin.Int value=-438126079
           ARG sourceInformation: CONST String type=kotlin.String value="C(bar)N(a)-1@-2:versionOverloads.kt#lvnus6"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
             if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
             then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-              ARG key: CONST Int type=kotlin.Int value=1582449543
+              ARG key: CONST Int type=kotlin.Int value=-438126079
               ARG dirty1: GET_VAR '$changed: kotlin.Int declared in example.bar' type=kotlin.Int origin=null
               ARG dirty2: CONST Int type=kotlin.Int value=-1
               ARG info: CONST String type=kotlin.String value="example.bar (versionOverloads.kt:-1)"
@@ -258,7 +258,7 @@ MODULE_FRAGMENT
       BLOCK_BODY
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.bar' type=androidx.compose.runtime.Composer? origin=null
-          ARG key: CONST Int type=kotlin.Int value=729054976
+          ARG key: CONST Int type=kotlin.Int value=1963707764
           ARG sourceInformation: CONST String type=kotlin.String value="C(bar)N(a,b)-1@-2:versionOverloads.kt#lvnus6"
         WHEN type=kotlin.Unit origin=IF
           BRANCH
@@ -274,7 +274,7 @@ MODULE_FRAGMENT
           BRANCH
             if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
             then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
-              ARG key: CONST Int type=kotlin.Int value=729054976
+              ARG key: CONST Int type=kotlin.Int value=1963707764
               ARG dirty1: GET_VAR '$changed: kotlin.Int declared in example.bar' type=kotlin.Int origin=null
               ARG dirty2: CONST Int type=kotlin.Int value=-1
               ARG info: CONST String type=kotlin.String value="example.bar (versionOverloads.kt:-1)"

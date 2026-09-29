@@ -25,6 +25,8 @@ import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromO
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -36,7 +38,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.irBlockBody
@@ -57,7 +58,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
-import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.Annotations
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -1260,17 +1260,13 @@ abstract class AbstractComposeLowering(
         }
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrSimpleFunction.sourceKey(): Int {
         val info = this.durableFunctionKey
         if (info != null) {
             info.used = true
             return info.key
         }
-        val signature = symbol.descriptor.computeJvmDescriptor(withName = false)
-        val name = fqNameForIrSerialization
-        val stringKey = "$name$signature"
-        return stringKey.hashCode()
+        return IrMangleComputer(StringBuilder(), MangleMode.FULL, compatibleMode = false).computeMangle(this).hashCode()
     }
 
     /*
