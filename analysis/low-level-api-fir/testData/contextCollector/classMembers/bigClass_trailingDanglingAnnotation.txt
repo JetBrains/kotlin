@@ -1,0 +1,79 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Static scope owner symbol: FirRegularClassSymbol public final class BigClass : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class BigClass : R|kotlin/Any|
+                Type: test.BigClass
+
+FILE: [ResolvedTo(IMPORTS)] bigClass_trailingDanglingAnnotation.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|test/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val CONSTANT: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class BigClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/BigClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member1(): R|kotlin/Int| {
+            ^member1 Int(1)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member2(): R|kotlin/Int| {
+            ^member2 Int(2)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member3(): R|kotlin/Int| {
+            ^member3 Int(3)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member4(): R|kotlin/Int| {
+            ^member4 Int(4)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member5(): R|kotlin/Int| {
+            ^member5 Int(5)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member6(): R|kotlin/Int| {
+            ^member6 Int(6)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member7(): R|kotlin/Int| {
+            ^member7 Int(7)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member8(): R|kotlin/Int| {
+            ^member8 Int(8)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member9(): R|kotlin/Int| {
+            ^member9 Int(9)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun member10(): R|kotlin/Int| {
+            ^member10 Int(10)
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](value = R|test/CONSTANT| [evaluated = Int(1)]) <DANGLING MODIFIER: Top level declaration expected>
+    }
