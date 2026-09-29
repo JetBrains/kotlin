@@ -37,7 +37,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks(config.configuration.konanHome) {
                 PhaseEngine.startTopLevel(config) { engine ->
-                    LlvmKotlinBridge.initialize()
+                    LlvmKotlinBridge.initialize(config.configuration.konanHome)
                     if (!config.compileFromBitcode.isNullOrEmpty()) produceBinaryFromBitcode(engine, config, config.compileFromBitcode!!)
                     else when (config.produce) {
                         CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)

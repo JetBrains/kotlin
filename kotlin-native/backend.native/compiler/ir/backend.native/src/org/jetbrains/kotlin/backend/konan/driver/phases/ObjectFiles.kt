@@ -5,18 +5,26 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
+import org.jetbrains.kotlin.backend.konan.BitcodePostProcessingContext
 import org.jetbrains.kotlin.backend.konan.ClangBitcodeCompiler
-import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.LlvmBitcodeCompiler
 import java.nio.file.Path
 
-internal data class ObjectFilesPhaseInput(
-        val bitcodeFile: Path,
-        val objectFile: Path,
-)
+internal sealed interface ObjectFilesPhaseInput {
+    // Where the object file will be written into the file-system.
+    val objectOutputPath: Path
 
-internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, ObjectFilesPhaseInput>(
+    data class ClangBased(val bitcodePath: Path, override val objectOutputPath: Path) : ObjectFilesPhaseInput
+    data class InProcess(val llvmModule: LLVMModuleRef, override val objectOutputPath: Path) : ObjectFilesPhaseInput
+}
+
+internal val ObjectFilesPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, ObjectFilesPhaseInput>(
         name = "ObjectFiles",
 ) { context, input ->
-    ClangBitcodeCompiler(context).makeObjectFile(input.bitcodeFile, input.objectFile)
+    when (input) {
+        is ObjectFilesPhaseInput.ClangBased -> ClangBitcodeCompiler(context).makeObjectFile(input.bitcodePath, input.objectOutputPath)
+        is ObjectFilesPhaseInput.InProcess -> LlvmBitcodeCompiler(context).makeObjectFile(input.llvmModule, input.objectOutputPath)
+    }
 }

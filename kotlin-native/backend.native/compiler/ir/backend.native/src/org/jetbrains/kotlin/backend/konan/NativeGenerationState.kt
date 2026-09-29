@@ -9,7 +9,9 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.LlvmKotlinBridge
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.createTargetMachineConfig
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
@@ -42,6 +44,7 @@ internal class FileLowerState {
 internal interface BitcodePostProcessingContext : NativeBackendPhaseContext, LlvmIrHolder {
     val llvm: BasicLlvmHelpers
     val llvmContext: LLVMContextRef
+    val llvmBridge: LlvmKotlinBridge
 }
 
 internal class BitcodePostProcessingContextImpl(
@@ -50,6 +53,21 @@ internal class BitcodePostProcessingContextImpl(
         override val llvmContext: LLVMContextRef
 ) : BitcodePostProcessingContext, BasicNativeBackendPhaseContext(config) {
     override val llvm: BasicLlvmHelpers = BasicLlvmHelpers(this, llvmModule)
+
+    private val llvmBridgeDelegate = lazy { LlvmKotlinBridge(createTargetMachineConfig(llvm.targetTriple)) }
+    override val llvmBridge by llvmBridgeDelegate
+
+    private var isDisposed = false
+
+    override fun dispose() {
+        if (isDisposed) return
+
+        if (llvmBridgeDelegate.isInitialized()) {
+            llvmBridge.close()
+        }
+
+        isDisposed = true
+    }
 }
 
 internal class NativeGenerationState(
@@ -83,6 +101,7 @@ internal class NativeGenerationState(
     private val runtimeDelegate = lazy { Runtime(this, llvmContext, runtimeModulesConfig.absolutePathFor(RuntimeModule.COMPILER_INTERFACE)) }
     private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
+    private val llvmBridgeDelegate = lazy { LlvmKotlinBridge(createTargetMachineConfig(llvm.targetTriple)) }
 
     override val llvmContext = run {
         loadLLVMStubs(config.configuration.konanHome)
@@ -91,6 +110,7 @@ internal class NativeGenerationState(
     val runtime by runtimeDelegate
     override val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
+    override val llvmBridge by llvmBridgeDelegate
     val cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations
 
@@ -130,6 +150,9 @@ internal class NativeGenerationState(
     override fun dispose() {
         if (isDisposed) return
 
+        if (llvmBridgeDelegate.isInitialized()) {
+            llvmBridge.close()
+        }
         if (hasDebugInfo()) {
             LLVMDisposeDIBuilder(debugInfo.builder)
         }
