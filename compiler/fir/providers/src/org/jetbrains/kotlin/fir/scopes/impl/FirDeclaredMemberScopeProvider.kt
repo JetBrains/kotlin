@@ -174,11 +174,11 @@ fun FirSession.nestedClassifierScope(klass: FirClass): FirNestedClassifierScope?
 }
 
 fun lazyNestedClassifierScope(
+    klass: FirClass,
     session: FirSession,
-    classId: ClassId,
     existingNames: List<Name>,
 ): FirLazyNestedClassifierScope {
-    return FirLazyNestedClassifierScope(session, classId, existingNames)
+    return FirLazyNestedClassifierScope(klass, session, existingNames)
 }
 
 val FirSession.declaredMemberScopeProvider: FirDeclaredMemberScopeProvider by FirSession.sessionComponentAccessor()
