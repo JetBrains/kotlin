@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // ISSUE: KT-78987
 annotation class ValueContainer
 

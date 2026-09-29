@@ -1,1 +1,0 @@
-Caused by: org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Unexpected returnTypeRef. Expected is FirResolvedTypeRef, but was FirImplicitTypeRefImplWithoutSource
