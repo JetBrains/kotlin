@@ -47,6 +47,12 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   }
 
   @Test
+  @TestMetadata("codeFragmentWithCompilerPlugin.kt")
+  public void testCodeFragmentWithCompilerPlugin() {
+    run("codeFragmentWithCompilerPlugin.kt");
+  }
+
+  @Test
   @TestMetadata("companionBlocks.kt")
   public void testCompanionBlocks() {
     run("companionBlocks.kt");
@@ -164,6 +170,12 @@ public class SourceLikePsiBasedContainingClassCalculatorConsistencyTestGenerated
   @TestMetadata("localClass.kt")
   public void testLocalClass() {
     run("localClass.kt");
+  }
+
+  @Test
+  @TestMetadata("localClassWithCompilerPlugin.kt")
+  public void testLocalClassWithCompilerPlugin() {
+    run("localClassWithCompilerPlugin.kt");
   }
 
   @Test
