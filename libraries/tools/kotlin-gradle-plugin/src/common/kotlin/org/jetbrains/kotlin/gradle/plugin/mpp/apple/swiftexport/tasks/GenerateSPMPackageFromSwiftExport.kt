@@ -13,6 +13,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -22,12 +23,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.sharedPackageRootFor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.utils.CommaSeparatedEntriesBuilder
 import org.jetbrains.kotlin.gradle.utils.StringBlockBuilder
 import org.jetbrains.kotlin.gradle.utils.buildStringBlock
 import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
 import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -54,6 +57,17 @@ internal abstract class SwiftExportTargetOutput {
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val files: ConfigurableFileCollection
+}
+
+internal fun ObjectFactory.SwiftExportTargetOutput(
+    target: KotlinNativeTarget,
+    swiftExportTask: TaskProvider<SwiftExportTask>,
+): SwiftExportTargetOutput = newInstance<SwiftExportTargetOutput>().apply {
+    targetName.set(target.name)
+    this.target.set(target.konanTarget)
+    swiftModulesFile.set(swiftExportTask.flatMap { it.parameters.swiftModulesFile })
+    // The parent of `outputPath`: Swift Export writes the support modules next to it.
+    files.from(swiftExportTask.flatMap { it.parameters.outputPath }.map { it.asFile.parentFile })
 }
 
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
