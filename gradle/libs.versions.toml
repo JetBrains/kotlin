@@ -247,6 +247,8 @@ analysis-api-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", ve
 analysis-api-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "analysis-api-kotlin" }
 analysis-api-kotlin-metadata-jvm = { module = "org.jetbrains.kotlin:kotlin-metadata-jvm", version.ref = "analysis-api-kotlin" }
 
+swiftextract = { module = "org.swift.swiftkit:swiftextract", version = "0.6.0" }
+
 fileLeakDetector = { module = "io.jenkins.tools:file-leak-detector", version.ref = "fileLeakDetector" }
 
 jacoco-agent = { module = "org.jacoco:org.jacoco.agent", version.ref = "jacoco" }
