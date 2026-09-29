@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -611,6 +612,7 @@ private class ContextCollectorVisitor(
 
             onActive {
                 withInterceptor {
+                    skipUnrelatedDeclarations(file.declarations) { it.parent is KtFile }
                     processChildren(file)
                 }
             }
@@ -726,7 +728,7 @@ private class ContextCollectorVisitor(
                     onActive {
                         withLocalVariableHolder(onEnter = { enterClass(regularClass) }, onExit = { exitClass() }) {
                             withInterceptor {
-                                skipUnrelatedClassBodyMembers(regularClass)
+                                skipUnrelatedDeclarations(regularClass.declarations) { it.parent is KtClassBody }
                                 processChildren(regularClass)
                             }
                         }
@@ -816,22 +818,19 @@ private class ContextCollectorVisitor(
     }
 
     /**
-     * Once the designation is exhausted, skips class body members that don't contain the target:
+     * Once the designation is exhausted or absent, skips [declarations] that don't contain the target:
      * no context can be collected inside them, but visiting them would trigger their body analysis (KT-76375).
      *
-     * Only members with a real source declared directly in the class body are skipped, as FIR might put the target under
-     * members with a fake source (e.g., data class generated members) or declared outside the class body
-     * (e.g., constructor properties, delegate fields, or the primary constructor with its delegated constructor call).
-     * Each member is checked by its own PSI, as the FIR tree of a class body member never leaves its PSI.
+     * Only declarations with a real source declared directly in a class body or a file ([isDirectMember]) are skipped,
+     * as FIR might put the target under members with a fake source (e.g., data class generated members) or declared
+     * outside the class body (e.g., constructor properties, delegate fields, or the primary constructor with its
+     * delegated constructor call). Each declaration is checked by its own PSI, as the FIR tree of such a declaration
+     * never leaves its PSI. Script and REPL snippet members are kept, as their statements drive the data flow.
      */
-    private fun Processor.skipUnrelatedClassBodyMembers(regularClass: FirRegularClass) {
-        if (designationPathInterceptor == null) {
-            return
-        }
-
-        for (declaration in regularClass.declarations) {
+    private fun Processor.skipUnrelatedDeclarations(declarations: List<FirDeclaration>, isDirectMember: (PsiElement) -> Boolean) {
+        for (declaration in declarations) {
             val psi = declaration.realPsi ?: continue
-            if (psi.parent is KtClassBody && filter(psi) == FilterResponse.SKIP) {
+            if (isDirectMember(psi) && filter(psi) == FilterResponse.SKIP) {
                 skip(declaration)
             }
         }
