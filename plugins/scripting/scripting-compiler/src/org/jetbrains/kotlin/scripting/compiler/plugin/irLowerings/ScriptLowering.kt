@@ -19,6 +19,11 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.IrAnonymousInitializerBuilder
+import org.jetbrains.kotlin.ir.declarations.builder.buildAnonymousInitializer
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
 import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
@@ -29,8 +34,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -263,24 +266,9 @@ internal class ScriptsToClassesLowering(
         irScript: IrScript,
         implicitReceiversFieldsWithParameters: ArrayList<Pair<IrField, IrValueParameter>>
     ): IrConstructor =
-        with(IrFunctionBuilder().apply {
+        irScriptClass.factory.buildConstructor {
             isPrimary = true
             returnType = irScriptClass.thisReceiver!!.type as IrSimpleType
-        }) {
-            irScriptClass.factory.createConstructor(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = SpecialNames.INIT,
-                visibility = visibility,
-                isInline = isInline,
-                isExpect = isExpect,
-                returnType = returnType,
-                symbol = IrConstructorSymbolImpl(),
-                isPrimary = isPrimary,
-                isExternal = isExternal,
-                containerSource = containerSource,
-            )
         }.also { irConstructor ->
             irConstructor.parameters = buildList {
                 irScript.earlierScriptsParameter?.let {
@@ -625,14 +613,11 @@ private fun IrClass.addEarlierScriptField(irScript: IrScript) =
         declarations.add(it)
     }
 
-private inline fun IrClass.addAnonymousInitializer(builder: IrFunctionBuilder.() -> Unit = {}): IrAnonymousInitializer =
-    IrFunctionBuilder().run {
+private inline fun IrClass.addAnonymousInitializer(
+    builder: IrAnonymousInitializerBuilder.() -> Unit = {},
+): IrAnonymousInitializer =
+    factory.buildAnonymousInitializer {
         builder()
-        returnType = defaultType
-        factory.createAnonymousInitializer(
-            startOffset, endOffset, origin,
-            IrAnonymousInitializerSymbolImpl()
-        )
     }.also { anonymousInitializer ->
         declarations.add(anonymousInitializer)
         anonymousInitializer.parent = this@addAnonymousInitializer

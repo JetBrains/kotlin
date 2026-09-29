@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -98,7 +98,7 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
     // * the regular rules of this lowering will insert calls to the actual initializers inside the body
     // * initializers of other classes will emit calls to this trigger, when needed
     private fun IrClass.getClinitTriggerFunction() = ::clinitTriggerFunction.getOrSetIfNull {
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             name = Name.identifier($$"$clinit_trigger")
             visibility = DescriptorVisibilities.PUBLIC
             returnType = context.irBuiltIns.unitType
@@ -288,7 +288,7 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
             name: String,
             origin: IrDeclarationOrigin,
             initializers: List<IrExpression>
-    ) = context.irFactory.buildFun {
+    ) = context.irFactory.buildSimpleFunction {
         startOffset = SYNTHETIC_OFFSET
         endOffset = SYNTHETIC_OFFSET
         this.origin = origin

@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -232,7 +232,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
                 (metadata as? MetadataSource.Property)?.isConst != true)
     ) return null
 
-    val function = context.irFactory.buildFun {
+    val function = context.irFactory.buildSimpleFunction {
         updateFrom(target)
         isFakeOverride = shouldGeneratePartHierarchy
         name = target.name

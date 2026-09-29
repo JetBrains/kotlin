@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClassBase
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_DEFAULT_FQ_NAME
@@ -89,7 +89,7 @@ private fun isFakeOverrideOrDefaultImplsBridge(f: IrSimpleFunction): Boolean =
 fun IrFactory.createDefaultImplsRedirection(fakeOverride: IrSimpleFunction): IrSimpleFunction {
     assert(fakeOverride.isFakeOverride) { "Function should be a fake override: ${fakeOverride.render()}" }
     val irClass = fakeOverride.parentAsClass
-    return buildFun {
+    return buildSimpleFunction {
         origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
         name = fakeOverride.name
         visibility = fakeOverride.visibility

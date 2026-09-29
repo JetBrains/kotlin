@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -52,7 +52,7 @@ interface IrBuilderWithPluginContext {
         type: IrType,
         bodyGen: IrBlockBodyBuilder.() -> Unit
     ): IrFunctionExpression {
-        val function = compilerContext.irFactory.buildFun {
+        val function = compilerContext.irFactory.buildSimpleFunction {
             this.startOffset = this@createLambdaExpression.startOffset
             this.endOffset = this@createLambdaExpression.endOffset
             this.returnType = type

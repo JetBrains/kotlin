@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.Companion.ARGUMENTS_REORDERING_FOR_CALL
 import org.jetbrains.kotlin.ir.irAttribute
@@ -46,7 +46,7 @@ internal class EnumsSupport(
     fun getValueGetter(enumClass: IrClass): IrSimpleFunction {
         require(enumClass.isEnumClass) { "Expected enum class but was: ${enumClass.render()}" }
         return enumClass::enumValueGetter.getOrSetIfNull {
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 startOffset = enumClass.startOffset
                 endOffset = enumClass.endOffset
                 origin = DECLARATION_ORIGIN_ENUM

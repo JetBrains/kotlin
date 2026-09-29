@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -48,7 +48,7 @@ fun IrBuilderWithScope.irLambda(
     block: IrBlockBodyBuilder.() -> Unit,
 ): IrFunctionExpression {
     val scope = this
-    val lambda = context.irFactory.buildFun {
+    val lambda = context.irFactory.buildSimpleFunction {
         this.startOffset = startOffset
         this.endOffset = endOffset
         name = Name.special("<anonymous>")

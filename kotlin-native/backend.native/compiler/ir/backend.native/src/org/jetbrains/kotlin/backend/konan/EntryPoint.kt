@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
@@ -36,7 +36,7 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
         actualMain.endOffset
     else
         SYNTHETIC_OFFSET
-    val entryPoint = context.irFactory.buildFun {
+    val entryPoint = context.irFactory.buildSimpleFunction {
         this.startOffset = startOffset
         this.endOffset = endOffset
         origin = DECLARATION_ORIGIN_ENTRY_POINT

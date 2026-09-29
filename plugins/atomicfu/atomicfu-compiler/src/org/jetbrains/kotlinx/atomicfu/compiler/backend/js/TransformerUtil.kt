@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -149,7 +150,7 @@ private fun buildGetField(backingField: IrField, ownerClass: IrExpression?): IrG
 }
 
 private fun IrPluginContext.buildDefaultPropertyAccessor(name: String): IrSimpleFunction =
-    irFactory.buildFun {
+    irFactory.buildSimpleFunction {
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
         this.origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR

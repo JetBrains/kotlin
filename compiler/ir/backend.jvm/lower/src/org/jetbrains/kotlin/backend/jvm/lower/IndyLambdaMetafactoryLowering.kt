@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -163,7 +163,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
             byDeserializedLambdaInfo[deserializedLambdaInfo] = serializableMethodRefInfo
         }
 
-        val deserializeLambdaFun = backendContext.irFactory.buildFun {
+        val deserializeLambdaFun = backendContext.irFactory.buildSimpleFunction {
             name = Name.identifier("\$deserializeLambda\$")
             visibility = DescriptorVisibilities.PRIVATE
             origin = JvmLoweredDeclarationOrigin.DESERIALIZE_LAMBDA_FUN
@@ -453,7 +453,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
     ): IrCall {
         val dynamicCallArguments = mutableListOf<IrExpression>()
 
-        val irDynamicCallTarget = backendContext.irFactory.buildFun {
+        val irDynamicCallTarget = backendContext.irFactory.buildSimpleFunction {
             origin = JvmLoweredDeclarationOrigin.INVOKEDYNAMIC_CALL_TARGET
             name = samMethod.name
             returnType = erasedSamType

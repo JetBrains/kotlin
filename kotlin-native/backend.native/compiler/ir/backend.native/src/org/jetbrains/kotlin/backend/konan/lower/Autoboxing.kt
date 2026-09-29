@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
 import org.jetbrains.kotlin.ir.irAttribute
@@ -643,7 +643,7 @@ private fun NativeLoweringContext.getLoweredInlineClassConstructor(irConstructor
         irConstructor.returnType
     }
 
-    irFactory.buildFun {
+    irFactory.buildSimpleFunction {
         startOffset = irConstructor.startOffset
         endOffset = irConstructor.endOffset
         name = Name.special("<constructor>")

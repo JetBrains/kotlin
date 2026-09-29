@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
@@ -36,7 +36,7 @@ internal var IrSimpleFunction.originalConstructor: IrConstructor? by irAttribute
 
 internal fun NativeLoweringContext.getLoweredConstructorFunction(irConstructor: IrConstructor): IrSimpleFunction =
         irConstructor::loweredConstructorFunction.getOrSetIfNull {
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 name = irConstructor.name
                 startOffset = irConstructor.startOffset
                 endOffset = irConstructor.endOffset

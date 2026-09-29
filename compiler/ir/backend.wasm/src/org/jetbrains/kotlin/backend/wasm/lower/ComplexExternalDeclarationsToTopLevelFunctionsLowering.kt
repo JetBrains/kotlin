@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -471,7 +471,7 @@ fun createExternalJsFunction(
     resultType: IrType,
     jsCode: String,
 ): IrSimpleFunction {
-    val res = context.irFactory.buildFun {
+    val res = context.irFactory.buildSimpleFunction {
         name = Name.identifier(originalName.asStringStripSpecialMarkers() + suffix)
         returnType = resultType
         isExternal = true

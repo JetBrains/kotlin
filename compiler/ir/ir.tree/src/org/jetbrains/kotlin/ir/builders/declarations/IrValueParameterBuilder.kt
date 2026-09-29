@@ -5,12 +5,18 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
 
 const val UNDEFINED_PARAMETER_INDEX = -1
 
+/**
+ * This class cannot be marked as deprecated as there are methods in declarationBuilders.kt that still use the builders
+ * and are not yet part of the builders migration (addX)
+ */
+@OptIn(DeprecatedCompilerApi::class)
 class IrValueParameterBuilder : IrDeclarationBuilder() {
     var kind: IrParameterKind = IrParameterKind.Regular
     lateinit var type: IrType

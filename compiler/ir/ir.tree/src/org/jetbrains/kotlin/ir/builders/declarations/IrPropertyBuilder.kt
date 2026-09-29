@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
+/**
+ * This class cannot be marked as deprecated as there are methods in declarationBuilders.kt that still use the builders
+ * and are not yet part of the builders migration (addX)
+ */
+@OptIn(DeprecatedCompilerApi::class)
 class IrPropertyBuilder : IrDeclarationBuilder() {
     var modality: Modality = Modality.FINAL
 

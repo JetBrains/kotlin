@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -157,7 +157,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     ): IrSimpleFunction {
         val source = this
 
-        return factory.buildFun {
+        return factory.buildSimpleFunction {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
@@ -214,7 +214,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         parent: IrDeclarationParent,
         superQualifierSymbol: IrClassSymbol?
     ): IrSimpleFunction =
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR
@@ -274,7 +274,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         parent: IrDeclarationParent,
         superQualifierSymbol: IrClassSymbol?
     ): IrSimpleFunction =
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             startOffset = parent.startOffset
             endOffset = parent.startOffset
             origin = IrDeclarationOrigin.SYNTHETIC_ACCESSOR

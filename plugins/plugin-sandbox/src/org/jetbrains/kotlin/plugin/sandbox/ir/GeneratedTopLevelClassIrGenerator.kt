@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.addBackingField
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -382,7 +382,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
     }
 
     private fun buildFromCompanionFunction(klass: IrClass): IrSimpleFunction {
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier("fromCompanion")
@@ -501,7 +501,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
      */
     private fun buildIdentityFunction(klass: IrClass, functionName: String, typeParameter: IrTypeParameter): IrSimpleFunction {
         val valueType = typeParameter.defaultType
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier(functionName)
@@ -528,7 +528,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
 
     private fun buildSelfFunction(klass: IrClass): IrSimpleFunction {
         val selfType = klass.thisReceiver!!.type
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier("self")
@@ -636,7 +636,7 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
     }
 
     private fun buildFooFunction(klass: IrClass): IrSimpleFunction {
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier("foo")

@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetField
@@ -105,7 +105,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
     }
 
     private fun createFunction(irScript: IrScript, name: String, returnType: IrType): IrSimpleFunction =
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             val [startOffset, endOffset] = getFunctionBodyOffsets(irScript)
             this.startOffset = startOffset
             this.endOffset = endOffset

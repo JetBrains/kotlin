@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.builders.declarations
 
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -12,6 +13,11 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
+/**
+ * This class cannot be marked as deprecated as there are methods in declarationBuilders.kt that still use the builders
+ * and are not yet part of the builders migration (addX)
+ */
+@OptIn(DeprecatedCompilerApi::class)
 class IrFunctionBuilder : IrDeclarationBuilder() {
 
     var isInline: Boolean = false

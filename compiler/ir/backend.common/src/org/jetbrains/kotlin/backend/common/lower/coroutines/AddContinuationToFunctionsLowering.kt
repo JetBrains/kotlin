@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irReturnUnit
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrReturn
@@ -116,7 +116,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(
     lowerReturnType: (IrType) -> IrType,
 ): IrSimpleFunction {
     require(this.isSuspend) { "$fqNameWhenAvailable should be a suspend function to create version with continuation" }
-    return factory.buildFun {
+    return factory.buildSimpleFunction {
         updateFrom(this@createSuspendFunctionStub)
         isSuspend = false
         name = this@createSuspendFunctionStub.name

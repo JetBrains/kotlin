@@ -24,6 +24,11 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.classSymbolOrNull
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildEnumEntry
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.impl.IrAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
@@ -609,7 +614,7 @@ class JvmSymbols(
     }
 
     override val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<unsafe-coerce>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -692,7 +697,7 @@ class JvmSymbols(
     val illegalArgumentExceptionCtorString = illegalArgumentException.constructors.single()
 
     val jvmMethodType: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<jvm-method-type>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -702,7 +707,7 @@ class JvmSymbols(
         }.symbol
 
     val jvmMethodHandle: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<jvm-method-handle>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -728,7 +733,7 @@ class JvmSymbols(
      * Bootstrap method handle is represented as a `<jvm-method-handle>` call.
      */
     val jvmIndyIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<jvm-indy>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -753,7 +758,7 @@ class JvmSymbols(
      * ```
      */
     val jvmOriginalMethodTypeIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<jvm-original-method-type>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -763,7 +768,7 @@ class JvmSymbols(
         }.symbol
 
     val jvmDebuggerInvokeSpecialIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<jvm-debugger-invokespecial>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -780,7 +785,7 @@ class JvmSymbols(
         }.symbol
 
     val getClassByDescriptor: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<get-class>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -790,7 +795,7 @@ class JvmSymbols(
         }.symbol
 
     val handleResultOfReflectiveAccess: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<coerce-result-of-reflective-access>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -991,7 +996,7 @@ class JvmSymbols(
     val intPrefixIncrDecr = createIncrDecrFun("<int-prefix-incr-decr>")
 
     private fun createIncrDecrFun(intrinsicName: String): IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special(intrinsicName)
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -1020,7 +1025,7 @@ class JvmSymbols(
     }
 
     val signatureStringIntrinsic: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
+        irFactory.buildSimpleFunction {
             name = Name.special("<signature-string>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {

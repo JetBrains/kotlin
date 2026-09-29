@@ -64,6 +64,7 @@ val referencedSymbolVisitorType = type(util, "ReferencedSymbolVisitor")
 val emptySymbolVisitorType = ClassRef<PositionTypeParameterRef>(TypeKind.Class, util, "SymbolVisitor", "Empty")
 val symbolVisitorType = type(util, "SymbolVisitor")
 val irImplementationDetailType = type(tree, "IrImplementationDetail", TypeKind.Class).toAnnotation()
+val irBuilderDslAnnotation = type("$declarations.builder", "IrBuilderDsl", TypeKind.Class).toAnnotation()
 val irElementConstructorIndicatorType = type(util, "IrElementConstructorIndicator", TypeKind.Class)
 
 val irSymbolBaseType = type(symbolsImpl, "IrSymbolBase", TypeKind.Class)

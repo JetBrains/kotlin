@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.Companion.INSTANCE_RECEIVER
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
@@ -309,13 +308,14 @@ class IrBasedFunctionFactory(
 
         for (i in 1 until typeParameters.size) {
             val vTypeParam = typeParameters[i - 1]
-            val vDeclaration = IrValueParameterBuilder().run {
+            val vDeclaration = irFactory.buildValueParameter {
                 startOffset = offset
                 endOffset = offset
                 origin = memberOrigin
                 name = Name.identifier("p$i")
                 type = vTypeParam.symbol.typeWith()
-                factory.buildValueParameter(this, fDeclaration)
+            }.apply {
+                parent = fDeclaration
             }
             fDeclaration.parameters += vDeclaration
         }

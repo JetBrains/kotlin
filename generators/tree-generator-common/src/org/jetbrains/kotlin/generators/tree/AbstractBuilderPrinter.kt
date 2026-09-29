@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tree
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.ImportCollectingPrinter
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
+import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.generators.util.printBlock
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -17,6 +18,11 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
               ElementField : AbstractField<ElementField> {
 
     companion object {
+        /**
+         * The name of the parameter that an out-of-class `build` takes the builder as.
+         */
+        const val BUILDER_PARAMETER_NAME = "builder"
+
         private val experimentalContractsAnnotation =
             type("kotlin.contracts", "ExperimentalContracts", TypeKind.Class).toAnnotation()
     }
@@ -31,6 +37,101 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
 
     protected open fun actualTypeOfField(field: ElementField): TypeRefWithNullability =
         if (field is ListField) StandardTypes.mutableList.withArgs(field.baseType) else field.typeRef
+
+    /**
+     * Which of the builder's fields are passed to the implementation's constructor.
+     *
+     * By default all of them, which is what a tree whose implementations take all of their fields in the constructor needs. A tree
+     * that also initializes fields after construction narrows this and assigns the rest in [printBuildFunctionBody].
+     */
+    protected open fun fieldsInConstructorCall(builder: LeafBuilder<ElementField, Element, Implementation>): List<ElementField> =
+        builder.allFields
+
+    /**
+     * Whether the generated `build` is `@PublishedApi internal` rather than public.
+     *
+     * A tree whose only intended entry point is the `buildX {}` DSL hides `build`, so that a caller cannot hand the same builder
+     * to it twice and get two elements sharing a symbol. `@PublishedApi` rather than a plain `internal`, because the public
+     * inline `buildX {}` is inlined into other modules and its bytecode names `build` directly.
+     */
+    protected open val buildFunctionIsPublishedApi: Boolean
+        get() = false
+
+    /**
+     * The opt-in annotations that the generated `build()` needs.
+     */
+    protected open fun buildFunctionOptIns(builder: LeafBuilder<ElementField, Element, Implementation>): Set<PrintableAnnotation> =
+        if (builder.implementation.isPublic) setOf(implementationDetailAnnotation) else emptySet()
+
+    /**
+     * Extra members to print in the builder class, after its properties.
+     */
+    protected open fun ImportCollectingPrinter.printAdditionalBuilderMethods(
+        builder: LeafBuilder<ElementField, Element, Implementation>,
+    ) {
+    }
+
+    /**
+     * Documentation for the generated builder class, or `null` for none.
+     */
+    protected open fun builderKDoc(builder: LeafBuilder<ElementField, Element, Implementation>): String? = null
+
+    /**
+     * Documentation for the generated `build`, or `null` for none.
+     */
+    protected open fun buildFunctionKDoc(builder: LeafBuilder<ElementField, Element, Implementation>): String? = null
+
+    /**
+     * The type that owns the generated `build`, or `null` to keep it a member of the builder.
+     *
+     * When non-null, `build` is emitted as `fun <Receiver>.build(builder: XBuilder): X` next to the builder class instead of
+     * inside it, and the fields in [fieldsSuppliedByBuildReceiver] disappear from the builder. Use it when building needs
+     * something the builder itself should not carry -- something with no sensible default, that must come from the caller.
+     */
+    protected open fun buildFunctionReceiver(
+        builder: LeafBuilder<ElementField, Element, Implementation>,
+    ): TypeRef? = null
+
+    /**
+     * Fields that [buildFunctionReceiver] supplies, and which the builder therefore does not declare.
+     */
+    protected open fun fieldsSuppliedByBuildReceiver(
+        builder: LeafBuilder<ElementField, Element, Implementation>,
+    ): List<ElementField> = emptyList()
+
+    /**
+     * The type that the generated `buildX {}` function is an extension of, or `null` for a top-level function.
+     */
+    protected open fun dslBuildFunctionExtensionReceiver(
+        builder: LeafBuilder<ElementField, Element, Implementation>,
+    ): TypeRef? = null
+
+    /**
+     * How the generated `buildX {}` function instantiates the builder, before `init` is applied to it. A tree whose builders need
+     * something from [dslBuildFunctionExtensionReceiver] hands it over here.
+     */
+    protected open fun ImportCollectingPrinter.printBuilderInstantiation(
+        builder: LeafBuilder<ElementField, Element, Implementation>,
+    ) {
+        print(builder.render(), "()")
+    }
+
+    /**
+     * The body of the generated `build()`.
+     */
+    protected open fun ImportCollectingPrinter.printBuildFunctionBody(
+        builder: LeafBuilder<ElementField, Element, Implementation>,
+    ) {
+        println("return ${builder.implementation.render()}(")
+        withIndent {
+            for (field in fieldsInConstructorCall(builder)) {
+                if (field.invisibleField) continue
+                printFieldReferenceInImplementationConstructorCall(field)
+                println(",")
+            }
+        }
+        println(")")
+    }
 
     protected open fun copyField(field: ElementField, originalParameterName: String, copyBuilderVariableName: String) {
         printer.run {
@@ -59,6 +160,8 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                 return
             }
 
+            @Suppress("UNCHECKED_CAST")
+            (builder as? LeafBuilder<ElementField, Element, Implementation>)?.let { printKDoc(builderKDoc(it)) }
             println(builderDslAnnotation.render())
             when (builder) {
                 is IntermediateBuilder -> print("${if (builder.isSealed) "sealed " else ""}interface ")
@@ -70,6 +173,10 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                 }
             }
             print(builder.render())
+            @Suppress("UNCHECKED_CAST")
+            val leafBuilder = builder as? LeafBuilder<ElementField, Element, Implementation>
+            val buildReceiver = leafBuilder?.let { buildFunctionReceiver(it) }
+            val fieldsFromReceiver = leafBuilder?.let { fieldsSuppliedByBuildReceiver(it) }.orEmpty()
             if (builder.parents.isNotEmpty()) {
                 print(builder.parents.joinToString(separator = ", ", prefix = " : ") { it.render() })
             }
@@ -77,44 +184,49 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
             printBlock {
                 var needNewLine = false
                 for (field in builder.allFields) {
+                    if (field in fieldsFromReceiver) continue
                     val [newLine, requiredFields] = printFieldInBuilder(field, builder, fieldIsUseless = false)
                     needNewLine = newLine
                     hasRequiredFields = hasRequiredFields || requiredFields
                 }
                 val hasBackingFields = builder.allFields.any { it.nullable }
-                if (needNewLine) {
+                if (needNewLine && buildReceiver == null) {
                     println()
                 }
                 val buildType = when (builder) {
                     is LeafBuilder<*, *, *> -> builder.implementation.element.render()
                     is IntermediateBuilder -> builder.materializedElement!!.withStarArgs().render()
                 }
-                if (builder is LeafBuilder<*, *, *> && builder.implementation.isPublic) {
-                    println("@OptIn(", implementationDetailAnnotation.asClassRefString, ")")
-                }
-                if (builder.parents.isNotEmpty()) {
-                    print("override ")
-                }
-                print("fun build(): ", buildType)
-                if (builder is LeafBuilder<*, *, *>) {
-                    printBlock {
-                        println("return ${builder.implementation.render()}(")
-                        withIndent {
-                            for (field in builder.allFields) {
-                                if (field.invisibleField) continue
-                                printFieldReferenceInImplementationConstructorCall(field)
-                                println(",")
-                            }
+                if (buildReceiver == null) {
+                    if (leafBuilder != null) {
+                        val optIns = buildFunctionOptIns(leafBuilder)
+                        if (optIns.isNotEmpty()) {
+                            println("@OptIn(", optIns.joinToString { it.asClassRefString }, ")")
                         }
-                        println(")")
                     }
-                    if (hasBackingFields) {
+                    if (leafBuilder != null && buildFunctionIsPublishedApi) {
+                        println("@PublishedApi")
+                    }
+                    if (builder.parents.isNotEmpty()) {
+                        print("override ")
+                    }
+                    if (leafBuilder != null && buildFunctionIsPublishedApi) {
+                        print("internal ")
+                    }
+                    print("fun build(): ", buildType)
+                    if (leafBuilder != null) {
+                        printBlock { printBuildFunctionBody(leafBuilder) }
+                        if (hasBackingFields) {
+                            println()
+                        }
+                    } else {
                         println()
                     }
-                } else {
-                    println()
                 }
 
+                if (leafBuilder != null) {
+                    printAdditionalBuilderMethods(leafBuilder)
+                }
                 if (builder is LeafBuilder<*, *, *>) {
                     if (builder.uselessFields.isNotEmpty()) {
                         println()
@@ -125,6 +237,29 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                             printFieldInBuilder(field, builder, fieldIsUseless = true)
                         }
                     }
+                }
+            }
+            if (leafBuilder != null && buildReceiver != null) {
+                println()
+                printKDoc(buildFunctionKDoc(leafBuilder))
+                val optIns = buildFunctionOptIns(leafBuilder)
+                if (optIns.isNotEmpty()) {
+                    println("@OptIn(", optIns.joinToString { it.asClassRefString }, ")")
+                }
+                if (buildFunctionIsPublishedApi) {
+                    println("@PublishedApi")
+                }
+                printFunctionWithBlockBody(
+                    name = "build",
+                    parameters = listOf(FunctionParameter(name = BUILDER_PARAMETER_NAME, type = leafBuilder)),
+                    returnType = leafBuilder.implementation.element,
+                    typeParameters = leafBuilder.implementation.element.params,
+                    extensionReceiver = buildReceiver,
+                    visibility = if (buildFunctionIsPublishedApi) Visibility.INTERNAL else Visibility.PUBLIC,
+                ) {
+                    println("with(", BUILDER_PARAMETER_NAME, ") {")
+                    withIndent { printBuildFunctionBody(leafBuilder) }
+                    println("}")
                 }
             }
             if (builder is LeafBuilder<*, *, *>) {
@@ -156,7 +291,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
     }
 
     private fun builderFunctionName(builder: LeafBuilder<ElementField, Element, Implementation>) =
-        "build" + builder.implementation.run { name?.removePrefix(namePrefix) ?: element.name }
+        "build" + builder.builderBaseName.removePrefix(builder.implementation.namePrefix)
 
     private fun ImportCollectingPrinter.printDslBuildFunction(
         builder: LeafBuilder<ElementField, Element, Implementation>,
@@ -174,6 +309,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
             parameters = listOfNotNull(initParameter),
             returnType = builder.implementation.element,
             typeParameters = builder.implementation.element.params,
+            extensionReceiver = dslBuildFunctionExtensionReceiver(builder),
             isInline = !isEmpty,
         ) {
             if (!isEmpty) {
@@ -185,10 +321,18 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
                 println("}")
             }
             print("return ")
-            if (isEmpty) {
-                println(builder.implementation.render(), "()")
-            } else {
-                println(builder.render(), "().apply(init).build()")
+            when {
+                isEmpty -> println(builder.implementation.render(), "()")
+                // `build` lives on the receiver, so the builder is passed to it rather than asked to build itself.
+                buildFunctionReceiver(builder) != null -> {
+                    print("build(")
+                    printBuilderInstantiation(builder)
+                    println(".apply(init))")
+                }
+                else -> {
+                    printBuilderInstantiation(builder)
+                    println(".apply(init).build()")
+                }
             }
         }
     }

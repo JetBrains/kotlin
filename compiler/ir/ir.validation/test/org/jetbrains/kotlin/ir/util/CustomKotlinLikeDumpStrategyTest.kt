@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.TestIrBuiltins
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -68,7 +68,7 @@ class CustomKotlinLikeDumpStrategyTest {
             parent = instanceFactory
         }
 
-        val createFun = IrFactoryImpl.buildFun {
+        val createFun = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("create")
             returnType = TestIrBuiltins.unitType
         }.apply {
@@ -86,7 +86,7 @@ class CustomKotlinLikeDumpStrategyTest {
             createThisReceiverParameter()
         }
 
-        val useFun = IrFactoryImpl.buildFun {
+        val useFun = IrFactoryImpl.buildSimpleFunction {
             name = Name.identifier("use")
             returnType = TestIrBuiltins.unitType
         }.apply {

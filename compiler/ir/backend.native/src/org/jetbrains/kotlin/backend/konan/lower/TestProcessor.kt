@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildClass
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -349,7 +349,7 @@ class TestProcessor(
         objectSymbol: IrClassSymbol,
         owner: IrClass,
         getterName: Name,
-    ) = context.irFactory.buildFun {
+    ) = context.irFactory.buildSimpleFunction {
         startOffset = owner.startOffset
         endOffset = owner.endOffset
         origin = TEST_SUITE_GENERATED_MEMBER
@@ -380,7 +380,7 @@ class TestProcessor(
         classSymbol: IrClassSymbol,
         owner: IrClass,
         getterName: Name,
-    ) = context.irFactory.buildFun {
+    ) = context.irFactory.buildSimpleFunction {
         startOffset = owner.startOffset
         endOffset = owner.endOffset
         origin = TEST_SUITE_GENERATED_MEMBER
@@ -634,7 +634,7 @@ class TestProcessor(
             //   InfrastructureDumpedTestListingTest.testListingCompiledFromIncludedLibrary
             //   InfrastructureDumpedTestListingTest.testListingCompiledFromSources
             // ).
-            context.irFactory.buildFun {
+            context.irFactory.buildSimpleFunction {
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 name = "createTestSuites".synthesizedName

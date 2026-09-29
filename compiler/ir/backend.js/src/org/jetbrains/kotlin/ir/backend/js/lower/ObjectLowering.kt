@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildField
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
@@ -143,7 +143,7 @@ private fun getOrCreateGetInstanceFunction(obj: IrClass): IrSimpleFunction =
         // There is need to initialize _instance field together with _getInstance, so the outer restrictTo call would properly assign
         // signature and tags for JS namer. It prevents name clashes during the JS namer phase.
         getOrCreateInstanceField(obj)
-        obj.factory.buildFun {
+        obj.factory.buildSimpleFunction {
             name = ObjectDeclarationLowering.GET_INSTANCE_METHOD_NAME
             returnType = obj.defaultType
             origin = JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION

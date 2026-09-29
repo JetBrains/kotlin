@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
@@ -69,7 +69,7 @@ internal class CachesAbiSupport(private val irFactory: IrFactory) {
     fun getOuterThisAccessor(irClass: IrClass): IrSimpleFunction {
         require(irClass.isInner) { "Expected an inner class but was: ${irClass.render()}" }
         return irClass::outerThisAccessor.getOrSetIfNull {
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 name = getMangledNameFor("outerThis", irClass)
                 origin = INTERNAL_ABI_ORIGIN
                 returnType = irClass.parentAsClass.defaultType
@@ -90,7 +90,7 @@ internal class CachesAbiSupport(private val irFactory: IrFactory) {
     fun getTopLevelFieldAccessor(irField: IrField): IrSimpleFunction {
         require(irField.isTopLevel)
         return irField::topLevelFieldAccessor.getOrSetIfNull {
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 name = getMangledNameFor("${irField.name}_get", irField.parent)
                 origin = INTERNAL_ABI_ORIGIN
                 returnType = irField.type
@@ -105,7 +105,7 @@ internal class CachesAbiSupport(private val irFactory: IrFactory) {
         return irProperty::lateinitPropertyAccessor.getOrSetIfNull {
             val backingField = irProperty.backingField ?: error("Lateinit property ${irProperty.render()} should have a backing field")
             val owner = irProperty.parent
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 name = getMangledNameFor("${irProperty.name}_field", owner)
                 origin = INTERNAL_ABI_ORIGIN
                 returnType = backingField.type
@@ -128,7 +128,7 @@ internal class CachesAbiSupport(private val irFactory: IrFactory) {
         return irFunction::fakeOverrideAccessor.getOrSetIfNull {
             val owner = irFunction.correspondingPropertySymbol?.owner?.parent ?: irFunction.parent
             owner as? IrClass ?: error("An instance method expected: ${irFunction.render()}")
-            irFactory.buildFun {
+            irFactory.buildSimpleFunction {
                 name = getMangledNameFor("${irFunction.name}_accessor", owner)
                 origin = INTERNAL_ABI_ORIGIN
             }.apply {

@@ -22,10 +22,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.IrValueParameterBuilder
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.objcinterop.*
@@ -300,7 +299,7 @@ private class InteropTransformerPart1(
 
         // Generate `override fun init...(...) = this.initBy(...)`:
 
-        return context.irFactory.buildFun {
+        return context.irFactory.buildSimpleFunction {
             startOffset = constructor.startOffset
             endOffset = constructor.endOffset
             origin = OVERRIDING_INITIALIZER_BY_CONSTRUCTOR
@@ -389,7 +388,7 @@ private class InteropTransformerPart1(
 
         val parameterTypes = (0..function.parameters.size).map { context.symbols.nativePtrType } // id self, SEL _cmd, ...
 
-        val newFunction = context.irFactory.buildFun {
+        val newFunction = context.irFactory.buildSimpleFunction {
             startOffset = function.startOffset
             endOffset = function.endOffset
             // The generated function is called by ObjC and contains Kotlin code, so
@@ -401,16 +400,15 @@ private class InteropTransformerPart1(
         }
 
         newFunction.parameters = parameterTypes.mapIndexed { index, parameterType ->
-            context.irFactory.buildValueParameter(
-                    IrValueParameterBuilder().apply {
-                        startOffset = function.startOffset
-                        endOffset = function.endOffset
-                        name = Name.identifier("p$index")
-                        kind = IrParameterKind.Regular
-                        type = parameterType
-                    },
-                    newFunction
-            )
+            context.irFactory.buildValueParameter {
+                startOffset = function.startOffset
+                endOffset = function.endOffset
+                name = Name.identifier("p$index")
+                kind = IrParameterKind.Regular
+                type = parameterType
+            }.apply {
+                parent = newFunction
+            }
         }
 
         // Annotations to be detected in KotlinObjCClassInfoGenerator:

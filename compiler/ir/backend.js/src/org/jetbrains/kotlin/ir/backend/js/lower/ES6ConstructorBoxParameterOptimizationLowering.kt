@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
@@ -96,7 +96,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
         if (constructedClass.needsBoxParameter || parameters.none { it.isBoxParameter }) return null
 
         val original = this
-        val newReplacement = factory.buildFun {
+        val newReplacement = factory.buildSimpleFunction {
             updateFrom(original)
             name = original.name
             returnType = original.returnType

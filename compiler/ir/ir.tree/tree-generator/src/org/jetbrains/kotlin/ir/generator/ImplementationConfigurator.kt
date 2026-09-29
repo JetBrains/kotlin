@@ -140,6 +140,9 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
                 "importedScripts", "earlierScripts", "targetClass", "constructor"
             )
             isLateinit("explicitCallParameters", "implicitReceiversParameters", "providedProperties", "providedPropertiesParameters")
+            // The import is a no-op for the implementation, which lives in the same package, but the generated builder repeats
+            // this default from a sibling package and does need it.
+            additionalImports(ArbitraryImportable("${Packages.declarations}.impl", "SCRIPT_ORIGIN"))
             default("origin", "SCRIPT_ORIGIN")
         }
 
@@ -147,6 +150,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             implementation.putImplementationOptInInConstructor = false
             defaultNull("stateObject", "targetClass")
             isLateinit("receiverParameters")
+            additionalImports(ArbitraryImportable("${Packages.declarations}.impl", "REPL_SNIPPET_ORIGIN"))
             default("origin", "REPL_SNIPPET_ORIGIN")
             default("declarationsFromOtherSnippets", "ArrayList()")
             default("variablesFromOtherSnippets", "ArrayList()")

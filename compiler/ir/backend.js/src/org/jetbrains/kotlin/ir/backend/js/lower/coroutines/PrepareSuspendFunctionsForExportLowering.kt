@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExportIgnore
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsStaticDeclaration
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -396,7 +396,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
         isStatic: Boolean = false,
         bodyFactory: IrBlockBodyBuilder.(IrSimpleFunction) -> Unit,
     ): IrSimpleFunction =
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             updateFrom(originalFunc)
             this.name = Name.identifier(name)
             origin = EXPORTED_SUSPEND_FUNCTION_BRIDGE
@@ -432,7 +432,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
         isFakeOverride: Boolean = false,
         overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList(),
     ): IrSimpleFunction =
-        context.irFactory.buildFun {
+        context.irFactory.buildSimpleFunction {
             updateFrom(originalFunc)
             name = Name.identifier("${originalFunc.name.asString()}${PROMISIFIED_WRAPPER_SUFFIX}")
             origin = if (originalFunc.isTopLevel || originalFunc.isStatic) originalFunc.origin else PROMISIFIED_MEMBER_WRAPPER
@@ -484,7 +484,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                         call.dispatchReceiver = selfSaver?.let(::irGet)
                     }
 
-                    val promisifiedSuspendLambda = context.irFactory.buildFun {
+                    val promisifiedSuspendLambda = context.irFactory.buildSimpleFunction {
                         name = SpecialNames.NO_NAME_PROVIDED
                         visibility = DescriptorVisibilities.LOCAL
                         isSuspend = true

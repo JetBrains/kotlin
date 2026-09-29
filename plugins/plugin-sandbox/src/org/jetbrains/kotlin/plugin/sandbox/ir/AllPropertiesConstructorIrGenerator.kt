@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.addBackingField
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
-import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
+import org.jetbrains.kotlin.ir.declarations.builder.buildConstructor
+import org.jetbrains.kotlin.ir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.ir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -64,7 +64,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
             this += buildConstructor(klass)
 
             if (klass.declarations.none { it is IrFunction && it.name == Name.identifier("hasExtension") }) {
-                this += context.irFactory.buildFun {
+                this += context.irFactory.buildSimpleFunction {
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
                     name = Name.identifier("hasExtension")
@@ -78,7 +78,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
                 }
             }
             if (klass.declarations.none { it is IrFunction && it.name == Name.identifier("hasContext") }) {
-                this += context.irFactory.buildFun {
+                this += context.irFactory.buildSimpleFunction {
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
                     name = Name.identifier("hasContext")
