@@ -145,7 +145,6 @@ internal fun Project.registerSwiftExportTask(
     swiftPMImportProductsOrNull()?.let { products ->
         packageGenerationTask.configure { task ->
             task.swiftPMImportHasDependencies.set(products.hasDependencies)
-            task.dependsOn(products.hasDependencies)
             task.swiftPMImportProductName.set(products.umbrellaProductName)
             task.swiftPMImportPackageRoot.set(products.syntheticPackageLocalRoot)
             task.swiftPMImportFingerprint.set(products.syntheticPackageFingerprint)
@@ -154,7 +153,6 @@ internal fun Project.registerSwiftExportTask(
         }
         packageBuild.configure { task ->
             task.swiftPMImportHasDependencies.set(products.hasDependencies)
-            task.dependsOn(products.hasDependencies)
             task.swiftPMImportPackageRoot.set(products.syntheticPackageLocalRoot)
             task.swiftPMImportCheckout.set(products.swiftPMLocalCheckout)
             task.swiftPMImportFingerprint.set(products.syntheticPackageFingerprint)
