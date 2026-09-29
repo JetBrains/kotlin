@@ -8,8 +8,10 @@
 
 #include <cstdint>
 #include "KAssert.h"
-#include "stackmap/DeltaMainStackMap.hpp"
-#include "stackmap/RootsInfo.hpp"
+#if defined(__aarch64__)
+#include "DeltaMainStackMap.hpp"
+#include "RootsInfo.hpp"
+#endif
 #include "mm/ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
 #include "mm/GlobalData.hpp"
@@ -133,6 +135,7 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
     }
 }
 
+#if defined(__aarch64__)
 template <typename Traits>
 void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, kotlin::stackMap::DeltaMainStackMapBuilder& stackMapBuilder, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
@@ -171,6 +174,7 @@ void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueu
         }
     }
 }
+#endif
 
 template <typename Traits>
 void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQueue) noexcept {

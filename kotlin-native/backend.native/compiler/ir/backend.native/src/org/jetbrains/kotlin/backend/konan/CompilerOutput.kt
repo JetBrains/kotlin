@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CInterfaceGenerationMode
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GCSchedulerType
+import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.components.bitcode
 import org.jetbrains.kotlin.konan.library.linkerOpts
@@ -156,6 +157,9 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             GC.NOOP -> add(RuntimeModule.GC_NOOP)
             GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add(RuntimeModule.GC_PARALLEL_MARK_CONCURRENT_SWEEP)
             GC.CONCURRENT_MARK_AND_SWEEP -> add(RuntimeModule.GC_CONCURRENT_MARK_AND_SWEEP)
+        }
+        if (config.gc == GC.CONCURRENT_MARK_AND_SWEEP && config.target.architecture == Architecture.ARM64) {
+            add(RuntimeModule.GC_DELTA_MAIN_STACKMAP)
         }
         if (config.target.supportsCoreSymbolication()) {
             add(RuntimeModule.SOURCE_INFO_CORE_SYMBOLICATION)

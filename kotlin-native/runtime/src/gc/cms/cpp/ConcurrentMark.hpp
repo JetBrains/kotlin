@@ -7,7 +7,9 @@
 
 #include <mutex>
 
-#include "gc/stackmap/RootsInfo.hpp"
+#if defined(__aarch64__)
+#include "RootsInfo.hpp"
+#endif
 #include "gc/GCStatistics.hpp"
 #include "ManuallyScoped.hpp"
 #include "ObjectData.hpp"

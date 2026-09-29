@@ -166,8 +166,10 @@ extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRe
 }
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+#if defined(__aarch64__)
     if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain)
         return;
+#endif
     UpdateStackRef(returnSlot, object);
 }
 
@@ -226,14 +228,18 @@ extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
 }
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
+#if defined(__aarch64__)
     if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
         mm::KotlinFrameAnchor anchor = mm::captureCallerFrameAnchor();
         mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor);
     }
+#endif
     mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+#if defined(__aarch64__)
     if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
         mm::ThreadRegistry::Instance().CurrentThreadData()->popStackMapAnchor();
     }
+#endif
 }
 
 extern "C" void Kotlin_native_internal_GC_schedule(ObjHeader*) {
@@ -406,11 +412,13 @@ extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_debu
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
 }
 
+#if defined(__aarch64__)
 extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative_delta_main() {
     mm::KotlinFrameAnchor anchor = mm::captureCallerFrameAnchor();
     mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor);
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kNative);
 }
+#endif
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
@@ -420,10 +428,12 @@ extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_de
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
 }
 
+#if defined(__aarch64__)
 extern "C" NO_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable_delta_main() {
     SwitchThreadState(mm::ThreadRegistry::Instance().CurrentThreadData(), ThreadState::kRunnable);
     mm::ThreadRegistry::Instance().CurrentThreadData()->popStackMapAnchor();
 }
+#endif
 
 MemoryState* kotlin::mm::GetMemoryState() noexcept {
     return ToMemoryState(ThreadRegistry::Instance().CurrentThreadDataNode());

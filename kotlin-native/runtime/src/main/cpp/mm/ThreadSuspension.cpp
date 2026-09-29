@@ -46,9 +46,11 @@ PERFORMANCE_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() n
     auto pauseTimeMicros = konan::getTimeMicros() - pauseStartTimeMicros_;
     RuntimeLogInfo({logging::Tag::kPause}, "Resuming mutation after %" PRIu64 " microseconds of suspension (%s)", pauseTimeMicros, reason_);
     resumed = true;
+#if defined(__aarch64__)
     if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
         threadData_.popStackMapAnchor();
     }
+#endif
 
 }
 
@@ -91,9 +93,11 @@ void mm::ThreadSuspensionData::requestThreadsSuspension(const char* reason) noex
 
 PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(
         const char* reason) noexcept {
+#if defined(__aarch64__)
     if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
         threadData_.pushLastStackMapAnchor();
     }
+#endif
     return MutatorPauseHandle(reason, threadData_);
 }
 

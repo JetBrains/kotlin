@@ -138,8 +138,13 @@ class NativeSecondStageCompilationConfig(
     val gc: GC
         get() = configuration.get(BinaryOptions.gc) ?: defaultGC
     private val defaultGCStackMapScheme get() = GCStackMapScheme.SHADOW_STACK
-    val gcStackMapScheme: GCStackMapScheme
-        get() = configuration.get(BinaryOptions.gcStackMapScheme) ?: defaultGCStackMapScheme
+    val gcStackMapScheme: GCStackMapScheme = (configuration.get(BinaryOptions.gcStackMapScheme) ?: defaultGCStackMapScheme).also {
+        if (it == GCStackMapScheme.DELTA_MAIN && target.architecture != Architecture.ARM64) {
+            configuration.reportCompilationErrorAndThrow(
+                    "delta-main GC stack maps are not supported on ${target.architecture} (target ${target.visibleName}). " +
+                            "Use the default shadow-stack scheme, or target an ARM64 platform.")
+        }
+    }
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val checkStateAtExternalCalls: Boolean get() = configuration.get(BinaryOptions.checkStateAtExternalCalls) ?: false
     private val defaultDisableMmap get() = target.family == Family.MINGW || !pagedAllocator

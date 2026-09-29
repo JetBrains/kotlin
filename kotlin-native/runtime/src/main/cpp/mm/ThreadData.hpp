@@ -26,6 +26,7 @@ struct ObjHeader;
 namespace kotlin {
 namespace mm {
 
+#if defined(__aarch64__)
 struct KotlinFrameAnchor {
     uint64_t* fp;
     uint64_t* pc;
@@ -46,6 +47,7 @@ ALWAYS_INLINE inline KotlinFrameAnchor captureCallerFrameAnchor() {
     uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
     return KotlinFrameAnchor{(uint64_t*) fp[0], (uint64_t*) fp[1]};
 }
+#endif
 
 // `ThreadData` is supposed to be thread local singleton.
 // Pin it in memory to prevent accidental copying.
@@ -98,6 +100,7 @@ public:
         allocator_.clearForTests();
     }
 
+#if defined(__aarch64__)
     void pushStackMapAnchor(const KotlinFrameAnchor& anchor) noexcept {
         RuntimeLogInfo({logging::Tag::kLogging}, "Pushing new anchor: fp=%p pc=%p", anchor.fp, anchor.pc);
         frameAnchors_.emplace_back(anchor);
@@ -122,6 +125,7 @@ public:
         RuntimeLogInfo({logging::Tag::kLogging}, "Setting last frame anchor: fp=%p pc=%p", anchor.fp, anchor.pc);
         lastFrame_ = anchor;
     }
+#endif
 
 private:
     const uintptr_t threadId_;
@@ -134,8 +138,10 @@ private:
     gc::GC::ThreadData gc_;
     std::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;
+#if defined(__aarch64__)
     std::vector<KotlinFrameAnchor> frameAnchors_;
     KotlinFrameAnchor lastFrame_ = {};
+#endif
 };
 
 } // namespace mm
