@@ -39,8 +39,8 @@ FILE: [ResolvedTo(IMPORTS)] companionBlockLevel.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static const [ResolvedTo(BODY_RESOLVE)] val COMPANION_CONSTANT: R|kotlin/String| = String(companion)
-            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+        public final static const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val COMPANION_CONSTANT: R|kotlin/String| = String(companion)
+            public static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
         [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](value = R|foo/FILE_CONSTANT|.R|kotlin/String.plus|(Q|foo/Owner|.R|foo/Owner.COMPANION_CONSTANT|) [evaluated = String(filecompanion)]) <DANGLING MODIFIER: Top level declaration expected>
     }

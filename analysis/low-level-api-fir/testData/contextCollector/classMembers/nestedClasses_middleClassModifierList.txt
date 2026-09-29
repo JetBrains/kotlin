@@ -32,20 +32,16 @@ FILE: [ResolvedTo(IMPORTS)] nestedClasses_middleClassModifierList.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedClass : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/TopLevelClass.MiddleClass.NestedClass| {
-                    super<R|kotlin/Any|>()
+            public final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] constructor(): R|test/TopLevelClass.MiddleClass.NestedClass| {
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(BODY_RESOLVE)] fun nestedMember(): R|kotlin/Int| {
-                    ^nestedMember Int(0)
-                }
+                public? final? [ResolvedTo(RAW_FIR)] fun nestedMember(): <implicit> { LAZY_BLOCK }
 
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun middleMember(): R|kotlin/Int| {
-                ^middleMember Int(1)
-            }
+            public final [ResolvedTo(STATUS)] fun middleMember(): <implicit> { LAZY_BLOCK }
 
         }
 

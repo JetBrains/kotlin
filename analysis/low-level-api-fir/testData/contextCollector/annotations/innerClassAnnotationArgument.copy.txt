@@ -80,13 +80,13 @@ FILE: [ResolvedTo(IMPORTS)] innerClassAnnotationArgument.kt
             public final [ResolvedTo(BODY_RESOLVE)] val d: R|kotlin/Double| = R|<local>/d|
                 public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Double|
 
-            public final companion [ResolvedTo(STATUS)] object Companion : R|kotlin/Any| {
-                private [ResolvedTo(BODY_RESOLVE)] constructor(): R|pack/TopLevelClass.NestedClass.Companion| {
-                    super<R|kotlin/Any|>()
+            public final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] constructor(): R|pack/TopLevelClass.NestedClass.Companion| {
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final const [ResolvedTo(BODY_RESOLVE)] val CONST: R|kotlin/Double| = Double(2.0)
-                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Double|
+                public? final? const [ResolvedTo(RAW_FIR)] val CONST: <implicit> = LAZY_EXPRESSION
+                    public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
             }
 

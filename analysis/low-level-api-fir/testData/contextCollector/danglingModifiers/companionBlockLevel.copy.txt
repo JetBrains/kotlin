@@ -14,8 +14,8 @@ Tower Data Context:
     Element 6
         Scope: FirNameAwareOnlyCallablesScope
             Properties:
-                FirRegularPropertySymbol public final static const val COMPANION_CONSTANT: R|kotlin/String|
-                    public static get(): R|kotlin/String|
+                FirRegularPropertySymbol public? final? static const val COMPANION_CONSTANT: <implicit>
+                    public? static get(): <implicit>
         Static scope owner symbol: FirRegularClassSymbol public final class Owner : R|kotlin/Any|
     Element 7
         Implicit receiver:
@@ -39,8 +39,8 @@ FILE: [ResolvedTo(IMPORTS)] companionBlockLevel.kt
             super<R|kotlin/Any|>()
         }
 
-        public final static const [ResolvedTo(BODY_RESOLVE)] val COMPANION_CONSTANT: R|kotlin/String| = String(companion)
-            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+        public? final? static const [ResolvedTo(RAW_FIR)] val COMPANION_CONSTANT: <implicit> = LAZY_EXPRESSION
+            public? static [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         [ResolvedTo(BODY_RESOLVE)] @R|foo/Anno|[Types](value = R|foo/FILE_CONSTANT|.R|kotlin/String.plus|(Q|foo/Owner|.R|foo/Owner.COMPANION_CONSTANT|) [evaluated = String(filecompanion)]) <DANGLING MODIFIER: Top level declaration expected>
     }
