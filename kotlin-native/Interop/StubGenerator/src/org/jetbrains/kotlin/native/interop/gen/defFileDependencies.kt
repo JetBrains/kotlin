@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.utils.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.gen.jvm.buildNativeLibrary
+import org.jetbrains.kotlin.native.interop.gen.jvm.parseKeyValuePairs
 import org.jetbrains.kotlin.native.interop.gen.jvm.prepareTool
 import org.jetbrains.kotlin.native.interop.indexer.NativeLibraryHeaders
 import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
@@ -16,6 +17,7 @@ import kotlin.streams.toList
 fun defFileDependencies(args: Array<String>, runFromDaemon: Boolean) {
     val defFiles = mutableListOf<File>()
     val targets = mutableListOf<String>()
+    val propertyOverrides = mutableListOf<String>()
 
     var index = 0
     while (index < args.size) {
@@ -28,6 +30,10 @@ fun defFileDependencies(args: Array<String>, runFromDaemon: Boolean) {
                 targets += args[index]
                 ++index
             }
+            "-Xoverride-konan-properties" -> {
+                propertyOverrides += args[index].split(';')
+                ++index
+            }
             else -> {
                 defFiles.add(File(arg))
             }
@@ -35,18 +41,27 @@ fun defFileDependencies(args: Array<String>, runFromDaemon: Boolean) {
     }
     usingNativeMemoryAllocator {
         usingJvmCInteropCallbacks {
-            defFileDependencies(makeDependencyAssigner(targets, defFiles, runFromDaemon))
+            defFileDependencies(makeDependencyAssigner(targets, defFiles, parseKeyValuePairs(propertyOverrides), runFromDaemon))
         }
     }
 }
 
-private fun makeDependencyAssigner(targets: List<String>, defFiles: List<File>, runFromDaemon: Boolean) =
-        CompositeDependencyAssigner(targets.map { makeDependencyAssignerForTarget(it, defFiles, runFromDaemon) })
+private fun makeDependencyAssigner(
+        targets: List<String>,
+        defFiles: List<File>,
+        propertyOverrides: Map<String, String>,
+        runFromDaemon: Boolean,
+) = CompositeDependencyAssigner(targets.map { makeDependencyAssignerForTarget(it, defFiles, propertyOverrides, runFromDaemon) })
 
-private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>, runFromDaemon: Boolean): SingleTargetDependencyAssigner {
+private fun makeDependencyAssignerForTarget(
+        target: String,
+        defFiles: List<File>,
+        propertyOverrides: Map<String, String>,
+        runFromDaemon: Boolean,
+): SingleTargetDependencyAssigner {
     val cinteropArguments = CInteropArguments()
     cinteropArguments.argParser.parse(arrayOf())
-    val tool = prepareTool(target, KotlinPlatform.NATIVE, runFromDaemon, konanDataDir = cinteropArguments.konanDataDir)
+    val tool = prepareTool(target, KotlinPlatform.NATIVE, runFromDaemon, propertyOverrides, konanDataDir = cinteropArguments.konanDataDir)
     val libraries = defFiles.parallelStream().map {
         it to buildNativeLibrary(
                 tool,
