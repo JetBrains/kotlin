@@ -134,6 +134,11 @@ dependencyResolutionManagement {
         val mirrorRepo: String? = settings.providers.systemProperty("maven.repository.mirror").orNull
         mirrorRepo?.let(::maven)
         mavenCentral()
+        if (buildProperties.isSwiftImportEnabled.get()) {
+            mavenLocal {
+                content { includeGroup("org.swift.swiftkit") }
+            }
+        }
     }
     repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
 }
@@ -697,6 +702,7 @@ if (buildProperties.isSwiftImportEnabled.get()) {
     include(":native:swift:kir")
     include(":native:swift:kir:tree-generator")
     include(":native:swift:kir-printer")
+    include(":native:swift:swift-import-standalone")
 }
 
 include(":native:swift:swift-export-embeddable")

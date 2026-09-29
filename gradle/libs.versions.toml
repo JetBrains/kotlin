@@ -246,6 +246,8 @@ analysis-api-kotlin-metadata-jvm = { module = "org.jetbrains.kotlin:kotlin-metad
 analysis-api-intellij-patched-kotlinx-coroutines-core-jvm = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "analysis-api-kotlinx-coroutines" }
 analysis-api-intellij-patched-kotlinx-coroutines-debug = { module = "org.jetbrains.intellij.deps.kotlinx:kotlinx-coroutines-debug", version.ref = "analysis-api-kotlinx-coroutines" }
 
+swiftextract = { module = "org.swift.swiftkit:swiftextract", version = "0.6.0" }
+
 fileLeakDetector = { module = "io.jenkins.tools:file-leak-detector", version.ref = "fileLeakDetector" }
 
 [plugins]
