@@ -154,7 +154,8 @@ internal class NativeBackendContext(
             KtDiagnosticReporterWithImplicitIrBasedContext(
                     configuration.diagnosticsCollector,
                     config.languageVersionSettings,
-            )
+            ),
+            config.partialLinkageIssues,
     )
 }
 
