@@ -1281,7 +1281,7 @@ private fun incrementScopeNumbersOfVariables(node: MethodNode, label: Label): In
     var inlineScopeNumberIncrement = 0
     for (variable in localVariables) {
         val variableStartIndex = labelToIndex[variable.start.label] ?: continue
-        if (variableStartIndex < currentIndex && JvmAbi.isFakeLocalVariableForInline(variable.name)) {
+        if (variableStartIndex <= currentIndex && JvmAbi.isFakeLocalVariableForInline(variable.name)) {
             inlineScopeNumberIncrement += 1
         }
 
