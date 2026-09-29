@@ -164,7 +164,6 @@ internal fun compileSingleModuleToWasmIr(
     val multimoduleOptions = MultimoduleCompileOptions(
         stdlibModuleNameForImport = stdlibModuleNameForImport,
         dependencyModules = dependencyImports,
-        initializeUnit = stdlibIsMainModule,
     )
 
     return WasmIrModuleConfiguration(
