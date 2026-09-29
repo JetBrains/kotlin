@@ -617,6 +617,9 @@ class NativeSecondStageCompilationConfig(
     internal val producePerFileCache
         get() = configuration.makePerFileCache
 
+    internal val inProcessObjEmission: Boolean
+        get() = configuration.inProcessObjEmission
+
     private val implicitModuleName: String
         get() = cacheSupport.libraryToCache?.let {
             if (producePerFileCache)

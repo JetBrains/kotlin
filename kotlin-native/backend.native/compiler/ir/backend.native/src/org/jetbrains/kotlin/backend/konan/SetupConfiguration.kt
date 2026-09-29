@@ -144,6 +144,11 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.dumpBuiltCachesTo?.let { put(DUMP_BUILT_CACHES_TO, it) }
     put(FILES_TO_CACHE, arguments.filesToCache.toList())
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
+    put(IN_PROCESS_OBJ_EMISSION, arguments.inProcessObjEmission)
+    if (arguments.inProcessObjEmission) {
+        report(KONAN_ARGUMENT_WARNING, "${K2NativeCompilerArguments::inProcessObjEmission.cliArgument} is an experimental feature. " +
+                "The clang flags defined in konan.properties will be ignored when emitting object files.")
+    }
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
     val availableProcessors = Runtime.getRuntime().availableProcessors()
     val nThreads = if (nThreadsRaw == 0) availableProcessors else nThreadsRaw
