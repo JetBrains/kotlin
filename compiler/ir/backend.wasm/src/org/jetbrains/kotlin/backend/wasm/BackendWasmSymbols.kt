@@ -172,25 +172,8 @@ class BackendWasmSymbols(
 
     val rangeCheck by CallableIds.rangeCheck.functionSymbol()
 
-    val createBoxIntrinsic by CallableIds.createBoxIntrinsic.functionSymbol()
-
-    val getOrBoxForPrimitives: Map<IrType, IrSimpleFunctionSymbol> = run {
-        val getOrBoxBoolean: IrSimpleFunctionSymbol by CallableIds.getOrBoxBoolean.functionSymbol()
-        val getOrBoxChar: IrSimpleFunctionSymbol by CallableIds.getOrBoxChar.functionSymbol()
-        val getOrBoxByte: IrSimpleFunctionSymbol by CallableIds.getOrBoxByte.functionSymbol()
-        val getOrBoxShort: IrSimpleFunctionSymbol by CallableIds.getOrBoxShort.functionSymbol()
-        val getOrBoxInt: IrSimpleFunctionSymbol by CallableIds.getOrBoxInt.functionSymbol()
-        val getOrBoxLong: IrSimpleFunctionSymbol by CallableIds.getOrBoxLong.functionSymbol()
-        mapOf(
-            irBuiltIns.booleanType to getOrBoxBoolean,
-            irBuiltIns.charType to getOrBoxChar,
-            irBuiltIns.byteType to getOrBoxByte,
-            irBuiltIns.shortType to getOrBoxShort,
-            irBuiltIns.intType to getOrBoxInt,
-            irBuiltIns.longType to getOrBoxLong,
-        )
-    }
-
+    val getBoxedBoolean: IrSimpleFunctionSymbol by CallableIds.getBoxedBoolean.functionSymbol()
+    val boxBoolean: IrSimpleFunctionSymbol by CallableIds.boxBoolean.functionSymbol()
     val boxIntrinsic: IrSimpleFunctionSymbol by CallableIds.boxIntrinsic.functionSymbol()
     val unboxIntrinsic: IrSimpleFunctionSymbol by CallableIds.unboxIntrinsic.functionSymbol()
 
@@ -544,18 +527,10 @@ private object CallableIds {
     val array_new_data0_char_array = "array_new_data0_char_array".wasmCallableId
     val wasm_i64_extend_i32_s = "wasm_i64_extend_i32_s".wasmCallableId
     val rangeCheck = "rangeCheck".wasmCallableId
-
-    val createBoxIntrinsic = "createBoxIntrinsic".wasmCallableId
-    val getOrBoxBoolean = "getOrBoxBoolean".wasmCallableId
-    val getOrBoxByte = "getOrBoxByte".wasmCallableId
-    val getOrBoxShort = "getOrBoxShort".wasmCallableId
-    val getOrBoxInt = "getOrBoxInt".wasmCallableId
-    val getOrBoxChar = "getOrBoxChar".wasmCallableId
-    val getOrBoxLong = "getOrBoxLong".wasmCallableId
-
+    val getBoxedBoolean = "getBoxedBoolean".wasmCallableId
+    val boxBoolean = "boxBoolean".wasmCallableId
     val boxIntrinsic = "boxIntrinsic".wasmCallableId
     val unboxIntrinsic = "unboxIntrinsic".wasmCallableId
-
     val getWasmAbiVersion = "getWasmAbiVersion".wasmCallableId
     val wasmTypeId = "wasmTypeId".wasmCallableId
     val wasmGetTypeRtti = "wasmGetTypeRtti".wasmCallableId
