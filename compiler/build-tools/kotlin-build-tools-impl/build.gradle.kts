@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     id("generated-sources")
     id("test-inputs-check")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -52,6 +53,8 @@ dependencies {
     testCompileOnly(intellijPlatformUtil())
     testImplementation(project(":compiler:incremental-compilation-impl"))
     testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(project(":daemon-common"))
+    testImplementation(project(":kotlin-daemon-client"))
     testImplementation(kotlinTest("junit5"))
 }
 
@@ -70,6 +73,12 @@ tasks.named<ShadowJar>(EMBEDDABLE_COMPILER_TASK_NAME) {
     }
     transform(DontIncludeResourceTransformer::class.java) {
         resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
+    }
+}
+
+projectTests {
+    testTask {
+        useJUnitPlatform()
     }
 }
 
