@@ -75,7 +75,7 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] companionBlocks.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<E>|
-            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<E>|
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<E>|
 
     }
     public final [ResolvedTo(CONTRACTS)] val o: <implicit> = LAZY_EXPRESSION

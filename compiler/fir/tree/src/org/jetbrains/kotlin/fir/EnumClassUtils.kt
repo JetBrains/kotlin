@@ -272,6 +272,8 @@ fun generateEntriesGetter(
             this.status = createStatus(classStatus).apply {
                 isStatic = true
             }
+
+            containingClassForStaticMemberAttr = classSymbol.toLookupTag()
         }
     }.apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()

@@ -220,7 +220,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<test/E>|
-            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<test/E>|
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] get(): R|kotlin/enums/EnumEntries<test/E>|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] annotation class EnumLiteral : R|kotlin/Annotation| {
