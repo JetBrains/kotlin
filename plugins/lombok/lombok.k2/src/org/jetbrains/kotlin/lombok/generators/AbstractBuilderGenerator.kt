@@ -868,8 +868,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     ConeLombokValueParameter(nameInSingularForm, parameterTypeRef)
                 )
 
-                collectionType = when (typeId) {
-                    in LombokNames.SUPPORTED_GUAVA_COLLECTION_IDS -> SingularAddAllParameterType.Iterable
+                collectionType = when {
+                    typeId in LombokNames.SUPPORTED_GUAVA_COLLECTION_IDS -> SingularAddAllParameterType.Iterable
+                    // Lombok's Guava singularizer (when lombok.singular.useGuava=true) also takes an `Iterable`
+                    session.lombokService.config.singularUseGuava -> SingularAddAllParameterType.Iterable
                     else -> SingularAddAllParameterType.Collection
                 }
                 typeArgumentRefs = listOf(parameterTypeRef)

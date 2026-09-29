@@ -1,7 +1,6 @@
 // ISSUE: KT-89084
 // WITH_GUAVA
 // FULL_JDK
-// IGNORE_BACKEND_K2: JVM
 
 // FILE: main.kt
 import com.google.common.collect.ImmutableList
@@ -56,7 +55,7 @@ fun box(): String {
     val letters = object : Iterable<String> {
         override fun iterator(): Iterator<String> = listOf("x", "y").iterator()
     }
-    assertEquals(listOf("x", "y"), UseGuavaConfigTarget.builder().words(<!ARGUMENT_TYPE_MISMATCH!>letters<!>).build().words)
+    assertEquals(listOf("x", "y"), UseGuavaConfigTarget.builder().words(letters).build().words)
 
     val empty = UseGuavaConfigTarget.builder().build()
     assertTrue(empty.words is ImmutableList<String>)

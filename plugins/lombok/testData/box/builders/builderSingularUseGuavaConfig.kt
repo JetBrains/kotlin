@@ -1,7 +1,6 @@
 // ISSUE: KT-89117
 // WITH_GUAVA
 // FULL_JDK
-// IGNORE_BACKEND_K2: JVM
 
 // FILE: Art.java
 import lombok.AllArgsConstructor;
@@ -51,7 +50,7 @@ fun box(): String {
     assertEquals(mapOf("z" to 1, "w" to 2), art.scores)
 
     // Any `Iterable` is accepted, not only a `Collection`.
-    val fromIterable = Art.builder().tags(<!ARGUMENT_TYPE_MISMATCH!>listOf("p", "q").asIterable()<!>).build()
+    val fromIterable = Art.builder().tags(listOf("p", "q").asIterable()).build()
     assertEquals(listOf("p", "q"), fromIterable.tags)
 
     return "OK"
