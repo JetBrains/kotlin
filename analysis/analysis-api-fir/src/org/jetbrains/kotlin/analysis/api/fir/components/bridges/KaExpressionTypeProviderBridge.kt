@@ -19,24 +19,22 @@ import org.jetbrains.kotlin.analysis.api.expressions.expressionType as expressio
 import org.jetbrains.kotlin.analysis.api.expressions.functionType as functionTypeEndpoint
 import org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNotNull as isDefinitelyNotNullEndpoint
 import org.jetbrains.kotlin.analysis.api.expressions.isDefinitelyNull as isDefinitelyNullEndpoint
+import org.jetbrains.kotlin.analysis.api.expressions.returnType as returnTypeEndpoint
 
 /**
  * Routes the legacy [KaExpressionTypeProvider] surface through the new public `context(session: KaSession)` expression-type endpoints,
- * which in turn reach the [KaInternalsExpressionTypeProvider] proxy. The [KaExpressionTypeProvider.returnType] members have no public
- * endpoint yet (KT-73570), so [KtDeclarationWithReturnType.returnType] is forwarded straight to the proxy and the deprecated
- * [KtDeclaration.returnType][KaExpressionTypeProvider.returnType] keeps the interface default that routes to it.
+ * which in turn reach the [KaInternalsExpressionTypeProvider] proxy. The deprecated
+ * [KtDeclaration.returnType][KaExpressionTypeProvider.returnType] keeps the interface default that routes to
+ * [KtDeclarationWithReturnType.returnType].
  */
 internal class KaExpressionTypeProviderBridge(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseSessionComponent<KaFirSession>(), KaExpressionTypeProvider {
-    private val proxy: KaInternalsExpressionTypeProvider
-        get() = analysisSession.expressionTypeProvider
-
     override val KtExpression.expressionType: KaType?
         get() = context(analysisSession) { expressionTypeEndpoint }
 
     override val KtDeclarationWithReturnType.returnType: KaType
-        get() = proxy.returnType(this)
+        get() = context(analysisSession) { returnTypeEndpoint }
 
     override val KtFunction.functionType: KaType
         get() = context(analysisSession) { functionTypeEndpoint }
