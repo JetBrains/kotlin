@@ -2549,7 +2549,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SEALED_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
             "Sealed value class primary constructor cannot have property parameters."
         )
-        map.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS, "Value class cannot have properties with backing fields.")
+        map.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS, "Value class cannot have properties with backing fields outside the primary constructor.")
         map.put(DELEGATED_PROPERTY_INSIDE_VALUE_CLASS, "Value class cannot have delegated properties.")
         map.put(VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "{1} class cannot have value parameter of type ''{0}''.", TO_STRING, STRING)
         map.put(VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Value class cannot implement an interface by delegation.")
@@ -2600,7 +2600,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS,
-            "Declaration annotated with '@WillBecomeValue' cannot have properties with backing fields."
+            "Declaration annotated with '@WillBecomeValue' cannot have properties with backing fields outside the primary constructor."
         )
         map.put(
             DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS,
