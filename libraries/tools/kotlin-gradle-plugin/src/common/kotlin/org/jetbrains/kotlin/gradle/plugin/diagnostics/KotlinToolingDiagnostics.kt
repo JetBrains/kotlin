@@ -2033,6 +2033,26 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftPackageOutputDirectoryNotSet : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke() = build {
+            title("Swift Package Output Directory Not Set")
+                .description {
+                    """
+                    The Swift package integration of Swift Export is activated, but 'outputDirectory' is not set, so there is nowhere to export the package to.
+                    Example:
+                    ```
+                    export.swift {
+                        swiftPackageIntegration {
+                            outputDirectory.set(layout.projectDirectory.dir("../iosApp/SharedPackage"))
+                        }
+                    }
+                    ```
+                    """.trimIndent()
+                }
+                .solution("Set 'outputDirectory' of 'swiftPackageIntegration' to the directory the package is exported into.")
+        }
+    }
+
     internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'swiftExport { }' DSL")
