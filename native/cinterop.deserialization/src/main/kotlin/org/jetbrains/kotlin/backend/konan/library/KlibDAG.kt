@@ -12,12 +12,14 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.konan.serialization.IdSignaturesExtractorFromCInteropKlib
+import org.jetbrains.kotlin.io.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.io.path.isRegularFile
 import kotlin.io.path.pathString
 
 /**
@@ -205,9 +208,25 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
         // and populateSignatureIndicesForLibrary only writes to the  ConcurrentHashMap indices for distinct nodes,
         // so the calls are safe to run concurrently.
         runBlocking {
-            librariesToPopulateSignatureIndices
-                .map { library -> async(Dispatchers.Default) { populateSignatureIndicesForLibrary(library) } }
-                .awaitAll()
+            // We need to re-load ZIP'ped libraries with `ZipFileSystemInPlaceAccessor` because otherwise multithreaded access
+            // could lead to unexpected concurrency issues. See KT-89764.
+            val [zippedLibraries, unzippedLibraries] = librariesToPopulateSignatureIndices.partition { it.canonicalPath.isRegularFile() }
+            val zippedLibrariesByCanonicalPath = zippedLibraries.associateBy { it.canonicalPath }
+
+            val reloadedZippedLibraries = KlibLoader {
+                libraryPaths(zippedLibraries.map { it.canonicalPath.pathString })
+                zipFileSystemAccessor(ZipFileSystemInPlaceAccessor)
+            }.load().librariesStdlibFirst
+
+            // TODO(KT-89764): Do not reload libraries here, iterate over `librariesToPopulateSignatureIndices` libraries list instead.
+            (reloadedZippedLibraries + unzippedLibraries).map { library ->
+                async(Dispatchers.Default) {
+                    populateSignatureIndicesForLibrary(
+                        library = library,
+                        originalLibrary = zippedLibrariesByCanonicalPath[library.canonicalPath] ?: library,
+                    )
+                }
+            }.awaitAll()
         }
 
         // Maintain the set of really used DAG nodes and their statuses.
@@ -316,8 +335,8 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
      * @return `true` if the indices have been populated as a result of this [populateSignatureIndicesForLibrary] call.
      *         `false` if the indices have been already populated earlier.
      */
-    private fun populateSignatureIndicesForLibrary(library: KotlinLibrary): Boolean {
-        val node = dagUnderConstruction.getValue(library)
+    private fun populateSignatureIndicesForLibrary(library: KotlinLibrary, originalLibrary: KotlinLibrary = library): Boolean {
+        val node = dagUnderConstruction.getValue(originalLibrary)
         if (nodeToImportedSignatures.containsKey(node)) return false // The indices were populated earlier.
 
         // Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.
