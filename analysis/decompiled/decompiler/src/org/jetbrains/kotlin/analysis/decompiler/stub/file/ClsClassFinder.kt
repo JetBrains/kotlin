@@ -55,12 +55,7 @@ object ClsClassFinder {
         }
 
         val innerClass = try {
-            if (fileContent == null) {
-                ClassFileViewProvider.isInnerClass(file)
-            } else {
-                @Suppress("DEPRECATION") // KT-81203
-                ClassFileViewProvider.isInnerClass(file, fileContent)
-            }
+            ClassFileViewProvider.isInnerClass(file)
         } catch (exception: Exception) {
             rethrowIntellijPlatformExceptionIfNeeded(exception)
 
