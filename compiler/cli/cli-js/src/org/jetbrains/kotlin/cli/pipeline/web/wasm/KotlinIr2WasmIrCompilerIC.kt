@@ -147,7 +147,6 @@ private fun compileArtifactMultimodule(
     val multimoduleOptions = MultimoduleCompileOptions(
         stdlibModuleNameForImport = stdlibModuleName,
         dependencyModules = currentModuleImports,
-        initializeUnit = false,
     )
 
     return WasmIrModuleConfiguration(
@@ -168,7 +167,6 @@ private fun compileStdlibArtifactMultimodule(
     val multimoduleOptions = MultimoduleCompileOptions(
         stdlibModuleNameForImport = null,
         dependencyModules = emptySet(),
-        initializeUnit = true,
     )
     return WasmIrModuleConfiguration(
         wasmCompiledFileFragments = codeFragments,
@@ -301,7 +299,6 @@ fun compileIncrementallySingleModule(
     val multimoduleOptions = MultimoduleCompileOptions(
         stdlibModuleNameForImport = stdLibArtifact.moduleName,
         dependencyModules = currentModuleImports,
-        initializeUnit = false,
     )
 
     val configuration = WasmIrModuleConfiguration(

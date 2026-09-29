@@ -10,21 +10,13 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.common.serialization.cityHash128
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
-import org.jetbrains.kotlin.backend.wasm.MultimoduleCompileOptions
-import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.backend.wasm.importedStringConstants
-import org.jetbrains.kotlin.backend.wasm.wasmStartExportName
+import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
-import org.jetbrains.kotlin.backend.wasm.wasmInitializeExportName
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.wasm.ir.*
-import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
-import java.util.IdentityHashMap
-import kotlin.collections.MutableMap
-import kotlin.collections.mutableMapOf
-import kotlin.collections.set
+import java.util.*
 
 enum class ExceptionTagType { WASM_TAG, JS_TAG, TRAP }
 
@@ -202,7 +194,6 @@ class WasmCompiledModuleFragment(
 
         val masterInitFunction = createMasterInitFunction(
             definedDeclarations = definedDeclarations,
-            initializeUnit = multimoduleOptions?.initializeUnit ?: true
         )
 
         val globals = getGlobals(definedDeclarations)
@@ -504,14 +495,9 @@ class WasmCompiledModuleFragment(
 
     private fun createMasterInitFunction(
         definedDeclarations: DefinedDeclarationsResolver,
-        initializeUnit: Boolean,
     ): WasmFunction.Defined {
         val masterInitFunction = WasmFunction.Defined("_initializeModule", Synthetics.FunctionHeapTypes.parameterlessNoReturnFunctionType)
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
-            if (initializeUnit) {
-                buildCall(Synthetics.Functions.unitGetInstanceBuiltIn, serviceCodeLocation)
-            }
-
             buildCall(Synthetics.Functions.fieldInitializerFunction, serviceCodeLocation)
 
             if (definedDeclarations.functions.containsKey(Synthetics.Functions.associatedObjectGetter.value)) {
