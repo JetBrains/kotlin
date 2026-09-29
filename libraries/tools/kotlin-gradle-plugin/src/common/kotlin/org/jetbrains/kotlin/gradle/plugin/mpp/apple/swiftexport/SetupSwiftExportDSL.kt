@@ -83,15 +83,22 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         }
     }
 
-    // The targets are awaited above, so the DSL is finalised by now and the activation is order-independent.
-    if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
+    // The targets are awaited above, so the DSL is finalised by now and the activations are order-independent.
+    val xcodeIntegrationActivated = multiplatformExtension.isSwiftExportXcodeIntegrationActivated()
+    val swiftPackageIntegrationActivated = swiftExportConfiguration.activatedSwiftPackageIntegration != null
+    if (!xcodeIntegrationActivated && !swiftPackageIntegrationActivated) return@KotlinProjectSetupCoroutine
 
     swiftExportConfiguration.activatedXcodeIntegration?.let { activatedXcodeIntegration ->
         SwiftExportDslMetrics.collectXcodeIntegrationMetrics(project, activatedXcodeIntegration)
     }
 
     initSwiftExportClasspathConfigurations()
-    registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
+    if (xcodeIntegrationActivated) {
+        registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
+    }
+    if (swiftPackageIntegrationActivated) {
+        registerSwiftPackageExportPipeline(exportExtension)
+    }
 }
 
 /**
