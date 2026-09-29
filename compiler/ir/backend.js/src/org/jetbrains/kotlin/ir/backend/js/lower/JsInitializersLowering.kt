@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 
 @PhasePrerequisites(
     EnumClassConstructorLowering::class,
@@ -24,7 +25,8 @@ internal class JsInitializersLowering(context: JsIrBackendContext) : Initializer
 internal class JsInitializersCleanupLowering(context: CommonBackendContext) : InitializersCleanupLowering(
     context,
     shouldEraseFieldInitializer = {
-        it.correspondingPropertySymbol?.owner?.isConst != true &&
-                it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_state` fields (KT-89144).
+        it.correspondingPropertySymbol?.owner?.isConst != true
+                && it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_state` fields (KT-89144).
+                && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE // Keep the initializer for eagerly initialized objects
     }
 )

@@ -61,9 +61,9 @@ fun box(): String {
 
 // EXPECTATIONS JS_IR
 // test.kt:13 box
-// test.kt:10 Enum$static_init_0
+// test.kt:10 Enum$static_init
 // test.kt:8 <init>
-// test.kt:10 Enum$static_init_0
+// test.kt:10 Enum$static_init
 // test.kt:8 <init>
 // test.kt:14 box
 // test.kt:15 box
