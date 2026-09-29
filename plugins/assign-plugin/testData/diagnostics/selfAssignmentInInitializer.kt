@@ -8,10 +8,10 @@ class StringProperty(var v: String) {
     }
 }
 
-val topLevel = topLevel = "str"
+val topLevel = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!><!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, VAL_REASSIGNMENT!>topLevel<!> = "str"<!>
 
 class Task {
-    val member = member = "str"
+    val member = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!><!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>member<!> = "str"<!>
 
     fun usage() {
         member.toString()
