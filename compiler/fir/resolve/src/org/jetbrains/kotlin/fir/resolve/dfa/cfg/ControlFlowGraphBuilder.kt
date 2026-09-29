@@ -265,7 +265,11 @@ class ControlFlowGraphBuilder private constructor(
 
     // ----------------------------------- Regular function -----------------------------------
 
-    fun enterFunction(function: FirFunction): Pair<LocalFunctionDeclarationNode?, FunctionEnterNode> {
+    private fun FirCallableDeclaration.isCfgLocal(): Boolean {
+        return this is FirNamedFunction && this.status.visibility == Visibilities.Local && bodyBuildingMode
+    }
+
+    fun enterFunction(function: FirFunction): CfgFunctionEnterResult {
         require(function !is FirAnonymousFunction)
         val name = when (function) {
             is FirNamedFunction -> function.name.asString()
@@ -274,29 +278,44 @@ class ControlFlowGraphBuilder private constructor(
             else -> throw IllegalArgumentException("Unknown function: ${function.render()}")
         }
 
-        val localFunctionNode = runIf(function is FirNamedFunction && function.status.visibility == Visibilities.Local && bodyBuildingMode) {
-            createLocalFunctionDeclarationNode(function).also { addNewSimpleNode(it) }
+        val localEnterNode = runIf(function.isCfgLocal()) {
+            createLocalFunctionDeclarationEnterNode(function).also { addNewSimpleNode(it) }
         }
         val kind = when {
-            localFunctionNode != null -> ControlFlowGraph.Kind.LocalFunction
+            localEnterNode != null -> ControlFlowGraph.Kind.LocalFunction
             function is FirConstructor -> ControlFlowGraph.Kind.Constructor
             else -> ControlFlowGraph.Kind.Function
         }
         val enterNode = enterGraph(function, name, kind) {
             createFunctionEnterNode(it) to createFunctionExitNode(it).also { exit -> exitTargetsForReturn[it.symbol] = exit }
         }
-        if (localFunctionNode != null) {
-            addEdge(localFunctionNode, enterNode)
+        if (localEnterNode != null) {
+            addEdge(localEnterNode, enterNode)
             addBackEdge(enterNode.owner.exitNode, enterNode) // Local functions can be called repeatedly.
         } else {
             addEdgeIfLocalClassMember(enterNode)
         }
-        return Pair(localFunctionNode, enterNode)
+        return CfgFunctionEnterResult(localEnterNode, enterNode)
     }
 
-    fun exitFunction(function: FirFunction): Pair<FunctionExitNode, ControlFlowGraph> {
+    fun exitFunction(function: FirFunction): CfgFunctionExitResult {
         exitTargetsForReturn.remove(function.symbol)
-        return exitGraph()
+        val [functionExitNode, graph] = exitGraph<FunctionExitNode>()
+
+        val localExitNode = runIf(function.isCfgLocal()) {
+            createLocalFunctionDeclarationExitNode(function).also { addNewSimpleNode(it) }
+        }
+
+        if (localExitNode != null) {
+            addEdge(
+                from = functionExitNode,
+                to = localExitNode,
+                propagateDeadness = false,
+                preferredKind = EdgeKind.LexicalForward,
+            )
+        }
+
+        return CfgFunctionExitResult(functionExitNode, localExitNode, graph)
     }
 
     // ----------------------------------- Anonymous function -----------------------------------
@@ -382,10 +401,12 @@ class ControlFlowGraphBuilder private constructor(
             ControlFlowGraph.Kind.AnonymousFunction
         return enterGraph(anonymousFunction, "<anonymous>", graphKind) {
             createFunctionEnterNode(it) to createFunctionExitNode(it).also { exit -> exitTargetsForReturn[anonymousFunction.symbol] = exit }
-        }.also {
+        }.also { enterNode ->
             val captureNode = anonymousFunctionCaptureNodes[anonymousFunction.symbol]
-            if (captureNode != null) addEdge(captureNode, it, preferredKind = EdgeKind.CfgForward, label = CapturedByValue)
-            addEdge(postponedAnonymousFunctionNodes.getValue(anonymousFunction.symbol).first, it)
+            if (captureNode != null) addEdge(captureNode, enterNode, preferredKind = EdgeKind.CfgForward, label = CapturedByValue)
+
+            val splitNode = postponedAnonymousFunctionNodes.getValue(anonymousFunction.symbol).first
+            addEdge(splitNode, enterNode)
         }
     }
 
@@ -417,6 +438,12 @@ class ControlFlowGraphBuilder private constructor(
         } else {
             // Non-in-place lambdas could be invoked repeatedly.
             addBackEdge(graph.exitNode, graph.enterNode)
+            addEdge(
+                from = graph.exitNode,
+                to = postponedExitNode,
+                propagateDeadness = false,
+                preferredKind = EdgeKind.LexicalForward,
+            )
         }
 
         // Lambdas called inline do not capture any variables, so the capture edge needs to be marked as dead.
@@ -620,7 +647,7 @@ class ControlFlowGraphBuilder private constructor(
             is FirAnonymousObject -> createAnonymousObjectEnterNode(klass)
             // Local classes are only initialized on first use, so they look pretty much like named functions:
             // control flow enters here and never leaves, and assignments invalidate smart casts.
-            is FirRegularClass if klass.isLocal && bodyBuildingMode -> createLocalClassExitNode(klass)
+            is FirRegularClass if klass.isLocal && bodyBuildingMode -> createLocalClassEnterNode(klass)
             else -> null
         }?.also { addNewSimpleNode(it) }
 
@@ -714,7 +741,42 @@ class ControlFlowGraphBuilder private constructor(
 
         val memberGraph = createClassMemberGraph(primaryConstructor, secondaryConstructors, calledInPlace, calledLater)
         val staticGraph = createClassStaticGraph(klass, statics)
-        return CfgExitClassResult(memberGraph, staticGraph)
+
+        // When a class is local or anonymous, create edges from non-in-place members and the class exit to a local exit node.
+        // This enables inheriting resolved assignment types within the class, outside the class.
+        val localClassExitNode = when (klass) {
+            is FirAnonymousObject -> createAnonymousObjectExitNode(klass)
+            is FirRegularClass if klass.isLocal && bodyBuildingMode -> createLocalClassExitNode(klass)
+            else -> null
+        }
+
+        if (localClassExitNode != null) {
+            if (localClassExitNode is AnonymousObjectExitNode) {
+                addEdge(memberGraph.exitNode, localClassExitNode)
+                // Fake edge to enforce ordering.
+                addEdge(lastNodes.pop(), localClassExitNode, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
+                lastNodes.push(localClassExitNode)
+            } else {
+                addEdge(
+                    from = memberGraph.exitNode,
+                    to = localClassExitNode,
+                    propagateDeadness = false,
+                    preferredKind = EdgeKind.LexicalForward,
+                )
+                addNewSimpleNode(localClassExitNode)
+            }
+
+            for (graph in calledLater) {
+                addEdge(
+                    from = graph.exitNode,
+                    to = localClassExitNode,
+                    propagateDeadness = false,
+                    preferredKind = EdgeKind.LexicalForward,
+                )
+            }
+        }
+
+        return CfgExitClassResult(localClassExitNode, memberGraph, staticGraph)
     }
 
     private fun createClassMemberGraph(
@@ -875,21 +937,6 @@ class ControlFlowGraphBuilder private constructor(
         addEdge(lastNodes.pop(), exitNode, preferredKind = EdgeKind.Forward)
 
         return exitNode to popGraph()
-    }
-
-    fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode? {
-        val klass = anonymousObjectExpression.anonymousObject
-        return createAnonymousObjectExpressionExitNode(anonymousObjectExpression).also {
-            val exitNode = klass.controlFlowGraphReference?.controlFlowGraph?.exitNode
-            if (exitNode != null && lastNode is AnonymousObjectEnterNode) {
-                addEdge(exitNode, it)
-                // Fake edge to enforce ordering.
-                addEdge(lastNodes.pop(), it, preferredKind = EdgeKind.DeadForward, propagateDeadness = false)
-                lastNodes.push(it)
-            } else {
-                addNewSimpleNode(it)
-            }
-        }
     }
 
     // ----------------------------------- Scripts -----------------------------------
@@ -1133,7 +1180,17 @@ class ControlFlowGraphBuilder private constructor(
     }
 
     fun enterWhenBranchCondition(whenBranch: FirWhenBranch): WhenBranchConditionEnterNode {
-        return createWhenBranchConditionEnterNode(whenBranch).also { addNewSimpleNode(it) }
+        val node = createWhenBranchConditionEnterNode(whenBranch)
+        if (lastNode is WhenBranchResultExitNode) {
+            addEdge(
+                from = lastNodes.pop(),
+                to = node,
+                propagateDeadness = false,
+                preferredKind = EdgeKind.LexicalForward,
+            )
+        }
+        addNewSimpleNode(node)
+        return node
     }
 
     fun exitWhenBranchCondition(whenBranch: FirWhenBranch): Pair<WhenBranchConditionExitNode, WhenBranchResultEnterNode> {
@@ -1145,7 +1202,7 @@ class ControlFlowGraphBuilder private constructor(
 
     fun exitWhenBranchResult(whenBranch: FirWhenBranch): WhenBranchResultExitNode {
         val node = createWhenBranchResultExitNode(whenBranch)
-        popAndAddEdge(node)
+        addNewSimpleNode(node) // Preserve exit node for lexical edge to next condition.
         addEdge(node, whenExitNodes.top(), propagateDeadness = false)
         return node
     }
@@ -1158,6 +1215,7 @@ class ControlFlowGraphBuilder private constructor(
         // exit from last condition node still on stack
         // we should remove it
         notCompletedFunctionCalls.pop().forEach(::completeFunctionCall)
+        if (lastNode is WhenBranchResultExitNode) lastNodes.pop()
         val lastWhenConditionExit = lastNodes.pop()
         val syntheticElseBranchNode = if (!whenExpression.isProperlyExhaustive) {
             createWhenSyntheticElseBranchNode(whenExpression).apply {
@@ -1316,6 +1374,7 @@ class ControlFlowGraphBuilder private constructor(
     }
 
     fun enterCatchClause(catch: FirCatch): CatchClauseEnterNode {
+        // TODO lexical path between catch blocks?
         val catchEnterNode = catchBlocksInProgress.pop()
         assert(catchEnterNode.fir == catch)
         if (tryExitNodes.top().fir.finallyBlock != null) {
@@ -1609,6 +1668,10 @@ class ControlFlowGraphBuilder private constructor(
         return node
     }
 
+    fun exitAugmentedAssignment(assignment: FirAugmentedAssignment): AugmentedAssignmentNode {
+        return createAugmentedAssignmentNode(assignment).also { addNewSimpleNode(it) }
+    }
+
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression): ThrowExceptionNode {
         return createThrowExceptionNode(throwExpression).also { addNonSuccessfullyTerminatingNode(it) }
     }
@@ -1845,8 +1908,20 @@ class LambdaExitLayer<out T>(
 )
 
 class CfgExitClassResult(
+    val localExitNode: CFGNode<*>?,
     val memberGraph: ControlFlowGraph,
     val staticGraph: ControlFlowGraph?,
+)
+
+class CfgFunctionEnterResult(
+    val localEnterNode: LocalFunctionDeclarationEnterNode?,
+    val functionEnterNode: FunctionEnterNode,
+)
+
+class CfgFunctionExitResult(
+    val functionExitNode: FunctionExitNode,
+    val localExitNode: LocalFunctionDeclarationExitNode?,
+    val graph: ControlFlowGraph,
 )
 
 @OptIn(UnresolvedExpressionTypeAccess::class)

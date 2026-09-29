@@ -568,6 +568,7 @@ digraph callsInPlace_kt {
     180 -> {181};
     181 -> {182};
     182 -> {183};
+    183 -> {186} [color=blue];
     183 -> {179} [color=green style=dashed];
     184 -> {185};
     185 -> {187};

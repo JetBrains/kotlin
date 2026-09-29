@@ -89,115 +89,130 @@ digraph enumInitilization_kt {
         subgraph cluster_9 {
             color=blue
             27 [label="Enter enum entry FIRST" style="filled" fillcolor=red];
-            28 [label="Enter anonymous object"];
             subgraph cluster_10 {
                 color=blue
-                29 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                28 [label="Enter anonymous object"];
                 subgraph cluster_11 {
                     color=blue
-                    30 [label="Enter function <init>" style="filled" fillcolor=red];
-                    31 [label="Access variable R|/InitEnum.SECOND|"];
-                    32 [label="Access variable R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
-                    33 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
-                    34 [label="Exit function <init>" style="filled" fillcolor=red];
+                    29 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                    subgraph cluster_12 {
+                        color=blue
+                        30 [label="Enter function <init>" style="filled" fillcolor=red];
+                        31 [label="Access variable R|/InitEnum.SECOND|"];
+                        32 [label="Access variable R|SubstitutionOverride</InitEnum.name: R|kotlin/String|>|"];
+                        33 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+                        34 [label="Exit function <init>" style="filled" fillcolor=red];
+                    }
+                    35 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
                 }
-                35 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+                36 [label="Exit anonymous object"];
             }
-            36 [label="Exit anonymous object expression"];
             37 [label="Exit enum entry FIRST" style="filled" fillcolor=red];
         }
-        subgraph cluster_12 {
+        subgraph cluster_13 {
             color=blue
             38 [label="Enter enum entry SECOND" style="filled" fillcolor=red];
-            39 [label="Enter anonymous object"];
-            subgraph cluster_13 {
+            subgraph cluster_14 {
                 color=blue
-                40 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
-                subgraph cluster_14 {
+                39 [label="Enter anonymous object"];
+                subgraph cluster_15 {
                     color=blue
-                    41 [label="Enter function <init>" style="filled" fillcolor=red];
-                    42 [label="Access variable R|/InitEnum.Companion.companionObject|"];
-                    43 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
-                    44 [label="Exit function <init>" style="filled" fillcolor=red];
+                    40 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                    subgraph cluster_16 {
+                        color=blue
+                        41 [label="Enter function <init>" style="filled" fillcolor=red];
+                        42 [label="Access variable R|/InitEnum.Companion.companionObject|"];
+                        43 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+                        44 [label="Exit function <init>" style="filled" fillcolor=red];
+                    }
+                    45 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
                 }
-                45 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+                46 [label="Exit anonymous object"];
             }
-            46 [label="Exit anonymous object expression"];
             47 [label="Exit enum entry SECOND" style="filled" fillcolor=red];
         }
-        subgraph cluster_15 {
+        subgraph cluster_17 {
             color=blue
             48 [label="Enter enum entry THIRD" style="filled" fillcolor=red];
-            49 [label="Enter anonymous object"];
-            subgraph cluster_16 {
+            subgraph cluster_18 {
                 color=blue
-                50 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
-                subgraph cluster_17 {
+                49 [label="Enter anonymous object"];
+                subgraph cluster_19 {
                     color=blue
-                    51 [label="Enter function <init>" style="filled" fillcolor=red];
-                    52 [label="Access variable R|/InitEnum.companionBlock|"];
-                    53 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
-                    54 [label="Exit function <init>" style="filled" fillcolor=red];
+                    50 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                    subgraph cluster_20 {
+                        color=blue
+                        51 [label="Enter function <init>" style="filled" fillcolor=red];
+                        52 [label="Access variable R|/InitEnum.companionBlock|"];
+                        53 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+                        54 [label="Exit function <init>" style="filled" fillcolor=red];
+                    }
+                    55 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
                 }
-                55 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+                56 [label="Exit anonymous object"];
             }
-            56 [label="Exit anonymous object expression"];
             57 [label="Exit enum entry THIRD" style="filled" fillcolor=red];
-        }
-        subgraph cluster_18 {
-            color=blue
-            58 [label="Enter enum entry FOURTH" style="filled" fillcolor=red];
-            59 [label="Enter anonymous object"];
-            subgraph cluster_19 {
-                color=blue
-                60 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
-                subgraph cluster_20 {
-                    color=blue
-                    61 [label="Enter function <init>" style="filled" fillcolor=red];
-                    62 [label="Access variable R|/InitEnum.companionBlockComputed|"];
-                    63 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
-                    64 [label="Exit function <init>" style="filled" fillcolor=red];
-                }
-                65 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
-            }
-            66 [label="Exit anonymous object expression"];
-            67 [label="Exit enum entry FOURTH" style="filled" fillcolor=red];
         }
         subgraph cluster_21 {
             color=blue
-            68 [label="Enter enum entry FIFTH" style="filled" fillcolor=red];
-            69 [label="Enter anonymous object"];
+            58 [label="Enter enum entry FOURTH" style="filled" fillcolor=red];
             subgraph cluster_22 {
                 color=blue
-                70 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                59 [label="Enter anonymous object"];
                 subgraph cluster_23 {
                     color=blue
-                    71 [label="Enter function <init>" style="filled" fillcolor=red];
+                    60 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
                     subgraph cluster_24 {
                         color=blue
-                        72 [label="Function call arguments enter"];
-                        73 [label="Function call arguments exit"];
+                        61 [label="Enter function <init>" style="filled" fillcolor=red];
+                        62 [label="Access variable R|/InitEnum.companionBlockComputed|"];
+                        63 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+                        64 [label="Exit function <init>" style="filled" fillcolor=red];
                     }
-                    74 [label="Function call enter: Q|InitEnum|.R|/InitEnum.companionBlockFunction|()"];
-                    75 [label="Function call exit: Q|InitEnum|.R|/InitEnum.companionBlockFunction|()" style="filled" fillcolor=yellow];
-                    76 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
-                    77 [label="Exit function <init>" style="filled" fillcolor=red];
+                    65 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
                 }
-                78 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+                66 [label="Exit anonymous object"];
             }
-            79 [label="Exit anonymous object expression"];
-            80 [label="Exit enum entry FIFTH" style="filled" fillcolor=red];
+            67 [label="Exit enum entry FOURTH" style="filled" fillcolor=red];
         }
         subgraph cluster_25 {
             color=blue
-            81 [label="Enter class Companion" style="filled" fillcolor=red];
+            68 [label="Enter enum entry FIFTH" style="filled" fillcolor=red];
             subgraph cluster_26 {
+                color=blue
+                69 [label="Enter anonymous object"];
+                subgraph cluster_27 {
+                    color=blue
+                    70 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+                    subgraph cluster_28 {
+                        color=blue
+                        71 [label="Enter function <init>" style="filled" fillcolor=red];
+                        subgraph cluster_29 {
+                            color=blue
+                            72 [label="Function call arguments enter"];
+                            73 [label="Function call arguments exit"];
+                        }
+                        74 [label="Function call enter: Q|InitEnum|.R|/InitEnum.companionBlockFunction|()"];
+                        75 [label="Function call exit: Q|InitEnum|.R|/InitEnum.companionBlockFunction|()" style="filled" fillcolor=yellow];
+                        76 [label="Delegated constructor call: super<R|InitEnum|>(...)" style="filled" fillcolor=yellow];
+                        77 [label="Exit function <init>" style="filled" fillcolor=red];
+                    }
+                    78 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+                }
+                79 [label="Exit anonymous object"];
+            }
+            80 [label="Exit enum entry FIFTH" style="filled" fillcolor=red];
+        }
+        subgraph cluster_30 {
+            color=blue
+            81 [label="Enter class Companion" style="filled" fillcolor=red];
+            subgraph cluster_31 {
                 color=blue
                 82 [label="Enter function <init>" style="filled" fillcolor=red];
                 83 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
                 84 [label="Exit function <init>" style="filled" fillcolor=red];
             }
-            subgraph cluster_27 {
+            subgraph cluster_32 {
                 color=blue
                 85 [label="Enter property" style="filled" fillcolor=red];
                 86 [label="Access variable R|/InitEnum.FIRST|"];
@@ -206,7 +221,7 @@ digraph enumInitilization_kt {
             }
             89 [label="Exit class Companion" style="filled" fillcolor=red];
         }
-        subgraph cluster_28 {
+        subgraph cluster_33 {
             color=blue
             90 [label="Enter property" style="filled" fillcolor=red];
             91 [label="Access variable R|/InitEnum.SECOND|"];

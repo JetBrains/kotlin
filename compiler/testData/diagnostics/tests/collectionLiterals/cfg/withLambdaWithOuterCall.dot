@@ -310,6 +310,7 @@ digraph withLambdaWithOuterCall_kt {
     88 -> {89} [style=dotted];
     89 -> {90} [style=dotted];
     90 -> {91} [style=dotted];
+    91 -> {94} [color=blue];
     91 -> {86} [color=green style=dashed];
     92 -> {93};
     93 -> {95};
@@ -374,6 +375,7 @@ digraph withLambdaWithOuterCall_kt {
     109 -> {110} [style=dotted];
     110 -> {111} [style=dotted];
     111 -> {112} [style=dotted];
+    112 -> {115} [color=blue];
     112 -> {107} [color=green style=dashed];
     113 -> {114};
     114 -> {116};

@@ -96,7 +96,7 @@ fun test8() {
     exactlyOnce {
         x.length
         exactlyOnce {
-            <!SMARTCAST_IMPOSSIBLE!>x<!>.length
+            x.length
         }
         x = 10
     }

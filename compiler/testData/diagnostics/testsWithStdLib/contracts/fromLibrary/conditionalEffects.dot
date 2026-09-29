@@ -197,36 +197,36 @@ digraph conditionalEffects_kt {
                     71 [label="Access variable R|<local>/b|"];
                     72 [label="Exit when branch condition"];
                 }
+                73 [label="Enter when branch result"];
                 subgraph cluster_19 {
                     color=blue
-                    73 [label="Enter when branch condition else"];
-                    74 [label="Exit when branch condition"];
+                    74 [label="Enter block"];
+                    subgraph cluster_20 {
+                        color=blue
+                        75 [label="Function call arguments enter"];
+                        76 [label="Access variable R|<local>/x|"];
+                        77 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
+                        78 [label="Function call arguments exit"];
+                    }
+                    79 [label="Function call enter: R|kotlin/require|(...)"];
+                    80 [label="Function call exit: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
+                    81 [label="Access variable R|<local>/x|"];
+                    82 [label="Smart cast: R|<local>/x|"];
+                    83 [label="Access variable R|kotlin/String.length|"];
+                    84 [label="Exit block"];
                 }
-                75 [label="Enter when branch result"];
-                subgraph cluster_20 {
-                    color=blue
-                    76 [label="Enter block"];
-                    77 [label="Access variable R|<local>/x|"];
-                    78 [label="Access variable <Unresolved name: length>#"];
-                    79 [label="Exit block"];
-                }
-                80 [label="Exit when branch result"];
-                81 [label="Enter when branch result"];
+                85 [label="Exit when branch result"];
                 subgraph cluster_21 {
                     color=blue
-                    82 [label="Enter block"];
-                    subgraph cluster_22 {
-                        color=blue
-                        83 [label="Function call arguments enter"];
-                        84 [label="Access variable R|<local>/x|"];
-                        85 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                        86 [label="Function call arguments exit"];
-                    }
-                    87 [label="Function call enter: R|kotlin/require|(...)"];
-                    88 [label="Function call exit: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
-                    89 [label="Access variable R|<local>/x|"];
-                    90 [label="Smart cast: R|<local>/x|"];
-                    91 [label="Access variable R|kotlin/String.length|"];
+                    86 [label="Enter when branch condition else"];
+                    87 [label="Exit when branch condition"];
+                }
+                88 [label="Enter when branch result"];
+                subgraph cluster_22 {
+                    color=blue
+                    89 [label="Enter block"];
+                    90 [label="Access variable R|<local>/x|"];
+                    91 [label="Access variable <Unresolved name: length>#"];
                     92 [label="Exit block"];
                 }
                 93 [label="Exit when branch result"];
@@ -243,7 +243,7 @@ digraph conditionalEffects_kt {
     69 -> {70};
     70 -> {71};
     71 -> {72};
-    72 -> {73 81};
+    72 -> {73 86};
     73 -> {74};
     74 -> {75};
     75 -> {76};
@@ -251,12 +251,13 @@ digraph conditionalEffects_kt {
     77 -> {78};
     78 -> {79};
     79 -> {80};
-    80 -> {94};
+    80 -> {81};
     81 -> {82};
     82 -> {83};
     83 -> {84};
     84 -> {85};
-    85 -> {86};
+    85 -> {94};
+    85 -> {86} [color=blue];
     86 -> {87};
     87 -> {88};
     88 -> {89};
@@ -285,30 +286,30 @@ digraph conditionalEffects_kt {
                     103 [label="Access variable R|<local>/b|"];
                     104 [label="Exit when branch condition"];
                 }
+                105 [label="Enter when branch result"];
                 subgraph cluster_27 {
                     color=blue
-                    105 [label="Enter when branch condition else"];
-                    106 [label="Exit when branch condition"];
-                }
-                107 [label="Enter when branch result"];
-                subgraph cluster_28 {
-                    color=blue
-                    108 [label="Enter block"];
-                    subgraph cluster_29 {
+                    106 [label="Enter block"];
+                    subgraph cluster_28 {
                         color=blue
-                        109 [label="Function call arguments enter"];
-                        110 [label="Access variable R|<local>/x|"];
-                        111 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
-                        112 [label="Function call arguments exit"];
+                        107 [label="Function call arguments enter"];
+                        108 [label="Access variable R|<local>/x|"];
+                        109 [label="Type operator: (R|<local>/x| is R|kotlin/String|)"];
+                        110 [label="Function call arguments exit"];
                     }
-                    113 [label="Function call enter: R|kotlin/require|(...)"];
-                    114 [label="Function call exit: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
-                    115 [label="Access variable R|<local>/x|"];
-                    116 [label="Smart cast: R|<local>/x|"];
-                    117 [label="Access variable R|kotlin/String.length|"];
-                    118 [label="Exit block"];
+                    111 [label="Function call enter: R|kotlin/require|(...)"];
+                    112 [label="Function call exit: R|kotlin/require|(...)" style="filled" fillcolor=yellow];
+                    113 [label="Access variable R|<local>/x|"];
+                    114 [label="Smart cast: R|<local>/x|"];
+                    115 [label="Access variable R|kotlin/String.length|"];
+                    116 [label="Exit block"];
                 }
-                119 [label="Exit when branch result"];
+                117 [label="Exit when branch result"];
+                subgraph cluster_29 {
+                    color=blue
+                    118 [label="Enter when branch condition else"];
+                    119 [label="Exit when branch condition"];
+                }
                 120 [label="Enter when branch result"];
                 subgraph cluster_30 {
                     color=blue
@@ -342,7 +343,7 @@ digraph conditionalEffects_kt {
     101 -> {102};
     102 -> {103};
     103 -> {104};
-    104 -> {105 120};
+    104 -> {105 118};
     105 -> {106};
     106 -> {107};
     107 -> {108};
@@ -355,9 +356,10 @@ digraph conditionalEffects_kt {
     114 -> {115};
     115 -> {116};
     116 -> {117};
-    117 -> {118};
+    117 -> {133};
+    117 -> {118} [color=blue];
     118 -> {119};
-    119 -> {133};
+    119 -> {120};
     120 -> {121};
     121 -> {122};
     122 -> {123};

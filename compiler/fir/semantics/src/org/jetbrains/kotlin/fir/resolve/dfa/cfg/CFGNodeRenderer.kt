@@ -22,7 +22,8 @@ fun CFGNode<*>.render(): String =
             when (this@render) {
                 is FunctionEnterNode -> "Enter function ${owner.name}"
                 is FunctionExitNode -> "Exit function ${owner.name}"
-                is LocalFunctionDeclarationNode -> "Local function declaration"
+                is LocalFunctionDeclarationEnterNode -> "Enter local function declaration"
+                is LocalFunctionDeclarationExitNode -> "Exit local function declaration"
 
                 is BlockEnterNode -> "Enter block"
                 is BlockExitNode -> "Exit block"
@@ -63,6 +64,7 @@ fun CFGNode<*>.render(): String =
                     }"
 
                 is VariableAssignmentNode -> "Assignment: ${fir.calleeReference?.let(CfgRenderer::renderElementAsString)}"
+                is AugmentedAssignmentNode -> "Assignment via ${fir.operation}"
                 is FunctionCallArgumentsEnterNode -> "Function call arguments enter"
                 is FunctionCallArgumentsExitNode -> "Function call arguments exit"
                 is FunctionCallEnterNode -> "Function call enter: ${CfgRenderer.renderElementAsString(fir)}"
@@ -111,11 +113,12 @@ fun CFGNode<*>.render(): String =
                 is ClassExitNode -> "Exit class ${owner.name}"
                 is StaticEnterNode -> "Enter static ${owner.name}"
                 is StaticExitNode -> "Exit static ${owner.name}"
-                is LocalClassExitNode -> "Local class declaration"
+                is LocalClassEnterNode -> "Enter local class ${fir.name}"
+                is LocalClassExitNode -> "Exit local class ${fir.name}"
                 is EnumEntryEnterNode -> "Enter enum entry ${owner.name}"
                 is EnumEntryExitNode -> "Exit enum entry ${owner.name}"
                 is AnonymousObjectEnterNode -> "Enter anonymous object"
-                is AnonymousObjectExpressionExitNode -> "Exit anonymous object expression"
+                is AnonymousObjectExitNode -> "Exit anonymous object"
 
                 is ScriptEnterNode -> "Enter class ${fir.name}"
                 is ScriptExitNode -> "Exit class ${fir.name}"

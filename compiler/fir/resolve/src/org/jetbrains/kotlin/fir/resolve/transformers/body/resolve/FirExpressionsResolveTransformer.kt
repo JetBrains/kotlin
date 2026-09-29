@@ -1093,6 +1093,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(resolvedAssignCall, ContextIndependent)
             dataFlowAnalyzer.exitFunctionCall(resolvedAssignCall, callCompleted = true)
+            dataFlowAnalyzer.exitAugmentedAssignment(augmentedAssignment, leftArgument, resolvedType = leftArgument.resolvedType)
             return resolvedAssignCall
         }
 
@@ -1105,6 +1106,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 } ?: ResolutionMode.ContextIndependent,
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
+            dataFlowAnalyzer.exitAugmentedAssignment(augmentedAssignment, leftArgument, resolvedType = resolvedOperatorCall.resolvedType)
 
             val leftArgumentDesugaredSource = leftArgument.source?.fakeElement(fakeSourceKind)
             val unwrappedLeftArgument = leftArgument.unwrapSmartcastExpression()
@@ -2559,7 +2561,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         if (!anonymousObjectExpression.hasResolvedType) {
             anonymousObjectExpression.resultType = anonymousObjectExpression.anonymousObject.defaultType()
         }
-        dataFlowAnalyzer.exitAnonymousObjectExpression(anonymousObjectExpression)
         return anonymousObjectExpression
     }
 

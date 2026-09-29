@@ -117,26 +117,26 @@ digraph functionCallBound_kt {
                     39 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     40 [label="Exit when branch condition"];
                 }
+                41 [label="Enter when branch result"];
                 subgraph cluster_15 {
                     color=blue
-                    41 [label="Enter when branch condition else"];
-                    42 [label="Exit when branch condition"];
-                }
-                43 [label="Enter when branch result"];
-                subgraph cluster_16 {
-                    color=blue
-                    44 [label="Enter block"];
-                    45 [label="Access variable R|<local>/base|"];
+                    42 [label="Enter block"];
+                    43 [label="Access variable R|<local>/base|"];
+                    44 [label="Smart cast: R|<local>/base|"];
+                    45 [label="Access variable R|/Sub.data|"];
                     46 [label="Exit block"];
                 }
                 47 [label="Exit when branch result"];
-                48 [label="Enter when branch result"];
+                subgraph cluster_16 {
+                    color=blue
+                    48 [label="Enter when branch condition else"];
+                    49 [label="Exit when branch condition"];
+                }
+                50 [label="Enter when branch result"];
                 subgraph cluster_17 {
                     color=blue
-                    49 [label="Enter block"];
-                    50 [label="Access variable R|<local>/base|"];
-                    51 [label="Smart cast: R|<local>/base|"];
-                    52 [label="Access variable R|/Sub.data|"];
+                    51 [label="Enter block"];
+                    52 [label="Access variable R|<local>/base|"];
                     53 [label="Exit block"];
                 }
                 54 [label="Exit when branch result"];
@@ -178,6 +178,7 @@ digraph functionCallBound_kt {
     45 -> {46};
     46 -> {47};
     47 -> {55};
+    47 -> {48} [color=blue];
     48 -> {49};
     49 -> {50};
     50 -> {51};

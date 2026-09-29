@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.*
@@ -301,9 +300,17 @@ class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction, l
     }
 }
 
-class LocalFunctionDeclarationNode(owner: ControlFlowGraph, override val fir: FirFunction, level: Int) : CFGNodeWithCfgOwner<FirFunction>(owner, level) {
+class LocalFunctionDeclarationEnterNode(owner: ControlFlowGraph, override val fir: FirFunction, level: Int) :
+    CFGNodeWithCfgOwner<FirFunction>(owner, level), EnterNodeMarker, MustBeReachableNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitLocalFunctionDeclarationNode(this, data)
+        return visitor.visitLocalFunctionDeclarationEnterNode(this, data)
+    }
+}
+
+class LocalFunctionDeclarationExitNode(owner: ControlFlowGraph, override val fir: FirFunction, level: Int) :
+    CFGNode<FirFunction>(owner, level), ExitNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitLocalFunctionDeclarationExitNode(this, data)
     }
 }
 
@@ -453,7 +460,15 @@ class StaticExitNode(
     }
 }
 
-class LocalClassExitNode(owner: ControlFlowGraph, override val fir: FirRegularClass, level: Int) : CFGNodeWithCfgOwner<FirRegularClass>(owner, level) {
+class LocalClassEnterNode(owner: ControlFlowGraph, override val fir: FirRegularClass, level: Int) :
+    CFGNodeWithCfgOwner<FirRegularClass>(owner, level), EnterNodeMarker, MustBeReachableNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitLocalClassEnterNode(this, data)
+    }
+}
+
+class LocalClassExitNode(owner: ControlFlowGraph, override val fir: FirRegularClass, level: Int) :
+    CFGNode<FirRegularClass>(owner, level), ExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitLocalClassExitNode(this, data)
     }
@@ -479,15 +494,17 @@ class EnumEntryExitNode(
     }
 }
 
-class AnonymousObjectEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int) : CFGNodeWithCfgOwner<FirAnonymousObject>(owner, level) {
+class AnonymousObjectEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int) :
+    CFGNodeWithCfgOwner<FirAnonymousObject>(owner, level), EnterNodeMarker, MustBeReachableNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitAnonymousObjectEnterNode(this, data)
     }
 }
 
-class AnonymousObjectExpressionExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObjectExpression, level: Int) : CFGNode<FirAnonymousObjectExpression>(owner, level) {
+class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnonymousObject, level: Int) :
+    CFGNode<FirAnonymousObject>(owner, level), ExitNodeMarker, MustBeReachableNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitAnonymousObjectExpressionExitNode(this, data)
+        return visitor.visitAnonymousObjectExitNode(this, data)
     }
 }
 
@@ -1017,6 +1034,13 @@ class VariableDeclarationExitNode(owner: ControlFlowGraph, override val fir: Fir
 class VariableAssignmentNode(owner: ControlFlowGraph, override val fir: FirVariableAssignment, level: Int) : CFGNode<FirVariableAssignment>(owner, level) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitVariableAssignmentNode(this, data)
+    }
+}
+
+class AugmentedAssignmentNode(owner: ControlFlowGraph, override val fir: FirAugmentedAssignment, level: Int) :
+    CFGNode<FirAugmentedAssignment>(owner, level), AlwaysReachableNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitAugmentedAssignmentNode(this, data)
     }
 }
 

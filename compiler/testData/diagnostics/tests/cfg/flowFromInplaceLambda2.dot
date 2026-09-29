@@ -418,24 +418,24 @@ digraph flowFromInplaceLambda2_kt {
                         149 [label="Const: Boolean(true)"];
                         150 [label="Exit when branch condition"];
                     }
+                    151 [label="Enter when branch result"];
                     subgraph cluster_42 {
                         color=blue
-                        151 [label="Enter when branch condition else"];
-                        152 [label="Exit when branch condition"];
+                        152 [label="Enter block"];
+                        153 [label="Const: Int(1)"];
+                        154 [label="Exit block"];
                     }
-                    153 [label="Enter when branch result"];
+                    155 [label="Exit when branch result"];
                     subgraph cluster_43 {
                         color=blue
-                        154 [label="Enter block"];
-                        155 [label="Const: Int(2)"];
-                        156 [label="Exit block"];
+                        156 [label="Enter when branch condition else"];
+                        157 [label="Exit when branch condition"];
                     }
-                    157 [label="Exit when branch result"];
                     158 [label="Enter when branch result"];
                     subgraph cluster_44 {
                         color=blue
                         159 [label="Enter block"];
-                        160 [label="Const: Int(1)"];
+                        160 [label="Const: Int(2)"];
                         161 [label="Exit block"];
                     }
                     162 [label="Exit when branch result"];
@@ -505,14 +505,15 @@ digraph flowFromInplaceLambda2_kt {
     147 -> {148};
     148 -> {149};
     149 -> {150};
-    150 -> {151 158};
+    150 -> {151 156};
     151 -> {152};
     152 -> {153};
     153 -> {154};
     154 -> {155};
-    155 -> {156};
+    155 -> {163};
+    155 -> {156} [color=blue];
     156 -> {157};
-    157 -> {163};
+    157 -> {158};
     158 -> {159};
     159 -> {160};
     160 -> {161};
@@ -584,27 +585,24 @@ digraph flowFromInplaceLambda2_kt {
                                     203 [label="Const: Boolean(true)"];
                                     204 [label="Exit when branch condition"];
                                 }
+                                205 [label="Enter when branch result"];
                                 subgraph cluster_57 {
                                     color=blue
-                                    205 [label="Enter when branch condition else"];
-                                    206 [label="Exit when branch condition"];
-                                }
-                                207 [label="Enter when branch result"];
-                                subgraph cluster_58 {
-                                    color=blue
-                                    208 [label="Enter block"];
-                                    subgraph cluster_59 {
+                                    206 [label="Enter block"];
+                                    subgraph cluster_58 {
                                         color=blue
-                                        209 [label="Function call arguments enter"];
-                                        210 [label="Anonymous function capture"];
-                                        211 [label="Postponed enter to lambda"];
-                                        subgraph cluster_60 {
+                                        207 [label="Function call arguments enter"];
+                                        208 [label="Anonymous function capture"];
+                                        209 [label="Postponed enter to lambda"];
+                                        subgraph cluster_59 {
                                             color=blue
-                                            212 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                                            subgraph cluster_61 {
+                                            210 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                                            subgraph cluster_60 {
                                                 color=blue
-                                                213 [label="Enter block"];
-                                                subgraph cluster_62 {
+                                                211 [label="Enter block"];
+                                                212 [label="Const: Null(null)"];
+                                                213 [label="Assignment: R|<local>/p|"];
+                                                subgraph cluster_61 {
                                                     color=blue
                                                     214 [label="Function call arguments enter"];
                                                     215 [label="Function call arguments exit"];
@@ -623,23 +621,26 @@ digraph flowFromInplaceLambda2_kt {
                                     224 [label="Exit block"];
                                 }
                                 225 [label="Exit when branch result"];
-                                226 [label="Enter when branch result"];
+                                subgraph cluster_62 {
+                                    color=blue
+                                    226 [label="Enter when branch condition else"];
+                                    227 [label="Exit when branch condition"];
+                                }
+                                228 [label="Enter when branch result"];
                                 subgraph cluster_63 {
                                     color=blue
-                                    227 [label="Enter block"];
+                                    229 [label="Enter block"];
                                     subgraph cluster_64 {
                                         color=blue
-                                        228 [label="Function call arguments enter"];
-                                        229 [label="Anonymous function capture"];
-                                        230 [label="Postponed enter to lambda"];
+                                        230 [label="Function call arguments enter"];
+                                        231 [label="Anonymous function capture"];
+                                        232 [label="Postponed enter to lambda"];
                                         subgraph cluster_65 {
                                             color=blue
-                                            231 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                                            233 [label="Enter function <anonymous>" style="filled" fillcolor=red];
                                             subgraph cluster_66 {
                                                 color=blue
-                                                232 [label="Enter block"];
-                                                233 [label="Const: Null(null)"];
-                                                234 [label="Assignment: R|<local>/p|"];
+                                                234 [label="Enter block"];
                                                 subgraph cluster_67 {
                                                     color=blue
                                                     235 [label="Function call arguments enter"];
@@ -730,12 +731,12 @@ digraph flowFromInplaceLambda2_kt {
     206 -> {207};
     207 -> {208};
     208 -> {209};
-    209 -> {210};
+    208 -> {210} [color=green style=dotted label="CapturedByValue"];
+    209 -> {210 220};
+    209 -> {222} [style=dotted];
+    209 -> {210} [style=dashed];
     210 -> {211};
-    210 -> {212} [color=green style=dotted label="CapturedByValue"];
-    211 -> {212 220};
-    211 -> {222} [style=dotted];
-    211 -> {212} [style=dashed];
+    211 -> {212};
     212 -> {213};
     213 -> {214};
     214 -> {215};
@@ -751,16 +752,17 @@ digraph flowFromInplaceLambda2_kt {
     223 -> {224};
     224 -> {225};
     225 -> {247};
+    225 -> {226} [color=blue];
     226 -> {227};
     227 -> {228};
     228 -> {229};
     229 -> {230};
-    229 -> {231} [color=green style=dotted label="CapturedByValue"];
-    230 -> {231 241};
-    230 -> {243} [style=dotted];
-    230 -> {231} [style=dashed];
+    230 -> {231};
     231 -> {232};
-    232 -> {233};
+    231 -> {233} [color=green style=dotted label="CapturedByValue"];
+    232 -> {233 241};
+    232 -> {243} [style=dotted];
+    232 -> {233} [style=dashed];
     233 -> {234};
     234 -> {235};
     235 -> {236};
@@ -958,47 +960,47 @@ digraph flowFromInplaceLambda2_kt {
                             328 [label="Const: Boolean(true)"];
                             329 [label="Exit when branch condition"];
                         }
+                        330 [label="Enter when branch result"];
                         subgraph cluster_87 {
                             color=blue
-                            330 [label="Enter when branch condition else"];
-                            331 [label="Exit when branch condition"];
-                        }
-                        332 [label="Enter when branch result"];
-                        subgraph cluster_88 {
-                            color=blue
-                            333 [label="Enter block"];
-                            subgraph cluster_89 {
+                            331 [label="Enter block"];
+                            subgraph cluster_88 {
                                 color=blue
-                                334 [label="Function call arguments enter"];
-                                335 [label="Anonymous function capture"];
-                                336 [label="Postponed enter to lambda"];
-                                subgraph cluster_90 {
+                                332 [label="Function call arguments enter"];
+                                333 [label="Anonymous function capture"];
+                                334 [label="Postponed enter to lambda"];
+                                subgraph cluster_89 {
                                     color=blue
-                                    337 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                                    subgraph cluster_91 {
+                                    335 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                                    subgraph cluster_90 {
                                         color=blue
-                                        338 [label="Enter block"];
-                                        339 [label="Access variable R|<local>/x|"];
-                                        340 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
-                                        subgraph cluster_92 {
+                                        336 [label="Enter block"];
+                                        337 [label="Access variable R|<local>/x|"];
+                                        338 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
+                                        subgraph cluster_91 {
                                             color=blue
-                                            341 [label="Function call arguments enter"];
-                                            342 [label="Function call arguments exit"];
+                                            339 [label="Function call arguments enter"];
+                                            340 [label="Function call arguments exit"];
                                         }
-                                        343 [label="Function call enter: R|/n|<R|kotlin/Int?|>()"];
-                                        344 [label="Function call exit: R|/n|<R|kotlin/Int?|>()" style="filled" fillcolor=yellow];
-                                        345 [label="Exit block"];
+                                        341 [label="Function call enter: R|/n|<R|kotlin/Int?|>()"];
+                                        342 [label="Function call exit: R|/n|<R|kotlin/Int?|>()" style="filled" fillcolor=yellow];
+                                        343 [label="Exit block"];
                                     }
-                                    346 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                                    344 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                                 }
-                                347 [label="Function call arguments exit"];
+                                345 [label="Function call arguments exit"];
                             }
-                            348 [label="Function call enter: R|kotlin/run|<R|kotlin/Int?|>(...)"];
-                            349 [label="Postponed exit from lambda"];
-                            350 [label="Function call exit: R|kotlin/run|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
-                            351 [label="Exit block"];
+                            346 [label="Function call enter: R|kotlin/run|<R|kotlin/Int?|>(...)"];
+                            347 [label="Postponed exit from lambda"];
+                            348 [label="Function call exit: R|kotlin/run|<R|kotlin/Int?|>(...)" style="filled" fillcolor=yellow];
+                            349 [label="Exit block"];
                         }
-                        352 [label="Exit when branch result"];
+                        350 [label="Exit when branch result"];
+                        subgraph cluster_92 {
+                            color=blue
+                            351 [label="Enter when branch condition else"];
+                            352 [label="Exit when branch condition"];
+                        }
                         353 [label="Enter when branch result"];
                         subgraph cluster_93 {
                             color=blue
@@ -1083,17 +1085,17 @@ digraph flowFromInplaceLambda2_kt {
     326 -> {327};
     327 -> {328};
     328 -> {329};
-    329 -> {330 353};
+    329 -> {330 351};
     330 -> {331};
     331 -> {332};
     332 -> {333};
     333 -> {334};
-    334 -> {335};
+    333 -> {335} [color=green style=dotted label="CapturedByValue"];
+    334 -> {335 345};
+    334 -> {347} [style=dotted];
+    334 -> {335} [style=dashed];
     335 -> {336};
-    335 -> {337} [color=green style=dotted label="CapturedByValue"];
-    336 -> {337 347};
-    336 -> {349} [style=dotted];
-    336 -> {337} [style=dashed];
+    336 -> {337};
     337 -> {338};
     338 -> {339};
     339 -> {340};
@@ -1101,16 +1103,17 @@ digraph flowFromInplaceLambda2_kt {
     341 -> {342};
     342 -> {343};
     343 -> {344};
-    344 -> {345};
+    344 -> {347};
     345 -> {346};
-    346 -> {349};
-    347 -> {348};
-    348 -> {350};
-    349 -> {350} [color=green];
-    349 -> {395} [color=red];
-    350 -> {351};
+    346 -> {348};
+    347 -> {348} [color=green];
+    347 -> {395} [color=red];
+    348 -> {349};
+    349 -> {350};
+    350 -> {374};
+    350 -> {351} [color=blue];
     351 -> {352};
-    352 -> {374};
+    352 -> {353};
     353 -> {354};
     354 -> {355};
     355 -> {356};

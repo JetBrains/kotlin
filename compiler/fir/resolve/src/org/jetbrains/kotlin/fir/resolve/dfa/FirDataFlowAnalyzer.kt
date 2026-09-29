@@ -10,14 +10,18 @@ import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
+import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.assignmentKeyFactory
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundType
+import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentParent
+import org.jetbrains.kotlin.fir.diagnostics.ConeSmartcastToTypeVariable
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.*
@@ -27,20 +31,15 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
-import org.jetbrains.kotlin.fir.declarations.utils.equalityBoundTypeOfParameter
-import org.jetbrains.kotlin.fir.diagnostics.ConeSmartcastToTypeVariable
-import org.jetbrains.kotlin.fir.resolve.transformers.appendNonFatalDiagnostics
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
@@ -48,13 +47,13 @@ import org.jetbrains.kotlin.util.ArrayLiteralResolution
 class DataFlowAnalyzerContext private constructor(
     private val session: FirSession,
     graphBuilder: ControlFlowGraphBuilder,
-    variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer,
-    private var assignmentCounter: Int
+    val scopes: ArrayDeque<AssignmentLexicalScope>,
+    private var assignmentCounter: Int,
 ) {
     constructor(session: FirSession) : this(
         session,
         graphBuilder = ControlFlowGraphBuilder(),
-        variableAssignmentAnalyzer = FirLocalVariableAssignmentAnalyzer(),
+        scopes = ArrayDeque(),
         assignmentCounter = 0
     )
 
@@ -71,8 +70,8 @@ class DataFlowAnalyzerContext private constructor(
         val snapshotContext = DataFlowAnalyzerContext(
             session,
             graphBuilder = graphBuilder.createSnapshot(copier),
-            variableAssignmentAnalyzer = variableAssignmentAnalyzer.createSnapshot(firMapper),
-            assignmentCounter = assignmentCounter
+            scopes = scopes.snapshot(firMapper),
+            assignmentCounter = assignmentCounter,
         )
 
         copier.finish()
@@ -84,14 +83,13 @@ class DataFlowAnalyzerContext private constructor(
      * Replaces all state of this [DataFlowAnalyzerContext] with those from [source].
      *
      * The method does not perform any deep copying, so the [source] context will be affected by changes in this one.
-     * If you need to avoid this, call [createSnapshot] first.
+     * If you need to avoid this, call [snapshot] first.
      */
-    @OptIn(CfgInternals::class)
     fun resetFrom(source: DataFlowAnalyzerContext) {
         reset()
 
         graphBuilder = source.graphBuilder
-        variableAssignmentAnalyzer = source.variableAssignmentAnalyzer
+        scopes.addAll(source.scopes)
         assignmentCounter = source.assignmentCounter
     }
 
@@ -99,10 +97,9 @@ class DataFlowAnalyzerContext private constructor(
      * Clears all intermediate state of this [DataFlowAnalyzerContext].
      * Are calling [reset], the context is identical to the newly created one.
      */
-    @OptIn(CfgInternals::class)
     fun reset() {
         graphBuilder.reset()
-        variableAssignmentAnalyzer.reset()
+        scopes.clear()
     }
 
     @CfgInternals
@@ -112,12 +109,26 @@ class DataFlowAnalyzerContext private constructor(
     internal var graphBuilder: ControlFlowGraphBuilder = graphBuilder
         private set
 
-    @CfgInternals
-    var variableAssignmentAnalyzer: FirLocalVariableAssignmentAnalyzer = variableAssignmentAnalyzer
-        private set
-
     fun newAssignmentIndex(): Int {
         return assignmentCounter++
+    }
+
+    @OptIn(CfgInternals::class)
+    private fun ArrayDeque<AssignmentLexicalScope>.snapshot(firMapper: SnapshotFirMapper): ArrayDeque<AssignmentLexicalScope> {
+        val scopes = mutableMapOf<LexicalScopeKey, AssignmentLexicalScope>()
+
+        fun AssignmentLexicalScope.snapshot(): AssignmentLexicalScope {
+            return scopes.getOrPut(key) {
+                AssignmentLexicalScope(
+                    key,
+                    children.map { [key, value] -> key to value.snapshot() }.toMap(),
+                    insideAssignments.map { [key, value] -> firMapper.mapSymbol(key) to value }.toMap(),
+                    followingAssignments.map { [key, value] -> firMapper.mapSymbol(key) to value }.toMap(),
+                )
+            }
+        }
+
+        return ArrayDeque(map { it.snapshot() })
     }
 }
 
@@ -125,15 +136,15 @@ class DataFlowAnalyzerContext private constructor(
  * Returns the effective stability for the given [RealVariable] that should be used for smart cast possibility checks.
  *
  * The function enriches [RealVariable.getStability] (which can return "default" values for certain declarations such as mutable
- * local variables), using the additional assignment data from the [FirLocalVariableAssignmentAnalyzer].
+ * local variables), using the additional assignment data from the [flow].
  */
 @CfgInternals
-context(holder: SessionHolder, context: DataFlowAnalyzerContext)
+context(holder: SessionHolder)
 fun RealVariable.computeEffectiveStability(flow: Flow, targetTypes: Set<ConeKotlinType>?): SmartcastStability {
     val stability = getStability(flow, holder.session)
 
     if (stability == SmartcastStability.CAPTURED_VARIABLE) {
-        if (!isUnstableLocalVariable(targetTypes)) {
+        if (!isUnstableLocalVariable(flow, targetTypes)) {
             return SmartcastStability.STABLE_VALUE
         }
     }
@@ -142,13 +153,11 @@ fun RealVariable.computeEffectiveStability(flow: Flow, targetTypes: Set<ConeKotl
 }
 
 /**
- * Checks if smart casts are allowed for given mutable [RealVariable] in the current context
- * of the [DataFlowAnalyzerContext.variableAssignmentAnalyzer].
+ * Checks if smart casts are allowed for given mutable [RealVariable] in the current [flow].
  *
  * `var`s are normally stable because flows track assignments, but they can be captured by blocks that will be evaluated
  * later (namely local functions, lambdas without "callsInPlace" contracts, and classes). In that case they become unstable
- * if there are any assignments that could execute while these blocks are accessible, which is tracked by
- * [FirLocalVariableAssignmentAnalyzer].
+ * if there are any assignments that could execute while these blocks are accessible, which is tracked by the [flow].
  *
  * ```
  * var x = ...
@@ -170,10 +179,45 @@ fun RealVariable.computeEffectiveStability(flow: Flow, targetTypes: Set<ConeKotl
  * When [types] are **not** provided, **any** assignments cause the variable to be considered unstable.
  */
 @CfgInternals
-context(holder: SessionHolder, context: DataFlowAnalyzerContext)
-private fun RealVariable.isUnstableLocalVariable(types: Set<ConeKotlinType>?): Boolean {
-    return context.variableAssignmentAnalyzer.isUnstableInCurrentScope(symbol.fir, types, holder.session)
-            || dispatchReceiver?.isUnstableLocalVariable(types = null) == true
+context(holder: SessionHolder)
+private fun RealVariable.isUnstableLocalVariable(flow: Flow, types: Set<ConeKotlinType>?): Boolean {
+    return isUnstableInCurrentScope(flow, symbol.fir, types)
+            || dispatchReceiver?.isUnstableLocalVariable(flow, types = null) == true
+}
+
+context(holder: SessionHolder)
+fun RealVariable.isUnstableInCurrentScope(
+    flow: Flow,
+    declaration: FirDeclaration,
+    types: Set<ConeKotlinType>?,
+): Boolean {
+    // Only captured local vars can be stable/unstable depending on scope; everything else has the same stability everywhere.
+    if (declaration !is FirProperty || !declaration.isEffectivelyLocal || !declaration.isVar) return false
+    val assignments = flow.getAssignments(this)
+    return !allAssignmentsPreserveType(assignments, types)
+}
+
+// Variables are only stable for smart casting if there are no assignments that could make the smart
+// cast incorrect by assigning a value that is not of the smart casted type. This includes assignments
+// that are not resolved yet, as their type is unknown. For aliasing, variables are always unstable
+// if there are any assignments; in that case, `types` is null.
+context(holder: SessionHolder)
+private fun allAssignmentsPreserveType(
+    assignments: Map<AssignmentKey, ConeKotlinType?>,
+    types: Set<ConeKotlinType>?,
+): Boolean {
+    return assignments.isEmpty() ||
+            (types != null &&
+                    assignments.all { it.value != null } &&
+                    assignments.all { assignment ->
+                        types.all {
+                            AbstractTypeChecker.isSubtypeOf(
+                                context = holder.session.typeContext,
+                                subType = assignment.value!!,
+                                superType = it
+                            )
+                        }
+                    })
 }
 
 /**
@@ -273,9 +317,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun DataFlowVariable.getStability(flow: Flow, targetTypes: Set<ConeKotlinType>?): SmartcastStability {
         return if (this is RealVariable) {
-            context(context) {
-                computeEffectiveStability(flow, targetTypes)
-            }
+            computeEffectiveStability(flow, targetTypes)
         } else {
             SmartcastStability.STABLE_VALUE
         }
@@ -361,38 +403,61 @@ abstract class FirDataFlowAnalyzer(
     fun enterFunction(function: FirFunction) {
         if (function is FirDefaultPropertyAccessor) return
 
-        val assignedInside = context.variableAssignmentAnalyzer.enterFunction(function)
+        val scope = enterLexicalScope(function)
 
-        val [localFunctionNode, functionEnterNode] = if (function is FirAnonymousFunction) {
-            null to graphBuilder.enterAnonymousFunction(function)
-        } else {
-            graphBuilder.enterFunction(function)
-        }
-        localFunctionNode?.mergeIncomingFlow()
-        functionEnterNode.mergeIncomingFlow { _, flow ->
-            if (function is FirAnonymousFunction) {
-                /*
-             * Anonymous functions which can be revisited, either in-place or not in-place, are treated as repeatable statements. This
-             * causes any assignments to local variables within the anonymous function body to clear type statements for those local
-             * variables.
-             */
-                if (function.invocationKind?.canBeRevisited() != false) {
-                    enterRepeatableStatement(flow, assignedInside)
+        if (function is FirAnonymousFunction) {
+            val enterNode = graphBuilder.enterAnonymousFunction(function)
+            enterNode.mergeIncomingFlow { _, flow ->
+                if (scope != null) {
+                    // To prohibit smart-casts in concurrent lambdas, 'exitCallArguments()' adds **all** inside assignments
+                    // for **all** lambdas. Only if this lambda is not in-place does its own assignments restrict itself.
+                    // And in that case, following assignments also prohibit smart-casts, so the scope should always be removed.
+                    removeCapturedAssignments(flow, scope.key)
+
+                    // Anonymous functions which can be revisited, either in-place or not in-place, are treated as repeatable statements. This
+                    // causes any assignments to local variables within the anonymous function body to clear type statements for those local
+                    // variables.
+                    when (function.invocationKind?.canBeRevisited()) {
+                        false -> {
+                            // In-place and not repeated.
+                        }
+
+                        true -> {
+                            // In-place and repeated.
+                            enterRepeatableStatement(flow, scope.insideAssignments)
+                        }
+
+                        null -> {
+                            // Not in-place and repeatable.
+                            enterRepeatableStatement(flow, scope.insideAssignments)
+                            addCapturedAssignments(flow, scope.key, scope.insideAssignments.merge(scope.followingAssignments))
+                        }
+                    }
                 }
                 function.lambdaArgumentParent?.let {
                     processConditionalContract(flow, it, null, targetLambdaArgument = function)
                 }
             }
+        } else {
+            val (localEnterNode, functionEnterNode) = graphBuilder.enterFunction(function)
+            localEnterNode?.mergeIncomingFlow { _, flow ->
+                if (scope != null) {
+                    // Not in-place and repeatable.
+                    addCapturedAssignments(flow, scope.key, scope.insideAssignments.merge(scope.followingAssignments))
+                }
+            }
+            functionEnterNode.mergeIncomingFlow()
         }
     }
 
     fun exitFunction(function: FirFunction): FirControlFlowGraphReference? {
         if (function is FirDefaultPropertyAccessor) return null
 
-        context.variableAssignmentAnalyzer.exitFunction()
+        exitLexicalScope(assignmentKeyFactory.createLexicalScopeKey(function))
 
-        val [node, graph] = graphBuilder.exitFunction(function)
-        node.mergeIncomingFlow()
+        val (functionExitNode, localExitNode, graph) = graphBuilder.exitFunction(function)
+        functionExitNode.mergeIncomingFlow()
+        localExitNode?.mergeIncomingFlow()
         resetSmartCastPosition()
         return FirControlFlowGraphReferenceImpl(graph)
     }
@@ -424,14 +489,24 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Classes -----------------------------------
 
     fun enterClass(klass: FirClass, buildGraph: Boolean) {
-        val [outerNode, enterNode] = graphBuilder.enterClass(klass, buildGraph)
-        outerNode?.mergeIncomingFlow()
-        enterNode?.mergeIncomingFlow()
-        context.variableAssignmentAnalyzer.enterClass(klass)
+        val scope = enterLexicalScope(klass)
+        val [localNode, enterNode] = graphBuilder.enterClass(klass, buildGraph)
+        localNode?.mergeIncomingFlow()
+        enterNode?.mergeIncomingFlow { _, flow ->
+            if (scope != null) {
+                if (klass is FirAnonymousObject) {
+                    // Inside assignments invalidate smart-casts within an anonymous object.
+                    addCapturedAssignments(flow, scope.key, scope.insideAssignments)
+                } else {
+                    // Inside *and* following assignments invalidate smart-casts within a class.
+                    addCapturedAssignments(flow, scope.key, scope.insideAssignments.merge(scope.followingAssignments))
+                }
+            }
+        }
     }
 
-    fun exitClass(): CfgExitClassResult? {
-        context.variableAssignmentAnalyzer.exitClass()
+    fun exitClass(klass: FirClass): CfgExitClassResult? {
+        val scope = exitLexicalScope(assignmentKeyFactory.createLexicalScopeKey(klass))
         val result = graphBuilder.exitClass()
         val staticGraph = result?.staticGraph
         val memberGraph = result?.memberGraph
@@ -439,6 +514,28 @@ abstract class FirDataFlowAnalyzer(
         staticGraph?.enterNode?.mergeIncomingFlow()
         staticGraph?.exitNode?.mergeIncomingFlow()
         memberGraph?.exitNode?.mergeIncomingFlow()
+
+        val localExitNode = result?.localExitNode
+        localExitNode?.mergeIncomingFlow { _, flow ->
+            if (scope != null) {
+                if (klass is FirAnonymousObject) {
+                    removeCapturedAssignments(flow, scope.key)
+
+                    // According to 'graphBuilder.exitClass()', 'calledLater' graphs will have lexical edges to the local exit node.
+                    for (node in localExitNode.previousNodes) {
+                        val edge = localExitNode.edgeFrom(node)
+                        if (edge.kind != LexicalForward) continue
+
+                        val key = assignmentKeyFactory.createLexicalScopeKey(node.owner.declaration ?: continue)
+                        val child = scope.children[key] ?: error("could not find child: $key") // TODO ?: continue
+                        addCapturedAssignments(flow, key, child.insideAssignments)
+                    }
+                } else {
+                    // All assignments within a class invalidate smart-casts in following statements.
+                    addCapturedAssignments(flow, scope.key, scope.insideAssignments)
+                }
+            }
+        }
 
         if (memberGraph == null || !memberGraph.exitNode.isUnion) {
             resetSmartCastPosition() // to state before class initialization
@@ -457,10 +554,6 @@ abstract class FirDataFlowAnalyzer(
         return graph
     }
 
-    fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression) {
-        graphBuilder.exitAnonymousObjectExpression(anonymousObjectExpression)?.mergeIncomingFlow()
-    }
-
     // ----------------------------------- Scripts ------------------------------------------
 
     fun enterScript(script: FirScript, buildGraph: Boolean) {
@@ -476,7 +569,7 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Code Fragment ------------------------------------------
 
     fun enterCodeFragment(codeFragment: FirCodeFragment) {
-        context.variableAssignmentAnalyzer.enterCodeFragment(codeFragment)
+        enterLexicalScope(codeFragment)
         graphBuilder.enterCodeFragment(codeFragment).mergeIncomingFlow { _, flow ->
             val smartCasts = codeFragment.codeFragmentContext?.smartCasts.orEmpty()
             for ([realVariable, exactTypes] in smartCasts) {
@@ -492,7 +585,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitCodeFragment(codeFragment: FirCodeFragment): ControlFlowGraph {
-        context.variableAssignmentAnalyzer.exitCodeFragment(codeFragment)
+        exitLexicalScope(assignmentKeyFactory.createLexicalScopeKey(codeFragment))
         val [node, graph] = graphBuilder.exitCodeFragment()
         node.mergeIncomingFlow()
         return graph
@@ -944,7 +1037,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun CFGNode<*>.mergeWhenBranchEntryFlow(): Unit = mergeIncomingFlow { _, flow ->
-        val previousConditionExitNode = previousNodes.singleOrNull() as? WhenBranchConditionExitNode ?: return@mergeIncomingFlow
+        val previousConditionExitNode = previousNodes.singleOrNull { it is WhenBranchConditionExitNode } as? WhenBranchConditionExitNode ?: return@mergeIncomingFlow
         val previousCondition = previousConditionExitNode.fir.condition
         if (!previousCondition.resolvedType.isBoolean) return@mergeIncomingFlow
         val previousConditionVariable = flow.getKnownVariableIfUsed(previousCondition) ?: return@mergeIncomingFlow
@@ -952,6 +1045,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitWhenBranchCondition(whenBranch: FirWhenBranch) {
+        enterLexicalScope(assignmentKeyFactory.createLexicalScopeKey(whenBranch))
         val [conditionExitNode, resultEnterNode] = graphBuilder.exitWhenBranchCondition(whenBranch)
         conditionExitNode.mergeIncomingFlow()
         resultEnterNode.mergeIncomingFlow { _, flow ->
@@ -964,6 +1058,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitWhenBranchResult(whenBranch: FirWhenBranch) {
+        exitLexicalScope(assignmentKeyFactory.createLexicalScopeKey(whenBranch))
         graphBuilder.exitWhenBranchResult(whenBranch).mergeIncomingFlow()
     }
 
@@ -982,10 +1077,13 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- While Loop -----------------------------------
 
     fun enterWhileLoop(loop: FirLoop) {
-        val assignedInside = context.variableAssignmentAnalyzer.enterLoop(loop)
+        val scope = enterLexicalScope(assignmentKeyFactory.createLexicalScopeKey(loop))
         val [loopEnterNode, loopConditionEnterNode] = graphBuilder.enterWhileLoop(loop)
         loopEnterNode.mergeIncomingFlow()
-        loopConditionEnterNode.mergeIncomingFlow { _, flow -> enterRepeatableStatement(flow, assignedInside) }
+        loopConditionEnterNode.mergeIncomingFlow { _, flow ->
+            // TODO(KT-32066) 'insideAssignments' should be considered captured until proven otherwise.
+            enterRepeatableStatement(flow, scope?.insideAssignments.orEmpty())
+        }
     }
 
     fun exitWhileLoopCondition(loop: FirLoop) {
@@ -1000,11 +1098,11 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitWhileLoop(loop: FirLoop) {
-        val assignedInside = context.variableAssignmentAnalyzer.exitLoop()
+        val scope = exitLexicalScope(assignmentKeyFactory.createLexicalScopeKey(loop))
         val [conditionEnterNode, blockExitNode, exitNode] = graphBuilder.exitWhileLoop(loop)
         blockExitNode.mergeIncomingFlow()
         exitNode.mergeIncomingFlow { path, flow ->
-            processWhileLoopExit(path, flow, exitNode, conditionEnterNode, assignedInside)
+            processWhileLoopExit(path, flow, exitNode, conditionEnterNode, scope?.insideAssignments?.keys.orEmpty())
             processLoopExit(flow, exitNode, exitNode.firstPreviousNode as LoopConditionExitNode)
         }
     }
@@ -1049,19 +1147,55 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private fun enterRepeatableStatement(flow: MutableFlow, reassigned: Set<FirPropertySymbol>) {
-        for (symbol in reassigned) {
+    private fun enterRepeatableStatement(flow: MutableFlow, reassigned: Map<FirPropertySymbol, Collection<AssignmentKey>>) {
+        for ([symbol, keys] in reassigned) {
+            // TODO(KT-57563): Operator assignments should be treated just like any other assignment.
+            if (keys.count { !it.isAugmentedAssignment } == 0) continue
+
             val variable = flow.getLocal(symbol, create = false) ?: continue
             logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
+        }
+    }
+
+    private fun addCapturedAssignments(
+        flow: MutableFlow,
+        scopeKey: LexicalScopeKey,
+        reassigned: Map<FirPropertySymbol, Collection<AssignmentKey>>,
+    ) {
+        for ([symbol, keys] in reassigned) {
+            val variable = flow.getLocal(symbol, create = false) ?: continue
+            logicSystem.addCapturedAssignments(flow, variable, scopeKey, keys)
+        }
+    }
+
+    private fun removeCapturedAssignments(flow: MutableFlow, scopeKey: LexicalScopeKey) {
+        logicSystem.removeCapturedAssignments(flow, scopeKey)
+    }
+
+    /**
+     * Removes captured writes for in-place lambdas.
+     *
+     * This should be used for any kind of function call which may take lambda arguments. This will remove the related scopes of captured
+     * writes from the specified [flow].
+     */
+    private fun removeInplaceLambdaCapturedAssignments(flow: MutableFlow, lambdaExitNodes: List<CFGNode<*>>) {
+        for (node in lambdaExitNodes) {
+            val lambda = (node.fir as? FirExpression)?.unwrapAnonymousFunctionExpression() ?: continue
+            if (lambda.invocationKind.isInPlace) {
+                removeCapturedAssignments(flow, scopeKey = assignmentKeyFactory.createLexicalScopeKey(lambda))
+            }
         }
     }
 
     // ----------------------------------- Do while Loop -----------------------------------
 
     fun enterDoWhileLoop(loop: FirLoop) {
-        val assignedInside = context.variableAssignmentAnalyzer.enterLoop(loop)
+        val scope = enterLexicalScope(assignmentKeyFactory.createLexicalScopeKey(loop))
         val [loopEnterNode, loopBlockEnterNode] = graphBuilder.enterDoWhileLoop(loop)
-        loopEnterNode.mergeIncomingFlow { _, flow -> enterRepeatableStatement(flow, assignedInside) }
+        loopEnterNode.mergeIncomingFlow { _, flow ->
+            // TODO(KT-32066) 'insideAssignments' should be considered captured until proven otherwise.
+            enterRepeatableStatement(flow, scope?.insideAssignments.orEmpty())
+        }
         loopBlockEnterNode.mergeIncomingFlow()
     }
 
@@ -1072,7 +1206,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitDoWhileLoop(loop: FirLoop) {
-        context.variableAssignmentAnalyzer.exitLoop()
+        exitLexicalScope(assignmentKeyFactory.createLexicalScopeKey(loop))
         val [loopConditionExitNode, loopExitNode] = graphBuilder.exitDoWhileLoop(loop)
         loopConditionExitNode.mergeIncomingFlow()
         loopExitNode.mergeIncomingFlow { _, flow ->
@@ -1093,10 +1227,12 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun enterCatchClause(catch: FirCatch) {
+        enterLexicalScope(assignmentKeyFactory.createLexicalScopeKey(catch))
         graphBuilder.enterCatchClause(catch).mergeIncomingFlow()
     }
 
     fun exitCatchClause(catch: FirCatch) {
+        exitLexicalScope(assignmentKeyFactory.createLexicalScopeKey(catch))
         graphBuilder.exitCatchClause(catch).mergeIncomingFlow()
     }
 
@@ -1188,13 +1324,22 @@ abstract class FirDataFlowAnalyzer(
     fun enterCallArguments(call: FirStatement, arguments: List<FirExpression>) {
         val lambdas = arguments.mapNotNull { it.unwrapAnonymousFunctionExpression() }
         graphBuilder.enterCall(lambdas.mapTo(mutableSetOf()) { it.symbol })
-        context.variableAssignmentAnalyzer.enterFunctionCall(lambdas)
         graphBuilder.enterCallArguments(call, lambdas)?.mergeIncomingFlow()
     }
 
     fun exitCallArguments() {
+        val scope = context.scopes.lastOrNull()
         val [splitNode, exitNode] = graphBuilder.exitCallArguments()
-        splitNode?.mergeIncomingFlow()
+        splitNode?.mergeIncomingFlow { _, flow ->
+            if (scope != null) {
+                // Add all assignments in all lambdas as captured assignments.
+                // Individual lambdas will remove their own assignments when they are entered.
+                for (lambda in splitNode.lambdas) {
+                    val lambdaScope = scope.children[assignmentKeyFactory.createLexicalScopeKey(lambda)] ?: continue
+                    addCapturedAssignments(flow, lambdaScope.key, lambdaScope.insideAssignments)
+                }
+            }
+        }
 
         if (exitNode != null) {
             exitNode.mergeIncomingFlow()
@@ -1216,12 +1361,12 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitFunctionCall(functionCall: FirCall, callCompleted: Boolean) {
-        context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
         val (lambdaExitNodes, node = value) = graphBuilder.exitFunctionCall(functionCall, callCompleted)
         lambdaExitNodes.forEach { it.mergeIncomingFlow() }
         node.mergeIncomingFlow { _, flow ->
             val callArgsExit = node.previousNodes.singleOrNull { it is FunctionCallEnterNode }
             processConditionalContract(flow, functionCall, callArgsExit?.flow)
+            removeInplaceLambdaCapturedAssignments(flow, lambdaExitNodes)
         }
     }
 
@@ -1234,10 +1379,11 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean) {
-        context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted)
         val (lambdaExitNodes, node = value) = graphBuilder.exitDelegatedConstructorCall(call, callCompleted)
         lambdaExitNodes.forEach { it.mergeIncomingFlow() }
-        node.mergeIncomingFlow()
+        node.mergeIncomingFlow { _, flow ->
+            removeInplaceLambdaCapturedAssignments(flow, lambdaExitNodes)
+        }
     }
 
     fun enterStringConcatenationCall() {
@@ -1495,25 +1641,36 @@ abstract class FirDataFlowAnalyzer(
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         val property = assignment.calleeReference?.toResolvedPropertySymbol()?.fir
-        if (property != null && property.isEffectivelyLocal) {
-            context.variableAssignmentAnalyzer.visitAssignment(property, assignment.rValue.resolvedType.refinedTypeForDataFlowOrSelf)
-        }
-
         graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow { _, flow ->
             property ?: return@mergeIncomingFlow
             if (property.isEffectivelyLocal || property.isVal) {
                 val variable = flow.rememberVariableWithoutUnwrappingAlias(assignment.lValue)
                 if (variable is RealVariable) {
+                    val type = assignment.rValue.resolvedType.refinedTypeForDataFlowOrSelf
                     logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
+                    logicSystem.recordAssignmentType(flow, variable, key = assignmentKeyFactory.createAssignmentKey(assignment), type)
                     exitVariableInitialization(flow, assignment.rValue, property, variable, hasExplicitType = false, isAssignment = true)
                 }
             } else {
                 val variable = flow.getKnownVariableWithoutUnwrappingAlias(assignment.lValue)
                 if (variable is RealVariable) {
+                    val type = assignment.rValue.resolvedType.refinedTypeForDataFlowOrSelf
                     logicSystem.recordNewAssignment(flow, variable, context.newAssignmentIndex())
+                    logicSystem.recordAssignmentType(flow, variable, key = assignmentKeyFactory.createAssignmentKey(assignment), type)
                 }
             }
             processConditionalContract(flow, assignment, callArgsExit = null)
+        }
+    }
+
+    fun exitAugmentedAssignment(assignment: FirAugmentedAssignment, leftArgument: FirExpression, resolvedType: ConeKotlinType) {
+        // TODO(KT-57563): Operator assignments should be treated just like any other assignment.
+        // I.e., this should record a new assignment index.
+        graphBuilder.exitAugmentedAssignment(assignment).mergeIncomingFlow { _, flow ->
+            val variable = flow.rememberVariableWithoutUnwrappingAlias(leftArgument)
+            if (variable is RealVariable) {
+                logicSystem.recordAssignmentType(flow, variable, key = assignmentKeyFactory.createAssignmentKey(assignment), resolvedType)
+            }
         }
     }
 
@@ -1707,13 +1864,13 @@ abstract class FirDataFlowAnalyzer(
 
     // See also `exitFunctionCall`
     fun exitAnnotationCall() {
-        context.variableAssignmentAnalyzer.exitFunctionCall(callCompleted = true)
-
         // node is exit node of fake graph
         // this graph will be dropped later as part of `exitAnnotation()` call
         val (lambdaExitNodes, node = value) = graphBuilder.exitAnnotationCall()
         lambdaExitNodes.forEach { it.mergeIncomingFlow() }
-        node.mergeIncomingFlow()
+        node.mergeIncomingFlow { _, flow ->
+            removeInplaceLambdaCapturedAssignments(flow, lambdaExitNodes)
+        }
 
         graphBuilder.exitFakeExpression()
         resetSmartCastPosition() // rollback to position before annotation
@@ -1722,12 +1879,12 @@ abstract class FirDataFlowAnalyzer(
     // ----------------------------------- Init block -----------------------------------
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer) {
-        context.variableAssignmentAnalyzer.enterAnonymousInitializer(initBlock)
+        enterLexicalScope(initBlock)
         graphBuilder.enterInitBlock(initBlock).mergeIncomingFlow()
     }
 
     fun exitInitBlock(initBlock: FirAnonymousInitializer): ControlFlowGraph {
-        context.variableAssignmentAnalyzer.exitAnonymousInitializer(initBlock)
+        exitLexicalScope(assignmentKeyFactory.createLexicalScopeKey(initBlock))
         val [node, controlFlowGraph] = graphBuilder.exitInitBlock()
         node.mergeIncomingFlow()
         return controlFlowGraph
@@ -1822,10 +1979,16 @@ abstract class FirDataFlowAnalyzer(
     ): MutableFlow {
         val previousFlows = mutableListOf<PersistentFlow>()
         val statementFlows = mutableListOf<PersistentFlow>()
+        val lexicalFlows = mutableListOf<PersistentFlow>()
 
         for (node in previousNodes) {
             val edge = edgeFrom(node)
-            if (!usedInDfa(edge)) continue
+            if (edge.kind == LexicalForward || edge.kind == DeadLexicalForward) {
+                lexicalFlows.add(node.flow)
+                continue
+            } else if (!usedInDfa(edge)) {
+                continue
+            }
 
             // For CFGNodes that are the end of alternate flows, use the alternate flow associated with the edge label.
             val flow = if (node is FinallyBlockExitNode) {
@@ -1840,7 +2003,7 @@ abstract class FirDataFlowAnalyzer(
             }
         }
 
-        val result = logicSystem.joinFlow(previousFlows, statementFlows, isUnion)
+        val result = logicSystem.joinFlow(previousFlows, statementFlows, lexicalFlows, isUnion)
 
         if (graphBuilder.lastNodeOrNull == this) {
             if (currentSmartCastPosition == null || currentSmartCastPosition != previousFlows.singleOrNull()) {
@@ -1863,10 +2026,16 @@ abstract class FirDataFlowAnalyzer(
         val alternateFlowStart = this is FinallyBlockEnterNode
         val previousFlows = mutableListOf<PersistentFlow>()
         val statementFlows = mutableListOf<PersistentFlow>()
+        val lexicalFlows = mutableListOf<PersistentFlow>()
 
         for (node in previousNodes) {
             val edge = edgeFrom(node)
-            if (!usedInDfa(edge)) continue
+            if (edge.kind == LexicalForward || edge.kind == DeadLexicalForward) {
+                lexicalFlows.add(node.flow)
+                continue
+            } else if (!usedInDfa(edge)) {
+                continue
+            }
 
             // For CFGNodes that cause alternate flow paths to be created, only edges with matching labels should be merged. However, when
             // an alternate flow is being propagated through one of these CFGNodes - i.e., when the FirElements do not match - only
@@ -1886,7 +2055,7 @@ abstract class FirDataFlowAnalyzer(
             }
         }
 
-        val result = logicSystem.joinFlow(previousFlows, statementFlows, isUnion)
+        val result = logicSystem.joinFlow(previousFlows, statementFlows, lexicalFlows, isUnion)
         builder(path, result)
         return result
     }
@@ -2058,7 +2227,7 @@ abstract class FirDataFlowAnalyzer(
 
         if (unwrappedVariable != variable) {
             context(context) {
-                return if (variable.isUnstableLocalVariable(types = null)) null else unwrappedVariable
+                return if (variable.isUnstableLocalVariable(flow = this, types = null)) null else unwrappedVariable
             }
         }
 
@@ -2083,5 +2252,61 @@ abstract class FirDataFlowAnalyzer(
             originalType = components.returnTypeCalculator.tryCalculateReturnType(symbol).coneType
         )
         return if (create) remember(prototype) else getVariableIfKnown(prototype)
+    }
+
+    private fun enterLexicalScope(declaration: FirDeclaration): AssignmentLexicalScope? {
+        val currentScope = context.scopes.lastOrNull()
+        val declarationScope: AssignmentLexicalScope?
+        if (currentScope == null) {
+            // Entering the first assignment lexical scope so it needs to be built.
+            // This will recursively visit the declaration for all property assignments.
+            declarationScope = when (declaration) {
+                is FirFunction,
+                is FirAnonymousInitializer,
+                is FirCodeFragment,
+                is FirReplSnippet,
+                    -> buildAssignmentLexicalScope(declaration)
+                else -> {
+                    return null
+                }
+            }
+        } else {
+            // Visiting a sub-scope so it should be found as a child.
+            val key = assignmentKeyFactory.createLexicalScopeKey(declaration)
+            declarationScope = currentScope.children.getOrElse(key) { AssignmentLexicalScope.empty(key) }
+        }
+        context.scopes.addLast(declarationScope)
+        return declarationScope
+    }
+
+    private fun enterLexicalScope(key: LexicalScopeKey): AssignmentLexicalScope? {
+        val currentScope = context.scopes.lastOrNull() ?: return null
+        val nextScope = currentScope.children.getOrElse(key) { AssignmentLexicalScope.empty(key) }
+        context.scopes.addLast(nextScope)
+        return nextScope
+    }
+
+    private fun exitLexicalScope(key: LexicalScopeKey): AssignmentLexicalScope? {
+        val scope = context.scopes.removeLastOrNull() ?: return null
+        require(scope.key == key)
+        return scope
+    }
+}
+
+private fun <K, V> Map<K, Set<V>>.merge(other: Map<K, Set<V>>): Map<K, Set<V>> {
+    if (other.isEmpty()) return this
+    if (this.isEmpty()) return other
+
+    return buildMap {
+        putAll(this@merge)
+
+        for ([key, values] in other) {
+            val existing = this[key]
+            if (existing == null) {
+                put(key, values)
+            } else {
+                put(key, existing.toPersistentSet().addingAll(values))
+            }
+        }
     }
 }

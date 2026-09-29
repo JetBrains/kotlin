@@ -103,30 +103,32 @@ digraph delegatedConstructorArguments_kt {
                     54 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
                     55 [label="Function call enter: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)"];
                     56 [label="Function call exit: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
-                    57 [label="Assignment: R|/Test.size|"];
-                    58 [label="Exit block"];
+                    57 [label="Assignment via PLUS_ASSIGN"];
+                    58 [label="Assignment: R|/Test.size|"];
+                    59 [label="Exit block"];
                 }
-                59 [label="Exit function <init>" style="filled" fillcolor=red];
+                60 [label="Exit function <init>" style="filled" fillcolor=red];
             }
             subgraph cluster_15 {
                 color=blue
-                60 [label="Enter block"];
-                61 [label="Access variable this@R|/Test|"];
-                62 [label="Access variable R|/Test.size|"];
-                63 [label="Access variable this@R|/Test|"];
-                64 [label="Access variable R|/Test.values|"];
-                65 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
-                66 [label="Function call enter: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)"];
-                67 [label="Function call exit: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
-                68 [label="Assignment: R|/Test.size|"];
-                69 [label="Exit block"];
+                61 [label="Enter block"];
+                62 [label="Access variable this@R|/Test|"];
+                63 [label="Access variable R|/Test.size|"];
+                64 [label="Access variable this@R|/Test|"];
+                65 [label="Access variable R|/Test.values|"];
+                66 [label="Access variable R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|"];
+                67 [label="Function call enter: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)"];
+                68 [label="Function call exit: this@R|/Test|.R|/Test.size|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
+                69 [label="Assignment via PLUS_ASSIGN"];
+                70 [label="Assignment: R|/Test.size|"];
+                71 [label="Exit block"];
             }
-            70 [label="Exit function <init>" style="filled" fillcolor=red];
+            72 [label="Exit function <init>" style="filled" fillcolor=red];
         }
-        71 [label="Exit class Test" style="filled" fillcolor=red];
+        73 [label="Exit class Test" style="filled" fillcolor=red];
     }
     2 -> {3 18 34} [color=green];
-    2 -> {71} [style=dotted];
+    2 -> {73} [style=dotted];
     2 -> {3 18 34 41} [style=dashed];
     3 -> {4};
     4 -> {5};
@@ -168,7 +170,7 @@ digraph delegatedConstructorArguments_kt {
     31 -> {33} [color=red label="Postponed"];
     32 -> {33};
     33 -> {34} [color=green];
-    33 -> {60} [color=red];
+    33 -> {61} [color=red];
     34 -> {35};
     35 -> {36};
     36 -> {37};
@@ -183,7 +185,7 @@ digraph delegatedConstructorArguments_kt {
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {49 60 71} [color=green];
+    48 -> {49 61 73} [color=green];
     49 -> {50};
     50 -> {51};
     51 -> {52};
@@ -194,8 +196,8 @@ digraph delegatedConstructorArguments_kt {
     56 -> {57};
     57 -> {58};
     58 -> {59};
-    59 -> {71} [color=green];
-    60 -> {61};
+    59 -> {60};
+    60 -> {73} [color=green];
     61 -> {62};
     62 -> {63};
     63 -> {64};
@@ -205,13 +207,15 @@ digraph delegatedConstructorArguments_kt {
     67 -> {68};
     68 -> {69};
     69 -> {70};
-    70 -> {71} [color=green];
+    70 -> {71};
+    71 -> {72};
+    72 -> {73} [color=green];
 
     subgraph cluster_16 {
         color=red
-        72 [label="Enter static <static of Test>" style="filled" fillcolor=red];
-        73 [label="Exit static <static of Test>" style="filled" fillcolor=red];
+        74 [label="Enter static <static of Test>" style="filled" fillcolor=red];
+        75 [label="Exit static <static of Test>" style="filled" fillcolor=red];
     }
-    72 -> {73} [color=green];
+    74 -> {75} [color=green];
 
 }

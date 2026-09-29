@@ -140,31 +140,31 @@ digraph whenExpressionType_kt {
                     49 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     50 [label="Exit when branch condition"];
                 }
+                51 [label="Enter when branch result"];
                 subgraph cluster_17 {
                     color=blue
-                    51 [label="Enter when branch condition "];
-                    52 [label="Access variable R|<local>/<when-subject>|"];
-                    53 [label="Smart cast: $subj$"];
-                    54 [label="Exit $subj"];
-                    55 [label="Access qualifier /A"];
-                    56 [label="Access variable R|/A.A2|"];
-                    57 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    58 [label="Exit when branch condition"];
-                }
-                59 [label="Enter when branch result"];
-                subgraph cluster_18 {
-                    color=blue
-                    60 [label="Enter block"];
-                    subgraph cluster_19 {
+                    52 [label="Enter block"];
+                    subgraph cluster_18 {
                         color=blue
-                        61 [label="Function call arguments enter"];
-                        62 [label="Function call arguments exit"];
+                        53 [label="Function call arguments enter"];
+                        54 [label="Function call arguments exit"];
                     }
-                    63 [label="Function call enter: R|/B.B|()"];
-                    64 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    65 [label="Exit block"];
+                    55 [label="Function call enter: R|/B.B|()"];
+                    56 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    57 [label="Exit block"];
                 }
-                66 [label="Exit when branch result"];
+                58 [label="Exit when branch result"];
+                subgraph cluster_19 {
+                    color=blue
+                    59 [label="Enter when branch condition "];
+                    60 [label="Access variable R|<local>/<when-subject>|"];
+                    61 [label="Smart cast: $subj$"];
+                    62 [label="Exit $subj"];
+                    63 [label="Access qualifier /A"];
+                    64 [label="Access variable R|/A.A2|"];
+                    65 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    66 [label="Exit when branch condition"];
+                }
                 67 [label="Enter when branch result"];
                 subgraph cluster_20 {
                     color=blue
@@ -216,7 +216,7 @@ digraph whenExpressionType_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    50 -> {51 67};
+    50 -> {51 59};
     51 -> {52};
     52 -> {53};
     53 -> {54};
@@ -224,7 +224,8 @@ digraph whenExpressionType_kt {
     55 -> {56};
     56 -> {57};
     57 -> {58};
-    58 -> {59};
+    58 -> {75};
+    58 -> {59} [color=blue];
     59 -> {60};
     60 -> {61};
     61 -> {62};
@@ -232,7 +233,7 @@ digraph whenExpressionType_kt {
     63 -> {64};
     64 -> {65};
     65 -> {66};
-    66 -> {75};
+    66 -> {67};
     67 -> {68};
     68 -> {69};
     69 -> {70};
@@ -281,31 +282,31 @@ digraph whenExpressionType_kt {
                     104 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     105 [label="Exit when branch condition"];
                 }
+                106 [label="Enter when branch result"];
                 subgraph cluster_27 {
                     color=blue
-                    106 [label="Enter when branch condition "];
-                    107 [label="Access variable R|<local>/<when-subject>|"];
-                    108 [label="Smart cast: $subj$"];
-                    109 [label="Exit $subj"];
-                    110 [label="Access qualifier /A"];
-                    111 [label="Access variable R|/A.A2|"];
-                    112 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    113 [label="Exit when branch condition"];
-                }
-                114 [label="Enter when branch result"];
-                subgraph cluster_28 {
-                    color=blue
-                    115 [label="Enter block"];
-                    subgraph cluster_29 {
+                    107 [label="Enter block"];
+                    subgraph cluster_28 {
                         color=blue
-                        116 [label="Function call arguments enter"];
-                        117 [label="Function call arguments exit"];
+                        108 [label="Function call arguments enter"];
+                        109 [label="Function call arguments exit"];
                     }
-                    118 [label="Function call enter: R|/B.B|()"];
-                    119 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    120 [label="Exit block"];
+                    110 [label="Function call enter: R|/B.B|()"];
+                    111 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    112 [label="Exit block"];
                 }
-                121 [label="Exit when branch result"];
+                113 [label="Exit when branch result"];
+                subgraph cluster_29 {
+                    color=blue
+                    114 [label="Enter when branch condition "];
+                    115 [label="Access variable R|<local>/<when-subject>|"];
+                    116 [label="Smart cast: $subj$"];
+                    117 [label="Exit $subj"];
+                    118 [label="Access qualifier /A"];
+                    119 [label="Access variable R|/A.A2|"];
+                    120 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    121 [label="Exit when branch condition"];
+                }
                 122 [label="Enter when branch result"];
                 subgraph cluster_30 {
                     color=blue
@@ -356,7 +357,7 @@ digraph whenExpressionType_kt {
     102 -> {103};
     103 -> {104};
     104 -> {105};
-    105 -> {106 122};
+    105 -> {106 114};
     106 -> {107};
     107 -> {108};
     108 -> {109};
@@ -364,7 +365,8 @@ digraph whenExpressionType_kt {
     110 -> {111};
     111 -> {112};
     112 -> {113};
-    113 -> {114};
+    113 -> {130};
+    113 -> {114} [color=blue];
     114 -> {115};
     115 -> {116};
     116 -> {117};
@@ -372,7 +374,7 @@ digraph whenExpressionType_kt {
     118 -> {119};
     119 -> {120};
     120 -> {121};
-    121 -> {130};
+    121 -> {122};
     122 -> {123};
     123 -> {124};
     124 -> {125};
@@ -422,31 +424,31 @@ digraph whenExpressionType_kt {
                     160 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     161 [label="Exit when branch condition"];
                 }
+                162 [label="Enter when branch result"];
                 subgraph cluster_37 {
                     color=blue
-                    162 [label="Enter when branch condition "];
-                    163 [label="Access variable R|<local>/<when-subject>|"];
-                    164 [label="Smart cast: $subj$"];
-                    165 [label="Exit $subj"];
-                    166 [label="Access qualifier /A"];
-                    167 [label="Access variable R|/A.A2|"];
-                    168 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    169 [label="Exit when branch condition"];
-                }
-                170 [label="Enter when branch result"];
-                subgraph cluster_38 {
-                    color=blue
-                    171 [label="Enter block"];
-                    subgraph cluster_39 {
+                    163 [label="Enter block"];
+                    subgraph cluster_38 {
                         color=blue
-                        172 [label="Function call arguments enter"];
-                        173 [label="Function call arguments exit"];
+                        164 [label="Function call arguments enter"];
+                        165 [label="Function call arguments exit"];
                     }
-                    174 [label="Function call enter: R|/B.B|()"];
-                    175 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    176 [label="Exit block"];
+                    166 [label="Function call enter: R|/B.B|()"];
+                    167 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    168 [label="Exit block"];
                 }
-                177 [label="Exit when branch result"];
+                169 [label="Exit when branch result"];
+                subgraph cluster_39 {
+                    color=blue
+                    170 [label="Enter when branch condition "];
+                    171 [label="Access variable R|<local>/<when-subject>|"];
+                    172 [label="Smart cast: $subj$"];
+                    173 [label="Exit $subj"];
+                    174 [label="Access qualifier /A"];
+                    175 [label="Access variable R|/A.A2|"];
+                    176 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    177 [label="Exit when branch condition"];
+                }
                 178 [label="Enter when branch result"];
                 subgraph cluster_40 {
                     color=blue
@@ -498,7 +500,7 @@ digraph whenExpressionType_kt {
     158 -> {159};
     159 -> {160};
     160 -> {161};
-    161 -> {162 178};
+    161 -> {162 170};
     162 -> {163};
     163 -> {164};
     164 -> {165};
@@ -506,7 +508,8 @@ digraph whenExpressionType_kt {
     166 -> {167};
     167 -> {168};
     168 -> {169};
-    169 -> {170};
+    169 -> {186};
+    169 -> {170} [color=blue];
     170 -> {171};
     171 -> {172};
     172 -> {173};
@@ -514,7 +517,7 @@ digraph whenExpressionType_kt {
     174 -> {175};
     175 -> {176};
     176 -> {177};
-    177 -> {186};
+    177 -> {178};
     178 -> {179};
     179 -> {180};
     180 -> {181};
@@ -563,31 +566,31 @@ digraph whenExpressionType_kt {
                     215 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     216 [label="Exit when branch condition"];
                 }
+                217 [label="Enter when branch result"];
                 subgraph cluster_47 {
                     color=blue
-                    217 [label="Enter when branch condition "];
-                    218 [label="Access variable R|<local>/<when-subject>|"];
-                    219 [label="Smart cast: $subj$"];
-                    220 [label="Exit $subj"];
-                    221 [label="Access qualifier /A"];
-                    222 [label="Access variable R|/A.A2|"];
-                    223 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    224 [label="Exit when branch condition"];
-                }
-                225 [label="Enter when branch result"];
-                subgraph cluster_48 {
-                    color=blue
-                    226 [label="Enter block"];
-                    subgraph cluster_49 {
+                    218 [label="Enter block"];
+                    subgraph cluster_48 {
                         color=blue
-                        227 [label="Function call arguments enter"];
-                        228 [label="Function call arguments exit"];
+                        219 [label="Function call arguments enter"];
+                        220 [label="Function call arguments exit"];
                     }
-                    229 [label="Function call enter: R|/B.B|()"];
-                    230 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    231 [label="Exit block"];
+                    221 [label="Function call enter: R|/B.B|()"];
+                    222 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    223 [label="Exit block"];
                 }
-                232 [label="Exit when branch result"];
+                224 [label="Exit when branch result"];
+                subgraph cluster_49 {
+                    color=blue
+                    225 [label="Enter when branch condition "];
+                    226 [label="Access variable R|<local>/<when-subject>|"];
+                    227 [label="Smart cast: $subj$"];
+                    228 [label="Exit $subj"];
+                    229 [label="Access qualifier /A"];
+                    230 [label="Access variable R|/A.A2|"];
+                    231 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    232 [label="Exit when branch condition"];
+                }
                 233 [label="Enter when branch result"];
                 subgraph cluster_50 {
                     color=blue
@@ -638,7 +641,7 @@ digraph whenExpressionType_kt {
     213 -> {214};
     214 -> {215};
     215 -> {216};
-    216 -> {217 233};
+    216 -> {217 225};
     217 -> {218};
     218 -> {219};
     219 -> {220};
@@ -646,7 +649,8 @@ digraph whenExpressionType_kt {
     221 -> {222};
     222 -> {223};
     223 -> {224};
-    224 -> {225};
+    224 -> {241};
+    224 -> {225} [color=blue];
     225 -> {226};
     226 -> {227};
     227 -> {228};
@@ -654,7 +658,7 @@ digraph whenExpressionType_kt {
     229 -> {230};
     230 -> {231};
     231 -> {232};
-    232 -> {241};
+    232 -> {233};
     233 -> {234};
     234 -> {235};
     235 -> {236};
@@ -701,50 +705,50 @@ digraph whenExpressionType_kt {
                     268 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     269 [label="Exit when branch condition"];
                 }
+                270 [label="Enter when branch result"];
                 subgraph cluster_57 {
                     color=blue
-                    270 [label="Enter when branch condition "];
-                    271 [label="Access variable R|<local>/<when-subject>|"];
-                    272 [label="Smart cast: $subj$"];
-                    273 [label="Exit $subj"];
-                    274 [label="Access qualifier /A"];
-                    275 [label="Access variable R|/A.A2|"];
-                    276 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    277 [label="Exit when branch condition"];
+                    271 [label="Enter block"];
+                    subgraph cluster_58 {
+                        color=blue
+                        272 [label="Function call arguments enter"];
+                        273 [label="Function call arguments exit"];
+                    }
+                    274 [label="Function call enter: R|/B.B|()"];
+                    275 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    276 [label="Exit block"];
                 }
-                subgraph cluster_58 {
-                    color=blue
-                    278 [label="Enter when branch condition else"];
-                    279 [label="Exit when branch condition"];
-                }
-                280 [label="Enter when branch result"];
+                277 [label="Exit when branch result"];
                 subgraph cluster_59 {
                     color=blue
-                    281 [label="Enter block"];
-                    subgraph cluster_60 {
-                        color=blue
-                        282 [label="Function call arguments enter"];
-                        283 [label="Function call arguments exit"];
-                    }
-                    284 [label="Function call enter: R|/B.B|()"];
-                    285 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    286 [label="Exit block"];
+                    278 [label="Enter when branch condition "];
+                    279 [label="Access variable R|<local>/<when-subject>|"];
+                    280 [label="Smart cast: $subj$"];
+                    281 [label="Exit $subj"];
+                    282 [label="Access qualifier /A"];
+                    283 [label="Access variable R|/A.A2|"];
+                    284 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    285 [label="Exit when branch condition"];
                 }
-                287 [label="Exit when branch result"];
-                288 [label="Enter when branch result"];
-                subgraph cluster_61 {
+                286 [label="Enter when branch result"];
+                subgraph cluster_60 {
                     color=blue
-                    289 [label="Enter block"];
-                    subgraph cluster_62 {
+                    287 [label="Enter block"];
+                    subgraph cluster_61 {
                         color=blue
-                        290 [label="Function call arguments enter"];
-                        291 [label="Function call arguments exit"];
+                        288 [label="Function call arguments enter"];
+                        289 [label="Function call arguments exit"];
                     }
-                    292 [label="Function call enter: R|/B.B|()"];
-                    293 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    294 [label="Exit block"];
+                    290 [label="Function call enter: R|/B.B|()"];
+                    291 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    292 [label="Exit block"];
                 }
-                295 [label="Exit when branch result"];
+                293 [label="Exit when branch result"];
+                subgraph cluster_62 {
+                    color=blue
+                    294 [label="Enter when branch condition else"];
+                    295 [label="Exit when branch condition"];
+                }
                 296 [label="Enter when branch result"];
                 subgraph cluster_63 {
                     color=blue
@@ -793,7 +797,7 @@ digraph whenExpressionType_kt {
     266 -> {267};
     267 -> {268};
     268 -> {269};
-    269 -> {270 296};
+    269 -> {270 278};
     270 -> {271};
     271 -> {272};
     272 -> {273};
@@ -801,7 +805,8 @@ digraph whenExpressionType_kt {
     274 -> {275};
     275 -> {276};
     276 -> {277};
-    277 -> {278 288};
+    277 -> {304};
+    277 -> {278} [color=blue];
     278 -> {279};
     279 -> {280};
     280 -> {281};
@@ -809,17 +814,18 @@ digraph whenExpressionType_kt {
     282 -> {283};
     283 -> {284};
     284 -> {285};
-    285 -> {286};
+    285 -> {286 294};
     286 -> {287};
-    287 -> {304};
+    287 -> {288};
     288 -> {289};
     289 -> {290};
     290 -> {291};
     291 -> {292};
     292 -> {293};
-    293 -> {294};
+    293 -> {304};
+    293 -> {294} [color=blue];
     294 -> {295};
-    295 -> {304};
+    295 -> {296};
     296 -> {297};
     297 -> {298};
     298 -> {299};
@@ -867,50 +873,50 @@ digraph whenExpressionType_kt {
                     332 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     333 [label="Exit when branch condition"];
                 }
+                334 [label="Enter when branch result"];
                 subgraph cluster_70 {
                     color=blue
-                    334 [label="Enter when branch condition "];
-                    335 [label="Access variable R|<local>/<when-subject>|"];
-                    336 [label="Smart cast: $subj$"];
-                    337 [label="Exit $subj"];
-                    338 [label="Access qualifier /A"];
-                    339 [label="Access variable R|/A.A2|"];
-                    340 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    341 [label="Exit when branch condition"];
+                    335 [label="Enter block"];
+                    subgraph cluster_71 {
+                        color=blue
+                        336 [label="Function call arguments enter"];
+                        337 [label="Function call arguments exit"];
+                    }
+                    338 [label="Function call enter: R|/B.B|()"];
+                    339 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    340 [label="Exit block"];
                 }
-                subgraph cluster_71 {
-                    color=blue
-                    342 [label="Enter when branch condition else"];
-                    343 [label="Exit when branch condition"];
-                }
-                344 [label="Enter when branch result"];
+                341 [label="Exit when branch result"];
                 subgraph cluster_72 {
                     color=blue
-                    345 [label="Enter block"];
-                    subgraph cluster_73 {
-                        color=blue
-                        346 [label="Function call arguments enter"];
-                        347 [label="Function call arguments exit"];
-                    }
-                    348 [label="Function call enter: R|/B.B|()"];
-                    349 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    350 [label="Exit block"];
+                    342 [label="Enter when branch condition "];
+                    343 [label="Access variable R|<local>/<when-subject>|"];
+                    344 [label="Smart cast: $subj$"];
+                    345 [label="Exit $subj"];
+                    346 [label="Access qualifier /A"];
+                    347 [label="Access variable R|/A.A2|"];
+                    348 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    349 [label="Exit when branch condition"];
                 }
-                351 [label="Exit when branch result"];
-                352 [label="Enter when branch result"];
-                subgraph cluster_74 {
+                350 [label="Enter when branch result"];
+                subgraph cluster_73 {
                     color=blue
-                    353 [label="Enter block"];
-                    subgraph cluster_75 {
+                    351 [label="Enter block"];
+                    subgraph cluster_74 {
                         color=blue
-                        354 [label="Function call arguments enter"];
-                        355 [label="Function call arguments exit"];
+                        352 [label="Function call arguments enter"];
+                        353 [label="Function call arguments exit"];
                     }
-                    356 [label="Function call enter: R|/B.B|()"];
-                    357 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    358 [label="Exit block"];
+                    354 [label="Function call enter: R|/B.B|()"];
+                    355 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    356 [label="Exit block"];
                 }
-                359 [label="Exit when branch result"];
+                357 [label="Exit when branch result"];
+                subgraph cluster_75 {
+                    color=blue
+                    358 [label="Enter when branch condition else"];
+                    359 [label="Exit when branch condition"];
+                }
                 360 [label="Enter when branch result"];
                 subgraph cluster_76 {
                     color=blue
@@ -960,7 +966,7 @@ digraph whenExpressionType_kt {
     330 -> {331};
     331 -> {332};
     332 -> {333};
-    333 -> {334 360};
+    333 -> {334 342};
     334 -> {335};
     335 -> {336};
     336 -> {337};
@@ -968,7 +974,8 @@ digraph whenExpressionType_kt {
     338 -> {339};
     339 -> {340};
     340 -> {341};
-    341 -> {342 352};
+    341 -> {368};
+    341 -> {342} [color=blue];
     342 -> {343};
     343 -> {344};
     344 -> {345};
@@ -976,17 +983,18 @@ digraph whenExpressionType_kt {
     346 -> {347};
     347 -> {348};
     348 -> {349};
-    349 -> {350};
+    349 -> {350 358};
     350 -> {351};
-    351 -> {368};
+    351 -> {352};
     352 -> {353};
     353 -> {354};
     354 -> {355};
     355 -> {356};
     356 -> {357};
-    357 -> {358};
+    357 -> {368};
+    357 -> {358} [color=blue];
     358 -> {359};
-    359 -> {368};
+    359 -> {360};
     360 -> {361};
     361 -> {362};
     362 -> {363};
@@ -1033,50 +1041,50 @@ digraph whenExpressionType_kt {
                     395 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     396 [label="Exit when branch condition"];
                 }
+                397 [label="Enter when branch result"];
                 subgraph cluster_83 {
                     color=blue
-                    397 [label="Enter when branch condition "];
-                    398 [label="Access variable R|<local>/<when-subject>|"];
-                    399 [label="Smart cast: $subj$"];
-                    400 [label="Exit $subj"];
-                    401 [label="Access qualifier /A"];
-                    402 [label="Access variable R|/A.A2|"];
-                    403 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    404 [label="Exit when branch condition"];
+                    398 [label="Enter block"];
+                    subgraph cluster_84 {
+                        color=blue
+                        399 [label="Function call arguments enter"];
+                        400 [label="Function call arguments exit"];
+                    }
+                    401 [label="Function call enter: R|/B.B|()"];
+                    402 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    403 [label="Exit block"];
                 }
-                subgraph cluster_84 {
-                    color=blue
-                    405 [label="Enter when branch condition else"];
-                    406 [label="Exit when branch condition"];
-                }
-                407 [label="Enter when branch result"];
+                404 [label="Exit when branch result"];
                 subgraph cluster_85 {
                     color=blue
-                    408 [label="Enter block"];
-                    subgraph cluster_86 {
-                        color=blue
-                        409 [label="Function call arguments enter"];
-                        410 [label="Function call arguments exit"];
-                    }
-                    411 [label="Function call enter: R|/B.B|()"];
-                    412 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    413 [label="Exit block"];
+                    405 [label="Enter when branch condition "];
+                    406 [label="Access variable R|<local>/<when-subject>|"];
+                    407 [label="Smart cast: $subj$"];
+                    408 [label="Exit $subj"];
+                    409 [label="Access qualifier /A"];
+                    410 [label="Access variable R|/A.A2|"];
+                    411 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    412 [label="Exit when branch condition"];
                 }
-                414 [label="Exit when branch result"];
-                415 [label="Enter when branch result"];
-                subgraph cluster_87 {
+                413 [label="Enter when branch result"];
+                subgraph cluster_86 {
                     color=blue
-                    416 [label="Enter block"];
-                    subgraph cluster_88 {
+                    414 [label="Enter block"];
+                    subgraph cluster_87 {
                         color=blue
-                        417 [label="Function call arguments enter"];
-                        418 [label="Function call arguments exit"];
+                        415 [label="Function call arguments enter"];
+                        416 [label="Function call arguments exit"];
                     }
-                    419 [label="Function call enter: R|/B.B|()"];
-                    420 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    421 [label="Exit block"];
+                    417 [label="Function call enter: R|/B.B|()"];
+                    418 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    419 [label="Exit block"];
                 }
-                422 [label="Exit when branch result"];
+                420 [label="Exit when branch result"];
+                subgraph cluster_88 {
+                    color=blue
+                    421 [label="Enter when branch condition else"];
+                    422 [label="Exit when branch condition"];
+                }
                 423 [label="Enter when branch result"];
                 subgraph cluster_89 {
                     color=blue
@@ -1125,7 +1133,7 @@ digraph whenExpressionType_kt {
     393 -> {394};
     394 -> {395};
     395 -> {396};
-    396 -> {397 423};
+    396 -> {397 405};
     397 -> {398};
     398 -> {399};
     399 -> {400};
@@ -1133,7 +1141,8 @@ digraph whenExpressionType_kt {
     401 -> {402};
     402 -> {403};
     403 -> {404};
-    404 -> {405 415};
+    404 -> {431};
+    404 -> {405} [color=blue];
     405 -> {406};
     406 -> {407};
     407 -> {408};
@@ -1141,17 +1150,18 @@ digraph whenExpressionType_kt {
     409 -> {410};
     410 -> {411};
     411 -> {412};
-    412 -> {413};
+    412 -> {413 421};
     413 -> {414};
-    414 -> {431};
+    414 -> {415};
     415 -> {416};
     416 -> {417};
     417 -> {418};
     418 -> {419};
     419 -> {420};
-    420 -> {421};
+    420 -> {431};
+    420 -> {421} [color=blue];
     421 -> {422};
-    422 -> {431};
+    422 -> {423};
     423 -> {424};
     424 -> {425};
     425 -> {426};
@@ -1199,50 +1209,50 @@ digraph whenExpressionType_kt {
                     459 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     460 [label="Exit when branch condition"];
                 }
+                461 [label="Enter when branch result"];
                 subgraph cluster_96 {
                     color=blue
-                    461 [label="Enter when branch condition "];
-                    462 [label="Access variable R|<local>/<when-subject>|"];
-                    463 [label="Smart cast: $subj$"];
-                    464 [label="Exit $subj"];
-                    465 [label="Access qualifier /A"];
-                    466 [label="Access variable R|/A.A2|"];
-                    467 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    468 [label="Exit when branch condition"];
+                    462 [label="Enter block"];
+                    subgraph cluster_97 {
+                        color=blue
+                        463 [label="Function call arguments enter"];
+                        464 [label="Function call arguments exit"];
+                    }
+                    465 [label="Function call enter: R|/B.B|()"];
+                    466 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    467 [label="Exit block"];
                 }
-                subgraph cluster_97 {
-                    color=blue
-                    469 [label="Enter when branch condition else"];
-                    470 [label="Exit when branch condition"];
-                }
-                471 [label="Enter when branch result"];
+                468 [label="Exit when branch result"];
                 subgraph cluster_98 {
                     color=blue
-                    472 [label="Enter block"];
-                    subgraph cluster_99 {
-                        color=blue
-                        473 [label="Function call arguments enter"];
-                        474 [label="Function call arguments exit"];
-                    }
-                    475 [label="Function call enter: R|/B.B|()"];
-                    476 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    477 [label="Exit block"];
+                    469 [label="Enter when branch condition "];
+                    470 [label="Access variable R|<local>/<when-subject>|"];
+                    471 [label="Smart cast: $subj$"];
+                    472 [label="Exit $subj"];
+                    473 [label="Access qualifier /A"];
+                    474 [label="Access variable R|/A.A2|"];
+                    475 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    476 [label="Exit when branch condition"];
                 }
-                478 [label="Exit when branch result"];
-                479 [label="Enter when branch result"];
-                subgraph cluster_100 {
+                477 [label="Enter when branch result"];
+                subgraph cluster_99 {
                     color=blue
-                    480 [label="Enter block"];
-                    subgraph cluster_101 {
+                    478 [label="Enter block"];
+                    subgraph cluster_100 {
                         color=blue
-                        481 [label="Function call arguments enter"];
-                        482 [label="Function call arguments exit"];
+                        479 [label="Function call arguments enter"];
+                        480 [label="Function call arguments exit"];
                     }
-                    483 [label="Function call enter: R|/B.B|()"];
-                    484 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    485 [label="Exit block"];
+                    481 [label="Function call enter: R|/B.B|()"];
+                    482 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    483 [label="Exit block"];
                 }
-                486 [label="Exit when branch result"];
+                484 [label="Exit when branch result"];
+                subgraph cluster_101 {
+                    color=blue
+                    485 [label="Enter when branch condition else"];
+                    486 [label="Exit when branch condition"];
+                }
                 487 [label="Enter when branch result"];
                 subgraph cluster_102 {
                     color=blue
@@ -1292,7 +1302,7 @@ digraph whenExpressionType_kt {
     457 -> {458};
     458 -> {459};
     459 -> {460};
-    460 -> {461 487};
+    460 -> {461 469};
     461 -> {462};
     462 -> {463};
     463 -> {464};
@@ -1300,7 +1310,8 @@ digraph whenExpressionType_kt {
     465 -> {466};
     466 -> {467};
     467 -> {468};
-    468 -> {469 479};
+    468 -> {495};
+    468 -> {469} [color=blue];
     469 -> {470};
     470 -> {471};
     471 -> {472};
@@ -1308,17 +1319,18 @@ digraph whenExpressionType_kt {
     473 -> {474};
     474 -> {475};
     475 -> {476};
-    476 -> {477};
+    476 -> {477 485};
     477 -> {478};
-    478 -> {495};
+    478 -> {479};
     479 -> {480};
     480 -> {481};
     481 -> {482};
     482 -> {483};
     483 -> {484};
-    484 -> {485};
+    484 -> {495};
+    484 -> {485} [color=blue];
     485 -> {486};
-    486 -> {495};
+    486 -> {487};
     487 -> {488};
     488 -> {489};
     489 -> {490};
@@ -1365,32 +1377,32 @@ digraph whenExpressionType_kt {
                     522 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     523 [label="Exit when branch condition"];
                 }
+                524 [label="Enter when branch result"];
                 subgraph cluster_109 {
                     color=blue
-                    524 [label="Enter when branch condition "];
-                    525 [label="Access variable R|<local>/<when-subject>|"];
-                    526 [label="Smart cast: $subj$"];
-                    527 [label="Exit $subj"];
-                    528 [label="Access qualifier /A"];
-                    529 [label="Access variable R|/A.A2|"];
-                    530 [label="Equality operator ==" style="filled" fillcolor=yellow];
-                    531 [label="Exit when branch condition"];
-                }
-                532 [label="Synthetic else branch"];
-                533 [label="Enter when branch result"];
-                subgraph cluster_110 {
-                    color=blue
-                    534 [label="Enter block"];
-                    subgraph cluster_111 {
+                    525 [label="Enter block"];
+                    subgraph cluster_110 {
                         color=blue
-                        535 [label="Function call arguments enter"];
-                        536 [label="Function call arguments exit"];
+                        526 [label="Function call arguments enter"];
+                        527 [label="Function call arguments exit"];
                     }
-                    537 [label="Function call enter: R|/B.B|()"];
-                    538 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
-                    539 [label="Exit block"];
+                    528 [label="Function call enter: R|/B.B|()"];
+                    529 [label="Function call exit: R|/B.B|()" style="filled" fillcolor=yellow];
+                    530 [label="Exit block"];
                 }
-                540 [label="Exit when branch result"];
+                531 [label="Exit when branch result"];
+                subgraph cluster_111 {
+                    color=blue
+                    532 [label="Enter when branch condition "];
+                    533 [label="Access variable R|<local>/<when-subject>|"];
+                    534 [label="Smart cast: $subj$"];
+                    535 [label="Exit $subj"];
+                    536 [label="Access qualifier /A"];
+                    537 [label="Access variable R|/A.A2|"];
+                    538 [label="Equality operator ==" style="filled" fillcolor=yellow];
+                    539 [label="Exit when branch condition"];
+                }
+                540 [label="Synthetic else branch"];
                 541 [label="Enter when branch result"];
                 subgraph cluster_112 {
                     color=blue
@@ -1439,7 +1451,7 @@ digraph whenExpressionType_kt {
     520 -> {521};
     521 -> {522};
     522 -> {523};
-    523 -> {524 541};
+    523 -> {524 532};
     524 -> {525};
     525 -> {526};
     526 -> {527};
@@ -1447,15 +1459,16 @@ digraph whenExpressionType_kt {
     528 -> {529};
     529 -> {530};
     530 -> {531};
-    531 -> {532 533};
-    532 -> {549};
+    531 -> {549};
+    531 -> {532} [color=blue];
+    532 -> {533};
     533 -> {534};
     534 -> {535};
     535 -> {536};
     536 -> {537};
     537 -> {538};
     538 -> {539};
-    539 -> {540};
+    539 -> {540 541};
     540 -> {549};
     541 -> {542};
     542 -> {543};

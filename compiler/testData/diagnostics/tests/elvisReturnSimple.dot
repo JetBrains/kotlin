@@ -28,31 +28,31 @@ digraph elvisReturnSimple_kt {
                     9 [label="Equality operator !=" style="filled" fillcolor=yellow];
                     10 [label="Exit when branch condition"];
                 }
+                11 [label="Enter when branch result"];
                 subgraph cluster_5 {
                     color=blue
-                    11 [label="Enter when branch condition else"];
-                    12 [label="Exit when branch condition"];
+                    12 [label="Enter block"];
+                    13 [label="Access variable R|<local>/s|"];
+                    14 [label="Smart cast: R|<local>/s|"];
+                    15 [label="Access variable R|kotlin/String.length|"];
+                    16 [label="Jump: ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|"];
+                    17 [label="Stub" style="filled" fillcolor=gray];
+                    18 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                13 [label="Enter when branch result"];
+                19 [label="Exit when branch result" style="filled" fillcolor=gray];
                 subgraph cluster_6 {
                     color=blue
-                    14 [label="Enter block"];
-                    15 [label="Const: Null(null)"];
-                    16 [label="Exit block"];
+                    20 [label="Enter when branch condition else"];
+                    21 [label="Exit when branch condition"];
                 }
-                17 [label="Exit when branch result"];
-                18 [label="Enter when branch result"];
+                22 [label="Enter when branch result"];
                 subgraph cluster_7 {
                     color=blue
-                    19 [label="Enter block"];
-                    20 [label="Access variable R|<local>/s|"];
-                    21 [label="Smart cast: R|<local>/s|"];
-                    22 [label="Access variable R|kotlin/String.length|"];
-                    23 [label="Jump: ^stringReturnInLeftLen R|<local>/s|.R|kotlin/String.length|"];
-                    24 [label="Stub" style="filled" fillcolor=gray];
-                    25 [label="Exit block" style="filled" fillcolor=gray];
+                    23 [label="Enter block"];
+                    24 [label="Const: Null(null)"];
+                    25 [label="Exit block"];
                 }
-                26 [label="Exit when branch result" style="filled" fillcolor=gray];
+                26 [label="Exit when branch result"];
                 27 [label="Exit when"];
             }
             28 [label="Exit lhs of ?:"];
@@ -76,24 +76,25 @@ digraph elvisReturnSimple_kt {
     7 -> {8};
     8 -> {9};
     9 -> {10};
-    10 -> {11 18};
+    10 -> {11 20};
     11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    16 -> {17};
-    17 -> {27};
-    18 -> {19};
-    19 -> {20};
+    16 -> {38};
+    16 -> {17} [style=dotted];
+    17 -> {18} [style=dotted];
+    18 -> {19} [style=dotted];
+    19 -> {20} [color=blue style=dotted];
+    19 -> {27} [style=dotted];
     20 -> {21};
     21 -> {22};
     22 -> {23};
-    23 -> {38};
-    23 -> {24} [style=dotted];
-    24 -> {25} [style=dotted];
-    25 -> {26} [style=dotted];
-    26 -> {27} [style=dotted];
+    23 -> {24};
+    24 -> {25};
+    25 -> {26};
+    26 -> {27};
     27 -> {28};
     28 -> {29};
     28 -> {33} [style=dotted];

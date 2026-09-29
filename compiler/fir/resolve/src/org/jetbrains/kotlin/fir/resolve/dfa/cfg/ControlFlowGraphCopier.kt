@@ -126,8 +126,12 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
         return FunctionExitNode(get(node.owner), node.fir, node.level)
     }
 
-    override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: Unit): CFGNode<*> {
-        return LocalFunctionDeclarationNode(get(node.owner), node.fir, node.level)
+    override fun visitLocalFunctionDeclarationEnterNode(node: LocalFunctionDeclarationEnterNode, data: Unit): CFGNode<*> {
+        return LocalFunctionDeclarationEnterNode(get(node.owner), node.fir, node.level)
+    }
+
+    override fun visitLocalFunctionDeclarationExitNode(node: LocalFunctionDeclarationExitNode, data: Unit): CFGNode<*> {
+        return LocalFunctionDeclarationExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitEnterValueParameterNode(node: EnterValueParameterNode, data: Unit): CFGNode<*> {
@@ -178,8 +182,8 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
         return AnonymousObjectEnterNode(get(node.owner), node.fir, node.level)
     }
 
-    override fun visitAnonymousObjectExpressionExitNode(node: AnonymousObjectExpressionExitNode, data: Unit): CFGNode<*> {
-        return AnonymousObjectExpressionExitNode(get(node.owner), node.fir, node.level)
+    override fun visitAnonymousObjectExitNode(node: AnonymousObjectExitNode, data: Unit): CFGNode<*> {
+        return AnonymousObjectExitNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitClassEnterNode(node: ClassEnterNode, data: Unit): CFGNode<*> {
@@ -196,6 +200,10 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
 
     override fun visitStaticExitNode(node: StaticExitNode, data: Unit): CFGNode<*> {
         return StaticExitNode(get(node.owner), node.fir, node.level)
+    }
+
+    override fun visitLocalClassEnterNode(node: LocalClassEnterNode, data: Unit): CFGNode<*> {
+        return LocalClassEnterNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitLocalClassExitNode(node: LocalClassExitNode, data: Unit): CFGNode<*> {
@@ -447,6 +455,10 @@ internal class ControlFlowGraphCopier : ControlFlowGraphVisitor<CFGNode<*>, Unit
 
     override fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: Unit): CFGNode<*> {
         return VariableAssignmentNode(get(node.owner), node.fir, node.level)
+    }
+
+    override fun visitAugmentedAssignmentNode(node: AugmentedAssignmentNode, data: Unit): CFGNode<*> {
+        return AugmentedAssignmentNode(get(node.owner), node.fir, node.level)
     }
 
     override fun visitEnterSafeCallNode(node: EnterSafeCallNode, data: Unit): CFGNode<*> {

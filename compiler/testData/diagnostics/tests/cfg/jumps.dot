@@ -28,36 +28,36 @@ digraph jumps_kt {
                     9 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     10 [label="Exit when branch condition"];
                 }
+                11 [label="Enter when branch result"];
                 subgraph cluster_5 {
                     color=blue
-                    11 [label="Enter when branch condition else"];
-                    12 [label="Exit when branch condition"];
+                    12 [label="Enter block"];
+                    subgraph cluster_6 {
+                        color=blue
+                        13 [label="Function call arguments enter"];
+                        14 [label="Function call arguments exit"];
+                    }
+                    15 [label="Function call enter: R|java/lang/Exception.Exception|()"];
+                    16 [label="Function call exit: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                    17 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                    18 [label="Stub" style="filled" fillcolor=gray];
+                    19 [label="Exit block" style="filled" fillcolor=gray];
                 }
-                13 [label="Enter when branch result"];
-                subgraph cluster_6 {
-                    color=blue
-                    14 [label="Enter block"];
-                    15 [label="Access variable R|<local>/x|"];
-                    16 [label="Smart cast: R|<local>/x|"];
-                    17 [label="Exit block"];
-                }
-                18 [label="Exit when branch result"];
-                19 [label="Enter when branch result"];
+                20 [label="Exit when branch result" style="filled" fillcolor=gray];
                 subgraph cluster_7 {
                     color=blue
-                    20 [label="Enter block"];
-                    subgraph cluster_8 {
-                        color=blue
-                        21 [label="Function call arguments enter"];
-                        22 [label="Function call arguments exit"];
-                    }
-                    23 [label="Function call enter: R|java/lang/Exception.Exception|()"];
-                    24 [label="Function call exit: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-                    25 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-                    26 [label="Stub" style="filled" fillcolor=gray];
-                    27 [label="Exit block" style="filled" fillcolor=gray];
+                    21 [label="Enter when branch condition else"];
+                    22 [label="Exit when branch condition"];
                 }
-                28 [label="Exit when branch result" style="filled" fillcolor=gray];
+                23 [label="Enter when branch result"];
+                subgraph cluster_8 {
+                    color=blue
+                    24 [label="Enter block"];
+                    25 [label="Access variable R|<local>/x|"];
+                    26 [label="Smart cast: R|<local>/x|"];
+                    27 [label="Exit block"];
+                }
+                28 [label="Exit when branch result"];
                 29 [label="Exit when"];
             }
             30 [label="Exit variable declaration: lval y: R|kotlin/Int|"];
@@ -90,25 +90,26 @@ digraph jumps_kt {
     7 -> {8};
     8 -> {9};
     9 -> {10};
-    10 -> {11 19};
+    10 -> {11 21};
     11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    17 -> {18};
-    18 -> {29};
-    19 -> {20};
-    20 -> {21};
+    17 -> {18} [style=dotted];
+    18 -> {19} [style=dotted];
+    19 -> {20} [style=dotted];
+    20 -> {21} [color=blue style=dotted];
+    20 -> {29} [style=dotted];
     21 -> {22};
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {26} [style=dotted];
-    26 -> {27} [style=dotted];
-    27 -> {28} [style=dotted];
-    28 -> {29} [style=dotted];
+    25 -> {26};
+    26 -> {27};
+    27 -> {28};
+    28 -> {29};
     29 -> {30};
     30 -> {31};
     31 -> {32};
@@ -142,20 +143,20 @@ digraph jumps_kt {
                     51 [label="Equality operator ==" style="filled" fillcolor=yellow];
                     52 [label="Exit when branch condition"];
                 }
+                53 [label="Enter when branch result"];
                 subgraph cluster_15 {
                     color=blue
-                    53 [label="Enter when branch condition else"];
-                    54 [label="Exit when branch condition"];
+                    54 [label="Enter block"];
+                    55 [label="Access variable R|<local>/x|"];
+                    56 [label="Smart cast: R|<local>/x|"];
+                    57 [label="Exit block"];
                 }
-                55 [label="Enter when branch result"];
+                58 [label="Exit when branch result"];
                 subgraph cluster_16 {
                     color=blue
-                    56 [label="Enter block"];
-                    57 [label="Access variable R|<local>/x|"];
-                    58 [label="Smart cast: R|<local>/x|"];
-                    59 [label="Exit block"];
+                    59 [label="Enter when branch condition else"];
+                    60 [label="Exit when branch condition"];
                 }
-                60 [label="Exit when branch result"];
                 61 [label="Enter when branch result"];
                 subgraph cluster_17 {
                     color=blue
@@ -188,15 +189,16 @@ digraph jumps_kt {
     49 -> {50};
     50 -> {51};
     51 -> {52};
-    52 -> {53 61};
+    52 -> {53 59};
     53 -> {54};
     54 -> {55};
     55 -> {56};
     56 -> {57};
     57 -> {58};
-    58 -> {59};
+    58 -> {67};
+    58 -> {59} [color=blue];
     59 -> {60};
-    60 -> {67};
+    60 -> {61};
     61 -> {62};
     62 -> {63};
     63 -> {64};

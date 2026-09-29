@@ -18,7 +18,11 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: D): R {
+    open fun visitLocalFunctionDeclarationEnterNode(node: LocalFunctionDeclarationEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitLocalFunctionDeclarationExitNode(node: LocalFunctionDeclarationExitNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -78,7 +82,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitAnonymousObjectExpressionExitNode(node: AnonymousObjectExpressionExitNode, data: D): R {
+    open fun visitAnonymousObjectExitNode(node: AnonymousObjectExitNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -95,6 +99,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitStaticExitNode(node: StaticExitNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitLocalClassEnterNode(node: LocalClassEnterNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -372,6 +380,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitAugmentedAssignmentNode(node: AugmentedAssignmentNode, data: D): R {
         return visitNode(node, data)
     }
 

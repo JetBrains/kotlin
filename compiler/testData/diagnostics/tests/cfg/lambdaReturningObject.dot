@@ -151,6 +151,7 @@ digraph lambdaReturningObject_kt {
     37 -> {38};
     38 -> {39};
     39 -> {40};
+    40 -> {43} [color=blue];
     40 -> {36} [color=green style=dashed];
     41 -> {42};
     42 -> {44};

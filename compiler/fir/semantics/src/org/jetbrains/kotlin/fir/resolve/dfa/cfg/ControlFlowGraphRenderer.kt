@@ -107,8 +107,9 @@ private class ControlFlowGraphRenderer(
     private val Edge.style: String?
         get() = listOfNotNull(
             when {
-                !kind.usedInDfa && !kind.usedInDeadDfa -> "color=green"
-                !kind.usedInCfa -> "color=red"
+                !kind.usedInDfa && !kind.usedInDeadDfa && !kind.usedInCfa -> "color=blue" // Lexical edge.
+                !kind.usedInDfa && !kind.usedInDeadDfa -> "color=green" // CFG-only edge.
+                !kind.usedInCfa -> "color=red" // DFA-only edge.
                 else -> null
             },
             when {

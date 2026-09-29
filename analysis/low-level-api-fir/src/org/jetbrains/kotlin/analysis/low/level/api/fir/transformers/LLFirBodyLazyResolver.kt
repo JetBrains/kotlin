@@ -138,13 +138,14 @@ private class FirPartialBodyDeclarationResolveTransformer(
         data: ResolutionMode
     ): FirAnonymousInitializer {
         if (anonymousInitializer.partialBodyAnalysisState != null) {
+            dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
             context.withAnonymousInitializer(anonymousInitializer, session) {
                 val result = transformDeclarationContent(
                     anonymousInitializer,
                     ResolutionMode.ContextIndependent
                 ) as FirAnonymousInitializer
 
-                val graph = dataFlowAnalyzer.exitInitBlock(result)
+                val graph = dataFlowAnalyzer.exitInitBlock(anonymousInitializer) // Called with the original initializer on purpose.
                 result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
                 return result
             }
@@ -304,7 +305,7 @@ private class FirPartialBodyExpressionResolveTransformer(
     @CfgInternals
     private class LLSnapshotFirMapper(private val roots: List<FirElement>) : SnapshotFirMapper {
         private fun shouldBeHandled(element: FirElement): Boolean {
-            /** Accepts elements handled by [org.jetbrains.kotlin.fir.resolve.dfa.FirLocalVariableAssignmentAnalyzer] */
+            // TODO(???)
             val isElementKindHandled = when (element) {
                 is FirDeclaration -> element.isLocal
                 is FirLoop -> true
@@ -689,7 +690,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
 
         val dataFlowAnalyzer = transformer.declarationsTransformer.dataFlowAnalyzer
         dataFlowAnalyzer.enterClass(target, buildGraph = true)
-        val (memberGraph, staticGraph) = dataFlowAnalyzer.exitClass()
+        val (memberGraph, staticGraph) = dataFlowAnalyzer.exitClass(target)
             ?: errorWithAttachment("CFG should not be 'null' as 'buildGraph' is specified") {
                 withFirEntry("firClass", target)
             }
