@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.diagnostics.diagnostics
 import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryFallbackDependenciesModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.kaModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.symbol
@@ -208,6 +211,37 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
         // Otherwise the check above misses the no-arg overload of 'ClassWithDefaultParameterValues'
         testServices.assertions.assertTrue(declaredConstructors.any { it is SymbolLightNoArgConstructor }) {
             "A no-arg constructor overload is expected among $declaredConstructors"
+        }
+    }
+
+    /**
+     * A library class resolved from a library source module with fallback dependencies is deserialized in the session of the
+     * [KaLibraryFallbackDependenciesModule], while its decompiled PSI belongs to the [KaLibraryModule].
+     *
+     * The declaration location has to be computed from the PSI, so such a class gets a light class built over decompiled Java stubs.
+     * The fallback dependencies module is not a declaration location, so no light class would be created otherwise.
+     */
+    @Test
+    fun libraryClassFromFallbackDependencies(file: KtFile, testServices: TestServices) {
+        analyze(file) {
+            val classId = ClassId(FqName("lib"), Name.identifier("LibraryClass"))
+            val classSymbol = findClass(classId) ?: error("'$classId' symbol was not found")
+
+            testServices.assertions.assertTrue(classSymbol.containingModule is KaLibraryFallbackDependenciesModule) {
+                "'$classId' is expected to come from fallback dependencies, but '${classSymbol.containingModule}' was found"
+            }
+
+            val declaration = classSymbol.realPsi as? KtClassOrObject
+                ?: error("'$classId' is expected to have a decompiled PSI, but '${classSymbol.realPsi}' was found")
+
+            testServices.assertions.assertTrue(declaration.kaModule is KaLibraryModule) {
+                "The decompiled PSI of '$classId' is expected to belong to a library module, but '${declaration.kaModule}' was found"
+            }
+
+            val lightClass = classSymbol.asPsiClass()
+            testServices.assertions.assertTrue(lightClass == null) {
+                "Expected `null` as `SymbolKotlinAsJavaSuport` doesn't create LCs for symbols from `KaLibraryFallbackDependenciesModule`"
+            }
         }
     }
 
