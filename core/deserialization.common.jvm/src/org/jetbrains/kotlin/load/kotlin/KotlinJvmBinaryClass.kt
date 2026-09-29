@@ -34,7 +34,7 @@ interface KotlinJvmBinaryClass {
     interface MemberVisitor {
         // TODO: abstract signatures for methods and fields instead of ASM 'desc' strings?
 
-        fun visitMethod(name: Name, desc: String): MethodAnnotationVisitor?
+        fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): MethodAnnotationVisitor?
 
         fun visitField(name: Name, desc: String, initializer: Any?): AnnotationVisitor?
     }

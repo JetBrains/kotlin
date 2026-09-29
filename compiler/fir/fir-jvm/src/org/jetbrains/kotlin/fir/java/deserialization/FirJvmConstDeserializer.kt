@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
@@ -38,7 +39,7 @@ class FirJvmConstDeserializer(
         }
 
         binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
+            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
 
             override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
                 if (initializer != null) {

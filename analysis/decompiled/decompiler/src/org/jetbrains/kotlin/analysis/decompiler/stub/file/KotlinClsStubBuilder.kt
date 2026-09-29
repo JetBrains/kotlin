@@ -243,7 +243,7 @@ private class JvmClsAnnotationLoader(
 
         ProgressManager.checkCanceled()
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
+            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
                 ProgressManager.checkCanceled()
 
                 return AnnotationVisitorForMethod(
