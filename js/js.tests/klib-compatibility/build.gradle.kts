@@ -117,7 +117,10 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomSecondStage_$version",
-        tag = "custom-second-stage"
+        tag = "custom-second-stage",
+        // The custom-second-stage tests are migrated to the two-stage grouping test infrastructure
+        // (`AbstractCustomJsCompilerSecondStageTest`), so the grouping test engine must be enabled.
+        enableGroupingTestEngine = true,
     )
 }
 
@@ -127,7 +130,7 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
         version = version,
         taskName = "testMinimalInAggregate",
         tag = "aggregate",
-        // Aggregates the sanity and minimal generated tests of both stages; those of the first stage are run by the grouping test engine.
+        // Aggregates the sanity and minimal generated tests of both stages, which are run by the grouping test engine.
         enableGroupingTestEngine = true,
     )
 }

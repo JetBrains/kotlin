@@ -43,7 +43,7 @@ class CustomJsCompilerSecondStageFacade(
     override fun isMainModule(module: TestModule) = module == JsEnvironmentConfigurator.getMainModule(testServices)
     override fun collectDependencies(module: TestModule) = module.collectDependencies(testServices, CompilationStage.SECOND)
 
-    override fun compileBinary(
+    public override fun compileBinary(
         module: TestModule,
         customArgs: List<String>,
         mainLibrary: String,
