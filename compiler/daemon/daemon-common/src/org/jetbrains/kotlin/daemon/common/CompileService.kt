@@ -77,6 +77,9 @@ interface CompileService : Remote {
         abstract fun get(): R
     }
 
+    @Throws(RemoteException::class)
+    fun isSessionActive(sessionId: Int): CallResult<Boolean>
+
     // TODO: remove!
     @Throws(RemoteException::class)
     fun checkCompilerId(expectedCompilerId: CompilerId): Boolean

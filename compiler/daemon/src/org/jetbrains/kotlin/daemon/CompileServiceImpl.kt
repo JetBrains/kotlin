@@ -899,6 +899,9 @@ class CompileServiceImpl(
             })
     }
 
+    override fun isSessionActive(sessionId: Int): CompileService.CallResult<Boolean> = ifAlive(minAliveness = Aliveness.LastSession) {
+        CompileService.CallResult.Good(state.sessions[sessionId] != null)
+    }
 
     override fun releaseCompileSession(sessionId: Int) = ifAlive(minAliveness = Aliveness.LastSession) {
         state.sessions.remove(sessionId)

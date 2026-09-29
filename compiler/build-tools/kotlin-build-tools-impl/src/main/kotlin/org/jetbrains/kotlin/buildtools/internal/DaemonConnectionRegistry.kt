@@ -15,27 +15,14 @@ internal class DaemonConnectionRegistry(private val sessionIsAliveFlagFile: Lazy
     fun getCompileServiceSession(
         policy: DaemonExecutionPolicyImpl,
         loggerAdapter: KotlinLoggerMessageCollectorAdapter,
-        forceRecreate: Boolean = false,
     ): CompileServiceSession? {
-        val daemonConnectionFactory = { policyImpl: DaemonExecutionPolicyImpl ->
-            policyImpl.createDaemonConnection(loggerAdapter, sessionIsAliveFlagFile)
-        }
-        return if (!forceRecreate) {
-            @Suppress("UNCHECKED_CAST") // to support the case when computeIfAbsent returns null and the mapping is not recorded
-            (connections as MutableMap<DaemonExecutionPolicyImpl, CompileServiceSession?>).computeIfAbsent(
-                policy, daemonConnectionFactory
-            )?.let { daemon ->
-                if (clientIsAliveFile.absolutePath in (daemon.compileService.getClients().takeIf { it.isGood }?.get() ?: emptyList())) {
-                    daemon
-                } else {
-                    getCompileServiceSession(policy, loggerAdapter, forceRecreate = true)
-                }
-            }
-        } else {
-            @Suppress("UNCHECKED_CAST") // to support the case when computeIfAbsent returns null and the mapping is not recorded
-            (connections as MutableMap<DaemonExecutionPolicyImpl, CompileServiceSession?>).compute(policy) { policy, _ ->
-                daemonConnectionFactory(policy)
-            }
+
+        @Suppress("UNCHECKED_CAST") // to support the case when compute returns null and the mapping is not recorded
+        val connectionsNullable = connections as MutableMap<DaemonExecutionPolicyImpl, CompileServiceSession?>
+
+        return connectionsNullable.compute(policy) { policy, daemon: CompileServiceSession? ->
+            val resultingDaemon = daemon.takeIfAlive() ?: policy.createDaemonConnection(loggerAdapter, sessionIsAliveFlagFile)
+            resultingDaemon
         }
     }
 
@@ -47,5 +34,14 @@ internal class DaemonConnectionRegistry(private val sessionIsAliveFlagFile: Lazy
             }
         }
         connections.clear()
+    }
+}
+
+private fun CompileServiceSession?.takeIfAlive(): CompileServiceSession? {
+    if (this == null) return null
+    return try {
+        this.takeIf { compileService.isSessionActive(sessionId).takeIf { it.isGood }?.get() ?: false }
+    } catch (_: Exception) {
+        null
     }
 }
