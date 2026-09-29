@@ -1,0 +1,21 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivatePropertyFromCompanionMethodWithInheritorParameter.kt */
+
+internal open class UndoManager<R : Any?>
+    private val o: String
+        /* TARGET declaration */ private fun <get-o>(): String
+    private val k: String
+        /* TARGET declaration */ private fun <get-k>(): String
+    public companion object Companion
+        public inline fun <reified T : Any?> getO(value: Derived<T>): String
+            /* ACCESSOR use-site */ access$<get-o><List<T>>($this = base)
+    public inline companion fun <reified T : Any?> getK(value: Derived<T>): String
+        /* ACCESSOR use-site */ access$<get-k><List<T>>($this = base)
+    /* ACCESSOR declaration */ internal companion fun <R : Any?> access$<get-o>($this: UndoManager<R>): String
+        /* TARGET use-site */ $this.<get-o>()
+    /* ACCESSOR declaration */ internal companion fun <R : Any?> access$<get-k>($this: UndoManager<R>): String
+        /* TARGET use-site */ $this.<get-k>()
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-o><List<Int>>($this = base)
+    /* ACCESSOR use-site */ access$<get-k><List<Int>>($this = base)

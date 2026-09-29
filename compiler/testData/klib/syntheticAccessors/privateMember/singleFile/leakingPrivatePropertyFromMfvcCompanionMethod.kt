@@ -1,5 +1,5 @@
-// LANGUAGE: +CompanionBlocks
-internal class UndoManager<R>(private val o: String = "O", private val k: String = "K") {
+// LANGUAGE: +CompanionBlocks +FullValueClasses
+internal value class UndoManager<R>(private val o: String = "O", private val k: String = "K") {
     companion object {
         inline fun <reified T> getO(value: UndoManager<T>): String {
             return value.o
