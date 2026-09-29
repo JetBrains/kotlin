@@ -1,0 +1,3 @@
+error: <user> @
+Function 'gone' can not be called
+linkage errors reported by the partial linkage engine
