@@ -89,8 +89,11 @@ sealed class BuilderDeclarationType {
          *
          * fir2ir records this very symbol on the declaration it produces, so the two sides are tied together
          * by identity rather than by declaration names or source offsets.
+         *
+         * [useGuavaForSingular] is `lombok.singular.useGuava`: whether `build()` produces a Guava immutable
+         * collection for a `@Singular` field, whatever collection type the field is declared with.
          */
-        class Build(val entitySymbol: FirBasedSymbol<*>) : Function()
+        class Build(val entitySymbol: FirBasedSymbol<*>, val useGuavaForSingular: Boolean) : Function()
         object Builder : Function()
         object ToBuilder : Function()
     }

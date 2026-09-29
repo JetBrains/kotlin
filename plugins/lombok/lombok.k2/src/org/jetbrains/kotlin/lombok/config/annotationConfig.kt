@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_CLASS_NAME_C
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SUPER_BUILDER_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SINGULAR_AUTO_CONFIG
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.SINGULAR_USE_GUAVA_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILDER_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.BUILD_METHOD_NAME
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.CHAIN
@@ -113,6 +114,7 @@ class GlobalConfig(
     val builderFlagUsage: FlagUsageValue?,
     val superBuilderFlagUsage: FlagUsageValue?,
     val singularAuto: Boolean,
+    val singularUseGuava: Boolean,
     val logFieldName: String,
     val logFieldIsStatic: Boolean,
     val logFlagUsage: FlagUsageValue?,
@@ -150,6 +152,7 @@ class GlobalConfig(
                 builderFlagUsage = parseFlagUsage(config, BUILDER_FLAG_USAGE_CONFIG),
                 superBuilderFlagUsage = parseFlagUsage(config, SUPER_BUILDER_FLAG_USAGE_CONFIG),
                 singularAuto = config.getBoolean(SINGULAR_AUTO_CONFIG) ?: true,
+                singularUseGuava = config.getBoolean(SINGULAR_USE_GUAVA_CONFIG) ?: false,
                 logFieldName = config.getString(LOG_FIELD_NAME_CONFIG) ?: "log",
                 logFieldIsStatic = config.getBoolean(LOG_FIELD_IS_STATIC_CONFIG) ?: true,
                 logFlagUsage = parseFlagUsage(config, LOG_FLAG_USAGE_CONFIG),

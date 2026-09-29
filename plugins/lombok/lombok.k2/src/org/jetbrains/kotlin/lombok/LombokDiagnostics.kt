@@ -64,6 +64,8 @@ import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.TO_BUILDER_CANNOT_OBTAIN
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_EXPLICIT_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.CANNOT_SINGULARIZE_NAME
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE
+import org.jetbrains.kotlin.lombok.LombokFirDiagnostics.SINGULAR_REQUIRES_GUAVA
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
@@ -127,6 +129,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val SINGULAR_REQUIRES_EXPLICIT_NAME by error0<KtAnnotationEntry>()
     val CANNOT_SINGULARIZE_NAME by error0<KtAnnotationEntry>()
     val UNSUPPORTED_SINGULAR_TYPE by error1<KtAnnotationEntry, ConeKotlinType>()
+    val SINGULAR_REQUIRES_GUAVA by error1<KtAnnotationEntry, FqName>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 }
@@ -296,6 +299,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             UNSUPPORTED_SINGULAR_TYPE,
             "Lombok does not know how to create the singular-form builder methods for type ''{0}''; these methods will not be generated.",
             RENDER_TYPE,
+        )
+        map.put(
+            SINGULAR_REQUIRES_GUAVA,
+            "Package ''{0}'' does not exist. ''lombok.singular.useGuava'' requires Guava on the classpath.",
+            TO_STRING,
         )
     }
 }

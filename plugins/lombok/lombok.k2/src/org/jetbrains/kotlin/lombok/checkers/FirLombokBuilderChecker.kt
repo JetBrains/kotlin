@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -38,7 +39,9 @@ import org.jetbrains.kotlin.lombok.generators.Singulars
 import org.jetbrains.kotlin.lombok.generators.hasReceiverOrContextParameters
 import org.jetbrains.kotlin.lombok.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.generators.kotlin.promotedPropertiesByName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
     private val BUILDER_FIELD_ANNOTATION_IDS = listOf(LombokNames.BUILDER_DEFAULT_ID, LombokNames.SINGULAR_ID)
@@ -276,7 +279,31 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             classId !in LombokNames.SUPPORTED_TABLE_IDS
         ) {
             reporter.reportOn(source, LombokFirDiagnostics.UNSUPPORTED_SINGULAR_TYPE, variable.resolvedReturnType, context)
+        } else if (classId != null && lombokService.config.singularUseGuava) {
+            // Lombok's Guava singularizers build the field with a Guava immutable collection, so without Guava on the
+            // classpath javac rejects what Lombok generates, and this mirrors its error.
+            val immutableClassId = useGuavaImmutableClassId(classId)
+            if (immutableClassId != null && context.session.symbolProvider.getClassLikeSymbolByClassId(immutableClassId) == null) {
+                reporter.reportOn(source, LombokFirDiagnostics.SINGULAR_REQUIRES_GUAVA, immutableClassId.asSingleFqName(), context)
+            }
         }
+    }
+
+    /**
+     * The Guava immutable class `lombok.singular.useGuava` builds a `@Singular` field declared with [classId] as, the
+     * same mapping as `BuilderBodyBuilder` uses, or `null` for a field declared with a Guava type already.
+     */
+    private fun useGuavaImmutableClassId(classId: ClassId): ClassId? = when (classId) {
+        in LombokNames.SUPPORTED_GUAVA_COLLECTION_IDS,
+        in LombokNames.SUPPORTED_TABLE_IDS,
+        LombokNames.IMMUTABLE_MAP_ID, LombokNames.IMMUTABLE_BI_MAP_ID, LombokNames.IMMUTABLE_SORTED_MAP_ID,
+            -> null
+        LombokNames.JAVA_SORTED_SET_ID, LombokNames.JAVA_NAVIGABLE_SET_ID -> LombokNames.IMMUTABLE_SORTED_SET_ID
+        LombokNames.JAVA_SORTED_MAP_ID, LombokNames.JAVA_NAVIGABLE_MAP_ID -> LombokNames.IMMUTABLE_SORTED_MAP_ID
+        in LombokNames.SUPPORTED_MAP_IDS -> LombokNames.IMMUTABLE_MAP_ID
+        StandardClassIds.Set, StandardClassIds.MutableSet, LombokNames.JAVA_SET_ID -> LombokNames.IMMUTABLE_SET_ID
+        in LombokNames.SUPPORTED_COLLECTION_IDS -> LombokNames.IMMUTABLE_LIST_ID
+        else -> null
     }
 
     /**

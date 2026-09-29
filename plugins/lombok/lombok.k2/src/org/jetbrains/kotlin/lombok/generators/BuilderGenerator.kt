@@ -106,7 +106,9 @@ class BuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Builder>(
                 visibility = visibility,
                 modality = Modality.OPEN,
                 createKey = {
-                    BuilderGeneratorKey(BuilderDeclarationType.Function.Build(builderDeclaration.symbol))
+                    BuilderGeneratorKey(
+                        BuilderDeclarationType.Function.Build(builderDeclaration.symbol, lombokService.config.singularUseGuava)
+                    )
                 }
             )
         }
