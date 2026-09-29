@@ -267,7 +267,9 @@ private fun generateTestLifecycleTasksDump(projectDir: Path): TestLifecycleTasks
         appendLine()
         appendLine()
         appendLine("Not connected to any 'lifecycleTestTask':")
-        missingTestTasks.sorted().forEach {
+        missingTestTasks.filter {
+            !it.endsWith(":testDataManagerWarmup") // no need to dump a special synthetic task
+        }.sorted().forEach {
             val testTask = testTaskIndex[it]
             val testLifecycleTask = testLifecycleTaskIndex[it]
             val domains = testTask?.domains ?: testLifecycleTask?.allDomains()?.toArgumentString()
