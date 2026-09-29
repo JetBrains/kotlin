@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageIssueSink
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
@@ -39,6 +40,7 @@ class KonanIrLinker(
     irDiagnosticReporter: IrDiagnosticReporter,
     private val libraryBeingCached: PartialCacheInfo?,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
+    partialLinkageIssueSink: PartialLinkageIssueSink? = null,
 ) : KotlinIrLinker(configuration, symbolTable) {
     override fun isBuiltInModule(module: IrModuleFragment): Boolean {
         val klib = module.kotlinLibrary ?: return false
@@ -55,6 +57,7 @@ class KonanIrLinker(
         anyClass = anyClass,
         nothingClass = nothingClass,
         diagnosticReporter = irDiagnosticReporter,
+        issueSink = partialLinkageIssueSink,
     )
 
     private val globalDeclarationTable = KonanGlobalDeclarationTable(null)

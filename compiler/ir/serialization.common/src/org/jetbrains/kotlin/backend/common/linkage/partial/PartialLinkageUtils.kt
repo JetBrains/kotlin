@@ -133,8 +133,19 @@ fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
 }
 
 
+/**
+ * Receives every partial linkage issue that has been logged by the PL engine.
+ */
+fun interface PartialLinkageIssueSink {
+    fun record(message: String, location: PartialLinkageLogger.Location, significance: PartialLinkageIssueSignificance)
+}
+
 // A workaround for KT-58837 until KT-58904 is fixed.
-class PartialLinkageLogger(val diagnosticReporter: IrDiagnosticReporter, val logLevel: PartialLinkageLogLevel) {
+class PartialLinkageLogger(
+    val diagnosticReporter: IrDiagnosticReporter,
+    val logLevel: PartialLinkageLogLevel,
+    private val issueSink: PartialLinkageIssueSink? = null,
+) {
     class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {
         fun render(): StringBuilder = StringBuilder().apply {
             append(moduleName)
@@ -150,6 +161,8 @@ class PartialLinkageLogger(val diagnosticReporter: IrDiagnosticReporter, val log
     }
 
     fun log(message: String, location: Location, significance: PartialLinkageIssueSignificance) {
+        issueSink?.record(message, location, significance)
+
         diagnosticReporter.report(
             significance.toDiagnosticFactory(),
             location.render().append(": ").append(message).toString()
