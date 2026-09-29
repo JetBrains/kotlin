@@ -69,6 +69,31 @@ class CacheBuilder(
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
     private val cacheRootDirectories = mutableMapOf<KotlinLibrary, String>()
 
+    /**
+     * What part of a library cache has been built during this compilation. See `wasRebuiltInThisRun`.
+     */
+    private sealed class RebuiltCache {
+        /** The cache of the whole library. */
+        object WholeLibrary : RebuiltCache()
+
+        /** The per-file caches of the files with the given cache file IDs. */
+        class Files : RebuiltCache() {
+            val fileIds = mutableSetOf<String>()
+        }
+    }
+
+    private val rebuiltCaches = mutableMapOf<KotlinLibrary, RebuiltCache>()
+
+    /**
+     * Whether the cache of the given file of [library] (or of the whole [library], if [fileId] is `null`) has been
+     * built during this compilation.
+     */
+    fun wasRebuiltInThisRun(library: KotlinLibrary, fileId: String?): Boolean = when (val rebuiltCache = rebuiltCaches[library]) {
+        null -> false
+        RebuiltCache.WholeLibrary -> true
+        is RebuiltCache.Files -> fileId in rebuiltCache.fileIds
+    }
+
     // If libA depends on libB, then dependableLibraries[libB] contains libA.
     private val dependableLibraries = mutableMapOf<KotlinLibrary, MutableList<KotlinLibrary>>()
 
@@ -575,6 +600,23 @@ class CacheBuilder(
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache
             serializedKlibDag = klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
+        }
+
+        recordRebuiltCacheFiles(library, makePerFileCache, filesToCache)
+    }
+
+    private fun recordRebuiltCacheFiles(library: KotlinLibrary, makePerFileCache: Boolean, filesToCache: List<String>): Unit = when {
+        makePerFileCache && filesToCache.isNotEmpty() -> {
+            val rebuiltFiles = when (val rebuiltCache = rebuiltCaches.getOrPut(library) { RebuiltCache.Files() }) {
+                RebuiltCache.WholeLibrary -> return // Already covers every file of the library.
+                is RebuiltCache.Files -> rebuiltCache.fileIds
+            }
+            library.getFilesWithFqNames()
+                    .filter { it.filePath in filesToCache }
+                    .forEach { rebuiltFiles += CacheSupport.cacheFileId(it.fqName, it.filePath) }
+        }
+        else -> {
+            rebuiltCaches[library] = RebuiltCache.WholeLibrary
         }
     }
 
