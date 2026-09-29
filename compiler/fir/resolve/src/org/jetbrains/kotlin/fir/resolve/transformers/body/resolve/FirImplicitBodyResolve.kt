@@ -315,8 +315,10 @@ open class ReturnTypeCalculatorWithJump(
                     "$symbol with origin ${declaration.origin} and return type ${declaration.returnTypeRef}"
         }
 
-        resolveDeclaration(symbolForStatus.fir)
-        return declaration.returnTypeRef as FirResolvedTypeRef
+        val resolvedTypeRef = resolveDeclaration(symbolForStatus.fir)
+
+        // The resolved type is not always written into the declaration, e.g., in the case of a resolution cycle in LL FIR
+        return declaration.returnTypeRef as? FirResolvedTypeRef ?: resolvedTypeRef
     }
 
     @OptIn(PrivateForInline::class)
