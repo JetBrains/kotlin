@@ -1,0 +1,3 @@
+A@(1,1)
+  x@(3,13) : kotlin.Int
+y@(6,9) : kotlin.String
