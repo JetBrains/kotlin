@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.FUNCTION_REFERENCE_IMPL
 import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
+import org.jetbrains.kotlin.ir.backend.js.lower.WebCallableReferenceLowering.Companion.LIFTED_CALLABLE_REFERENCE_FUNCTION
 import org.jetbrains.kotlin.ir.backend.js.lower.getArity
 import org.jetbrains.kotlin.ir.backend.js.lower.getFlags
 import org.jetbrains.kotlin.ir.builders.*
@@ -579,7 +580,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         val anyNType = backendContext.irBuiltIns.anyNType
         return context.irFactory.addFunction(irFile) {
             setSourceRange(if (isLambda) invokeFunction else functionReference)
-            origin = IrDeclarationOrigin.DEFINED
+            origin = LIFTED_CALLABLE_REFERENCE_FUNCTION
             name = getBridgedFunctionName(functionReference)
             returnType = anyNType
             isOperator = false
