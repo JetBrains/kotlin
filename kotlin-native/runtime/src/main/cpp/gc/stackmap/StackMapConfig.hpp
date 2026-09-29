@@ -5,19 +5,7 @@
 // This scheme's version byte, written by DeltaMainStackMapEncoder::emit and
 // checked by DeltaMainStackMapBuilder::verifyMagic. Bump this whenever the
 // wire format changes in a way that isn't purely additive.
-#define DELTA_MAIN_VERSION 3
-
-// Whether callee-saved-register liveness is encoded in the stack map, in
-// addition to stack-slot liveness. Must match the corresponding
-// DeltaMainStackMapEncoder(EmitRegisters=...) setting used to build the
-// running binary; kept as a compile-time constant (rather than a runtime
-// flag) because it changes the wire format's magic byte, checked once at
-// startup by DeltaMainStackMapBuilder::verifyMagic.
-//
-// Always 0 in this initial port: DeltaMainStackMapEncoder does not yet have
-// a register-liveness data source on the LLVM side (see
-// llvm/lib/CodeGen/DeltaMainStackMapEncoder.h's class comment).
-#define ENABLE_REGISTERS 0
+#define DELTA_MAIN_VERSION 4
 
 // Whether a function's stack map can be resolved lazily, from its stack
 // map's address alone, without first walking the whole `__LLVM_StackMaps`
@@ -25,12 +13,6 @@
 // the LLVM emitting side in this port (see DeltaMainStackMapEncoder.h);
 // reserved for a follow-up.
 #define ENABLE_LAZY_STACKMAP 0
-
-#if ENABLE_REGISTERS
-#define REGISTER_IN_STACKMAP_MAGIC 0b1
-#else
-#define REGISTER_IN_STACKMAP_MAGIC 0b0
-#endif
 
 #if ENABLE_LAZY_STACKMAP
 #define LAZY_ENABLED_MAGIC 0b10

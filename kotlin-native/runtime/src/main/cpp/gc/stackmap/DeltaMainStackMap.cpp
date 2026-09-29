@@ -12,38 +12,8 @@ namespace kotlin::stackMap {
 
 Delta DeltaMainStackMapBuilder::Reader::getNextDelta() {
     Delta delta;
-
-#if ENABLE_REGISTERS
-    delta.regs = bytes_.nextULEB128BitVector();
-#endif
-
     delta.slots = bytes_.nextULEB128BitVector();
-
-    uint64_t size = bytes_.nextULEB128();
-    for (uint64_t i = 0; i < size; i++) {
-        int64_t location = bytes_.nextSLEB128();
-        int64_t base = bytes_.nextSLEB128();
-        delta.derives.emplace_back(location, base);
-    }
     return delta;
-}
-
-PrologueInfo DeltaMainStackMapBuilder::Reader::getPrologueInfo() {
-#if ENABLE_REGISTERS
-    uint32_t calleeSavedMask = bytes_.nextULEB128();
-    uint32_t remainingMask = calleeSavedMask;
-    std::vector<uint32_t> calleeSavedOffsets;
-
-    while (remainingMask != 0) {
-        if (remainingMask & 1) {
-            calleeSavedOffsets.push_back(bytes_.nextULEB128());
-        }
-        remainingMask >>= 1;
-    }
-    return {calleeSavedMask, std::move(calleeSavedOffsets)};
-#else
-    return {};
-#endif
 }
 
 void DeltaMainStackMapBuilder::Reader::getRootsInfo(
@@ -75,11 +45,16 @@ void DeltaMainStackMapBuilder::Reader::getRootsInfo(
 }
 
 void DeltaMainStackMapBuilder::verifyMagic(uint8_t magic) {
-    uint8_t expected = (DELTA_MAIN_VERSION << 4) | REGISTER_IN_STACKMAP_MAGIC | LAZY_ENABLED_MAGIC;
+    // Assumes the LLVM encoder's EmitRegisters is hardcoded false (see
+    // KotlinNativeGCPrinter.cpp) and so never contributes a register bit to
+    // the magic byte. If that ever changes on the LLVM side without a
+    // corresponding change here, wire-format version-byte compatibility
+    // would break.
+    uint8_t expected = (DELTA_MAIN_VERSION << 4) | LAZY_ENABLED_MAGIC;
 
     RuntimeAssert(magic == expected,
                  "Delta-main stack map magic mismatch: section was built with incompatible "
-                 "ENABLE_REGISTERS/ENABLE_LAZY_STACKMAP/DELTA_MAIN_VERSION settings "
+                 "ENABLE_LAZY_STACKMAP/DELTA_MAIN_VERSION settings "
                  "(expected 0x%x, got 0x%x)",
                  expected, magic);
 }
@@ -96,10 +71,6 @@ void DeltaMainStackMapBuilder::collect() {
         int64_t baseOffset = reader_.getNextSLEB128();
         [[maybe_unused]] uint64_t stackSize = reader_.getNextULEB128();
 
-        PrologueInfo prologue = reader_.getPrologueInfo();
-        prologue.log();
-        funcAddr2PrologueInfo_[funcAddress] = prologue;
-
         reader_.getRootsInfo(baseOffset, funcAddress, pc2RootsInfo_);
     }
 }
@@ -113,8 +84,6 @@ void DeltaMainStackMapBuilder::collectLazy(uintptr_t functionPC, uintptr_t curre
     reader_.getNextInt(4);
     int64_t baseOffset = reader_.getNextSLEB128();
     reader_.getNextULEB128(); // stack size
-
-    reader_.getPrologueInfo(); // Not needed for a single-callsite lookup.
 
     Delta base = reader_.getNextDelta();
 

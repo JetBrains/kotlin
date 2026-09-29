@@ -3,7 +3,6 @@
 #include "CompilerConstants.hpp"
 #include "DeltaMath.hpp"
 #include "KAssert.h"
-#include "PrologueInfo.hpp"
 #include "RootsInfo.hpp"
 #include "StackMapConfig.hpp"
 #include "VarIntCodec.hpp"
@@ -21,8 +20,8 @@ using FunctionAddress = uintptr_t;
 ///
 /// Two collection modes are supported:
 ///  - collect(): eagerly decodes every function's every callsite up front,
-///    populating pc2RootsInfo()/funcAddr2PrologueInfo() for the whole
-///    binary. Used when ENABLE_LAZY_STACKMAP is off.
+///    populating pc2RootsInfo() for the whole binary. Used when
+///    ENABLE_LAZY_STACKMAP is off.
 ///  - collectLazy(): decodes a single function's record on demand, given a
 ///    pointer directly to that function's stack map (obtained out of band,
 ///    e.g. from a per-function offset table). Not yet wired up to an
@@ -45,14 +44,9 @@ struct DeltaMainStackMapBuilder {
         uint64_t getNextULEB128() { return bytes_.nextULEB128(); }
         int64_t getNextSLEB128() { return bytes_.nextSLEB128(); }
 
-        /// Reads one Delta: (if ENABLE_REGISTERS) a register bit vector,
-        /// then a stack-slot bit vector, then the derived-pointer link
-        /// list. Mirrors llvm::deltamain::Delta::emit.
+        /// Reads one Delta: a stack-slot bit vector, then the
+        /// derived-pointer link list. Mirrors llvm::deltamain::Delta::emit.
         Delta getNextDelta();
-
-        /// Decodes the callee-saved-register spill info written for one
-        /// function (empty when ENABLE_REGISTERS is off).
-        PrologueInfo getPrologueInfo();
 
         /// Reads one function's complete delta-main record starting at the
         /// current position, and records a RootsInfo for each of its
@@ -68,7 +62,7 @@ struct DeltaMainStackMapBuilder {
     }
 
     /// Decodes every function's every callsite in the section, populating
-    /// pc2RootsInfo()/funcAddr2PrologueInfo() for the whole binary.
+    /// pc2RootsInfo() for the whole binary.
     void collect();
 
     /// Decodes a single function's record, given a direct pointer to it
@@ -88,7 +82,6 @@ struct DeltaMainStackMapBuilder {
     };
 
     std::unordered_map<uintptr_t, RootsInfo>& pc2RootsInfo() { return pc2RootsInfo_; }
-    std::unordered_map<uintptr_t, PrologueInfo>& funcAddr2PrologueInfo() { return funcAddr2PrologueInfo_; }
 
 private:
     void verifyMagic(uint8_t magic);
@@ -96,7 +89,6 @@ private:
     Reader reader_;
     uint8_t* sectionStart_;
     std::unordered_map<uintptr_t, RootsInfo> pc2RootsInfo_;
-    std::unordered_map<uintptr_t, PrologueInfo> funcAddr2PrologueInfo_;
 };
 
 } // namespace kotlin::stackMap

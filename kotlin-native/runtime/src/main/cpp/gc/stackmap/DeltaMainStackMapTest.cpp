@@ -9,8 +9,6 @@
 #include "VarIntCodec.hpp"
 
 #include <cstdint>
-#include <set>
-#include <utility>
 #include <vector>
 
 using namespace kotlin::stackMap;
@@ -76,14 +74,10 @@ TEST(DeltaMainDeltaTest, XorIsSelfInverse) {
     // property DeltaMainStackMapBuilder::Reader::getRootsInfo relies on
     // when a callsite's Delta equals its function's base Delta.
     Delta d;
-    d.regs = {0b1010};
     d.slots = {0b0110};
-    d.derives = {{-1, -3}};
 
     Delta selfXor = d ^ d;
-    EXPECT_TRUE(selfXor.regs.empty() || selfXor.regs[0] == 0);
     EXPECT_TRUE(selfXor.slots.empty() || selfXor.slots[0] == 0);
-    EXPECT_TRUE(selfXor.derives.empty());
 }
 
 TEST(DeltaMainDeltaTest, XorRecoversOriginalViaSecondXor) {
@@ -91,45 +85,23 @@ TEST(DeltaMainDeltaTest, XorRecoversOriginalViaSecondXor) {
     // this is exactly how a callsite's Delta is reconstructed from its
     // function's base Delta plus the stored per-callsite Delta.
     Delta base;
-    base.regs = {0b0001};
     base.slots = {0b1100};
-    base.derives = {{-1, -3}};
 
     Delta other;
-    other.regs = {0b0101};
     other.slots = {0b1100};
-    other.derives = {{-1, -3}, {-2, -4}};
 
     Delta diff = base ^ other;
     Delta recovered = base ^ diff;
 
-    EXPECT_EQ(recovered.regs, other.regs);
     EXPECT_EQ(recovered.slots, other.slots);
-    EXPECT_EQ(std::set<std::pair<int64_t, int64_t>>(recovered.derives.begin(), recovered.derives.end()),
-             std::set<std::pair<int64_t, int64_t>>(other.derives.begin(), other.derives.end()));
 }
 
-TEST(DeltaMainDeltaTest, ToRootInfoDecodesRegisterAndStackSlotBits) {
+TEST(DeltaMainDeltaTest, ToRootInfoDecodesStackSlotBits) {
     Delta d;
     d.slots = {0b101}; // bits 0 and 2 set: two stack slots.
-    d.derives = {};
 
     RootsInfo info = d.toRootInfo(/*baseOffset=*/64);
 
-    // Two live base locations (bit 0 and bit 2 of the slot bit vector),
-    // each with no derived pointers.
-    EXPECT_EQ(info.totalCount(), 2u);
-}
-
-TEST(DeltaMainDeltaTest, ToRootInfoResolvesDerivedPointerAgainstBase) {
-    Delta d;
-    // A stack-slot base at enumerated index 0 (signedEnumerate(-1) form: -1)
-    // with one derived pointer, also a stack slot, at enumerated index 1
-    // (signed form: -2).
-    d.derives = {{/*location=*/-2, /*base=*/-1}};
-
-    RootsInfo info = d.toRootInfo(/*baseOffset=*/64);
-
-    // One base plus one derived pointer.
+    // Two live base locations (bit 0 and bit 2 of the slot bit vector).
     EXPECT_EQ(info.totalCount(), 2u);
 }

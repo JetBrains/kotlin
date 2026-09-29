@@ -7,8 +7,8 @@
 #define RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H
 
 #include <cstdint>
-#include "stackmap/DeltaMainStackMap.hpp"
 #include "KAssert.h"
+#include "stackmap/DeltaMainStackMap.hpp"
 #include "stackmap/RootsInfo.hpp"
 #include "mm/ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
@@ -147,9 +147,7 @@ void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueu
         while (anchor.fp != 0 && stackMapBuilder.hasMapForPC(anchor.pc)) {
             RuntimeLogDebug({logging::Tag::kGC}, "Start new frame pc=%p fp=%p", anchor.pc, anchor.fp);
 
-            for (auto pair : stackMapBuilder.pc2RootsInfo().at((uintptr_t)anchor.pc).base2Derived_) {
-                stackMap::RootLocation rootsInfo = pair.first;
-
+            for (const auto& rootsInfo : stackMapBuilder.getRootsInfoForPC(anchor.pc).bases()) {
                 if (rootsInfo.Type == stackMap::RootLocation::Indirect) {
                     uint8_t* address = (uint8_t*) anchor.fp + rootsInfo.Offset;
                     ObjHeader* object = *reinterpret_cast<ObjHeader**>(address);
