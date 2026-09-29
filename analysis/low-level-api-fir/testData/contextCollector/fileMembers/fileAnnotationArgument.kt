@@ -1,0 +1,23 @@
+@file:Anno(<expr>CONSTANT</expr>)
+
+package test
+
+@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+annotation class Anno(val value: Int)
+
+const val CONSTANT = 1
+
+class AfterClass {
+    val memberProperty: Int = 1
+
+    fun memberFunction(): Int = memberProperty
+}
+
+fun afterFunction(): Int {
+    val local = 1
+    return local + CONSTANT
+}
+
+val afterProperty: Int = afterFunction()
+
+typealias AfterAlias = AfterClass

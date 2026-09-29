@@ -1371,6 +1371,44 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/fileMembers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class FileMembers {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/fileMembers/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInFileMembers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/fileMembers"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("fileAnnotationArgument.kt")
+    public void testFileAnnotationArgument() {
+      run("fileAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("importDirective.kt")
+    public void testImportDirective() {
+      run("importDirective.kt");
+    }
+
+    @Test
+    @TestMetadata("packageDirective.kt")
+    public void testPackageDirective() {
+      run("packageDirective.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelDanglingModifierList.kt")
+    public void testTopLevelDanglingModifierList() {
+      run("topLevelDanglingModifierList.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/repl")
   @TestDataPath("$PROJECT_ROOT")
   public class Repl {

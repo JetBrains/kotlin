@@ -1,0 +1,106 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirPackageMemberScope
+    Element 7
+        Scope: FirExplicitSimpleImportingScope
+
+FILE: [ResolvedTo(IMPORTS)] replAnnotationArgument.repl.kts
+    @FILE:Anno[Unresolved](LAZY_EXPRESSION)
+    REPL_SNIPPET: [ResolvedTo(RAW_FIR)] <snippet-replAnnotationArgument.repl.kts>
+        public final [ResolvedTo(STATUS)] object ReplAnnotationArgument_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ReplAnnotationArgument_repl.constructor(): R|ReplAnnotationArgument_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /ReplAnnotationArgument_repl.Anno
+                <repl declaration reference>: /ReplAnnotationArgument_repl.CONSTANT
+                <repl declaration reference>: /ReplAnnotationArgument_repl.BeforeClass
+                <repl declaration reference>: /ReplAnnotationArgument_repl.beforeFunction
+                <repl property initializer: /ReplAnnotationArgument_repl.beforeProperty> = this@R|/ReplAnnotationArgument_repl|.R|/ReplAnnotationArgument_repl.beforeFunction|()
+                <repl declaration reference>: /ReplAnnotationArgument_repl.BeforeAlias
+                this@R|/ReplAnnotationArgument_repl|.R|/ReplAnnotationArgument_repl.beforeFunction|()
+                <repl declaration reference>: /ReplAnnotationArgument_repl.AfterClass
+                <repl declaration reference>: /ReplAnnotationArgument_repl.afterFunction
+                <repl property initializer: /ReplAnnotationArgument_repl.afterProperty> = this@R|/ReplAnnotationArgument_repl|.R|/ReplAnnotationArgument_repl.afterFunction|()
+                <repl declaration reference>: /ReplAnnotationArgument_repl.AfterAlias
+                <repl property initializer: /$$result> = this@R|/ReplAnnotationArgument_repl|.R|/ReplAnnotationArgument_repl.afterFunction|()
+            }
+
+            @R|kotlin/annotation/Target|[Types](AnnotationTarget#.FILE#, AnnotationTarget#.CLASS#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.PROPERTY#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|, R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|ReplAnnotationArgument_repl.Anno| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val value: R|kotlin/Int| = R|<local>/value|
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] val CONSTANT: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(STATUS)] class BeforeClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|ReplAnnotationArgument_repl.BeforeClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(1)
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Int| {
+                    ^memberFunction this@R|/ReplAnnotationArgument_repl.BeforeClass|.R|/ReplAnnotationArgument_repl.BeforeClass.memberProperty|
+                }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun beforeFunction(): R|kotlin/Int| {
+                [ResolvedTo(BODY_RESOLVE)] lval local: R|kotlin/Int| = Int(1)
+                ^beforeFunction R|<local>/local|.R|kotlin/Int.plus|(this@R|/ReplAnnotationArgument_repl|.R|/ReplAnnotationArgument_repl.CONSTANT|)
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val beforeProperty: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(RAW_FIR)] typealias BeforeAlias = BeforeClass
+
+            public final [ResolvedTo(STATUS)] class AfterClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|ReplAnnotationArgument_repl.AfterClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(1)
+                    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+                public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Int| {
+                    ^memberFunction this@R|/ReplAnnotationArgument_repl.AfterClass|.R|/ReplAnnotationArgument_repl.AfterClass.memberProperty|
+                }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun afterFunction(): R|kotlin/Int| {
+                [ResolvedTo(BODY_RESOLVE)] lval local: R|kotlin/Int| = Int(1)
+                ^afterFunction R|<local>/local|.R|kotlin/Int.plus|(this@R|/ReplAnnotationArgument_repl|.R|/ReplAnnotationArgument_repl.CONSTANT|)
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] val afterProperty: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(RAW_FIR)] typealias AfterAlias = AfterClass
+
+            public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        }
