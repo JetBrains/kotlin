@@ -3,6 +3,115 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinStdlib
 
+extension ExportedKotlinPackages.kotlin.collections {
+    public protocol Collection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterable, ExportedKotlinPackages.kotlin.collections._Collection {
+        var size: Swift.Int32 {
+            get
+        }
+        func isEmpty() -> Swift.Bool
+        func contains(
+            element: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> Swift.Bool
+        func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
+        func containsAll(
+            elements: any ExportedKotlinPackages.kotlin.collections.Collection
+        ) -> Swift.Bool
+    }
+    @objc(_ExportedKotlinPackages_kotlin_collections_Collection)
+    public protocol _Collection: ExportedKotlinPackages.kotlin.collections._Iterable {
+    }
+    public protocol __Collection: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterable {
+    }
+    public protocol Iterable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterable {
+        func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
+    }
+    @objc(_ExportedKotlinPackages_kotlin_collections_Iterable)
+    public protocol _Iterable {
+    }
+    public protocol __Iterable: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public protocol Iterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterator {
+        func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
+        func hasNext() -> Swift.Bool
+    }
+    @objc(_ExportedKotlinPackages_kotlin_collections_Iterator)
+    public protocol _Iterator {
+    }
+    public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    open class ByteIterator: KotlinRuntime.KotlinBase {
+        public final func next() -> Swift.Int8 {
+            return kotlin_collections_ByteIterator_next(self.__externalRCRef())
+        }
+        open func nextByte() -> Swift.Int8 {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.ByteIterator.self {
+                return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.ByteIterator.nextByte': a Swift subclass must override it and must not call super.")
+            }
+        }
+        public override init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.ByteIterator.self, "ExportedKotlinPackages.kotlin.collections.ByteIterator is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    open class IntIterator: KotlinRuntime.KotlinBase {
+        public final func next() -> Swift.Int32 {
+            return kotlin_collections_IntIterator_next(self.__externalRCRef())
+        }
+        open func nextInt() -> Swift.Int32 {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.IntIterator.self {
+                return kotlin_collections_IntIterator_nextInt(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.IntIterator.nextInt': a Swift subclass must override it and must not call super.")
+            }
+        }
+        public override init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.IntIterator.self, "ExportedKotlinPackages.kotlin.collections.IntIterator is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+    open class CharIterator: KotlinRuntime.KotlinBase {
+        public final func next() -> Swift.Unicode.UTF16.CodeUnit {
+            return kotlin_collections_CharIterator_next(self.__externalRCRef())
+        }
+        open func nextChar() -> Swift.Unicode.UTF16.CodeUnit {
+            if Self.self == ExportedKotlinPackages.kotlin.collections.CharIterator.self {
+                return kotlin_collections_CharIterator_nextChar(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.CharIterator.nextChar': a Swift subclass must override it and must not call super.")
+            }
+        }
+        public override init() {
+            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.CharIterator.self, "ExportedKotlinPackages.kotlin.collections.CharIterator is an abstract class and cannot be instantiated directly")
+            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+    }
+}
 extension ExportedKotlinPackages.kotlin {
     public protocol Annotation: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin._Annotation {
     }
@@ -6628,115 +6737,6 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
     }
 }
-extension ExportedKotlinPackages.kotlin.collections {
-    public protocol Collection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterable, ExportedKotlinPackages.kotlin.collections._Collection {
-        var size: Swift.Int32 {
-            get
-        }
-        func isEmpty() -> Swift.Bool
-        func contains(
-            element: (any KotlinRuntimeSupport._KotlinBridgeable)?
-        ) -> Swift.Bool
-        func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
-        func containsAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-    }
-    @objc(_ExportedKotlinPackages_kotlin_collections_Collection)
-    public protocol _Collection: ExportedKotlinPackages.kotlin.collections._Iterable {
-    }
-    public protocol __Collection: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.kotlin.collections.__Iterable {
-    }
-    public protocol Iterable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterable {
-        func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
-    }
-    @objc(_ExportedKotlinPackages_kotlin_collections_Iterable)
-    public protocol _Iterable {
-    }
-    public protocol __Iterable: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    public protocol Iterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterator {
-        func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
-        func hasNext() -> Swift.Bool
-    }
-    @objc(_ExportedKotlinPackages_kotlin_collections_Iterator)
-    public protocol _Iterator {
-    }
-    public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
-    }
-    open class ByteIterator: KotlinRuntime.KotlinBase {
-        public final func next() -> Swift.Int8 {
-            return kotlin_collections_ByteIterator_next(self.__externalRCRef())
-        }
-        open func nextByte() -> Swift.Int8 {
-            if Self.self == ExportedKotlinPackages.kotlin.collections.ByteIterator.self {
-                return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.ByteIterator.nextByte': a Swift subclass must override it and must not call super.")
-            }
-        }
-        public override init() {
-            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.ByteIterator.self, "ExportedKotlinPackages.kotlin.collections.ByteIterator is an abstract class and cannot be instantiated directly")
-            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    open class IntIterator: KotlinRuntime.KotlinBase {
-        public final func next() -> Swift.Int32 {
-            return kotlin_collections_IntIterator_next(self.__externalRCRef())
-        }
-        open func nextInt() -> Swift.Int32 {
-            if Self.self == ExportedKotlinPackages.kotlin.collections.IntIterator.self {
-                return kotlin_collections_IntIterator_nextInt(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.IntIterator.nextInt': a Swift subclass must override it and must not call super.")
-            }
-        }
-        public override init() {
-            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.IntIterator.self, "ExportedKotlinPackages.kotlin.collections.IntIterator is an abstract class and cannot be instantiated directly")
-            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlin_collections_IntIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-    open class CharIterator: KotlinRuntime.KotlinBase {
-        public final func next() -> Swift.Unicode.UTF16.CodeUnit {
-            return kotlin_collections_CharIterator_next(self.__externalRCRef())
-        }
-        open func nextChar() -> Swift.Unicode.UTF16.CodeUnit {
-            if Self.self == ExportedKotlinPackages.kotlin.collections.CharIterator.self {
-                return kotlin_collections_CharIterator_nextChar(self.__externalRCRef())
-            } else {
-                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.CharIterator.nextChar': a Swift subclass must override it and must not call super.")
-            }
-        }
-        public override init() {
-            precondition(Self.self != ExportedKotlinPackages.kotlin.collections.CharIterator.self, "ExportedKotlinPackages.kotlin.collections.CharIterator is an abstract class and cannot be instantiated directly")
-            let __kt = _kotlinAllocInstanceForSwiftSubclass(Self.self)
-            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
-            { kotlin_collections_CharIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
-        }
-    }
-}
 extension ExportedKotlinPackages.kotlin.time {
     public enum DurationUnit: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable, Swift.LosslessStringConvertible, Swift.RawRepresentable {
         case NANOSECONDS
@@ -7201,17 +7201,6 @@ extension ExportedKotlinPackages.kotlin.time {
     }
 }
 @_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlin.Annotation where Self : ExportedKotlinPackages.kotlin.__Annotation {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Annotation {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation, ExportedKotlinPackages.kotlin.__Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
-}
-extension ExportedKotlinPackages.kotlin.Annotation {
-}
-@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.collections.Collection where Self : ExportedKotlinPackages.kotlin.collections.__Collection {
     public var size: Swift.Int32 {
         get {
@@ -7262,6 +7251,17 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterable, ExportedKotlinPackages.kotlin.collections.__Iterable where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterable {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterable {
+}
+@_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlin.Annotation where Self : ExportedKotlinPackages.kotlin.__Annotation {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Annotation {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation, ExportedKotlinPackages.kotlin.__Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
+}
+extension ExportedKotlinPackages.kotlin.Annotation {
 }
 extension ExportedKotlinPackages.kotlin.ranges {
     public final class CharRange: ExportedKotlinPackages.kotlin.ranges.CharProgression {
@@ -7639,6 +7639,23 @@ extension ExportedKotlinPackages.kotlin.ranges {
     }
 }
 @_documentation(visibility: internal)
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
+    public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
+    }
+    public func hasNext() -> Swift.Bool {
+        return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
+    }
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
+}
+extension ExportedKotlinPackages.kotlin.collections.Iterator {
+}
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.kotlin.CharSequence where Self : ExportedKotlinPackages.kotlin.__CharSequence {
     public var length: Swift.Int32 {
         get {
@@ -7671,23 +7688,6 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin.__CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
 extension ExportedKotlinPackages.kotlin.CharSequence {
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
-    public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res?: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
-    }
-    public func hasNext() -> Swift.Bool {
-        return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
-    }
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
-}
-extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }
 @_cdecl("KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__")
 package func KotlinStdlib_internal_functional_type_callee_SwiftU2EOptionalU3CanyU20KotlinRuntimeSupportU2E_KotlinBridgeableU3E__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int64_Swift_Int32_Swift_Int32_Swift_Int32_Swift_Int32__(_ pointerToClosure: Swift.UnsafeMutableRawPointer, _ _1: Swift.Int64, _ _2: Swift.Int32, _ _3: Swift.Int32, _ _4: Swift.Int32, _ _5: Swift.Int32) -> Swift.UnsafeMutableRawPointer? {

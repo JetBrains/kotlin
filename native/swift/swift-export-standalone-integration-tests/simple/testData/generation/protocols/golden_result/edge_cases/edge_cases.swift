@@ -121,15 +121,15 @@ extension edge_cases.Baz where Self : edge_cases.__Baz {
 extension edge_cases.Baz {
 }
 @_documentation(visibility: internal)
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo where Self : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo {
+}
+extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo {
+}
+@_documentation(visibility: internal)
 extension ExportedKotlinPackages.conflictingTypealiases.Foo where Self : ExportedKotlinPackages.conflictingTypealiases.__Foo {
 }
 extension ExportedKotlinPackages.conflictingTypealiases.Foo {
     public typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict
-}
-@_documentation(visibility: internal)
-extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo where Self : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo {
-}
-extension ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo {
 }
 @_documentation(visibility: internal)
 extension edge_cases.InterfaceA where Self : edge_cases.__InterfaceA {
@@ -205,16 +205,16 @@ extension KotlinRuntimeSupport._KotlinExistential: edge_cases.InterfaceB, edge_c
 extension KotlinRuntimeSupport._KotlinExistential: edge_cases.Baz, edge_cases.__Baz where Wrapped : edge_cases._Baz {
 }
 @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Foo, ExportedKotlinPackages.conflictingTypealiases.__Foo where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Foo {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Bar, ExportedKotlinPackages.conflictingTypealiases.__Bar where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Bar {
-}
-@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.Foo, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__Foo where Wrapped : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.u2764_️s_u20_Kotlin, ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.___u2764_️s_u20_Kotlin where Wrapped : ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Foo, ExportedKotlinPackages.conflictingTypealiases.__Foo where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Bar, ExportedKotlinPackages.conflictingTypealiases.__Bar where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Bar {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: edge_cases._SomeInterface {
@@ -229,16 +229,16 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: edge_cases._InterfaceB 
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: edge_cases._Baz {
 }
 @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Foo {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Bar {
-}
-@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`._Foo {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.jetbrains.kotlin.`internal`.__u2764_️s_u20_Kotlin {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Foo {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Bar {
 }
 extension ExportedKotlinPackages.conflictingTypealiases {
     public protocol Bar: KotlinRuntime.KotlinBase, ExportedKotlinPackages.conflictingTypealiases.Foo, ExportedKotlinPackages.conflictingTypealiases._Bar {
