@@ -5182,6 +5182,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("operationReferences.kt")
+    public void testOperationReferences() {
+      run("operationReferences.kt");
+    }
+
+    @Test
     @TestMetadata("parameterDefaultValues.kt")
     public void testParameterDefaultValues() {
       run("parameterDefaultValues.kt");

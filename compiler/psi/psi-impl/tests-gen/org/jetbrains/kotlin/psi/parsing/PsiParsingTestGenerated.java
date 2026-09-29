@@ -5254,6 +5254,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("assignmentOperationReferences.kts")
+    public void testAssignmentOperationReferences() {
+      run("assignmentOperationReferences.kts");
+    }
+
+    @Test
     @TestMetadata("callInitializers.kt")
     public void testCallInitializers() {
       run("callInitializers.kt");
@@ -5269,6 +5275,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("nonStubbedInitializers.kt")
     public void testNonStubbedInitializers() {
       run("nonStubbedInitializers.kt");
+    }
+
+    @Test
+    @TestMetadata("operationReferences.kt")
+    public void testOperationReferences() {
+      run("operationReferences.kt");
     }
 
     @Test
