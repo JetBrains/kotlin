@@ -4,6 +4,7 @@
 // FILE: test.kt
 package `a{z}`
 class `a'b`<T>
+class `a''b`<T>
 
 class A
 
@@ -12,7 +13,8 @@ fun <`{y}`> test(y: `{y}`) {
     mutableListOf<Int>().add(<!ARGUMENT_TYPE_MISMATCH("{x}<{y} (of fun <{y}> test)>; Int")!>`{x}`()<!>)
     mutableListOf<Int>().add(<!ARGUMENT_TYPE_MISMATCH("{y} (of fun <{y}> test); Int")!>y<!>)
     mutableListOf<A>().add(<!ARGUMENT_TYPE_MISMATCH("b.A; a{z}.A")!>b.A()<!>)
-    mutableListOf<Int>().add(<!ARGUMENT_TYPE_MISMATCH("ab<{0}>{1}; Int")!>`a'b`<String>()<!>)
+    mutableListOf<Int>().add(<!ARGUMENT_TYPE_MISMATCH("a'b<String>; Int")!>`a'b`<String>()<!>)
+    mutableListOf<Int>().add(<!ARGUMENT_TYPE_MISMATCH("a''b<String>; Int")!>`a''b`<String>()<!>)
 }
 
 // FILE: b.kt
