@@ -57,6 +57,12 @@ abstract class FirReplHistoryProvider : FirSessionComponent {
 
     abstract fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean
     abstract fun getSnippetCount(): Int
+
+    /**
+     * Removes the [symbols] of failed snippets from the history, so their declarations are not visible to the later snippets.
+     */
+    abstract fun removeSnippets(symbols: Collection<FirReplSnippetSymbol>)
+
     open fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? = null
 
     /**
