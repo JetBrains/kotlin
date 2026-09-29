@@ -88,8 +88,11 @@ private fun IrDeclaration.addRootsTo(
         }
 
         this is IrField -> {
-            // TODO: simplify
-            if ((initializer != null && !isKotlinPackage() || correspondingPropertySymbol?.owner?.isExported(context) == true) && !isConstant()) {
+            val isEagerlyInitialized = initializer != null
+                    && !isKotlinPackage()
+                    // We only initialize objects eagerly if their initializers have no effects.
+                    && origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE
+            if ((isEagerlyInitialized || correspondingPropertySymbol?.owner?.isExported(context) == true) && !isConstant()) {
                 acceptVoid(nestedVisitor)
             }
         }

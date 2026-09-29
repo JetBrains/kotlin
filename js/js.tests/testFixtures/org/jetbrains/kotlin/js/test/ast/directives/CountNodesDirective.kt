@@ -19,28 +19,29 @@ class CountNodesDirective<T : JsNode>(entry: String, private val klass: KClass<T
         inline fun <reified T : JsNode> counting(): (String) -> CountNodesDirective<T> = { CountNodesDirective(it, T::class) }
     }
 
-    val function by required()
+    val function by optional()
     val count by optionalInt()
     val max by optionalInt()
     val includeNestedDeclarations by boolean()
     val name by optional()
 
     override fun evaluate(ast: JsNode, sourceFile: File) {
-        val functionName = function
         val count = count
         val maxCount = max
 
-        val function = getFunction(ast, functionName)
-        val nodes = collectInstances(klass, function.body, includeNestedDeclarations)
+        val scope = function?.let { getFunction(ast, it).body } ?: ast
+        val nodes = collectInstances(klass, scope, includeNestedDeclarations)
         val actualCount = nodes.fold(0) { acc, node -> acc + getActualCountFor(node) }
+
+        fun astNodeName() = function?.let { "Function $it" } ?: "Program"
 
         if (count != null) {
             assertEquals(count, actualCount) {
-                "Function $functionName contains $actualCount nodes of type ${klass.simpleName}, but expected count is $count"
+                "${astNodeName()} contains $actualCount nodes of type ${klass.simpleName}, but expected count is $count"
             }
         } else if (maxCount != null) {
             assertTrue(maxCount >= actualCount) {
-                "Function $functionName contains $actualCount nodes of type ${klass.simpleName}, but expected max is $maxCount"
+                "${astNodeName()} contains $actualCount nodes of type ${klass.simpleName}, but expected max is $maxCount"
             }
         } else {
             throw IllegalArgumentException("'max' or 'count' argument should be provided")
