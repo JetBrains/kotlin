@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.TestAbortedException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 @Tag("sanity")
@@ -29,10 +30,11 @@ class CustomJsCompilerFirstStageSanity :
 
     @Test
     fun checkIncorrectBoxResult() {
-        val exception = assertThrows<AssertionFailedError> {
+        // The test is not isolated, so it is run by the launcher of a grouped batch, which validates the box result itself.
+        val exception = assertThrows<AssertionError> {
             runTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        assertEquals("expected: <OK> but was: <FAIL>", exception.message)
+        assertContains(exception.message!!, "Test failed with: FAIL. Expected <OK>, actual <FAIL>.")
     }
 
     @Test
