@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.asProperties
 import org.jetbrains.kotlin.nativeDistribution.llvmDistributionSource
 import org.jetbrains.kotlin.nativeDistribution.nativeProtoDistribution
+import java.util.Properties
 import javax.inject.Inject
 
 /**
@@ -57,6 +58,18 @@ open class PlatformManagerProvider @Inject constructor(
             } else {
                 llvmOverride
             }
+        } else if (project.isWholeXcodeProvisioningEnabled()) {
+            val protoKonanProperties = Properties().apply {
+                project.nativeProtoDistribution.konanProperties.asFile.inputStream().use { load(it) }
+            }
+
+            fun requiredProperty(name: String) = protoKonanProperties.getProperty(name)
+                    ?: error("whole-Xcode provisioning is on but '$name' is missing from konan.properties")
+            mapOf(
+                    "useProvisionedXcode" to "true",
+                    "xcodeVersion" to requiredProperty("xcodeVersion"),
+                    "xcodeBuild" to requiredProperty("xcodeBuild"),
+            )
         } else {
             // For any other distribution, we shouldn't change anything.
             emptyMap()
