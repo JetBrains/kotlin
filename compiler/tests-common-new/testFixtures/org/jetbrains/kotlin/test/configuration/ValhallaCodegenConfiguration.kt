@@ -44,5 +44,5 @@ internal fun RegisteredDirectivesBuilder.configureValhallaDefaultDirectives() {
  * non-Valhalla tests (where the skip can't be applied by overriding the runner itself).
  */
 internal class ValhallaJdkAvailabilitySkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
-    override fun shouldSkipTest(): Boolean = true
+    override fun shouldSkipTest(): Boolean = !KtTestUtil.isJdkValhallaAvailable()
 }
