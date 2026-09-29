@@ -290,7 +290,7 @@ internal class KonanInteropModuleDeserializer(
         private fun loadAndCacheMetadata(): Map<MetadataDeclarationId, List<Any>> {
             val metadataComponent = klib.metadata
             val provider = object : KlibModuleMetadata.MetadataLibraryProvider {
-                override val moduleHeaderData get() = metadataComponent.moduleHeaderData ?: error("No metadata header data found")
+                override val moduleHeaderData get() = metadataComponent.moduleHeaderData
                 override val packageNames: Set<String> = metadataComponent.getPackageNames()
                 override val metadataVersion = KlibMetadataVersion((klib.metadataVersion?.toArray()
                         ?: error("No metadata version specified in ${klib.path}")))

@@ -79,7 +79,7 @@ class KmEntityProcessingStrategyTest {
     private class MetadataLibraryProviderImpl(
         private val metadata: KlibModuleMetadata.SerializedKlibMetadata,
     ) : KlibModuleMetadata.MetadataLibraryProvider {
-        override val moduleHeaderData: ByteArray get() = metadata.header
+        override val moduleHeaderData: ByteArray? get() = metadata.header
         override val packageNames: Set<String> = setOf("")
         override val metadataVersion: KlibMetadataVersion = metadata.metadataVersion
         override fun packageMetadataParts(fqName: String): Set<String> = metadata.fragmentNames.toSet()

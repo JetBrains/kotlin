@@ -197,7 +197,7 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
 
         val moduleMetadata = KlibModuleMetadata.readStrict(
             object : MetadataLibraryProvider {
-                override val moduleHeaderData get() = metadataComponent.moduleHeaderData ?: error("No metadata header data found")
+                override val moduleHeaderData get() = metadataComponent.moduleHeaderData
                 override val packageNames: Set<String> = metadataComponent.getPackageNames()
                 override val metadataVersion get() = KlibMetadataVersion.LATEST_STABLE_SUPPORTED
                 override fun packageMetadataParts(fqName: String) = metadataComponent.getPackageFragmentNames(fqName)
