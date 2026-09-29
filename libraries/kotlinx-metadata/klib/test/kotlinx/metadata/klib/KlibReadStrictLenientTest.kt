@@ -59,7 +59,7 @@ class KlibReadStrictLenientTest {
             metadataVersion = version,
         ).write()
         val provider = object : KlibModuleMetadata.MetadataLibraryProvider {
-            override val moduleHeaderData: ByteArray get() = metadata.header
+            override val moduleHeaderData: ByteArray? get() = metadata.header
             override val packageNames: Set<String> = metadata.fragmentNames.toSet()
             override val metadataVersion: KlibMetadataVersion = metadata.metadataVersion
             override fun packageMetadataParts(fqName: String): Set<String> = metadata.fragmentNames.toSet()

@@ -25,7 +25,7 @@ import java.nio.file.Path
  */
 interface KlibMetadataComponent : KlibComponent {
     /** The metadata header in the raw form (bytes, yet to be deserialized to [KlibMetadataProtoBuf.Header]). */
-    val moduleHeaderData: ByteArray
+    val moduleHeaderData: ByteArray?
 
     /** Names of package fragments for the fully qualified package name [packageFqName]. */
     fun getPackageFragmentNames(packageFqName: String): Set<String>

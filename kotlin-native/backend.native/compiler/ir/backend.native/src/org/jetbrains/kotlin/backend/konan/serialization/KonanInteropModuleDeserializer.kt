@@ -66,7 +66,7 @@ internal class KonanInteropModuleDeserializer(
 
     private val symbolTable = linker.symbolTable
     private val metadataReader = KlibMetadataReader(klib)
-    private val moduleHeaderProto: KlibMetadataProtoBuf.Header by lazy { parseModuleHeader(klib.metadata.moduleHeaderData) }
+    private val moduleHeaderProto: KlibMetadataProtoBuf.Header? by lazy { parseModuleHeader(klib.metadata.moduleHeaderData) }
 
     // Interop Klibs may declare only one package, and its FQ name is declared in the manifest.
     private val definedPackageFqName: FqName = klib.packageFqName?.let(::FqName)

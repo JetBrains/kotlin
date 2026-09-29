@@ -26,7 +26,7 @@ class KlibDeserializedContainerSource(
 ) : DeserializedContainerSource {
     constructor(
         klib: KotlinLibrary,
-        header: Header,
+        header: Header?,
         configuration: DeserializationConfiguration,
         packageFqName: FqName,
         incompatibility: IncompatibleVersionErrorData<*>?,
@@ -47,7 +47,7 @@ class KlibDeserializedContainerSource(
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }
 
-private fun isPreReleaseKlib(klib: KotlinLibrary, header: Header): Boolean {
-    val flags = klib.manifestProperties.getProperty(KLIB_PROPERTY_METADATA_FLAGS)?.toIntOrNull() ?: header.flags
+private fun isPreReleaseKlib(klib: KotlinLibrary, header: Header?): Boolean {
+    val flags = klib.manifestProperties.getProperty(KLIB_PROPERTY_METADATA_FLAGS)?.toIntOrNull() ?: header?.flags ?: return false
     return (flags and KlibMetadataHeaderFlags.PRE_RELEASE) != 0
 }
