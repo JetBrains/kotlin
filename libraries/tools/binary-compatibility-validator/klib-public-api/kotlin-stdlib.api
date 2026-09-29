@@ -11608,6 +11608,16 @@ final class kotlin.native.runtime/GCInfo { // kotlin.native.runtime/GCInfo|null[
 }
 
 // Targets: [native]
+final class kotlin.native.runtime/MemoryDumpOptions { // kotlin.native.runtime/MemoryDumpOptions|null[0]
+    constructor <init>(kotlin/Boolean = ..., kotlin/Boolean = ...) // kotlin.native.runtime/MemoryDumpOptions.<init>|<init>(kotlin.Boolean;kotlin.Boolean){}[0]
+
+    final val gzip // kotlin.native.runtime/MemoryDumpOptions.gzip|{}gzip[0]
+        final fun <get-gzip>(): kotlin/Boolean // kotlin.native.runtime/MemoryDumpOptions.gzip.<get-gzip>|<get-gzip>(){}[0]
+    final val omitPrimitiveArrayPayloads // kotlin.native.runtime/MemoryDumpOptions.omitPrimitiveArrayPayloads|{}omitPrimitiveArrayPayloads[0]
+        final fun <get-omitPrimitiveArrayPayloads>(): kotlin/Boolean // kotlin.native.runtime/MemoryDumpOptions.omitPrimitiveArrayPayloads.<get-omitPrimitiveArrayPayloads>|<get-omitPrimitiveArrayPayloads>(){}[0]
+}
+
+// Targets: [native]
 final class kotlin.native.runtime/MemoryUsage { // kotlin.native.runtime/MemoryUsage|null[0]
     constructor <init>(kotlin/Long) // kotlin.native.runtime/MemoryUsage.<init>|<init>(kotlin.Long){}[0]
 
@@ -14160,16 +14170,6 @@ final suspend inline fun <#A: kotlin/Any?> kotlin.native.internal/suspendCorouti
 
 // Targets: [native]
 final suspend inline fun kotlin.native.internal/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.native.internal/getCoroutineContext|getCoroutineContext(){}[0]
-
-// Targets: [native]
-final class kotlin.native.runtime/MemoryDumpOptions { // kotlin.native.runtime/MemoryDumpOptions|null[0]
-    constructor <init>(kotlin/Boolean = ..., kotlin/Boolean = ...) // kotlin.native.runtime/MemoryDumpOptions.<init>|<init>(kotlin.Boolean;kotlin.Boolean){}[0]
-
-    final val gzip // kotlin.native.runtime/MemoryDumpOptions.gzip|{}gzip[0]
-        final fun <get-gzip>(): kotlin/Boolean // kotlin.native.runtime/MemoryDumpOptions.gzip.<get-gzip>|<get-gzip>(){}[0]
-    final val omitPrimitiveArrayPayloads // kotlin.native.runtime/MemoryDumpOptions.omitPrimitiveArrayPayloads|{}omitPrimitiveArrayPayloads[0]
-        final fun <get-omitPrimitiveArrayPayloads>(): kotlin/Boolean // kotlin.native.runtime/MemoryDumpOptions.omitPrimitiveArrayPayloads.<get-omitPrimitiveArrayPayloads>|<get-omitPrimitiveArrayPayloads>(){}[0]
-}
 
 // Targets: [js, wasmJs, wasmWasi]
 open annotation class kotlin.concurrent/Volatile : kotlin/Annotation { // kotlin.concurrent/Volatile|null[1]
