@@ -216,10 +216,12 @@ private class JKlibNonPrivateInlineFunctionResolver(
     private val inlineCrossModuleFunctions: Boolean,
 ) : JKlibPreSerializationInlineFunctionResolver(privateOnly = false) {
 
+    private val symbolResolver = JKlibInlineFunctionSymbolResolver(context)
+
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,
         signatureComputer = PublicIdSignatureComputer(context.irMangler),
-        symbolResolver = JKlibInlineFunctionSymbolResolver(context)::resolve,
+        symbolResolver = symbolResolver::resolve,
     )
 
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
@@ -230,7 +232,8 @@ private class JKlibNonPrivateInlineFunctionResolver(
         // Unlike the other KLIB backends, JKlib can depend on Kotlin libraries that are only available as plain JVM jars.
         // Those have no `inlinableFunctionsIr` to deserialize from, and the deserializer would throw on them, so leave
         // their calls for the second phase to inline.
-        if (callee.containerSource !is KlibDeserializedContainerSource) return null
+        val containerSource = callee.containerSource as? KlibDeserializedContainerSource ?: return null
+        symbolResolver.dependencyLibraries += containerSource.klib
         return deserializer.deserializeInlineFunction(callee)
     }
 
