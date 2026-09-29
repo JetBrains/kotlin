@@ -1,7 +1,6 @@
 // ISSUE: KT-89084
 // WITH_GUAVA
 // FULL_JDK
-// IGNORE_BACKEND_K2: JVM
 
 // FILE: main.kt
 import com.google.common.collect.ImmutableList

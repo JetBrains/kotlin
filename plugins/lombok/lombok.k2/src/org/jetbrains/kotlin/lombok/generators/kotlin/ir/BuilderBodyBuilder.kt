@@ -67,7 +67,7 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val builderFunctionType = key.type as? BuilderDeclarationType.Function ?: return
         when (builderFunctionType) {
             BuilderDeclarationType.Function.Setter -> buildSetter(declaration, regularParameters.single())
-            is BuilderDeclarationType.Function.Build -> buildBuildMethod(declaration, builderFunctionType.entitySymbol)
+            is BuilderDeclarationType.Function.Build -> buildBuildMethod(declaration, builderFunctionType)
             BuilderDeclarationType.Function.Builder -> buildBuilderFactory(declaration)
             BuilderDeclarationType.Function.ToBuilder -> buildToBuilder(declaration)
             is BuilderDeclarationType.SingularFunction -> {
@@ -112,14 +112,14 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
      * builder setter call or from its own default — rather than re-reading a possibly-unset builder field.
      */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction, entitySymbol: FirBasedSymbol<*>) {
+    private fun IrBlockBodyBuilder.buildBuildMethod(declaration: IrSimpleFunction, build: BuilderDeclarationType.Function.Build) {
         val builderClass = declaration.parent as IrClass
         val thisParameter = declaration.dispatchReceiverParameter!!
         // The builder class is always nested directly in the entity class, so the entity is taken from there
         // rather than from `declaration.returnType`: `build()` may return a bare type parameter (e.g. for a
         // companion factory `fun <M> method(m: M): M`), which has no class to read the entity off of.
         val entityClass = builderClass.parent as IrClass
-        val callable = entityClass.entityCallableFor(entitySymbol)
+        val callable = entityClass.entityCallableFor(build.entitySymbol)
         val singularFieldNames = builderClass.singularFieldNames()
         val regularParameters = callable.parameters.filter { it.kind == IrParameterKind.Regular }
 
@@ -128,7 +128,8 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             val field = builderClass.findBuilderField(parameter.name) ?: continue
             val fieldRead = irGetField(irGet(thisParameter), field)
             val value = when {
-                parameter.name in singularFieldNames -> buildSingularResult(field, thisParameter, parameter.type)
+                parameter.name in singularFieldNames ->
+                    buildSingularResult(field, thisParameter, parameter.type, build.useGuavaForSingular)
                 else -> builderClass.defaultFlagField(parameter.name)?.let { flagField ->
                     buildDefaultOrSetValue(declaration, parameter, flagField, thisParameter, fieldRead, resolvedValues)
                 } ?: fieldRead
@@ -295,6 +296,15 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             LombokNames.IMMUTABLE_SORTED_MAP_ID -> GuavaCollectionKind.SORTED_MAP
             else -> null
         }
+
+    /** The Guava immutable class Lombok builds for [this] with `lombok.singular.useGuava`, as in its Guava singularizers. */
+    private fun SingularCollectionInfo.useGuavaCollectionKind(): GuavaCollectionKind = when (kind) {
+        SingularKind.MAP -> if (sorted) GuavaCollectionKind.SORTED_MAP else GuavaCollectionKind.MAP
+        SingularKind.SET -> if (sorted) GuavaCollectionKind.SORTED_SET else GuavaCollectionKind.SET
+        SingularKind.COLLECTION, SingularKind.ITERABLE -> GuavaCollectionKind.LIST
+        // Table fields never reach this path: `buildSingularResult` routes them through `buildTableSingularResult`.
+        SingularKind.TABLE -> shouldNotBeCalled()
+    }
 
     /** `item(e)` (or `item(k, v)` for maps, `item(rowKey, columnKey, value)` for tables) — mutates the (lazily-created) backing collection in place. */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -469,16 +479,22 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         field: IrField,
         thisParameter: IrValueParameter,
         entityParameterType: IrType,
+        useGuava: Boolean,
     ): IrExpression {
         val info = singularCollectionInfo(field.type) ?: return irGetField(irGet(thisParameter), field)
         if (info.kind == SingularKind.TABLE) {
             return buildTableSingularResult(field, thisParameter, info)
         }
-        if (info.sorted) {
-            return buildSortedSingularResult(field, thisParameter, info, entityParameterType)
-        }
         entityParameterType.guavaCollectionKindOrNull()?.let { guavaKind ->
             return buildGuavaSingularResult(field, thisParameter, info, guavaKind)
+        }
+        // `lombok.singular.useGuava`: whatever the declared collection type, build the Guava immutable collection
+        // Lombok builds for it. Without Guava on the classpath, `FirLombokBuilderChecker` reports an error.
+        if (useGuava) {
+            return buildGuavaSingularResult(field, thisParameter, info, info.useGuavaCollectionKind())
+        }
+        if (info.sorted) {
+            return buildSortedSingularResult(field, thisParameter, info, entityParameterType)
         }
         val builtIns = pluginContext.irBuiltIns
         // Built from `info`'s (already-substituted, builder-scoped) type arguments rather than the entity
