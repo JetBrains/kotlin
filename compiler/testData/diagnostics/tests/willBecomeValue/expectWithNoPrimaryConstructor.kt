@@ -2,6 +2,7 @@
 // LANGUAGE: +MultiPlatformProjects, +AllowExpectValueClassesWithNoPrimaryConstructor
 // LANGUAGE_FEATURE_TOGGLED: StabilizeWillBecomeValueRestrictions
 // WITH_STDLIB
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 // MODULE: common
 
 @WillBecomeValue

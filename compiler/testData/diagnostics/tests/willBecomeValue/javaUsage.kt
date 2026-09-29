@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 // FILE: J.java
 import kotlin.WillBecomeValue;

@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 import java.lang.ref.WeakReference
 import java.util.IdentityHashMap

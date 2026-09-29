@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: LOWERINGS
 // LANGUAGE: +CustomEqualsInValueClasses +FullValueClasses
 // WITH_STDLIB
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 @JvmInline
 value class Inline(val x: Int) {

@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // LANGUAGE: +FullValueClasses
 // LANGUAGE_FEATURE_TOGGLED: StabilizeWillBecomeValueRestrictions
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 @WillBecomeValue
 class Final(val x: Int) {

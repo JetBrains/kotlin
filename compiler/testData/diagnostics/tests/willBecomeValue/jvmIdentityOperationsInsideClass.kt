@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // LANGUAGE_FEATURE_TOGGLED: StabilizeWillBecomeValueRestrictions
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 @WillBecomeValue
 class Key(val x: Int) {

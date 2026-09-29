@@ -34,4 +34,4 @@ package kotlin
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @SinceKotlin("2.5")
-public annotation class WillBecomeValue
+internal annotation class WillBecomeValue

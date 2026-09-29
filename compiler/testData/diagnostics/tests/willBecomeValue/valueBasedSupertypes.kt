@@ -2,6 +2,7 @@
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
 // SKIP_JAVAC
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 // FILE: jdk/internal/ValueBased.java
 package jdk.internal;

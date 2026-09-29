@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // LANGUAGE_FEATURE_TOGGLED: StabilizeWillBecomeValueRestrictions
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 @WillBecomeValue
 class Wrapper(val x: Int) {
