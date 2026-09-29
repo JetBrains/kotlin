@@ -77,6 +77,11 @@ internal class ClasspathBackedFirReplHistoryProvider(
         }
     }
 
+    override fun removeSnippets(symbols: Collection<FirReplSnippetSymbol>) {
+        liveBatchSnippets.removeAll(symbols)
+        liveImportedSnippets.removeAll(symbols)
+    }
+
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean {
         if (configuredPriorClassIds.isEmpty() && liveBatchSnippets.isEmpty()) return true
         val list = classpathSnippets ?: return false
