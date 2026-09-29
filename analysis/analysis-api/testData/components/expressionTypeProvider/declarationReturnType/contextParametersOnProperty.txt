@@ -1,0 +1,7 @@
+property@(1,1) : kotlin.Int
+  s@(2,9) : kotlin.String
+  KtPropertyAccessor@(4,5) : kotlin.Int
+A@(6,1)
+  member@(7,5) : kotlin.Long
+    i@(7,13) : kotlin.Int
+    p@(8,16) : kotlin.Long
