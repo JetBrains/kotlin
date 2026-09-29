@@ -1,0 +1,49 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+            Import name:AfterClass
+                Qualified name: test.AfterClass
+                Is all under: false
+
+FILE: [ResolvedTo(IMPORTS)] importDirective.kt
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.FILE#, AnnotationTarget#.CLASS#, AnnotationTarget#.FUNCTION#, AnnotationTarget#.PROPERTY#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.FILE|, R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.PROPERTY|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|test/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val value: R|kotlin/Int| = R|<local>/value|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] val CONSTANT: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(STATUS)] class AfterClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/AfterClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun memberFunction(): R|kotlin/Int| {
+            ^memberFunction this@R|test/AfterClass|.R|test/AfterClass.memberProperty|
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun afterFunction(): R|kotlin/Int| {
+        [ResolvedTo(BODY_RESOLVE)] lval local: R|kotlin/Int| = Int(1)
+        ^afterFunction R|<local>/local|.R|kotlin/Int.plus|(R|test/CONSTANT|)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val afterProperty: R|kotlin/Int| = R|test/afterFunction|()
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(RAW_FIR)] typealias AfterAlias = AfterClass
