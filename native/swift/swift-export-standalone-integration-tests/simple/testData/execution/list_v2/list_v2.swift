@@ -159,10 +159,7 @@ class SwiftFooArrayProvider : FooArrayProvider {
     }
 }
 
-@Test
-func testObjCInterop() throws {
-    let provider: FooArrayProvider = ObjCFooArrayProvider()
-
+private func testObjCInterop(provider: FooArrayProvider) throws {
     let array: [any Foo] = [SwiftFoo(1), SwiftFoo(2)]
     try #require(array.count == 2)
     try #require(array[0].value() == 1)
@@ -171,6 +168,7 @@ func testObjCInterop() throws {
     provider.setFooArray(array)
     let list: any KotlinRuntimeSupport.List<any Foo> = getFooList(provider: provider)
     try #require(list.count == 2)
+//     TODO: ObjC protocol types are converted to _KotlinExistential KT-88831
 //     try #require(list[0].value() == 1)
 //     try #require(list[1].value() == 2)
 
@@ -179,11 +177,21 @@ func testObjCInterop() throws {
 //     try #require(newList[0].value() == 3)
 //     try #require(newList[1].value() == 4)
 //     try #require(newList[2].value() == 5)
-
     setFooList(provider: provider, list: newList)
+
     let newArray: [any Foo] = provider.getFooArray()
     try #require(newArray.count == 3)
 //     try #require(newArray[0].value() == 3)
 //     try #require(newArray[1].value() == 4)
 //     try #require(newArray[2].value() == 5)
+}
+
+@Test
+func testObjCInteropObjCImpl() throws {
+    try testObjCInterop(provider: ObjCFooArrayProvider())
+}
+
+@Test
+func testObjCInteropSwiftImpl() throws {
+    try testObjCInterop(provider: ObjCFooArrayProvider())
 }

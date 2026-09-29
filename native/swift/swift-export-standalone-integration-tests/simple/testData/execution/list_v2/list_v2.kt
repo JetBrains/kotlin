@@ -108,17 +108,18 @@ import platform.darwin.NSObject
 import list_export_objc.FooProtocol
 import list_export_objc.FooArrayProviderProtocol
 
-//private class KotlinFoo(private val value: Int) : NSObject(), FooProtocol {
-//    override fun value(): Int = value
-//}
-//
-//private class KotlinFooArrayProvider : NSObject(), FooArrayProviderProtocol {
-//    override fun fooArray(): List<FooProtocol> = listOf(KotlinFoo(1))
+// TODO: Test Kotlin implementation of ObjC protocol KT-88831
+// Currently this Kotlin code isn't compiling in our tests
+//private class KotlinFooArrayProvider(
+//    private var list: List<FooProtocol> = emptyList()
+//) : NSObject(), FooArrayProviderProtocol {
+//    override fun getFooArray(): List<*> = list
+//    override fun setFooArray(array: List<*>?) {
+//        list = array as List<FooProtocol>
+//    }
 //}
 //
 //fun kotlinFooArrayProvider(): FooArrayProviderProtocol = KotlinFooArrayProvider()
-
-// TODO: Test Kotlin implementation
 
 fun listOf(vararg elements: FooProtocol): List<FooProtocol> = elements.asList()
 
