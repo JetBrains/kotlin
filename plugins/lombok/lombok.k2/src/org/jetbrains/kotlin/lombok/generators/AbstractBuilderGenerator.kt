@@ -630,8 +630,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
              */
             val classFir = classSymbol.fir
             val existingClassifierNames = if (classFir is FirJavaClass) {
-                val nestedClassifierScope = classFir.scopeProvider.getNestedClassifierScope(classFir, session, ScopeSession())
-                nestedClassifierScope?.getClassifierNames()?.toSet() ?: emptySet()
+                classFir.existingNestedClassifierNames
             } else {
                 buildSet {
                     classSymbol.fir.declarations.mapNotNullTo(this) { (it as? FirClassLikeDeclaration)?.nameOrSpecialName }
