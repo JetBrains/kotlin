@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "Common.h"
+#include "KAssert.h"
 #include "mm/GlobalData.hpp"
 #include "mm/GlobalsRegistry.hpp"
 #include "gc/GC.hpp"
@@ -23,6 +25,29 @@ struct ObjHeader;
 
 namespace kotlin {
 namespace mm {
+
+#if defined(__aarch64__)
+struct KotlinFrameAnchor {
+    uint64_t* fp;
+    uint64_t* pc;
+
+    KotlinFrameAnchor() = default;
+    KotlinFrameAnchor(uint64_t* fp, uint64_t* pc) : fp(fp), pc(pc) {}
+
+    KotlinFrameAnchor next() {
+        RuntimeAssert(fp != nullptr, "Current fp is null, cannot get next");
+        return KotlinFrameAnchor((uint64_t*)(*fp), (uint64_t*) (*(fp + 1)));
+    }
+};
+
+// Captures the immediate caller's {fp, pc} by reading this function's own
+// frame record (ALWAYS_INLINE so __builtin_frame_address(0) resolves to
+// the caller's frame once inlined, not a separate frame of its own).
+ALWAYS_INLINE inline KotlinFrameAnchor captureCallerFrameAnchor() {
+    uint64_t* fp = reinterpret_cast<uint64_t*>(__builtin_frame_address(0));
+    return KotlinFrameAnchor{(uint64_t*) fp[0], (uint64_t*) fp[1]};
+}
+#endif
 
 // `ThreadData` is supposed to be thread local singleton.
 // Pin it in memory to prevent accidental copying.
@@ -75,6 +100,33 @@ public:
         allocator_.clearForTests();
     }
 
+#if defined(__aarch64__)
+    void pushStackMapAnchor(const KotlinFrameAnchor& anchor) noexcept {
+        RuntimeLogInfo({logging::Tag::kLogging}, "Pushing new anchor: fp=%p pc=%p", anchor.fp, anchor.pc);
+        frameAnchors_.emplace_back(anchor);
+    }
+
+    void pushLastStackMapAnchor() noexcept {
+        RuntimeAssert(lastFrame_.fp != nullptr, "Trying push last anchor, but last anchor is not initialized");
+        RuntimeLogInfo({logging::Tag::kLogging}, "Pushing last frame anchor: fp=%p pc=%p", lastFrame_.fp, lastFrame_.pc);
+        frameAnchors_.emplace_back(lastFrame_);
+    }
+
+    void popStackMapAnchor() noexcept {
+        RuntimeLogInfo({logging::Tag::kLogging}, "Poping last anchor: fp=%p pc=%p", frameAnchors_.back().fp, frameAnchors_.back().pc);
+        frameAnchors_.pop_back();
+    }
+
+    const std::vector<KotlinFrameAnchor>& frameAnchors() {
+        return frameAnchors_;
+    }
+
+    void setLastFrame(KotlinFrameAnchor anchor) noexcept {
+        RuntimeLogInfo({logging::Tag::kLogging}, "Setting last frame anchor: fp=%p pc=%p", anchor.fp, anchor.pc);
+        lastFrame_ = anchor;
+    }
+#endif
+
 private:
     const uintptr_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
@@ -86,6 +138,10 @@ private:
     gc::GC::ThreadData gc_;
     std::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;
+#if defined(__aarch64__)
+    std::vector<KotlinFrameAnchor> frameAnchors_;
+    KotlinFrameAnchor lastFrame_ = {};
+#endif
 };
 
 } // namespace mm

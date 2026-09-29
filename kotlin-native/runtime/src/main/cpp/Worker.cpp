@@ -26,12 +26,15 @@
 #include <pthread.h>
 #include "PthreadUtils.h"
 
+#include "CompilerConstants.hpp"
 #include "Exceptions.h"
 #include "ExternalRCRef.hpp"
 #include "KAssert.h"
 #include "Memory.h"
 #include "Natives.h"
 #include "Runtime.h"
+#include "mm/ThreadData.hpp"
+#include "mm/ThreadRegistry.hpp"
 #include "Types.h"
 #include "Worker.h"
 #include "objc_support/AutoreleasePool.hpp"
@@ -203,7 +206,19 @@ THREAD_LOCAL_VARIABLE Worker* g_worker = nullptr;
 
 void waitInNativeState(pthread_cond_t* cond, pthread_mutex_t* mutex) {
     kotlin::compactObjectPoolInCurrentThread();
+#if defined(__aarch64__)
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
+        mm::KotlinFrameAnchor anchor = mm::captureCallerFrameAnchor();
+        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor);
+    }
+#endif
+
     CallWithThreadState<ThreadState::kNative>(pthread_cond_wait, cond, mutex);
+#if defined(__aarch64__)
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
+        mm::ThreadRegistry::Instance().CurrentThreadData()->popStackMapAnchor();
+    }
+#endif
 }
 
 void waitInNativeState(pthread_cond_t* cond,
@@ -211,7 +226,19 @@ void waitInNativeState(pthread_cond_t* cond,
           uint64_t timeoutNanoseconds,
           uint64_t* microsecondsPassed = nullptr) {
     kotlin::compactObjectPoolInCurrentThread();
+#if defined(__aarch64__)
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
+        mm::KotlinFrameAnchor anchor = mm::captureCallerFrameAnchor();
+        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor);
+    }
+#endif
+
     CallWithThreadState<ThreadState::kNative>(WaitOnCondVar, cond, mutex, timeoutNanoseconds, microsecondsPassed);
+#if defined(__aarch64__)
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
+        mm::ThreadRegistry::Instance().CurrentThreadData()->popStackMapAnchor();
+    }
+#endif
 }
 
 KULong pthreadToNumber(pthread_t thread) {
@@ -571,9 +598,9 @@ class State {
           }
       }
       ObjHolder arrayHolder;
-      AllocArrayInstance(theIntArrayTypeInfo, workers.size(), arrayHolder.slot());
-      std::copy(workers.begin(), workers.end(), IntArrayAddressOfElementAt(arrayHolder.obj()->array(), 0));
-      RETURN_OBJ(arrayHolder.obj());
+      ObjHeader* array = AllocArrayInstance(theIntArrayTypeInfo, workers.size(), arrayHolder.slot());
+      std::copy(workers.begin(), workers.end(), IntArrayAddressOfElementAt(array->array(), 0));
+      RETURN_OBJ(array);
   }
 
  private:

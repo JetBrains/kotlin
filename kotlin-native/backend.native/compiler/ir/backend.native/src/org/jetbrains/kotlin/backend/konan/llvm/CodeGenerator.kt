@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -266,7 +267,7 @@ internal object VirtualTablesLookup {
     }
 
     fun FunctionGenerationContext.getVirtualImpl(receiver: LLVMValueRef, irFunction: IrSimpleFunction): LlvmCallable {
-        assert(LLVMTypeOf(receiver) == llvm.pointerType)
+        assert(LLVMTypeOf(receiver) == llvm.kotlinObjectPtrType)
 
         val typeInfoPtr: LLVMValueRef = if (irFunction.getObjCMethodInfo() != null)
             call(llvm.getObjCKotlinTypeInfo, listOf(receiver))
@@ -434,7 +435,7 @@ internal class StackLocalsManagerImpl(
         val classInfo = llvmDeclarations.forClass(irClass)
         val type = classInfo.bodyType.llvmBodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
-            val stackSlot = LLVMBuildAlloca(builder, type, "")!!
+            val stackSlot = LLVMBuildAllocaInAddrspace(builder, type, "", runtime.kotlinObjectAddressSpace)!!
             LLVMSetAlignment(stackSlot, classInfo.alignment)
 
             memset(stackSlot, 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
@@ -492,7 +493,7 @@ internal class StackLocalsManagerImpl(
             val constCount = extractConstUnsignedInt(count).toInt()
             val arrayType = localArrayType(irClass, constCount)
             val typeInfo = codegen.typeInfoValue(irClass)
-            val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
+            val arraySlot = LLVMBuildAllocaInAddrspace(builder, arrayType, "", runtime.kotlinObjectAddressSpace)!!
             // Set array size in ArrayHeader.
             val arrayHeaderSlot = structGep(arrayType, arraySlot, 0, "arrayHeader")
             setTypeInfoForStackObject(runtime.arrayHeaderType, arrayHeaderSlot, typeInfo)
@@ -539,23 +540,22 @@ internal class StackLocalsManagerImpl(
                 if (fieldSymbol.owner.type.binaryTypeIsReference()) {
                     val fieldPtr = structGep(type, stackLocal.stackAllocationPtr, fieldIndex, "")
                     if (refsOnly)
-                        storeHeapRef(llvm.kNull, fieldPtr)
+                        storeHeapRef(llvm.kObjectNull, fieldPtr)
                     else
                         call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
                 }
             }
 
             if (!refsOnly) {
-                val bodyPtr = ptrToInt(stackLocal.stackAllocationPtr, codegen.intPtrType)
                 val bodySize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8
                 val serviceInfoSize = runtime.pointerSize
                 val serviceInfoSizeLlvm = LLVMConstInt(codegen.intPtrType, serviceInfoSize.toLong(), 1)!!
-                val bodyWithSkippedServiceInfoPtr = intToPtr(add(bodyPtr, serviceInfoSizeLlvm), llvm.pointerType)
+                val bodyWithSkippedServiceInfoPtr = gep(llvm.int8Type, stackLocal.stackAllocationPtr, serviceInfoSizeLlvm)
                 memset(bodyWithSkippedServiceInfoPtr, 0, bodySize - serviceInfoSize)
             }
         }
         if (stackLocal.gcRootSetSlot != null) {
-            storeStackRef(llvm.kNull, stackLocal.gcRootSetSlot)
+            storeStackRef(llvm.kObjectNull, stackLocal.gcRootSetSlot)
         }
     }
 
@@ -687,7 +687,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun alloca(type: LLVMTypeRef?, isObjectType: Boolean, name: String = "", variableLocation: VariableDebugLocation? = null): LLVMValueRef {
-        if (isObjectType) {
+        if (isObjectType && (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)) {
             appendingTo(localsInitBb) {
                 val slotAddress = gep(type!!, slotsPhi!!, llvm.int32(slotCount), name)
                 variableLocation?.let {
@@ -773,15 +773,26 @@ internal abstract class FunctionGenerationContext(
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
+        if (context.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+            return
+        }
+
         call(llvm.updateReturnRefFunction, listOf(address, value))
     }
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
                           isVolatile: Boolean = false, alignment: Int? = null) {
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
+
         if (onStack) {
-            require(!isVolatile) { "Stack ref update can't be volatile"}
-            call(llvm.updateStackRefFunction, listOf(address, value))
+            require(!isVolatile) { "Stack ref update can't be volatile" }
+
+            if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+                call(llvm.updateStackRefFunction, listOf(address, value))
+            } else {
+                store(value, address)
+            }
+
         } else {
             if (isVolatile) {
                 call(llvm.UpdateVolatileHeapRef, listOf(address, value))
@@ -793,18 +804,43 @@ internal abstract class FunctionGenerationContext(
 
     //-------------------------------------------------------------------------//
 
-    fun switchThreadState(state: ThreadState) {
+    /**
+     * Switches the current thread's state to [state].
+     *
+     * [isOutboundNativeCall] distinguishes two unrelated situations that both flip the thread
+     * state, and must be routed to different runtime entry points under the delta-main GC
+     * stack-map scheme:
+     * - `true` (K2N, the default): this Kotlin function is calling *out* to native code and
+     *   expects that same call to return here. Under delta-main, switching to [Native] here
+     *   pushes a `{fp, pc}` anchor describing this call site, and the matching switch back to
+     *   [Runnable] pops it once the call returns.
+     * - `false` (N2K): this is a function's own entry/exit boundary for being called *from*
+     *   native code (e.g. an exported/interop entry point). Entering such a function is a brand
+     *   new, independent activation, not a resumption of some earlier K2N call - it must never
+     *   touch the anchor stack. Routing an N2K boundary through the K2N (anchor-touching) path
+     *   pops whatever anchor happens to be on top, which may belong to a completely unrelated,
+     *   still-live Kotlin frame lower on the stack (e.g. one blocked in a native call that
+     *   reentered Kotlin) - silently corrupting GC root scanning for that frame.
+     */
+    fun switchThreadState(state: ThreadState, isOutboundNativeCall: Boolean = true) {
         check(!forbidRuntime) {
             "Attempt to switch the thread state when runtime is forbidden"
         }
-        when (state) {
-            Native -> call(llvm.Kotlin_mm_switchThreadStateNative, emptyList())
-            Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
-        }.let {} // Force exhaustive.
+        if (isOutboundNativeCall) {
+            when (state) {
+                Native -> call(llvm.Kotlin_mm_switchThreadStateNative, emptyList())
+                Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
+            }.let {} // Force exhaustive.
+        } else {
+            when (state) {
+                Native -> call(llvm.Kotlin_mm_switchThreadStateNative_n2k, emptyList())
+                Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable_n2k, emptyList())
+            }.let {} // Force exhaustive.
+        }
     }
 
     fun memset(pointer: LLVMValueRef, value: Byte, size: Int, isVolatile: Boolean = false) =
-            call(llvm.memsetFunction,
+            call(llvm.memsetFunction.getValue(LLVMGetPointerAddressSpace(LLVMTypeOf(pointer))),
                     listOf(pointer,
                             llvm.int8(value),
                             llvm.int32(size),
@@ -820,6 +856,11 @@ internal abstract class FunctionGenerationContext(
     ): LLVMValueRef {
         val callArgs = if (verbatim || !llvmCallable.returnsObjectType) {
             args
+        } else if (context.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+            // The return-slot out-parameter is unused under delta-main (RS4GC tracks the
+            // returned object via the ordinary SSA return value) - always pass null instead of
+            // allocating a stack/arena slot for it.
+            args + llvm.kNull
         } else {
             // If function returns an object - create slot for the returned value or give local arena.
             // This allows appropriate rootset accounting by just looking at the stack slots,
@@ -1051,8 +1092,11 @@ internal abstract class FunctionGenerationContext(
         if (switchThreadState) {
             switchThreadState(Runnable)
         }
-        call(llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
-        setCurrentFrameIsCalled = true
+
+        if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+            call(llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
+            setCurrentFrameIsCalled = true
+        }
 
         return landingpad
     }
@@ -1201,7 +1245,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun generateFrameCheck() {
-        if (!context.shouldOptimize())
+        if (!context.shouldOptimize() && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)
             call(llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
     }
 
@@ -1353,12 +1397,14 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun prologue() {
-        if (function.returnsObjectType) {
+        if (function.returnsObjectType && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
             returnSlot = function.param(function.numParams - 1)
         }
 
         positionAtEnd(localsInitBb)
-        slotsPhi = phi(llvm.pointerType)
+        if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+            slotsPhi = phi(llvm.pointerType)
+        }
         // Is removed by DCE trivially, if not needed.
         /*arenaSlot = intToPtr(
                 or(ptrToInt(slotsPhi, codegen.intPtrType), codegen.immOneIntPtrType), kObjHeaderPtrPtr)*/
@@ -1369,16 +1415,20 @@ internal abstract class FunctionGenerationContext(
         val needCleanupLandingpadAndLeaveFrame = this.needCleanupLandingpadAndLeaveFrame
 
         appendingTo(prologueBb) {
-            val slots = if (needSlotsPhi || needCleanupLandingpadAndLeaveFrame)
+            val slots = if ((needSlotsPhi || needCleanupLandingpadAndLeaveFrame)
+                    && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)
                 LLVMBuildArrayAlloca(builder, llvm.pointerType, llvm.int32(slotCount), "")!!
             else
                 llvm.kNull
-            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+            if ((needSlots || needCleanupLandingpadAndLeaveFrame)
+                    && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
                 check(!forbidRuntime) { "Attempt to start a frame where runtime usage is forbidden" }
                 // Zero-init slots.
                 memset(slots, 0, slotCount * codegen.runtime.pointerSize)
             }
-            addPhiIncoming(slotsPhi!!, prologueBb to slots)
+            if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+                addPhiIncoming(slotsPhi!!, prologueBb to slots)
+            }
             memScoped {
                 slotToVariableLocation.forEach { [slot, variable] ->
                     val expr = longArrayOf(DwarfOp.DW_OP_plus_uconst.value,
@@ -1426,14 +1476,19 @@ internal abstract class FunctionGenerationContext(
                 check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
                 call(llvm.initRuntimeIfNeeded, emptyList())
             }
+
             if (switchToRunnable) {
-                switchThreadState(Runnable)
+                switchThreadState(Runnable, isOutboundNativeCall = false)
             }
-            if (needSlots || needCleanupLandingpadAndLeaveFrame) {
-                call(llvm.enterFrameFunction, listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
-            } else {
-                check(!setCurrentFrameIsCalled)
+
+            if (context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+                if (needSlots || needCleanupLandingpadAndLeaveFrame) {
+                    call(llvm.enterFrameFunction, listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
+                } else {
+                    check(!setCurrentFrameIsCalled)
+                }
             }
+
             if (!forbidRuntime && needSafePoint) {
                 call(llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
             }
@@ -1451,7 +1506,7 @@ internal abstract class FunctionGenerationContext(
     protected abstract fun processReturns()
 
     protected fun retValue(value: LLVMValueRef): LLVMValueRef {
-        if (returnSlot != null) {
+        if (returnSlot != null && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
             updateReturnRef(value, returnSlot!!)
         }
         onReturn()
@@ -1478,7 +1533,7 @@ internal abstract class FunctionGenerationContext(
     private fun handleEpilogueExperimentalMM() {
         if (switchToRunnable) {
             check(!forbidRuntime) { "Generating a bridge when runtime is forbidden" }
-            switchThreadState(Native)
+            switchThreadState(Native, isOutboundNativeCall = false)
         }
     }
 
@@ -1609,7 +1664,8 @@ internal abstract class FunctionGenerationContext(
         }
 
     private fun releaseVars() {
-        if (needCleanupLandingpadAndLeaveFrame || needSlots) {
+        if ((needCleanupLandingpadAndLeaveFrame || needSlots) &&
+                context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
             check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
             call(llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))

@@ -165,7 +165,7 @@ bitcode {
 
         module("runtime") {
             srcRoot.set(layout.projectDirectory.dir("src/main"))
-            headersDirs.from("src/utfcpp/cpp")
+            headersDirs.from("src/utfcpp/cpp", "src/gc/stackmap/cpp")
             sourceSets {
                 main {}
                 testFixtures {}
@@ -318,7 +318,7 @@ bitcode {
 
         module("legacy_alloc") {
             srcRoot.set(layout.projectDirectory.dir("src/alloc/legacy"))
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"), files("src/gc/stackmap/cpp"))
             sourceSets {
                 main {}
                 test {}
@@ -441,7 +441,7 @@ bitcode {
 
         module("same_thread_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"), files("src/gc/stackmap/cpp"))
             sourceSets {
                 main {}
                 testFixtures {}
@@ -461,7 +461,7 @@ bitcode {
 
         module("pmcs_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"), files("src/gc/stackmap/cpp"))
             sourceSets {
                 main {}
                 testFixtures {}
@@ -481,7 +481,7 @@ bitcode {
 
         module("concurrent_ms_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
-            headersDirs.from(files("src/main/cpp"))
+            headersDirs.from(files("src/main/cpp"), files("src/gc/stackmap/cpp"))
             sourceSets {
                 main {}
                 testFixtures {}
@@ -497,6 +497,23 @@ bitcode {
         testsGroup("cms_gc_custom_test") {
             testedModules.addAll("concurrent_ms_gc")
             testSupportModules.addAll("runtime", "noop_externalCallsChecker", "custom_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
+        }
+
+        module("delta_main_stackmap") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/stackmap"))
+            headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+                test {}
+            }
+
+            onlyIf { it.architecture == TargetArchitecture.ARM64 }
+        }
+
+        testsGroup("delta_main_stackmap_test") {
+            testedModules.addAll("delta_main_stackmap")
+            testSupportModules.addAll("runtime")
         }
 
         module("manual_gcScheduler") {

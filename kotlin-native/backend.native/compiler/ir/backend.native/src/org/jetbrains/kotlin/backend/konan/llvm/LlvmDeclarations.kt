@@ -412,7 +412,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val storage = if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet, declaration.type.binaryTypeIsReference())
             } else {
-                addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
+                addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false, isObjectType = declaration.type.binaryTypeIsReference())
             }
 
             declaration.metadata = KonanMetadata.StaticField(declaration, StaticFieldLlvmDeclarations(storage, alignmnet))

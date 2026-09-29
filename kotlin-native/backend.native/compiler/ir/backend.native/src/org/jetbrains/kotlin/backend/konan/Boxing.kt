@@ -171,16 +171,16 @@ private fun initCache(cache: BoxCache, generationState: NativeGenerationState, c
     val [start, end] = cache.defaultRange
 
     return if (declareOnly) {
-        staticData.createGlobal(LLVMArrayType(llvmBoxType, end - start + 1)!!, cacheName, true)
+        staticData.createGlobal(LLVMArrayType(llvmBoxType, end - start + 1)!!, cacheName, true, llvm.runtime.kotlinObjectAddressSpace)
     } else {
         // Constancy of these globals allows LLVM's constant propagation and DCE
         // to remove fast path of boxing function in case of empty range.
-        staticData.placeGlobal(rangeStartName, createConstant(llvmType, start), true)
+        staticData.placeGlobal(rangeStartName, createConstant(llvmType, start), true, llvm.runtime.kotlinObjectAddressSpace)
                 .setConstant(true)
-        staticData.placeGlobal(rangeEndName, createConstant(llvmType, end), true)
+        staticData.placeGlobal(rangeEndName, createConstant(llvmType, end), true, llvm.runtime.kotlinObjectAddressSpace)
                 .setConstant(true)
         val values = (start..end).map { staticData.createConstKotlinObjectBody(kotlinType, createConstant(llvmType, it)) }
-        staticData.placeGlobalArray(cacheName, llvmBoxType, values, true).also {
+        staticData.placeGlobalArray(cacheName, llvmBoxType, values, true, llvm.runtime.kotlinObjectAddressSpace).also {
             it.setConstant(true)
         }
     }

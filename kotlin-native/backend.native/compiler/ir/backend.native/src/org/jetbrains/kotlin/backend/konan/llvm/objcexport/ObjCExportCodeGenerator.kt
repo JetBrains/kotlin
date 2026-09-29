@@ -588,7 +588,7 @@ internal class ObjCExportCodeGenerator(
 private val ObjCExportCodeGenerator.kotlinToObjCFunctionType: LlvmFunctionSignature
     get() = LlvmFunctionSignature(
             LlvmRetType(llvm.pointerType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType)),
+            listOf(LlvmParamType(llvm.kotlinObjectPtrType)),
             isVararg = false
     )
 
@@ -668,7 +668,7 @@ private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletion
         check(arguments.size == 1)
 
         val errorArgument = arguments[0]
-        val resultArgument = ifThenElse(icmpNe(errorArgument, llvm.kNull), llvm.kNull) {
+        val resultArgument = ifThenElse(icmpNe(errorArgument, llvm.kNull), llvm.kObjectNull) {
             codegen.theUnitInstanceRef.llvm
         }
 

@@ -5,6 +5,7 @@
 
 #include "ConcurrentMark.hpp"
 
+#include "CompilerConstants.hpp"
 #include "gc/MarkAndSweepUtils.hpp"
 #include "gc/GCStatistics.hpp"
 #include "GCImpl.hpp"
@@ -139,7 +140,17 @@ void gc::mark::ConcurrentMark::tryCollectRootSet(mm::ThreadData& thread, MarkTra
 
     GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %" PRIuPTR " for thread %" PRIuPTR, konan::currentThreadId(), thread.threadId());
     gcData.publish();
+
+#if defined(__aarch64__)
+    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+        auto& stackMapBuilder = thread.gc().impl().stackMapBuilder_;
+        collectRootSetFromMapForThread<MarkTraits>(gcHandle(), markQueue, stackMapBuilder, thread);
+    } else {
+        collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
+    }
+#else
     collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
+#endif
 }
 
 /** Terminates the mark loop if possible, otherwise returns `false`. */

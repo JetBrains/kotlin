@@ -16,6 +16,7 @@ enum class RuntimeModule(val filename: String) {
     GC_STOP_THE_WORLD_MARK_AND_SWEEP("same_thread_ms_gc.bc"),
     GC_PARALLEL_MARK_CONCURRENT_SWEEP("pmcs_gc.bc"),
     GC_CONCURRENT_MARK_AND_SWEEP("concurrent_ms_gc.bc"),
+    GC_DELTA_MAIN_STACKMAP("delta_main_stackmap.bc"),
     GC_SCHEDULER_MANUAL("manual_gcScheduler.bc"),
     GC_SCHEDULER_ADAPTIVE("adaptive_gcScheduler.bc"),
     GC_SCHEDULER_AGGRESSIVE("aggressive_gcScheduler.bc"),

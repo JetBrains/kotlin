@@ -102,7 +102,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     ).generate {
         val blockPtr = param(0)
         ifThen(icmpEq(blockPtr, llvm.kNull)) {
-            ret(llvm.kNull)
+            ret(llvm.kObjectNull)
         }
 
         val retainedBlockPtr = callFromBridge(retainBlock, listOf(blockPtr))
@@ -166,7 +166,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 
     private val blockLiteralType = llvm.structType(
             codegen.runtime.blockLiteralType,
-            llvm.pointerType,
+            llvm.kotlinObjectPtrType,
             llvm.pointerType,
     )
 
@@ -211,7 +211,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         val dstBlockPtr = param(0)
         val srcBlockPtr = param(1)
 
-        val obj = load(llvm.pointerType, objectInBlock(srcBlockPtr))
+        val obj = load(llvm.kotlinObjectPtrType, objectInBlock(srcBlockPtr))
         val refHolder = call(llvm.Kotlin_mm_createRetainedExternalRCRef, listOf(obj))
 
         store(obj, objectInBlock(dstBlockPtr))
@@ -264,7 +264,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         val result = functionGenerator(blockType.toBlockInvokeLlvmType(llvm).toProto(invokeName, null, LLVMLinkage.LLVMInternalLinkage)) {
             switchToRunnable = true
         }.generate {
-            val kotlinObject = load(llvm.pointerType, objectInBlock(param(0)))
+            val kotlinObject = load(llvm.kotlinObjectPtrType, objectInBlock(param(0)))
 
             val arguments = (1 .. blockType.numberOfParameters).map { index -> param(index) }
 
@@ -312,13 +312,13 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         return functionGenerator(
                 LlvmFunctionSignature(
                         LlvmRetType(llvm.pointerType, isObjectType = false),
-                        listOf(LlvmParamType(llvm.pointerType))
+                        listOf(LlvmParamType(llvm.kotlinObjectPtrType))
                 ).toProto(
                         convertName, null, LLVMLinkage.LLVMInternalLinkage
                 )
         ).generate {
             val kotlinRef = param(0)
-            ifThen(icmpEq(kotlinRef, llvm.kNull)) {
+            ifThen(icmpEq(kotlinRef, llvm.kObjectNull)) {
                 ret(llvm.kNull)
             }
 

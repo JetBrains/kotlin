@@ -386,7 +386,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitReadBits(args: List<LLVMValueRef>): LLVMValueRef {
         val ptr = args[0]
-        assert(ptr.type == llvm.pointerType)
+        assert(ptr.type == llvm.pointerType || ptr.type == llvm.kotlinObjectPtrType)
 
         val offset = extractConstUnsignedInt(args[1])
         val size = extractConstUnsignedInt(args[2]).toInt()
@@ -416,7 +416,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.emitWriteBits(args: List<LLVMValueRef>): LLVMValueRef {
         val ptr = args[0]
-        assert(ptr.type == llvm.pointerType)
+        assert(ptr.type == llvm.pointerType || ptr.type == llvm.kotlinObjectPtrType)
 
         val offset = extractConstUnsignedInt(args[1])
         val size = extractConstUnsignedInt(args[2]).toInt()

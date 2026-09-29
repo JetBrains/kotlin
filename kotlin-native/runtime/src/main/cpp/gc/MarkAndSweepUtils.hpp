@@ -6,6 +6,12 @@
 #ifndef RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H
 #define RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H
 
+#include <cstdint>
+#include "KAssert.h"
+#if defined(__aarch64__)
+#include "DeltaMainStackMap.hpp"
+#include "RootsInfo.hpp"
+#endif
 #include "mm/ExtraObjectData.hpp"
 #include "FinalizerHooks.hpp"
 #include "mm/GlobalData.hpp"
@@ -15,10 +21,8 @@
 #include "mm/ObjectOps.hpp"
 #include "mm/ObjectTraversal.hpp"
 #include "mm/RootSet.hpp"
-#include "Runtime.h"
 #include "mm/ExternalRCRefRegistry.hpp"
 #include "mm/ThreadData.hpp"
-#include "Types.h"
 
 namespace kotlin {
 namespace gc {
@@ -130,6 +134,56 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
         }
     }
 }
+
+#if defined(__aarch64__)
+template <typename Traits>
+void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, kotlin::stackMap::DeltaMainStackMapBuilder& stackMapBuilder, mm::ThreadData& thread) {
+    auto handle = gcHandle.collectThreadRoots(thread);
+
+    for (auto anchor : thread.frameAnchors()) {
+        RuntimeLogDebug({logging::Tag::kGC}, "Start new anchor pc=%p fp=%p", anchor.pc, anchor.fp);
+
+        // The anchor may not point to a Kotlin frame. Walk up the frame chain until a frame
+        // has a stack map, or fp == 0. fp == 0 means the chain has no more frames and this
+        // thread has no Kotlin frame at all.
+        while (anchor.fp != 0 && !stackMapBuilder.hasMapForPC(anchor.pc)) {
+            anchor = anchor.next();
+            RuntimeLogDebug({logging::Tag::kGC}, "Hop one frame up pc=%p fp=%p", anchor.pc, anchor.fp);
+        }
+
+        if (!stackMapBuilder.hasMapForPC(anchor.pc) || anchor.fp == 0 || anchor.pc == 0) {
+            RuntimeLogDebug({logging::Tag::kGC}, "Cannot find live frame");
+            continue;
+        }
+
+        while (anchor.fp != 0 && stackMapBuilder.hasMapForPC(anchor.pc)) {
+            RuntimeLogDebug({logging::Tag::kGC}, "Start new frame pc=%p fp=%p", anchor.pc, anchor.fp);
+
+            for (const auto& rootsInfo : stackMapBuilder.getRootsInfoForPC(anchor.pc).bases()) {
+                if (rootsInfo.Type == stackMap::RootLocation::Indirect) {
+                    uint8_t* address = (uint8_t*) anchor.fp + rootsInfo.Offset;
+                    ObjHeader* object = *reinterpret_cast<ObjHeader**>(address);
+
+                    RuntimeLogDebug({logging::Tag::kGC}, "Trying to collect root slot pc=%p fp=%p address=%p", anchor.pc, anchor.fp, address);
+                    RuntimeLogDebug({logging::Tag::kGC}, "Object address=%p", object);
+
+                    if (internal::collectRoot<Traits>(markQueue, object)) {
+                        handle.addStackRoot();
+                        RuntimeLogDebug({logging::Tag::kGC}, "collected root slot pc=%p fp=%p address=%p", anchor.pc, anchor.fp, address);
+                    } else {
+                        RuntimeLogDebug({logging::Tag::kGC}, "root slot is not collected pc=%p fp=%p address=%p", anchor.pc, anchor.fp, address);
+                    }
+
+                } else {
+                    RuntimeFail("Indirect only expected");
+                }
+            }
+
+            anchor = anchor.next();
+        }
+    }
+}
+#endif
 
 template <typename Traits>
 void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQueue) noexcept {

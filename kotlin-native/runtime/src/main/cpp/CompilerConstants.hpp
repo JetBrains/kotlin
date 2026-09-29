@@ -7,6 +7,7 @@
 #define RUNTIME_COMPILER_CONSTANTS_H
 
 #include <cstdint>
+#include <cstring>
 
 #include "Common.h"
 
@@ -30,6 +31,7 @@ extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_fixedBlockPageSize;
 extern "C" const int32_t Kotlin_pagedAllocator;
+extern "C" const char* Kotlin_gcStackMapScheme;
 
 class SourceInfo;
 
@@ -47,6 +49,15 @@ enum class RuntimeAssertsMode : int32_t {
 enum class AppStateTracking {
     kDisabled = 0,
     kEnabled = 1,
+};
+
+inline const char* SHADOW_STACK = "shadowstack";
+inline const char* DELTA_MAIN = "delta-main";
+
+// Must match GCStackMapScheme in GCStackMapScheme.kt
+enum class GCStackMapScheme {
+    kShadowStack = 0,
+    kDeltaMain = 1,
 };
 
 ALWAYS_INLINE inline bool shouldContainDebugInfo() noexcept {
@@ -101,6 +112,7 @@ uint8_t mmapTag() noexcept;
 const char* minidumpLocation() noexcept;
 bool minidumpOnSIGTERM() noexcept;
 const int32_t* runtimeLogs() noexcept;
+GCStackMapScheme gcStackMapScheme() noexcept;
 
 #ifdef KONAN_ANDROID
 bool printToAndroidLogcat() noexcept;

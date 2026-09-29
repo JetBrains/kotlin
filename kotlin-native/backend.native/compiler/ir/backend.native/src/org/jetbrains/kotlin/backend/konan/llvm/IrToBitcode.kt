@@ -1401,7 +1401,7 @@ internal class CodeGeneratorVisitor(
                 },
                 onNull = {
                     if (value.typeOperand.isNullable()) {
-                        llvm.kNull
+                        llvm.kObjectNull
                     } else {
                         callDirect(
                                 context.symbols.throwNullPointerException.owner,
@@ -1453,7 +1453,7 @@ internal class CodeGeneratorVisitor(
                     if (type.isNullable())
                         kTrue
                     else
-                        functionGenerationContext.icmpNe(arg, llvm.kNull)
+                        functionGenerationContext.icmpNe(arg, llvm.kObjectNull)
                 },
                 onNull = { if (type.isNullable()) kTrue else kFalse },
                 onCheck = { _, checkResult -> checkResult }
@@ -1471,7 +1471,7 @@ internal class CodeGeneratorVisitor(
             onCheck: (argument: LLVMValueRef, checkResult: LLVMValueRef) -> LLVMValueRef,
     ) : LLVMValueRef {
         val srcArg = evaluateExpression(value.argument, resultSlot)
-        require(srcArg.type == llvm.pointerType) { "Expected ObjHeader but was ${srcArg.type.toTypeString()} for ${value.argument.dump()}" }
+        require(srcArg.type == llvm.kotlinObjectPtrType) { "Expected ObjHeader but was ${srcArg.type.toTypeString()} for ${value.argument.dump()}" }
         val srcType = value.argument.type
         val isSuperClassCast = srcType.isSuperClassCastTo(dstClass)
 
@@ -1483,7 +1483,7 @@ internal class CodeGeneratorVisitor(
             val bbNull = basicBlock("instance_of_null", value.startLocation)
 
 
-            val condition = icmpEq(srcArg, llvm.kNull)
+            val condition = icmpEq(srcArg, llvm.kObjectNull)
             condBr(condition, bbNull, bbInstanceOf)
 
             positionAtEnd(bbNull)
@@ -1711,7 +1711,7 @@ internal class CodeGeneratorVisitor(
         val alignment: Int
         if (thisPtr != null) {
             require(!field.isStatic) { "Unexpected receiver for a static field: ${value.render()}" }
-            require(thisPtr.type == llvm.pointerType) {
+            require(thisPtr.type == llvm.kotlinObjectPtrType) {
                 thisPtr.type.toTypeString()
             }
             address = fieldPtrOfClass(thisPtr, field)
@@ -1774,7 +1774,7 @@ internal class CodeGeneratorVisitor(
     private fun evaluateConst(value: IrConst): ConstValue {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
         return when (value.kind) {
-            IrConstKind.Null -> llvm.nullPointer
+            IrConstKind.Null -> llvm.objectNullPointer
             IrConstKind.Boolean -> llvm.constInt1(value.value as Boolean)
             IrConstKind.Char -> llvm.constChar16(value.value as Char)
             IrConstKind.Byte -> llvm.constInt8(value.value as Byte)
@@ -1816,7 +1816,7 @@ internal class CodeGeneratorVisitor(
                     if (value.value.kind == IrConstKind.Null) {
                         Zero(value.type.toLLVMType(llvm))
                     } else {
-                        require(value.type.toLLVMType(llvm) == llvm.pointerType) {
+                        require(value.type.toLLVMType(llvm) == llvm.kotlinObjectPtrType) {
                             "Can't wrap ${value.value.kind.asString} constant to type ${value.type.render()}"
                         }
                         value.toBoxCacheValue(generationState) ?: codegen.staticData.createConstKotlinObject(
@@ -1893,7 +1893,7 @@ internal class CodeGeneratorVisitor(
                     }
                 }
 
-                require(value.type.toLLVMType(llvm) == llvm.pointerType) { "Constant object is not an object, but ${value.type.render()}" }
+                require(value.type.toLLVMType(llvm) == llvm.kotlinObjectPtrType) { "Constant object is not an object, but ${value.type.render()}" }
                 codegen.staticData.createConstKotlinObject(
                         constructedClass,
                         *fields.toTypedArray()
@@ -2909,6 +2909,7 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule(): LLVMModuleR
         setRuntimeConstGlobal(NativeRuntimeConstants.RUNTIME_LOGS_ENABLED, config.runtimeLogsEnabled.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.CONCURRENT_WEAK_SWEEP, context.config.concurrentWeakSweep.toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.GC_MARK_SINGLE_THREADED, config.gcMarkSingleThreaded.toLlvmConstInt32())
+        setRuntimeConstGlobal(NativeRuntimeConstants.GC_STACK_MAP_SCHEME, config.gcStackMapScheme.shortcut.toCStringLiteral())
         setRuntimeConstGlobal(NativeRuntimeConstants.FIXED_BLOCK_PAGE_SIZE, config.fixedBlockPageSize.toInt().toLlvmConstInt32())
         setRuntimeConstGlobal(NativeRuntimeConstants.PAGED_ALLOCATOR, config.pagedAllocator.toLlvmConstInt32())
     }
