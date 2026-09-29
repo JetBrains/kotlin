@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.WebStaticInitializersDeclarationLowering
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 
 @PhasePrerequisites(
     PrimaryConstructorLowering::class,
@@ -24,7 +25,8 @@ internal class WasmInitializersLowering(context: WasmBackendContext) : Initializ
 internal class WasmInitializersCleanupLowering(context: CommonBackendContext) : InitializersCleanupLowering(
     context,
     shouldEraseFieldInitializer = {
-        it.correspondingPropertySymbol?.owner?.isConst != true &&
-                it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_state` fields (KT-89144).
+        it.correspondingPropertySymbol?.owner?.isConst != true
+                && it.origin != WebStaticInitializersDeclarationLowering.STATIC_CLASS_INITIALIZER // We need to preserve initializers for `static_init_state` fields (KT-89144).
+                && it.origin != IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE // Keep the initializer for eagerly initialized objects
     }
 )
