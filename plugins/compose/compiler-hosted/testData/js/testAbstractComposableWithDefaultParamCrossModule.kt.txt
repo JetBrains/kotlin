@@ -27,7 +27,7 @@ interface TestValue {
       var modifier: Modifier? = modifier
       var $composer: Composer? = $composer
       { // BLOCK
-        $composer = $composer.startRestartGroup(key = -1942814401)
+        $composer = $composer.startRestartGroup(key = -1719345412)
         sourceInformation(composer = $composer, sourceInformation = "C(compose$default):lib.kt")
       }
       val $dirty: Int = $changed
@@ -56,7 +56,7 @@ interface TestValue {
             EQEQ(arg0 = $default.and(other = 1), arg1 = 0).not() -> modifier = Companion
           }
           when {
-            isTraceInProgress() -> traceEventStart(key = -1942814401, dirty1 = $dirty, dirty2 = -1, info = "TestValue.ComposeDefaultImpls.compose$default (lib.kt:-1)")
+            isTraceInProgress() -> traceEventStart(key = -1719345412, dirty1 = $dirty, dirty2 = -1, info = "TestValue.ComposeDefaultImpls.compose$default (lib.kt:-1)")
           }
           $this$.compose(modifier = modifier /*as Modifier */, $composer = $composer, $changed = 14.and(other = $dirty).or(other = 112.and(other = $dirty)))
           when {

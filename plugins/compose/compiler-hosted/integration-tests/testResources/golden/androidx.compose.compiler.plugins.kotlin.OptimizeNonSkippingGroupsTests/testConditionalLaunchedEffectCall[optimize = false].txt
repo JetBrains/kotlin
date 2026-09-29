@@ -64,7 +64,7 @@ fun Test(states: List<String>, condition: Boolean, %composer: Composer?, %change
       }
       %composer.endReplaceGroup()
       TwoLambdas(<block>{
-        %composer.startReplaceGroup(<!DUPLICATE KEY: 1227189541!>)
+        %composer.startReplaceGroup(<!DUPLICATE KEY: 1500731557!>)
         sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
         val tmp1_group = %composer.cache(%composer.changed(state)) {
           {
@@ -74,7 +74,7 @@ fun Test(states: List<String>, condition: Boolean, %composer: Composer?, %change
         %composer.endReplaceGroup()
         tmp1_group
       }, <block>{
-        %composer.startReplaceGroup(<!DUPLICATE KEY: 1227189541!>)
+        %composer.startReplaceGroup(<!DUPLICATE KEY: 1500731557!>)
         sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
         val tmp2_group = %composer.cache(%composer.changed(state)) {
           { it: Int ->

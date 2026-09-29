@@ -25,6 +25,8 @@ import androidx.compose.compiler.plugins.kotlin.lower.hiddenfromobjc.hiddenFromO
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -1264,18 +1266,7 @@ abstract class AbstractComposeLowering(
             info.used = true
             return info.key
         }
-        // Functions synthesized after durable keys were assigned still need a key on every backend.
-        val signature = buildString {
-            typeParameters.joinTo(this, prefix = "<", postfix = ">") { parameter ->
-                parameter.superTypes.joinToString(" & ") { it.render() }
-            }
-            parameters.filter { it.kind != IrParameterKind.DispatchReceiver }
-                .joinTo(this, prefix = "(", postfix = ")") { it.type.render() }
-            append(returnType.render())
-        }
-        val name = fqNameForIrSerialization
-        val stringKey = "$name$signature"
-        return stringKey.hashCode()
+        return IrMangleComputer(StringBuilder(), MangleMode.FULL, compatibleMode = false).computeMangle(this).hashCode()
     }
 
     /*
