@@ -11,12 +11,20 @@ interface IV { val v: String }
 fun bar() = object: IV { override val v = "OK" }
 fun baz(): IV = object: IV { override val v = "OK" }
 
-foo().<!UNRESOLVED_REFERENCE!>v<!>
 bar().v
 baz().v
 
 // SNIPPET
 
-<!UNRESOLVED_REFERENCE!>foo<!>().v
+foo().v
+
+// SNIPPET
+
 <!UNRESOLVED_REFERENCE!>bar<!>().v
 baz().v
+
+// SNIPPET
+
+fun foo2() = object { val v = "OK" }
+
+foo2().v

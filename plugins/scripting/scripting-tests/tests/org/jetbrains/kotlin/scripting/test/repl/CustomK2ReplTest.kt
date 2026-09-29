@@ -391,6 +391,42 @@ class CustomK2ReplTest {
         assertEquals(listOf("E"), layer3.map { it.simpleName })
     }
 
+    /**
+     * As in the K1 REPL, a snippet that fails at any compilation stage (here in the checkers, after its resolution has already
+     * registered it in the frontend history) is dropped from the history: its declarations are not visible to the later snippets.
+     * Unlike the K1 compiler (but like the JSR-223 engines), it still consumes a snippet number.
+     */
+    @Test
+    fun testFailedSnippetsDoNotAffectLaterSnippets() {
+        if (!isK2) return
+        val compiled = mutableListOf<KJvmCompiledScript>()
+        val results = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, baseCompilationConfiguration))
+            val evaluator = K2ReplEvaluator()
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                var i = 0
+                suspend fun assertFails(text: String, expectedMessage: String) {
+                    val res = compiler.compile(text.toScriptSource("s${i++}.repl.kts"))
+                    if (res !is ResultWithDiagnostics.Failure) fail("Compilation of '$text' should fail: $res")
+                    if (res.reports.none { it.message.contains(expectedMessage) }) fail("Unexpected failure of '$text': ${res.reports}")
+                    messageCollector.clear()
+                }
+                assertFails("val a: String", "Property must be initialized")
+                assertFails("a", "Unresolved reference 'a'")
+                assertFails("val s: String = s", "Variable 's' must be initialized")
+                assertFails("s", "Unresolved reference 's'")
+                listOf("val s = \"ok\"", "s").map { text ->
+                    compiler.compile(text.toScriptSource("s${i++}.repl.kts")).valueOr { return@internalScriptingRunSuspend it }
+                        .also { compiled.add(it.get() as KJvmCompiledScript) }
+                }.mapSuccess { evaluator.eval(it, baseEvaluationConfiguration) }
+            }
+        }
+
+        checkEvaluatedSnippetsResultVals(sequenceOf(null, "ok"), results)
+        assertEquals(listOf(null, "res5"), compiled.map { it.resultField?.first })
+    }
+
     @Test
     fun testConvertToFirSeamAndResultFieldNumbering() {
         val convertedSources = mutableListOf<String>()
@@ -474,7 +510,7 @@ class CustomK2ReplTest {
             }
 
             checkEvaluatedSnippetsResultVals(sequenceOf(15, "Hi from common via middle 5"), results)
-            // the imported snippets do not consume the snippet numbers (the resolved but failed snippet `s0` consumed the `res0`)
+            // the imported snippets do not consume the snippet numbers; the failed snippet `s0` consumed `res0`, but it is not visible
             assertEquals(listOf("res1", "res2"), compiled.map { it.resultField?.first })
             // `common.kts` is imported both directly and via `middle.kts`, but evaluated once
             assertEquals(1, capturedOut.toString().lines().count { it == "common evaluated" })
