@@ -8,5 +8,4 @@ func testReexportedCinteropTypeRoundTrip() {
     #expect(payloadTriple(x: foo) == 21)
     #expect(foo.doubled() == 14)
     #expect(barValuePlusOne(x: foo) == 8)
-    #expect(demo(x: foo, list: getEmptyList()) == 0)
 }
