@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.classId
@@ -221,9 +222,14 @@ class FunctionCallTransformer(
             val firstSchema = rootSchemaSymbol.fir
             val dataSchemaApis = materialize(dataFrameSchema ?: PluginDataFrameSchema.EMPTY, call, firstSchema)
 
-            val tokenFir = token.toRegularClassSymbol()!!.fir
+            val interceptedTokenFir = token.toRegularClassSymbol()!!.fir
+            val tokenFir = withCompatibleDataSchemaSupertypes(interceptedTokenFir, dataFrameSchema)
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol }, rootSchemaSymbol)
-            addCompatibleDataSchemaSupertypes(tokenFir, dataFrameSchema)
+            if (tokenFir !== interceptedTokenFir) {
+                call.replaceConeTypeOrNull(
+                    dataSchemaLikeClassId.constructClassLikeType(typeArguments = arrayOf(tokenFir.symbol.defaultType()))
+                )
+            }
 
             return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir)) { tokenFir.generatedClasses = it }
         }
@@ -299,19 +305,26 @@ class FunctionCallTransformer(
     /**
      * Proof of concept for [KDF#2097](https://github.com/Kotlin/dataframe/issues/2097).
      *
-     * Adds every `@DataSchema` interface of the module that [schema] is compatible with as a supertype of the local
-     * [marker] class generated for the refined call. Only the marker itself is touched, the schema and scope classes
-     * behind it keep their original supertypes.
+     * Returns a marker to use instead of [marker] that has every `@DataSchema` interface of the module that [schema] is
+     * compatible with as an additional supertype, or [marker] itself if there is nothing to add. Only the marker is
+     * affected, the schema and scope classes behind it keep their original supertypes.
+     *
+     * [marker] can't simply get new supertypes: it is the type argument of the call's return type during resolution,
+     * and the supertypes of a class are cached ([org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache]) the
+     * first time it takes part in a subtype check. With an expected type, like in
+     * `val df: DataFrame<UserLike> = dataFrameOf(...)`, such a check already happens when the call is completed, so
+     * supertypes added afterward would never be seen. A new class has not been part of any subtype check yet.
      *
      * @see PolymorphicDataSchemasService
      */
-    private fun addCompatibleDataSchemaSupertypes(marker: FirRegularClass, schema: PluginDataFrameSchema?) {
-        if (!polymorphicDataSchemas || schema == null) return
+    private fun withCompatibleDataSchemaSupertypes(marker: FirRegularClass, schema: PluginDataFrameSchema?): FirRegularClass {
+        if (!polymorphicDataSchemas || schema == null) return marker
         val newSupertypes = session.polymorphicDataSchemasService.compatibleDataSchemas(schema)
-        if (newSupertypes.isEmpty()) return
-        val resolvedNewSuperTypes = newSupertypes.map { buildResolvedTypeRef { coneType = it } }
-        marker.replaceSuperTypeRefs(
-            marker.superTypeRefs + resolvedNewSuperTypes
+        if (newSupertypes.isEmpty()) return marker
+        return buildMarker(
+            classId = marker.symbol.classId,
+            source = marker.source,
+            superTypeRefs = marker.superTypeRefs + newSupertypes.map { buildResolvedTypeRef { coneType = it } },
         )
     }
 
@@ -336,27 +349,36 @@ class FunctionCallTransformer(
         val token = buildSchema(tokenId, callSite)
 
         val dataFrameTypeId = nextName(suggestedName)
-        val dataFrameType = buildRegularClass {
-            moduleData = session.moduleData
+        return buildMarker(
+            classId = dataFrameTypeId,
             source = callSite.source?.fakeElement(
                 KtFakeSourceElementKind.PluginGenerated.Custom(
                     DataFrameSourceElementKind.TypeClass(dataFrameTypeId.relativeClassName.asString()),
                 ),
-            )
+            ),
+            superTypeRefs = listOf(
+                buildResolvedTypeRef {
+                    coneType = ConeClassLikeLookupTagWithFixedSymbol(tokenId, token.symbol).constructClassType()
+                }
+            ),
+        )
+    }
+
+    private fun buildMarker(classId: ClassId, source: KtSourceElement?, superTypeRefs: List<FirTypeRef>): FirRegularClass {
+        return buildRegularClass {
+            moduleData = session.moduleData
+            this.source = source
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
             deprecationsProvider = EmptyDeprecationsProvider
             classKind = ClassKind.CLASS
             scopeProvider = FirKotlinScopeProvider()
-            superTypeRefs += buildResolvedTypeRef {
-                coneType = ConeClassLikeLookupTagWithFixedSymbol(tokenId, token.symbol).constructClassType()
-            }
+            this.superTypeRefs += superTypeRefs
 
-            this.name = dataFrameTypeId.shortClassName
-            this.symbol = FirRegularClassSymbol(dataFrameTypeId)
+            this.name = classId.shortClassName
+            this.symbol = FirRegularClassSymbol(classId)
         }
-        return dataFrameType
     }
 
     private fun nextName(s: String) = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName(s), true)
@@ -493,8 +515,9 @@ class FunctionCallTransformer(
         }
 
         val newCall1 = buildFunctionCall {
-            // source = call.source makes IDE navigate to `let` declaration
-            source = null
+            // source = call.source makes IDE navigate to `let` declaration.
+            // A fake source is still needed: checkers report type mismatches of the whole expression on it, KDF#1490
+            source = call.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
             this.coneTypeOrNull = returnType
             if (receiverType != null) {
                 typeArguments += buildTypeProjectionWithVariance {
