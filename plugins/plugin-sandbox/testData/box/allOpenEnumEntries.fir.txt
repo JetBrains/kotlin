@@ -1,0 +1,56 @@
+FILE: allOpenEnumEntries.kt
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllOpen2|() public final enum class Direction : R|kotlin/Enum<Direction>| {
+        private constructor(): R|Direction| {
+            super<R|kotlin/Enum<Direction>|>()
+        }
+
+        public final static enum entry NORTH: R|Direction|
+        public final static enum entry SOUTH: R|Direction|
+        public final static fun values(): R|kotlin/Array<Direction>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Direction| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+            public static get(): R|kotlin/enums/EnumEntries<Direction>|
+
+    }
+    @R|org/jetbrains/kotlin/plugin/sandbox/AllOpen2|() public open class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final enum class Nested : R|kotlin/Enum<Outer.Nested>| {
+            private constructor(): R|Outer.Nested| {
+                super<R|kotlin/Enum<Outer.Nested>|>()
+            }
+
+            public final static enum entry ENTRY: R|Outer.Nested|
+            public final static fun values(): R|kotlin/Array<Outer.Nested>| {
+            }
+
+            public final static fun valueOf(value: R|kotlin/String|): R|Outer.Nested| {
+            }
+
+            public final static val entries: R|kotlin/enums/EnumEntries<Outer.Nested>|
+                public static get(): R|kotlin/enums/EnumEntries<Outer.Nested>|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(Q|Direction|.R|/Direction.entries*s|, R|kotlin/collections/listOf|<R|Direction|>(vararg(Q|Direction|.R|/Direction.NORTH|, Q|Direction|.R|/Direction.SOUTH|))) ->  {
+                ^box String(Fail: Direction)
+            }
+        }
+
+        when () {
+            !=(Q|Outer.Nested|.R|/Outer.Nested.entries*s|.R|kotlin/collections/single|<R|Outer.Nested|>(), Q|Outer.Nested|.R|/Outer.Nested.ENTRY|) ->  {
+                ^box String(Fail: Nested)
+            }
+        }
+
+        ^box String(OK)
+    }
