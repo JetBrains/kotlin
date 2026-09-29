@@ -1,0 +1,14 @@
+STEP 0:
+    dependencies: lib
+    modifications:
+        U : user.kt -> user.kt
+    added cache: user.kt
+
+// user is not recompiled after step 0: its klib still references lib.gone().
+// The IC dirty-file analysis rebuilds its cache at step 1 (reverse dependency on lib.kt),
+// which is when the partial linkage warning is detected and baked into the cached binary.
+STEP 1:
+    modified cache: user.kt
+
+STEP 2:
+    unchanged cache: user.kt
