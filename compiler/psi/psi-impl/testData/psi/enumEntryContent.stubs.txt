@@ -6,13 +6,13 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       ENUM_ENTRY[classId=null, fqName=MyEnumClass.ENTRY, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ENTRY, superNames=[]]
         CLASS_BODY
-          CLASS[classId=null, fqName=MyEnumClass.ENTRY.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]
+          CLASS[classId=null, fqName=MyEnumClass.ENTRY.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=NestedClass, superNames=[]]
             CLASS_BODY
-              CLASS[classId=null, fqName=MyEnumClass.ENTRY.NestedClass.NestedNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedNested, superNames=[]]
+              CLASS[classId=null, fqName=MyEnumClass.ENTRY.NestedClass.NestedNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=NestedNested, superNames=[]]
                 CLASS_BODY
-          OBJECT_DECLARATION[classId=null, fqName=MyEnumClass.ENTRY.NestedObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NestedObject, superNames=[]]
+          OBJECT_DECLARATION[classId=null, fqName=MyEnumClass.ENTRY.NestedObject, isLocal=true, isObjectLiteral=false, isTopLevel=false, name=NestedObject, superNames=[]]
             CLASS_BODY
-              OBJECT_DECLARATION[classId=null, fqName=MyEnumClass.ENTRY.NestedObject.NestedNested, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=NestedNested, superNames=[]]
+              OBJECT_DECLARATION[classId=null, fqName=MyEnumClass.ENTRY.NestedObject.NestedNested, isLocal=true, isObjectLiteral=false, isTopLevel=false, name=NestedNested, superNames=[]]
                 CLASS_BODY
           CLASS_INITIALIZER
             FUNCTION[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=initFunction]

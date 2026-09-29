@@ -1,22 +1,22 @@
 enum class EnumClass {
     ENTRY {
-        class NestedInEntry {
-            class NestedNestedInEntry
+        class NestedInEntryLocal {
+            class NestedNestedInEntryLocal
 
-            fun nestedMemberInEntry() {}
+            fun nestedMemberInEntryLocal() {}
         }
 
-        inner class InnerInEntry
+        inner class InnerInEntryLocal
 
-        object ObjectInEntry
+        object ObjectInEntryLocal
 
-        fun memberInEntry() {
+        fun memberInEntryLocal() {
             class BodyLocal
 
             fun bodyFunctionLocal() {}
         }
 
-        val propertyInEntry = 1
+        val propertyInEntryLocal = 1
 
         init {
             class InitLocal
