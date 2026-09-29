@@ -182,7 +182,11 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
         moduleDescriptors: List<ModuleDescriptor>,
         linker: KonanIrLinker,
 ) {
-    val exportedDependencies: Set<KotlinLibrary> = (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
+    val exportedDependencies: Set<KotlinLibrary> = if (config.produce.isObjCCache) {
+        config.librariesToCache.keys
+    } else {
+        (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
+    }
 
     val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptor> = moduleDescriptors
             .filterNot {
