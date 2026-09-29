@@ -69,7 +69,7 @@ internal fun produceObjCExportInterface(
     val entryPoints = config.objcEntryPoints
     val expandEntryPoints = config.configuration.getBoolean(BinaryOptions.objcExportExpandEntryPoints)
     val effectiveEntryPoints = if (entryPoints != ObjCEntryPoints.ALL && expandEntryPoints) {
-        ObjCEntryPoints.create(computeDownwardClosure(entryPoints, moduleDescriptors))
+        expandObjCEntryPoints(entryPoints, moduleDescriptors)
     } else {
         entryPoints
     }

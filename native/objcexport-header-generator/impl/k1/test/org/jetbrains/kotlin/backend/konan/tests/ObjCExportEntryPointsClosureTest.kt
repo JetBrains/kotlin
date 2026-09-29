@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.testUtils.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.cli.common.disposeRootInWriteAction
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.assertFalse
 
@@ -67,11 +69,11 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
             }
         }
 
-        val closure = computeDownwardClosure(entryPoints, listOf(module))
+        val expanded = expandObjCEntryPoints(entryPoints, listOf(module))
 
-        assertTrue(runnableRun in closure, "Runnable.run should be in closure")
-        assertTrue(aRun in closure, "A.run should be in closure")
-        assertTrue(bRun in closure, "B.run should be in closure")
+        assertTrue(expanded.shouldBeExposed(runnableRun), "Runnable.run should be exposed")
+        assertTrue(expanded.shouldBeExposed(aRun), "A.run should be exposed")
+        assertTrue(expanded.shouldBeExposed(bRun), "B.run should be exposed")
     }
 
     @Test
@@ -109,10 +111,59 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
             }
         }
 
-        val closure = computeDownwardClosure(entryPoints, listOf(module))
+        val expanded = expandObjCEntryPoints(entryPoints, listOf(module))
 
-        assertFalse(runnableRun.original in closure, "Runnable.run should not be in closure")
-        assertTrue(aRun in closure, "A.run should be in closure")
-        assertFalse(bRun in closure, "B.run should not be in closure")
+        assertFalse(expanded.shouldBeExposed(runnableRun), "Runnable.run should not be exposed")
+        assertTrue(expanded.shouldBeExposed(aRun), "A.run should be exposed")
+        assertFalse(expanded.shouldBeExposed(bRun), "B.run should not be exposed")
+    }
+
+    @Test
+    fun `test expansion through intermediate classes and properties`() {
+        val source = """
+            interface Root {
+                fun run()
+                val size: Int
+            }
+            abstract class Middle : Root {
+                override fun run() {}
+            }
+            class Leaf : Middle() {
+                override fun run() {}
+                override val size: Int get() = 1
+            }
+            class Inherits : Middle() {
+                override val size: Int get() = 2
+            }
+            class Unrelated {
+                fun run() {}
+            }
+        """.trimIndent()
+
+        val module = createModuleDescriptor(source)
+        val root = module.findClassAcrossModuleDependencies(ClassId.fromString("Root"))!!
+        val rootMembers = root.unsubstitutedMemberScope.getContributedDescriptors()
+            .filterIsInstance<CallableMemberDescriptor>()
+        val allCallables = listOf("Root", "Middle", "Leaf", "Inherits", "Unrelated").flatMap { name ->
+            val descriptor = module.findClassAcrossModuleDependencies(ClassId.fromString(name))!!
+            descriptor.unsubstitutedMemberScope.getContributedDescriptors()
+                .filterIsInstance<CallableMemberDescriptor>()
+                .flatMap { member ->
+                    listOf(member) + ((member as? PropertyDescriptor)?.accessors.orEmpty())
+                }
+        }
+
+        val exposed = rootMembers.associate { entry ->
+            val expanded = expandObjCEntryPoints(
+                object : ObjCEntryPoints {
+                    override fun shouldBeExposed(descriptor: CallableMemberDescriptor): Boolean = descriptor.original == entry.original
+                },
+                listOf(module),
+            )
+            entry.name.asString() to allCallables.filter { expanded.shouldBeExposed(it) }
+                .map { "${it.containingDeclaration.name}.${it.name}" }.toSet()
+        }
+        assertEquals(setOf("Root.run", "Middle.run", "Leaf.run", "Inherits.run"), exposed["run"])
+        assertEquals(setOf("Root.size", "Middle.size", "Leaf.size", "Inherits.size"), exposed["size"])
     }
 }
