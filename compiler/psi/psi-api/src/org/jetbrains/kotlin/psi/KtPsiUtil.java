@@ -1032,6 +1032,10 @@ public class KtPsiUtil {
                     return (KtElement) grandParent;
                 }
             }
+            // An enum entry body is an anonymous object, so its members are local
+            if (current instanceof KtClassBody && parent instanceof KtEnumEntry) {
+                return (KtElement) current;
+            }
 
             current = parent;
         }

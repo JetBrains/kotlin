@@ -6,5 +6,5 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       ENUM_ENTRY[classId=null, fqName=InnerClassEnumEntry.ENTRY, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ENTRY, superNames=[]]
         CLASS_BODY
-          CLASS[classId=null, fqName=InnerClassEnumEntry.ENTRY.InnerClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=InnerClass, superNames=[]]
+          CLASS[classId=null, fqName=InnerClassEnumEntry.ENTRY.InnerClass, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=true, isTopLevel=false, name=InnerClass, superNames=[]]
             MODIFIER_LIST[inner]
