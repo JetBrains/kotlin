@@ -35,21 +35,9 @@ fun main(args: Array<String>) {
         }
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomJsCompilerSecondStageTest>(
-                annotations = listOf(annotation(HeavyTest::class.java))
+                annotations = listOf(annotation(HeavyTest::class.java), aggregate())
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
-                model("boxInline")
-            }
-        }
-
-        testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
-            testClass<AbstractCustomJsCompilerSecondStageTest>(
-                suiteTestClassName = "CustomJsAggregateSecondStageTestGenerated",
-                annotations = listOf(
-                    annotation(HeavyTest::class.java),
-                    aggregate(),
-                )
-            ) {
                 model("boxInline")
             }
         }
