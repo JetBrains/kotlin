@@ -1936,6 +1936,20 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnVarInModuleFileError : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileError>
+            get() = JsModuleProhibitedOnVarInModuleFileError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnVarInModuleFileWarning : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileWarning>
+            get() = JsModuleProhibitedOnVarInModuleFileWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface CallFromUmdMustBeJsModuleAndJsNonModule : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<CallFromUmdMustBeJsModuleAndJsNonModule>
             get() = CallFromUmdMustBeJsModuleAndJsNonModule::class
@@ -2122,20 +2136,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<JsModuleProhibitedOnVar>
             get() = JsModuleProhibitedOnVar::class
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface JsModuleProhibitedOnVarInModuleFileError : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileError>
-            get() = JsModuleProhibitedOnVarInModuleFileError::class
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface JsModuleProhibitedOnVarInModuleFileWarning : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileWarning>
-            get() = JsModuleProhibitedOnVarInModuleFileWarning::class
     }
 
     @KaUnstableDiagnosticApi

@@ -2387,7 +2387,7 @@ private fun KaDiagnosticConverterBuilder.addConversions49() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions50() {
-    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.errorFactory) { firDiagnostic ->
+    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.errorFactory) { firDiagnostic ->
         JsModuleProhibitedOnVarInModuleFileErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -4496,7 +4496,7 @@ private fun KaDiagnosticConverterBuilder.addConversions98() {
             token,
         )
     }
-    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.warningFactory) { firDiagnostic ->
+    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.warningFactory) { firDiagnostic ->
         JsModuleProhibitedOnVarInModuleFileWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,

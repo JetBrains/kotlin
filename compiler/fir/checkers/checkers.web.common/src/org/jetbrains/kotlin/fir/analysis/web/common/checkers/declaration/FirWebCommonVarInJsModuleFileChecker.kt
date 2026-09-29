@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
-import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
 
@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
  * so the decision is left to [isNonWritableModuleImport].
  */
 abstract class FirWebCommonVarInJsModuleFileChecker : FirPropertyChecker(MppCheckerKind.Common) {
+    protected abstract val diagnostic: KtDiagnosticFactoryForDeprecation0
+
     /**
      * Whether [property] is imported from the module declared by the annotations of its containing file
      * and a write to that import does not reach the module.
      */
     context(context: CheckerContext)
-    abstract fun isNonWritableModuleImport(property: FirProperty): Boolean
+    protected abstract fun isNonWritableModuleImport(property: FirProperty): Boolean
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
@@ -37,6 +39,6 @@ abstract class FirWebCommonVarInJsModuleFileChecker : FirPropertyChecker(MppChec
         if (!declaration.symbol.isNativeObject(context.session)) return
         if (!isNonWritableModuleImport(declaration)) return
 
-        reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE)
+        reporter.reportOn(declaration.source, diagnostic)
     }
 }
