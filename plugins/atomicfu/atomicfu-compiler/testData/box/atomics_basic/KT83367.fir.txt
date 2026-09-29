@@ -1,0 +1,31 @@
+Module: lib
+FILE: lib.kt
+    private final class HolderWrapper : R|kotlin/Any| {
+        public constructor(any: R|kotlin/Any|): R|HolderWrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val any: R|kotlin/Any| = R|<local>/any|
+            public get(): R|kotlin/Any|
+
+        public final val flag: R|kotlinx/atomicfu/AtomicBoolean| = R|kotlinx/atomicfu/atomic|(Boolean(false))
+            public get(): R|kotlinx/atomicfu/AtomicBoolean|
+
+    }
+    public final class Accessor : R|kotlin/Any| {
+        public constructor(): R|Accessor| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun access(): R|kotlin/Unit| {
+            lval h: R|HolderWrapper| = R|/HolderWrapper.HolderWrapper|(String())
+            R|<local>/h|.R|/HolderWrapper.flag|.R|kotlinx/atomicfu/AtomicBoolean.compareAndSet|(Boolean(false), Boolean(true))
+        }
+
+    }
+Module: app
+FILE: app.kt
+    public final fun box(): R|kotlin/String| {
+        lval a: R|Accessor| = R|/Accessor.Accessor|()
+        ^box String(OK)
+    }

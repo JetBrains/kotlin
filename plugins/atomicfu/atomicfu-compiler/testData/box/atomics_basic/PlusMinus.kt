@@ -1,3 +1,4 @@
+// FIR_DUMP
 import kotlinx.atomicfu.*
 import kotlin.test.*
 

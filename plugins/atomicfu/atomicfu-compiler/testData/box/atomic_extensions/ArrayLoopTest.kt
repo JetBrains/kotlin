@@ -1,4 +1,5 @@
 // DUMP_IR_DIFFERENCE: JS_IR
+// FIR_DUMP
 import kotlinx.atomicfu.*
 import kotlin.test.*
 
