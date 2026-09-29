@@ -22,12 +22,7 @@ import kotlin.reflect.jvm.javaField
 
 private object CovariantOverrideComparator : Comparator<ReflectKCallable<*>> {
     override fun compare(a: ReflectKCallable<*>, b: ReflectKCallable<*>): Int {
-        val typeParametersEliminator = a.typeParameters.substitutedWith(b.typeParameters)
-            ?: error(
-                "Intersection overrides can't have different type parameters sizes. " +
-                        "It must have been reported by the compiler. " +
-                        "The following members appear to be violating intersection overrides: '$a' '$b'"
-            )
+        val typeParametersEliminator = a.typeParameters.substitutedWith(b.typeParameters) ?: return 0
         val aReturnType = typeParametersEliminator.substituteTopLevelType(a.returnType, a.name)
         val bReturnType = b.returnType
 
