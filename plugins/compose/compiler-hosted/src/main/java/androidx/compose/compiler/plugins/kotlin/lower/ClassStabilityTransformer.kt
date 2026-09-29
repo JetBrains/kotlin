@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.IrImplementationDetail
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -162,12 +161,10 @@ class ClassStabilityTransformer(
             stableExpr = if (externalParameters)
                 irConst(UNSTABLE)
             else
-                @OptIn(ObsoleteDescriptorBasedAPI::class)
                 stability.irStableExpression(
                     resolve = { irConst(STABLE) },
                     reportUnknownStability = { unstableClassesWarning?.add(it) }) ?: irConst(UNSTABLE)
         } else {
-            @OptIn(ObsoleteDescriptorBasedAPI::class)
             stableExpr =
                 stability.irStableExpression(reportUnknownStability = { unstableClassesWarning?.add(it) }) ?: irConst(UNSTABLE)
             if (stability.knownStable()) {
