@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.resultOrNull
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -125,6 +129,13 @@ fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId, session: Fir
 
 fun List<FirAnnotation>.getAnnotationByClassId(classId: ClassId, session: FirSession): FirAnnotation? {
     return getAnnotationsByClassId(classId, session).firstOrNull()
+}
+
+@OptIn(UnresolvedExpressionTypeAccess::class)
+fun List<FirAnnotation>.getCompilerRequiredAnnotationByClassId(classId: ClassId): FirAnnotation? {
+    return firstOrNull {
+        /*it.resolved && */ it.coneTypeOrNull?.classLikeLookupTagIfAny?.classId == classId
+    }
 }
 
 fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> =
