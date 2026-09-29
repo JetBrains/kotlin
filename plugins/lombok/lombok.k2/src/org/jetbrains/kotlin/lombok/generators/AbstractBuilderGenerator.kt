@@ -619,7 +619,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             /**
              * Existing classifier names are extracted differently for Java and Kotlin:
              *  - For Java: Names are not present in FIR declarations but can be safely retrieved
-             *    via `getNestedClassifierScope`.
+             *    via `existingNestedClassifierNames`.
              *  - For Kotlin: Names exist in FIR declarations, but calling scope functions here
              *    triggers infinite recursion.
              *
