@@ -9,6 +9,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirDestructuringDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.fir.unwrapSafeCall
 import org.jetbrains.kotlin.analysis.api.fir.utils.unwrap
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAss
 import org.jetbrains.kotlin.analysis.api.internals.KaInternalsExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.containingSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.directlyOverriddenSymbols
 import org.jetbrains.kotlin.analysis.api.types.KaErrorType
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaFunctionType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.createInheritanceTypeSubstitutor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.fir.*
@@ -283,16 +287,20 @@ internal class KaFirExpressionTypeProvider(
     override fun returnType(declaration: KtDeclarationWithReturnType): KaType = declaration.withPsiValidityAssertion {
         declaration.inferReturnTypeByPsi()?.let { return it }
 
-        val firDeclaration = if (declaration is KtParameter && declaration.ownerDeclaration == null) {
-            declaration.getOrBuildFir(resolutionFacade)
-        } else {
-            declaration.resolveToFirSymbol(resolutionFacade, FirResolvePhase.TYPES).fir
+        // Function type parameters have no symbol
+        if (declaration is KtParameter && declaration.isFunctionTypeParameter) {
+            val firParameter = declaration.getOrBuildFirOfType<FirFunctionTypeParameter>(resolutionFacade)
+            return firParameter.returnTypeRef.coneType.asKaType()
         }
 
-        return when (firDeclaration) {
-            is FirCallableDeclaration -> firDeclaration.symbol.resolvedReturnType.asKaType()
-            is FirFunctionTypeParameter -> firDeclaration.returnTypeRef.coneType.asKaType()
-            else -> unexpectedElementError<FirElement>(firDeclaration)
+        return when (val symbol = with(analysisSession) { declaration.symbol }) {
+            // The symbol has the element type, while the declaration is consumed as an array at the use site
+            is KaFirValueParameterSymbol if symbol.isVararg -> symbol.firSymbol.resolvedReturnType.asKaType()
+            is KaCallableSymbol -> symbol.returnType
+
+            // The destructuring declaration symbol is not callable, but its underlying container variable has a type
+            is KaFirDestructuringDeclarationSymbol -> symbol.firSymbol.resolvedReturnType.asKaType()
+            else -> unexpectedElementError<KaSymbol>(symbol)
         }
     }
 
