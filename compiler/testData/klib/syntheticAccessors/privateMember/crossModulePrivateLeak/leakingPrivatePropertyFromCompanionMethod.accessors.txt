@@ -1,6 +1,6 @@
-/* MODULE name=<main> */
+/* MODULE name=<lib> */
 
-/* FILE package=<root> fileName=leakingPrivatePropertyFromCompanionMethod.kt */
+/* FILE package=<root> fileName=A.kt */
 
 internal class UndoManager<R : Any?>
     private val o: String
@@ -16,6 +16,12 @@ internal class UndoManager<R : Any?>
         /* TARGET use-site */ $this.<get-o>()
     /* ACCESSOR declaration */ internal companion fun <R : Any?> access$<get-k>($this: UndoManager<R>): String
         /* TARGET use-site */ $this.<get-k>()
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
 public fun box(): String
     /* ACCESSOR use-site */ access$<get-o><Int>($this = value)
     /* ACCESSOR use-site */ access$<get-k><Int>($this = value)
