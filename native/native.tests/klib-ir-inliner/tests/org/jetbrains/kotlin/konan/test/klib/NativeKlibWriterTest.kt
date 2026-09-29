@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.backend.common.KlibSignatureIndexComponentWriterImpl
+import org.jetbrains.kotlin.backend.common.includeSignatureIndex
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest
 import org.jetbrains.kotlin.konan.library.writer.includeBitcode
 import org.jetbrains.kotlin.konan.library.writer.includeNativeIncludedBinaries
@@ -14,7 +16,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.klib.NativeKlibWriterTest.NewNativeKlibWriterParameters
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import org.jetbrains.kotlin.library.KlibFormat
+import org.jetbrains.kotlin.library.KlibMockDSL
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
+import org.jetbrains.kotlin.library.SerializedSignatureIndex
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.writer.KlibWriter
 import org.jetbrains.kotlin.library.writer.includeIr
@@ -27,6 +31,7 @@ import kotlin.io.path.nameWithoutExtension
 class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterParameters>(::NewNativeKlibWriterParameters) {
     class NewNativeKlibWriterParameters : NativeParameters() {
         var targetsForManifest: List<KonanTarget>? = null
+        var signatureIndex: SerializedSignatureIndex? = null
     }
 
     @Test
@@ -39,6 +44,23 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
             runTestWithParameters {
                 this.targetsForManifest = targets
             }
+        }
+    }
+
+    @Test
+    fun `Writing a klib with and without signature index`() {
+        listOf(true, false).forEach { useSignatureIndex ->
+            runTestWithParameters {
+                signatureIndex = if (useSignatureIndex) KlibMockDSL.generateRandomSignatureIndex() else null
+            }
+        }
+    }
+
+    context(dsl: KlibMockDSL)
+    override fun customizeMockKlib(parameters: NewNativeKlibWriterParameters) {
+        super.customizeMockKlib(parameters)
+        parameters.signatureIndex?.let {
+            KlibSignatureIndexComponentWriterImpl(it).writeTo(dsl.rootDir)
         }
     }
 
@@ -76,6 +98,7 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
             }
             includeMetadata(parameters.metadata)
             includeIr(parameters.ir)
+            includeSignatureIndex(parameters.signatureIndex)
             includeBitcode(parameters.target, parameters.bitcodeFiles.map { it.file })
             includeNativeIncludedBinaries(parameters.target, parameters.nativeIncludedBinaryFiles.map { it.file })
         }.writeTo(klibLocation)
