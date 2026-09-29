@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 
@@ -38,6 +39,47 @@ public val KtExpression.expressionType: KaType?
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.expressionTypeProvider.expressionType(this)
+    }
+
+/**
+ * The return type of the given [KtDeclarationWithReturnType], either declared explicitly or inferred.
+ *
+ * Depending on the declaration kind, the return type is:
+ *
+ * - The return type for a function, including anonymous functions and function literals (lambdas). A function with a block body and
+ *   without a declared return type returns [Unit].
+ * - The constructed class type for a constructor, e.g., `Foo<T>` for a constructor of `class Foo<T>`.
+ * - The property type for a property and its getter, and [Unit] for its setter.
+ * - The field type for an explicit backing field, which may differ from the property type.
+ * - The parameter type for a value, context, lambda, `for` loop, `catch`, or function type parameter.
+ * - The type of the destructured value for a destructuring declaration, and the component type for its entries.
+ * - The enum class type for an enum entry.
+ *
+ * If the type cannot be resolved or inferred (e.g., it refers to an unresolved class, or implicit types depend on each other
+ * recursively), the result is a [KaErrorType][org.jetbrains.kotlin.analysis.api.types.KaErrorType].
+ *
+ * ### `vararg` parameters
+ *
+ * For a `vararg foo: T` parameter, the resulting type is the full `Array<out T>` type, or a primitive array type such as `IntArray` for
+ * a primitive `T` (unlike [KaValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol.returnType],
+ * which is `T`).
+ *
+ * The reasoning behind this is that [KaCallableSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol.returnType]
+ * sees the parameter from the declaration's semantic perspective, representing the signature of the parameter, which contains just the
+ * element type. In this paradigm, `vararg` arrays are constructed separately under the hood.
+ *
+ * At the same time, [returnType] represents a use-site perspective, which has to desugar `vararg` parameters because they are consumed
+ * as array types.
+ *
+ * Apart from `vararg` parameters, the result is the same as the return type of the declaration's
+ * [KaCallableSymbol][org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol] if there is one (function type parameters have no symbol,
+ * and destructuring declarations have a non-callable symbol).
+ */
+context(session: KaSession)
+public val KtDeclarationWithReturnType.returnType: KaType
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.expressionTypeProvider.returnType(this)
     }
 
 /**
