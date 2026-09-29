@@ -230,10 +230,16 @@ private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.()
 private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> T?): T? =
     transform()
 
-private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext) =
-    correspondingProperty?.let {
-        !it.isExternal && it.isForLazyInit() && !it.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)
-    } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
+private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext): Boolean {
+    if (withPersistentSafe { origin in compatibleOrigins } != true) return false
+
+    val property = correspondingProperty ?: return true
+    if (property.isExternal) return false
+    if (!property.isForLazyInit()) return false
+    if (property.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)) return false
+
+    return true
+}
 
 private val compatibleOrigins = listOf(
     IrDeclarationOrigin.DEFINED,
