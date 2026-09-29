@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import java.io.File
 import java.io.StringWriter
+import org.jetbrains.kotlin.gradle.targets.wasm.WASM_UNIT_TESTS_ENTRY_POINT
 
 @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""js""""))
 const val JS = "js"
@@ -41,7 +42,7 @@ internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File
     testRunnerFile.writeText(
         """
         import * as exports from './${compiledFile.relativeTo(static).invariantSeparatorsPath}';
-        exports["startUnitTests"]?.();
+        exports["$WASM_UNIT_TESTS_ENTRY_POINT"]?.();
         """.trimIndent()
     )
     return testRunnerFile

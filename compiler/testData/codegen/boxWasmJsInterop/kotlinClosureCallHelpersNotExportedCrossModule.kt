@@ -27,7 +27,7 @@ import * as moduleExports from "./index.mjs"
 import { importObject } from './index.import-object.mjs'
 
 function check(list) {
-    const allowedList = ['startUnitTests', 'box'];
+    const allowedList = ['startunittests', 'box'];
     if (!list.every(element => allowedList.includes(element))) {
         throw 'Export list has unexpected elements: expected: [' + allowedList + '] but found [' + list + ']';
     }
