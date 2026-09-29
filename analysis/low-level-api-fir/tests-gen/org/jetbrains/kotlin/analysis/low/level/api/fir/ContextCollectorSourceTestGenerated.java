@@ -675,6 +675,164 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Nested
+  @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classMembers")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ClassMembers {
+    private void run(String fileName) {
+      runTest("analysis/low-level-api-fir/testData/contextCollector/classMembers/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInClassMembers() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/contextCollector/classMembers"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("bigClass_lastMember.kt")
+    public void testBigClass_lastMember() {
+      run("bigClass_lastMember.kt");
+    }
+
+    @Test
+    @TestMetadata("bigClass_trailingDanglingAnnotation.kt")
+    public void testBigClass_trailingDanglingAnnotation() {
+      run("bigClass_trailingDanglingAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("companionObject.kt")
+    public void testCompanionObject() {
+      run("companionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClassGeneratedMembers.kt")
+    public void testDataClassGeneratedMembers() {
+      run("dataClassGeneratedMembers.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedSupertype.kt")
+    public void testDelegatedSupertype() {
+      run("delegatedSupertype.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntriesWithBodies_classHeader.kt")
+    public void testEnumEntriesWithBodies_classHeader() {
+      run("enumEntriesWithBodies_classHeader.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntriesWithBodies_entryArgument.kt")
+    public void testEnumEntriesWithBodies_entryArgument() {
+      run("enumEntriesWithBodies_entryArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("explicitPrimaryConstructorSuperCallArgument.kt")
+    public void testExplicitPrimaryConstructorSuperCallArgument() {
+      run("explicitPrimaryConstructorSuperCallArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaDestructuringBody.kt")
+    public void testLambdaDestructuringBody() {
+      run("lambdaDestructuringBody.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaDestructuringEntry.kt")
+    public void testLambdaDestructuringEntry() {
+      run("lambdaDestructuringEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("localClass_capturedAssignmentBeforeTarget.kt")
+    public void testLocalClass_capturedAssignmentBeforeTarget() {
+      run("localClass_capturedAssignmentBeforeTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("localClass_capturedAssignmentInSibling.kt")
+    public void testLocalClass_capturedAssignmentInSibling() {
+      run("localClass_capturedAssignmentInSibling.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClasses_middleClassHeader.kt")
+    public void testNestedClasses_middleClassHeader() {
+      run("nestedClasses_middleClassHeader.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClasses_middleClassModifierList.kt")
+    public void testNestedClasses_middleClassModifierList() {
+      run("nestedClasses_middleClassModifierList.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClasses_middleClassSuperTypeList.kt")
+    public void testNestedClasses_middleClassSuperTypeList() {
+      run("nestedClasses_middleClassSuperTypeList.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClasses_middleMember.kt")
+    public void testNestedClasses_middleMember() {
+      run("nestedClasses_middleMember.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClasses_nestedClass.kt")
+    public void testNestedClasses_nestedClass() {
+      run("nestedClasses_nestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClasses_topMember.kt")
+    public void testNestedClasses_topMember() {
+      run("nestedClasses_topMember.kt");
+    }
+
+    @Test
+    @TestMetadata("useSiteAnnotation_field.kt")
+    public void testUseSiteAnnotation_field() {
+      run("useSiteAnnotation_field.kt");
+    }
+
+    @Test
+    @TestMetadata("useSiteAnnotation_get.kt")
+    public void testUseSiteAnnotation_get() {
+      run("useSiteAnnotation_get.kt");
+    }
+
+    @Test
+    @TestMetadata("useSiteAnnotation_param.kt")
+    public void testUseSiteAnnotation_param() {
+      run("useSiteAnnotation_param.kt");
+    }
+
+    @Test
+    @TestMetadata("useSiteAnnotation_set.kt")
+    public void testUseSiteAnnotation_set() {
+      run("useSiteAnnotation_set.kt");
+    }
+
+    @Test
+    @TestMetadata("useSiteAnnotation_setparam.kt")
+    public void testUseSiteAnnotation_setparam() {
+      run("useSiteAnnotation_setparam.kt");
+    }
+
+    @Test
+    @TestMetadata("valConstructorParameter.kt")
+    public void testValConstructorParameter() {
+      run("valConstructorParameter.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/codeFragments")
   @TestDataPath("$PROJECT_ROOT")
   public class CodeFragments {

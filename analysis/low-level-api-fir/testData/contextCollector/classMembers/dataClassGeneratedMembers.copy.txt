@@ -1,0 +1,45 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Static scope owner symbol: FirRegularClassSymbol public final data class Data : R|kotlin/Any|
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol first: R|kotlin/Int| = Int(1)
+                FirValueParameterSymbol second: R|kotlin/String|
+
+FILE: [ResolvedTo(IMPORTS)] dataClassGeneratedMembers.kt
+    public final? data [ResolvedTo(RAW_FIR)] class Data : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] first: R|kotlin/Int| = Int(1), [ResolvedTo(BODY_RESOLVE)] second: R|kotlin/String|): R|test/Data| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val first: Int = R|<local>/first|
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] val second: String = R|<local>/second|
+            public? [ResolvedTo(RAW_FIR)] get(): String
+
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int
+
+        public? final? [ResolvedTo(RAW_FIR)] fun member(): Int { LAZY_BLOCK }
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): String
+
+        public? final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] first: Int = this@R|test/Data|.R|test/Data.first|, [ResolvedTo(RAW_FIR)] second: String = this@R|test/Data|.R|test/Data.second|): R|test/Data|
+
+    }
