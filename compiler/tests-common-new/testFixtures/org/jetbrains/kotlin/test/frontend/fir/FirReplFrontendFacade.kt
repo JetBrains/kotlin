@@ -14,7 +14,11 @@ import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
+import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.replHistoryProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
@@ -28,6 +32,7 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
+import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
@@ -105,7 +110,13 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         )
     }
 
+    private val checkedSnippetModules = mutableSetOf<TestModule>()
+    private val erroneousSnippetModuleData = mutableSetOf<FirModuleData>()
+    private val erroneousSnippets = mutableListOf<FirReplSnippetSymbol>()
+
     override fun analyze(module: TestModule): FirOutputArtifact {
+        collectErroneousPrecedingSnippets(module)
+
         val moduleData = initializeModuleData(module)
 
         val firOutputPart = analyzeImpl(module, moduleData)
@@ -113,14 +124,30 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         return FirOutputArtifactImpl(listOf(firOutputPart))
     }
 
+    @OptIn(DirectDeclarationsAccess::class)
+    private fun collectErroneousPrecedingSnippets(module: TestModule) {
+        for (precedingModule in testServices.moduleStructure.modules.takeWhile { it != module }) {
+            if (!checkedSnippetModules.add(precedingModule)) continue
+            val artifact = testServices.artifactsProvider.getArtifactSafe(precedingModule, FrontendKinds.FIR) ?: continue
+            if (!testServices.firDiagnosticCollectorService.containsErrors(artifact)) continue
+            erroneousSnippetModuleData += testServices.firModuleInfoProvider.getCorrespondingModuleData(precedingModule)
+            erroneousSnippets += artifact.allFirFiles.flatMap { file -> file.declarations.filterIsInstance<FirReplSnippet>() }.map { it.symbol }
+        }
+    }
+
     private fun initializeModuleData(module: TestModule): FirModuleData {
         val moduleInfoProvider = testServices.firModuleInfoProvider
         val libraryList = replCompilationEnvironment.libraryList
 
-        val regularModules = libraryList.regularDependencies + moduleInfoProvider.getRegularDependentSourceModules(module)
+        fun List<FirModuleData>.withoutErroneousSnippets() = filter { it !in erroneousSnippetModuleData }
+
+        val regularModules =
+            libraryList.regularDependencies + moduleInfoProvider.getRegularDependentSourceModules(module).withoutErroneousSnippets()
         // TODO: collect instead of recursive traversal on each new snippet
-        val friendModules = libraryList.friendDependencies + moduleInfoProvider.getDependentFriendSourceModulesRecursively(module)
-        val dependsOnModules = libraryList.dependsOnDependencies + moduleInfoProvider.getDependentDependsOnSourceModules(module)
+        val friendModules =
+            libraryList.friendDependencies + moduleInfoProvider.getDependentFriendSourceModulesRecursively(module).withoutErroneousSnippets()
+        val dependsOnModules =
+            libraryList.dependsOnDependencies + moduleInfoProvider.getDependentDependsOnSourceModules(module).withoutErroneousSnippets()
 
         return FirSourceModuleData(
             Name.special("<${module.name}>"),
@@ -160,6 +187,8 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
                 registerExperimentalCheckers()
             }
         }.also(::registerExtraComponents)
+
+        moduleBasedSession.replHistoryProvider?.removeSnippets(erroneousSnippets)
 
         val firAnalyzerFacade = FirAnalyzerFacade(moduleBasedSession, ktFiles.values, parser = firParser)
         val firFiles = firAnalyzerFacade.runResolution()

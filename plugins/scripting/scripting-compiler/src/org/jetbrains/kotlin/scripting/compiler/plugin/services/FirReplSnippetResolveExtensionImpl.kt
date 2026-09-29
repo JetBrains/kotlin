@@ -45,6 +45,11 @@ class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
 
     override fun isImportedSnippet(symbol: FirReplSnippetSymbol): Boolean = symbol in importedSnippets
 
+    override fun removeSnippets(symbols: Collection<FirReplSnippetSymbol>) {
+        history.removeAll(symbols)
+        importedSnippets.removeAll(symbols)
+    }
+
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean = history.firstOrNull() == symbol
 
     override fun getSnippetCount(): Int = history.size - importedSnippets.size

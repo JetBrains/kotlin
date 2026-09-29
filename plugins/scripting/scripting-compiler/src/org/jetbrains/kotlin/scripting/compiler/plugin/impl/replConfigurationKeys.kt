@@ -9,8 +9,8 @@ import kotlin.script.experimental.api.ReplScriptCompilationConfigurationKeys
 import kotlin.script.experimental.util.PropertiesCollection
 
 /**
- * The number of the snippet being compiled. A host may set it; `K2ReplCompiler` always stores the effective value
- * in the refined configuration, where the FIR configurators read it.
+ * The number of the snippet being compiled. A host may set it to renumber the snippets from this value on;
+ * `K2ReplCompiler` always stores the effective value in the refined configuration, where the FIR configurators read it.
  */
 val ReplScriptCompilationConfigurationKeys.currentSnippetNo by PropertiesCollection.key<Int>(isTransient = true)
 
