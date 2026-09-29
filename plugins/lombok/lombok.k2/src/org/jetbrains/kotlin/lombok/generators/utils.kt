@@ -14,16 +14,9 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.processAllDeclaredCallables
-import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
-import org.jetbrains.kotlin.fir.declarations.utils.isExtension
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
@@ -31,16 +24,12 @@ import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.typeParameterSymbol
+import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.hasContextParameters
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
@@ -54,6 +43,7 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.addToStdlib.forEachZipped
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -393,3 +383,25 @@ fun ConeLombokAnnotations.CallSuper.shouldCallSuper(
 }
 
 abstract class LombokDeclarationKey : GeneratedDeclarationKey()
+
+/**
+ * Rewrites the bounds of [newTypeParameters], copied from [originalTypeParameters] (matched by index), so that they
+ * refer to the copies instead of the originals.
+ */
+fun remapTypeParameterBounds(
+    newTypeParameters: Collection<FirTypeParameter>,
+    originalTypeParameters: Collection<FirTypeParameterRef>,
+    session: FirSession
+) {
+    val substitution = buildMap {
+        originalTypeParameters.forEachZipped(newTypeParameters) { original, copy -> this[original.symbol] = copy.symbol.toConeType() }
+    }
+    val substitutor = substitutorByMap(substitution, session)
+
+    for (typeParameter in newTypeParameters) {
+        val remappedBounds = typeParameter.bounds.map { bound ->
+            bound.withReplacedConeType(substitutor.substituteOrNull(bound.coneType))
+        }
+        typeParameter.replaceBounds(remappedBounds)
+    }
+}
