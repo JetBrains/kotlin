@@ -70,13 +70,15 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+    testDataManager {
+        // Ensure golden tests run first
+        mustRunAfterProjects.add(":analysis:analysis-api-fir")
+    }
+}
+
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_21_0)) {
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            // Ensure golden tests run first
-            mustRunAfter(":analysis:analysis-api-fir:test")
-        }
-
         smokeTestConfig = SmokeTestConfig.Enabled(autoSmokeTestPercentage = 1)
     }
 

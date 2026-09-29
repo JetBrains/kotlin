@@ -106,6 +106,13 @@ kotlin {
     }
 }
 
+if (!kotlinBuildProperties.isTeamcityBuild.get()) {
+    testDataManager {
+        // Ensure golden tests run first since some LL tests are complementary for the surface tests
+        mustRunAfterProjects.add(":analysis:analysis-api-fir")
+    }
+}
+
 projectTests {
     testTask(
         defineJDKEnvVariables = listOf(
@@ -115,11 +122,6 @@ projectTests {
         )
     ) {
         addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
-
-        if (!kotlinBuildProperties.isTeamcityBuild.get()) {
-            // Ensure golden tests run first since some LL tests are complementary for the surface tests
-            mustRunAfter(":analysis:analysis-api-fir:test")
-        }
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.low.level.api.fir.TestGeneratorKt")

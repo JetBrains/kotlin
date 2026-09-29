@@ -84,10 +84,14 @@ internal fun Project.createGeneralTestTask(
 
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
-    return getOrCreateTask<Test>(taskName) {
+
+    val testTaskInitializer = fun Test.() {
         this.javaLauncher.set(getToolchainLauncherFor(javaLauncher))
 
-        if (taskName != "test" && classpath.isEmpty) {
+        // Only `test` gets its classpath from the java plugin; other tasks, including `testDataManagerWarmup`
+        // (configured with `taskName == "test"`), need this fallback. Checking the name first also avoids
+        // resolving the classpath of `test` during configuration.
+        if (name != "test" && classpath.isEmpty) {
             classpath = sourceSets.getByName("test").runtimeClasspath
             testClassesDirs = sourceSets.getByName("test").output.classesDirs
         }
@@ -201,6 +205,25 @@ internal fun Project.createGeneralTestTask(
         }
         body()
     }
+
+    // A special mock test task is required for the test data manager
+    // to be able to fully reuse its configuration without forcing real tests execution.
+    // Mirrors only `test`: other general test tasks (e.g., `codebaseTest`) must not add their configuration to it.
+    // `getOrCreateTask` like for `test` itself, so a repeated `testTask { ... }` configures both the same way.
+    if (taskName == "test") {
+        project.pluginManager.withPlugin("test-data-manager") {
+            getOrCreateTask<Test>("testDataManagerWarmup") {
+                description = "Carries Test configuration for test-data-manager"
+
+                testTaskInitializer()
+                onlyIf("configuration carrier; tests must not be executed") {
+                    false
+                }
+            }
+        }
+    }
+
+    return getOrCreateTask<Test>(taskName, testTaskInitializer)
 }
 
 private val Test.commandLineIncludePatterns: Set<String>
