@@ -1,0 +1,128 @@
+FILE[kind=Facade[packageFqName=test, facadeFqName=test.OperationReferencesKt]]
+  facadeFqName: test.OperationReferencesKt
+  partSimpleName: "OperationReferencesKt"
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=test]
+  IMPORT_LIST
+  PROPERTY[fqName=test.counter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=counter]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+  FUNCTION[fqName=test.postfixDecrement, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=postfixDecrement]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    POSTFIX_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=counter]
+      OPERATION_REFERENCE[operationToken=MINUSMINUS, referencedName=--]
+  FUNCTION[fqName=test.prefixDecrement, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=prefixDecrement]
+    VALUE_PARAMETER_LIST
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    PREFIX_EXPRESSION
+      OPERATION_REFERENCE[operationToken=MINUSMINUS, referencedName=--]
+      REFERENCE_EXPRESSION[referencedName=counter]
+  FUNCTION[fqName=test.greater, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=greater]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=a]
+      OPERATION_REFERENCE[operationToken=GT, referencedName=>]
+      REFERENCE_EXPRESSION[referencedName=b]
+  FUNCTION[fqName=test.lessOrEqual, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=lessOrEqual]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=a]
+      OPERATION_REFERENCE[operationToken=LTEQ, referencedName=<=]
+      REFERENCE_EXPRESSION[referencedName=b]
+  FUNCTION[fqName=test.notIdentical, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=notIdentical]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Any]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Any]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=a]
+      OPERATION_REFERENCE[operationToken=EXCLEQEQEQ, referencedName=!==]
+      REFERENCE_EXPRESSION[referencedName=b]
+  FUNCTION[fqName=test.contains, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contains]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=range]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=IntRange]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Boolean]
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=a]
+      OPERATION_REFERENCE[operationToken=in, referencedName=in]
+      REFERENCE_EXPRESSION[referencedName=range]
+  FUNCTION[fqName=test.in, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=in]
+    MODIFIER_LIST[infix]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      OPERATION_REFERENCE[operationToken=PLUS, referencedName=+]
+      REFERENCE_EXPRESSION[referencedName=other]
+  FUNCTION[fqName=test.backtickedInfixCall, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=backtickedInfixCall]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Int]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=Int]
+    BINARY_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=a]
+      OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=in]
+      REFERENCE_EXPRESSION[referencedName=b]

@@ -1,0 +1,31 @@
+FILE[kind=Script[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=AssignmentOperationReferences, fqName=AssignmentOperationReferences, isReplSnippet=false, name=AssignmentOperationReferences]
+    PROPERTY[fqName=AssignmentOperationReferences.counter, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=true, name=counter]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=0]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=counter]
+        OPERATION_REFERENCE[operationToken=PLUSEQ, referencedName=+=]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=counter]
+        OPERATION_REFERENCE[operationToken=MINUSEQ, referencedName=-=]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=counter]
+        OPERATION_REFERENCE[operationToken=MULTEQ, referencedName=*=]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=counter]
+        OPERATION_REFERENCE[operationToken=DIVEQ, referencedName=/=]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=4]
+    SCRIPT_INITIALIZER
+      BINARY_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=counter]
+        OPERATION_REFERENCE[operationToken=PERCEQ, referencedName=%=]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=5]
