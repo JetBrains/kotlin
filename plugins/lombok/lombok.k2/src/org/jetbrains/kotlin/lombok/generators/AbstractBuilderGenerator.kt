@@ -574,6 +574,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                                 }
                             }
                         ).apply {
+                            remapTypeParameterBounds(typeParameters, builderTypeParameters, session)
                             if (isStaticBuilderFunction) {
                                 replaceAnnotations(listOf(symbol.buildJvmStaticAnnotationCallOrError(session)))
                             }
@@ -1125,7 +1126,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * }
      * ```
      *
-     * We have to initialize the new type parameters for static `builder` (T -> T2) to make Java resolve robust:
+     * We have to initialize the new type parameters for static `builder` (T -> T2) to make Java/Kotlin resolve robust:
      *
      * ```java
      * public static <T2> CBuilder<T2> builder() {
@@ -1153,7 +1154,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      *
      * The function also handles type parameters on explicitly declared declarations.
      *
-     * @return a map used for remapping type parameters on a Java stack
+     * @return a map used for remapping type parameters on a Java stack/substitutors
      */
     @OptIn(SymbolInternals::class)
     private fun FirDeclaration.extractTypeParametersMapping(
@@ -1174,6 +1175,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                     symbol = FirTypeParameterSymbol()
                     containingDeclarationSymbol = newContainingDeclarationSymbol
                 }
+            }
+
+            // An existing declaration's type parameters keep the bounds the user wrote: only fresh copies are remapped.
+            if (!existingDeclaration) {
+                remapTypeParameterBounds(values, keys, session)
             }
         }
     }

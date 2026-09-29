@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
-
 import lombok.Builder
 import kotlin.test.assertEquals
 
@@ -32,11 +30,11 @@ class GenericWrapper {
 }
 
 fun box(): String {
-    assertEquals(1, SelfReferentialBound.builder<<!UPPER_BOUND_VIOLATED!>Int<!>>().value(1).build().value)
-    assertEquals("second", ForwardReferentialBound.builder<<!UPPER_BOUND_VIOLATED!>Key<!>, String>().first(Key()).second("second").build().second)
+    assertEquals(1, SelfReferentialBound.builder<Int>().value(1).build().value)
+    assertEquals("second", ForwardReferentialBound.builder<Key, String>().first(Key()).second("second").build().second)
 
     val wrapper = GenericWrapper()
-    assertEquals(1, wrapper.wrapWCBBuilder<<!UPPER_BOUND_VIOLATED!>Int<!>>().item(1).build().item)
+    assertEquals(1, wrapper.wrapWCBBuilder<Int>().item(1).build().item)
     assertEquals(1, wrapper.wrapCount)
 
     val test = BoundedTypeParameter.builder<String>().value("OK").build()

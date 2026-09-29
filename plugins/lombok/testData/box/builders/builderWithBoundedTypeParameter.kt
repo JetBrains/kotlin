@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
-
 // FILE: BoundedTypeParameter.java
 import lombok.Builder;
 import lombok.Getter;
@@ -53,8 +51,8 @@ fun box(): String {
     val test1 = BoundedTypeParameter.builder<String>().value("OK").build()
     val test2 = BoundedTypeParameter("1")
 
-    assertEquals(1, SelfReferentialBound.builder<<!UPPER_BOUND_VIOLATED!>Int<!>>().value(1).build().value)
-    assertEquals("second", ForwardReferentialBound.builder<<!UPPER_BOUND_VIOLATED!>Key<!>, String>().first(Key()).second("second").build().second)
+    assertEquals(1, SelfReferentialBound.builder<Int>().value(1).build().value)
+    assertEquals("second", ForwardReferentialBound.builder<Key, String>().first(Key()).second("second").build().second)
 
     return test1.value
 }
