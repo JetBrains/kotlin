@@ -68,6 +68,19 @@ class CacheBuilder(
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
     private val cacheRootDirectories = mutableMapOf<KotlinLibrary, String>()
 
+    // The cached files built during this compilation, grouped by library: the cache file IDs for the per-file cache
+    // builds, and `null` for the whole-library ones. See `wasRebuiltInThisRun`.
+    private val rebuiltCacheFiles = mutableMapOf<KotlinLibrary, MutableSet<String?>>()
+
+    /**
+     * Whether the cache of the given file of [library] (or of the whole [library], if [fileId] is `null`) has been
+     * built during this compilation.
+     */
+    fun wasRebuiltInThisRun(library: KotlinLibrary, fileId: String?): Boolean {
+        val rebuiltFiles = rebuiltCacheFiles[library] ?: return false
+        return null in rebuiltFiles || fileId in rebuiltFiles
+    }
+
     // If libA depends on libB, then dependableLibraries[libB] contains libA.
     private val dependableLibraries = mutableMapOf<KotlinLibrary, MutableList<KotlinLibrary>>()
 
@@ -566,6 +579,20 @@ class CacheBuilder(
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache
             serializedKlibDag = klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
+        }
+
+        recordRebuiltCacheFiles(library, makePerFileCache, filesToCache)
+    }
+
+    private fun recordRebuiltCacheFiles(library: KotlinLibrary, makePerFileCache: Boolean, filesToCache: List<String>) {
+        val rebuiltFiles = rebuiltCacheFiles.getOrPut(library) { mutableSetOf() }
+        if (!makePerFileCache || filesToCache.isEmpty()) {
+            // The cache of the whole library has been built.
+            rebuiltFiles += null
+        } else {
+            library.getFilesWithFqNames()
+                    .filter { it.filePath in filesToCache }
+                    .forEach { rebuiltFiles += CacheSupport.cacheFileId(it.fqName, it.filePath) }
         }
     }
 

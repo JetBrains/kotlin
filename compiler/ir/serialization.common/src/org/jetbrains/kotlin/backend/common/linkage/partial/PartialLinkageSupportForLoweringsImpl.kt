@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources
 fun createPartialLinkageSupportForLowerings(
     partialLinkageConfig: PartialLinkageConfig,
     diagnosticReporter: IrDiagnosticReporter,
+    issueSink: PartialLinkageIssueSink? = null,
 ): PartialLinkageSupportForLowerings = PartialLinkageSupportForLoweringsImpl(
-    PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel)
+    PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel, issueSink)
 )
 
 internal class PartialLinkageSupportForLoweringsImpl(

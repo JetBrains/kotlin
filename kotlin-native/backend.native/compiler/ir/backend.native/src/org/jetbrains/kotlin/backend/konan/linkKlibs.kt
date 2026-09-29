@@ -179,6 +179,7 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor):
             irDiagnosticReporter = irDiagnosticReporter,
             libraryBeingCached = config.libraryToCache,
             externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
+            partialLinkageIssueSink = config.partialLinkageIssues,
     )
 }
 

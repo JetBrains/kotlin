@@ -322,6 +322,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             try {
                 runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)
             } finally {
+                // The spawned compilation has its own diagnostics collector, which nothing else reports.
+                // Do it here, otherwise the diagnostics of e.g. the partial linkage engine would be lost (KT-78253).
+                CheckDiagnosticCollector.reportToMessageCollector(spawnedConfiguration)
                 perfManager?.addOtherUnitStats(spawnedPerfManager?.unitStats)
             }
         }

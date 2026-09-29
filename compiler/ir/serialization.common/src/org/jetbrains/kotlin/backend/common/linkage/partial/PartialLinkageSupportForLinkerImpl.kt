@@ -31,11 +31,12 @@ fun createPartialLinkageSupportForLinker(
     anyClass: IrClassSymbol,
     nothingClass: IrClassSymbol,
     diagnosticReporter: IrDiagnosticReporter,
+    issueSink: PartialLinkageIssueSink? = null,
 ): PartialLinkageSupportForLinker = PartialLinkageSupportForLinkerImpl(
     irFactory,
     anyClass,
     nothingClass,
-    PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel)
+    PartialLinkageLogger(diagnosticReporter, partialLinkageConfig.logLevel, issueSink)
 )
 
 internal class PartialLinkageSupportForLinkerImpl(
