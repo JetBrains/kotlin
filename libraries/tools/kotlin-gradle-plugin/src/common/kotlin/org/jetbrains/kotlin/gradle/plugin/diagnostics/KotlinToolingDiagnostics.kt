@@ -2019,6 +2019,14 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportWithoutAppleTargets : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke() = build {
+            title("Swift Export Configured Without Apple Targets")
+                .description("'export.swift { }' is configured, but the project declares no Apple target, so there is nothing to export.")
+                .solution("Declare an Apple target, such as 'iosArm64()', or remove the 'export.swift { }' block.")
+        }
+    }
+
     internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'swiftExport { }' DSL")

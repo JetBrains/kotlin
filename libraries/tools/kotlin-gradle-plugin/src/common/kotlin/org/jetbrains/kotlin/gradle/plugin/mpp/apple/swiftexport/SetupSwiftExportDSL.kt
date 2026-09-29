@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.shareSwiftExportMe
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.swiftExportDependencySelectorFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.tasks.locateOrRegisterSwiftExportMetadataTaskAndConsumableConfiguration
 import org.jetbrains.kotlin.gradle.plugin.statistics.SwiftExportDslMetrics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 
 internal object SwiftExportDSLConstants {
     const val SWIFT_EXPORT_EXTENSION_NAME = "swiftExport"
@@ -47,7 +49,12 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         .withType(KotlinNativeTarget::class.java)
         .matching { it.konanTarget.family.isAppleFamily }
 
-    if (appleTargets.isEmpty()) return@KotlinProjectSetupCoroutine
+    if (appleTargets.isEmpty()) {
+        if (exportExtension.isSwiftExportConfigured) {
+            project.reportDiagnostic(KotlinToolingDiagnostics.SwiftExportWithoutAppleTargets())
+        }
+        return@KotlinProjectSetupCoroutine
+    }
 
     if (exportExtension.isSwiftExportConfigured) {
         SwiftExportDslMetrics.collectSwiftExportConfigured(project)
@@ -83,15 +90,22 @@ internal val SetUpSwiftExportAction = KotlinProjectSetupCoroutine {
         }
     }
 
-    // The targets are awaited above, so the DSL is finalised by now and the activation is order-independent.
-    if (!multiplatformExtension.isSwiftExportXcodeIntegrationActivated()) return@KotlinProjectSetupCoroutine
+    // The targets are awaited above, so the DSL is finalised by now and the activations are order-independent.
+    val xcodeIntegrationActivated = multiplatformExtension.isSwiftExportXcodeIntegrationActivated()
+    val swiftPackageIntegrationActivated = swiftExportConfiguration.activatedSwiftPackageIntegration != null
+    if (xcodeIntegrationActivated || swiftPackageIntegrationActivated) {
+        swiftExportConfiguration.activatedXcodeIntegration?.let { activatedXcodeIntegration ->
+            SwiftExportDslMetrics.collectXcodeIntegrationMetrics(project, activatedXcodeIntegration)
+        }
 
-    swiftExportConfiguration.activatedXcodeIntegration?.let { activatedXcodeIntegration ->
-        SwiftExportDslMetrics.collectXcodeIntegrationMetrics(project, activatedXcodeIntegration)
+        initSwiftExportClasspathConfigurations()
+        if (xcodeIntegrationActivated) {
+            registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
+        }
+        if (swiftPackageIntegrationActivated) {
+            registerSwiftPackageExportPipeline(exportExtension)
+        }
     }
-
-    initSwiftExportClasspathConfigurations()
-    registerSwiftExportPipeline(legacySwiftExportExtension, exportExtension)
 }
 
 /**

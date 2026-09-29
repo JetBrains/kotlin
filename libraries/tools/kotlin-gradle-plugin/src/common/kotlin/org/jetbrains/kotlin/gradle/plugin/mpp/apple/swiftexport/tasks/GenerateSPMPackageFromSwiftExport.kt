@@ -12,6 +12,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -21,12 +22,15 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFinge
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.sharedPackageRootFor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftPackagePlatform
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.swiftModulesFile
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.utils.CommaSeparatedEntriesBuilder
 import org.jetbrains.kotlin.gradle.utils.StringBlockBuilder
 import org.jetbrains.kotlin.gradle.utils.buildStringBlock
 import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
 import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -55,6 +59,16 @@ internal abstract class SwiftExportTargetOutput {
     abstract val files: ConfigurableFileCollection
 }
 
+internal fun ObjectFactory.SwiftExportTargetOutput(
+    target: KotlinNativeTarget,
+    swiftExportTask: TaskProvider<SwiftExportTask>,
+): SwiftExportTargetOutput = newInstance<SwiftExportTargetOutput>().apply {
+    targetName.set(target.name)
+    this.target.set(target.konanTarget)
+    swiftModulesFile.set(swiftExportTask.flatMap { it.parameters.swiftModulesFile })
+    files.from(swiftExportTask.flatMap { it.parameters.outputDirectory })
+}
+
 @DisableCachingByDefault(because = "Swift Export is experimental, so no caching for now")
 internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     objectFactory: ObjectFactory,
@@ -62,6 +76,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
     init {
         onlyIf { HostManager.hostIsMac }
+        collectIncludes.convention(false)
     }
 
     @get:Input
@@ -124,10 +139,17 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     @get:OutputDirectory
     abstract val packagePath: DirectoryProperty
 
-    @get:OutputDirectory
-    val includesPath: DirectoryProperty = objectFactory.directoryProperty().apply {
-        set(packagePath.dir("OtherIncludes"))
-    }
+    /**
+     * Whether to collect the headers of every module into [includesPath] for the Xcode integration, which copies
+     * them into Xcode's products directory. Off in the package flow: the package carries its headers in its targets.
+     */
+    @get:Input
+    abstract val collectIncludes: Property<Boolean>
+
+    /** Inside [packagePath], so it needs no output declaration of its own. */
+    @get:Internal
+    val includesPath: Provider<Directory>
+        get() = packagePath.dir("OtherIncludes")
 
     @get:OutputDirectory
     val sourcesPath: DirectoryProperty = objectFactory.directoryProperty().apply {
@@ -282,6 +304,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     }
 
     private fun appendToOtherIncludes(name: String, path: File) {
+        if (!collectIncludes.get()) return
         val includesPath = includesPath.get()
         fileSystem.copy {
             it.from(path)

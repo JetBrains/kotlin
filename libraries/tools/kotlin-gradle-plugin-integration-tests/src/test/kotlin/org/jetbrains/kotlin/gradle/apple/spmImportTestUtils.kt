@@ -1086,6 +1086,7 @@ data class SwiftPackageTarget(
     @SerialName("product_dependencies") val productDependencies: List<String> = emptyList(),
     @SerialName("product_memberships") val productMemberships: List<String> = emptyList(),
     val sources: List<String> = emptyList(),
+    @SerialName("target_dependencies") val targetDependencies: List<String> = emptyList(),
     val type: String,
 )
 
