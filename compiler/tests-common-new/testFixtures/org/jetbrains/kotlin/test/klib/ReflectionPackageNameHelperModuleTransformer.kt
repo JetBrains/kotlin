@@ -5,16 +5,8 @@
 
 package org.jetbrains.kotlin.test.klib
 
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.model.DependencyDescription
-import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.DefaultsProvider
-import org.jetbrains.kotlin.test.services.ModuleStructureTransformer
-import org.jetbrains.kotlin.test.services.TestModuleStructure
-import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 import org.jetbrains.kotlin.test.testInfraError
 
 /**
@@ -30,77 +22,15 @@ import org.jetbrains.kotlin.test.testInfraError
  * The current stdlib contains this annotation as well, so it is necessary not to link the helper module into the executable,
  * to prevent `IllegalStateException: IrClassSymbolImpl is already bound. Signature: helpers/...` at link time.
  */
-@OptIn(TestInfrastructureInternals::class)
-object ReflectionPackageNameHelperModuleTransformer : ModuleStructureTransformer() {
+object ReflectionPackageNameHelperModuleTransformer : HelperModuleExtractingTransformer() {
     const val HELPERS_MODULE_NAME: String = "reflectionPackageNameHelper"
 
-    override fun transformModuleStructure(
-        moduleStructure: TestModuleStructure,
-        defaultsProvider: DefaultsProvider
-    ): TestModuleStructure {
-        val originalModules = moduleStructure.modules
+    override val helpersModuleName: String
+        get() = HELPERS_MODULE_NAME
 
-        // 1. Find the helper file. [ReflectionPackageNameAdditionalSourceProvider] attaches it to a single module,
-        //    and only when the test is going to be grouped, so its absence means there is nothing to do.
-        val helperFiles = originalModules.flatMap { module -> module.files.filter { isReflectionPackageNameHelperFile(it) } }
-        if (helperFiles.isEmpty()) return moduleStructure
-        val helperFile = helperFiles.singleOrNull()
-            ?: testInfraError("Expected a single ReflectionPackageName helper file, got ${helperFiles.size}")
-
-        // 2. Build the new helpers module.
-        //    - Uses the same language version settings as the first original module.
-        //    - Has no dependencies of its own.
-        val firstModule = originalModules.first()
-        val helpersModule = TestModule(
-            name = HELPERS_MODULE_NAME,
-            files = listOf(helperFile),
-            allDependencies = emptyList(),
-            directives = firstModule.directives,
-            languageVersionSettings = firstModule.languageVersionSettings,
-        )
-
-        val helpersDependency = DependencyDescription(
-            dependencyModule = helpersModule,
-            kind = DependencyKind.Binary,
-            relation = DependencyRelation.RegularDependency,
-        )
-
-        // 3. Strip helper files from each original module and add the dependency.
-        //    Rewrite dependencies recursively so every edge points to the final rewritten module
-        //    instance, rather than to an intermediate copy with stale dependencies.
-        val originalModulesByName = originalModules.associateBy { it.name }
-        val rewrittenModulesByName = mutableMapOf(HELPERS_MODULE_NAME to helpersModule)
-
-        fun rewriteModule(module: TestModule): TestModule {
-            rewrittenModulesByName[module.name]?.let { return it }
-
-            val rewrittenDependencies = module.allDependencies.map { dependency ->
-                val dependencyModule = when (val dependencyModuleName = dependency.dependencyModule.name) {
-                    HELPERS_MODULE_NAME -> helpersModule
-                    else -> originalModulesByName[dependencyModuleName]?.let(::rewriteModule)
-                        ?: testInfraError("Module $dependencyModuleName not found while rewriting dependencies of ${module.name}")
-                }
-                dependency.copy(dependencyModule = dependencyModule)
-            }
-            val newDependencies = if (rewrittenDependencies.any { it.dependencyModule.name == HELPERS_MODULE_NAME }) {
-                rewrittenDependencies
-            } else {
-                rewrittenDependencies + helpersDependency
-            }
-
-            return module.copy(
-                files = module.files.filterNot { isReflectionPackageNameHelperFile(it) },
-                allDependencies = newDependencies,
-            ).also { rewrittenModulesByName[module.name] = it }
-        }
-
-        val rewrittenModules = originalModules.map(::rewriteModule)
-
-        return TestModuleStructureImpl(
-            modules = listOf(helpersModule) + rewrittenModules,
-            originalTestDataFiles = moduleStructure.originalTestDataFiles,
-        )
-    }
+    /** [ReflectionPackageNameAdditionalSourceProvider] attaches the helper file to a single module. */
+    override fun selectHelpersModuleFiles(helperFiles: List<TestFile>): List<TestFile> =
+        listOf(helperFiles.singleOrNull() ?: testInfraError("Expected a single ReflectionPackageName helper file, got ${helperFiles.size}"))
 
     /**
      * Returns true if the given module is the dedicated helper module this transformer synthesizes.
@@ -112,7 +42,7 @@ object ReflectionPackageNameHelperModuleTransformer : ModuleStructureTransformer
      * Returns true if the given file is the synthetic ReflectionPackageName helper file produced
      * by [ReflectionPackageNameAdditionalSourceProvider].
      */
-    private fun isReflectionPackageNameHelperFile(file: TestFile): Boolean {
+    override fun isHelperFile(file: TestFile): Boolean {
         if (!file.isAdditional) return false
         // Cheap content check: helper files start with `package kotlin.internal`.
         val content = file.originalContent
