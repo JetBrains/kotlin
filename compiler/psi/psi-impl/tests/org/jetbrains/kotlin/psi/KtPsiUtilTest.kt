@@ -126,6 +126,38 @@ class KtPsiUtilTest(private val testInfo: TestInfo) : KotlinTestWithEnvironment(
         }
     }
 
+    /**
+     * A declaration is expected to be local if its name contains `Local`.
+     * A local declaration whose name ends with `InEntryLocal` is expected to be enclosed by the enum entry body.
+     */
+    @Test
+    fun testIsLocalInEnumEntry() {
+        val text = FileUtil.loadFile(
+            /* file = */ ForTestCompileRuntime.transformTestDataPath("compiler/psi/psi-impl/testData/psiUtil/isLocalEnumEntry.kt"),
+            /* convertLineSeparators = */ true
+        )
+        val file = KtPsiFactory(project).createFile(text)
+        val declarations = file.collectDescendantsOfType<KtNamedDeclaration> {
+            it is KtClassOrObject || it is KtNamedFunction || it is KtProperty
+        }
+
+        for (declaration in declarations) {
+            val name = declaration.name!!
+            val expectedLocal = name.contains("Local")
+            Assertions.assertEquals(expectedLocal, KtPsiUtil.isLocal(declaration)) { "KtPsiUtil.isLocal for $name" }
+            if (declaration is KtClassOrObject) {
+                Assertions.assertEquals(expectedLocal, declaration.isLocal()) { "KtClassOrObject.isLocal for $name" }
+            }
+
+            if (name.endsWith("InEntryLocal")) {
+                val enclosingElement = KtPsiUtil.getEnclosingElementForLocalDeclaration(declaration)
+                Assertions.assertTrue(enclosingElement is KtClassBody && enclosingElement.parent is KtEnumEntry) {
+                    "Enclosing element for $name is expected to be the enum entry body, but was $enclosingElement"
+                }
+            }
+        }
+    }
+
     @Test
     fun testIsSelectorInExpression() {
         checkIsSelectorInQualified()
