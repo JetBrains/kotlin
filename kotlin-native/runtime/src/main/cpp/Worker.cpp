@@ -226,7 +226,19 @@ void waitInNativeState(pthread_cond_t* cond,
           uint64_t timeoutNanoseconds,
           uint64_t* microsecondsPassed = nullptr) {
     kotlin::compactObjectPoolInCurrentThread();
+#if defined(__aarch64__)
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
+        mm::KotlinFrameAnchor anchor = mm::captureCallerFrameAnchor();
+        mm::ThreadRegistry::Instance().CurrentThreadData()->pushStackMapAnchor(anchor);
+    }
+#endif
+
     CallWithThreadState<ThreadState::kNative>(WaitOnCondVar, cond, mutex, timeoutNanoseconds, microsecondsPassed);
+#if defined(__aarch64__)
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain) {
+        mm::ThreadRegistry::Instance().CurrentThreadData()->popStackMapAnchor();
+    }
+#endif
 }
 
 KULong pthreadToNumber(pthread_t thread) {
