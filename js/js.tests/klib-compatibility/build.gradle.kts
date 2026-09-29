@@ -114,7 +114,8 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomSecondStage_$version",
-        tag = "custom-second-stage"
+        tag = "custom-second-stage",
+        enableGroupingTestEngine = true,
     )
 }
 

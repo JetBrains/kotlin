@@ -1,12 +1,14 @@
 package org.jetbrains.kotlin.js.test.klib
 
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.test.klib.runSanityTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.opentest4j.AssertionFailedError
 import org.opentest4j.TestAbortedException
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -17,13 +19,13 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
 
     @Test
     fun checkPassed() {
-        runTest(testDataRoot + "green.kt")
+        runSanityTest(testDataRoot + "green.kt")
     }
 
     @Test
     fun checkGreenNeedsUnmuting() {
         val exception = assertThrowsIfNotMuted<AssertionError> {
-            runTest(testDataRoot + "greenNeedsUnmuting.kt")
+            runSanityTest(testDataRoot + "greenNeedsUnmuting.kt")
         }
         val expected = "Looks like this test can be unmuted. " +
                 "Remove ${customJsCompilerSettings.defaultLanguageVersion} from the IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE directive"
@@ -32,16 +34,16 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
 
     @Test
     fun checkIncorrectBoxResult() {
-        val exception = assertThrowsIfNotMuted<AssertionFailedError> {
-            runTest(testDataRoot + "incorrectBoxResult.kt")
+        val exception = assertThrowsIfNotMuted<AssertionError> {
+            runSanityTest(testDataRoot + "incorrectBoxResult.kt")
         }
-        assertEquals("expected: <OK> but was: <FAIL>", exception.message)
+        assertContains(exception.message!!, "Test failed with: FAIL. Expected <OK>, actual <FAIL>.")
     }
 
     @Test
     fun checkNotMutedWithIgnoreRuntimeErrors1stStage() {
         val exception = assertThrowsIfNotMuted<AssertionFailedError> {
-            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
+            runSanityTest(testDataRoot + "mutedWithIgnoreRuntimeErrors1stStage.kt")
         }
         assertEquals("expected: <OK> but was: <FAIL>", exception.message)
     }
@@ -49,7 +51,7 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
     @Test
     fun checkMutedWithIgnoreRuntimeErrors2ndStage() {
         val exception = assertThrowsIfNotMuted<TestAbortedException> {
-            runTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
+            runSanityTest(testDataRoot + "mutedWithIgnoreRuntimeErrors2ndStage.kt")
         }
         assertEquals(null, exception.message)
     }
@@ -59,7 +61,7 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
         Assumptions.assumeTrue(LanguageVersion.LATEST_STABLE == customJsCompilerSettings.defaultLanguageVersion)
         // current testdata is expected to be parsed by the current frontend. So errors must not be muted
         val exception = assertThrowsIfNotMuted<Exception> {
-            runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
+            runSanityTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
         assertTrue(exception.message!!.startsWith("UNRESOLVED_REFERENCE: Unresolved reference 'FAIL'. at mutedDueToFrontendErrorWithCustom1stStage.kt:"),
             "Unexpected exception message: ${exception.message}")
@@ -70,7 +72,7 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
         Assumptions.assumeFalse(LanguageVersion.LATEST_STABLE == customJsCompilerSettings.defaultLanguageVersion)
         // Some tests cannot be compiled with previous LV, so the frontend errors must be muted
         val exception = assertThrowsIfNotMuted<TestAbortedException> {
-            runTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
+            runSanityTest(testDataRoot + "mutedDueToFrontendErrorWithCustom1stStage.kt")
         }
         assertEquals(null, exception.message)
     }
@@ -79,7 +81,7 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
     fun checkRecompileIgnoredLatestLV() {
         Assumptions.assumeTrue(LanguageVersion.LATEST_STABLE == customJsCompilerSettings.defaultLanguageVersion)
         // RECOMPILE does not raise exception when testing against 2.4.0
-        runTest(testDataRoot + "recompile.kt")
+        runSanityTest(testDataRoot + "recompile.kt")
     }
 
     @Test
@@ -87,7 +89,7 @@ class CustomJsCompilerSecondStageSanity : AbstractCustomJsCompilerSecondStageTes
         Assumptions.assumeFalse(LanguageVersion.LATEST_STABLE == customJsCompilerSettings.defaultLanguageVersion)
         // RECOMPILE raises exception when testing against 2.3.0
         val exception = assertThrowsIfNotMuted<TestAbortedException> {
-            runTest(testDataRoot + "recompile.kt")
+            runSanityTest(testDataRoot + "recompile.kt")
         }
         assertEquals(null, exception.message)
     }
