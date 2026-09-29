@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinMultiplatformPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
@@ -38,7 +39,7 @@ import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile<*>>(
     project: Project,
     val explicitApiMode: Provider<ExplicitApiMode>,
-    val returnValueCheckerMode: Provider<ReturnValueCheckerMode> = project.providers.provider<ReturnValueCheckerMode> { null },
+    val returnValueCheckerMode: Provider<ReturnValueCheckerMode>
 ) : TaskConfigAction<TASK>(project) {
 
     init {
@@ -133,13 +134,7 @@ private fun KotlinCompilationInfo.explicitApiMode(): Provider<ExplicitApiMode> =
     val compilation = tcs.compilation
     val isCommonCompilation = compilation.target is KotlinMetadataTarget
 
-    val androidCompilation = tcs.compilation as? KotlinJvmAndroidCompilation
-    val isMainAndroidCompilation = androidCompilation?.let {
-        @Suppress("DEPRECATION") val variant = it.androidVariant
-        variant != null && getTestedVariantData(variant) == null
-    } == true
-
-    if (isMain || isCommonCompilation || isMainAndroidCompilation) {
+    if (isMain || isCommonCompilation || compilation.isMainAndroidCompilation()) {
         project.topLevelExtension.explicitApi
     } else {
         ExplicitApiMode.Disabled
@@ -147,7 +142,7 @@ private fun KotlinCompilationInfo.explicitApiMode(): Provider<ExplicitApiMode> =
 }
 
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
-private fun KotlinCompilationInfo.returnValueCheckerMode(): Provider<ReturnValueCheckerMode> = project.providers.provider {
+private fun KotlinCompilationInfo.returnValueCheckerMode(): Provider<ReturnValueCheckerMode> {
     // Unlike 'explicitApi', the return value checker mode applies to both production and test sources by default.
     // The test-specific mode is used only when it was explicitly configured.
     // Note: 'isCommonCompilation' here ('target is KotlinMetadataTarget') and 'isMetadataCompilation'
@@ -156,18 +151,18 @@ private fun KotlinCompilationInfo.returnValueCheckerMode(): Provider<ReturnValue
     val compilation = tcs.compilation
     val isCommonCompilation = compilation.target is KotlinMetadataTarget
 
-    val androidCompilation = tcs.compilation as? KotlinJvmAndroidCompilation
-    val isMainAndroidCompilation = androidCompilation?.let {
-        @Suppress("DEPRECATION") val variant = it.androidVariant
-        variant != null && getTestedVariantData(variant) == null
-    } == true
-
     val extension = project.topLevelExtension
-    if (isMain || isCommonCompilation || isMainAndroidCompilation) {
+    return if (isMain || isCommonCompilation || compilation.isMainAndroidCompilation()) {
         extension.returnValueCheckerMode
     } else {
-        extension.returnValueCheckerModeForTests ?: extension.returnValueCheckerMode
+        extension.returnValueCheckerModeForTests.orElse(extension.returnValueCheckerMode)
     }
+}
+
+private fun KotlinCompilation<*>.isMainAndroidCompilation(): Boolean {
+    val androidCompilation = this as? KotlinJvmAndroidCompilation ?: return false
+    @Suppress("DEPRECATION") val variant = androidCompilation.androidVariant ?: return false
+    return getTestedVariantData(variant) == null
 }
 
 internal abstract class TaskConfigAction<TASK : Task>(protected val project: Project) {

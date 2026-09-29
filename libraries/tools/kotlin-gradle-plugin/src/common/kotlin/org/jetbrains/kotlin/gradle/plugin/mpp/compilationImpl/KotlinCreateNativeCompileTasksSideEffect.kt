@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
 import org.jetbrains.kotlin.gradle.plugin.addToAssemble
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationSharedData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinCrossCompilationMetrics
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
@@ -72,16 +73,14 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
             }
         ).finalizeValueOnRead()
         task.returnValueCheckerMode.value(
-            project.providers.provider {
-                // Unlike 'explicitApi', the return value checker mode applies to both production and test sources
-                // by default. The test-specific mode is used only when it was explicitly configured.
-                // Shared/intermediate native metadata compilations (e.g. 'nativeMain') are production code, not tests,
-                // so they must use the production mode like 'isMain' compilations do.
-                if (compilationInfo.isMain || isMetadataCompilation) {
-                    extension.returnValueCheckerMode
-                } else {
-                    extension.returnValueCheckerModeForTests ?: extension.returnValueCheckerMode
-                }
+            // Unlike 'explicitApi', the return value checker mode applies to both production and test sources
+            // by default. The test-specific mode is used only when it was explicitly configured.
+            // Shared/intermediate native metadata compilations (e.g. 'nativeMain') are production code, not tests,
+            // so they must use the production mode like 'isMain' compilations do.
+            if (compilationInfo.isMain || compilationInfo.compilation is KotlinMetadataCompilation<*>) {
+                extension.returnValueCheckerMode
+            } else {
+                extension.returnValueCheckerModeForTests.orElse(extension.returnValueCheckerMode)
             }
         ).finalizeValueOnRead()
         task.kotlinNativeProvider.set(

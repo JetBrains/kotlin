@@ -44,7 +44,7 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         project: Project,
         explicitApiMode: Provider<ExplicitApiMode>,
         kaptExtension: KaptExtensionConfig
-    ) : super(project, explicitApiMode) {
+    ) : super(project, explicitApiMode, project.provider { null }) {
         configureFromExtension(kaptExtension)
     }
 

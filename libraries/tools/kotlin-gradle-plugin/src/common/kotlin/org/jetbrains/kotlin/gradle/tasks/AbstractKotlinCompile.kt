@@ -125,10 +125,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Optional
     abstract val explicitApiMode: Property<ExplicitApiMode>
 
-    @get:Input
-    @get:Optional
-    abstract val returnValueCheckerMode: Property<ReturnValueCheckerMode>
-
     @get:Internal
     internal abstract val suppressKotlinOptionsFreeArgsModificationWarning: Property<Boolean>
 

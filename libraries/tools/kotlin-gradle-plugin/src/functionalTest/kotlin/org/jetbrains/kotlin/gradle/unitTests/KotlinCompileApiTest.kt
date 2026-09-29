@@ -164,19 +164,6 @@ class KotlinCompileApiTest {
         assertEquals((task.get() as KotlinCompile).explicitApiMode.get(), ExplicitApiMode.Strict)
     }
 
-    @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    @Test
-    fun testCustomReturnValueCheckerMode() {
-        val task = plugin.registerKotlinJvmCompileTask(
-            "customKotlinCompile",
-            topLevelCompilerOptions,
-            project.provider { ExplicitApiMode.Disabled },
-            project.provider { ReturnValueCheckerMode.Check },
-        )
-
-        assertEquals(ReturnValueCheckerMode.Check, (task.get() as KotlinCompile).returnValueCheckerMode.get())
-    }
-
     @Test
     fun testTopLevelCompilerOptionsCouldBeOverriden() {
         taskApi.compilerOptions.progressiveMode.set(false)

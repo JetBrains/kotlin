@@ -111,19 +111,6 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
         taskName: String,
         compilerOptions: KotlinJvmCompilerOptions,
         explicitApiMode: Provider<ExplicitApiMode>,
-    ): TaskProvider<out KotlinJvmCompile> = registerKotlinJvmCompileTask(
-        taskName,
-        compilerOptions,
-        explicitApiMode,
-        providerFactory.provider { null },
-    )
-
-    @ExperimentalKotlinGradlePluginApi
-    override fun registerKotlinJvmCompileTask(
-        taskName: String,
-        compilerOptions: KotlinJvmCompilerOptions,
-        explicitApiMode: Provider<ExplicitApiMode>,
-        returnValueCheckerMode: Provider<ReturnValueCheckerMode>,
     ): TaskProvider<out KotlinJvmCompile> {
         val taskCompilerOptions = createCompilerJvmOptions()
         KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(compilerOptions, taskCompilerOptions)
@@ -134,7 +121,7 @@ abstract class KotlinBaseApiPlugin : DefaultKotlinBasePlugin(), KotlinJvmFactory
             KotlinCompileConfig(
                 myProject,
                 explicitApiMode,
-                returnValueCheckerMode,
+                providerFactory.provider { null }
             )
         )
         return registeredKotlinJvmCompileTask
