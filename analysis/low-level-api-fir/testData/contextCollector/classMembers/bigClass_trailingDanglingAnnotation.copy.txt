@@ -35,45 +35,25 @@ FILE: [ResolvedTo(IMPORTS)] bigClass_trailingDanglingAnnotation.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member1(): R|kotlin/Int| {
-            ^member1 Int(1)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member1(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member2(): R|kotlin/Int| {
-            ^member2 Int(2)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member2(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member3(): R|kotlin/Int| {
-            ^member3 Int(3)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member3(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member4(): R|kotlin/Int| {
-            ^member4 Int(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member4(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member5(): R|kotlin/Int| {
-            ^member5 Int(5)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member5(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member6(): R|kotlin/Int| {
-            ^member6 Int(6)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member6(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member7(): R|kotlin/Int| {
-            ^member7 Int(7)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member7(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member8(): R|kotlin/Int| {
-            ^member8 Int(8)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member8(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member9(): R|kotlin/Int| {
-            ^member9 Int(9)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member9(): Int { LAZY_BLOCK }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun member10(): R|kotlin/Int| {
-            ^member10 Int(10)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun member10(): Int { LAZY_BLOCK }
 
         [ResolvedTo(BODY_RESOLVE)] @R|test/Anno|[Types](value = R|test/CONSTANT| [evaluated = Int(1)]) <DANGLING MODIFIER: Top level declaration expected>
     }

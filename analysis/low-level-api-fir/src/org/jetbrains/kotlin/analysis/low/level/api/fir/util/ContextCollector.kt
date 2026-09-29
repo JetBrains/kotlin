@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -725,6 +726,7 @@ private class ContextCollectorVisitor(
                     onActive {
                         withLocalVariableHolder(onEnter = { enterClass(regularClass) }, onExit = { exitClass() }) {
                             withInterceptor {
+                                skipUnrelatedClassBodyMembers(regularClass)
                                 processChildren(regularClass)
                             }
                         }
@@ -809,6 +811,28 @@ private class ContextCollectorVisitor(
                 processList(regularClass.contextParameters)
                 processList(regularClass.typeParameters)
                 processList(regularClass.superTypeRefs)
+            }
+        }
+    }
+
+    /**
+     * Once the designation is exhausted, skips class body members that don't contain the target:
+     * no context can be collected inside them, but visiting them would trigger their body analysis (KT-76375).
+     *
+     * Only members with a real source declared directly in the class body are skipped, as FIR might put the target under
+     * members with a fake source (e.g., data class generated members) or declared outside the class body
+     * (e.g., constructor properties, delegate fields, or the primary constructor with its delegated constructor call).
+     * Each member is checked by its own PSI, as the FIR tree of a class body member never leaves its PSI.
+     */
+    private fun Processor.skipUnrelatedClassBodyMembers(regularClass: FirRegularClass) {
+        if (designationPathInterceptor == null) {
+            return
+        }
+
+        for (declaration in regularClass.declarations) {
+            val psi = declaration.realPsi ?: continue
+            if (psi.parent is KtClassBody && filter(psi) == FilterResponse.SKIP) {
+                skip(declaration)
             }
         }
     }
@@ -1219,6 +1243,10 @@ private class ContextCollectorVisitor(
                 process(element)
                 elementsToSkip += element
             }
+        }
+
+        fun skip(element: FirElement) {
+            elementsToSkip += element
         }
 
         fun processChildren(element: FirElement, checkIsActive: Boolean = true) {

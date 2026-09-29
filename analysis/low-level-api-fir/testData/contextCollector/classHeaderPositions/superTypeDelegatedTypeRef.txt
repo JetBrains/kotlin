@@ -31,8 +31,8 @@ FILE: [ResolvedTo(IMPORTS)] superTypeDelegatedTypeRef.kt
     public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Base|, R|test/MyInterface| {
         private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|test/MyInterface| = R|test/Base.Nested.Nested|()
 
-        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Child| {
-            super<R|test/Base|>()
+        public [ResolvedTo(STATUS)] constructor(): R|test/Child| {
+            LAZY_super<<implicit>>
         }
 
     }
