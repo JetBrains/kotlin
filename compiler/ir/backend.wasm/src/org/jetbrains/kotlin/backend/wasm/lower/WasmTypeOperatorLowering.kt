@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isSubtypeOf
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -47,16 +47,34 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private lateinit var builder: DeclarationIrBuilder
 
+    // Functions of the enclosing inlined function blocks (null for inlined lambdas).
+    private val enclosingInlinedFunctions = ArrayDeque<IrFunction?>()
+
+    // The implicit cast which initializes the compiler temporary currently being visited, if any.
+    private var temporaryInitializer: IrTypeOperatorCall? = null
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
+        enclosingInlinedFunctions.addLast(inlinedBlock.inlinedFunctionSymbol?.owner)
+        try {
+            return super.visitInlinedFunctionBlock(inlinedBlock)
+        } finally {
+            enclosingInlinedFunctions.removeLast()
+        }
+    }
+
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        // Must be decided before the argument is lowered, as that changes its shape and type.
+        val isImplicit = expression.operator == IrTypeOperator.IMPLICIT_CAST || expression.operator == IrTypeOperator.IMPLICIT_NOTNULL
+        val needsRuntimeCheck = isImplicit && shouldGenerateKotlinCast(expression)
         super.visitTypeOperator(expression)
         builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
 
         return when (expression.operator) {
-            IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression)
+            IrTypeOperator.IMPLICIT_CAST -> lowerImplicitCast(expression, needsRuntimeCheck)
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Dynamic casts are not supported in Wasm backend")
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> expression
             IrTypeOperator.IMPLICIT_INTEGER_COERCION -> lowerIntegerCoercion(expression)
-            IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitCast(expression)
+            IrTypeOperator.IMPLICIT_NOTNULL -> lowerImplicitCast(expression, needsRuntimeCheck)
             IrTypeOperator.INSTANCEOF -> lowerInstanceOf(expression, inverted = false)
             IrTypeOperator.NOT_INSTANCEOF -> lowerInstanceOf(expression, inverted = true)
             IrTypeOperator.CAST -> lowerCast(expression, isSafe = false)
@@ -69,6 +87,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     override fun visitVariable(declaration: IrVariable): IrStatement {
         // Some IR passes, notable for-loops-lowering assumes implicit cast during variable initialization
         val initializer = declaration.initializer
+        temporaryInitializer = (initializer as? IrTypeOperatorCall)?.takeIf { declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE }
         if (initializer != null &&
             initializer.type != declaration.type
         ) {
@@ -334,7 +353,13 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
     }
 
-    private fun shouldGenerateKotlinCast(expression: IrExpression, toType: IrType): Boolean {
+    /**
+     * Whether an implicit cast narrows a value produced at an erased generic type back to a substituted type (an erasure
+     * boundary), where heap pollution caused by an unchecked cast has to throw a ClassCastException. The IR doesn't record
+     * this, so it's reconstructed from the shapes which the preceding lowerings leave behind.
+     */
+    private fun shouldGenerateKotlinCast(cast: IrTypeOperatorCall): Boolean {
+        val toType = cast.typeOperand
         if (toType.isNullableAny()) return false
         if (toType.isTypeParameter()) return false
         // For the cases of casts of callable references to return Unit type, such as
@@ -348,23 +373,81 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         // also fixes testData/codegen/box/basics/unchecked_cast10.kt
         if (toType.isUnit()) return false
 
-        val argumentType = when (expression) {
-            is IrCall -> {
-                val function = expression.symbol.owner
-
-                val packageFragment = function.getPackageFragment()
-                if (context.getExcludedPackageFragment(packageFragment.packageFqName) == packageFragment) return false
-
-                function.returnType
-            }
-            is IrGetField -> expression.symbol.owner.type
-            else -> expression.type
+        // Look through the chain of implicit casts on top of the value, e.g. the inliner upcasts the result of an inline function
+        // to the erased return type before narrowing it to the substituted one (unchecked_cast13.kt).
+        var argument = cast.argument
+        while (true) {
+            // A value still statically typed as a type parameter comes straight from generic code.
+            if (argument.type.isTypeParameter()) return true
+            argument = (argument as? IrTypeOperatorCall)?.takeIf { it.operator == IrTypeOperator.IMPLICIT_CAST }?.argument ?: break
         }
-        return argumentType.isTypeParameter()
+        return when (argument) {
+            // The result of a call to a function returning a type parameter. Looks at the real override target, since a fake
+            // override declares the substituted return type (KT-88828). Intrinsics excluded from codegen (`unsafeCast` and
+            // friends) are meant to narrow without a check.
+            is IrCall -> !argument.symbol.owner.isExcludedFromCodegen() &&
+                    argument.symbol.owner.realOverrideTarget.returnType.isTypeParameter()
+            // A read of a generic field.
+            is IrGetField -> argument.symbol.owner.type.isTypeParameter()
+            // The result of an inline function returning a type parameter, which the inliner erased (unchecked_cast13.kt).
+            is IrReturnableBlock, is IrInlinedFunctionBlock -> argument.inlinedFunction()?.returnsErasedTypeParameter() == true
+            is IrGetValue -> when (val value = argument.symbol.owner) {
+                is IrVariable -> value.isSuspendResult() || (cast.isInlinerCastOfErasedValue() && !value.isProvenToBe(toType))
+                else -> false
+            }
+            else -> false
+        }
     }
 
-    private fun lowerImplicitCast(expression: IrTypeOperatorCall): IrExpression {
-        return if (shouldGenerateKotlinCast(expression.argument, expression.typeOperand)) {
+    private fun IrExpression.inlinedFunction(): IrFunction? = when (this) {
+        is IrInlinedFunctionBlock -> inlinedFunctionSymbol?.owner
+        is IrReturnableBlock -> (statements.singleOrNull() as? IrInlinedFunctionBlock)?.inlinedFunctionSymbol?.owner
+        else -> null
+    }
+
+    private fun IrFunction.returnsErasedTypeParameter(): Boolean =
+        (returnType.classifierOrNull?.owner as? IrTypeParameter)?.isReified == false
+
+    private fun IrSimpleFunction.isExcludedFromCodegen(): Boolean {
+        val packageFragment = getPackageFragment()
+        return context.getExcludedPackageFragment(packageFragment.packageFqName) == packageFragment
+    }
+
+    // The coroutine state machine reads the result of every suspend call back from this `Any?` variable. Whether the callee
+    // returned a type parameter is lost by then, so all of these reads are treated as erasure boundaries.
+    private fun IrVariable.isSuspendResult(): Boolean =
+        name.asString() == "suspendResult" && origin == JsIrBuilder.SYNTHESIZED_DECLARATION
+
+    // The inliner binds a value produced by the body of an inline function whose type parameters it erased (e.g. an element
+    // in `forEach`) to a parameter of an inlined lambda through a temporary initialized with an implicit cast (KT-87090).
+    // This also matches smart casts which the inliner re-applies, which then get a redundant check.
+    private fun IrTypeOperatorCall.isInlinerCastOfErasedValue(): Boolean =
+        this === temporaryInitializer &&
+                enclosingInlinedFunctions.any { function -> function != null && function.typeParameters.any { !it.isReified } }
+
+    // The inliner stores the arguments of an inline function in temporaries typed with the erased parameter type. If the value
+    // stored had the target type already, e.g. the receiver of `arrayOfNulls(n).also { cache = it }`, the cast is proven.
+    // Each implicit cast in the initializer is decided on its own, so any of their types can be relied upon. The value may be
+    // copied through several such temporaries (e.g. the inliner's argument temporary, then the inline function's `this`).
+    // Nullability is ignored: the inliner unwraps smart casts (e.g. from a safe call), and like a JVM checkcast, the checks at
+    // the inliner's erasure boundaries let null through anyway.
+    private fun IrVariable.isProvenToBe(type: IrType): Boolean {
+        if (isVar) return false
+        val nullableType = type.makeNullable()
+        var value: IrExpression? = initializer
+        while (value != null) {
+            if (value.type.isSubtypeOf(nullableType, context.typeSystem)) return true
+            value = when (value) {
+                is IrTypeOperatorCall -> value.argument.takeIf { value.operator == IrTypeOperator.IMPLICIT_CAST }
+                is IrGetValue -> (value.symbol.owner as? IrVariable)?.takeIf { !it.isVar }?.initializer
+                else -> null
+            }
+        }
+        return false
+    }
+
+    private fun lowerImplicitCast(expression: IrTypeOperatorCall, needsRuntimeCheck: Boolean): IrExpression {
+        return if (needsRuntimeCheck) {
             lowerCast(
                 expression = expression,
                 isSafe = false
