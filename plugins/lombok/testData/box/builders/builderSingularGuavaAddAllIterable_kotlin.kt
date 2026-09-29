@@ -1,6 +1,5 @@
 // WITH_GUAVA
 // FULL_JDK
-// IGNORE_BACKEND_K2: JVM
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSet

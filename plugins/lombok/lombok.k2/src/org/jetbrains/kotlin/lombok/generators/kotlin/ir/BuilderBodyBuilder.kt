@@ -370,13 +370,26 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val nullable = parameter.type.isNullable()
         val argument = if (nullable) irImplicitCast(irGet(parameter), parameter.type.makeNotNull()) else irGet(parameter)
         val backing = irImplicitCast(irGetField(irGet(thisParameter), field), field.type.makeNotNull())
+
+        // An `Iterable` parameter (a Guava-declared field, or `lombok.singular.useGuava`) may not be a `Collection`,
+        // which the member `addAll` requires: the stdlib extension takes any `Iterable`.
+        fun collectionAddAll(): IrExpression = if (parameter.type.classOrNull == builtIns.iterableClass) {
+            irCall(iterableAddAllExtension(), builtIns.booleanType, typeArgumentsCount = 1).apply {
+                typeArguments[0] = info.typeArguments.single()
+                arguments[0] = backing
+                arguments[1] = argument
+            }
+        } else {
+            irCallOp(builtIns.mutableCollectionClass.owner.getSimpleFunction("addAll")!!, builtIns.booleanType, backing, argument)
+        }
+
         val addAllCall = when (info.kind) {
             SingularKind.MAP -> irCallOp(builtIns.mutableMapClass.owner.getSimpleFunction("putAll")!!, builtIns.unitType, backing, argument)
             SingularKind.TABLE -> irCallOp(tableFunction(field.file, "putAll") ?: return, builtIns.unitType, backing, argument)
             SingularKind.COLLECTION,
             SingularKind.SET,
             SingularKind.ITERABLE
-                -> irCallOp(builtIns.mutableCollectionClass.owner.getSimpleFunction("addAll")!!, builtIns.booleanType, backing, argument)
+                -> collectionAddAll()
         }
         val mutate = irComposite(resultType = builtIns.unitType) {
             +ensureInitialized(thisParameter, field, info)
@@ -389,6 +402,19 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             +mutate
         }
         +irReturn(irGet(thisParameter))
+    }
+
+    /** The stdlib `fun <T> MutableCollection<in T>.addAll(elements: Iterable<T>): Boolean`. */
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrBlockBodyBuilder.iterableAddAllExtension(): IrSimpleFunctionSymbol {
+        val builtIns = pluginContext.irBuiltIns
+        return pluginContext.finderForBuiltins()
+            .findFunctions(CallableId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier("addAll")))
+            .single { function ->
+                val parameters = function.owner.parameters
+                parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classOrNull == builtIns.mutableCollectionClass &&
+                        parameters.singleOrNull { it.kind == IrParameterKind.Regular }?.type?.classOrNull == builtIns.iterableClass
+            }
     }
 
     /** `clearItems()` — reuses the existing backing collection in place; a never-created field stays `null`. */
