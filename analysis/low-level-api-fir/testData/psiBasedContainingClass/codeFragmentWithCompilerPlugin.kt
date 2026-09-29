@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // WITH_FIR_TEST_COMPILER_PLUGIN
 // MODULE: context
 // FILE: context.kt

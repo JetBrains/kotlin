@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -87,7 +87,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -261,7 +261,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -377,7 +377,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -435,7 +435,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -493,7 +493,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -551,7 +551,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -609,7 +609,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -667,7 +667,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -725,7 +725,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 
@@ -789,7 +789,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithMixedArguments.repl.kts
                 }
 
                 public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
-                    public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
+                    public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] get(): R|kotlin/enums/EnumEntries<AnnotationWithMixedArguments_repl.EnumClass>|
 
             }
 

@@ -10,7 +10,7 @@ FILE: expectNestedEnumClassGeneratedMembers.kt
             }
 
             public final expect static [ContainingClassKey=NestedEnum, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<Outer.NestedEnum>|
-                public static get(): R|kotlin/enums/EnumEntries<Outer.NestedEnum>|
+                public static [ContainingClassKey=NestedEnum] get(): R|kotlin/enums/EnumEntries<Outer.NestedEnum>|
 
         }
 

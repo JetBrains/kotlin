@@ -2541,7 +2541,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DeprecationLevel, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
-            public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
+            public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DeprecationLevel] get(): R|kotlin/enums/EnumEntries<kotlin/DeprecationLevel>|
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>| {
@@ -3607,7 +3607,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Level, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
-                public static [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
+                public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Level] get(): R|kotlin/enums/EnumEntries<kotlin/RequiresOptIn.Level>|
 
         }
 
