@@ -170,6 +170,10 @@ public val KtExpression.expressionType: KaType?
  * from [KaExpressionTypeProvider][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] represents a
  * use-site perspective, which has to desugar `vararg` parameters because they are consumed as array types.
  */
+@Deprecated(
+    message = "Use the 'org.jetbrains.kotlin.analysis.api.expressions' endpoint instead.",
+    replaceWith = ReplaceWith("this.returnType", "org.jetbrains.kotlin.analysis.api.expressions.returnType"),
+)
 context(session: KaSession)
 public val KtDeclarationWithReturnType.returnType: KaType
     get() = with(session) { returnType }
