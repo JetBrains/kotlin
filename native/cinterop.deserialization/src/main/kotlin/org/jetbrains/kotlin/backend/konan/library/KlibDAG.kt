@@ -158,17 +158,6 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
         }
     }
 
-    private val signatureExtractors: Map<KotlinLibrary, IdSignaturesExtractor> = buildMap {
-        for (library in libraries) {
-            this[library] = when {
-                library.isNativeStdlib -> continue
-                library.isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(library)
-                library.ir != null -> IdSignaturesExtractorFromRegularKlib(library)
-                else -> error("This library does not have IR and is not a C-interop library: ${library.path}")
-            }
-        }
-    }
-
     private val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = libraries.associateWith(::KlibDAGNodeImpl)
 
     // Optimization: Stdlib is a dependency for each library. We don't need to extract signatures from it.
@@ -320,7 +309,7 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
         // Note: We are intentionally extracting only signatures of top-level declarations. It's an optimization.
         // We can always deduce the signature of a top-level class from a signature of any member or an inner/nested class.
         // In case there are numerous members or inner/nested classes, this helps us to reduce the amount of the computational work.
-        val [declaredSignatures, importedSignatures] = signatureExtractors.getValue(library).extractOnlyTopLevelPublicSignatures()
+        val [declaredSignatures, importedSignatures] = library.getSignatureExtractor().extractOnlyTopLevelPublicSignatures()
 
         for (signature in declaredSignatures) {
             // Note: It might happen that there are clashing signatures coming from different libraries.
@@ -333,6 +322,15 @@ private class KlibDAGBuilderImpl(libraries: Collection<KotlinLibrary>, isRoot: (
         nodeToImportedSignatures[node] = importedSignatures
 
         return true // The indices were populated now.
+    }
+
+    private fun KotlinLibrary.getSignatureExtractor(): IdSignaturesExtractor {
+        val extractor = when {
+            isCInteropLibrary() -> IdSignaturesExtractorFromCInteropKlib(this)
+            ir != null -> IdSignaturesExtractorFromRegularKlib(this)
+            else -> error("This library does not have IR and is not a C-interop library: $path")
+        }
+        return extractor
     }
 
     private enum class State {
