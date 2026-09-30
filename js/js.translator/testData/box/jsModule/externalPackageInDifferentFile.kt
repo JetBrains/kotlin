@@ -19,7 +19,7 @@ external fun foo(y: Int): Int = definedExternally
 
 external val bar: Int = definedExternally
 
-external var mbar: Int = definedExternally
+external val mbar: Int = definedExternally
 
 // FILE: lib2.kt
 package foo
@@ -44,8 +44,7 @@ fun box(): String {
 
     assertEquals(12345, C.f())
 
-    mbar = 523
-    assertEquals(523, mbar)
+    assertEquals(-1, mbar)
 
     return "OK"
 }
