@@ -1,0 +1,1 @@
+Caused by: java.lang.ClassCastException: class org.jetbrains.kotlin.fir.types.ConeDynamicType cannot be cast to class org.jetbrains.kotlin.fir.types.ConeRigidType
