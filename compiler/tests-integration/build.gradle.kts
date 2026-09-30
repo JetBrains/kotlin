@@ -13,9 +13,6 @@ val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
 val antLauncherJar = configurations.create("antLauncherJar")
 
 dependencies {
-
-    testFixturesApi(project(":kotlin-script-runtime"))
-
     testFixturesApi(kotlinStdlib())
 
     testFixturesApi(kotlinTest())
@@ -124,7 +121,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/loadJavaPackageAnnotations")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withThirdPartyAnnotations()
     @OptIn(KotlinCompilerDistUsage::class)

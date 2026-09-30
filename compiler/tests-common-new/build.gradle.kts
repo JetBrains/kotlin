@@ -116,7 +116,6 @@ projectTests {
 
     withJvmStdlibAndReflect()
     withStdlibCommon()
-    withScriptRuntime()
     withTestJar()
     withAnnotations()
     withScriptingPlugin()
