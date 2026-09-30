@@ -1,0 +1,971 @@
+--- a/InlineExtensionProperties.ir.txt
++++ b/InlineExtensionProperties.ir.native.txt
+@@ -1,122 +1,223 @@
+ FILE fqName:<root> fileName:/InlineExtensionProperties.kt
+-  PROPERTY name:a visibility:private modality:FINAL [val]
+-    FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]
++  PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
++    FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private [static]
++      annotations:
++        Volatile
+       EXPRESSION_BODY
+-        CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
+-          ARG initial: CONST Int type=kotlin.Int value=0
+-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
+-      correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
++        CONST Int type=kotlin.Int value=0
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-a$volatile> visibility:private modality:FINAL returnType:kotlin.Int
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+       BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>'
+-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlinx.atomicfu.AtomicInt visibility:private [final,static]' type=kotlinx.atomicfu.AtomicInt origin=null
+-  PROPERTY name:s visibility:private modality:FINAL [val]
+-    FIELD PROPERTY_BACKING_FIELD name:s type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final,static]
++        RETURN type=kotlin.Nothing from='private final fun <get-a$volatile> (): kotlin.Int declared in <root>'
++          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private [static] declared in <root>' type=kotlin.Int origin=null
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-a$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Int
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
++      BLOCK_BODY
++        RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>'
++          SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
++            value: GET_VAR 'value: kotlin.Int declared in <root>.<set-a$volatile>' type=kotlin.Int origin=null
++  PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile visibility:private modality:FINAL [var]
++    FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Any? visibility:private [static]
++      annotations:
++        Volatile
+       EXPRESSION_BODY
+-        CALL 'public final fun atomic <T> (initial: T of kotlinx.atomicfu.atomic): kotlinx.atomicfu.AtomicRef<T of kotlinx.atomicfu.atomic> declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
+-          TYPE_ARG T: kotlin.String
+-          ARG initial: CONST String type=kotlin.String value="TEST"
+-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicRef<kotlin.String>
+-      correspondingProperty: PROPERTY name:s visibility:private modality:FINAL [val]
++        CONST String type=kotlin.String value="TEST"
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-s$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile visibility:private modality:FINAL [var]
+       BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-s> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>'
+-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final,static]' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
+-  PROPERTY name:arr visibility:private modality:FINAL [val]
+-    FIELD PROPERTY_BACKING_FIELD name:arr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final,static]
++        RETURN type=kotlin.Nothing from='private final fun <get-s$volatile> (): kotlin.Any? declared in <root>'
++          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Any? visibility:private [static] declared in <root>' type=kotlin.Any? origin=null
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-s$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Any?
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:s$volatile visibility:private modality:FINAL [var]
++      BLOCK_BODY
++        RETURN type=kotlin.Nothing from='private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>'
++          SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Any? visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
++            value: GET_VAR 'value: kotlin.Any? declared in <root>.<set-s$volatile>' type=kotlin.Any? origin=null
++  PROPERTY ATOMICFU_GENERATED_PROPERTY name:arr visibility:private modality:FINAL [val]
++    FIELD ATOMICFU_GENERATED_FIELD name:arr type:kotlin.concurrent.AtomicIntArray visibility:private [final,static]
+       EXPRESSION_BODY
+-        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicIntArray origin=null
++        CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicIntArray' type=kotlin.concurrent.AtomicIntArray origin=null
+           ARG size: CONST Int type=kotlin.Int value=10
+-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-arr> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicIntArray
+-      correspondingProperty: PROPERTY name:arr visibility:private modality:FINAL [val]
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-arr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicIntArray
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:arr visibility:private modality:FINAL [val]
+       BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>'
+-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:arr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final,static]' type=kotlinx.atomicfu.AtomicIntArray origin=null
+-  PROPERTY name:l visibility:private modality:FINAL [val]
+-    FIELD PROPERTY_BACKING_FIELD name:l type:kotlinx.atomicfu.AtomicLong visibility:private [final,static]
++        RETURN type=kotlin.Nothing from='private final fun <get-arr> (): kotlin.concurrent.AtomicIntArray declared in <root>'
++          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:arr type:kotlin.concurrent.AtomicIntArray visibility:private [final,static] declared in <root>' type=kotlin.concurrent.AtomicIntArray origin=null
++  PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
++    FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private [static]
++      annotations:
++        Volatile
+       EXPRESSION_BODY
+-        CALL 'public final fun atomic (initial: kotlin.Long): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicLong origin=null
+-          ARG initial: CONST Long type=kotlin.Long value=9223372032559808513
+-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-l> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicLong
+-      correspondingProperty: PROPERTY name:l visibility:private modality:FINAL [val]
++        CONST Long type=kotlin.Long value=9223372032559808513
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-l$volatile> visibility:private modality:FINAL returnType:kotlin.Long
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
+       BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-l> (): kotlinx.atomicfu.AtomicLong declared in <root>'
+-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:l type:kotlinx.atomicfu.AtomicLong visibility:private [final,static]' type=kotlinx.atomicfu.AtomicLong origin=null
+-  PROPERTY name:b visibility:private modality:FINAL [val]
+-    FIELD PROPERTY_BACKING_FIELD name:b type:kotlinx.atomicfu.AtomicBoolean visibility:private [final,static]
++        RETURN type=kotlin.Nothing from='private final fun <get-l$volatile> (): kotlin.Long declared in <root>'
++          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private [static] declared in <root>' type=kotlin.Long origin=null
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-l$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Long
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:l$volatile visibility:private modality:FINAL [var]
++      BLOCK_BODY
++        RETURN type=kotlin.Nothing from='private final fun <set-l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>'
++          SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:l$volatile type:kotlin.Long visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
++            value: GET_VAR 'value: kotlin.Long declared in <root>.<set-l$volatile>' type=kotlin.Long origin=null
++  PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
++    FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Boolean visibility:private [static]
++      annotations:
++        Volatile
+       EXPRESSION_BODY
+-        CALL 'public final fun atomic (initial: kotlin.Boolean): kotlinx.atomicfu.AtomicBoolean declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicBoolean origin=null
+-          ARG initial: CONST Boolean type=kotlin.Boolean value=false
+-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicBoolean
+-      correspondingProperty: PROPERTY name:b visibility:private modality:FINAL [val]
++        CONST Boolean type=kotlin.Boolean value=false
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-b$volatile> visibility:private modality:FINAL returnType:kotlin.Boolean
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
+       BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-b> (): kotlinx.atomicfu.AtomicBoolean declared in <root>'
+-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlinx.atomicfu.AtomicBoolean visibility:private [final,static]' type=kotlinx.atomicfu.AtomicBoolean origin=null
++        RETURN type=kotlin.Nothing from='private final fun <get-b$volatile> (): kotlin.Boolean declared in <root>'
++          GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Boolean visibility:private [static] declared in <root>' type=kotlin.Boolean origin=null
++    FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-b$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++      VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Boolean
++      correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
++      BLOCK_BODY
++        RETURN type=kotlin.Nothing from='private final fun <set-b$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>'
++          SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Boolean visibility:private [static] declared in <root>' type=kotlin.Unit origin=null
++            value: GET_VAR 'value: kotlin.Boolean declared in <root>.<set-b$volatile>' type=kotlin.Boolean origin=null
+   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.C
+-    PROPERTY name:ma visibility:private modality:FINAL [val]
+-      FIELD PROPERTY_BACKING_FIELD name:ma type:kotlinx.atomicfu.AtomicInt visibility:private [final]
++    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ma$volatile visibility:private modality:FINAL [var]
++      FIELD ATOMICFU_GENERATED_FIELD name:ma$volatile type:kotlin.Int visibility:private
++        annotations:
++          Volatile
+         EXPRESSION_BODY
+-          CALL 'public final fun atomic (initial: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicInt origin=null
+-            ARG initial: CONST Int type=kotlin.Int value=0
+-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ma> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicInt
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+-        correspondingProperty: PROPERTY name:ma visibility:private modality:FINAL [val]
++          CONST Int type=kotlin.Int value=0
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ma$volatile> visibility:private modality:FINAL returnType:kotlin.Int
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ma$volatile visibility:private modality:FINAL [var]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-ma> (): kotlinx.atomicfu.AtomicInt declared in <root>.C'
+-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ma type:kotlinx.atomicfu.AtomicInt visibility:private [final]' type=kotlinx.atomicfu.AtomicInt origin=null
+-              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ma>' type=<root>.C origin=null
+-    PROPERTY name:ms visibility:private modality:FINAL [val]
+-      FIELD PROPERTY_BACKING_FIELD name:ms type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final]
++          RETURN type=kotlin.Nothing from='private final fun <get-ma$volatile> (): kotlin.Int declared in <root>.C'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ma$volatile type:kotlin.Int visibility:private declared in <root>.C' type=kotlin.Int origin=null
++              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ma$volatile>' type=<root>.C origin=null
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-ma$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ma$volatile visibility:private modality:FINAL [var]
++        BLOCK_BODY
++          RETURN type=kotlin.Nothing from='private final fun <set-ma$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C'
++            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ma$volatile type:kotlin.Int visibility:private declared in <root>.C' type=kotlin.Unit origin=null
++              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-ma$volatile>' type=<root>.C origin=null
++              value: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-ma$volatile>' type=kotlin.Int origin=null
++    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ms$volatile visibility:private modality:FINAL [var]
++      FIELD ATOMICFU_GENERATED_FIELD name:ms$volatile type:kotlin.Any? visibility:private
++        annotations:
++          Volatile
+         EXPRESSION_BODY
+-          CALL 'public final fun atomic <T> (initial: T of kotlinx.atomicfu.atomic): kotlinx.atomicfu.AtomicRef<T of kotlinx.atomicfu.atomic> declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
+-            TYPE_ARG T: kotlin.String
+-            ARG initial: CONST String type=kotlin.String value="TEST"
+-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ms> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicRef<kotlin.String>
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+-        correspondingProperty: PROPERTY name:ms visibility:private modality:FINAL [val]
++          CONST String type=kotlin.String value="TEST"
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ms$volatile> visibility:private modality:FINAL returnType:kotlin.Any?
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ms$volatile visibility:private modality:FINAL [var]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-ms> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.C'
+-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlinx.atomicfu.AtomicRef<kotlin.String> visibility:private [final]' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=null
+-              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ms>' type=<root>.C origin=null
+-    PROPERTY name:marr visibility:private modality:FINAL [val]
+-      FIELD PROPERTY_BACKING_FIELD name:marr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final]
++          RETURN type=kotlin.Nothing from='private final fun <get-ms$volatile> (): kotlin.Any? declared in <root>.C'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ms$volatile type:kotlin.Any? visibility:private declared in <root>.C' type=kotlin.Any? origin=null
++              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ms$volatile>' type=<root>.C origin=null
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-ms$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ms$volatile visibility:private modality:FINAL [var]
++        BLOCK_BODY
++          RETURN type=kotlin.Nothing from='private final fun <set-ms$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.C'
++            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ms$volatile type:kotlin.Any? visibility:private declared in <root>.C' type=kotlin.Unit origin=null
++              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-ms$volatile>' type=<root>.C origin=null
++              value: GET_VAR 'value: kotlin.Any? declared in <root>.C.<set-ms$volatile>' type=kotlin.Any? origin=null
++    PROPERTY ATOMICFU_GENERATED_PROPERTY name:marr visibility:private modality:FINAL [val]
++      FIELD ATOMICFU_GENERATED_FIELD name:marr type:kotlin.concurrent.AtomicIntArray visibility:private [final]
+         EXPRESSION_BODY
+-          CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicIntArray origin=null
++          CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicIntArray' type=kotlin.concurrent.AtomicIntArray origin=null
+             ARG size: CONST Int type=kotlin.Int value=10
+-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-marr> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicIntArray
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+-        correspondingProperty: PROPERTY name:marr visibility:private modality:FINAL [val]
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-marr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicIntArray
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:marr visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-marr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.C'
+-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:marr type:kotlinx.atomicfu.AtomicIntArray visibility:private [final]' type=kotlinx.atomicfu.AtomicIntArray origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-marr> (): kotlin.concurrent.AtomicIntArray declared in <root>.C'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:marr type:kotlin.concurrent.AtomicIntArray visibility:private [final] declared in <root>.C' type=kotlin.concurrent.AtomicIntArray origin=null
+               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-marr>' type=<root>.C origin=null
+-    PROPERTY name:ml visibility:private modality:FINAL [val]
+-      FIELD PROPERTY_BACKING_FIELD name:ml type:kotlinx.atomicfu.AtomicLong visibility:private [final]
++    PROPERTY ATOMICFU_GENERATED_PROPERTY name:ml$volatile visibility:private modality:FINAL [var]
++      FIELD ATOMICFU_GENERATED_FIELD name:ml$volatile type:kotlin.Long visibility:private
++        annotations:
++          Volatile
+         EXPRESSION_BODY
+-          CALL 'public final fun atomic (initial: kotlin.Long): kotlinx.atomicfu.AtomicLong declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicLong origin=null
+-            ARG initial: CONST Long type=kotlin.Long value=9223372032559808513
+-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ml> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicLong
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+-        correspondingProperty: PROPERTY name:ml visibility:private modality:FINAL [val]
++          CONST Long type=kotlin.Long value=9223372032559808513
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-ml$volatile> visibility:private modality:FINAL returnType:kotlin.Long
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ml$volatile visibility:private modality:FINAL [var]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-ml> (): kotlinx.atomicfu.AtomicLong declared in <root>.C'
+-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ml type:kotlinx.atomicfu.AtomicLong visibility:private [final]' type=kotlinx.atomicfu.AtomicLong origin=null
+-              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ml>' type=<root>.C origin=null
+-    PROPERTY name:mb visibility:private modality:FINAL [val]
+-      FIELD PROPERTY_BACKING_FIELD name:mb type:kotlinx.atomicfu.AtomicBoolean visibility:private [final]
++          RETURN type=kotlin.Nothing from='private final fun <get-ml$volatile> (): kotlin.Long declared in <root>.C'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ml$volatile type:kotlin.Long visibility:private declared in <root>.C' type=kotlin.Long origin=null
++              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-ml$volatile>' type=<root>.C origin=null
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-ml$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:ml$volatile visibility:private modality:FINAL [var]
++        BLOCK_BODY
++          RETURN type=kotlin.Nothing from='private final fun <set-ml$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.C'
++            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:ml$volatile type:kotlin.Long visibility:private declared in <root>.C' type=kotlin.Unit origin=null
++              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-ml$volatile>' type=<root>.C origin=null
++              value: GET_VAR 'value: kotlin.Long declared in <root>.C.<set-ml$volatile>' type=kotlin.Long origin=null
++    PROPERTY ATOMICFU_GENERATED_PROPERTY name:mb$volatile visibility:private modality:FINAL [var]
++      FIELD ATOMICFU_GENERATED_FIELD name:mb$volatile type:kotlin.Boolean visibility:private
++        annotations:
++          Volatile
+         EXPRESSION_BODY
+-          CALL 'public final fun atomic (initial: kotlin.Boolean): kotlinx.atomicfu.AtomicBoolean declared in kotlinx.atomicfu' type=kotlinx.atomicfu.AtomicBoolean origin=null
+-            ARG initial: CONST Boolean type=kotlin.Boolean value=false
+-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-mb> visibility:private modality:FINAL returnType:kotlinx.atomicfu.AtomicBoolean
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+-        correspondingProperty: PROPERTY name:mb visibility:private modality:FINAL [val]
++          CONST Boolean type=kotlin.Boolean value=false
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-mb$volatile> visibility:private modality:FINAL returnType:kotlin.Boolean
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:mb$volatile visibility:private modality:FINAL [var]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-mb> (): kotlinx.atomicfu.AtomicBoolean declared in <root>.C'
+-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:mb type:kotlinx.atomicfu.AtomicBoolean visibility:private [final]' type=kotlinx.atomicfu.AtomicBoolean origin=null
+-              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-mb>' type=<root>.C origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-mb$volatile> (): kotlin.Boolean declared in <root>.C'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:mb$volatile type:kotlin.Boolean visibility:private declared in <root>.C' type=kotlin.Boolean origin=null
++              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-mb$volatile>' type=<root>.C origin=null
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-mb$volatile> visibility:private modality:FINAL returnType:kotlin.Unit
++        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Boolean
++        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:mb$volatile visibility:private modality:FINAL [var]
++        BLOCK_BODY
++          RETURN type=kotlin.Nothing from='private final fun <set-mb$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.C'
++            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:mb$volatile type:kotlin.Boolean visibility:private declared in <root>.C' type=kotlin.Unit origin=null
++              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-mb$volatile>' type=<root>.C origin=null
++              value: GET_VAR 'value: kotlin.Boolean declared in <root>.C.<set-mb$volatile>' type=kotlin.Boolean origin=null
+     CONSTRUCTOR visibility:public returnType:<root>.C [primary]
+       BLOCK_BODY
+         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
++    FUN ATOMICFU_GENERATED_FUNCTION name:getSquared$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.concurrent.AtomicIntArray
++      VALUE_PARAMETER kind:Regular name:index$atomicfu index:2 type:kotlin.Int
++      BLOCK_BODY
++        RETURN type=kotlin.Nothing from='private final fun getSquared$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int): kotlin.Int declared in <root>.C'
++          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
++            ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++              CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
++                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.C.getSquared$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
++                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.C.getSquared$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
++            ARG other: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++              CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
++                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.C.getSquared$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
++                ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.C.getSquared$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
++    FUN ATOMICFU_GENERATED_FUNCTION name:getSquared$atomicfu$NATIVE_PROPERTY_REF$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
++      VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> [crossinline]
++      BLOCK_BODY
++        RETURN type=kotlin.Nothing from='private final fun getSquared$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>): kotlin.Int declared in <root>.C'
++          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
++            ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
++                TYPE_ARG T: kotlin.Int
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
++                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.C.getSquared$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
++            ARG other: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
++                TYPE_ARG T: kotlin.Int
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
++                  ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.C.getSquared$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -133,79 +234,347 @@
+     FUN name:memberTest visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+       BLOCK_BODY
+-        CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=EQ
+-          ARG <this>: CALL 'private final fun <get-ma> (): kotlinx.atomicfu.AtomicInt declared in <root>.C' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-          ARG <set-?>: CONST Int type=kotlin.Int value=-10
+-        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG a: CONST Int type=kotlin.Int value=10
+-          ARG b: CALL 'private final fun <get-abs> (<this>: kotlinx.atomicfu.AtomicInt): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+-            ARG <this>: CALL 'private final fun <get-ma> (): kotlinx.atomicfu.AtomicInt declared in <root>.C' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-        CALL 'public final fun assertFalse (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG x: CALL 'private final fun <get-isEmpty> (<this>: kotlinx.atomicfu.AtomicRef<kotlin.String>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=GET_PROPERTY
+-            ARG <this>: CALL 'private final fun <get-ms> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.C' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final ma$volatile: kotlin.Int declared in <root>.C'
++            bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <get-ma$volatile> (<this>: <root>.C): kotlin.Int declared in <root>.C.memberTest'
++                  CALL 'private final fun <get-ma$volatile> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<get-ma$volatile>' type=<root>.C origin=null
++            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++              VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <set-ma$volatile> (<this>: <root>.C, p0: kotlin.Int): kotlin.Unit declared in <root>.C.memberTest'
++                  CALL 'private final fun <set-ma$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<set-ma$volatile>' type=<root>.C origin=null
++                    ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.C.memberTest.<set-ma$volatile>' type=kotlin.Int origin=null
++          ARG newValue: CONST Int type=kotlin.Int value=-10
++        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG a: CONST Int type=kotlin.Int value=-100
+-          ARG b: CALL 'private final fun <get-scaledBy10> (<this>: kotlinx.atomicfu.AtomicInt): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+-            ARG <this>: CALL 'private final fun <get-ma> (): kotlinx.atomicfu.AtomicInt declared in <root>.C' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-        CALL 'private final fun <set-scaledBy10> (<this>: kotlinx.atomicfu.AtomicInt, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+-          ARG <this>: CALL 'private final fun <get-ma> (): kotlinx.atomicfu.AtomicInt declared in <root>.C' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++          ARG expected: CONST Int type=kotlin.Int value=10
++          ARG actual: CALL 'private final fun getAbs$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
++              FUN ATOMICFU_GENERATED_FUNCTION name:<ma$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <ma$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.C.memberTest'
++                    RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final ma$volatile: kotlin.Int declared in <root>.C'
++                      bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-ma$volatile> (<this>: <root>.C): kotlin.Int declared in <root>.C.memberTest.<ma$volatile-getter>'
++                            CALL 'private final fun <get-ma$volatile> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ma$volatile-getter>.<get-ma$volatile>' type=<root>.C origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-ma$volatile> (<this>: <root>.C, p0: kotlin.Int): kotlin.Unit declared in <root>.C.memberTest.<ma$volatile-getter>'
++                            CALL 'private final fun <set-ma$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ma$volatile-getter>.<set-ma$volatile>' type=<root>.C origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.C.memberTest.<ma$volatile-getter>.<set-ma$volatile>' type=kotlin.Int origin=null
++        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG actual: CALL 'private final fun getIsEmpty$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
++            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
++              FUN ATOMICFU_GENERATED_FUNCTION name:<ms$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <ms$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.C.memberTest'
++                    RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final ms$volatile: kotlin.Any? declared in <root>.C'
++                      bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-ms$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-ms$volatile> (<this>: <root>.C): kotlin.Any? declared in <root>.C.memberTest.<ms$volatile-getter>'
++                            CALL 'private final fun <get-ms$volatile> (): kotlin.Any? declared in <root>.C' type=kotlin.Any? origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ms$volatile-getter>.<get-ms$volatile>' type=<root>.C origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-ms$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-ms$volatile> (<this>: <root>.C, p0: kotlin.Any?): kotlin.Unit declared in <root>.C.memberTest.<ms$volatile-getter>'
++                            CALL 'private final fun <set-ms$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ms$volatile-getter>.<set-ms$volatile>' type=<root>.C origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.C.memberTest.<ms$volatile-getter>.<set-ms$volatile>' type=kotlin.Any? origin=null
++        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          TYPE_ARG T: kotlin.Int
++          ARG expected: CONST Int type=kotlin.Int value=-100
++          ARG actual: CALL 'private final fun getScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
++              FUN ATOMICFU_GENERATED_FUNCTION name:<ma$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <ma$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.C.memberTest'
++                    RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final ma$volatile: kotlin.Int declared in <root>.C'
++                      bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-ma$volatile> (<this>: <root>.C): kotlin.Int declared in <root>.C.memberTest.<ma$volatile-getter>'
++                            CALL 'private final fun <get-ma$volatile> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ma$volatile-getter>.<get-ma$volatile>' type=<root>.C origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-ma$volatile> (<this>: <root>.C, p0: kotlin.Int): kotlin.Unit declared in <root>.C.memberTest.<ma$volatile-getter>'
++                            CALL 'private final fun <set-ma$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ma$volatile-getter>.<set-ma$volatile>' type=<root>.C origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.C.memberTest.<ma$volatile-getter>.<set-ma$volatile>' type=kotlin.Int origin=null
++        CALL 'private final fun setScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
++            FUN ATOMICFU_GENERATED_FUNCTION name:<ma$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <ma$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.C.memberTest'
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final ma$volatile: kotlin.Int declared in <root>.C'
++                    bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-ma$volatile> (<this>: <root>.C): kotlin.Int declared in <root>.C.memberTest.<ma$volatile-getter>'
++                          CALL 'private final fun <get-ma$volatile> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ma$volatile-getter>.<get-ma$volatile>' type=<root>.C origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-ma$volatile> (<this>: <root>.C, p0: kotlin.Int): kotlin.Unit declared in <root>.C.memberTest.<ma$volatile-getter>'
++                          CALL 'private final fun <set-ma$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ma$volatile-getter>.<set-ma$volatile>' type=<root>.C origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.C.memberTest.<ma$volatile-getter>.<set-ma$volatile>' type=kotlin.Int origin=null
+           ARG value: CONST Int type=kotlin.Int value=200
+-        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG a: CONST Int type=kotlin.Int value=20
+-          ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+-            ARG <this>: CALL 'private final fun <get-ma> (): kotlinx.atomicfu.AtomicInt declared in <root>.C' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-        CALL 'private final fun <set-scaledBy10> (<this>: kotlinx.atomicfu.AtomicInt, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+-          ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+-            ARG <this>: CALL 'private final fun <get-marr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.C' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-            ARG index: CONST Int type=kotlin.Int value=0
++          ARG expected: CONST Int type=kotlin.Int value=20
++          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
++              TYPE_ARG T: kotlin.Int
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final ma$volatile: kotlin.Int declared in <root>.C'
++                bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-ma$volatile> (<this>: <root>.C): kotlin.Int declared in <root>.C.memberTest'
++                      CALL 'private final fun <get-ma$volatile> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<get-ma$volatile>' type=<root>.C origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-ma$volatile> (<this>: <root>.C, p0: kotlin.Int): kotlin.Unit declared in <root>.C.memberTest'
++                      CALL 'private final fun <set-ma$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<set-ma$volatile>' type=<root>.C origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.C.memberTest.<set-ma$volatile>' type=kotlin.Int origin=null
++        CALL 'private final fun setScaledBy10$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++          ARG handler$atomicfu: CALL 'private final fun <get-marr> (): kotlin.concurrent.AtomicIntArray declared in <root>.C' type=kotlin.concurrent.AtomicIntArray origin=null
++            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++          ARG index$atomicfu: CONST Int type=kotlin.Int value=0
+           ARG value: CONST Int type=kotlin.Int value=300
+-        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG a: CONST Int type=kotlin.Int value=30
+-          ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+-            ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+-              ARG <this>: CALL 'private final fun <get-marr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>.C' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
++          ARG expected: CONST Int type=kotlin.Int value=30
++          ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
++              ARG <this>: CALL 'private final fun <get-marr> (): kotlin.concurrent.AtomicIntArray declared in <root>.C' type=kotlin.concurrent.AtomicIntArray origin=null
+                 ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+               ARG index: CONST Int type=kotlin.Int value=0
+-        CALL 'public final fun assertFalse (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-          ARG x: CALL 'private final fun <get-isTrue> (<this>: kotlinx.atomicfu.AtomicBoolean): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=GET_PROPERTY
+-            ARG <this>: CALL 'private final fun <get-mb> (): kotlinx.atomicfu.AtomicBoolean declared in <root>.C' type=kotlinx.atomicfu.AtomicBoolean origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG actual: CALL 'private final fun getIsTrue$atomicfu$NATIVE_PROPERTY_REF$Boolean (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
++            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=LAMBDA
++              FUN ATOMICFU_GENERATED_FUNCTION name:<mb$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Boolean> [inline]
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <mb$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.C.memberTest'
++                    RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null reflectionTarget='private final mb$volatile: kotlin.Boolean declared in <root>.C'
++                      bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-mb$volatile> visibility:local modality:FINAL returnType:kotlin.Boolean
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-mb$volatile> (<this>: <root>.C): kotlin.Boolean declared in <root>.C.memberTest.<mb$volatile-getter>'
++                            CALL 'private final fun <get-mb$volatile> (): kotlin.Boolean declared in <root>.C' type=kotlin.Boolean origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<mb$volatile-getter>.<get-mb$volatile>' type=<root>.C origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-mb$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Boolean
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-mb$volatile> (<this>: <root>.C, p0: kotlin.Boolean): kotlin.Unit declared in <root>.C.memberTest.<mb$volatile-getter>'
++                            CALL 'private final fun <set-mb$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<mb$volatile-getter>.<set-mb$volatile>' type=<root>.C origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Boolean declared in <root>.C.memberTest.<mb$volatile-getter>.<set-mb$volatile>' type=kotlin.Boolean origin=null
++        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG a: CONST Int type=kotlin.Int value=1
+-          ARG b: CALL 'private final fun <get-low> (<this>: kotlinx.atomicfu.AtomicLong): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+-            ARG <this>: CALL 'private final fun <get-ml> (): kotlinx.atomicfu.AtomicLong declared in <root>.C' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-        CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++          ARG expected: CONST Int type=kotlin.Int value=1
++          ARG actual: CALL 'private final fun getLow$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=LAMBDA
++              FUN ATOMICFU_GENERATED_FUNCTION name:<ml$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Long> [inline]
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <ml$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Long> declared in <root>.C.memberTest'
++                    RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final ml$volatile: kotlin.Long declared in <root>.C'
++                      bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-ml$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-ml$volatile> (<this>: <root>.C): kotlin.Long declared in <root>.C.memberTest.<ml$volatile-getter>'
++                            CALL 'private final fun <get-ml$volatile> (): kotlin.Long declared in <root>.C' type=kotlin.Long origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ml$volatile-getter>.<get-ml$volatile>' type=<root>.C origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-ml$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Long
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-ml$volatile> (<this>: <root>.C, p0: kotlin.Long): kotlin.Unit declared in <root>.C.memberTest.<ml$volatile-getter>'
++                            CALL 'private final fun <set-ml$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ml$volatile-getter>.<set-ml$volatile>' type=<root>.C origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.C.memberTest.<ml$volatile-getter>.<set-ml$volatile>' type=kotlin.Long origin=null
++        CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG a: CONST Int type=kotlin.Int value=400
+-          ARG b: CALL 'private final fun <get-squared> (<this>: kotlinx.atomicfu.AtomicInt): kotlin.Int declared in <root>.C' type=kotlin.Int origin=GET_PROPERTY
+-            ARG <this>(index:0): GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-            ARG <this>(index:1): CALL 'private final fun <get-ma> (): kotlinx.atomicfu.AtomicInt declared in <root>.C' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
+-    PROPERTY name:squared visibility:private modality:FINAL [val]
+-      FUN name:<get-squared> visibility:private modality:FINAL returnType:kotlin.Int [inline]
+-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.C
+-        VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:kotlinx.atomicfu.AtomicInt
+-        correspondingProperty: PROPERTY name:squared visibility:private modality:FINAL [val]
+-        BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-squared> (<this>: kotlinx.atomicfu.AtomicInt): kotlin.Int declared in <root>.C'
+-            CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+-              ARG <this>: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+-                ARG <this>: GET_VAR '<this>(index:1): kotlinx.atomicfu.AtomicInt declared in <root>.C.<get-squared>' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+-              ARG other: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+-                ARG <this>: GET_VAR '<this>(index:1): kotlinx.atomicfu.AtomicInt declared in <root>.C.<get-squared>' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
++          ARG expected: CONST Int type=kotlin.Int value=400
++          ARG actual: CALL 'private final fun getSquared$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
++            ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++            ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
++              FUN ATOMICFU_GENERATED_FUNCTION name:<ma$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <ma$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.C.memberTest'
++                    RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final ma$volatile: kotlin.Int declared in <root>.C'
++                      bound <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest' type=<root>.C origin=IMPLICIT_ARGUMENT
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-ma$volatile> (<this>: <root>.C): kotlin.Int declared in <root>.C.memberTest.<ma$volatile-getter>'
++                            CALL 'private final fun <get-ma$volatile> (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ma$volatile-getter>.<get-ma$volatile>' type=<root>.C origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-ma$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.C
++                        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-ma$volatile> (<this>: <root>.C, p0: kotlin.Int): kotlin.Unit declared in <root>.C.memberTest.<ma$volatile-getter>'
++                            CALL 'private final fun <set-ma$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.C declared in <root>.C.memberTest.<ma$volatile-getter>.<set-ma$volatile>' type=<root>.C origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.C.memberTest.<ma$volatile-getter>.<set-ma$volatile>' type=kotlin.Int origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:getAbs$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.concurrent.AtomicIntArray
++    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getAbs$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int): kotlin.Int declared in <root>'
++        CALL 'public final fun abs (n: kotlin.Int): kotlin.Int declared in kotlin.math' type=kotlin.Int origin=null
++          ARG n: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
++              ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.getAbs$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
++              ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getAbs$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:getAbs$atomicfu$NATIVE_PROPERTY_REF$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> [crossinline]
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getAbs$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>): kotlin.Int declared in <root>'
++        CALL 'public final fun abs (n: kotlin.Int): kotlin.Int declared in kotlin.math' type=kotlin.Int origin=null
++          ARG n: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
++              TYPE_ARG T: kotlin.Int
++              ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
++                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.getAbs$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:getIsEmpty$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.concurrent.AtomicArray<kotlin.Any?>
++    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getIsEmpty$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int): kotlin.Boolean declared in <root>'
++        CALL 'public final fun isEmpty (<this>: kotlin.CharSequence): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
++          ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
++            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++              ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.getIsEmpty$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
++              ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getIsEmpty$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:getIsEmpty$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getIsEmpty$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>): kotlin.Boolean declared in <root>'
++        CALL 'public final fun isEmpty (<this>: kotlin.CharSequence): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
++          ARG <this>: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
++              TYPE_ARG T: kotlin.Any?
++              ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
++                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.getIsEmpty$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.concurrent.AtomicIntArray
++    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int): kotlin.Boolean declared in <root>'
++        TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
++          CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
++            ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
++              ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
++              ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getIsTrue$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
++            ARG arg1: CONST Int type=kotlin.Int value=1
++  FUN ATOMICFU_GENERATED_FUNCTION name:getIsTrue$atomicfu$NATIVE_PROPERTY_REF$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> [crossinline]
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getIsTrue$atomicfu$NATIVE_PROPERTY_REF$Boolean (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>>): kotlin.Boolean declared in <root>'
++        TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
++          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Boolean origin=null
++            TYPE_ARG T: kotlin.Boolean
++            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
++              ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.getIsTrue$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:getLow$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Int [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.concurrent.AtomicLongArray
++    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getLow$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int): kotlin.Int declared in <root>'
++        CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Long' type=kotlin.Int origin=null
++          ARG <this>: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
++            CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
++              ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.getLow$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
++              ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getLow$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:getLow$atomicfu$NATIVE_PROPERTY_REF$Long visibility:private modality:FINAL returnType:kotlin.Int [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> [crossinline]
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getLow$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>): kotlin.Int declared in <root>'
++        CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Long' type=kotlin.Int origin=null
++          ARG <this>: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
++              TYPE_ARG T: kotlin.Long
++              ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
++                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.getLow$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
++  FUN ATOMICFU_GENERATED_FUNCTION name:getScaledBy10$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.concurrent.AtomicIntArray
++    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getScaledBy10$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int): kotlin.Int declared in <root>'
++        CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
++          ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++            CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
++              ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.getScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
++              ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.getScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
++          ARG other: CONST Int type=kotlin.Int value=10
++  FUN ATOMICFU_GENERATED_FUNCTION name:getScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> [crossinline]
++    BLOCK_BODY
++      RETURN type=kotlin.Nothing from='private final fun getScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>): kotlin.Int declared in <root>'
++        CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
++          ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
++              TYPE_ARG T: kotlin.Int
++              ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
++                ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.getScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
++          ARG other: CONST Int type=kotlin.Int value=10
++  FUN ATOMICFU_GENERATED_FUNCTION name:setScaledBy10$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.concurrent.AtomicIntArray
++    VALUE_PARAMETER kind:Regular name:index$atomicfu index:1 type:kotlin.Int
++    VALUE_PARAMETER kind:Regular name:value index:2 type:kotlin.Int
++    BLOCK_BODY
++      CALL 'public final fun set (index: kotlin.Int, newValue: kotlin.Int): kotlin.Unit declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Unit origin=null
++        ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.setScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
++        ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.setScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
++        ARG newValue: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIV
++          ARG <this>: GET_VAR 'value: kotlin.Int declared in <root>.setScaledBy10$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
++          ARG other: CONST Int type=kotlin.Int value=10
++  FUN ATOMICFU_GENERATED_FUNCTION name:setScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
++    VALUE_PARAMETER kind:Regular name:handler$atomicfu index:0 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> [crossinline]
++    VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
++    BLOCK_BODY
++      CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
++        TYPE_ARG T: kotlin.Int
++        ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
++          ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.setScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
++        ARG newValue: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIV
++          ARG <this>: GET_VAR 'value: kotlin.Int declared in <root>.setScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
++          ARG other: CONST Int type=kotlin.Int value=10
+   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+     BLOCK_BODY
+       CALL 'public final fun topLevelTest (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+@@ -215,103 +584,154 @@
+         CONST String type=kotlin.String value="OK"
+   FUN name:topLevelTest visibility:public modality:FINAL returnType:kotlin.Unit
+     BLOCK_BODY
+-      CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=EQ
+-        ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-        ARG <set-?>: CONST Int type=kotlin.Int value=-10
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++      CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Int
+-        ARG a: CONST Int type=kotlin.Int value=10
+-        ARG b: CALL 'private final fun <get-abs> (<this>: kotlinx.atomicfu.AtomicInt): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+-          ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-      CALL 'public final fun assertFalse (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-        ARG x: CALL 'private final fun <get-isEmpty> (<this>: kotlinx.atomicfu.AtomicRef<kotlin.String>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=GET_PROPERTY
+-          ARG <this>: CALL 'private final fun <get-s> (): kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=GET_PROPERTY
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>'
++          getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++            BLOCK_BODY
++              RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (): kotlin.Int declared in <root>.topLevelTest'
++                CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++          setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++            VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
++            BLOCK_BODY
++              RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (p0: kotlin.Int): kotlin.Unit declared in <root>.topLevelTest'
++                CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                  ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.topLevelTest.<set-a$volatile>' type=kotlin.Int origin=null
++        ARG newValue: CONST Int type=kotlin.Int value=-10
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Int
+-        ARG a: CONST Int type=kotlin.Int value=-100
+-        ARG b: CALL 'private final fun <get-scaledBy10> (<this>: kotlinx.atomicfu.AtomicInt): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+-          ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-      CALL 'private final fun <set-scaledBy10> (<this>: kotlinx.atomicfu.AtomicInt, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+-        ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
++        ARG expected: CONST Int type=kotlin.Int value=10
++        ARG actual: CALL 'private final fun getAbs$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
++            FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.topLevelTest'
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>'
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (): kotlin.Int declared in <root>.topLevelTest.<a$volatile-getter>'
++                          CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (p0: kotlin.Int): kotlin.Unit declared in <root>.topLevelTest.<a$volatile-getter>'
++                          CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.topLevelTest.<a$volatile-getter>.<set-a$volatile>' type=kotlin.Int origin=null
++      CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        ARG actual: CALL 'private final fun getIsEmpty$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
++          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=LAMBDA
++            FUN ATOMICFU_GENERATED_FUNCTION name:<s$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Any?> [inline]
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <s$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Any?> declared in <root>.topLevelTest'
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='private final s$volatile: kotlin.Any? declared in <root>'
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-s$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-s$volatile> (): kotlin.Any? declared in <root>.topLevelTest.<s$volatile-getter>'
++                          CALL 'private final fun <get-s$volatile> (): kotlin.Any? declared in <root>' type=kotlin.Any? origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-s$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Any?
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-s$volatile> (p0: kotlin.Any?): kotlin.Unit declared in <root>.topLevelTest.<s$volatile-getter>'
++                          CALL 'private final fun <set-s$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.topLevelTest.<s$volatile-getter>.<set-s$volatile>' type=kotlin.Any? origin=null
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        TYPE_ARG T: kotlin.Int
++        ARG expected: CONST Int type=kotlin.Int value=-100
++        ARG actual: CALL 'private final fun getScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
++            FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.topLevelTest'
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>'
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (): kotlin.Int declared in <root>.topLevelTest.<a$volatile-getter>'
++                          CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (p0: kotlin.Int): kotlin.Unit declared in <root>.topLevelTest.<a$volatile-getter>'
++                          CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.topLevelTest.<a$volatile-getter>.<set-a$volatile>' type=kotlin.Int origin=null
++      CALL 'private final fun setScaledBy10$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++        ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=LAMBDA
++          FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
++            BLOCK_BODY
++              RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.topLevelTest'
++                RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>'
++                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                    BLOCK_BODY
++                      RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (): kotlin.Int declared in <root>.topLevelTest.<a$volatile-getter>'
++                        CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++                  setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                    VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
++                    BLOCK_BODY
++                      RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (p0: kotlin.Int): kotlin.Unit declared in <root>.topLevelTest.<a$volatile-getter>'
++                        CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                          ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.topLevelTest.<a$volatile-getter>.<set-a$volatile>' type=kotlin.Int origin=null
+         ARG value: CONST Int type=kotlin.Int value=200
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Int
+-        ARG a: CONST Int type=kotlin.Int value=20
+-        ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+-          ARG <this>: CALL 'private final fun <get-a> (): kotlinx.atomicfu.AtomicInt declared in <root>' type=kotlinx.atomicfu.AtomicInt origin=GET_PROPERTY
+-      CALL 'private final fun <set-scaledBy10> (<this>: kotlinx.atomicfu.AtomicInt, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
+-        ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+-          ARG <this>: CALL 'private final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
+-          ARG index: CONST Int type=kotlin.Int value=0
++        ARG expected: CONST Int type=kotlin.Int value=20
++        ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
++            TYPE_ARG T: kotlin.Int
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>'
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (): kotlin.Int declared in <root>.topLevelTest'
++                    CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (p0: kotlin.Int): kotlin.Unit declared in <root>.topLevelTest'
++                    CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.topLevelTest.<set-a$volatile>' type=kotlin.Int origin=null
++      CALL 'private final fun setScaledBy10$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++        ARG handler$atomicfu: CALL 'private final fun <get-arr> (): kotlin.concurrent.AtomicIntArray declared in <root>' type=kotlin.concurrent.AtomicIntArray origin=null
++        ARG index$atomicfu: CONST Int type=kotlin.Int value=0
+         ARG value: CONST Int type=kotlin.Int value=300
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Int
+-        ARG a: CONST Int type=kotlin.Int value=30
+-        ARG b: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+-          ARG <this>: CALL 'public final fun get (index: kotlin.Int): kotlinx.atomicfu.AtomicInt declared in kotlinx.atomicfu.AtomicIntArray' type=kotlinx.atomicfu.AtomicInt origin=GET_ARRAY_ELEMENT
+-            ARG <this>: CALL 'private final fun <get-arr> (): kotlinx.atomicfu.AtomicIntArray declared in <root>' type=kotlinx.atomicfu.AtomicIntArray origin=GET_PROPERTY
++        ARG expected: CONST Int type=kotlin.Int value=30
++        ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
++          CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
++            ARG <this>: CALL 'private final fun <get-arr> (): kotlin.concurrent.AtomicIntArray declared in <root>' type=kotlin.concurrent.AtomicIntArray origin=null
+             ARG index: CONST Int type=kotlin.Int value=0
+-      CALL 'public final fun assertFalse (x: kotlin.Boolean): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+-        ARG x: CALL 'private final fun <get-isTrue> (<this>: kotlinx.atomicfu.AtomicBoolean): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=GET_PROPERTY
+-          ARG <this>: CALL 'private final fun <get-b> (): kotlinx.atomicfu.AtomicBoolean declared in <root>' type=kotlinx.atomicfu.AtomicBoolean origin=GET_PROPERTY
+-      CALL 'public final fun assertEquals <T> (a: T of kotlin.test.assertEquals, b: T of kotlin.test.assertEquals): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++      CALL 'public final fun assertFalse (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
++        ARG actual: CALL 'private final fun getIsTrue$atomicfu$NATIVE_PROPERTY_REF$Boolean (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
++          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=LAMBDA
++            FUN ATOMICFU_GENERATED_FUNCTION name:<b$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Boolean> [inline]
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <b$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.topLevelTest'
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null reflectionTarget='private final b$volatile: kotlin.Boolean declared in <root>'
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-b$volatile> visibility:local modality:FINAL returnType:kotlin.Boolean
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-b$volatile> (): kotlin.Boolean declared in <root>.topLevelTest.<b$volatile-getter>'
++                          CALL 'private final fun <get-b$volatile> (): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-b$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Boolean
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-b$volatile> (p0: kotlin.Boolean): kotlin.Unit declared in <root>.topLevelTest.<b$volatile-getter>'
++                          CALL 'private final fun <set-b$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Boolean declared in <root>.topLevelTest.<b$volatile-getter>.<set-b$volatile>' type=kotlin.Boolean origin=null
++      CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+         TYPE_ARG T: kotlin.Int
+-        ARG a: CONST Int type=kotlin.Int value=1
+-        ARG b: CALL 'private final fun <get-low> (<this>: kotlinx.atomicfu.AtomicLong): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+-          ARG <this>: CALL 'private final fun <get-l> (): kotlinx.atomicfu.AtomicLong declared in <root>' type=kotlinx.atomicfu.AtomicLong origin=GET_PROPERTY
+-  PROPERTY name:abs visibility:private modality:FINAL [val]
+-    FUN name:<get-abs> visibility:private modality:FINAL returnType:kotlin.Int [inline]
+-      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlinx.atomicfu.AtomicInt
+-      correspondingProperty: PROPERTY name:abs visibility:private modality:FINAL [val]
+-      BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-abs> (<this>: kotlinx.atomicfu.AtomicInt): kotlin.Int declared in <root>'
+-          CALL 'public final fun abs (n: kotlin.Int): kotlin.Int declared in kotlin.math' type=kotlin.Int origin=null
+-            ARG n: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: kotlinx.atomicfu.AtomicInt declared in <root>.<get-abs>' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+-  PROPERTY name:isEmpty visibility:private modality:FINAL [val]
+-    FUN name:<get-isEmpty> visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+-      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlinx.atomicfu.AtomicRef<kotlin.String>
+-      correspondingProperty: PROPERTY name:isEmpty visibility:private modality:FINAL [val]
+-      BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-isEmpty> (<this>: kotlinx.atomicfu.AtomicRef<kotlin.String>): kotlin.Boolean declared in <root>'
+-          CALL 'public final fun isEmpty (<this>: kotlin.CharSequence): kotlin.Boolean declared in kotlin.text' type=kotlin.Boolean origin=null
+-            ARG <this>: CALL 'public final fun <get-value> (): T of kotlinx.atomicfu.AtomicRef declared in kotlinx.atomicfu.AtomicRef' type=kotlin.String origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: kotlinx.atomicfu.AtomicRef<kotlin.String> declared in <root>.<get-isEmpty>' type=kotlinx.atomicfu.AtomicRef<kotlin.String> origin=IMPLICIT_ARGUMENT
+-  PROPERTY name:isTrue visibility:private modality:FINAL [val]
+-    FUN name:<get-isTrue> visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+-      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlinx.atomicfu.AtomicBoolean
+-      correspondingProperty: PROPERTY name:isTrue visibility:private modality:FINAL [val]
+-      BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-isTrue> (<this>: kotlinx.atomicfu.AtomicBoolean): kotlin.Boolean declared in <root>'
+-          CALL 'public final fun <get-value> (): kotlin.Boolean declared in kotlinx.atomicfu.AtomicBoolean' type=kotlin.Boolean origin=GET_PROPERTY
+-            ARG <this>: GET_VAR '<this>: kotlinx.atomicfu.AtomicBoolean declared in <root>.<get-isTrue>' type=kotlinx.atomicfu.AtomicBoolean origin=IMPLICIT_ARGUMENT
+-  PROPERTY name:low visibility:private modality:FINAL [val]
+-    FUN name:<get-low> visibility:private modality:FINAL returnType:kotlin.Int [inline]
+-      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlinx.atomicfu.AtomicLong
+-      correspondingProperty: PROPERTY name:low visibility:private modality:FINAL [val]
+-      BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-low> (<this>: kotlinx.atomicfu.AtomicLong): kotlin.Int declared in <root>'
+-          CALL 'public open fun toInt (): kotlin.Int declared in kotlin.Long' type=kotlin.Int origin=null
+-            ARG <this>: CALL 'public final fun <get-value> (): kotlin.Long declared in kotlinx.atomicfu.AtomicLong' type=kotlin.Long origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: kotlinx.atomicfu.AtomicLong declared in <root>.<get-low>' type=kotlinx.atomicfu.AtomicLong origin=IMPLICIT_ARGUMENT
+-  PROPERTY name:scaledBy10 visibility:private modality:FINAL [var]
+-    FUN name:<get-scaledBy10> visibility:private modality:FINAL returnType:kotlin.Int [inline]
+-      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlinx.atomicfu.AtomicInt
+-      correspondingProperty: PROPERTY name:scaledBy10 visibility:private modality:FINAL [var]
+-      BLOCK_BODY
+-        RETURN type=kotlin.Nothing from='private final fun <get-scaledBy10> (<this>: kotlinx.atomicfu.AtomicInt): kotlin.Int declared in <root>'
+-          CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+-            ARG <this>: CALL 'public final fun <get-value> (): kotlin.Int declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Int origin=GET_PROPERTY
+-              ARG <this>: GET_VAR '<this>: kotlinx.atomicfu.AtomicInt declared in <root>.<get-scaledBy10>' type=kotlinx.atomicfu.AtomicInt origin=IMPLICIT_ARGUMENT
+-            ARG other: CONST Int type=kotlin.Int value=10
+-    FUN name:<set-scaledBy10> visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+-      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlinx.atomicfu.AtomicInt
+-      VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+-      correspondingProperty: PROPERTY name:scaledBy10 visibility:private modality:FINAL [var]
+-      BLOCK_BODY
+-        CALL 'public final fun <set-value> (<set-?>: kotlin.Int): kotlin.Unit declared in kotlinx.atomicfu.AtomicInt' type=kotlin.Unit origin=EQ
+-          ARG <this>: GET_VAR '<this>: kotlinx.atomicfu.AtomicInt declared in <root>.<set-scaledBy10>' type=kotlinx.atomicfu.AtomicInt origin=null
+-          ARG <set-?>: CALL 'public final fun div (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=DIV
+-            ARG <this>: GET_VAR 'value: kotlin.Int declared in <root>.<set-scaledBy10>' type=kotlin.Int origin=null
+-            ARG other: CONST Int type=kotlin.Int value=10
++        ARG expected: CONST Int type=kotlin.Int value=1
++        ARG actual: CALL 'private final fun getLow$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>): kotlin.Int declared in <root>' type=kotlin.Int origin=null
++          ARG handler$atomicfu: FUN_EXPR type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=LAMBDA
++            FUN ATOMICFU_GENERATED_FUNCTION name:<l$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Long> [inline]
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <l$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Long> declared in <root>.topLevelTest'
++                  RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final l$volatile: kotlin.Long declared in <root>'
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-l$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-l$volatile> (): kotlin.Long declared in <root>.topLevelTest.<l$volatile-getter>'
++                          CALL 'private final fun <get-l$volatile> (): kotlin.Long declared in <root>' type=kotlin.Long origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-l$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:p0 index:0 type:kotlin.Long
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-l$volatile> (p0: kotlin.Long): kotlin.Unit declared in <root>.topLevelTest.<l$volatile-getter>'
++                          CALL 'private final fun <set-l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.topLevelTest.<l$volatile-getter>.<set-l$volatile>' type=kotlin.Long origin=null

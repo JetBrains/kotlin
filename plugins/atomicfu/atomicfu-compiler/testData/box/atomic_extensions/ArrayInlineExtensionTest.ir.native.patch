@@ -1,0 +1,799 @@
+--- a/ArrayInlineExtensionTest.ir.txt
++++ b/ArrayInlineExtensionTest.ir.native.txt
+@@ -73,15 +73,15 @@
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Boolean
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+                       ARG expectedValue: GET_VAR 'cur: kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Boolean.<anonymous>' type=kotlin.Boolean origin=null
+                       ARG newValue: GET_VAR 'to: kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Boolean origin=null
+                     then: RETURN type=kotlin.Nothing from='private final fun extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Boolean (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>>, to: kotlin.Boolean): kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest'
+                       TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+-                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                           TYPE_ARG T: kotlin.Boolean
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicBooleanArrayInlineExtensionTest
+@@ -158,7 +158,7 @@
+                 BLOCK_BODY
+                   CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+                     TYPE_ARG T: kotlin.Boolean
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+                     ARG newValue: CONST Boolean type=kotlin.Boolean value=false
+                   RETURN type=kotlin.Nothing from='private final fun extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Boolean (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>>, to: kotlin.Boolean): kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest'
+@@ -166,22 +166,22 @@
+                       BRANCH
+                         if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                           TYPE_ARG T: kotlin.Boolean
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+                           ARG expectedValue: GET_VAR 'cur: kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Boolean.<anonymous>' type=kotlin.Boolean origin=null
+                           ARG newValue: GET_VAR 'to: kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Boolean origin=null
+                         then: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+-                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                             TYPE_ARG T: kotlin.Boolean
+-                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                               ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+                       BRANCH
+                         if: CONST Boolean type=kotlin.Boolean value=true
+                         then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=null
+                           ARG <this>: TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+-                            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                               TYPE_ARG T: kotlin.Boolean
+-                              ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                              ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                                 ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Boolean [inline]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicBooleanArrayInlineExtensionTest
+@@ -260,7 +260,7 @@
+                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                   CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                     TYPE_ARG T: kotlin.Boolean
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+                     ARG expectedValue: GET_VAR 'cur: kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Boolean.<anonymous>' type=kotlin.Boolean origin=null
+                     ARG newValue: GET_VAR 'first: kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Boolean origin=null
+@@ -285,9 +285,9 @@
+                         then: CONST Int type=kotlin.Int value=0
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Boolean (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>>, first: kotlin.Boolean, second: kotlin.Boolean, index: kotlin.Int): kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Boolean origin=CAST typeOperand=kotlin.Boolean
+-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Boolean
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_ARRAY$Boolean visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicBooleanArrayInlineExtensionTest
+@@ -297,14 +297,14 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
++          body: BLOCK type=kotlin.Unit origin=null
+             VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Boolean [val]
+               CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                 ARG arg0: CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.AtomicBooleanArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.concurrent.AtomicIntArray origin=null
+                   ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.AtomicBooleanArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Int origin=null
+                 ARG arg1: CONST Int type=kotlin.Int value=1
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Unit> declared in <root>.AtomicBooleanArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=null
+               ARG p1: GET_VAR 'val tmp_0: kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Boolean' type=kotlin.Boolean origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$NATIVE_PROPERTY_REF$Boolean visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+@@ -314,15 +314,15 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++          body: BLOCK type=kotlin.Unit origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Boolean [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                 TYPE_ARG T: kotlin.Boolean
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.AtomicBooleanArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Boolean, kotlin.Unit> declared in <root>.AtomicBooleanArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function1<kotlin.Boolean, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_1: T of kotlin.concurrent.atomicGetField declared in <root>.AtomicBooleanArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=T of kotlin.concurrent.atomicGetField origin=null
++              ARG p1: GET_VAR 'val tmp_1: kotlin.Boolean declared in <root>.AtomicBooleanArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Boolean origin=null
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -531,9 +531,9 @@
+             ARG handler$atomicfu: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+             ARG to: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+               ARG <this>: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                   TYPE_ARG T: kotlin.Int
+-                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                     ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+               ARG other: GET_VAR 'delta: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:extensionLoop$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+@@ -580,15 +580,15 @@
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Int
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                       ARG expectedValue: GET_VAR 'cur: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>' type=kotlin.Int origin=null
+                       ARG newValue: GET_VAR 'to: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+                     then: RETURN type=kotlin.Nothing from='private final fun extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, to: kotlin.Int): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest'
+                       TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                           TYPE_ARG T: kotlin.Int
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, to: kotlin.Int): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest'
+                   CONST Int type=kotlin.Int value=777
+@@ -645,7 +645,7 @@
+                 BLOCK_BODY
+                   CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+                     TYPE_ARG T: kotlin.Int
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                     ARG newValue: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+                       ARG <this>: GET_VAR 'cur: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>' type=kotlin.Int origin=null
+@@ -655,20 +655,20 @@
+                       BRANCH
+                         if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                           TYPE_ARG T: kotlin.Int
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                           ARG expectedValue: GET_VAR 'cur: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>' type=kotlin.Int origin=null
+                           ARG newValue: GET_VAR 'to: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+                         then: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                             TYPE_ARG T: kotlin.Int
+-                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                               ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                       BRANCH
+                         if: CONST Boolean type=kotlin.Boolean value=true
+                         then: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                           ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Int>, delta: kotlin.Int): kotlin.Int declared in kotlin.concurrent' type=kotlin.Int origin=null
+-                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                               ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                             ARG delta: CONST Int type=kotlin.Int value=1
+                           ARG other: CONST Int type=kotlin.Int value=1
+@@ -723,7 +723,7 @@
+                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                   CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                     TYPE_ARG T: kotlin.Int
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                     ARG expectedValue: GET_VAR 'cur: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>' type=kotlin.Int origin=null
+                     ARG newValue: GET_VAR 'first: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+@@ -736,9 +736,9 @@
+                     ARG newValue: GET_VAR 'second: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, first: kotlin.Int, second: kotlin.Int, index: kotlin.Int): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                       TYPE_ARG T: kotlin.Int
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicIntArrayInlineExtensionTest
+@@ -767,8 +767,22 @@
+                       FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
+                         BLOCK_BODY
+                           RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int.<anonymous>'
+-                            PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.AtomicIntArrayInlineExtensionTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AtomicIntArrayInlineExtensionTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                              ARG 1: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
++                            RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest'
++                              bound <this>: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
++                              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicIntArrayInlineExtensionTest
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.AtomicIntArrayInlineExtensionTest): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int.<anonymous>.<a$volatile-getter>'
++                                    CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest' type=kotlin.Int origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int.<anonymous>.<a$volatile-getter>.<get-a$volatile>' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
++                              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicIntArrayInlineExtensionTest
++                                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.AtomicIntArrayInlineExtensionTest, p0: kotlin.Int): kotlin.Unit declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int.<anonymous>.<a$volatile-getter>'
++                                    CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AtomicIntArrayInlineExtensionTest' type=kotlin.Unit origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int.<anonymous>.<a$volatile-getter>.<set-a$volatile>' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
++                                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int.<anonymous>.<a$volatile-getter>.<set-a$volatile>' type=kotlin.Int origin=null
+                     ARG to: CONST Int type=kotlin.Int value=5
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Int (handler$atomicfu: kotlin.concurrent.AtomicIntArray, index$atomicfu: kotlin.Int, to: kotlin.Int): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+@@ -790,7 +804,7 @@
+                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                   CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                     TYPE_ARG T: kotlin.Int
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                     ARG expectedValue: GET_VAR 'cur: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>' type=kotlin.Int origin=null
+                     ARG newValue: GET_VAR 'to: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+@@ -801,14 +815,28 @@
+                       FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Int> [inline]
+                         BLOCK_BODY
+                           RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Int> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>'
+-                            PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.AtomicIntArrayInlineExtensionTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AtomicIntArrayInlineExtensionTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                              ARG 1: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
++                            RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest'
++                              bound <this>: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
++                              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicIntArrayInlineExtensionTest
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.AtomicIntArrayInlineExtensionTest): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>.<a$volatile-getter>'
++                                    CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest' type=kotlin.Int origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>.<a$volatile-getter>.<get-a$volatile>' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
++                              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicIntArrayInlineExtensionTest
++                                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.AtomicIntArrayInlineExtensionTest, p0: kotlin.Int): kotlin.Unit declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>.<a$volatile-getter>'
++                                    CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AtomicIntArrayInlineExtensionTest' type=kotlin.Unit origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.AtomicIntArrayInlineExtensionTest declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>.<a$volatile-getter>.<set-a$volatile>' type=<root>.AtomicIntArrayInlineExtensionTest origin=null
++                                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>.<a$volatile-getter>.<set-a$volatile>' type=kotlin.Int origin=null
+                     ARG to: CONST Int type=kotlin.Int value=5
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, to: kotlin.Int): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                       TYPE_ARG T: kotlin.Int
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:foo$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Int [inline]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicIntArrayInlineExtensionTest
+@@ -856,7 +884,7 @@
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Int
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+                       ARG expectedValue: GET_VAR 'cur: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Int.<anonymous>' type=kotlin.Int origin=null
+                       ARG newValue: GET_VAR 'to: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+@@ -866,9 +894,9 @@
+                     if: CONST Boolean type=kotlin.Boolean value=true
+                     then: RETURN type=kotlin.Nothing from='private final fun foo$atomicfu$NATIVE_PROPERTY_REF$Int (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>>, to: kotlin.Int): kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest'
+                       TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                           TYPE_ARG T: kotlin.Int
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_ARRAY$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicIntArrayInlineExtensionTest
+@@ -878,12 +906,12 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
++          body: BLOCK type=kotlin.Unit origin=null
+             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
+               CALL 'public final fun get (index: kotlin.Int): kotlin.Int declared in kotlin.concurrent.AtomicIntArray' type=kotlin.Int origin=null
+                 ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicIntArray declared in <root>.AtomicIntArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.concurrent.AtomicIntArray origin=null
+                 ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.AtomicIntArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+               ARG p1: GET_VAR 'val tmp_2: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Int' type=kotlin.Int origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$NATIVE_PROPERTY_REF$Int visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+@@ -893,15 +921,15 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++          body: BLOCK type=kotlin.Unit origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                 TYPE_ARG T: kotlin.Int
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> declared in <root>.AtomicIntArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Int>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.AtomicIntArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_3: T of kotlin.concurrent.atomicGetField declared in <root>.AtomicIntArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=T of kotlin.concurrent.atomicGetField origin=null
++              ARG p1: GET_VAR 'val tmp_3: kotlin.Int declared in <root>.AtomicIntArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Int' type=kotlin.Int origin=null
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -1113,9 +1141,9 @@
+             ARG handler$atomicfu: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+             ARG to: CALL 'public final fun plus (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=PLUS
+               ARG <this>: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-                CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+                   TYPE_ARG T: kotlin.Long
+-                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                  ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                     ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+               ARG other: GET_VAR 'delta: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.bar$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Long origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:extensionLoop$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
+@@ -1162,15 +1190,15 @@
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Long
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                       ARG expectedValue: GET_VAR 'cur: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>' type=kotlin.Long origin=null
+                       ARG newValue: GET_VAR 'to: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Long origin=null
+                     then: RETURN type=kotlin.Nothing from='private final fun extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>, to: kotlin.Long): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest'
+                       TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+                           TYPE_ARG T: kotlin.Long
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>, to: kotlin.Long): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest'
+                   CONST Long type=kotlin.Long value=777
+@@ -1227,7 +1255,7 @@
+                 BLOCK_BODY
+                   CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+                     TYPE_ARG T: kotlin.Long
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                     ARG newValue: CALL 'public final fun plus (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=PLUS
+                       ARG <this>: GET_VAR 'cur: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>' type=kotlin.Long origin=null
+@@ -1237,20 +1265,20 @@
+                       BRANCH
+                         if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                           TYPE_ARG T: kotlin.Long
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                           ARG expectedValue: GET_VAR 'cur: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>' type=kotlin.Long origin=null
+                           ARG newValue: GET_VAR 'to: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Long origin=null
+                         then: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+                             TYPE_ARG T: kotlin.Long
+-                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                               ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                       BRANCH
+                         if: CONST Boolean type=kotlin.Boolean value=true
+                         then: CALL 'public final fun plus (other: kotlin.Long): kotlin.Long declared in kotlin.Long' type=kotlin.Long origin=null
+                           ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Long>, delta: kotlin.Long): kotlin.Long declared in kotlin.concurrent' type=kotlin.Long origin=null
+-                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                               ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                             ARG delta: TYPE_OP type=kotlin.Long origin=IMPLICIT_CAST typeOperand=kotlin.Long
+                               CONST Long type=kotlin.Long value=1
+@@ -1306,7 +1334,7 @@
+                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                   CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                     TYPE_ARG T: kotlin.Long
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                     ARG expectedValue: GET_VAR 'cur: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>' type=kotlin.Long origin=null
+                     ARG newValue: GET_VAR 'first: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Long origin=null
+@@ -1319,9 +1347,9 @@
+                     ARG newValue: GET_VAR 'second: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Long origin=null
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>, first: kotlin.Long, second: kotlin.Long, index: kotlin.Int): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+                       TYPE_ARG T: kotlin.Long
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicLongArrayInlineExtensionTest
+@@ -1350,8 +1378,22 @@
+                       FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Long> [inline]
+                         BLOCK_BODY
+                           RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Long> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long.<anonymous>'
+-                            PROPERTY_REFERENCE 'private final a$volatile: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Long visibility:private declared in <root>.AtomicLongArrayInlineExtensionTest' getter='private final fun <get-a$volatile> (): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest' setter='private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AtomicLongArrayInlineExtensionTest' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-                              ARG 1: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
++                            RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final a$volatile: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest'
++                              bound <this>: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
++                              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicLongArrayInlineExtensionTest
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.AtomicLongArrayInlineExtensionTest): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long.<anonymous>.<a$volatile-getter>'
++                                    CALL 'private final fun <get-a$volatile> (): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest' type=kotlin.Long origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long.<anonymous>.<a$volatile-getter>.<get-a$volatile>' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
++                              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicLongArrayInlineExtensionTest
++                                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Long
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.AtomicLongArrayInlineExtensionTest, p0: kotlin.Long): kotlin.Unit declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long.<anonymous>.<a$volatile-getter>'
++                                    CALL 'private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AtomicLongArrayInlineExtensionTest' type=kotlin.Unit origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long.<anonymous>.<a$volatile-getter>.<set-a$volatile>' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
++                                      ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long.<anonymous>.<a$volatile-getter>.<set-a$volatile>' type=kotlin.Long origin=null
+                     ARG to: CONST Long type=kotlin.Long value=5
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopRecursive$atomicfu$ATOMIC_ARRAY$Long (handler$atomicfu: kotlin.concurrent.AtomicLongArray, index$atomicfu: kotlin.Int, to: kotlin.Long): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+@@ -1373,7 +1415,7 @@
+                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                   CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                     TYPE_ARG T: kotlin.Long
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                     ARG expectedValue: GET_VAR 'cur: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>' type=kotlin.Long origin=null
+                     ARG newValue: GET_VAR 'to: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Long origin=null
+@@ -1384,14 +1426,28 @@
+                       FUN ATOMICFU_GENERATED_FUNCTION name:<a$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Long> [inline]
+                         BLOCK_BODY
+                           RETURN type=kotlin.Nothing from='local final fun <a$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Long> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>'
+-                            PROPERTY_REFERENCE 'private final a$volatile: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Long visibility:private declared in <root>.AtomicLongArrayInlineExtensionTest' getter='private final fun <get-a$volatile> (): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest' setter='private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AtomicLongArrayInlineExtensionTest' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-                              ARG 1: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
++                            RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final a$volatile: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest'
++                              bound <this>: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
++                              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicLongArrayInlineExtensionTest
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.AtomicLongArrayInlineExtensionTest): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>.<a$volatile-getter>'
++                                    CALL 'private final fun <get-a$volatile> (): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest' type=kotlin.Long origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>.<a$volatile-getter>.<get-a$volatile>' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
++                              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicLongArrayInlineExtensionTest
++                                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Long
++                                BLOCK_BODY
++                                  RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.AtomicLongArrayInlineExtensionTest, p0: kotlin.Long): kotlin.Unit declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>.<a$volatile-getter>'
++                                    CALL 'private final fun <set-a$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AtomicLongArrayInlineExtensionTest' type=kotlin.Unit origin=null
++                                      ARG <this>: GET_VAR '<this>: <root>.AtomicLongArrayInlineExtensionTest declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>.<a$volatile-getter>.<set-a$volatile>' type=<root>.AtomicLongArrayInlineExtensionTest origin=null
++                                      ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>.<a$volatile-getter>.<set-a$volatile>' type=kotlin.Long origin=null
+                     ARG to: CONST Long type=kotlin.Long value=5
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>, to: kotlin.Long): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+                       TYPE_ARG T: kotlin.Long
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:foo$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Long [inline]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicLongArrayInlineExtensionTest
+@@ -1439,7 +1495,7 @@
+                   BRANCH
+                     if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                       TYPE_ARG T: kotlin.Long
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+                       ARG expectedValue: GET_VAR 'cur: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Long.<anonymous>' type=kotlin.Long origin=null
+                       ARG newValue: GET_VAR 'to: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Long origin=null
+@@ -1449,9 +1505,9 @@
+                     if: CONST Boolean type=kotlin.Boolean value=true
+                     then: RETURN type=kotlin.Nothing from='private final fun foo$atomicfu$NATIVE_PROPERTY_REF$Long (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>>, to: kotlin.Long): kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest'
+                       TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                        CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+                           TYPE_ARG T: kotlin.Long
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.foo$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_ARRAY$Long visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicLongArrayInlineExtensionTest
+@@ -1461,12 +1517,12 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
++          body: BLOCK type=kotlin.Unit origin=null
+             VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Long [val]
+               CALL 'public final fun get (index: kotlin.Int): kotlin.Long declared in kotlin.concurrent.AtomicLongArray' type=kotlin.Long origin=null
+                 ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicLongArray declared in <root>.AtomicLongArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.concurrent.AtomicLongArray origin=null
+                 ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.AtomicLongArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Int origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Unit> declared in <root>.AtomicLongArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Function1<kotlin.Long, kotlin.Unit> origin=null
+               ARG p1: GET_VAR 'val tmp_4: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Long' type=kotlin.Long origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$NATIVE_PROPERTY_REF$Long visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+@@ -1476,15 +1532,15 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++          body: BLOCK type=kotlin.Unit origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Long [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+                 TYPE_ARG T: kotlin.Long
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> declared in <root>.AtomicLongArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Long>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Long, kotlin.Unit> declared in <root>.AtomicLongArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Function1<kotlin.Long, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_5: T of kotlin.concurrent.atomicGetField declared in <root>.AtomicLongArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Long' type=T of kotlin.concurrent.atomicGetField origin=null
++              ARG p1: GET_VAR 'val tmp_5: kotlin.Long declared in <root>.AtomicLongArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Long' type=kotlin.Long origin=null
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -1631,19 +1687,19 @@
+   CLASS CLASS name:AtomicRefArrayInlineExtensionTest modality:FINAL visibility:public superTypes:[kotlin.Any]
+     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AtomicRefArrayInlineExtensionTest
+     PROPERTY ATOMICFU_GENERATED_PROPERTY name:refArr visibility:private modality:FINAL [val]
+-      FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final]
++      FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<kotlin.Any?> visibility:private [final]
+         EXPRESSION_BODY
+-          CONSTRUCTOR_CALL 'internal constructor <init> (array: kotlin.Array<T of kotlin.concurrent.AtomicArray>) declared in kotlin.concurrent.AtomicArray' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          CONSTRUCTOR_CALL 'internal constructor <init> (array: kotlin.Array<T of kotlin.concurrent.AtomicArray>) declared in kotlin.concurrent.AtomicArray' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+             TYPE_ARG (of class) T: kotlin.Any?
+-            ARG array: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOfNulls?> origin=null
++            ARG array: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
+               TYPE_ARG T: kotlin.Any?
+               ARG size: CONST Int type=kotlin.Int value=10
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-refArr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray>
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-refArr> visibility:private modality:FINAL returnType:kotlin.concurrent.AtomicArray<kotlin.Any?>
+         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicRefArrayInlineExtensionTest
+         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:refArr visibility:private modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final] declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          RETURN type=kotlin.Nothing from='private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<kotlin.Any?> visibility:private [final] declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               receiver: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.<get-refArr>' type=<root>.AtomicRefArrayInlineExtensionTest origin=null
+     PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
+       FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Long visibility:private
+@@ -1695,7 +1751,7 @@
+                         ARG newValue: GET_VAR 'to: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.String origin=null
+                       then: RETURN type=kotlin.Nothing from='private final fun extensionLoop$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, to: kotlin.String): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest'
+                         TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
++                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                             ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+                     BRANCH
+@@ -1718,15 +1774,15 @@
+                     BRANCH
+                       if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                         TYPE_ARG T: kotlin.Any?
+-                        ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                        ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                           ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+                         ARG expectedValue: GET_VAR 'cur: kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Any.<anonymous>' type=kotlin.String? origin=null
+                         ARG newValue: GET_VAR 'to: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.String origin=null
+                       then: RETURN type=kotlin.Nothing from='private final fun extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, to: kotlin.String): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest'
+                         TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                             TYPE_ARG T: kotlin.Any?
+-                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                               ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+                     BRANCH
+                       if: CONST Boolean type=kotlin.Boolean value=true
+@@ -1759,7 +1815,7 @@
+                           ARG expectedValue: GET_VAR 'cur: kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Any.<anonymous>' type=kotlin.String? origin=null
+                           ARG newValue: GET_VAR 'to: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.String origin=null
+                         then: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
++                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                             ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+                       BRANCH
+@@ -1780,7 +1836,7 @@
+                 BLOCK_BODY
+                   CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+                     TYPE_ARG T: kotlin.Any?
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+                     ARG newValue: CONST String type=kotlin.String value="aaa"
+                   RETURN type=kotlin.Nothing from='private final fun extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, to: kotlin.String): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest'
+@@ -1788,14 +1844,14 @@
+                       BRANCH
+                         if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                           TYPE_ARG T: kotlin.Any?
+-                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+                           ARG expectedValue: GET_VAR 'cur: kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Any.<anonymous>' type=kotlin.String? origin=null
+                           ARG newValue: GET_VAR 'to: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.String origin=null
+                         then: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                          CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                             TYPE_ARG T: kotlin.Any?
+-                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                            ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                               ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+                       BRANCH
+                         if: CONST Boolean type=kotlin.Boolean value=true
+@@ -1824,14 +1880,14 @@
+                     ARG newValue: GET_VAR 'first: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.String origin=null
+                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                   CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
+-                    ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                    ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                       ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any' type=<root>.AtomicRefArrayInlineExtensionTest origin=null
+                     ARG index: GET_VAR 'index: kotlin.Int declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+                     ARG expectedValue: GET_VAR 'first: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.String origin=null
+                     ARG newValue: GET_VAR 'second: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.String origin=null
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, first: kotlin.String, second: kotlin.String, index: kotlin.Int): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                    CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
++                    CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                       ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.String? [inline]
+@@ -1851,22 +1907,22 @@
+                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                   CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                     TYPE_ARG T: kotlin.Any?
+-                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                    ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                       ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+                     ARG expectedValue: GET_VAR 'cur: kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any.<anonymous>' type=kotlin.String? origin=null
+                     ARG newValue: GET_VAR 'first: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.String origin=null
+                 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                   CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
+-                    ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                    ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                       ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any' type=<root>.AtomicRefArrayInlineExtensionTest origin=null
+                     ARG index: GET_VAR 'index: kotlin.Int declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Int origin=null
+                     ARG expectedValue: GET_VAR 'first: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.String origin=null
+                     ARG newValue: GET_VAR 'second: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.String origin=null
+                 RETURN type=kotlin.Nothing from='private final fun extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>>, first: kotlin.String, second: kotlin.String, index: kotlin.Int): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest'
+                   TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                       TYPE_ARG T: kotlin.Any?
+-                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                      ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                         ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.AtomicRefArrayInlineExtensionTest.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$ATOMIC_ARRAY$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicRefArrayInlineExtensionTest
+@@ -1876,14 +1932,14 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:T of kotlin.concurrent.AtomicArray [val]
+-              CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
++          body: BLOCK type=kotlin.Unit origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Any? [val]
++              CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
+                 ARG <this>: GET_VAR 'handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                 ARG index: GET_VAR 'index$atomicfu: kotlin.Int declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Int origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_6: T of kotlin.concurrent.AtomicArray declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=T of kotlin.concurrent.AtomicArray origin=null
++              ARG p1: GET_VAR 'val tmp_6: kotlin.Any? declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$ATOMIC_ARRAY$Any' type=kotlin.Any? origin=null
+     FUN ATOMICFU_GENERATED_FUNCTION name:loop$atomicfu$NATIVE_PROPERTY_REF$Any visibility:private modality:FINAL returnType:kotlin.Unit [inline]
+       VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicRefArrayInlineExtensionTest
+       VALUE_PARAMETER kind:Regular name:handler$atomicfu index:1 type:kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> [crossinline]
+@@ -1891,15 +1947,15 @@
+       BLOCK_BODY
+         WHILE label=null origin=null
+           condition: CONST Boolean type=kotlin.Boolean value=true
+-          body: BLOCK type=R of kotlin.Function1 origin=null
+-            VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:T of kotlin.concurrent.atomicGetField [val]
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++          body: BLOCK type=kotlin.Unit origin=null
++            VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Any? [val]
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+                 TYPE_ARG T: kotlin.Any?
+-                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++                ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+                   ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Any?>> origin=null
+-            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=R of kotlin.Function1 origin=null
++            CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 declared in kotlin.Function1' type=kotlin.Unit origin=null
+               ARG <this>: GET_VAR 'action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit> declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=null
+-              ARG p1: GET_VAR 'val tmp_7: T of kotlin.concurrent.atomicGetField declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=T of kotlin.concurrent.atomicGetField origin=null
++              ARG p1: GET_VAR 'val tmp_7: kotlin.Any? declared in <root>.AtomicRefArrayInlineExtensionTest.loop$atomicfu$NATIVE_PROPERTY_REF$Any' type=kotlin.Any? origin=null
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -1919,7 +1975,7 @@
+       BLOCK_BODY
+         CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.Unit origin=null
+           ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.casLoop' type=<root>.AtomicRefArrayInlineExtensionTest origin=null
+-          ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+             ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.casLoop' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+           ARG index$atomicfu: CONST Int type=kotlin.Int value=0
+           ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.Unit> origin=LAMBDA
+@@ -1929,15 +1985,15 @@
+                 WHEN type=kotlin.Unit origin=IF
+                   BRANCH
+                     if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
+-                      ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                      ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                         ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.casLoop' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+                       ARG index: CONST Int type=kotlin.Int value=0
+                       ARG expectedValue: GET_VAR 'cur: kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest.casLoop.<anonymous>' type=kotlin.String? origin=null
+                       ARG newValue: GET_VAR 'to: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.casLoop' type=kotlin.String origin=null
+                     then: RETURN type=kotlin.Nothing from='private final fun casLoop (to: kotlin.String): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest'
+                       TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                        CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-                          ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                        CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++                          ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                             ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.casLoop' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+                           ARG index: CONST Int type=kotlin.Int value=0
+     FUN name:casLoopExpression visibility:private modality:FINAL returnType:kotlin.String? [inline]
+@@ -1947,7 +2003,7 @@
+         RETURN type=kotlin.Nothing from='private final fun casLoopExpression (to: kotlin.String): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest'
+           CALL 'private final fun loop$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, action$atomicfu: kotlin.Function1<kotlin.Any?, kotlin.Unit>): kotlin.Unit declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.Unit origin=null
+             ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.casLoopExpression' type=<root>.AtomicRefArrayInlineExtensionTest origin=null
+-            ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.casLoopExpression' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+             ARG index$atomicfu: CONST Int type=kotlin.Int value=3
+             ARG action$atomicfu: FUN_EXPR type=kotlin.Function1<kotlin.String?, kotlin.Unit> origin=LAMBDA
+@@ -1957,15 +2013,15 @@
+                   WHEN type=kotlin.Unit origin=IF
+                     BRANCH
+                       if: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
+-                        ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                        ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                           ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.casLoopExpression' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+                         ARG index: CONST Int type=kotlin.Int value=3
+                         ARG expectedValue: GET_VAR 'cur: kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest.casLoopExpression.<anonymous>' type=kotlin.String? origin=null
+                         ARG newValue: GET_VAR 'to: kotlin.String declared in <root>.AtomicRefArrayInlineExtensionTest.casLoopExpression' type=kotlin.String origin=null
+                       then: RETURN type=kotlin.Nothing from='private final fun casLoopExpression (to: kotlin.String): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest'
+                         TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-                            ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                          CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++                            ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                               ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.casLoopExpression' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+                             ARG index: CONST Int type=kotlin.Int value=3
+     FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
+@@ -1988,7 +2044,7 @@
+           ARG expected: CONST String type=kotlin.String value="ccc"
+           ARG actual: CALL 'private final fun extensionLoop$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, to: kotlin.String): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.String? origin=null
+             ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.test' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+-            ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.test' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+             ARG index$atomicfu: CONST Int type=kotlin.Int value=1
+             ARG to: CONST String type=kotlin.String value="ccc"
+@@ -1997,7 +2053,7 @@
+           ARG expected: CONST String type=kotlin.String value="CAS_failed"
+           ARG actual: CALL 'private final fun extensionLoopExpression$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, to: kotlin.String): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.String? origin=null
+             ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.test' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+-            ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.test' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+             ARG index$atomicfu: CONST Int type=kotlin.Int value=1
+             ARG to: CONST String type=kotlin.String value="ccc"
+@@ -2006,7 +2062,7 @@
+           ARG expected: CONST String type=kotlin.String value="bbb"
+           ARG actual: CALL 'private final fun extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Any (handler$atomicfu: kotlin.concurrent.AtomicArray<kotlin.Any?>, index$atomicfu: kotlin.Int, first: kotlin.String, second: kotlin.String, index: kotlin.Int): kotlin.String? declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.String? origin=null
+             ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.test' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+-            ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            ARG handler$atomicfu: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicRefArrayInlineExtensionTest' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               ARG <this>: GET_VAR '<this>: <root>.AtomicRefArrayInlineExtensionTest declared in <root>.AtomicRefArrayInlineExtensionTest.test' type=<root>.AtomicRefArrayInlineExtensionTest origin=IMPLICIT_ARGUMENT
+             ARG index$atomicfu: CONST Int type=kotlin.Int value=7
+             ARG first: CONST String type=kotlin.String value="aaa"

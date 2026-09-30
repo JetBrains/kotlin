@@ -1,4 +1,4 @@
-// DUMP_IR_DIFFERENCE: JS_IR
+// DUMP_IR_DIFFERENCE: JS_IR, NATIVE
 // DUMP_SMAP
 
 import kotlinx.atomicfu.AtomicRef
