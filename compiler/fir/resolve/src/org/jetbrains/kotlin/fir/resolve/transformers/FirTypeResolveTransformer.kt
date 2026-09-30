@@ -160,16 +160,16 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    fun transformClassTypeParameters(regularClass: FirRegularClass, data: Any?) {
+    fun transformClassTypeParameters(firClass: FirClass, data: Any?) {
         withScopeCleanup {
             // Remove type parameter scopes for classes that are neither inner nor local
-            if (removeOuterTypeParameterScope(regularClass)) {
+            if (removeOuterTypeParameterScope(firClass)) {
                 this.scopes = staticScopes
             }
-            addTypeParametersScope(regularClass)
+            addTypeParametersScope(firClass)
 
-            resolveTypeParameterBounds(regularClass)
-            unboundCyclesInTypeParametersSupertypes(regularClass)
+            resolveTypeParameterBounds(firClass)
+            unboundCyclesInTypeParametersSupertypes(firClass)
         }
     }
 
@@ -179,6 +179,8 @@ open class FirTypeResolveTransformer(
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
         withClassDeclarationCleanup(classDeclarationsStack, anonymousObject) {
+            // Anonymous objects can declare type parameters only in red code, they are visible in their own bounds only
+            transformClassTypeParameters(anonymousObject, data)
             return resolveClassContent(anonymousObject, data)
         }
     }

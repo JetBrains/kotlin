@@ -1,4 +1,3 @@
-// IGNORE_FIR
 val x = object<T> {
     fun foo(t: T) {}
 }

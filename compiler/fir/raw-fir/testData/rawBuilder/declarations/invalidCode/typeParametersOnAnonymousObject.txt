@@ -1,6 +1,6 @@
 FILE: typeParametersOnAnonymousObject.kt
     public? final? val x: <implicit> = object : R|kotlin/Any| {
-        private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+        private [ContainingClassKey=<anonymous>] constructor<T>(): R|<anonymous><T>| {
             super<R|kotlin/Any|>()
         }
 
@@ -12,7 +12,7 @@ FILE: typeParametersOnAnonymousObject.kt
         public? get(): <implicit>
     public? final? fun <R> test(): R|kotlin/Unit| {
         lval y: <implicit> = object : R|kotlin/Any| {
-            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous><R>| {
+            private [ContainingClassKey=<anonymous>] constructor<T : R, K : Comparable<K>>(): R|<anonymous><T, K, R>| {
                 super<R|kotlin/Any|>()
             }
 
