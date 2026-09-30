@@ -1,0 +1,21 @@
+KT element: KtAnnotationEntry
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] annotatedDestructuringTopLevel.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.s] s: String): R|Ann| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] get(): String
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val x: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(BODY_RESOLVE)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = IntegerLiteral(1).<Unresolved name: to>#(Int(2))
