@@ -10,7 +10,7 @@ sourceSets["main"].kotlin {
 
 dependencies {
     val kotlinVersion = project.bootstrapKotlinVersion
-    val kotlinxBenchmarkVersion = "0.4.17"
+    val kotlinxBenchmarkVersion = "0.5.0"
 
     compileOnly(gradleApi())
 
