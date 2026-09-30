@@ -13,6 +13,10 @@ import kotlin.test.fail
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
+internal const val WASI_BOX_ENTRY_EXPORT = "startTest"
+
+internal const val WASI_UNIT_TESTS_ENTRY_EXPORT = "startUnitTests"
+
 internal sealed class WasmVM(
     val property: String,
     val entryPointIsJsFile: Boolean
@@ -28,6 +32,7 @@ internal sealed class WasmVM(
         useNewExceptionHandling: Boolean = false,
         useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
+        wasiEntryExport: String = WASI_BOX_ENTRY_EXPORT,
     ): String
 
     object V8 : WasmVM(property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
@@ -38,6 +43,7 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -58,6 +64,7 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -75,7 +82,8 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -93,11 +101,12 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 entryFile,
-                "startTest",
+                wasiEntryExport,
                 workingDirectory = workingDirectory,
             )
     }
@@ -110,13 +119,14 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 "-W",
                 "gc,function-references,exceptions",
                 "--invoke",
-                "startTest",
+                wasiEntryExport,
                 entryFile,
                 workingDirectory = workingDirectory,
             )
@@ -129,7 +139,8 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
