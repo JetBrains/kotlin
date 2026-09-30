@@ -182,6 +182,7 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     // Reminder: single-field value class is considered inline if it has @JvmInline annotation or if the FullValueClasses feature is disabled
     val isSubjectForCheck = when {
         valueClassRepresentation is InlineClassRepresentation -> true
+        valueClassRepresentation is FullValueClassRepresentation && valueClassRepresentation.belongsToAbstractOrSealedValueClass -> false
         isOrWillBeFullValueClass && isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
         else -> isOrWillBeFullValueClass
     }
