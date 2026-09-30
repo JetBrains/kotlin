@@ -166,6 +166,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                 when (bridge) {
                     is Bridge.CToKotlin -> {
                         val language = annotation.getConstArgument<String>("language")!!
+                        // Note: `declaration` is always empty at the moment. Will be removed later.
                         val declaration = fixUpAllPlaceHolders(annotation.getConstArgument<String>("declaration")!!)
                         newAnnotations[newAnnotations.indexOf(annotation)] =
                                 buildSimpleAnnotation(
