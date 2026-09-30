@@ -28,7 +28,8 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirComposa
 
     open fun loadHasBackingFieldFlag(propertyProto: ProtoBuf.Property): Boolean? = null
 
-    open fun isMaybeFullValueClass(containerSource: DeserializedContainerSource?): Boolean = false
+    // Metadata of klibs has the underlying property of every inline class, so a value class without it is a full value class.
+    open fun isMaybeFullValueClass(containerSource: DeserializedContainerSource?): Boolean = true
 
     open val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean get() = true
 
@@ -63,6 +64,9 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirComposa
         override fun loadHasBackingFieldFlag(propertyProto: ProtoBuf.Property): Boolean? {
             return components.firstNotNullOfOrNull { it.loadHasBackingFieldFlag(propertyProto) }
         }
+
+        override fun isMaybeFullValueClass(containerSource: DeserializedContainerSource?): Boolean =
+            components.all { it.isMaybeFullValueClass(containerSource) }
 
         override val isLoadingOfAnnotationsOnAnnotationPropertiesEnabled: Boolean
             get() = components.all { it.isLoadingOfAnnotationsOnAnnotationPropertiesEnabled }

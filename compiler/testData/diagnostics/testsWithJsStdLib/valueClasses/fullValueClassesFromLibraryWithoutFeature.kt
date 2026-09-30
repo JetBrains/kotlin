@@ -16,7 +16,7 @@ value class Sub(val x: Int) : Base()
 import lib.*
 
 fun test(multi: Multi, sub: Sub, base: Base) {
-    multi === multi
+    <!FORBIDDEN_IDENTITY_EQUALS!>multi === multi<!>
     <!FORBIDDEN_IDENTITY_EQUALS!>sub === sub<!>
-    base === base
+    <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>base === base<!>
 }
