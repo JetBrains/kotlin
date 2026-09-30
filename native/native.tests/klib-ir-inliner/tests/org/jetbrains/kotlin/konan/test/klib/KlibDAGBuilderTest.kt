@@ -54,15 +54,14 @@ import kotlin.io.path.pathString
 class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     @ParameterizedTest
     @EnumSource
-    fun `stdlib does not depend on anything`(mode: KlibDAGBuildingMode) {
+    fun `stdlib does not depend on anything`(mode: KlibDAGBuildingMode) = context(mode) {
         val libraries = loadLibraries()
         assertEquals(1, libraries.size)
 
         val stdlib = libraries[0]
         assertTrue(stdlib.isNativeStdlib)
 
-        @OptIn(InternalKlibDAGApi::class)
-        val dag = KlibDAGBuilder(libraries, useSignatureIndices = mode.useSignatureIndices) { true }.build()
+        val dag = KlibDAGBuilder(buildParams(libraries)).build()
         assertEquals(1, dag.librariesReverseTopoSorted.size)
         assertEquals(stdlib, dag.librariesReverseTopoSorted.single())
 
@@ -77,7 +76,9 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     @ParameterizedTest
     @EnumSource
-    fun `dependencies of platform libs correlate to what is written in their manifest (unique_name, depends)`(mode: KlibDAGBuildingMode) {
+    fun `dependencies of platform libs correlate to what is written in their manifest (unique_name, depends)`(
+        mode: KlibDAGBuildingMode,
+    ) = context(mode) {
         val libraries = loadLibraries(platformLibs = true)
         assertTrue(libraries.size > 1)
 
@@ -98,8 +99,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         )
 
         // Now, compute the DAG of dependencies by signatures.
-        @OptIn(InternalKlibDAGApi::class)
-        val dag = KlibDAGBuilder(libraries, useSignatureIndices = mode.useSignatureIndices) { true }.build()
+        val dag = KlibDAGBuilder(buildParams(libraries)).build()
 
         // Direct dependencies computed by signatures.
         val directDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.librariesReverseTopoSorted.associateWith {
@@ -150,7 +150,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         contractedDag: Boolean,
         mode: KlibDAGBuildingMode,
         isRoot: KotlinLibrary.() -> Boolean,
-    ) {
+    ) = context(mode) {
         // Define the user's project structure.
         // Note: stdlib & platform libraries are not reflected in this structure.
         val userProjectModules = newSourceModules {
@@ -194,8 +194,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         val allLibraries: List<KotlinLibrary> = loadLibraries(platformLibs = true, others = userLibraryPathToModuleName.keys)
 
         // Compute the DAG of dependencies by signatures.
-        @OptIn(InternalKlibDAGApi::class)
-        val dag = KlibDAGBuilder(allLibraries, useSignatureIndices = mode.useSignatureIndices) { !contractedDag || isRoot(it) }.build()
+        val dag = KlibDAGBuilder(buildParams(allLibraries) { !contractedDag || isRoot(it) }).build()
 
         if (contractedDag) {
             // Only the necessary (used) libraries should be present in the DAG.
@@ -298,7 +297,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     @ParameterizedTest
     @EnumSource
-    fun `cycling dependency is an error`(mode: KlibDAGBuildingMode) {
+    fun `cycling dependency is an error`(mode: KlibDAGBuildingMode) = context(mode) {
         val moduleNameToLibraryPath: MutableMap</* name of test module */ String, /* path of KLIB */ Path> = mutableMapOf()
 
         /*
@@ -333,8 +332,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
         val libraries = loadLibraries(stdlib = false, others = moduleNameToLibraryPath.values)
 
-        @OptIn(InternalKlibDAGApi::class)
-        val dag = KlibDAGBuilder(libraries, useSignatureIndices = mode.useSignatureIndices) { true }.build()
+        val dag = KlibDAGBuilder(buildParams(libraries)).build()
         val anyLibraryNode: KlibDAGNode = dag[dag.librariesReverseTopoSorted.first()]
         anyLibraryNode.directDependencies // that should be successful
 
@@ -386,11 +384,12 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     @ParameterizedTest
     @EnumSource
-    fun `DAG deserialization fails if there are libraries in current compilation that are missing in SerializedKlibDAG`(mode: KlibDAGBuildingMode) {
+    fun `DAG deserialization fails if there are libraries in current compilation that are missing in SerializedKlibDAG`(
+        mode: KlibDAGBuildingMode,
+    ) = context(mode) {
         val libraries: List<KotlinLibrary> = loadLibraries(platformLibs = true)
 
-        @OptIn(InternalKlibDAGApi::class)
-        val dag: KlibDAG = KlibDAGBuilder(libraries, useSignatureIndices = mode.useSignatureIndices) { true }.build()
+        val dag: KlibDAG = KlibDAGBuilder(buildParams(libraries)).build()
         assertEquals(libraries.size, dag.librariesReverseTopoSorted.size)
 
         val serializedOriginal: SerializedKlibDAG = dag.serialize()
@@ -529,6 +528,18 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         val serializedTwice = serializedOnce.deserialize(dag.librariesReverseTopoSorted).serialize()
 
         assertEquals(serializedOnce, serializedTwice)
+    }
+
+    context(mode: KlibDAGBuildingMode)
+    private fun buildParams(
+        libraries: List<KotlinLibrary>,
+        isRoot: (KotlinLibrary) -> Boolean = { true },
+    ) = KlibDAGBuilder.Parameters(
+        libraries = libraries,
+        isRoot = isRoot,
+    ).apply {
+        @OptIn(InternalKlibDAGApi::class)
+        useSignatureIndices = mode.useSignatureIndices
     }
 }
 
