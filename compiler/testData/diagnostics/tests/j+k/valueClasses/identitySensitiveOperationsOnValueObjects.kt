@@ -19,6 +19,7 @@ public value class JavaValue {
 // FILE: test.kt
 import java.lang.ref.Cleaner
 import java.lang.ref.PhantomReference
+import java.lang.ref.ReferenceQueue
 import java.lang.ref.SoftReference
 import java.lang.ref.WeakReference
 import java.time.LocalDate
@@ -39,6 +40,7 @@ fun test(inline: Inline, full: Full, java: JavaValue, date: LocalDate, int: Int,
     Cleaner.create().register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>int<!>) {}
     IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>Full<!>, Int>()
     WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>LocalDate<!>, Int>()
+    ReferenceQueue<Full>()
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>zone<!>)
 }
 
