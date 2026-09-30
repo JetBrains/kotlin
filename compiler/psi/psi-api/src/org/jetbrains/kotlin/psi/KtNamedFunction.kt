@@ -13,6 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.containingScript
 import org.jetbrains.kotlin.psi.psiUtil.isContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
@@ -173,6 +174,10 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
         findChildByType(KtTokens.COLON)
 
     override fun isLocal(): Boolean {
+        // Checked before `parent` since it forces AST loading for script declarations
+        @OptIn(KtExperimentalApi::class)
+        if (containingScript != null) return false
+
         val parent = parent
         return when {
             parent == null -> {
@@ -181,7 +186,6 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
             }
             isKtFile(parent) -> false
             parent is KtClassBody -> false
-            parent.parent is KtScript -> false
             else -> true
         }
     }
