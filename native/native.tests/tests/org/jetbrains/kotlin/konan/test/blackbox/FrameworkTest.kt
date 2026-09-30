@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertFailsWith
 import kotlin.time.Duration
 
 @TestDataPath("\$PROJECT_ROOT")
@@ -418,6 +419,15 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         val testName = "companionBlocksAndExtensions"
         val testCase = generateObjCFramework(testName, listOf("-XXLanguage:+CompanionBlocks", "-XXLanguage:+CompanionExtensions"))
         compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
+    fun testFullValueClasses() {
+        val testName = "fullValueClasses"
+        assertFailsWith<CompilationToolException> {
+            val testCase = generateObjCFramework(testName, listOf("-XXLanguage:+FullValueClasses"))
+            compileAndRunSwift(testName, testCase)
+        }
     }
 
     @Test
