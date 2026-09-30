@@ -1,6 +1,9 @@
 KaDestructuringDeclarationSymbol:
   anchorPsi: KtDestructuringDeclaration
-  annotations: []
+  annotations: [
+    Ann(s = "str")
+      psi: KtAnnotationEntry
+  ]
   entries: [
     KaLocalVariableSymbol(<local>/<error property>)
     KaLocalVariableSymbol(<local>/<error property>)

@@ -527,10 +527,7 @@ open class PsiRawFirBuilder(
                         ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol
                     )
                 }
-                is KtDestructuringDeclaration -> {
-                    val initializer = toInitializerExpression()
-                    buildErrorNonLocalDestructuringDeclaration(toFirSourceElement(), initializer, baseModuleData)
-                }
+                is KtDestructuringDeclaration -> buildErrorNonLocalDestructuringDeclaration(this)
                 is KtClassInitializer -> {
                     buildAnonymousInitializer(this, ownerClassBuilder.ownerRegularOrAnonymousObjectSymbol)
                         .apply {
@@ -1429,10 +1426,7 @@ open class PsiRawFirBuilder(
                     for (declaration in file.declarations) {
                         declarations += when (declaration) {
                             is KtScript -> convertScriptOrSnippets(declaration, psiSourceFile, this@buildFile)
-                            is KtDestructuringDeclaration -> {
-                                val initializer = declaration.toInitializerExpression()
-                                buildErrorNonLocalDestructuringDeclaration(declaration.toFirSourceElement(), initializer, baseModuleData)
-                            }
+                            is KtDestructuringDeclaration -> buildErrorNonLocalDestructuringDeclaration(declaration)
                             else -> declaration.convert()
                         }
                     }
@@ -1456,6 +1450,15 @@ open class PsiRawFirBuilder(
             }
 
             return packageName
+        }
+
+        protected fun buildErrorNonLocalDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirErrorProperty {
+            val initializer = destructuringDeclaration.toInitializerExpression()
+            return this@PsiRawFirBuilder.buildErrorNonLocalDestructuringDeclaration(
+                destructuringDeclaration.toFirSourceElement(),
+                initializer,
+                baseModuleData,
+            ) { destructuringDeclaration.extractAnnotationsTo(it) }
         }
 
         protected fun buildScriptDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration): FirVariable {

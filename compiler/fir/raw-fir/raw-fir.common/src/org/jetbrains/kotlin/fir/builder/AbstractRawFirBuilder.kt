@@ -213,6 +213,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         source: KtSourceElement,
         initializer: FirExpression?,
         baseModuleData: FirModuleData,
+        extractAnnotationsTo: (FirAnnotationContainerBuilder) -> Unit,
     ): FirErrorProperty = buildErrorProperty {
         this.source = source
         moduleData = baseModuleData
@@ -220,6 +221,10 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         name = Name.special("<destructuring>")
         diagnostic = ConeDestructuringDeclarationsOnTopLevel
         symbol = FirErrorPropertySymbol(diagnostic)
+        context.withContainerSymbol(symbol) {
+            extractAnnotationsTo(this)
+        }
+
         this.initializer = initializer ?: buildErrorExpression {
             this.source = source
             diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
