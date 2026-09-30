@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.isFullValueClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -120,6 +121,11 @@ fun createInitializerAdapter(
         return expression.deepCopyWithoutPatchingParents().transform(initializerTransformer, null)
     }
 }
+
+// The field initializers of full value classes are moved into their primary constructors, so only the parameter defaults remain.
+fun IrProperty.defaultValueInitializer(): IrExpressionBody? =
+    backingField?.initializer ?: (parent as? IrClass)?.takeIf { it.isFullValueClass }
+        ?.primaryConstructor?.parameters?.find { it.name == name }?.defaultValue
 
 private fun extractDefaultValuesFromConstructor(irClass: IrClass?): Map<IrValueSymbol, IrExpression?> {
     if (irClass == null) return emptyMap()
