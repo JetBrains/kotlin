@@ -517,8 +517,11 @@ class StabilityInferencer(
                 } else {
                     val primaryProperties = valueClassDeclaration.valueClassRepresentation?.underlyingPropertyNamesToTypes
                         ?: return Stability.Unstable // is abstract value class
+                    val typeArguments = valueClassDeclaration.typeParameters.map { substitutions[it.symbol] }
+                    val symbol = SymbolForAnalysis(valueClassDeclaration.symbol, typeArguments, analysisEntryFile)
+                    if (symbol in currentlyAnalyzing) return Stability.Unstable
                     Stability.Stable + primaryProperties.map { [_, type] ->
-                        stabilityOf(type, substitutions, currentlyAnalyzing, analysisEntryFile)
+                        stabilityOf(type, substitutions, currentlyAnalyzing + symbol, analysisEntryFile)
                     }
                 }
             }
