@@ -6,7 +6,7 @@ class Outer {
     inner class <!NOARG_ON_INNER_CLASS_ERROR!>Inner<!>(val b: Any)
 
     @NoArg
-    inner class <!NOARG_ON_INNER_CLASS_ERROR, NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS!>InnerSub<!>(b: Any) : Base(b)
+    inner class <!NOARG_ON_INNER_CLASS_ERROR!>InnerSub<!>(b: Any) : Base(b)
 }
 
 open class Base(val b: Any)
