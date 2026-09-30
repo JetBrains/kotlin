@@ -327,5 +327,18 @@ private fun FirLiteralExpression.toRuntimeValue(): Any? {
     }
 }
 
+/**
+ * [refineAllForK2] with the annotations collected by [collectAndResolveScriptAnnotationsViaFir].
+ */
+internal fun ScriptCompilationConfiguration.refineAllViaFir(
+    script: SourceCode,
+    hostConfiguration: ScriptingHostConfiguration,
+    getSessionForAnnotationResolution: (SourceCode, ScriptCompilationConfiguration) -> FirSession,
+    convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    refineAllForK2(script, hostConfiguration) { source, configuration ->
+        collectAndResolveScriptAnnotationsViaFir(source, configuration, hostConfiguration, getSessionForAnnotationResolution, convertToFir)
+    }
+
 // TODO: implement. Probably need to change SourceCode.Position to accept offsets and then remap them later on reporting
 private fun FirElement.getLocation(): SourceCode.Location? = null
