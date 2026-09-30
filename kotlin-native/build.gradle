@@ -296,6 +296,7 @@ tasks.register("distKonanProperties", PrepareKonanProperties) {
     compilerVersion = kotlinBuildProperties.kotlinVersion.get()
     llvmVariants.put(HostManager.host, LLVMDistributionKind.ESSENTIALS)
     llvmProperties.set(LLVMDistributionSourceKt.getAsProperties(LLVMDistributionSourceKt.getLlvmDistributionSource(project)))
+    localLibffiDirectory.set(providers.gradleProperty("kotlin.native.libffi").map { rootProject.file(it).absolutePath })
 }
 
 tasks.register("crossDistRuntime") {
@@ -674,6 +675,9 @@ String platformName(KonanTarget target) {
         case KonanTarget.LINUX_X64:
             result ="linux-x86_64"
             break
+        case KonanTarget.LINUX_ARM64:
+            result = "linux-aarch64"
+            break
         case KonanTarget.MACOS_X64:
             result = "macos-x86_64"
             break
@@ -690,9 +694,11 @@ String platformName(KonanTarget target) {
 }
 
 Map<KonanTarget, File> createConfigurations(List<File> bundles) {
-    def hostTargets = platformManager.enabledByHost.keySet().findAll {
-        it.name != 'macos_x64'
-    } as Set
+    // Experimental compiler hosts do not imply that matching release bundles exist.
+    // Add Linux ARM64 here when its bundles become part of the release pipeline.
+    def hostTargets = [
+            KonanTarget.LINUX_X64.INSTANCE, KonanTarget.MACOS_ARM64.INSTANCE, KonanTarget.MINGW_X64.INSTANCE
+    ] as Set
     def result = hostTargets.collectEntries { target ->
         [ (target): bundles.find { it.name.contains(platformName(target)) }]
     }

@@ -14,6 +14,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -56,6 +57,13 @@ open class PrepareKonanProperties @Inject constructor(
     @get:Input
     val llvmProperties: MapProperty<String, String> = objectFactory.mapProperty(String::class.java, String::class.java)
 
+    /**
+     * Keep a locally built libffi discoverable when using the source-built distribution.
+     */
+    @get:Input
+    @get:Optional
+    val localLibffiDirectory: Property<String> = objectFactory.property(String::class.java)
+
     @TaskAction
     fun prepare() {
         val output = output.get()
@@ -78,5 +86,8 @@ open class PrepareKonanProperties @Inject constructor(
             |# LLVM Version configuration:
             |$llvmPropertiesString
         """.trimMargin())
+        localLibffiDirectory.orNull?.let { path ->
+            output.asFile.appendText("\nlibffiDir.${llvmVariants.get().keys.single()}=${path.replace('\\', '/')}\n")
+        }
     }
 }
