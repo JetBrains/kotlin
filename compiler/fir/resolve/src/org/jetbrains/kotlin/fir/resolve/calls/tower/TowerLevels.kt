@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -159,6 +160,12 @@ class DispatchReceiverMemberScopeTowerLevel(
             )
 
             withSynthetic?.processScopeMembers { symbol ->
+                (symbol.fir as? FirSyntheticProperty)?.let { property ->
+                    recordSyntheticAccessorLookups(property.getter.delegate.symbol, useSiteForSyntheticScope, info)
+                    property.setter?.delegate?.symbol?.let { setter ->
+                        recordSyntheticAccessorLookups(setter, useSiteForSyntheticScope, info)
+                    }
+                }
                 processResult = ProcessResult.FOUND
                 output.consumeCandidate(
                     symbol,
@@ -294,6 +301,23 @@ class DispatchReceiverMemberScopeTowerLevel(
         (dispatchReceiverValue.receiverExpression as? FirSmartCastExpression)
             ?.takeIf { it.isStable }
             ?.originalExpression
+
+    private fun recordSyntheticAccessorLookups(function: FirNamedFunctionSymbol, scope: FirTypeScope, info: CallInfo) {
+        val lookupTracker = session.lookupTracker ?: return
+        val visited = hashSetOf<MemberWithBaseScope<FirNamedFunctionSymbol>>()
+
+        fun visit(symbol: FirNamedFunctionSymbol, symbolScope: FirTypeScope) {
+            if (!visited.add(MemberWithBaseScope(symbol, symbolScope))) return
+            // An annotation on an overridden Java accessor can change this synthetic property's type.
+            lookupTracker.recordCallableCandidateAsLookup(symbol, info.callSite.source, info.containingFile.source)
+            symbolScope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overridden, baseScope ->
+                visit(overridden, baseScope)
+                ProcessorAction.NEXT
+            }
+        }
+
+        visit(function, scope)
+    }
 
     override fun processFunctionsByName(
         info: CallInfo,

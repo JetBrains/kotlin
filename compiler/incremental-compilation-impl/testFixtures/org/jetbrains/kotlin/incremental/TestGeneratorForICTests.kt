@@ -148,7 +148,7 @@ private object ExcludePattern {
 
     val JPS_ONLY = listOf(
         "(^multifileClassFileMovedToAnotherMultifileClass$)", // KT-89326
-        "(^addNullableAnnotation$)", // KT-89329
+        "(^addNullableAnnotation$)", // KT-89329: covered by IncrementalJvmCompilerRunnerTestCustom
         "(^changeTypeWithHierarchyDependency$)", // KT-89336
         "(^changeTopLevelTypeAlias$)", // KT-28233
         "(^renameFileWithFunctionOverloadAndCreateConflict$)", // KT-89565

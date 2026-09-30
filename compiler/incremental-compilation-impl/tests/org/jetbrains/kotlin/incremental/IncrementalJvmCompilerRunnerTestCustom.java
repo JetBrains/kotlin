@@ -12,6 +12,12 @@ import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("all")
 public class IncrementalJvmCompilerRunnerTestCustom extends AbstractIncrementalJvmCompilerRunnerTest {
+    @Test
+    @TestMetadata("addNullableAnnotation")
+    public void testNullableJavaBaseMethodThroughOverride() {
+        runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/addNullableAnnotation/");
+    }
+
     @Nested
     @TestMetadata("jps/jps-plugin/testData/incremental/custom")
     @TestDataPath("$PROJECT_ROOT")
