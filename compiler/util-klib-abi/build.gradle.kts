@@ -42,4 +42,3 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt", generateTestsInBuildDirectory = true)
 }
 
-testsJar()

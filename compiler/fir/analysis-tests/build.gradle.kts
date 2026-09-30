@@ -107,4 +107,3 @@ projectTests {
     withThirdPartyJava9Annotations()
 }
 
-testsJar()

@@ -48,7 +48,6 @@ sourceSets {
 
 runtimeJar()
 sourcesJar()
-testsJar()
 
 projectTests {
     testTask(

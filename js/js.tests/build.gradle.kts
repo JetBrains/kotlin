@@ -202,7 +202,6 @@ projectTests {
     withWasmRuntime()
 }
 
-testsJar()
 
 val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")

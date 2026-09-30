@@ -144,7 +144,6 @@ val runtimeJar = runtimeJar {
 
 sourcesJar()
 javadocJar()
-testsJar()
 
 val distCompat = configurations.create("distCompat") {
     isCanBeResolved = false

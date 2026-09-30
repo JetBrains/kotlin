@@ -33,4 +33,3 @@ projectTests {
     }
 }
 
-testsJar()

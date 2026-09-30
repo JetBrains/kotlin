@@ -56,7 +56,6 @@ kotlin {
     }
 }
 
-testsJar()
 
 projectTests {
     testTask()

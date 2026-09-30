@@ -95,4 +95,3 @@ projectTests {
     }
 }
 
-testsJar()

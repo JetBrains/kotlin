@@ -53,4 +53,3 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 
-testsJar()

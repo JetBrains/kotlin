@@ -77,4 +77,3 @@ projectTests {
     testData(project(":compiler:psi:psi-impl").isolated, "testData/psi")
 }
 
-testsJar()

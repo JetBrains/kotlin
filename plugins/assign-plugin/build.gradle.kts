@@ -41,7 +41,6 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
 
 projectTests {
     testData(project.isolated, "testData")
