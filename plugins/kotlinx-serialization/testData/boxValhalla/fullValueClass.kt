@@ -1,5 +1,4 @@
 // ISSUE: KT-89974
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +FullValueClasses
 
 import kotlinx.serialization.*
