@@ -4,6 +4,6 @@
 
 /declarationMessages.kt:11:25: error: Final value class primary constructor must only have final read-only ('val') non-'vararg' property parameters.
 
-/declarationMessages.kt:14:33: error: @JvmInline value class cannot have value parameter of type 'kotlin/Unit'.
+/declarationMessages.kt:14:33: error: @JvmInline value class cannot have value parameter of type 'Unit'.
 
 /declarationMessages.kt:17:11: error: Value class cannot be inner.
