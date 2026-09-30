@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.backend.jvm.ir.isKotlinValhallaValueClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -110,7 +111,8 @@ class SerializableIrGenerator(
 
 
             val superClass = irClass.getSuperClassOrAny()
-            var startPropOffset: Int = 0
+            val startPropOffset =
+                if (superClass.shouldHaveGeneratedMethods()) serializablePropertiesForIrBackend(superClass).serializableProperties.size else 0
 
 
             if (!irClass.isAbstractOrSealedSerializableClass) {
@@ -123,16 +125,8 @@ class SerializableIrGenerator(
                 }
                 generateGoldenMaskCheck(seenVars, properties, getDescriptorExpr)
             }
-            when {
-                superClass.symbol == compilerContext.irBuiltIns.anyClass -> generateAnySuperConstructorCall(toBuilder = this@addFunctionBody)
-                superClass.shouldHaveGeneratedMethods() -> {
-                    startPropOffset = generateSuperSerializableCall(superClass, ctor.parameters, seenVarsOffset)
-                }
-                else -> generateSuperNonSerializableCall(superClass)
-            }
 
-            statementsAfterSerializableProperty[null]?.forEach { +it }
-            for (index in startPropOffset until serializableProperties.size) {
+            val propertyAssignments = (startPropOffset until serializableProperties.size).associate { index ->
                 val prop = serializableProperties[index]
                 val paramRef = ctor.parameters[index + seenVarsOffset]
                 // Assign this.a = a in else branch
@@ -140,31 +134,48 @@ class SerializableIrGenerator(
                 val backingFieldToAssign = prop.ir.backingField!!
                 val assignParamExpr = irSetField(irGet(thiz), backingFieldToAssign, irGet(paramRef))
 
-                val ifNotSeenExpr: IrExpression = if (prop.optional) {
+                val assignment = if (prop.optional) {
                     val initializerBody =
                         requireNotNull(initializerAdapter(prop.ir.backingField?.initializer!!)) { "Optional value without an initializer" } // todo: filter abstract here
-                    irSetField(irGet(thiz), backingFieldToAssign, initializerBody)
+                    val ifNotSeenExpr = irSetField(irGet(thiz), backingFieldToAssign, initializerBody)
+
+                    val propNotSeenTest =
+                        irEquals(
+                            irInt(0),
+                            irBinOp(
+                                OperatorNameConventions.AND,
+                                irGet(seenVars[bitMaskSlotAt(index)]),
+                                irInt(1 shl (index % 32))
+                            )
+                        )
+
+                    irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)
                 } else {
                     // property required
                     // field definitely not empty as it's checked before - no need another IF, only assign property from param
-                    +assignParamExpr
-                    statementsAfterSerializableProperty[prop.ir]?.forEach { +it }
-                    continue
+                    assignParamExpr
                 }
+                prop.ir to assignment
+            }
 
-                val propNotSeenTest =
-                    irEquals(
-                        irInt(0),
-                        irBinOp(
-                            OperatorNameConventions.AND,
-                            irGet(seenVars[bitMaskSlotAt(index)]),
-                            irInt(1 shl (index % 32))
-                        )
-                    )
+            // Strict fields of Valhalla value classes and fields of value classes with a superclass are assigned before super().
+            val assignFieldsBeforeSuper = irClass.isFullValueClass &&
+                    (irClass.getSuperClassNotAny() != null ||
+                            compilerContext.platform.isJvm() && irClass.isKotlinValhallaValueClass(compilerContext.languageVersionSettings))
+            if (assignFieldsBeforeSuper) {
+                propertyAssignments.values.forEach { +it }
+            }
 
-                +irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)
+            when {
+                superClass.symbol == compilerContext.irBuiltIns.anyClass -> generateAnySuperConstructorCall(toBuilder = this@addFunctionBody)
+                superClass.shouldHaveGeneratedMethods() -> generateSuperSerializableCall(superClass, ctor.parameters, seenVarsOffset)
+                else -> generateSuperNonSerializableCall(superClass)
+            }
 
-                statementsAfterSerializableProperty[prop.ir]?.forEach { +it }
+            statementsAfterSerializableProperty[null]?.forEach { +it }
+            for ([property, assignment] in propertyAssignments) {
+                if (!assignFieldsBeforeSuper) +assignment
+                statementsAfterSerializableProperty[property]?.forEach { +it }
             }
 
             // Handle function-intialized interface delegates
@@ -271,7 +282,7 @@ class SerializableIrGenerator(
         superClass: IrClass,
         allValueParameters: List<IrValueParameter>,
         propertiesStart: Int
-    ): Int {
+    ) {
         check(superClass.shouldHaveGeneratedMethods())
         val superCtorRef = superClass.findSerializableSyntheticConstructor()
             ?: error("Class serializable internally should have special constructor with marker")
@@ -289,7 +300,6 @@ class SerializableIrGenerator(
         call.arguments.assignFrom(arguments) { irGet(it) }
         call.insertTypeArgumentsForSuperClass(superClass)
         +call
-        return superProperties.size
     }
 
     fun generateWriteSelfMethod(methodDescriptor: IrSimpleFunction) {
