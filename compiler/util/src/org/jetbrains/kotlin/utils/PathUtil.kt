@@ -89,6 +89,12 @@ object PathUtil {
         KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR,
     )
 
+    // added to the scripting plugin classpath only if present, KT-87149
+    val KOTLIN_SCRIPTING_PLUGIN_OPTIONAL_CLASSPATH_JARS = arrayOf(
+        // only for the legacy script templates support in the scripting plugin
+        KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
+    )
+
     const val KOTLIN_TEST_NAME = "kotlin-test"
     const val KOTLIN_TEST_JAR = "$KOTLIN_TEST_NAME.jar"
     const val KOTLIN_TEST_SRC_JAR = "$KOTLIN_TEST_NAME-sources.jar"
