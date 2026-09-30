@@ -34,15 +34,15 @@ FILE: annotatedNonLocalDestructuring.kt
         public final fun copy(a: R|kotlin/Int| = this@R|/X|.R|/X.a|, b: R|kotlin/Int| = this@R|/X|.R|/X.b|): R|X|
 
     }
-    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
-    public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+    @R|Ann|(s = R|/x| [evaluated = String(str)]) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+    @R|Ann|(s = <Unresolved name: y># [evaluated = <Unresolved name: y>#]) @<ERROR TYPE REF: Symbol not found for Unresolved>() @R|ClassOnly|() @PROPERTY:R|Ann|(s = R|/x| [evaluated = String(str)]) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
     public final class C : R|kotlin/Any| {
         public constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        @R|Ann|(s = R|/x| [evaluated = String(str)]) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
+        @R|Ann|(s = <Unresolved name: y># [evaluated = <Unresolved name: y>#]) @<ERROR TYPE REF: Symbol not found for Unresolved>() @R|ClassOnly|() @PROPERTY:R|Ann|(s = R|/x| [evaluated = String(str)]) public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = R|/X.X|(Int(1), Int(2))
 
     }

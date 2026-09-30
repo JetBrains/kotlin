@@ -14,20 +14,20 @@ data class X(val a: Int, val b: Int)
 @Ann(x)
 val <!SYNTAX!>(a, b)<!> = X(1, 2)
 
-@Ann(y)
-@Unresolved
-@ClassOnly
-@property:Ann(x)
+@Ann(<!UNRESOLVED_REFERENCE!>y<!>)
+@<!UNRESOLVED_REFERENCE!>Unresolved<!>
+<!WRONG_ANNOTATION_TARGET!>@ClassOnly<!>
+<!REPEATED_ANNOTATION!>@property:Ann(x)<!>
 val <!SYNTAX!>(c, d)<!> = X(1, 2)
 
 class C {
     @Ann(x)
     val <!SYNTAX!>(a, b)<!> = X(1, 2)
 
-    @Ann(y)
-    @Unresolved
-    @ClassOnly
-    @property:Ann(x)
+    @Ann(<!UNRESOLVED_REFERENCE!>y<!>)
+    @<!UNRESOLVED_REFERENCE!>Unresolved<!>
+    <!WRONG_ANNOTATION_TARGET!>@ClassOnly<!>
+    <!REPEATED_ANNOTATION!>@property:Ann(x)<!>
     val <!SYNTAX!>(c, d)<!> = X(1, 2)
 }
 

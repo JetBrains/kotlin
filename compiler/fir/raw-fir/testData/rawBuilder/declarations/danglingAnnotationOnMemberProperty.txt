@@ -10,6 +10,6 @@ FILE: danglingAnnotationOnMemberProperty.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
+        @Ann() public final val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = ERROR_EXPR(Initializer required for destructuring declaration)
 
     }

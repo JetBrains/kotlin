@@ -1,1 +1,2 @@
-(`<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values), `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values))
+@Ann(s = "str")
+(@Ann(s = "str") `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values), @Ann(s = "str") `<error property>`: ERROR(Destructuring declarations are only allowed for local variables/values))

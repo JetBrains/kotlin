@@ -2,4 +2,7 @@ KtNameReferenceExpression(85,88): 'Ann'
   isImplicitReferenceToCompanion: false
   contextSensitiveResolutionStatus: NotAvailable
   lookupLocally: false
-  null
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      /Ann
+    ]

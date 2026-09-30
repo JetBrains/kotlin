@@ -196,12 +196,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 KtNodeTypes.FUNCTION_ID -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
                 KtNodeTypes.PROPERTY_ID -> firDeclarationList += convertPropertyDeclaration(child)
                 KtNodeTypes.TYPEALIAS_ID -> firDeclarationList += convertTypeAlias(child)
-                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> {
-                    val initializer = buildFirDestructuringDeclarationInitializer(child)
-                    firDeclarationList += buildErrorNonLocalDestructuringDeclaration(
-                        child.toFirSourceElement(), initializer, baseModuleData
-                    )
-                }
+                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> firDeclarationList += buildErrorNonLocalDestructuringDeclaration(child)
                 KtNodeTypes.SCRIPT_ID -> scriptNodes += child
                 KtNodeTypes.MODIFIER_LIST_ID -> modifierList += child
             }
@@ -1107,10 +1102,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             } //anonymousInitializer
             KtNodeTypes.SECONDARY_CONSTRUCTOR_ID -> container += convertSecondaryConstructor(node, classWrapper!!)
             KtNodeTypes.MODIFIER_LIST_ID -> modifierLists += node
-            KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> {
-                val initializer = buildFirDestructuringDeclarationInitializer(node)
-                container += buildErrorNonLocalDestructuringDeclaration(node.toFirSourceElement(), initializer, baseModuleData)
-            }
+            KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> container += buildErrorNonLocalDestructuringDeclaration(node)
             KtNodeTypes.COMPANION_BLOCK_ID -> {
                 classWrapper?.companionBlockCollector?.collect(node.toFirSourceElement(), isNested = isDirectlyInsideCompanionBlock)
                 context.withCompanionBlock {
@@ -1126,6 +1118,19 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     ) {
         for (node in modifierLists) {
             firDeclarations += buildErrorNonLocalDeclarationForDanglingModifierList(node)
+        }
+    }
+
+    private fun buildErrorNonLocalDestructuringDeclaration(destructuringDeclaration: Node): FirErrorProperty {
+        val initializer = buildFirDestructuringDeclarationInitializer(destructuringDeclaration)
+        return buildErrorNonLocalDestructuringDeclaration(
+            destructuringDeclaration.toFirSourceElement(),
+            initializer,
+            baseModuleData,
+        ) { annotationContainer ->
+            destructuringDeclaration.getChildNodeByTokenId(KtNodeTypes.MODIFIER_LIST_ID)?.let {
+                convertAnnotationsOnlyTo(it, annotationContainer.annotations)
+            }
         }
     }
 

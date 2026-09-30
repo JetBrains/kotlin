@@ -1,5 +1,4 @@
-// KT-74654: InvalidFirElementTypeException, the annotation has no FIR
-// IGNORE_FIR
+// KT-74654
 annotation class Ann
 
 @An<caret>n
