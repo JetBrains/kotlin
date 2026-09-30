@@ -369,6 +369,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleCollectDiagnosticsTestGenerated
   }
 
   @Test
+  @TestMetadata("privateAnnotationFromLibrary.kt")
+  public void testPrivateAnnotationFromLibrary() {
+    run("privateAnnotationFromLibrary.kt");
+  }
+
+  @Test
+  @TestMetadata("privateAnnotationFromSameModule.kt")
+  public void testPrivateAnnotationFromSameModule() {
+    run("privateAnnotationFromSameModule.kt");
+  }
+
+  @Test
+  @TestMetadata("privateAnnotationFromSourceModule.kt")
+  public void testPrivateAnnotationFromSourceModule() {
+    run("privateAnnotationFromSourceModule.kt");
+  }
+
+  @Test
   @TestMetadata("resolutionErrors.kt")
   public void testResolutionErrors() {
     run("resolutionErrors.kt");

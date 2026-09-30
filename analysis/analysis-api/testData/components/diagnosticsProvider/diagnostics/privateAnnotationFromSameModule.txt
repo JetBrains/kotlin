@@ -1,0 +1,22 @@
+Diagnostics from lib.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from usage.kt:
+  for PSI element of type KtNameReferenceExpression at (12,2-20)
+    INVISIBLE_REFERENCE      text ranges: [(40,58)]
+      PSI: KtNameReferenceExpression at (12,2-20)
+  for PSI element of type KtNameReferenceExpression at (12,2-20)
+    INVISIBLE_REFERENCE      text ranges: [(40,58)]
+      PSI: KtNameReferenceExpression at (12,2-20)
+  for PSI element of type KtNameReferenceExpression at (15,2-19)
+    INVISIBLE_REFERENCE      text ranges: [(87,104)]
+      PSI: KtNameReferenceExpression at (15,2-19)
+  for PSI element of type KtNameReferenceExpression at (15,2-19)
+    INVISIBLE_REFERENCE      text ranges: [(87,104)]
+      PSI: KtNameReferenceExpression at (15,2-19)
+  for PSI element of type KtNameReferenceExpression at (18,8-26)
+    INVISIBLE_REFERENCE      text ranges: [(138,156)]
+      PSI: KtNameReferenceExpression at (18,8-26)
+  for PSI element of type KtNameReferenceExpression at (21,24-42)
+    INVISIBLE_REFERENCE      text ranges: [(217,235)]
+      PSI: KtNameReferenceExpression at (21,24-42)
