@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -59,6 +61,8 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 
     init {
         onlyIf { browsers.get().isNotEmpty() }
+        // The marker is a per-task output, so it is only valid while the shared browsers directory still exists.
+        outputs.upToDateWhen { outputDir.get().asFile.exists() }
     }
 
     @get:Internal
@@ -78,7 +82,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
             dependsOnNpmTooling(compilation)
         }
 
-    // this is intentional to prevent gradle warnings about tasks writing to the same location
+    // The shared browsers directory is intentionally not a declared output to prevent gradle warnings about tasks writing to the same location.
     // FIXME: KT-87599 Design host-wide toolchain management
     @get:Internal
     internal val outputDir: DirectoryProperty = objects.directoryProperty().fileProvider(
@@ -87,6 +91,18 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
             .map { File(it) }
             .orElse(defaultPlaywrightBrowserDir)
     )
+
+    // A successful installation is recorded in a marker owned by this task alone, so Gradle can skip
+    // the Playwright CLI when nothing changed (KT-89686). It is written only after the install succeeds,
+    // so a failed installation is retried on the next build.
+    @get:OutputFile
+    internal val installationMarker: RegularFileProperty = objects.fileProperty().convention(
+        compilation.project.layout.buildDirectory.file("kotlin/playwright-install/$name.installed")
+    )
+
+    // Changing the browsers location must trigger a new installation.
+    @get:Input
+    internal val browsersPath: Provider<String> = outputDir.map { it.asFile.absolutePath }
 
     private val defaultPlaywrightBrowserDir: Provider<File>
         get() {
@@ -127,6 +143,11 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
                 spec.args(args)
                 spec.environment("PLAYWRIGHT_BROWSERS_PATH", outputDir.get().asFile.absolutePath)
             }
+        }
+
+        installationMarker.getFile().apply {
+            parentFile.mkdirs()
+            writeText(browsers.get().sorted().joinToString("\n"))
         }
     }
 }
