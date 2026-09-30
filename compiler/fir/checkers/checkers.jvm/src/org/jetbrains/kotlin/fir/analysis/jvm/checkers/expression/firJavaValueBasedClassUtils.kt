@@ -9,12 +9,19 @@ import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.fir.analysis.checkers.isFlexiblePrimitive
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClassOrPrimitive
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.isCompiledAsIdentityClass
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
+import org.jetbrains.kotlin.fir.isPlatformValueClass
+import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 import org.jetbrains.kotlin.fir.types.typeContext
 
 context(sessionHolder: SessionHolder)
@@ -34,4 +41,18 @@ internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(): Boolean {
         (this.isFlexiblePrimitive() || this.isValueClassOrPrimitive())
     ) return true
     return this.isJavaValueBasedClassAndWarningsEnabled()
+}
+
+// Whether instances of this type are value objects at run time (JEP 401): with a Valhalla-compatible JVM target, boxed primitives and
+// Java value classes are, and so are Kotlin value classes compiled as Valhalla value classes.
+context(sessionHolder: SessionHolder)
+internal fun ConeKotlinType.isValueObjectAtRuntime(): Boolean {
+    val session = sessionHolder.session
+    if (!session.isJvmTargetValhallaCompatible) return false
+    if (isFlexiblePrimitive()) return true
+    return collectUpperBounds(session.typeContext).any {
+        val symbol = it.toRegularClassSymbol(session)
+        it.isPrimitiveOrNullablePrimitive || symbol?.isPlatformValueClass(session) == true ||
+                symbol?.isValue == true && !symbol.isCompiledAsIdentityClass(session)
+    }
 }

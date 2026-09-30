@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isValueClassOrPrimitive
 import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationIfWillBecomeValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
@@ -105,7 +106,9 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             in operationsToCheckFirstArgCallableIds -> {
                 val argument = expression.arguments.firstOrNull() ?: return
                 val type = argument.resolvedType
-                if (type.isValueTypeAndWarningsEnabled()) {
+                if (type.isValueObjectAtRuntime()) {
+                    reporter.reportOn(argument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT, type)
+                } else if (type.isValueTypeAndWarningsEnabled()) {
                     reporter.reportOn(
                         argument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
@@ -116,7 +119,9 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             in operationsToCheckFirstTypeArgCallableIds -> {
                 val typeArgument = expression.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return
                 val type = typeArgument.typeRef.coneType.upperBoundIfFlexible()
-                if (type.isValueTypeAndWarningsEnabled()) {
+                if (type.isValueObjectAtRuntime()) {
+                    reporter.reportOn(typeArgument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT, type)
+                } else if (type.isValueTypeAndWarningsEnabled()) {
                     reporter.reportOn(
                         typeArgument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
