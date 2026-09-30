@@ -21,7 +21,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithDestructuringDeclaration
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=contracts]
-  CLASS[classId=/PairList, fqName=PairList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PairList, superNames=[]]
+  CLASS[classId=/PairList, fqName=PairList, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PairList, superNames=[]]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PairList]

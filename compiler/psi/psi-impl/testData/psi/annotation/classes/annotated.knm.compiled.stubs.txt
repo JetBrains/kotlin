@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/Marker, fqName=test.Marker, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Marker, superNames=[Annotation]]
+  CLASS[classId=test/Marker, fqName=test.Marker, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Marker, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Marker]
       MODIFIER_LIST[public]
@@ -16,7 +16,7 @@ FILE[kind=File[packageFqName=test]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=test/Targeted, fqName=test.Targeted, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Targeted, superNames=[Annotation]]
+  CLASS[classId=test/Targeted, fqName=test.Targeted, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Targeted, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Targeted]
       MODIFIER_LIST[public]

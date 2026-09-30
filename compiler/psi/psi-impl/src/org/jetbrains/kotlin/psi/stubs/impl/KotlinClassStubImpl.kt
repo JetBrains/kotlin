@@ -24,7 +24,6 @@ class KotlinClassStubImpl(
     private val superNameRefs: Array<StringRef>,
     override val isInterface: Boolean,
     override val isClsStubCompiledToJvmDefaultImplementation: Boolean,
-    override val isLocal: Boolean,
     override val isTopLevel: Boolean,
     override val kdocText: String?,
     /**
@@ -53,7 +52,6 @@ class KotlinClassStubImpl(
         superNameRefs = superNameRefs,
         isInterface = isInterface,
         isClsStubCompiledToJvmDefaultImplementation = isClsStubCompiledToJvmDefaultImplementation,
-        isLocal = isLocal,
         isTopLevel = isTopLevel,
         valueClassRepresentation = valueClassRepresentation,
         kdocText = kdocText,
@@ -65,7 +63,6 @@ class KotlinClassStubImpl(
                 other.name == name &&
                 other.classId == classId &&
                 other.isClsStubCompiledToJvmDefaultImplementation == isClsStubCompiledToJvmDefaultImplementation &&
-                other.isLocal == isLocal &&
                 other.isTopLevel == isTopLevel &&
                 other.qualifiedName == qualifiedName &&
                 other.isInterface == isInterface &&

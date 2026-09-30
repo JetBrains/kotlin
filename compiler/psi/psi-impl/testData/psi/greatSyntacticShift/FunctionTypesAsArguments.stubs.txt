@@ -23,7 +23,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionTypesAsArgumentsKt]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Unit]
         VALUE_ARGUMENT_LIST
-  CLASS[classId=/Lifetime, fqName=Lifetime, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Lifetime, superNames=[]]
+  CLASS[classId=/Lifetime, fqName=Lifetime, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Lifetime, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=Lifetime.attached, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=attached]
         CALL_EXPRESSION

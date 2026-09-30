@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  CLASS[classId=/Annotations, fqName=Annotations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
+  CLASS[classId=/Annotations, fqName=Annotations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Annotations, superNames=[]]
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
         CONSTRUCTOR_CALLEE
@@ -162,7 +162,7 @@ FILE[kind=File[packageFqName=<root>]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=a]
-      OBJECT_DECLARATION[classId=/Annotations.Companion, fqName=Annotations.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/Annotations.Companion, fqName=Annotations.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[private companion]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=b]
             CONSTRUCTOR_CALLEE
@@ -183,7 +183,7 @@ FILE[kind=File[packageFqName=<root>]]
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=f]
             INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=42]
-      CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+      CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
           MODIFIER_LIST[private]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
@@ -212,11 +212,11 @@ FILE[kind=File[packageFqName=<root>]]
                     REFERENCE_EXPRESSION[referencedName=E]
                     REFERENCE_EXPRESSION[referencedName=E2]
           VALUE_PARAMETER_LIST
-      CLASS[classId=/Annotations.En, fqName=Annotations.En, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[]]
+      CLASS[classId=/Annotations.En, fqName=Annotations.En, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=En, superNames=[]]
         MODIFIER_LIST[enum]
         CLASS_BODY
-          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry1, superNames=[]]
-          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry2, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Entry1, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Entry2, superNames=[]]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
@@ -233,7 +233,7 @@ FILE[kind=File[packageFqName=<root>]]
                     DOT_QUALIFIED_EXPRESSION
                       REFERENCE_EXPRESSION[referencedName=E]
                       REFERENCE_EXPRESSION[referencedName=E2]
-          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry3, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Entry3, superNames=[]]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
@@ -376,7 +376,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=a]
-      CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
+      CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassWithConstructor]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=Annotations.ClassWithConstructor.b, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=b]
@@ -390,7 +390,7 @@ FILE[kind=File[packageFqName=<root>]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]
-  CLASS[classId=/a, fqName=a, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[]]
+  CLASS[classId=/a, fqName=a, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=a, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -438,7 +438,7 @@ FILE[kind=File[packageFqName=<root>]]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=FIELD]
-  CLASS[classId=/b, fqName=b, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[]]
+  CLASS[classId=/b, fqName=b, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=b, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -487,7 +487,7 @@ FILE[kind=File[packageFqName=<root>]]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=E]
-  CLASS[classId=/c, fqName=c, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=c, superNames=[]]
+  CLASS[classId=/c, fqName=c, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=c, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -527,7 +527,7 @@ FILE[kind=File[packageFqName=<root>]]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=CLASS]
-  CLASS[classId=/f, fqName=f, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=f, superNames=[]]
+  CLASS[classId=/f, fqName=f, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=f, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         CONSTRUCTOR_CALLEE
@@ -539,8 +539,8 @@ FILE[kind=File[packageFqName=<root>]]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=FIELD]
-  CLASS[classId=/E, fqName=E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
+  CLASS[classId=/E, fqName=E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=E, superNames=[]]
     MODIFIER_LIST[enum]
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E1, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E2, superNames=[]]

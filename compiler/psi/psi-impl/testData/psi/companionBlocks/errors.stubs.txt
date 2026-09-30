@@ -5,7 +5,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ErrorsKt]]
   IMPORT_LIST
   FUNCTION[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
     MODIFIER_LIST[companion]
-  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY
       FUNCTION[fqName=C.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
         MODIFIER_LIST[private companion]
@@ -20,11 +20,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ErrorsKt]]
         MODIFIER_LIST[companion inline]
   FUNCTION[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
-  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
+  CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY
       COMPANION_BLOCK
         MODIFIER_LIST[companion]
         CLASS_BODY
-          CLASS[classId=/C.Nested, fqName=C.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+          CLASS[classId=/C.Nested, fqName=C.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
           TYPEALIAS[classId=/C.TA, fqName=C.TA, isTopLevel=false, name=TA]
             TYPE_REFERENCE

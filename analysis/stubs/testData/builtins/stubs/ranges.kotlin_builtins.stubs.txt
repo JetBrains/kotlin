@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
       REFERENCE_EXPRESSION[referencedName=kotlin]
       REFERENCE_EXPRESSION[referencedName=ranges]
   IMPORT_LIST
-  CLASS[classId=kotlin/ranges/CharProgression, fqName=kotlin.ranges.CharProgression, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=CharProgression, superNames=[Iterable]]
+  CLASS[classId=kotlin/ranges/CharProgression, fqName=kotlin.ranges.CharProgression, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=CharProgression, superNames=[Iterable]]
     MODIFIER_LIST[public open]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=CharProgression]
       MODIFIER_LIST[internal MustUseReturnValue]
@@ -49,7 +49,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=Char]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/ranges/CharProgression.Companion, fqName=kotlin.ranges.CharProgression.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/ranges/CharProgression.Companion, fqName=kotlin.ranges.CharProgression.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           FUNCTION[fqName=kotlin.ranges.CharProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
@@ -163,7 +163,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/CharProgressionIterator, fqName=kotlin.ranges.CharProgressionIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=CharProgressionIterator, superNames=[CharIterator]]
+  CLASS[classId=kotlin/ranges/CharProgressionIterator, fqName=kotlin.ranges.CharProgressionIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=CharProgressionIterator, superNames=[CharIterator]]
     MODIFIER_LIST[internal final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=CharProgressionIterator]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -250,7 +250,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Char]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/CharRange, fqName=kotlin.ranges.CharRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=CharRange, superNames=[CharProgression, ClosedRange, OpenEndRange]]
+  CLASS[classId=kotlin/ranges/CharRange, fqName=kotlin.ranges.CharRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=CharRange, superNames=[CharProgression, ClosedRange, OpenEndRange]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=CharRange]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -314,7 +314,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=Char]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/ranges/CharRange.Companion, fqName=kotlin.ranges.CharRange.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/ranges/CharRange.Companion, fqName=kotlin.ranges.CharRange.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.ranges.CharRange.Companion.EMPTY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=EMPTY]
@@ -468,7 +468,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/ClosedRange, fqName=kotlin.ranges.ClosedRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=ClosedRange, superNames=[]]
+  CLASS[classId=kotlin/ranges/ClosedRange, fqName=kotlin.ranges.ClosedRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=ClosedRange, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -520,7 +520,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/IntProgression, fqName=kotlin.ranges.IntProgression, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IntProgression, superNames=[Iterable]]
+  CLASS[classId=kotlin/ranges/IntProgression, fqName=kotlin.ranges.IntProgression, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=IntProgression, superNames=[Iterable]]
     MODIFIER_LIST[public open]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=IntProgression]
       MODIFIER_LIST[internal MustUseReturnValue]
@@ -565,7 +565,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=Int]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/ranges/IntProgression.Companion, fqName=kotlin.ranges.IntProgression.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/ranges/IntProgression.Companion, fqName=kotlin.ranges.IntProgression.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           FUNCTION[fqName=kotlin.ranges.IntProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
@@ -679,7 +679,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/IntProgressionIterator, fqName=kotlin.ranges.IntProgressionIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IntProgressionIterator, superNames=[IntIterator]]
+  CLASS[classId=kotlin/ranges/IntProgressionIterator, fqName=kotlin.ranges.IntProgressionIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=IntProgressionIterator, superNames=[IntIterator]]
     MODIFIER_LIST[internal final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=IntProgressionIterator]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -766,7 +766,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/IntRange, fqName=kotlin.ranges.IntRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IntRange, superNames=[IntProgression, ClosedRange, OpenEndRange]]
+  CLASS[classId=kotlin/ranges/IntRange, fqName=kotlin.ranges.IntRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=IntRange, superNames=[IntProgression, ClosedRange, OpenEndRange]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=IntRange]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -830,7 +830,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=Int]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/ranges/IntRange.Companion, fqName=kotlin.ranges.IntRange.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/ranges/IntRange.Companion, fqName=kotlin.ranges.IntRange.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.ranges.IntRange.Companion.EMPTY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=EMPTY]
@@ -984,7 +984,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/LongProgression, fqName=kotlin.ranges.LongProgression, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=LongProgression, superNames=[Iterable]]
+  CLASS[classId=kotlin/ranges/LongProgression, fqName=kotlin.ranges.LongProgression, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=LongProgression, superNames=[Iterable]]
     MODIFIER_LIST[public open]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=LongProgression]
       MODIFIER_LIST[internal MustUseReturnValue]
@@ -1029,7 +1029,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=Long]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/ranges/LongProgression.Companion, fqName=kotlin.ranges.LongProgression.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/ranges/LongProgression.Companion, fqName=kotlin.ranges.LongProgression.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           FUNCTION[fqName=kotlin.ranges.LongProgression.Companion.fromClosedRange, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=fromClosedRange]
@@ -1143,7 +1143,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/LongProgressionIterator, fqName=kotlin.ranges.LongProgressionIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=LongProgressionIterator, superNames=[LongIterator]]
+  CLASS[classId=kotlin/ranges/LongProgressionIterator, fqName=kotlin.ranges.LongProgressionIterator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=LongProgressionIterator, superNames=[LongIterator]]
     MODIFIER_LIST[internal final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=LongProgressionIterator]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -1230,7 +1230,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Long]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/LongRange, fqName=kotlin.ranges.LongRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=LongRange, superNames=[LongProgression, ClosedRange, OpenEndRange]]
+  CLASS[classId=kotlin/ranges/LongRange, fqName=kotlin.ranges.LongRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=LongRange, superNames=[LongProgression, ClosedRange, OpenEndRange]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=LongRange]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -1294,7 +1294,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
                     REFERENCE_EXPRESSION[referencedName=Long]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/ranges/LongRange.Companion, fqName=kotlin.ranges.LongRange.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/ranges/LongRange.Companion, fqName=kotlin.ranges.LongRange.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.ranges.LongRange.Companion.EMPTY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=EMPTY]
@@ -1448,7 +1448,7 @@ FILE[kind=File[packageFqName=kotlin.ranges]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/ranges/OpenEndRange, fqName=kotlin.ranges.OpenEndRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=OpenEndRange, superNames=[]]
+  CLASS[classId=kotlin/ranges/OpenEndRange, fqName=kotlin.ranges.OpenEndRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=OpenEndRange, superNames=[]]
     MODIFIER_LIST[public]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
         valueArguments: [ version -> "1.9" ]

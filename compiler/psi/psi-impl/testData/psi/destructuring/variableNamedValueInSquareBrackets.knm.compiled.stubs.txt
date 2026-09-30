@@ -117,7 +117,7 @@ FILE[kind=File[packageFqName=<root>]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
-  CLASS[classId=/Box, fqName=Box, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Box, superNames=[]]
+  CLASS[classId=/Box, fqName=Box, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Box, superNames=[]]
     MODIFIER_LIST[public final data]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Box]
       MODIFIER_LIST[public]

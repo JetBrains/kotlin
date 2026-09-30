@@ -2,7 +2,7 @@ Anno.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[]]
+    CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Anno, superNames=[]]
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
         VALUE_PARAMETER_LIST
@@ -16,7 +16,7 @@ WithCast.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithCast, fqName=WithCast, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithCast, superNames=[]]
+    CLASS[classId=/WithCast, fqName=WithCast, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithCast, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
           CONSTRUCTOR_CALLEE
@@ -32,7 +32,7 @@ WithCastOperand.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithCastOperand, fqName=WithCastOperand, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithCastOperand, superNames=[]]
+    CLASS[classId=/WithCastOperand, fqName=WithCastOperand, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithCastOperand, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Anno]
           CONSTRUCTOR_CALLEE

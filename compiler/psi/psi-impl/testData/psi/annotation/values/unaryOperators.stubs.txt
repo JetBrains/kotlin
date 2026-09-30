@@ -2,7 +2,7 @@ Unary.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Unary, fqName=Unary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Unary, superNames=[]]
+    CLASS[classId=/Unary, fqName=Unary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Unary, superNames=[]]
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Unary]
         VALUE_PARAMETER_LIST
@@ -36,7 +36,7 @@ WithMinus.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithMinus, fqName=WithMinus, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMinus, superNames=[]]
+    CLASS[classId=/WithMinus, fqName=WithMinus, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithMinus, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
           CONSTRUCTOR_CALLEE
@@ -78,7 +78,7 @@ WithNested.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithNested, fqName=WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNested, superNames=[]]
+    CLASS[classId=/WithNested, fqName=WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithNested, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
           CONSTRUCTOR_CALLEE
@@ -129,7 +129,7 @@ WithParentheses.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithParentheses, fqName=WithParentheses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithParentheses, superNames=[]]
+    CLASS[classId=/WithParentheses, fqName=WithParentheses, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithParentheses, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
           CONSTRUCTOR_CALLEE
@@ -186,7 +186,7 @@ WithPlus.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithPlus, fqName=WithPlus, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithPlus, superNames=[]]
+    CLASS[classId=/WithPlus, fqName=WithPlus, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithPlus, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unary]
           CONSTRUCTOR_CALLEE

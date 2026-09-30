@@ -8,7 +8,7 @@ ClassLiteral.kt:
             REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=reflect]
           REFERENCE_EXPRESSION[referencedName=KClass]
-    CLASS[classId=/ClassLiteral, fqName=ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[]]
+    CLASS[classId=/ClassLiteral, fqName=ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ClassLiteral, superNames=[]]
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassLiteral]
         VALUE_PARAMETER_LIST
@@ -36,7 +36,7 @@ WithArrayClassLiterals.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithArrayClassLiterals, fqName=WithArrayClassLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithArrayClassLiterals, superNames=[]]
+    CLASS[classId=/WithArrayClassLiterals, fqName=WithArrayClassLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithArrayClassLiterals, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
           CONSTRUCTOR_CALLEE
@@ -82,7 +82,7 @@ WithPrimitiveArrayClassLiterals.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithPrimitiveArrayClassLiterals, fqName=WithPrimitiveArrayClassLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithPrimitiveArrayClassLiterals, superNames=[]]
+    CLASS[classId=/WithPrimitiveArrayClassLiterals, fqName=WithPrimitiveArrayClassLiterals, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithPrimitiveArrayClassLiterals, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=ClassLiteral]
           CONSTRUCTOR_CALLEE

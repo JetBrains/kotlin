@@ -224,7 +224,7 @@ FILE[kind=File[packageFqName=test]]
             REFERENCE_EXPRESSION[referencedName=test]
           REFERENCE_EXPRESSION[referencedName=FunctionAlias]
             isClassRef: true
-  CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeAliasExpansion, superNames=[]]
+  CLASS[classId=test/TypeAliasExpansion, fqName=test.TypeAliasExpansion, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=TypeAliasExpansion, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TypeAliasExpansion]
       MODIFIER_LIST[public]

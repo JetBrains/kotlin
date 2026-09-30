@@ -22,7 +22,7 @@ FILE[kind=File[packageFqName=one two.three four]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Type Parameter]
                   isClassRef: true
-  CLASS[classId=one two/three four/Annotation Class, fqName=one two.three four.Annotation Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class, superNames=[Annotation]]
+  CLASS[classId=one two/three four/Annotation Class, fqName=one two.three four.Annotation Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Annotation Class, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPEALIAS, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY] ]
@@ -80,7 +80,7 @@ FILE[kind=File[packageFqName=one two.three four]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=one two/three four/Top Level Class, fqName=one two.three four.Top Level Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Top Level Class, superNames=[]]
+  CLASS[classId=one two/three four/Top Level Class, fqName=one two.three four.Top Level Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Top Level Class, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
         valueArguments: [ ]
@@ -254,10 +254,10 @@ FILE[kind=File[packageFqName=one two.three four]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
                       isClassRef: true
-  CLASS[classId=one two/three four/Top Level Interface, fqName=one two.three four.Top Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Top Level Interface, superNames=[]]
+  CLASS[classId=one two/three four/Top Level Interface, fqName=one two.three four.Top Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=Top Level Interface, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-  OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
+  OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
     MODIFIER_LIST[public]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -270,10 +270,10 @@ FILE[kind=File[packageFqName=one two.three four]]
             REFERENCE_EXPRESSION[referencedName=Top Level Interface]
               isClassRef: true
     CLASS_BODY
-      CLASS[classId=one two/three four/Top Level Object.Member Level Interface, fqName=one two.three four.Top Level Object.Member Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=false, name=Member Level Interface, superNames=[]]
+      CLASS[classId=one two/three four/Top Level Object.Member Level Interface, fqName=one two.three four.Top Level Object.Member Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=false, name=Member Level Interface, superNames=[]]
         MODIFIER_LIST[public]
         CLASS_BODY
-  CLASS[classId=one two/three four/Enum Class, fqName=one two.three four.Enum Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum Class, superNames=[Enum]]
+  CLASS[classId=one two/three four/Enum Class, fqName=one two.three four.Enum Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Enum Class, superNames=[Enum]]
     MODIFIER_LIST[public final enum]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
         valueArguments: [ ]
@@ -308,7 +308,7 @@ FILE[kind=File[packageFqName=one two.three four]]
                     REFERENCE_EXPRESSION[referencedName=Enum Class]
                       isClassRef: true
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=one two.three four.Enum Class.Enum Entry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Enum Entry, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=one two.three four.Enum Class.Enum Entry, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Enum Entry, superNames=[]]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=Annotation Class]
             valueArguments: [ ]
@@ -321,7 +321,7 @@ FILE[kind=File[packageFqName=one two.three four]]
                     REFERENCE_EXPRESSION[referencedName=three four]
                   REFERENCE_EXPRESSION[referencedName=Annotation Class]
                     isClassRef: true
-  CLASS[classId=one two/three four/Annotation Class With Arguments, fqName=one two.three four.Annotation Class With Arguments, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation Class With Arguments, superNames=[Annotation]]
+  CLASS[classId=one two/three four/Annotation Class With Arguments, fqName=one two.three four.Annotation Class With Arguments, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Annotation Class With Arguments, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Annotation Class With Arguments]
       MODIFIER_LIST[public]
@@ -345,7 +345,7 @@ FILE[kind=File[packageFqName=one two.three four]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=one two/three four/Annotated Class, fqName=one two.three four.Annotated Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotated Class, superNames=[]]
+  CLASS[classId=one two/three four/Annotated Class, fqName=one two.three four.Annotated Class, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Annotated Class, superNames=[]]
     MODIFIER_LIST[public final]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Annotation Class With Arguments]
         valueArguments: [ parameter name -> Enum Class.Enum Entry ]

@@ -153,7 +153,7 @@ FILE[kind=File[packageFqName=test]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
           isClassRef: true
-  CLASS[classId=test/WithConstructorCallDefault, fqName=test.WithConstructorCallDefault, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithConstructorCallDefault, superNames=[]]
+  CLASS[classId=test/WithConstructorCallDefault, fqName=test.WithConstructorCallDefault, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithConstructorCallDefault, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithConstructorCallDefault]
       MODIFIER_LIST[public]

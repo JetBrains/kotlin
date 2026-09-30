@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  CLASS[classId=test/Documented, fqName=test.Documented, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Documented, superNames=[Annotation]]
+  CLASS[classId=test/Documented, fqName=test.Documented, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Documented, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Documented]
       MODIFIER_LIST[public]

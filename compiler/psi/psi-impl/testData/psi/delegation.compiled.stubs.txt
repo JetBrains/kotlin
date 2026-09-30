@@ -2,7 +2,7 @@ A.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[T]]
+    CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=A, superNames=[T]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
         MODIFIER_LIST[public]
@@ -37,7 +37,7 @@ Delegation.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Delegation, fqName=Delegation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Delegation, superNames=[T]]
+    CLASS[classId=/Delegation, fqName=Delegation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Delegation, superNames=[T]]
       MODIFIER_LIST[public final]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Delegation]
         MODIFIER_LIST[public]
@@ -102,7 +102,7 @@ T.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/T, fqName=T, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
+    CLASS[classId=/T, fqName=T, isClsStubCompiledToJvmDefaultImplementation=true, isInterface=true, isTopLevel=true, name=T, superNames=[]]
       MODIFIER_LIST[public]
       CLASS_BODY
         PROPERTY[fqName=T.g, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]

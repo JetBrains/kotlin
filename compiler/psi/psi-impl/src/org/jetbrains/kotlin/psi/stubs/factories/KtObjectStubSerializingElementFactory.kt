@@ -47,7 +47,6 @@ internal object KtObjectStubSerializingElementFactory :
         classId = parentStub?.let { createClassId(it, psi) },
         superNameRefs = Utils.wrapStrings(psi.getSuperNames()),
         isTopLevel = psi.isTopLevel(),
-        isLocal = psi.isLocal(),
         isObjectLiteral = psi.isObjectLiteral(),
         kdocText = null,
     )
@@ -59,7 +58,6 @@ internal object KtObjectStubSerializingElementFactory :
         serializeClassId(dataStream, stub.classId)
 
         dataStream.writeBoolean(stub.isTopLevel)
-        dataStream.writeBoolean(stub.isLocal)
         dataStream.writeBoolean(stub.isObjectLiteral)
         dataStream.serializeKdocText(stub.kdocText)
 
@@ -77,7 +75,6 @@ internal object KtObjectStubSerializingElementFactory :
         val classId = deserializeClassId(dataStream)
 
         val isTopLevel = dataStream.readBoolean()
-        val isLocal = dataStream.readBoolean()
         val isObjectLiteral = dataStream.readBoolean()
         val kdocText = dataStream.deserializeKdocText()
 
@@ -94,7 +91,6 @@ internal object KtObjectStubSerializingElementFactory :
             classId = classId,
             superNameRefs = superNames,
             isTopLevel = isTopLevel,
-            isLocal = isLocal,
             isObjectLiteral = isObjectLiteral,
             kdocText = kdocText,
         )

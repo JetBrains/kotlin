@@ -36,7 +36,7 @@ FILE[kind=File[packageFqName=<root>]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
           isClassRef: true
-  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, kdocText=/** Class documentation. */, name=Foo, superNames=[]]
+  CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, kdocText=/** Class documentation. */, name=Foo, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
       MODIFIER_LIST[public]
@@ -49,7 +49,7 @@ FILE[kind=File[packageFqName=<root>]]
               REFERENCE_EXPRESSION[referencedName=String]
                 isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, kdocText=/** Companion object documentation. */, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/Foo.Companion, fqName=Foo.Companion, isObjectLiteral=false, isTopLevel=false, kdocText=/** Companion object documentation. */, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, kdocText=/** Secondary constructor documentation. */, mayHaveContract=false, name=Foo]
@@ -87,7 +87,7 @@ FILE[kind=File[packageFqName=<root>]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
               isClassRef: true
-  CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, kdocText=/** Annotation class documentation. */, name=Anno, superNames=[Annotation]]
+  CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, kdocText=/** Annotation class documentation. */, name=Anno, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, kdocText=/** Annotation class documentation. */, mayHaveContract=false, name=Anno]
       MODIFIER_LIST[public]
@@ -101,7 +101,7 @@ FILE[kind=File[packageFqName=<root>]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=/Direction, fqName=Direction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, kdocText=/** Enum class documentation. */, name=Direction, superNames=[Enum]]
+  CLASS[classId=/Direction, fqName=Direction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, kdocText=/** Enum class documentation. */, name=Direction, superNames=[Enum]]
     MODIFIER_LIST[public final enum]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, kdocText=/** Enum class documentation. */, mayHaveContract=false, name=Direction]
       MODIFIER_LIST[private]
@@ -121,7 +121,7 @@ FILE[kind=File[packageFqName=<root>]]
                     REFERENCE_EXPRESSION[referencedName=Direction]
                       isClassRef: true
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=Direction.SOUTH, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=SOUTH, superNames=[]]
-  OBJECT_DECLARATION[classId=/Obj, fqName=Obj, isLocal=false, isObjectLiteral=false, isTopLevel=true, kdocText=/** Top-level object documentation. */, name=Obj, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=Direction.SOUTH, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=SOUTH, superNames=[]]
+  OBJECT_DECLARATION[classId=/Obj, fqName=Obj, isObjectLiteral=false, isTopLevel=true, kdocText=/** Top-level object documentation. */, name=Obj, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY

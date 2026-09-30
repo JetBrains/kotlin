@@ -2,7 +2,7 @@
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Unsigned, fqName=Unsigned, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Unsigned, superNames=[Annotation]]
+    CLASS[classId=/Unsigned, fqName=Unsigned, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Unsigned, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Unsigned]
         MODIFIER_LIST[public]
@@ -54,7 +54,7 @@
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithMaxValues, fqName=WithMaxValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithMaxValues, superNames=[]]
+    CLASS[classId=/WithMaxValues, fqName=WithMaxValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithMaxValues, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unsigned]
           valueArguments: [
@@ -95,7 +95,7 @@
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithSmallValues, fqName=WithSmallValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithSmallValues, superNames=[]]
+    CLASS[classId=/WithSmallValues, fqName=WithSmallValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithSmallValues, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Unsigned]
           valueArguments: [

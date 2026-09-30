@@ -14,7 +14,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ObjectLiteralAsStatementKt]]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=String]
-    OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Thread]]
+    OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Thread]]
       SUPER_TYPE_LIST
         SUPER_TYPE_CALL_ENTRY
           CONSTRUCTOR_CALLEE
@@ -23,5 +23,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ObjectLiteralAsStatementKt]]
                 REFERENCE_EXPRESSION[referencedName=Thread]
           VALUE_ARGUMENT_LIST
       CLASS_BODY
-    OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
+    OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY

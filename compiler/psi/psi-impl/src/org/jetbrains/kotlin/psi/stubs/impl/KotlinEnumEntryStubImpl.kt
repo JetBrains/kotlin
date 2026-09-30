@@ -21,7 +21,6 @@ class KotlinEnumEntryStubImpl(
     parent: StubElement<*>?,
     private val qualifiedName: StringRef?,
     private val name: StringRef?,
-    override val isLocal: Boolean,
 ) : KotlinStubBaseImpl<KtClass>(
     parent = parent,
     elementType = KtNodeTypes.ENUM_ENTRY,
@@ -63,13 +62,11 @@ class KotlinEnumEntryStubImpl(
         parent = newParent,
         qualifiedName = qualifiedName,
         name = name,
-        isLocal = isLocal,
     )
 
     @KtImplementationDetail
     override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
         other is KotlinEnumEntryStubImpl &&
-                other.isLocal == isLocal &&
                 other.name == name &&
                 other.qualifiedName == qualifiedName &&
                 other.kdocText == kdocText
