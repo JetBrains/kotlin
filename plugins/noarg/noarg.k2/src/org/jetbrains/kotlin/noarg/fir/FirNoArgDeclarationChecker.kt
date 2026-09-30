@@ -27,9 +27,9 @@ object FirNoArgDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common
         if (!matcher.isAnnotated(declaration.symbol)) return
 
         when {
-            declaration.isInner -> reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_INNER_CLASS_ERROR)
-            declaration.isLocal -> reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_LOCAL_CLASS_ERROR)
-            declaration.isInlineOrValue -> reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_VALUE_CLASS_ERROR)
+            declaration.isInner -> return reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_INNER_CLASS_ERROR)
+            declaration.isLocal -> return reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_LOCAL_CLASS_ERROR)
+            declaration.isInlineOrValue -> return reporter.reportOn(source, KtErrorsNoArg.NOARG_ON_VALUE_CLASS_ERROR)
         }
 
         if (declaration.constructors(context.session).any { it.isNoArgConstructor() }) return
