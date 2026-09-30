@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.backend.jvm.ir.isKotlinValhallaValueClass
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -71,6 +72,12 @@ class SerializableIrGenerator(
             val thiz = irClass.thisReceiver!!
             val serializableProperties = properties.serializableProperties
 
+            // Like primary constructors in fir2ir, final full value classes assign their fields before `super(...)` if they have
+            // a non-Any (value class) superclass, and under Project Valhalla (JVM) always, since their strict fields (JEP 401) must be
+            // definitely assigned before `super()` even when they extend `Any`. Other value classes keep the plain order, as e.g. JS/ES6
+            // doesn't allow using `this` before `super()`.
+            val assignFieldsBeforeSuper = irClass.isFullValueClass && irClass.isFinalClass &&
+                    (irClass.getSuperClassNotAny() != null || irClass.isKotlinValhallaValueClass(compilerContext.languageVersionSettings))
             val propertyByParamReplacer: (IrValueParameterSymbol) -> IrExpression? =
                 createPropertyByParamReplacer(irClass, serializableProperties, thiz)
 
@@ -93,11 +100,15 @@ class SerializableIrGenerator(
                 serializableProperties[index].ir to generatePropertyAssignment(thiz, index, ctor.parameters, seenVars, initializerAdapter)
             }
 
+            if (assignFieldsBeforeSuper) {
+                propertyAssignments.values.forEach { +it }
+            }
+
             generateSuperConstructorCall(superClass, ctor.parameters, seenVarsOffset)
 
             statementsAfterSerializableProperty[null]?.forEach { +it }
             for ([property, assignment] in propertyAssignments) {
-                +assignment
+                if (!assignFieldsBeforeSuper) +assignment
                 statementsAfterSerializableProperty[property]?.forEach { +it }
             }
 
