@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.load.kotlin.ACC_IDENTITY
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes

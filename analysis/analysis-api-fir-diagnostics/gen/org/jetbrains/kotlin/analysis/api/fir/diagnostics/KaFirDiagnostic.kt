@@ -8873,6 +8873,16 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ValueClassExtendsValueClassCompiledAsIdentityClass : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<ValueClassExtendsValueClassCompiledAsIdentityClass>
+            get() = ValueClassExtendsValueClassCompiledAsIdentityClass::class
+
+        public val valueClass: KaClassLikeSymbol
+        public val superType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass: KClass<JavaTypeMismatch>
             get() = JavaTypeMismatch::class
