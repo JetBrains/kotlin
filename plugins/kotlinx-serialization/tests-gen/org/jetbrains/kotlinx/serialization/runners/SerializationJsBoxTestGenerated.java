@@ -166,6 +166,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   }
 
   @Test
+  @TestMetadata("fullValueClassWithSuperclassDefaults.kt")
+  public void testFullValueClassWithSuperclassDefaults() {
+    run("fullValueClassWithSuperclassDefaults.kt");
+  }
+
+  @Test
   @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
   public void testGeneratedClassifiersViaLibraryDependency() {
     run("generatedClassifiersViaLibraryDependency.kt");
