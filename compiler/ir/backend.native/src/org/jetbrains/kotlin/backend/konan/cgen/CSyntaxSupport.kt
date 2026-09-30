@@ -1,12 +1,23 @@
 package org.jetbrains.kotlin.backend.konan.cgen
 
+/**
+ * The destination of rendered C code.
+ * Rendering C code requires it, so that everything the rendered code depends on can be made available at the destination.
+ */
+interface CDeclarationScope
+
 interface CType {
+    context(scope: CDeclarationScope)
     fun render(name: String): String
 }
 
 class CVariable(val type: CType, val name: String) {
-    override fun toString() = type.render(name)
+    context(_: CDeclarationScope)
+    fun render(): String = type.render(name)
 }
+
+fun CVariable.render(scope: CDeclarationScope): String =
+    context(scope) { this.render() }
 
 object CTypes {
     fun simple(type: String): CType = SimpleCType(type)
@@ -15,6 +26,7 @@ object CTypes {
             FunctionCType(returnType, parameterTypes, variadic)
 
     fun blockPointer(pointee: CType): CType = object : CType {
+        context(scope: CDeclarationScope)
         override fun render(name: String): String = pointee.render("^$name")
     }
 
@@ -39,10 +51,12 @@ object CTypes {
 }
 
 private class SimpleCType(private val type: String) : CType {
+    context(scope: CDeclarationScope)
     override fun render(name: String): String = if (name.isEmpty()) type else "$type $name"
 }
 
 private class PointerCType(private val pointee: CType) : CType {
+    context(scope: CDeclarationScope)
     override fun render(name: String): String = pointee.render("*$name")
 }
 
@@ -51,6 +65,7 @@ private class FunctionCType(
         private val parameterTypes: List<CType>,
         private val variadic: Boolean
 ) : CType {
+    context(scope: CDeclarationScope)
     override fun render(name: String): String = returnType.render(buildString {
         append("(")
         append(name)
