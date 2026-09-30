@@ -19,6 +19,9 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.InsnSequence
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
@@ -47,6 +50,16 @@ abstract class ObjectTransformer<out T : TransformationInfo>(@JvmField val trans
 
     fun createClassReader(): ClassReader =
         ClassReader(loadClassBytesByInternalName(state, transformationInfo.oldClassName))
+
+    // Like the classes of this compilation, a regenerated object lists the Kotlin value classes of a library compiled without Valhalla
+    // value classes, which is expected to be recompiled with them like this compilation.
+    protected fun Type.isRecompiledKotlinValueClass(): Boolean {
+        val languageVersionSettings = state.config.languageVersionSettings
+        if (sort != Type.OBJECT || !languageVersionSettings.isValhallaSupportEnabled()) return false
+        return state.jvmBackendClassResolver.resolveToClasses(this).any { irClass ->
+            irClass.modality == Modality.FINAL && irClass.valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings)
+        }
+    }
 }
 
 class WhenMappingTransformer(
