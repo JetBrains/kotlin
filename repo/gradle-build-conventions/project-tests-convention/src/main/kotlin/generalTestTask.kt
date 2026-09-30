@@ -131,7 +131,6 @@ internal fun Project.createGeneralTestTask(
             "-XX:+UseCodeCacheFlushing",
             "-XX:ReservedCodeCacheSize=${reservedCodeCacheSize.toJvmArg()}",
             "-XX:MaxMetaspaceSize=${maxMetaspaceSize.toJvmArg()}",
-            "-XX:CICompilerCount=2",
             "-Djna.nosys=true"
         )
 
