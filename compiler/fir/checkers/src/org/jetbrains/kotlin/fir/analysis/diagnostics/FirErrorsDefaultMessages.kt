@@ -2507,8 +2507,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, "Captured type in mutable property reference. Usages of 'set' may lead to cast exceptions.")
 
         // Value classes
-        map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be local or inner.")
-        map.put(VALUE_CLASS_NOT_FINAL, "{0} class can be only final.", STRING)
+        map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be inner.")
+        map.put(VALUE_CLASS_NOT_FINAL, "{0} class can only be final.", STRING)
         map.put(VALUE_CLASS_OPEN, "Value class cannot be open.")
         map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for {0} classes.", STRING)
         map.put(
@@ -2520,7 +2520,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_EMPTY_CONSTRUCTOR, "{0} class must have at least one primary constructor parameter.", STRING)
         map.put(
             VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-            "{0} class primary constructor must only have final read-only (''val'') property parameters.",
+            "{0} class primary constructor must only have final read-only (''val'') non-''vararg'' property parameters.",
             STRING,
         )
         map.put(
