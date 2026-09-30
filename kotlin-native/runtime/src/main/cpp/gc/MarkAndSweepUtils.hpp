@@ -137,6 +137,16 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
 
 #if defined(__aarch64__)
 template <typename Traits>
+void collectThreadLocalRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
+    auto handle = gcHandle.collectThreadRoots(thread);
+    for (auto it = thread.tls().begin(); it != thread.tls().end(); ++it) {
+        if (internal::collectRoot<Traits>(markQueue, **it)) {
+            handle.addThreadLocalRoot();
+        }
+    }
+}
+
+template <typename Traits>
 void collectRootSetFromMapForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, kotlin::stackMap::DeltaMainStackMapBuilder& stackMapBuilder, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
 

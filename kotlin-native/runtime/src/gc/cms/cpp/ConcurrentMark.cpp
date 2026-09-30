@@ -145,6 +145,7 @@ void gc::mark::ConcurrentMark::tryCollectRootSet(mm::ThreadData& thread, MarkTra
     if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
         auto& stackMapBuilder = thread.gc().impl().stackMapBuilder_;
         collectRootSetFromMapForThread<MarkTraits>(gcHandle(), markQueue, stackMapBuilder, thread);
+        collectThreadLocalRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
     } else {
         collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
     }
