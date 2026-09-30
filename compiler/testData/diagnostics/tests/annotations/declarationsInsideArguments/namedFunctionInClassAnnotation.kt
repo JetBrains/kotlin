@@ -7,7 +7,10 @@ package testPack
 
 annotation class Anno(val i: Int)
 
-@Anno(i = fun foo() = 1)
+@Anno(i = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() = 1)
 abstract class Check {
     abstract var prop: Int
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral, localFunction,
+primaryConstructor, propertyDeclaration */

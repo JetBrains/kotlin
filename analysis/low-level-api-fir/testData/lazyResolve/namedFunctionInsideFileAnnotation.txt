@@ -143,10 +143,10 @@ FILE: [ResolvedTo(CONSTANT_EVALUATION)] namedFunctionInsideFileAnnotation.kt
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] namedFunctionInsideFileAnnotation.kt
-    @FILE:R|one/Anno|[Types](i = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+    @FILE:R|one/Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
-     [evaluated = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
     ])
@@ -162,10 +162,10 @@ FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] namedFunctionInsideFileAnnotation.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(BODY_RESOLVE)] namedFunctionInsideFileAnnotation.kt
-    @FILE:R|one/Anno|[Types](i = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+    @FILE:R|one/Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
-     [evaluated = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
     ])
@@ -181,10 +181,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] namedFunctionInsideFileAnnotation.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] namedFunctionInsideFileAnnotation.kt
-    @FILE:R|one/Anno|[Types](i = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+    @FILE:R|one/Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
-     [evaluated = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
     ])

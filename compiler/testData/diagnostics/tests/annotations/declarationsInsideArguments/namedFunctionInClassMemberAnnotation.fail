@@ -1,1 +1,0 @@
-org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Unexpected status. Expected is FirResolvedDeclarationStatus, but was FirDeclarationStatusImpl

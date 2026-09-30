@@ -5,8 +5,11 @@
 annotation class Anno(val i: Int)
 
 fun test() {
-    @Anno(i = fun foo() = 1)
+    @Anno(i = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() = 1)
     class Local
 
-    val obj = @Anno(i = fun foo() = 1) object {}
+    val obj = @Anno(i = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() = 1) object {}
 }
+
+/* GENERATED_FIR_TAGS: annotationDeclaration, anonymousObjectExpression, classDeclaration, functionDeclaration,
+integerLiteral, localClass, localFunction, localProperty, primaryConstructor, propertyDeclaration */
