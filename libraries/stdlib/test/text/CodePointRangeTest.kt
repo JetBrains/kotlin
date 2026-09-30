@@ -97,14 +97,14 @@ public class CodePointRangeTest {
 
     @Test
     fun nonEmptyEquals() {
-        assertAllEqual('a'.toCodePoint()..'d'.toCodePoint(), 'a'.toCodePoint()..<'e'.toCodePoint()) //, 'a'.toCodePoint()..'d'.toCodePoint() step 1)
+        assertAllEqual('a'.toCodePoint()..'d'.toCodePoint(), 'a'.toCodePoint()..<'e'.toCodePoint(), 'a'.toCodePoint()..'d'.toCodePoint() step 1)
         assertAllEqual('d'.toCodePoint() downTo 'a'.toCodePoint(), 'd'.toCodePoint() downTo 'a'.toCodePoint() step 1)
     }
 
     @Test
     fun nonEmptyRangeHashCode() {
         fun <N : Comparable<N>, R> checkIterableRangeHashCode(range: R) where R : ClosedRange<N>, R : Iterable<N> {
-            assertEquals(31 * range.start.hashCode() + range.endInclusive.hashCode(), range.hashCode())
+            assertEquals(31 * 31 * range.start.hashCode() + 31 * range.endInclusive.hashCode() + 1, range.hashCode())
         }
         checkIterableRangeHashCode('a'.toCodePoint()..'z'.toCodePoint())
     }
