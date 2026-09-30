@@ -1,0 +1,325 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public abstract [ResolvedTo(RAW_FIR)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public abstract [ResolvedTo(RAW_FIR)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public abstract [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public abstract [ResolvedTo(COMPANION_GENERATION)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public abstract [ResolvedTo(SUPER_TYPES)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(TYPES)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(STATUS)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(CONTRACTS)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.i] i: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|Anno|[Types](LAZY_EXPRESSION) public abstract [ResolvedTo(CONSTANT_EVALUATION)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.i] i: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+     [evaluated = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    ]) public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class Check : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] constructor(): R|Check| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? abstract [ResolvedTo(RAW_FIR)] var prop: Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] get(): Int
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Check] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.i] i: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+     [evaluated = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    ]) public abstract [ResolvedTo(BODY_RESOLVE)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] constructor(): R|Check| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(STATUS)] var prop: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Check] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] namedFunctionInsideClassAnnotation.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.i] i: R|kotlin/Int|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+     [evaluated = ERROR_EXPR(Argument is absent)local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    ]) public abstract [ResolvedTo(BODY_RESOLVE)] class Check : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] constructor(): R|Check| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract [ResolvedTo(BODY_RESOLVE)] var prop: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Check] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }

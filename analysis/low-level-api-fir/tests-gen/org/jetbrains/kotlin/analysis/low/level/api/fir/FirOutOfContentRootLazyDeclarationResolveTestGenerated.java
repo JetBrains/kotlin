@@ -563,6 +563,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
   }
 
   @Test
+  @TestMetadata("namedFunctionInsideClassAnnotation.kt")
+  public void testNamedFunctionInsideClassAnnotation() {
+    run("namedFunctionInsideClassAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("namedFunctionInsideFileAnnotation.kt")
+  public void testNamedFunctionInsideFileAnnotation() {
+    run("namedFunctionInsideFileAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("nestedCompilerRequiredAnnotations.kt")
   public void testNestedCompilerRequiredAnnotations() {
     run("nestedCompilerRequiredAnnotations.kt");
