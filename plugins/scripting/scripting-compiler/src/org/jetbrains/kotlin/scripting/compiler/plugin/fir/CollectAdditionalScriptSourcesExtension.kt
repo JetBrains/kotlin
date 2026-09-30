@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.legacyScriptRuntimeToAdd
+import org.jetbrains.kotlin.scripting.compiler.plugin.requiresLegacyScriptRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.toSystemIndependentScriptPath
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptingModuleDataProvider
@@ -101,6 +103,9 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 }.valueOrNull()
 
             updatedClasspath.addAll(refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.dependencies).toClassPathOrEmpty())
+            if (refinedScriptCompilationConfiguration?.requiresLegacyScriptRuntime == true) {
+                configuration.legacyScriptRuntimeToAdd()?.let(updatedClasspath::add)
+            }
             return refinedScriptCompilationConfiguration?.get(ScriptCompilationConfiguration.importScripts)?.takeIf { it.isNotEmpty() }
         }
 

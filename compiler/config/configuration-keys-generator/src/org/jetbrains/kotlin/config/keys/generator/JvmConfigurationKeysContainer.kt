@@ -47,6 +47,7 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
     val USE_OLD_INLINE_CLASSES_MANGLING_SCHEME by key<Boolean>("Use old, 1.4 version of inline classes mangling scheme.")
     val ENABLE_JVM_PREVIEW by key<Boolean>()
     val NO_REFLECT by key<Boolean>("Don't automatically include kotlin-reflect.jar into the output if the output is a jar.")
+    val NO_STDLIB by key<Boolean>("Don't automatically include the Kotlin/JVM stdlib and kotlin-reflect into the classpath.")
     val VALIDATE_BYTECODE by key<Boolean>()
     val ENABLE_DEBUG_MODE by key<Boolean>()
     val ENHANCED_COROUTINES_DEBUGGING by key<Boolean>("Mark compiled generated code in coroutines.")
