@@ -182,9 +182,7 @@ private fun Project.registerSwiftExportRun(
         "swiftExport"
     )
 
-    val outputs = layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration")
-    val files = outputs.map { it.dir("files") }
-    val serializedModules = outputs.map { it.dir("modules").file("${swiftApiModuleName.get()}.json") }
+    val outputDirectory = layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration")
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
         task.description = "Run $taskNamePrefix Swift Export process"
@@ -234,8 +232,9 @@ private fun Project.registerSwiftExportRun(
         )
 
         // Output
-        task.parameters.outputPath.set(files)
-        task.parameters.swiftModulesFile.set(serializedModules)
+        task.outputDirectory.set(outputDirectory)
+        task.parameters.outputPath.set(task.outputDirectory.dir("files"))
+        task.parameters.swiftModulesFile.set(task.outputDirectory.file(swiftApiModuleName.map { "modules/$it.json" }))
     }
 }
 
@@ -251,9 +250,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
 
-            swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.map {
-                it.parameters.outputPath.getFile().parentFile
-            })
+            swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.flatMap { it.outputDirectory })
 
             swiftExportCompilation.compileTaskProvider.configure {
                 it.compilerOptions.optIn.add("kotlin.experimental.ExperimentalNativeApi")

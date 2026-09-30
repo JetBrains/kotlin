@@ -19,7 +19,9 @@ import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.createParentDirectories
 import kotlin.io.path.readText
+import kotlin.io.path.writeText
 import kotlin.test.assertContains
 import kotlin.test.assertNotNull
 
@@ -269,6 +271,9 @@ class SwiftExportDslIT : KGPBaseTest() {
                 assertTasksUpToDate(":iosArm64DebugSwiftExport")
             }
 
+            // A file that no run produced, which the next run has to remove along with everything else in its directory.
+            projectPath.resolve("build/SwiftExport/iosArm64/Stale/Stale.kt").createParentDirectories().writeText("")
+
             // 3) Change ONLY the exported module name override. The override drives the task's output and is tracked
             // via the `exportedModulesInputs` task input, so up-to-date checking sees the change: the task re-executes
             // and emits the exported module under its new name, while the stale directory is gone.
@@ -280,6 +285,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                 assertTasksExecuted(":iosArm64DebugSwiftExport")
                 assertDirectoryInProjectExists(renamedModuleDir)
                 assertDirectoryInProjectDoesNotExist(initialModuleDir)
+                assertDirectoryInProjectDoesNotExist("build/SwiftExport/iosArm64/Stale")
             }
         }
     }
