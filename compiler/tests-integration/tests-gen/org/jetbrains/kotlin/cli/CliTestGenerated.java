@@ -191,6 +191,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("intermediateHasNonExistentDependency.args")
+    public void testIntermediateHasNonExistentDependency() {
+      run("intermediateHasNonExistentDependency.args");
+    }
+
+    @Test
     @TestMetadata("jvmDependenciesInCommonClasspath_dir.args")
     public void testJvmDependenciesInCommonClasspath_dir() {
       run("jvmDependenciesInCommonClasspath_dir.args");
