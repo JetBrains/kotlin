@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.KlibSignatureIndexConstants.KLIB_INDI
 import org.jetbrains.kotlin.backend.common.serialization.CommonSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.IrStringSerializer
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
@@ -96,12 +98,25 @@ class KlibSignatureIndexComponentWriterImpl(
             val stringSerializer = IrStringSerializer()
             val signatureSerializer = CommonSignatureSerializer(stringSerializer, debugInfoSerializer = null)
 
-            fun serializeSignatures(signatures: Set<IdSignature>): List<ByteArray> = signatures.map { signature ->
-                check(signature is IdSignature.CommonSignature) {
-                    "Unexpected signature type: ${signature.javaClass.name}, $signature"
+            fun serializeSignatures(unorderedSignatures: Set<IdSignature>): List<ByteArray> {
+                if (unorderedSignatures.isEmpty()) return emptyList()
+
+                val orderedSignatures = ArrayList<Pair<String, ByteArray>>(unorderedSignatures.size)
+
+                unorderedSignatures.mapTo(orderedSignatures) { signature ->
+                    check(signature is IdSignature.CommonSignature) {
+                        "Unexpected signature type: ${signature.javaClass.name}, $signature"
+                    }
+
+                    val sortingKey = signature.render(IdSignatureRenderer.DEFAULT)
+                    val serializedSignature = signatureSerializer.serializeSignature(signature).toByteArray()
+
+                    sortingKey to serializedSignature
                 }
 
-                signatureSerializer.serializeSignature(signature).toByteArray()
+                orderedSignatures.sortBy { it.first }
+
+                return orderedSignatures.map { it.second }
             }
 
             val serializedExportedSignatures = serializeSignatures(exportedSignatures)
