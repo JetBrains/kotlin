@@ -538,5 +538,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext)
     private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean =
-        isFullValueClass || isPlatformValueClass(context.session) || classId.isRecordId() || isMappedToPlatformValueClass(context.session)
+        classId == StandardClassIds.Any || isFullValueClass || isPlatformValueClass(context.session) || classId.isRecordId() ||
+                isMappedToPlatformValueClass(context.session)
 }
