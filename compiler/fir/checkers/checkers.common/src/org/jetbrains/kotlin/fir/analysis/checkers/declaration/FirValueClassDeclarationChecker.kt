@@ -252,7 +252,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         declaration.declarations.forEach { innerDeclaration ->
             if (innerDeclaration !is FirField || !innerDeclaration.isSynthetic) return@forEach
             val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol(context.session)
-            if (symbol != null && symbol in primaryConstructorParameters) {
+            // A delegate to a property of a final class reuses its backing field; any other delegate needs a field of its own.
+            if (declaration.isFinal && symbol != null && symbol in primaryConstructorParameters) {
                 return@forEach
             }
             val delegatedTypeRefSource = (innerDeclaration.returnTypeRef as FirResolvedTypeRef).delegatedTypeRef?.source
