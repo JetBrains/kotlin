@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JVM_TARGET
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
@@ -48,6 +51,9 @@ enum class TargetPlatformEnum(val targetPlatform: TargetPlatform) {
  * 3. The module name suffix, such as `*-common` or `*-jvm`. See [parseModulePlatformByName].
  * 4. The default target platform, provided by
  *    [DefaultsProvider.targetPlatform][org.jetbrains.kotlin.test.services.DefaultsProvider.targetPlatform].
+ *
+ * If the platform is not declared via [TARGET_PLATFORM] and turns out to be JVM, the [JVM_TARGET] directive specifies its JVM target, as it
+ * does in the compiler.
  */
 class TargetPlatformProviderForAnalysisApiTests(val testServices: TestServices) : TargetPlatformProvider() {
     override fun getTargetPlatform(module: TestModule): TargetPlatform {
@@ -70,9 +76,17 @@ class TargetPlatformProviderForAnalysisApiTests(val testServices: TestServices) 
         // For metadata compiler test data, `METADATA_TARGET_PLATFORMS` specifies the composite target platform. This takes priority over
         // the module name suffix because a common module like `lib-common` should get the explicitly specified platform (e.g., JS+WasmJs),
         // not the broadest possible platform.
-        return getMetadataTargetPlatformOrNull(module, testServices)
+        val targetPlatform = getMetadataTargetPlatformOrNull(module, testServices)
             ?: parseModulePlatformByName(module.name)
             ?: testServices.defaultsProvider.targetPlatform
+
+        return targetPlatform.withJvmTargetFromDirectives(module)
+    }
+
+    private fun TargetPlatform.withJvmTargetFromDirectives(module: TestModule): TargetPlatform {
+        if (!isJvm()) return this
+        val jvmTarget = module.directives.singleOrZeroValue(JVM_TARGET) ?: return this
+        return JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget)
     }
 
     private fun parseModulePlatformByName(moduleName: String): TargetPlatform? {
