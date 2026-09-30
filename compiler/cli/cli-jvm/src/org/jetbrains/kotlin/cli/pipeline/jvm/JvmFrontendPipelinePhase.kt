@@ -68,6 +68,7 @@ import java.io.File
 import javax.xml.stream.XMLOutputFactory
 import javax.xml.stream.XMLStreamWriter
 import kotlin.io.path.Path
+import kotlin.io.path.exists
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
@@ -367,7 +368,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                  * This could happen in a single-target project setup.
                  */
                 if (libraries.isNotEmpty()) return@l emptyList()
-                val dependencies = (rawRegularDependencies + rawFriendDependencies).map { Path(it) }
+                val dependencies = (rawRegularDependencies + rawFriendDependencies).mapNotNull { Path(it).takeIf { path -> path.exists() } }
                 if (dependencies.isEmpty()) return@l emptyList()
                 val classpath = JvmClasspath.Roots(dependencies.map(JvmClasspathRootId::of))
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
