@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignatur
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
 import org.jetbrains.kotlin.fir.types.*
@@ -1108,9 +1107,10 @@ inline fun FirElement.requireFeatureSupport(
 
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
-    get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
-        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
-    }
+    get() = !fullyExpandedType().isBoundedByPrimitiveOrValueClass(context.session)
+
+fun ConeKotlinType.isBoundedByPrimitiveOrValueClass(session: FirSession): Boolean =
+    collectUpperBounds(session.typeContext).any { it.isPrimitiveOrNullablePrimitive || it.isValueClass(session) }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkAtomicCallReceiverForStableIdentity(
