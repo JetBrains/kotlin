@@ -1,6 +1,5 @@
 // ISSUE: KT-89978
 // TARGET_BACKEND: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // LANGUAGE: +FullValueClasses
 // The test checks an optimization which is implemented only for JS_IR backend
 
