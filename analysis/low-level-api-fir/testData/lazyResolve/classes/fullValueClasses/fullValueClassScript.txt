@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? value [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(RAW_FIR)] fullValueClassScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? value [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? value [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? value [ResolvedTo(COMPANION_GENERATION)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? value [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? value [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final value [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-fullValueClassScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final value [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final value [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final value [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final value [ResolvedTo(CONSTANT_EVALUATION)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final value [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-fullValueClassScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final value [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {
@@ -261,7 +261,7 @@ FILE: [ResolvedTo(IMPORTS)] fullValueClassScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] fullValueClassScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-fullValueClassScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final value [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol pack.<script-fullValueClassScript.kts>, FirValueClassRepresentationKey=FullValueClassRepresentation(underlyingPropertyNamesToTypes=[(x, kotlin/Int), (y, kotlin/String)]), ScriptTopLevelDeclaration=true] class Point : R|kotlin/Any| {

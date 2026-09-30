@@ -1,4 +1,4 @@
-public final class HelloWorld /* HelloWorld*/ extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
+public final class HelloWorld /* HelloWorld*/ extends kotlin.script.experimental.templates.ScriptWithArgs {
   @org.jetbrains.annotations.NotNull()
   public final @org.jetbrains.annotations.NotNull() kotlin.Unit get$$result();//  get$$result()
 

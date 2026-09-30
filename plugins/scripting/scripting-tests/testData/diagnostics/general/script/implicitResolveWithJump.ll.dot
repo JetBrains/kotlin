@@ -60,12 +60,12 @@ digraph implicitResolveWithJump_ll_kts {
             subgraph cluster_7 {
                 color=blue
                 19 [label="Function call arguments enter [4]"];
-                20 [label="Access variable R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args| [4]"];
+                20 [label="Access variable R|kotlin/script/experimental/templates/ScriptWithArgs.args| [4]"];
                 21 [label="Const: Int(1) [4]"];
                 22 [label="Function call arguments exit [4]"];
             }
-            23 [label="Function call enter: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]"];
-            24 [label="Function call exit: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]" style="filled" fillcolor=yellow];
+            23 [label="Function call enter: this@R|?|.R|kotlin/script/experimental/templates/ScriptWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]"];
+            24 [label="Function call exit: this@R|?|.R|kotlin/script/experimental/templates/ScriptWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]" style="filled" fillcolor=yellow];
             25 [label="Exit property [4]" style="filled" fillcolor=red];
         }
         26 [label="Exit class A [3]" style="filled" fillcolor=red];
@@ -100,12 +100,12 @@ digraph implicitResolveWithJump_ll_kts {
             subgraph cluster_11 {
                 color=blue
                 32 [label="Function call arguments enter [4]"];
-                33 [label="Access variable R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args| [4]"];
+                33 [label="Access variable R|kotlin/script/experimental/templates/ScriptWithArgs.args| [4]"];
                 34 [label="Const: Int(2) [4]"];
                 35 [label="Function call arguments exit [4]"];
             }
-            36 [label="Function call enter: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]"];
-            37 [label="Function call exit: this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]" style="filled" fillcolor=yellow];
+            36 [label="Function call enter: this@R|?|.R|kotlin/script/experimental/templates/ScriptWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]"];
+            37 [label="Function call exit: this@R|?|.R|kotlin/script/experimental/templates/ScriptWithArgs.args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String|>|(...) [4]" style="filled" fillcolor=yellow];
             38 [label="Exit property [4]" style="filled" fillcolor=red];
         }
         39 [label="Exit class B [3]" style="filled" fillcolor=red];

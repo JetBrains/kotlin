@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] contractScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit|
@@ -11,7 +11,7 @@ FILE: [ResolvedTo(RAW_FIR)] contractScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit|
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] block: ( () -> Unit )): R|kotlin/Unit|
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(COMPANION_GENERATION)] block: ( () -> Unit )): R|kotlin/Unit|
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(SUPER_TYPES)] block: ( () -> Unit )): R|kotlin/Unit|
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(TYPES)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-contractScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-contractScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONTRACTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -104,7 +104,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-contractScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-contractScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(CONSTANT_EVALUATION)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-contractScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -173,7 +173,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-contractScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] contractScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-contractScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|

@@ -15,7 +15,7 @@ local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-localClassScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun y(): R|kotlin/Unit| {
