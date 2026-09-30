@@ -211,8 +211,8 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      * Returns `true` if any module of [input] contains a file with a top-level `box()` function.
      *
      * Tests without a `box()` (e.g. `// FILE: entry.mjs` driven Wasm/JS size tests) are
-     * executed via a custom JS entry point — not via the synthetic `ProxyLauncher_<hash>` /
-     * `Launcher_<hash>` unit-test classes — so they cannot be sanity-checked against
+     * executed via a custom JS entry point — not via the synthetic `ProxyLauncher_<encoded-package>` /
+     * `Launcher_<encoded-relative-path>` unit-test classes — so they cannot be sanity-checked against
      * `##teamcity[testSuiteFinished` markers.
      */
     protected fun hasBoxMethod(input: NonGroupingStageOutput): Boolean {
@@ -232,13 +232,13 @@ abstract class AbstractWasmGroupingStageBoxRunner(
      * its test was actually executed.
      *
      * Two flows produce different suite-name shapes:
-     *  - The non-isolated (grouped) path uses `ProxyLauncher_<hashCode(additionalPackage)>`
+     *  - The non-isolated (grouped) path uses `ProxyLauncher_<encoded-package>`
      *    (see `WasmCompilerSecondStageFacade.Grouping.transform()`).
      *  - The friend-dependency isolated path keeps the per-test KLIB as the `-Xinclude` main
      *    module (so that `-Xfriend-modules` correctly preserves the friend relation across
      *    sibling KLIBs). In that path the `@Test`-annotated launcher class baked into the
      *    per-test KLIB by `WasmJsLauncherAdditionalSourceProvider` (named
-     *    `Launcher_<hashCode(relativePath)>`) is what `GenerateWasmTests` registers — the
+     *    `Launcher_<encoded-relative-path>`) is what `GenerateWasmTests` registers — the
      *    synthetic `ProxyBatchLauncher.kt` is silently dropped because the linking pipeline
      *    skips frontend/Fir2Ir when `-Xinclude` is set.
      */
