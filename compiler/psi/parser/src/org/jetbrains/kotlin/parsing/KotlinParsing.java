@@ -207,7 +207,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     void parseExpressionCodeFragment() {
         PsiBuilder.Marker marker = mark();
-        myExpressionParsing.parseExpression();
+        myExpressionParsing.parseBlockLevelExpression();
 
         checkForUnexpectedSymbols();
 

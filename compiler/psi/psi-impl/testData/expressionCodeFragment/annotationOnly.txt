@@ -7,5 +7,5 @@ KtFile: fragment.kt
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('Ann')
-    PsiErrorElement:Expecting an element
+    PsiErrorElement:Expecting an expression
       <empty list>

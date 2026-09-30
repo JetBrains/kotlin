@@ -1,1 +1,5 @@
-(142,172) WRAPPED_LHS_IN_ASSIGNMENT_ERROR Wrapping the left-hand side of assignments in parentheses, labels or annotations is not allowed.
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method run(p0: Test): void
+}
