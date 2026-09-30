@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -52,10 +53,16 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
         }
 
         val symbolRemapper = ReplSnippetsToClassesSymbolRemapper()
+        val sameBatchSnippetClasses = snippets.mapNotNullTo(HashSet()) { it.targetClass?.owner }
 
         snippets.sortBy { it.name }
         for (irSnippet in snippets) {
-            finalizeReplSnippetClass(irSnippet, symbolRemapper)
+            finalizeReplSnippetClass(irSnippet, symbolRemapper, sameBatchSnippetClasses)
+        }
+
+        // Requires the final `$$eval` signatures of all the snippets.
+        for (irSnippet in snippets) {
+            chainImportedSnippetsEvaluation(irSnippet)
         }
 
         // Patch IrExternalPackageFragment parents on external Kotlin top-level callees referenced from
@@ -70,7 +77,38 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
         }
     }
 
-    private fun finalizeReplSnippetClass(irSnippet: IrReplSnippet, symbolRemapper: ReplSnippetsToClassesSymbolRemapper) {
+    private fun IrReplSnippet.getEvalFunction(): IrSimpleFunction =
+        targetClass!!.owner.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .single { it.origin == IrDeclarationOrigin.REPL_EVAL_FUNCTION }
+
+    private fun chainImportedSnippetsEvaluation(irSnippet: IrReplSnippet) {
+        val importedSnippets = irSnippet.importedSnippetsAttr ?: return
+        val evalFun = irSnippet.getEvalFunction()
+        val evalBody = evalFun.body as? IrBlockBody ?: return
+        importedSnippets.asReversed().forEach { importedSnippetSymbol ->
+            val importedSnippet = importedSnippetSymbol.owner
+            val importedClass = importedSnippet.targetClass?.owner ?: return@forEach
+            val importedEvalFun = importedSnippet.getEvalFunction()
+            require(importedEvalFun.parameters.size == evalFun.parameters.size) {
+                "The imported snippet ${importedClass.name} has different implicit receivers than the importing one (${irSnippet.name})"
+            }
+            val call = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, importedEvalFun.returnType, importedEvalFun.symbol).apply {
+                arguments[0] = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, importedClass.typeWith(), importedClass.symbol)
+                for (index in 1 until evalFun.parameters.size) {
+                    val parameter = evalFun.parameters[index]
+                    arguments[index] = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, parameter.type, parameter.symbol)
+                }
+            }
+            evalBody.statements.add(index = 0, element = call)
+        }
+    }
+
+    private fun finalizeReplSnippetClass(
+        irSnippet: IrReplSnippet,
+        symbolRemapper: ReplSnippetsToClassesSymbolRemapper,
+        sameBatchSnippetClasses: Set<IrClass>,
+    ) {
         val irSnippetClass = irSnippet.targetClass!!.owner
         val typeRemapper = SimpleTypeRemapper(symbolRemapper)
 
@@ -86,9 +124,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             context, irSnippetClassThisReceiver, implicitReceiversFieldsWithParameters, irSnippetClass, irSnippet.stateObject!!
         )
 
-        val evalFun = irSnippetClass.declarations
-            .filterIsInstance<IrFunction>()
-            .single { it.origin == IrDeclarationOrigin.REPL_EVAL_FUNCTION }
+        val evalFun = irSnippet.getEvalFunction()
         evalFun.parameters = buildList {
             add(
                 evalFun.buildReceiverParameter {
@@ -139,6 +175,7 @@ internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : Mod
             irSnippetClassThisReceiver,
             typeRemapper,
             snippetAccessCallsGenerator,
+            sameBatchSnippetClasses,
         )
         val lambdaPatcher = ScriptFixLambdasTransformer(irSnippetClass)
 
@@ -239,6 +276,7 @@ private class ReplSnippetToClassTransformer(
     snippetClassReceiver: IrValueParameter,
     typeRemapper: TypeRemapper,
     override val accessCallsGenerator: ReplSnippetAccessCallsGenerator,
+    private val sameBatchSnippetClasses: Set<IrClass>,
 ) : ScriptLikeToClassTransformer(
     context,
     irSnippet,
@@ -253,6 +291,17 @@ private class ReplSnippetToClassTransformer(
         val declaration = expression.symbol.owner as? IrDeclaration
         if (declaration != null && declaration in irSnippet.declarationsFromOtherSnippets) {
             expression.dispatchReceiver = declaration.toSnippetReceiverAccess(expression)
+            expression.transformChildren(this, data)
+            return expression
+        }
+        // A same-batch snippet declaration is a regular member of that snippet's object, not a REPL state entry.
+        val declarationParent = declaration?.parent
+        if (declaration != null && declarationParent is IrClass && declarationParent in sameBatchSnippetClasses &&
+            declarationParent !== irSnippet.targetClass?.owner && expression.dispatchReceiver is IrErrorCallExpression
+        ) {
+            expression.dispatchReceiver = IrGetObjectValueImpl(
+                expression.startOffset, expression.endOffset, declarationParent.typeWith(), declarationParent.symbol
+            )
             expression.transformChildren(this, data)
             return expression
         }

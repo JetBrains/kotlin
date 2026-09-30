@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.DelicateDeclarationStorageApi
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.IrReplSnippetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
@@ -49,8 +51,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactMetadataCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.buildSnippetArtifactMetadataFromFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.importedSnippetsAttr
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.replSnippetArtifactMetadataAttr
+import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -87,7 +92,15 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             usedOtherSnippets
         ).visitReplSnippet(firReplSnippet)
 
+        // Same-batch snippets are regular same-module declarations and need no lazy copies.
+        @OptIn(SymbolInternals::class)
+        fun FirReplSnippetSymbol.isFromSameBatch(): Boolean = declarationStorage.getCachedIrReplSnippet(fir) != null
+
         usedOtherSnippets.remove(firReplSnippet.symbol)
+        usedOtherSnippets.removeAll { it.isFromSameBatch() }
+        propertiesFromState.values.removeAll { it.isFromSameBatch() }
+        functionsFromState.values.removeAll { it.isFromSameBatch() }
+        classesFromState.values.removeAll { it.isFromSameBatch() }
         usedOtherSnippets.forEach {
             val packageFragment = declarationStorage.getIrExternalPackageFragment(it.packageFqName(), it.moduleData)
             classifierStorage.createAndCacheEarlierSnippetClass(it, packageFragment)
@@ -146,7 +159,48 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
 
         irSnippet.stateObject = stateObject.symbol
 
+        irSnippet.importedSnippetsAttr = collectImportedSameBatchSnippets(firReplSnippet).takeIf { it.isNotEmpty() }
+
         saveSnippetArtifactMetadataIfStateless(firReplSnippet, irSnippet)
+    }
+
+    /**
+     * Only the snippet not imported by any other one evaluates the imports, as the whole transitive closure in dependency order.
+     * A script imported both directly and via another import is evaluated once.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun Fir2IrComponents.collectImportedSameBatchSnippets(firReplSnippet: FirReplSnippet): List<IrReplSnippetSymbol> {
+        val currentSourceFile = session.firProvider.getFirReplSnippetContainerFile(firReplSnippet.symbol)?.sourceFile ?: return emptyList()
+        val currentPath = currentSourceFile.path ?: return emptyList()
+        val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: return emptyList()
+
+        class SameBatchSnippet(val irSymbol: IrReplSnippetSymbol, val importedPaths: List<String>)
+
+        fun KtSourceFile.getImportedPaths(): List<String> =
+            getOrLoadConfiguration(session, this)?.valueOrNull()
+                ?.get(ScriptCompilationConfiguration.resolvedImportScripts)?.mapNotNull { it.locationId }.orEmpty()
+
+        val sameBatchSnippetsByPath = historyProvider.getSnippets().mapNotNull { snippetSymbol ->
+            val irSnippet = declarationStorage.getCachedIrReplSnippet(snippetSymbol.fir) ?: return@mapNotNull null
+            val sourceFile = session.firProvider.getFirReplSnippetContainerFile(snippetSymbol)?.sourceFile ?: return@mapNotNull null
+            val path = sourceFile.path ?: return@mapNotNull null
+            path to SameBatchSnippet(irSnippet.symbol, sourceFile.getImportedPaths())
+        }.toMap()
+
+        if (sameBatchSnippetsByPath.values.any { currentPath in it.importedPaths }) return emptyList()
+
+        val visited = HashSet<String>().apply { add(currentPath) }
+        val result = ArrayList<IrReplSnippetSymbol>()
+        fun collect(importedPaths: List<String>) {
+            for (path in importedPaths) {
+                if (!visited.add(path)) continue
+                val imported = sameBatchSnippetsByPath[path] ?: continue
+                collect(imported.importedPaths)
+                result.add(imported.irSymbol)
+            }
+        }
+        collect(currentSourceFile.getImportedPaths())
+        return result
     }
 
     private fun saveSnippetArtifactMetadataIfStateless(firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
@@ -290,8 +344,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             val irReplStateParent =
                 declarationStorage.getIrExternalPackageFragment(firReplStateObject.symbol.classId.packageFqName, session.moduleData)
             lazyDeclarationsGenerator.createIrLazyClass(firReplStateObject, irReplStateParent, IrClassSymbolImpl())
-                .also { cachedStateObjectIrClass = it }
-        }
+        }.also { cachedStateObjectIrClass = it }
     }
 
     companion object {
