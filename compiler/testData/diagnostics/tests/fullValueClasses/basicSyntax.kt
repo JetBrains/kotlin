@@ -25,7 +25,7 @@ abstract class Abstract {
     inner <!VALUE_CLASS_NOT_TOP_LEVEL!>value<!> class Inner(val x: Int)
     inner class Inner1(val x: Int)
     init {
-        <!VALUE_CLASS_NOT_TOP_LEVEL, WRONG_MODIFIER_TARGET!>value<!> class Local(val x: Long)
+        <!WRONG_MODIFIER_TARGET!>value<!> class Local(val x: Long)
     }
 }
 

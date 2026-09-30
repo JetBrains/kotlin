@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -43,8 +46,9 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
             annotation == null && declaration.isValue && !declaration.isExpect &&
             !(declaration.isInline && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled())
         ) {
-            // do not report anything for non-class declarations, WRONG_MODIFIER will be reported anyway
+            // do not report anything for non-class declarations and local classes, WRONG_MODIFIER will be reported anyway
             if (declaration.classKind != ClassKind.CLASS) return
+            if (declaration.isLocal && !declaration.isInner && declaration.isReplSnippetDeclaration != true) return
             val isFullValueClassSupportEnabled = LanguageFeature.FullValueClasses.isEnabled()
             if (!isFullValueClassSupportEnabled) {
                 // only report if value keyword exists, this ignores the deprecated inline class syntax
