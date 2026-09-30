@@ -249,26 +249,26 @@ class SwiftExportDslIT : KGPBaseTest() {
                 }
             }
 
-            val initialModuleDir = "build/SwiftExport/iosArm64/Debug/files/$initialModuleName"
-            val renamedModuleDir = "build/SwiftExport/iosArm64/Debug/files/$renamedModuleName"
+            val initialModuleDir = "build/SwiftExport/iosArm64/files/$initialModuleName"
+            val renamedModuleDir = "build/SwiftExport/iosArm64/files/$renamedModuleName"
 
             // 1) First run with the initial override: the task executes and emits the exported module under its name.
             build(
-                ":iosArm64DebugSwiftExport",
+                ":iosArm64SwiftExport",
                 "-P$moduleNameProperty=$initialModuleName",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
                 assertDirectoryInProjectExists(initialModuleDir)
             }
 
             // 2) Re-running with the same override keeps the task UP-TO-DATE, as expected.
             build(
-                ":iosArm64DebugSwiftExport",
+                ":iosArm64SwiftExport",
                 "-P$moduleNameProperty=$initialModuleName",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
             ) {
-                assertTasksUpToDate(":iosArm64DebugSwiftExport")
+                assertTasksUpToDate(":iosArm64SwiftExport")
             }
 
             // A file that no run produced, which the next run has to remove along with everything else in its directory.
@@ -278,11 +278,11 @@ class SwiftExportDslIT : KGPBaseTest() {
             // via the `exportedModulesInputs` task input, so up-to-date checking sees the change: the task re-executes
             // and emits the exported module under its new name, while the stale directory is gone.
             build(
-                ":iosArm64DebugSwiftExport",
+                ":iosArm64SwiftExport",
                 "-P$moduleNameProperty=$renamedModuleName",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
             ) {
-                assertTasksExecuted(":iosArm64DebugSwiftExport")
+                assertTasksExecuted(":iosArm64SwiftExport")
                 assertDirectoryInProjectExists(renamedModuleDir)
                 assertDirectoryInProjectDoesNotExist(initialModuleDir)
                 assertDirectoryInProjectDoesNotExist("build/SwiftExport/iosArm64/Stale")
@@ -353,13 +353,13 @@ class SwiftExportDslIT : KGPBaseTest() {
                 ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
+                val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/files/Shared/Shared.swift")
                 assertContains(
                     sharedSwiftPath.readText(),
                     "public typealias MyKotlinClass = ExportedKotlinPackages.com.github.jetbrains.swiftexport.MyKotlinClass"
                 )
 
-                val subprojectSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Subproject/Subproject.swift")
+                val subprojectSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/files/Subproject/Subproject.swift")
                 assertContains(
                     subprojectSwiftPath.readText(),
                     "public typealias LibFoo = ExportedKotlinPackages.com.subproject.library.LibFoo"
@@ -521,7 +521,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                 val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                 assertNotNull(buildProductsDir)
 
-                val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/Shared/Shared.swift")
+                val sharedSwiftPath = projectPath.resolve("build/SwiftExport/iosArm64/files/Shared/Shared.swift")
                 assertContains(
                     sharedSwiftPath.readText(),
                     "public static func iosSuspendFunction() async throws -> Swift.Int32"
