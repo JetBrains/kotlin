@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.js
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature.ErrorAboutDataClassCopyVisibilityChange
 import org.jetbrains.kotlin.config.LanguageFeature.JsExposedNotExportedSuperInterfaceApiByExportedOne
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitVarInJsModuleFile
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 object FirJsErrors : KtDiagnosticsContainer() {
     // Annotations
     val JS_MODULE_PROHIBITED_ON_NON_NATIVE: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_MODULE_PROHIBITED_ON_NON_NATIVE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE", ProhibitVarInJsModuleFile, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtElement::class, getRendererFactory())
     val CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE: KtDiagnosticFactory0 = KtDiagnosticFactory0("CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
     val CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())

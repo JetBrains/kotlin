@@ -1,3 +1,5 @@
+// LANGUAGE: -ProhibitVarInJsModuleFile
+// ^^^ Keeps testing the pre-KT-88343 behavior of writing to a top-level `var` in a `@file:JsModule` file
 // JS_MODULE_KIND: AMD
 // FILE: lib.kt
 @file:JsModule("lib")
@@ -19,7 +21,7 @@ external fun foo(y: Int): Int = definedExternally
 
 external val bar: Int = definedExternally
 
-external val mbar: Int = definedExternally
+external var mbar: Int = definedExternally
 
 // FILE: lib2.kt
 package foo
@@ -44,7 +46,8 @@ fun box(): String {
 
     assertEquals(12345, C.f())
 
-    assertEquals(-1, mbar)
+    mbar = 523
+    assertEquals(523, mbar)
 
     return "OK"
 }
