@@ -180,7 +180,7 @@ object ContextCollector {
         return resolutionFacade.getOrBuildFirFor(resolvedElement) != null
     }
 
-    fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
+    private fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
         val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration(::isValidTarget)
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
@@ -199,12 +199,33 @@ object ContextCollector {
      * Processes the [FirFile], collecting contexts for elements matching the [filter].
      *
      * @param file The file to process.
-     * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
+     * @param targetElement The element whose non-local containing declaration is processed.
+     *     If there is no such declaration, all declarations in the [file] are processed.
      * @param preferBodyContext If `true`, [ContextKind.BODY] is collected where available.
      * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns
      *     [FilterResponse.CONTINUE] or [FilterResponse.STOP].
      */
     fun process(
+        file: FirFile,
+        targetElement: PsiElement,
+        preferBodyContext: Boolean,
+        shouldTriggerBodyAnalysis: Boolean,
+        filter: (PsiElement) -> FilterResponse,
+    ): ContextProvider {
+        val designation = computeDesignation(file, targetElement)
+        return process(file, designation, preferBodyContext, shouldTriggerBodyAnalysis, filter)
+    }
+
+    /**
+     * Processes the [FirFile], collecting contexts for elements matching the [filter].
+     *
+     * @param file The file to process.
+     * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
+     * @param preferBodyContext If `true`, [ContextKind.BODY] is collected where available.
+     * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns
+     *     [FilterResponse.CONTINUE] or [FilterResponse.STOP].
+     */
+    private fun process(
         file: FirFile,
         designation: FirDesignation?,
         preferBodyContext: Boolean,
