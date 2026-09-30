@@ -1307,7 +1307,7 @@ internal open class KotlinExpressionParsing(
      *  : annotations + ("\n")+ expression
      *  ;
      */
-    private fun parseBlockLevelExpression() {
+    fun parseBlockLevelExpression() {
         if (at(KtTokens.AT)) {
             val expression = mark()
             kotlinParsing.parseAnnotations(KotlinParsing.AnnotationParsingMode.DEFAULT)

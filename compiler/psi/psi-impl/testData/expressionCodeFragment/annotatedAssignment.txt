@@ -1,31 +1,31 @@
 KtFile: fragment.kt
-  BINARY_EXPRESSION
-    ANNOTATED_EXPRESSION
-      ANNOTATION_ENTRY
-        PsiElement(AT)('@')
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Suppress')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            STRING_TEMPLATE
-              PsiElement(OPEN_QUOTE)('"')
-              LITERAL_STRING_TEMPLATE_ENTRY
-                PsiElement(REGULAR_STRING_PART)('INVISIBLE_SETTER')
-              PsiElement(CLOSING_QUOTE)('"')
-          PsiElement(RPAR)(')')
-      PsiWhiteSpace('\n')
+  ANNOTATED_EXPRESSION
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Suppress')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          STRING_TEMPLATE
+            PsiElement(OPEN_QUOTE)('"')
+            LITERAL_STRING_TEMPLATE_ENTRY
+              PsiElement(REGULAR_STRING_PART)('INVISIBLE_SETTER')
+            PsiElement(CLOSING_QUOTE)('"')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    BINARY_EXPRESSION
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('a')
-    PsiWhiteSpace(' ')
-    OPERATION_REFERENCE
-      PsiElement(EQ)('=')
-    PsiWhiteSpace(' ')
-    STRING_TEMPLATE
-      PsiElement(OPEN_QUOTE)('"')
-      LITERAL_STRING_TEMPLATE_ENTRY
-        PsiElement(REGULAR_STRING_PART)('bar')
-      PsiElement(CLOSING_QUOTE)('"')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      STRING_TEMPLATE
+        PsiElement(OPEN_QUOTE)('"')
+        LITERAL_STRING_TEMPLATE_ENTRY
+          PsiElement(REGULAR_STRING_PART)('bar')
+        PsiElement(CLOSING_QUOTE)('"')

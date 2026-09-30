@@ -354,7 +354,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
     fun parseExpressionCodeFragment() {
         val marker = mark()
-        expressionParsing.parseExpression()
+        expressionParsing.parseBlockLevelExpression()
 
         checkForUnexpectedSymbols()
 

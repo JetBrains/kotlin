@@ -1,25 +1,25 @@
 KtFile: fragment.kt
-  BINARY_EXPRESSION
-    ANNOTATED_EXPRESSION
-      ANNOTATION_ENTRY
-        PsiElement(AT)('@')
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('Ann')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          PsiElement(RPAR)(')')
-      PsiWhiteSpace('\n')
+  ANNOTATED_EXPRESSION
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Ann')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace('\n')
+    BINARY_EXPRESSION
       PARENTHESIZED
         PsiElement(LPAR)('(')
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
-    PsiWhiteSpace(' ')
-    OPERATION_REFERENCE
-      PsiElement(EQ)('=')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('b')
+      PsiWhiteSpace(' ')
+      OPERATION_REFERENCE
+        PsiElement(EQ)('=')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('b')
