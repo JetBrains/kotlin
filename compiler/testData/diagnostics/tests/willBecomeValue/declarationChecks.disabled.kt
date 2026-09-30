@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE_FEATURE_TOGGLED: StabilizeWillBecomeValueRestrictions
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 interface I {
     fun foo()

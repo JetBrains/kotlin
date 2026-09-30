@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE_FEATURE_TOGGLED: StabilizeWillBecomeValueRestrictions
+// DIAGNOSTICS: -INVISIBLE_REFERENCE
 
 // 'Any.equals'/'Any.hashCode' compare and hash by identity, and 'Any.toString' renders the identity hash code, so all
 // three change behavior once the class becomes a value class and must be overridden.
