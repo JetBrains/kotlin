@@ -12,6 +12,7 @@ package org.jetbrains.kotlin.konan.config
  * DO NOT MODIFY IT MANUALLY
  */
 
+import java.nio.file.Path
 import org.jetbrains.kotlin.backend.konan.AllocationMode
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
@@ -276,6 +277,14 @@ object NativeConfigurationKeys {
     // A wrapper over the DAG of libraries that the compiler needs to build static caches for. It's saved in the compiler configuration for spawned static cache compilation to avoid recomputing the DAG.
     @JvmField
     val SERIALIZED_KLIB_DAG = CompilerConfigurationKey.create<SerializedKlibDAG>("SERIALIZED_KLIB_DAG")
+
+    // Canonical paths to the root directory with the libraries for which external signature indices should be generated.
+    @JvmField
+    val GENERATE_SIGNATURE_INDICES_FROM = CompilerConfigurationKey.create<List<Path>>("GENERATE_SIGNATURE_INDICES_FROM")
+
+    // Canonical path to the directory where the generated external signature indices should be stored.
+    @JvmField
+    val GENERATE_SIGNATURE_INDICES_DIR = CompilerConfigurationKey.create<Path>("GENERATE_SIGNATURE_INDICES_DIR")
 
 }
 
@@ -570,4 +579,12 @@ var CompilerConfiguration.llvmLtoPasses: String?
 var CompilerConfiguration.serializedKlibDag: SerializedKlibDAG?
     get() = get(NativeConfigurationKeys.SERIALIZED_KLIB_DAG)
     set(value) { put(NativeConfigurationKeys.SERIALIZED_KLIB_DAG, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.generateSignatureIndicesFrom: List<Path>
+    get() = getList(NativeConfigurationKeys.GENERATE_SIGNATURE_INDICES_FROM)
+    set(value) { put(NativeConfigurationKeys.GENERATE_SIGNATURE_INDICES_FROM, value) }
+
+var CompilerConfiguration.generateSignatureIndicesDir: Path?
+    get() = get(NativeConfigurationKeys.GENERATE_SIGNATURE_INDICES_DIR)
+    set(value) { put(NativeConfigurationKeys.GENERATE_SIGNATURE_INDICES_DIR, requireNotNull(value) { "nullable values are not allowed" }) }
 
