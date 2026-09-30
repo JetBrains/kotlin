@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.isFullValueClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
@@ -120,6 +121,12 @@ fun createInitializerAdapter(
         return expression.deepCopyWithoutPatchingParents().transform(initializerTransformer, null)
     }
 }
+
+// For full value classes that assign their fields before `super(...)`, fir2ir moves the initializers of properties declared in the
+// primary constructor into the constructor body, so their defaults remain only in the constructor parameters.
+fun IrProperty.defaultValueInitializer(): IrExpressionBody? =
+    backingField?.initializer ?: (parent as? IrClass)?.takeIf { it.isFullValueClass }
+        ?.primaryConstructor?.parameters?.find { it.name == name }?.defaultValue
 
 private fun extractDefaultValuesFromConstructor(irClass: IrClass?): Map<IrValueSymbol, IrExpression?> {
     if (irClass == null) return emptyMap()
