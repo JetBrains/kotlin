@@ -5,8 +5,6 @@ import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.CancellableBuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.DaemonConnectionRegistry
 import org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl
-import org.jetbrains.kotlin.buildtools.internal.Options
-import org.jetbrains.kotlin.buildtools.internal.classloading.LruClassLoadersCache
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.io.File
 import kotlin.concurrent.atomics.AtomicBoolean
@@ -22,7 +20,7 @@ import kotlin.test.assertTrue
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-private class ExampleCancellableOperation(override val options: Options = Options(ExampleCancellableOperation::class)) :
+private class ExampleCancellableOperation :
     CancellableBuildOperationImpl<Unit>() {
     override fun executeCancellableImpl(
         projectId: ProjectId,

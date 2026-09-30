@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
@@ -17,32 +20,18 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class WasmLinkingOperationImpl private constructor(
-    override val options: Options = Options(WasmLinkingOperation::class),
+internal class WasmLinkingOperationImpl(
     override val klib: Path,
     override val destination: Path,
-    compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
+    override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(),
     WasmLinkingOperation, WasmLinkingOperation.Builder,
     DeepCopyable<WasmLinkingOperationImpl> {
-    constructor(
-        klib: Path,
-        destination: Path,
-        compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-    ) : this(
-        options = Options(WasmLinkingOperation::class),
-        klib = klib,
-        destination = destination,
-        compilerArguments = compilerArguments,
-    ) {
-        initializeOptions(this::class, options)
-    }
 
     override fun toBuilder(): WasmLinkingOperation.Builder = deepCopy()
 
     override fun deepCopy(): WasmLinkingOperationImpl {
         return WasmLinkingOperationImpl(
-            options.deepCopy(),
             klib,
             destination,
             compilerArguments.deepCopy(),
@@ -50,23 +39,25 @@ internal class WasmLinkingOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: WasmLinkingOperation.Option<V>): V = options[key]
+    override fun <V> get(key: WasmLinkingOperation.Option<V>): V =
+        WasmLinkingOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: WasmLinkingOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        WasmLinkingOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun build(): WasmLinkingOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V =
+        WasmLinkingOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        WasmLinkingOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     override fun getRootProjectDir(): Path? {
         return null

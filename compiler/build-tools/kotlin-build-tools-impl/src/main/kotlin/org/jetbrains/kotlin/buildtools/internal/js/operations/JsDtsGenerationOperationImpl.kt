@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
+import kotlinx.serialization.SerialName
+import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
@@ -23,6 +28,8 @@ import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentValueAdapter
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
@@ -42,26 +49,49 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import java.nio.file.Path
 
-internal class JsDtsGenerationOperationImpl private constructor(
-    override val options: Options,
+internal class JsDtsGenerationOperationImpl(
     override val klibs: List<Path>,
     override val outputDirectory: Path,
 ) : BuildOperationImpl<CompilationResult>(), JsDtsGenerationOperation, JsDtsGenerationOperation.Builder,
     DeepCopyable<JsDtsGenerationOperationImpl> {
 
-    constructor(klibs: List<Path>, outputDirectory: Path) : this(
-        options = Options(JsDtsGenerationOperation::class),
-        klibs = klibs,
-        outputDirectory = outputDirectory,
-    ) {
-        initializeOptions(this::class, options)
-    }
+    @SerialName("TS_COMPILATION_STRATEGY")
+    private var tsCompilationStrategy: JsDtsCompilationStrategy = JsDtsCompilationStrategy.MERGED
+
+    @SerialName("GRANULARITY")
+    private var granularity: JsDtsGranularity = JsDtsGranularity.WHOLE_PROGRAM
+
+    @SerialName("MODULE_KIND")
+    private var moduleKind: JsModuleKind = defaultArgsReference.moduleKind
+        ?.let {
+            JsModuleKind.values().firstOrNull { entry ->
+                entry.stringValue.equals(
+                    it,
+                    false
+                )
+            } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it")
+        } ?: JsModuleKind.UMD
+
+    @SerialName("COMPILE_LONG_AS_BIG_INT")
+    private var compileLongAsBigInt: Boolean = defaultArgsReference.compileLongAsBigInt ?: false
+
+    @SerialName("IMPLEMENT_INTERFACES")
+    private var implementInterfaces: Boolean = defaultArgsReference.allowImplementableInterfacesExporting
+
+    @SerialName("EXPORT_SUSPEND_LAMBDAS")
+    private var exportSuspendLambdas: Boolean = defaultArgsReference.allowExportingSuspendLambdas
+
+    @SerialName("USE_UNKNOWN_INSTEAD_ANY")
+    private var useUnknownInsteadAny: Boolean = defaultArgsReference.useUnknownInsteadAny
+
+    @SerialName("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY")
+    private var dataClassCopyRespectsConstructorVisibility: Boolean = defaultArgsReference.consistentDataClassCopyVisibility
 
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val inputModules = transformKlibsIntoKlibInputModule(klibs)
         // The main KLIB is the last one in the list; its manifest drives the merged artifact naming.
@@ -127,20 +157,21 @@ internal class JsDtsGenerationOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    @Suppress("UNCHECKED_CAST")
-    override fun <V> get(key: JsDtsGenerationOperation.Option<V>): V =
-        JsArgumentValueAdapter.toApi(options[key]) as V
+    override fun <V> get(key: JsDtsGenerationOperation.Option<V>): V = JsArgumentValueAdapter.toApi(
+        JsDtsGenerationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
+    )
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsDtsGenerationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = JsArgumentValueAdapter.toImpl(value)
+        JsDtsGenerationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, JsArgumentValueAdapter.toImpl(value))
     }
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V =
+        JsDtsGenerationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        JsDtsGenerationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun toBuilder(): JsDtsGenerationOperation.Builder = deepCopy()
@@ -148,34 +179,20 @@ internal class JsDtsGenerationOperationImpl private constructor(
     override fun build(): JsDtsGenerationOperation = deepCopy()
 
     override fun deepCopy(): JsDtsGenerationOperationImpl =
-        JsDtsGenerationOperationImpl(options.deepCopy(), klibs, outputDirectory)
+        JsDtsGenerationOperationImpl(klibs, outputDirectory)
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     companion object {
         private val defaultArgsReference = K2JSCompilerArguments()
-        val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy> = Option("TS_COMPILATION_STRATEGY", JsDtsCompilationStrategy.MERGED)
-        val GRANULARITY: Option<JsDtsGranularity> = Option("GRANULARITY", JsDtsGranularity.WHOLE_PROGRAM)
-
-        @Suppress("EnumValuesSoftDeprecate")
-        val MODULE_KIND: Option<JsModuleKind> = Option(
-            "MODULE_KIND",
-            defaultArgsReference.moduleKind
-                ?.let {
-                    JsModuleKind.values().firstOrNull { entry ->
-                        entry.stringValue.equals(
-                            it,
-                            false
-                        )
-                    } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it")
-                } ?: JsModuleKind.UMD
-        )
-        val COMPILE_LONG_AS_BIG_INT: Option<Boolean> = Option("COMPILE_LONG_AS_BIG_INT", defaultArgsReference.compileLongAsBigInt ?: false)
-        val IMPLEMENT_INTERFACES: Option<Boolean> =
-            Option("IMPLEMENT_INTERFACES", defaultArgsReference.allowImplementableInterfacesExporting)
-        val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS", defaultArgsReference.allowExportingSuspendLambdas)
-        val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> = Option("USE_UNKNOWN_INSTEAD_ANY", defaultArgsReference.useUnknownInsteadAny)
+        val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy> = Option("TS_COMPILATION_STRATEGY")
+        val GRANULARITY: Option<JsDtsGranularity> = Option("GRANULARITY")
+        val MODULE_KIND: Option<JsModuleKind> = Option("MODULE_KIND")
+        val COMPILE_LONG_AS_BIG_INT: Option<Boolean> = Option("COMPILE_LONG_AS_BIG_INT")
+        val IMPLEMENT_INTERFACES: Option<Boolean> = Option("IMPLEMENT_INTERFACES")
+        val EXPORT_SUSPEND_LAMBDAS: Option<Boolean> = Option("EXPORT_SUSPEND_LAMBDAS")
+        val USE_UNKNOWN_INSTEAD_ANY: Option<Boolean> = Option("USE_UNKNOWN_INSTEAD_ANY")
         val DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY: Option<Boolean> =
-            Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY", defaultArgsReference.consistentDataClassCopyVisibility)
+            Option("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY")
     }
 }

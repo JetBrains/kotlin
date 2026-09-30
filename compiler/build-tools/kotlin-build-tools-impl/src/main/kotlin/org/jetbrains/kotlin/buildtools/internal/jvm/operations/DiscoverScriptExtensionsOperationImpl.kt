@@ -5,26 +5,28 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
+import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.nio.file.Path
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
-internal class DiscoverScriptExtensionsOperationImpl private constructor(
-    override val options: Options = Options(DiscoverScriptExtensionsOperation::class),
+internal class DiscoverScriptExtensionsOperationImpl(
     override val classpath: List<Path>,
 ) : BuildOperationImpl<Collection<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
     DeepCopyable<DiscoverScriptExtensionsOperation> {
 
-    constructor(classpath: List<Path>) : this(Options(DiscoverScriptExtensionsOperation::class), classpath) {
-        initializeOptions(this::class, options)
-    }
+    @SerialName("COMPILER_MESSAGE_RENDERER")
+    private var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 
     override val usesApplicationEnvironment: Boolean
         get() = false
@@ -49,29 +51,31 @@ internal class DiscoverScriptExtensionsOperationImpl private constructor(
     override fun toBuilder(): DiscoverScriptExtensionsOperation.Builder = deepCopy()
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: DiscoverScriptExtensionsOperation.Option<V>): V = options[key]
+    override fun <V> get(key: DiscoverScriptExtensionsOperation.Option<V>): V =
+        DiscoverScriptExtensionsOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: DiscoverScriptExtensionsOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        DiscoverScriptExtensionsOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun build(): DiscoverScriptExtensionsOperation = deepCopy()
 
-    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(options.deepCopy(), classpath)
+    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(classpath)
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V =
+        DiscoverScriptExtensionsOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        DiscoverScriptExtensionsOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     companion object {
         val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> =
-            Option("COMPILER_MESSAGE_RENDERER", default = DefaultCompilerMessageRenderer)
+            Option("COMPILER_MESSAGE_RENDERER")
     }
 
 }

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
+import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
@@ -14,11 +15,14 @@ import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.BACKUP_CLASSES
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MODULE_BUILD_DIR
@@ -45,29 +49,17 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class JsKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(JsKlibCompilationOperation::class),
+internal class JsKlibCompilationOperationImpl(
     override val sources: List<Path>,
     override val destination: Path,
-    compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
+    override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
     DeepCopyable<JsKlibCompilationOperationImpl> {
-    constructor(
-        sources: List<Path>,
-        destination: Path,
-        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-        compilerVersion: String,
-    ) : this(
-        options = Options(JsKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
-        initializeOptions(this::class, options)
-    }
+
+    @SerialName("INCREMENTAL_COMPILATION")
+    private var incrementalCompilation: JsIncrementalCompilationConfiguration? = null
 
     override fun historyBasedIcConfigurationBuilder(
         rootProjectDir: Path,
@@ -82,7 +74,6 @@ internal class JsKlibCompilationOperationImpl private constructor(
 
     override fun deepCopy(): JsKlibCompilationOperationImpl {
         return JsKlibCompilationOperationImpl(
-            options.deepCopy(),
             sources,
             destination,
             compilerArguments.deepCopy(),
@@ -91,23 +82,25 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JsKlibCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: JsKlibCompilationOperation.Option<V>): V =
+        JsKlibCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsKlibCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        JsKlibCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun build(): JsKlibCompilationOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V =
+        JsKlibCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        JsKlibCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     override fun getRootProjectDir(): Path? {
         return (get(INCREMENTAL_COMPILATION) as? JsHistoryBasedIncrementalCompilationConfigurationImpl)?.get(ROOT_PROJECT_DIR)
@@ -295,7 +288,7 @@ internal class JsKlibCompilationOperationImpl private constructor(
     }
 
     companion object {
-        val INCREMENTAL_COMPILATION: Option<JsIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
+        val INCREMENTAL_COMPILATION: Option<JsIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION")
     }
 }
 

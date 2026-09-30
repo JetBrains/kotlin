@@ -5,39 +5,34 @@
 
 package org.jetbrains.kotlin.buildtools.internal.abi.operations
 
+import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.abi.AbiFilters
 import org.jetbrains.kotlin.buildtools.api.abi.operations.DumpJvmAbiToStringOperation
-import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
-import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiFiltersImpl
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationUtils
-import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import java.nio.file.Path
 
-internal class DumpJvmAbiToStringOperationImpl private constructor(
+internal class DumpJvmAbiToStringOperationImpl(
     private val appendable: Appendable,
     override val inputFiles: Iterable<Path>,
     private val abiTools: AbiTools,
-    override val options: Options,
 ) : BuildOperationImpl<Unit>(), DumpJvmAbiToStringOperation, DumpJvmAbiToStringOperation.Builder,
     DeepCopyable<DumpJvmAbiToStringOperation> {
 
-    constructor(appendable: Appendable, inputFiles: Iterable<Path>, abiTools: AbiTools) : this(
-        appendable,
-        inputFiles,
-        abiTools,
-        Options(DumpJvmAbiToStringOperation::class)
-    ) {
-        initializeOptions(this::class, options)
-    }
+    @SerialName("PATTERN_FILTERS")
+    private var patternFilters: AbiFilters? = null
 
     override val usesApplicationEnvironment: Boolean
         get() = false
@@ -48,19 +43,26 @@ internal class DumpJvmAbiToStringOperationImpl private constructor(
         logger: KotlinLogger?,
         executionContext: ExecutionContext
     ) {
-        val filters = options[PATTERN_FILTERS]?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
+        val filters = patternFilters?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
         abiTools.printJvmDump(appendable, inputFiles.map { it.toFile() }, filters)
     }
 
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: DumpJvmAbiToStringOperation.Option<V>): V {
-        return options[key]
-    }
+    override fun <V> get(key: DumpJvmAbiToStringOperation.Option<V>): V =
+        DumpJvmAbiToStringOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: DumpJvmAbiToStringOperation.Option<V>, value: V) {
-        options[key] = value
+        checkOptionIsAvailableForVersion(key)
+        DumpJvmAbiToStringOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
+    }
+
+    operator fun <V> get(key: Option<V>): V =
+        DumpJvmAbiToStringOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
+
+    operator fun <V> set(key: Option<V>, value: V) {
+        DumpJvmAbiToStringOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun filtersBuilder(): AbiFilters.Builder {
@@ -68,19 +70,19 @@ internal class DumpJvmAbiToStringOperationImpl private constructor(
     }
 
     override fun deepCopy(): DumpJvmAbiToStringOperation {
-        return DumpJvmAbiToStringOperationImpl(appendable, inputFiles, abiTools, options.deepCopy())
+        return DumpJvmAbiToStringOperationImpl(appendable, inputFiles, abiTools)
     }
 
     override fun build(): DumpJvmAbiToStringOperation {
         return deepCopy()
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     companion object {
         /**
          * Filters with declarations of patterns containing `**`, `*` and `?` wildcards.
          */
-        val PATTERN_FILTERS: Option<AbiFilters?> = Option("PATTERN_FILTERS", null)
+        val PATTERN_FILTERS: Option<AbiFilters?> = Option("PATTERN_FILTERS")
     }
 }

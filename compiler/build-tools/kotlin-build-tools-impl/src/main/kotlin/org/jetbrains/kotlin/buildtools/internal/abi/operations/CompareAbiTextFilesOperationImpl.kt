@@ -13,28 +13,15 @@ import org.jetbrains.kotlin.buildtools.api.abi.operations.CompareAbiTextFilesOpe
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
-import org.jetbrains.kotlin.buildtools.internal.Options
-import org.jetbrains.kotlin.buildtools.internal.initializeOptions
 import java.nio.file.Path
 
-internal class CompareAbiTextFilesOperationImpl private constructor(
+internal class CompareAbiTextFilesOperationImpl(
     private val appendable: Appendable,
     override val expectedDumpFile: Path,
     override val actualDumpFile: Path,
     private val abiTools: AbiTools,
-    override val options: Options,
 ) : BuildOperationImpl<Unit>(), CompareAbiTextFilesOperation, CompareAbiTextFilesOperation.Builder,
     DeepCopyable<CompareAbiTextFilesOperation> {
-
-    constructor(appendable: Appendable, expectedDumpFile: Path, actualDumpFile: Path, abiTools: AbiTools) : this(
-        appendable,
-        expectedDumpFile,
-        actualDumpFile,
-        abiTools,
-        Options(CompareAbiTextFilesOperation::class)
-    ) {
-        initializeOptions(this::class, options)
-    }
 
     override val usesApplicationEnvironment: Boolean
         get() = false
@@ -55,7 +42,7 @@ internal class CompareAbiTextFilesOperationImpl private constructor(
     }
 
     override fun deepCopy(): CompareAbiTextFilesOperation {
-        return CompareAbiTextFilesOperationImpl(appendable, expectedDumpFile, actualDumpFile, abiTools, options.deepCopy())
+        return CompareAbiTextFilesOperationImpl(appendable, expectedDumpFile, actualDumpFile, abiTools)
     }
 
     override fun build(): CompareAbiTextFilesOperation {
