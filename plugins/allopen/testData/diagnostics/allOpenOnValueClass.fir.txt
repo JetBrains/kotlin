@@ -1,0 +1,74 @@
+FILE: allOpenOnValueClass.kt
+    public final annotation class AllOpen : R|kotlin/Annotation| {
+        public constructor(): R|AllOpen| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|AllOpen|() public open value class Final : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Final| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public open fun f(): R|kotlin/Int| {
+            ^f this@R|/Final|.R|/Final.x|
+        }
+
+    }
+    @R|AllOpen|() @R|kotlin/jvm/JvmInline|() public open value class Inline : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Inline| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|AllOpen|() public abstract value class Abstract : R|kotlin/Any| {
+        public constructor(): R|Abstract| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public open fun g(): R|kotlin/Int| {
+            ^g this@R|/Abstract|.R|/Abstract.x|
+        }
+
+    }
+    public open value class Impl : R|Abstract| {
+        public constructor(x: R|kotlin/Int|): R|Impl| {
+            super<R|Abstract|>()
+        }
+
+        public open override val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|AllOpen|() public sealed value class Sealed : R|kotlin/Any| {
+        protected constructor(): R|Sealed| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final value object Leaf : R|Sealed| {
+        private constructor(): R|Leaf| {
+            super<R|Sealed|>()
+        }
+
+    }
+    public open class Identity : R|Abstract| {
+        public constructor(): R|Identity| {
+            super<R|Abstract|>()
+        }
+
+        public open override val x: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(0)
+            }
+
+    }
