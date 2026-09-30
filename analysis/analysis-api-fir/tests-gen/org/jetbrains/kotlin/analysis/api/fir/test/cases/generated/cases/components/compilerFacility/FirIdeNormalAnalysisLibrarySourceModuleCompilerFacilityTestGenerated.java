@@ -256,6 +256,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleCompilerFacilityTestGenerate
     }
 
     @Test
+    @TestMetadata("annotatedAssignment.kt")
+    public void testAnnotatedAssignment() {
+      run("annotatedAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedAssignmentSameLine.kt")
+    public void testAnnotatedAssignmentSameLine() {
+      run("annotatedAssignmentSameLine.kt");
+    }
+
+    @Test
     @TestMetadata("annotatedEnumEntry.kt")
     public void testAnnotatedEnumEntry() {
       run("annotatedEnumEntry.kt");

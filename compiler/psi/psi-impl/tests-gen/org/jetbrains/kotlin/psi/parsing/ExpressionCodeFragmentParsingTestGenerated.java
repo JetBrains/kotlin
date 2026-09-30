@@ -28,9 +28,75 @@ public class ExpressionCodeFragmentParsingTestGenerated extends AbstractExpressi
   }
 
   @Test
+  @TestMetadata("annotatedAssignment.kt")
+  public void testAnnotatedAssignment() {
+    run("annotatedAssignment.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedAssignmentSameLine.kt")
+  public void testAnnotatedAssignmentSameLine() {
+    run("annotatedAssignmentSameLine.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedBinaryExpression.kt")
+  public void testAnnotatedBinaryExpression() {
+    run("annotatedBinaryExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedCall.kt")
+  public void testAnnotatedCall() {
+    run("annotatedCall.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLambda.kt")
+  public void testAnnotatedLambda() {
+    run("annotatedLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedLambdaSameLine.kt")
+  public void testAnnotatedLambdaSameLine() {
+    run("annotatedLambdaSameLine.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedParenthesizedAssignment.kt")
+  public void testAnnotatedParenthesizedAssignment() {
+    run("annotatedParenthesizedAssignment.kt");
+  }
+
+  @Test
+  @TestMetadata("annotatedParenthesizedAssignmentSameLine.kt")
+  public void testAnnotatedParenthesizedAssignmentSameLine() {
+    run("annotatedParenthesizedAssignmentSameLine.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationOnly.kt")
+  public void testAnnotationOnly() {
+    run("annotationOnly.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationWithParenthesizedArgument.kt")
+  public void testAnnotationWithParenthesizedArgument() {
+    run("annotationWithParenthesizedArgument.kt");
+  }
+
+  @Test
   @TestMetadata("error.kt")
   public void testError() {
     run("error.kt");
+  }
+
+  @Test
+  @TestMetadata("severalAnnotationsOnAssignment.kt")
+  public void testSeveralAnnotationsOnAssignment() {
+    run("severalAnnotationsOnAssignment.kt");
   }
 
   @Test

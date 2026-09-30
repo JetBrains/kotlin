@@ -1,0 +1,16 @@
+KtFile: fragment.kt
+  ANNOTATED_EXPRESSION
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Ann')
+    PsiWhiteSpace('\n')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')

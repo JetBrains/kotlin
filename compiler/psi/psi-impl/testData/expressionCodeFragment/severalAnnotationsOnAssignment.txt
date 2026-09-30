@@ -1,0 +1,41 @@
+KtFile: fragment.kt
+  BINARY_EXPRESSION
+    ANNOTATED_EXPRESSION
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('A')
+      PsiWhiteSpace('\n')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('B')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('C')
+      PsiWhiteSpace('\n')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    OPERATION_REFERENCE
+      PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    REFERENCE_EXPRESSION
+      PsiElement(IDENTIFIER)('b')
