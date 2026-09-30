@@ -1,4 +1,3 @@
-// IGNORE_ERROR_RESISTANCE: KT-85410
 import broken.lib.BrokenAnnotation
 
 @Target(AnnotationTarget.FIELD)
