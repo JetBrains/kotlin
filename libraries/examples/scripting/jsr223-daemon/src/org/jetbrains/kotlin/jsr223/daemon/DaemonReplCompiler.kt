@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.definitionIdentity
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.mergeRefinedFromSnippetClass
 import java.io.File
 import java.io.Serializable
 import java.nio.file.Files
@@ -26,6 +28,7 @@ import java.rmi.RemoteException
 import java.rmi.server.UnicastRemoteObject
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.impl._isSyntheticSnippet
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.compiledSnippetFromClassPath
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
@@ -105,6 +108,8 @@ class DaemonReplCompiler(
     private val priorOutputDirs = mutableListOf<File>()
     private val priorClassIds = mutableListOf<ClassId>()
 
+    private val compilerResolvedClasspath = mutableListOf<File>()
+
     private var lastCompiledSnippetInternal: LinkedSnippetImpl<CompiledSnippet>? = null
 
     override val lastCompiledSnippet: LinkedSnippet<CompiledSnippet>?
@@ -172,7 +177,9 @@ class DaemonReplCompiler(
         val sourceDir = Files.createTempDirectory("jsr223-daemon-repl-snippet-src-").toFile()
         try {
             val scriptFiles = refinedSnippets.map { File(sourceDir, it.name).also { file -> file.writeText(it.snippet.text) } }
-            val arguments = buildBatchCompilerArguments(scriptFiles, priorOutputDirs, priorClassIds, outputDir, configurationFile)
+            val arguments = buildBatchCompilerArguments(
+                scriptFiles, priorOutputDirs, priorClassIds, outputDir, configurationFile, batchConfiguration
+            )
 
             messageCollector.clear()
             val exitCode = runDaemonCompile(arguments)
@@ -185,11 +192,16 @@ class DaemonReplCompiler(
             priorOutputDirs += outputDir
             for ([refinedSnippet, scriptFile] in refinedSnippets.zip(scriptFiles)) {
                 val classId = snippetClassId(scriptFile)
+                // Brings in compiler-side refinement results, e.g. `@DependsOn`-resolved jars.
+                val compilationConfiguration = refinedSnippet.configuration.mergeRefinedFromSnippetClass(
+                    File(outputDir, "${classId.shortClassName.asString()}.class")
+                )
+                rememberResolvedClasspath(compilationConfiguration)
                 val compiledSnippet = compiledSnippetFromClassPath(
                     classPath = listOf(outputDir),
                     snippetClassFQName = classId.asSingleFqName().asString(),
                     snippet = refinedSnippet.snippet,
-                    compilationConfiguration = refinedSnippet.configuration,
+                    compilationConfiguration = compilationConfiguration,
                 )
                 priorClassIds += classId
                 lastCompiledSnippetInternal = lastCompiledSnippetInternal.add(compiledSnippet)
@@ -212,16 +224,18 @@ class DaemonReplCompiler(
         priorClassIds: List<ClassId>,
         outputDir: File,
         configurationFile: File,
+        batchConfiguration: ScriptCompilationConfiguration,
     ): List<String> {
         fun pluginOption(name: String, value: String) = "plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:$name=$value"
         return buildList {
-            val classpathEntries = additionalClasspath.map { it.toAbsolutePath().toString() } + priorOutputDirs.map { it.absolutePath }
+            val classpathEntries = additionalClasspath.map { it.toAbsolutePath().toString() } +
+                    compilerResolvedClasspath.map { it.absolutePath } +
+                    priorOutputDirs.map { it.absolutePath }
             if (classpathEntries.isNotEmpty()) {
                 add("-cp")
                 add(classpathEntries.joinToString(File.pathSeparator))
             }
             add("-Xallow-any-scripts-in-source-roots")
-            add("-Xuse-fir-lt=false") // TODO: remove after finishing KT-77583
             add("-P")
             add(pluginOption("repl-snippet-stateless-mode", "true"))
             // Only the immediately preceding snippet: the compiler recovers the rest of the session by
@@ -232,6 +246,12 @@ class DaemonReplCompiler(
             }
             add("-P")
             add(pluginOption("repl-snippet-configuration", configurationFile.absolutePath))
+            definitionIdentity(batchConfiguration)?.let { [templateFqName, definitionClasspath] ->
+                add("-P")
+                add(pluginOption("script-definitions", templateFqName))
+                add("-P")
+                add(pluginOption("script-definitions-classpath", definitionClasspath.joinToString(File.pathSeparator)))
+            }
             add("-d")
             add(outputDir.absolutePath)
             add("-Xsuppress-version-warnings")
@@ -239,6 +259,13 @@ class DaemonReplCompiler(
                 add(scriptFile.absolutePath)
             }
         }
+    }
+
+    private fun rememberResolvedClasspath(compilationConfiguration: ScriptCompilationConfiguration) {
+        val entries = compilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty()
+            .filterIsInstance<JvmDependency>().flatMap { it.classpath }
+        val known = additionalClasspath.mapTo(HashSet()) { it.toAbsolutePath().toFile() } + compilerResolvedClasspath
+        compilerResolvedClasspath += entries.filterNot { it in known }.distinct()
     }
 
     private fun runDaemonCompile(arguments: List<String>): Int {

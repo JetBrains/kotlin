@@ -35,17 +35,11 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollec
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingIrExplainGenerationExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.CollectAdditionalScriptSourcesExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.isSnippetDefinition
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys.ENABLE_SCRIPT_EXPLANATION_OPTION
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.fileExtension
-import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -97,20 +91,6 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
 
         val scriptDefinitionProvider = CliScriptDefinitionProvider()
         ScriptDefinitionProvider.registerExtension(scriptDefinitionProvider)
-
-        if (configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_STATELESS_MODE)) {
-            val base = configuration.get(ScriptingConfigurationKeys.REPL_SNIPPET_CONFIGURATION_FILE)
-                ?.let(ReplSnippetConfigurationCodec::readFrom)
-                ?: ScriptDefinition.getDefault(hostConfiguration).compilationConfiguration
-            val replSnippetCompilationConfiguration = ScriptCompilationConfiguration(base) {
-                fileExtension("repl." + (base[ScriptCompilationConfiguration.fileExtension] ?: "kts"))
-                repl.isSnippetDefinition(true)
-            }
-            configuration.add(
-                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ScriptDefinition.FromConfigurations(hostConfiguration, replSnippetCompilationConfiguration, null)
-            )
-        }
 
         @OptIn(MessageCollectorAccess::class) // TODO(KT-84516)
         val messageCollector = configuration[CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY]

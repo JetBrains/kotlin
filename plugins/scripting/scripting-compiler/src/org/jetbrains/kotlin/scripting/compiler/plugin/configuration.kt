@@ -26,8 +26,16 @@ fun configureScriptDefinitions(
     hostConfiguration: ScriptingHostConfiguration
 ) {
     // TODO: consider using escaping to allow kotlin escaped names in class names
+    // The definitions classpath is searched too: a definition is not necessarily on the compilation
+    // classpath, e.g. a REPL host transports the definition it built its configuration from.
+    val definitionsClasspath = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSPATH)
     val templatesFromClasspath = loadScriptTemplatesFromClasspath(
-        scriptTemplates, configuration.jvmClasspathRoots, emptyList(), baseClassloader, hostConfiguration, messageCollector.reporter
+        scriptTemplates,
+        configuration.jvmClasspathRoots + definitionsClasspath,
+        emptyList(),
+        baseClassloader,
+        hostConfiguration,
+        messageCollector.reporter
     )
     configuration.addAll(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, templatesFromClasspath.toList())
 }
