@@ -38,4 +38,10 @@ public class SerializationValhallaBoxTestGenerated extends AbstractSerialization
   public void testFullValueClassDefaults() {
     run("fullValueClassDefaults.kt");
   }
+
+  @Test
+  @TestMetadata("fullValueClassExposedBoxed.kt")
+  public void testFullValueClassExposedBoxed() {
+    run("fullValueClassExposedBoxed.kt");
+  }
 }
