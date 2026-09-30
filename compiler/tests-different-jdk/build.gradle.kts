@@ -32,7 +32,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/klib")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withScriptingPlugin()
     withAnnotations()
     withMockJdkRuntime()

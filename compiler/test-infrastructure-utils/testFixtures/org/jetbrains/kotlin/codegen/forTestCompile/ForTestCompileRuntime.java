@@ -284,7 +284,7 @@ public class ForTestCompileRuntime {
     public static synchronized ClassLoader runtimeAndReflectJarClassLoader() {
         ClassLoader loader = reflectJarClassLoader.get();
         if (loader == null) {
-            loader = createClassLoader(runtimeJarForTests(), reflectJarForTests(), scriptRuntimeJarForTests(), kotlinTestJarForTests());
+            loader = createClassLoader(runtimeJarForTests(), reflectJarForTests(), kotlinTestJarForTests());
             reflectJarClassLoader = new SoftReference<>(loader);
         }
         return loader;
@@ -294,7 +294,7 @@ public class ForTestCompileRuntime {
     public static synchronized ClassLoader runtimeJarClassLoader() {
         ClassLoader loader = runtimeJarClassLoader.get();
         if (loader == null) {
-            loader = createClassLoader(runtimeJarForTests(), scriptRuntimeJarForTests(), kotlinTestJarForTests());
+            loader = createClassLoader(runtimeJarForTests(), kotlinTestJarForTests());
             runtimeJarClassLoader = new SoftReference<>(loader);
         }
         return loader;

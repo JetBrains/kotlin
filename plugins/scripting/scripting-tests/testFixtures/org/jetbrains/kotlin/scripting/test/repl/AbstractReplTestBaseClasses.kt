@@ -206,6 +206,7 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
                 classpath += libPathProvider.reflectJarForTests()
             }
             classpath += libPathProvider.scriptRuntimeJarForTests()
+            libPathProvider.scriptingCommonJarForTests()?.let { classpath += it }
             classpath += libPathProvider.kotlinTestJarForTests()
         }
         return GeneratedClassLoader(

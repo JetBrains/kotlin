@@ -24,6 +24,7 @@ dependencies {
     // kotlin-scripting-jvm-host-unshaded's classes reference compiler-core types.
     testRuntimeOnly(project(":kotlin-compiler"))
     testImplementation(project(":kotlin-main-kts"))
+    testImplementation(project(":kotlin-script-runtime")) // marker class to locate the jar for legacy-template tests
     // MainKtsConfigurator instantiates a MavenDependenciesResolver in a default constructor
     // argument, so this is needed even though no test resolves dependencies.
     testRuntimeOnly(project(":kotlin-scripting-dependencies-maven"))

@@ -71,7 +71,6 @@ projectTests {
 
     withJvmStdlibAndReflect()
     withPluginSandboxAnnotations()
-    withScriptRuntime()
     withTestJar()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()
