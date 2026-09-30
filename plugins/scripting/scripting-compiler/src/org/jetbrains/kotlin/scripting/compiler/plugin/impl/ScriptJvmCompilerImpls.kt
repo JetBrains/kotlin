@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
@@ -322,20 +321,9 @@ private fun doCompileWithK2(
 
     val analysisResults = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, fir)))
 
-    if (diagnosticsReporter.hasErrors) {
-        diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-        return failure(messageCollector)
-    }
-
-    val irInput = convertAnalyzedFirToIr(configuration, targetId, analysisResults, compilerEnvironment)
-
-    val generationState = generateCodeFromIr(irInput, compilerEnvironment)
-
-    diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-
-    if (diagnosticsReporter.hasErrors) {
-        return failure(messageCollector)
-    }
+    val [irInput, generationState] = generateCodeIfNoErrors(
+        configuration, targetId, analysisResults, compilerEnvironment, messageCollector, renderDiagnosticName
+    ).valueOr { return it }
 
     return makeCompiledScript(
         generationState,

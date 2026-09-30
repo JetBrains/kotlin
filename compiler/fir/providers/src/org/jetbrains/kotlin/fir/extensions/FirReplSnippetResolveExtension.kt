@@ -52,7 +52,9 @@ abstract class FirReplHistoryProvider : FirSessionComponent {
     open fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? = null
 
     /**
-     * The snippet whose class declares [declaration] directly.
+     * The snippet whose class declares [declaration] directly. A class declared inside a snippet-level class, and the members
+     * of both, have no containing snippet: they are accessed through an instance of their own class, and reporting a snippet
+     * for them makes Fir2Ir replace that instance with an error expression.
      */
     fun getContainingSnippet(declaration: FirDeclaration): FirReplSnippetSymbol? {
         if (declaration.isReplSnippetDeclaration != true) return null

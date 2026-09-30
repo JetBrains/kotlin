@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.test.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
 import org.jetbrains.kotlin.scripting.compiler.test.ReplReceiver1
 import org.junit.jupiter.api.Assumptions.abort
@@ -20,10 +21,12 @@ import kotlin.reflect.full.declaredMemberFunctions
 import kotlin.reflect.full.declaredMemberProperties
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.CompoundDependenciesResolver
+import kotlin.script.experimental.dependencies.DependsOn
 import kotlin.script.experimental.dependencies.maven.MavenDependenciesResolver
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -389,6 +392,29 @@ class CustomK2ReplTest {
     }
 
     @Test
+    fun testConvertToFirSeamAndResultFieldNumbering() {
+        val convertedSources = mutableListOf<String>()
+        val compiledSnippets = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(
+                K2ReplCompiler.createCompilationState(messageCollector, disposable, baseCompilationConfiguration),
+                convertToFir = { session, diagnosticsReporter ->
+                    convertedSources.add(name!!)
+                    convertToFirViaLightTree(session, diagnosticsReporter)
+                }
+            )
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                listOf("val x = 3", "x + 4", "fun f() = x", "f()").mapIndexed { i, text ->
+                    compiler.compile(text.toScriptSource("s$i.repl.kts")).valueOr { return@internalScriptingRunSuspend it }.get()
+                }.asSuccess()
+            }
+        }.valueOrThrow()
+
+        assertEquals(listOf("s0.repl.kts", "s1.repl.kts", "s2.repl.kts", "s3.repl.kts"), convertedSources)
+        assertEquals(listOf(null, "res1", null, "res3"), compiledSnippets.map { (it as KJvmCompiledScript).resultField?.first })
+    }
+
+    @Test
     fun testKotlinxSerializationWithSeparateConfiguration() {
         if (!isK2) return
         val results = withMessageCollectorAndDisposable { messageCollector, disposable ->
@@ -513,6 +539,39 @@ class CustomK2ReplTest {
                 }
             }
         )
+    }
+
+    /**
+     * With `onAnnotations` refinement handlers, the snippet is converted already during the configuration refinement, which fails
+     * on syntax errors; an unfinished snippet should still be reported as incomplete code, so the REPL hosts could continue the input.
+     */
+    @Test
+    fun testIncompleteSnippetWithAnnotationsRefinement() {
+        if (!isK2) return
+        val compilationConfiguration = baseCompilationConfiguration.with {
+            refineConfiguration {
+                onAnnotations(DependsOn::class) { it.compilationConfiguration.asSuccess() }
+            }
+        }
+        withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, compilationConfiguration))
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                var i = 0
+                suspend fun assertFails(text: String, expectIncomplete: Boolean) {
+                    val res = compiler.compile(text.toScriptSource("s${i++}.repl.kts"))
+                    if (res !is ResultWithDiagnostics.Failure) fail("Compilation of '$text' should fail: $res")
+                    assertEquals(
+                        expectIncomplete, res.reports.any { it.code == ScriptDiagnostic.incompleteCode },
+                        "Unexpected incomplete code classification of '$text': ${res.reports}"
+                    )
+                    messageCollector.clear()
+                }
+                assertFails("val x = listOf(1,", expectIncomplete = true)
+                assertFails("val x = )\nval y = 1", expectIncomplete = false)
+                compiler.compile("val x = listOf(1, 2)\nx.size".toScriptSource("s${i++}.repl.kts"))
+            }
+        }.valueOrThrow()
     }
 }
 

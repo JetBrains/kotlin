@@ -6,9 +6,8 @@
 package kotlin.script.experimental.jvmhost.jsr223
 
 import com.google.common.base.Throwables
-import org.jetbrains.kotlin.cli.common.repl.LineId
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentLineId
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentSnippetNo
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollectorAndDisposable
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import javax.script.ScriptContext
@@ -89,7 +88,7 @@ class KotlinJsr223ScriptEngineImpl(
     override fun snippetCompilationConfiguration(snippet: SourceCode, snippetNo: Int): ScriptCompilationConfiguration =
         compilationConfiguration.with {
             repl {
-                currentLineId(LineId(snippetNo, 0, snippet.text.hashCode()))
+                currentSnippetNo(snippetNo)
             }
         }
 
