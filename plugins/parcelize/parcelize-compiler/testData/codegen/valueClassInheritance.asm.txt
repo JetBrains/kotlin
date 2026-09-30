@@ -79,14 +79,14 @@ public final class Derived : Base {
           LDC ($marker)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (0)
-          ACONST_NULL
-          INVOKESPECIAL (Base, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
-          ALOAD (0)
           ILOAD (1)
           PUTFIELD (Derived, id, I)
           ALOAD (0)
           ALOAD (2)
           PUTFIELD (Derived, s, Ljava/lang/String;)
+          ALOAD (0)
+          ACONST_NULL
+          INVOKESPECIAL (Base, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
           RETURN
         LABEL (L1)
     }
