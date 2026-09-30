@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractValhallaBlackBoxSmokeTest
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 
 open class AbstractSerializationFirLightTreeBlackBoxTest : AbstractFirLightTreeBlackBoxCodegenTest() {
@@ -33,6 +34,13 @@ open class AbstractSerializationJdk11FirLightTreeBoxTest : AbstractFirLightTreeB
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForKotlinxSerialization(useJdk11 = true)
+    }
+}
+
+open class AbstractSerializationValhallaBoxTest : AbstractValhallaBlackBoxSmokeTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureForKotlinxSerialization()
     }
 }
 

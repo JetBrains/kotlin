@@ -55,6 +55,10 @@ fun main(args: Array<String>) {
                 model("jdk11BoxIr")
             }
 
+            testClass<AbstractSerializationValhallaBoxTest> {
+                model("boxValhalla")
+            }
+
             testClass<AbstractSerializationWithoutRuntimeFirLightTreeBoxTest> {
                 model("boxWithoutRuntime")
             }
