@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
 object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -28,7 +29,9 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirFile || !declaration.hasAnnotation(JsModule, context.session)) return
 
-        if (declaration is FirProperty && declaration.isVar) {
+        // A qualified declaration is referenced through its qualifier, so a write lands on a plain JS object.
+        // Without a qualifier the declaration is the default export of the module, which is never writable.
+        if (declaration is FirProperty && declaration.isVar && !isQualified(declaration)) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
@@ -40,4 +43,9 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
             reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }
+
+    context(context: CheckerContext)
+    private fun isQualified(declaration: FirDeclaration): Boolean =
+        declaration.hasAnnotation(JsQualifier, context.session) ||
+                context.containingFileSymbol.hasAnnotation(JsQualifier, context.session)
 }
