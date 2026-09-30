@@ -22,7 +22,7 @@ value class ValueCompiled(val x: Int, val y: Int)
 
 fun test(identity: IdentityCompiled, value: ValueCompiled) {
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>identity<!>)
-    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>value<!>)
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>value<!>)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, javaFunction, primaryConstructor, propertyDeclaration,
