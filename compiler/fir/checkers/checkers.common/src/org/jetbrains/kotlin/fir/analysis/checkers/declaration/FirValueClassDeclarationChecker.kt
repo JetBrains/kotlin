@@ -86,8 +86,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             supportsFullValueClasses = supportsFullValueClasses,
         )
 
-        // The `value` modifier of a local class, unless it is inner or in a REPL snippet, is reported as `WRONG_MODIFIER_TARGET`.
-        if (!kind.isWillBecomeValueClass && declaration.isLocal && !declaration.isInner && declaration.isReplSnippetDeclaration != true) return
+        // The `value` modifier of a companion object or of a local class, unless it is inner or in a REPL snippet, is reported as
+        // `WRONG_MODIFIER_TARGET`.
+        if (!kind.isWillBecomeValueClass &&
+            (declaration.isCompanion || declaration.isLocal && !declaration.isInner && declaration.isReplSnippetDeclaration != true)
+        ) return
         checkPlacement(declaration, kind)
         checkModality(declaration, kind)
         checkSupertypes(declaration, kind)
