@@ -7,8 +7,6 @@ KtFile: accessorOnScriptDestructuring.kts
     BLOCK
       PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
       PsiWhiteSpace('\n')
-      PsiComment(EOL_COMMENT)('// IGNORE_ERRORS_FROM_API: KT-74793')
-      PsiWhiteSpace('\n')
       DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
@@ -32,9 +30,10 @@ KtFile: accessorOnScriptDestructuring.kts
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('2')
-        PsiWhiteSpace('\n    ')
-        PROPERTY_ACCESSOR
-          PsiElement(get)('get')
+      PsiWhiteSpace('\n    ')
+      SCRIPT_INITIALIZER
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('get')
       PsiWhiteSpace('\n\n')
       DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
@@ -59,15 +58,22 @@ KtFile: accessorOnScriptDestructuring.kts
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('2')
-        PsiWhiteSpace('\n    ')
-        PROPERTY_ACCESSOR
-          PsiElement(set)('set')
-          VALUE_PARAMETER_LIST
+      PsiWhiteSpace('\n    ')
+      SCRIPT_INITIALIZER
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('set')
+          VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
-            VALUE_PARAMETER
-              PsiElement(IDENTIFIER)('value')
+            VALUE_ARGUMENT
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('value')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
-            PsiElement(RBRACE)('}')
+          LAMBDA_ARGUMENT
+            LAMBDA_EXPRESSION
+              FUNCTION_LITERAL
+                PsiElement(LBRACE)('{')
+                BLOCK
+                  <empty list>
+                PsiElement(RBRACE)('}')

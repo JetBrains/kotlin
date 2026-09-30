@@ -30,3 +30,6 @@ FILE: positionalDestructuringScript.kts
 
         public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val b: <implicit> = LAZY_EXPRESSION
             public get(): <implicit>
+
+        public final val $$result: <implicit> = x#
+            public get(): <implicit>
