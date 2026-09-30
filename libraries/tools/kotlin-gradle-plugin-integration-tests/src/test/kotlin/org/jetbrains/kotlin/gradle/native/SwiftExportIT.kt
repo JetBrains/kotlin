@@ -211,6 +211,14 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":copyDebugSPMIntermediates")
             }
 
+            // Nothing changed, so nothing is copied into Xcode's products directory again.
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksUpToDate(":copyDebugSPMIntermediates")
+            }
+
             source.appendText(
                 """
 
