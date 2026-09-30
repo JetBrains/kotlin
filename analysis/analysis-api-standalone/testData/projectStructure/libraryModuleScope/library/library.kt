@@ -1,0 +1,3 @@
+package library
+
+fun foo() {}
