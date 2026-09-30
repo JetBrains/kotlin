@@ -11,7 +11,7 @@ import kotlin.math.ulp
 private const val BENCHMARK_SIZE = 10_000
 
 @State(Scope.Benchmark)
-@Measurement(time = 500, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
 class DoubleUlpBenchmark {
     private val normalValues = DoubleArray(BENCHMARK_SIZE) { index ->
         val sign = if ((index % 2) == 0) 0L else Long.MIN_VALUE
