@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.name.FqName
 
 /**
  * Service responsible for Kotlin PSI mutation operations whose implementation is provided by the Kotlin plugin environment.
+ *
+ * When the service is not registered (e.g., when the Kotlin PSI is used outside the IntelliJ Kotlin plugin), Kotlin PSI overrides of
+ * platform mutation methods, such as [PsiElement.delete], [PsiElement.replace], [com.intellij.psi.PsiNamedElement.setName] and
+ * [PsiLanguageInjectionHost.updateText], fall back to plain operations without Kotlin-specific adjustments like removing dangling
+ * separators or adding parentheses. Kotlin-specific mutation methods require the service.
  */
 @KtNonPublicApi
 interface KtPsiMutationService {
@@ -358,10 +363,18 @@ interface KtPsiMutationService {
     companion object {
         /**
          * Returns the registered Kotlin PSI mutation service.
+         *
+         * @throws IllegalStateException if the service is not registered.
          */
         @JvmStatic
         fun getInstance(): KtPsiMutationService =
+            getInstanceOrNull() ?: throw IllegalStateException("Cannot mutate Kotlin PSI because KtPsiMutationService is missing")
+
+        /**
+         * Returns the registered Kotlin PSI mutation service, or `null` if the environment does not provide one.
+         */
+        @JvmStatic
+        fun getInstanceOrNull(): KtPsiMutationService? =
             ApplicationManager.getApplication().getService(KtPsiMutationService::class.java)
-                ?: throw IllegalStateException("Cannot mutate Kotlin PSI because KtPsiMutationService is missing")
     }
 }

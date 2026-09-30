@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.ContributedReferenceHost;
+import com.intellij.psi.ElementManipulators;
 import com.intellij.psi.LiteralTextEscaper;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
@@ -80,7 +81,12 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
 
     @Override
     public PsiLanguageInjectionHost updateText(@NotNull String text) {
-        return KtPsiMutationService.getInstance().updateStringTemplateText(this, text);
+        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
+        if (mutationService != null) return mutationService.updateStringTemplateText(this, text);
+
+        KtExpression newExpression = new KtPsiFactory(getProject()).createExpressionIfPossible(text);
+        if (newExpression instanceof KtStringTemplateExpression) return (KtStringTemplateExpression) replace(newExpression);
+        return ElementManipulators.handleContentChange(this, text);
     }
 
     @NotNull

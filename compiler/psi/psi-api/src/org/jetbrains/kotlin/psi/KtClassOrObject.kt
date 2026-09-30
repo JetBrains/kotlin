@@ -205,7 +205,8 @@ abstract class KtClassOrObject :
     )
 
     override fun delete() {
-        KtPsiMutationService.getInstance().deleteClassOrObject(this)
+        val mutationService = KtPsiMutationService.getInstanceOrNull() ?: return rawDelete()
+        mutationService.deleteClassOrObject(this)
     }
 
     override fun subtreeChanged() {

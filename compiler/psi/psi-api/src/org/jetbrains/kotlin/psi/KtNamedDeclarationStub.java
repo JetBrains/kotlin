@@ -84,7 +84,14 @@ public abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> 
 
     @Override
     public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        return KtPsiMutationService.getInstance().setNamedDeclarationStubName(this, name);
+        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
+        if (mutationService != null) return mutationService.setNamedDeclarationStubName(this, name);
+
+        PsiElement identifier = getNameIdentifier();
+        if (identifier == null) return null;
+
+        identifier.replace(new KtPsiFactory(getProject()).createNameIdentifier(KtPsiUtilKt.quoteIfNeeded(name)));
+        return this;
     }
 
     @Override

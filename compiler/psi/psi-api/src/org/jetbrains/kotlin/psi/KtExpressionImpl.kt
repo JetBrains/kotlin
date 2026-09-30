@@ -28,8 +28,10 @@ abstract class KtExpressionImpl : KtElementImpl, KtExpression {
     }
 
     @OptIn(KtNonPublicApi::class)
-    override fun replace(newElement: PsiElement): PsiElement =
-        KtPsiMutationService.getInstance().replaceExpression(this, newElement, true) { super.replace(it) }
+    override fun replace(newElement: PsiElement): PsiElement {
+        val mutationService = KtPsiMutationService.getInstanceOrNull() ?: return super.replace(newElement)
+        return mutationService.replaceExpression(this, newElement, true) { super.replace(it) }
+    }
 
     companion object {
         @Deprecated(

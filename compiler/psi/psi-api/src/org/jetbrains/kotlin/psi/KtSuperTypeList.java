@@ -84,7 +84,13 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
 
     @Override
     public void delete() throws IncorrectOperationException {
-        KtPsiMutationService.getInstance().deleteSuperTypeList(this);
+        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
+        if (mutationService != null) {
+            mutationService.deleteSuperTypeList(this);
+        }
+        else {
+            rawDelete();
+        }
     }
 
     /** Returns the entries of the super type list, in source order; empty if there are none. */

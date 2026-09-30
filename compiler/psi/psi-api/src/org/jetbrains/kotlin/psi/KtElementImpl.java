@@ -76,7 +76,13 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
 
     @Override
     public void delete() throws IncorrectOperationException {
-        KtPsiMutationService.getInstance().deleteElement(this);
+        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
+        if (mutationService != null) {
+            mutationService.deleteElement(this);
+        }
+        else {
+            rawDelete();
+        }
     }
 
     @Override

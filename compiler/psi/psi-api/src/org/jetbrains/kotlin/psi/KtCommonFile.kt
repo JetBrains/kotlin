@@ -363,7 +363,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 
     @OptIn(KtNonPublicApi::class)
     @Throws(IncorrectOperationException::class)
-    override fun setName(name: String): PsiElement = KtPsiMutationService.getInstance().setCommonFileName(this, name)
+    override fun setName(name: String): PsiElement {
+        val mutationService = KtPsiMutationService.getInstanceOrNull() ?: return super.setName(name)
+        return mutationService.setCommonFileName(this, name)
+    }
 
     override fun getPsiOrParent(): KtElement = this
 
