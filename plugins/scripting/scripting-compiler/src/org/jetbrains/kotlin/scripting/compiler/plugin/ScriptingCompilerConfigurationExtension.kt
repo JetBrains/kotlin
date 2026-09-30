@@ -81,6 +81,8 @@ fun ScriptDefinitionProvider?.updateScriptingConfiguration(
 
         addReplSnippetDefinitionIfStateless(configuration, hostConfiguration)
 
+        addLegacyScriptRuntimeIfNeeded(configuration)
+
         if (this is CliScriptDefinitionProvider) {
             setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
             setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
