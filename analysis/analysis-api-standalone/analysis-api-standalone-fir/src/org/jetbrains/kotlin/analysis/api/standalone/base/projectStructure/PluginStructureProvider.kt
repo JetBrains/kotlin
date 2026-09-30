@@ -98,7 +98,6 @@ object PluginStructureProvider {
         val pluginDescriptor = getOrCalculatePluginDescriptor(PluginDesignation(pluginRelativePath, componentManager)) ?: return
         for (extensionPointDescriptor in pluginDescriptor.containerDescriptor().extensionPoints) {
             val extensionPointName = extensionPointDescriptor.qualifiedName ?: continue
-            if (extensionPointName in forbiddenExtensionPointNames) continue
 
             CoreApplicationEnvironment.registerExtensionPoint(
                 componentManager.extensionArea,
@@ -175,13 +174,6 @@ object PluginStructureProvider {
             element,
             hasExtraAttributes
         )
-
-    /**
-     * The list of extension points that are forbidden to be registered automatically.
-     */
-    private val forbiddenExtensionPointNames = listOf(
-        "org.jetbrains.kotlin.defaultErrorMessages",
-    )
 
     /**
      * The list of extension points that are safe to be registered automatically
