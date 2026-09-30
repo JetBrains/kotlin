@@ -162,7 +162,7 @@ projectTests {
     withJvmStdlibAndReflect()
 }
 
-testsJar {}
+testsJar()
 
 /**
  * Dependency Security Overrides

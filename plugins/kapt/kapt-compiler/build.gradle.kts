@@ -65,7 +65,7 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar {}
+testsJar()
 
 projectTests {
     fun kaptTestTask(name: String, javaLauncher: JdkMajorVersion) {

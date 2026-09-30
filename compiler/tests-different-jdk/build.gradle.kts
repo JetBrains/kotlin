@@ -10,8 +10,7 @@ plugins {
 }
 
 dependencies {
-    testImplementation(project(":compiler:tests-common-new", "testsJarConfig"))
-    testRuntimeOnly(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(project(":compiler:fir:fir2ir", "testsJarConfig"))
     testRuntimeOnly(testFixtures(project(":compiler:fir:fir2ir")))
 

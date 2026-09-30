@@ -39,7 +39,7 @@ sourceSets {
     }
 }
 
-testsJar {}
+testsJar()
 
 data class CustomCompilerVersion(val rawVersion: String) {
     val sanitizedVersion = rawVersion.replace('.', '_').replace('-', '_')
