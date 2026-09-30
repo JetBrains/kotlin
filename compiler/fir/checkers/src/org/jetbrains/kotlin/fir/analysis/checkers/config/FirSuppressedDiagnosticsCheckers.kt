@@ -21,7 +21,8 @@ object FirSuppressedDiagnosticsCheckers : FirLanguageVersionSettingsChecker() {
         val warningLevelMap = context.session.languageVersionSettings.getFlag(AnalysisFlags.warningLevels)
         if (warningLevelMap.isEmpty()) return
 
-        val allDiagnosticFactories = context.session.registeredDiagnosticFactoriesStorage.allDiagnosticFactories.associateBy { it.name }
+        val storage = context.session.registeredDiagnosticFactoriesStorage ?: return
+        val allDiagnosticFactories = storage.allDiagnosticFactories.associateBy { it.name }
 
         for (diagnosticName in warningLevelMap.keys) {
             val diagnosticFactory = allDiagnosticFactories[diagnosticName]
