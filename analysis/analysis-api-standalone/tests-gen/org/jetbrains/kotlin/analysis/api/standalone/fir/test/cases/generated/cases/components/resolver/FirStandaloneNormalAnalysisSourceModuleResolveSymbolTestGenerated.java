@@ -6960,6 +6960,24 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveSymbolTestGenerated e
     }
 
     @Test
+    @TestMetadata("annotationClassSuperTypeCall.kt")
+    public void testAnnotationClassSuperTypeCall() {
+      run("annotationClassSuperTypeCall.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationClassSuperTypeCallAny.kt")
+    public void testAnnotationClassSuperTypeCallAny() {
+      run("annotationClassSuperTypeCallAny.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationClassSuperTypeCallCallee.kt")
+    public void testAnnotationClassSuperTypeCallCallee() {
+      run("annotationClassSuperTypeCallCallee.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnExpression_asT.kt")
     public void testAnnotationOnExpression_asT() {
       run("annotationOnExpression_asT.kt");
