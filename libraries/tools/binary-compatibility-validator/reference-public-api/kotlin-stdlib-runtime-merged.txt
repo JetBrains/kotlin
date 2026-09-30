@@ -6439,6 +6439,159 @@ public final class kotlin/text/jdk8/RegexExtensionsJDK8Kt {
 	public static final fun get (Lkotlin/text/MatchGroupCollection;Ljava/lang/String;)Lkotlin/text/MatchGroup;
 }
 
+public final class kotlin/text/unicode/CodePoint : java/lang/Comparable {
+	public static final field Companion Lkotlin/text/unicode/CodePoint$Companion;
+	public static final synthetic fun box-impl (I)Lkotlin/text/unicode/CodePoint;
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo-9H9ifzQ (I)I
+	public static fun compareTo-9H9ifzQ (II)I
+	public static fun constructor-impl (I)I
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (ILjava/lang/Object;)Z
+	public static final fun equals-impl0 (II)Z
+	public final fun getCode ()I
+	public static final fun getSize-impl (I)I
+	public fun hashCode ()I
+	public static fun hashCode-impl (I)I
+	public static final fun highSurrogate-impl (I)C
+	public static final fun isBasic-impl (I)Z
+	public static final fun isSupplementary-impl (I)Z
+	public static final fun lowSurrogate-impl (I)C
+	public static final fun minus-0ZsbHTE (II)I
+	public static final fun minus-9H9ifzQ (II)I
+	public static final fun plus-0ZsbHTE (II)I
+	public static final fun rangeUntil-9H9ifzQ (II)Lkotlin/text/unicode/CodePointRange;
+	public static final fun requireIsSupplementary-impl (I)V
+	public static final fun toCharArray-impl (I)[C
+	public static final fun toSingleChar-impl (I)C
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (I)Ljava/lang/String;
+	public static final fun toSurrogatePair-impl (I)Lkotlin/Pair;
+	public static final fun toSurrogatePair-impl (ILkotlin/jvm/functions/Function2;)Ljava/lang/Object;
+	public final synthetic fun unbox-impl ()I
+}
+
+public final class kotlin/text/unicode/CodePoint$Companion {
+	public final fun fromChar-0ZsbHTE (C)I
+	public final fun fromSurrogatePair-0ZsbHTE (CC)I
+	public final fun getMAX_VALUE-0ZsbHTE ()I
+	public final fun getMIN_VALUE-0ZsbHTE ()I
+	public final fun isSurrogatePair (CC)Z
+}
+
+public final class kotlin/text/unicode/CodePointCasingKt {
+	public static final fun titlecase-9H9ifzQ (I)Ljava/lang/String;
+}
+
+public abstract interface class kotlin/text/unicode/CodePointIndexedIterator : kotlin/text/unicode/CodePointIterator {
+	public abstract fun advanceByCodePoints (I)V
+	public abstract fun hasNext ()Z
+	public abstract fun hasPrevious ()Z
+	public synthetic fun next ()Ljava/lang/Object;
+	public abstract fun next-0ZsbHTE ()I
+	public abstract fun nextIndex ()I
+	public abstract fun previous-0ZsbHTE ()I
+	public abstract fun previousIndex ()I
+}
+
+public final class kotlin/text/unicode/CodePointIterationJVMKt {
+	public static final fun codePointCount ([CII)I
+	public static synthetic fun codePointCount$default ([CIIILjava/lang/Object;)I
+}
+
+public final class kotlin/text/unicode/CodePointIterationKt {
+	public static final fun codePointIterator (Ljava/lang/CharSequence;I)Lkotlin/text/unicode/CodePointIndexedIterator;
+	public static final fun codePointIterator (Ljava/lang/String;I)Lkotlin/text/unicode/CodePointIndexedIterator;
+	public static final fun codePointIterator ([CIII)Lkotlin/text/unicode/CodePointIndexedIterator;
+	public static synthetic fun codePointIterator$default (Ljava/lang/CharSequence;IILjava/lang/Object;)Lkotlin/text/unicode/CodePointIndexedIterator;
+	public static synthetic fun codePointIterator$default (Ljava/lang/String;IILjava/lang/Object;)Lkotlin/text/unicode/CodePointIndexedIterator;
+	public static synthetic fun codePointIterator$default ([CIIIILjava/lang/Object;)Lkotlin/text/unicode/CodePointIndexedIterator;
+	public static final fun codePointSequence (Ljava/lang/CharSequence;)Lkotlin/text/unicode/CodePointSequence;
+	public static final fun codePointSequence (Ljava/lang/String;)Lkotlin/text/unicode/CodePointSequence;
+	public static final fun codePointSequence ([CII)Lkotlin/text/unicode/CodePointSequence;
+	public static synthetic fun codePointSequence$default ([CIIILjava/lang/Object;)Lkotlin/text/unicode/CodePointSequence;
+	public static final fun forEachCodePoint (Ljava/lang/CharSequence;Lkotlin/jvm/functions/Function1;)V
+	public static final fun forEachCodePoint (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public static final fun forEachCodePoint ([CIILkotlin/jvm/functions/Function1;)V
+	public static synthetic fun forEachCodePoint$default ([CIILkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static final fun forEachCodePointImpl (IILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+}
+
+public abstract interface class kotlin/text/unicode/CodePointIterator : java/util/Iterator, kotlin/jvm/internal/markers/KMappedMarker {
+}
+
+public final class kotlin/text/unicode/CodePointKt {
+	public static final fun appendCodePoint-gd9WNvA (Ljava/lang/Appendable;I)Ljava/lang/Appendable;
+	public static final fun deleteCodePointAt (Ljava/lang/StringBuilder;I)Ljava/lang/StringBuilder;
+	public static final fun insertCodePointAt-_tN5tts (Ljava/lang/StringBuilder;II)Ljava/lang/StringBuilder;
+	public static final fun setCodePointAt-_tN5tts (Ljava/lang/StringBuilder;II)Ljava/lang/StringBuilder;
+	public static final fun toCodePoint (C)I
+	public static final fun toCodePoint (I)I
+}
+
+public class kotlin/text/unicode/CodePointProgression : java/lang/Iterable, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field Companion Lkotlin/text/unicode/CodePointProgression$Companion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFirst-0ZsbHTE ()I
+	public final fun getLast-0ZsbHTE ()I
+	public final fun getStep ()I
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public final fun iterator ()Ljava/util/Iterator;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/text/unicode/CodePointProgression$Companion {
+	public final fun fromClosedRange-1rgJqWI (III)Lkotlin/text/unicode/CodePointProgression;
+}
+
+public final class kotlin/text/unicode/CodePointPropertiesJVMKt {
+	public static final fun getCategory-9H9ifzQ (I)Lkotlin/text/CharCategory;
+	public static final fun getDirectionality-9H9ifzQ (I)Lkotlin/text/CharDirectionality;
+	public static final fun isWhitespace-9H9ifzQ (I)Z
+}
+
+public final class kotlin/text/unicode/CodePointPropertiesKt {
+	public static final fun contains--p-mMO8 (Lkotlin/text/CharCategory;I)Z
+}
+
+public final class kotlin/text/unicode/CodePointRange : kotlin/text/unicode/CodePointProgression, kotlin/ranges/ClosedRange, kotlin/ranges/OpenEndRange {
+	public static final field Companion Lkotlin/text/unicode/CodePointRange$Companion;
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun contains (Ljava/lang/Comparable;)Z
+	public fun contains-9H9ifzQ (I)Z
+	public fun equals (Ljava/lang/Object;)Z
+	public synthetic fun getEndExclusive ()Ljava/lang/Comparable;
+	public fun getEndExclusive-0ZsbHTE ()I
+	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
+	public fun getEndInclusive-0ZsbHTE ()I
+	public synthetic fun getStart ()Ljava/lang/Comparable;
+	public fun getStart-0ZsbHTE ()I
+	public fun hashCode ()I
+	public fun isEmpty ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/text/unicode/CodePointRange$Companion {
+	public final fun getEMPTY ()Lkotlin/text/unicode/CodePointRange;
+}
+
+public final class kotlin/text/unicode/CodePointRangeKt {
+	public static final fun contains (Lkotlin/text/unicode/CodePointRange;C)Z
+	public static final fun downTo-5G-v9mo (II)Lkotlin/text/unicode/CodePointProgression;
+	public static final fun random (Lkotlin/text/unicode/CodePointRange;Lkotlin/random/Random;)I
+	public static final fun randomOrNull (Lkotlin/text/unicode/CodePointRange;Lkotlin/random/Random;)Lkotlin/text/unicode/CodePoint;
+	public static final fun step (Lkotlin/text/unicode/CodePointProgression;I)Lkotlin/text/unicode/CodePointProgression;
+}
+
+public abstract interface class kotlin/text/unicode/CodePointSequence : kotlin/sequences/Sequence {
+	public synthetic fun iterator ()Ljava/util/Iterator;
+	public abstract fun iterator ()Lkotlin/text/unicode/CodePointIterator;
+}
+
+public abstract interface annotation class kotlin/text/unicode/ExperimentalUnicodeApi : java/lang/annotation/Annotation {
+}
+
 public abstract class kotlin/time/AbstractDoubleTimeSource : kotlin/time/TimeSource$WithComparableMarks {
 	public fun <init> (Lkotlin/time/DurationUnit;)V
 	protected final fun getUnit ()Lkotlin/time/DurationUnit;
