@@ -46,6 +46,24 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
     fun testTypeParameterProperty() = assertStability("value class V<T>(val a: Int, val t: T)", "Parameter(T)")
 
     @Test
+    fun testStableTypeArgument() = assertStability(
+        "value class V<T>(val t: T, val n: Int)\nvalue class W(val v: V<Int>)",
+        "Parameter(T)",
+    )
+
+    @Test
+    fun testUncertainTypeArgument() = assertStability(
+        "value class V<T>(val t: T, val n: Int)\nvalue class W(val v: V<List<Int>>)",
+        "Parameter(T)",
+    )
+
+    @Test
+    fun testInlineClassTypeArgument() = assertStability(
+        "@JvmInline value class I<T>(val t: T)\nvalue class W(val i: I<Int>)",
+        "Parameter(T)",
+    )
+
+    @Test
     fun testRecursiveProperty() = assertStability("value class V(val a: Int, val next: V?)", "Unstable")
 
     /**
