@@ -290,6 +290,7 @@ private fun loadScriptDefinition(
     messageReporter: MessageReporter,
 ): ScriptDefinition? {
     val anns = loadAnnotationsFromClass(templateClassBytes)
+    var legacyTemplateSkipped = false
     for (ann in anns) {
         var def: ScriptDefinition? = null
         if (ann.name == KotlinScript::class.java.simpleName) {
@@ -302,14 +303,19 @@ private fun loadScriptDefinition(
                 messageReporter
             )
         } else if (ann.name == LEGACY_SCRIPT_TEMPLATE_DEFINITION_ANNOTATION_NAME) {
-            val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
-
-            @Suppress("DEPRECATION")
-            val compilationConfiguration: ScriptCompilationConfiguration =
-                ScriptCompilationConfigurationFromLegacyTemplate(
-                    hostConfiguration,
-                    templateClass
+            val compilationConfiguration: ScriptCompilationConfiguration = try {
+                val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
+                @Suppress("DEPRECATION")
+                ScriptCompilationConfigurationFromLegacyTemplate(hostConfiguration, templateClass)
+            } catch (e: LinkageError) {
+                // e.g. kotlin-script-runtime is absent, as in the relocated scripting part of the build tools
+                messageReporter(
+                    ScriptDiagnostic.Severity.INFO,
+                    "Configure scripting: legacy script template $templateClassName is skipped, it cannot be loaded: $e"
                 )
+                legacyTemplateSkipped = true
+                continue
+            }
 
             def = ScriptDefinition.FromConfigurations(
                 hostConfiguration,
@@ -325,10 +331,12 @@ private fun loadScriptDefinition(
             return def
         }
     }
-    messageReporter(
-        ScriptDiagnostic.Severity.WARNING,
-        "Configure scripting: $templateClassName is not marked with any known kotlin script annotation"
-    )
+    if (!legacyTemplateSkipped) {
+        messageReporter(
+            ScriptDiagnostic.Severity.WARNING,
+            "Configure scripting: $templateClassName is not marked with any known kotlin script annotation"
+        )
+    }
     return null
 }
 
