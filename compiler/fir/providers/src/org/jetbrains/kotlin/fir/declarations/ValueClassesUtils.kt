@@ -37,7 +37,7 @@ fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession)
             null
         } else {
             klass.getValueClassUnderlyingParameters(session)
-                ?.map { it.name to it.symbol.resolvedReturnType as ConeRigidType }
+                ?.map { it.name to it.symbol.resolvedReturnType.upperBoundIfFlexible() }
                 ?: emptyList()
         }
         return FullValueClassRepresentation(fields)
@@ -45,7 +45,7 @@ fun computeValueClassRepresentation(klass: FirRegularClass, session: FirSession)
     return klass.getValueClassUnderlyingParameters(session)
         ?.takeIf { it.isNotEmpty() }
         ?.singleOrNull()
-        ?.let { InlineClassRepresentation(it.name, it.symbol.resolvedReturnType as ConeRigidType) }
+        ?.let { InlineClassRepresentation(it.name, it.symbol.resolvedReturnType.upperBoundIfFlexible()) }
 }
 
 private fun FirRegularClass.getValueClassUnderlyingParameters(session: FirSession): List<FirValueParameter>? {
