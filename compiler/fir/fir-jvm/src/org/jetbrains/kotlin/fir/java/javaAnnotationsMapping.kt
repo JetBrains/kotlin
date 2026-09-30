@@ -70,7 +70,7 @@ internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
         this@convertAnnotationsToFir.mapTo(this) {
             if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
             val firAnnotationCall = it.toFirAnnotation(session, source)
-            if (firAnnotationCall.toAnnotationClassId(session) == StandardClassIds.Annotations.Target) {
+            if (firAnnotationCall.resolvedType.classId == StandardClassIds.Annotations.Target) {
                 val unmappedKotlinAnnotation = it.classId == StandardClassIds.Annotations.Target
                 if (annotationWithJavaTarget == null && !unmappedKotlinAnnotation) {
                     annotationWithJavaTarget = firAnnotationCall
