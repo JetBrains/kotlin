@@ -183,16 +183,16 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allInaccessibleReceiverCheckers.check(inaccessibleReceiverExpression, data)
     }
 
+    override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression, data: CheckerContext) {
+        checkers.allFunctionTypeConversionExpressionCheckers.check(functionTypeConversionExpression, data)
+    }
+
     override fun visitExpression(expression: FirExpression, data: CheckerContext) {
         checkers.allBasicExpressionCheckers.check(expression, data)
     }
 
     override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: CheckerContext) {
         checkers.allBasicExpressionCheckers.check(varargArgumentsExpression, data)
-    }
-
-    override fun visitFunctionTypeConversionExpression(functionTypeConversionExpression: FirFunctionTypeConversionExpression, data: CheckerContext) {
-        checkers.allBasicExpressionCheckers.check(functionTypeConversionExpression, data)
     }
 
     override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: CheckerContext) {

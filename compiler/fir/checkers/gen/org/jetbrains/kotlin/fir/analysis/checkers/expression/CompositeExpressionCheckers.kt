@@ -95,6 +95,8 @@ class CompositeExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
         field: MutableSet<FirClassReferenceExpressionChecker> = []
     override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker>
         field: MutableSet<FirInaccessibleReceiverChecker> = []
+    override val functionTypeConversionExpressionCheckers: Set<FirFunctionTypeConversionExpressionChecker>
+        field: MutableSet<FirFunctionTypeConversionExpressionChecker> = []
 
     @CheckersComponentInternal
     fun register(checkers: ExpressionCheckers) {
@@ -137,5 +139,6 @@ class CompositeExpressionCheckers(val predicate: (FirCheckerWithMppKind) -> Bool
         checkers.collectionLiteralCheckers.filterTo(collectionLiteralCheckers, predicate)
         checkers.classReferenceExpressionCheckers.filterTo(classReferenceExpressionCheckers, predicate)
         checkers.inaccessibleReceiverCheckers.filterTo(inaccessibleReceiverCheckers, predicate)
+        checkers.functionTypeConversionExpressionCheckers.filterTo(functionTypeConversionExpressionCheckers, predicate)
     }
 }
