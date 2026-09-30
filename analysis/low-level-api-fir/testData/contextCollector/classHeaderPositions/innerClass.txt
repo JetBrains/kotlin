@@ -24,9 +24,9 @@ Tower Data Context:
     Element 8
         Static scope owner symbol: FirRegularClassSymbol public final inner class B : R|r/A.Base|
     Element 9
-        Scope: FirLocalScope
-            Properties:
-                FirValueParameterSymbol x: R|kotlin/Int|
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class B : R|r/A.Base|
+                Type: r.A.B
 
 FILE: [ResolvedTo(IMPORTS)] innerClass.kt
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

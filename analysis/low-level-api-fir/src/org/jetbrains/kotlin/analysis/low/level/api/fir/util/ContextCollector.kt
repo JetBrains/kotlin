@@ -881,15 +881,40 @@ private class ContextCollectorVisitor(
                 }
 
                 onActive {
-                    context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = holder) {
-                        process(constructor.delegatedConstructor)
-                    }
-
+                    process(constructor.delegatedConstructor)
                     process(constructor.contractDescription)
                 }
             }
         }
     }
+
+    /**
+     * Same as [FirExpressionsResolveTransformer.transformDelegatedConstructorCall][org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer.transformDelegatedConstructorCall]:
+     * the call itself is resolved with the implicit receiver of the containing class (required for super calls to inner classes),
+     * while its children (e.g., arguments) are resolved without it.
+     */
+    override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall) = withProcessor(delegatedConstructorCall) {
+        val constructor = context.containerIfAny as? FirConstructor
+            ?: errorWithAttachment("Delegated constructor call is expected to be inside a constructor") {
+                withFirEntry("delegatedConstructorCall", delegatedConstructorCall)
+            }
+
+        context.forDelegatedConstructorCallResolution {
+            dumpContext(delegatedConstructorCall, ContextKind.SELF, hasBodyContext = false)
+        }
+
+        onActive {
+            context.forDelegatedConstructorCallChildren(constructor, owningClass = null, holder = getSessionHolder(constructor)) {
+                processChildren(delegatedConstructorCall)
+            }
+        }
+    }
+
+    override fun visitMultiDelegatedConstructorCall(multiDelegatedConstructorCall: FirMultiDelegatedConstructorCall) =
+        withProcessor(multiDelegatedConstructorCall) {
+            // The multi-call shares the source with its last delegated call, so its own context is not dumped
+            processChildren(multiDelegatedConstructorCall)
+        }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry) = withProcessor(enumEntry) {
         dumpContext(enumEntry, ContextKind.SELF)
