@@ -80,6 +80,27 @@ dependencies {
     testImplementation(libs.kotlinx.serialization.json)
 }
 
+// OSIP-499 (spike): the IDE hands the Build Tools API implementation over as a directory (`kotlin.jps.btaImplHome`),
+// the tests use a directory with the snapshot implementation instead.
+val btaImplSnapshot = configurations.dependencyScope("btaImplSnapshot")
+val btaImplSnapshotResolvable = configurations.resolvable("btaImplSnapshotResolvable") {
+    extendsFrom(btaImplSnapshot.get())
+}
+
+dependencies {
+    btaImplSnapshot(project(":compiler:build-tools:kotlin-build-tools-impl"))
+    btaImplSnapshot(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    // `compileOnly` in the implementation's build script, but needed at run time
+    btaImplSnapshot(project(":kotlin-reflect"))
+    btaImplSnapshot(project(":kotlin-daemon-client"))
+}
+
+val btaImplHome = layout.buildDirectory.dir("btaImplHome")
+val prepareBtaImplHome = tasks.register<Sync>("prepareBtaImplHome") {
+    from(btaImplSnapshotResolvable)
+    into(btaImplHome)
+}
+
 sourceSets {
     "main" {
         projectDefault()
@@ -109,6 +130,15 @@ jvmToolchains {
     }
 }
 
+kotlin {
+    compilerOptions {
+        // OSIP-499 (spike): the `btapi` package talks to the Build Tools API, which is entirely experimental.
+        optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+        optIn.add("org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument")
+        optIn.add("org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi")
+    }
+}
+
 projectTests {
     testTask(
         javaLauncher = JdkMajorVersion.JDK_21_0,
@@ -129,6 +159,14 @@ projectTests {
         systemProperty("jvm-inc-builder.test.track.mock.annotations", true)
         // for debugging tests with in-process compiler
         systemProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.")
+        inputs.files(prepareBtaImplHome).withPropertyName("btaImplHome").withNormalizer(ClasspathNormalizer::class)
+        systemProperty("kotlin.jps.btaImplHome", btaImplHome.get().asFile.absolutePath)
+        systemProperty("kotlin.jps.useBuildToolsApi", true)
+        // OSIP-499 (spike): `./gradlew ... -Pkotlin.jps.useBuildToolsApi=true` runs the JPS tests against the
+        // Build Tools API path instead of the module.xml + daemon one.
+        for (property in listOf("kotlin.jps.useBuildToolsApi", "kotlin.jps.btaImplHome", "kotlin.jps.btaDebugArguments")) {
+            providers.gradleProperty(property).orNull?.let { systemProperty(property, it) }
+        }
         jvmArgs(
             // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
             "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",

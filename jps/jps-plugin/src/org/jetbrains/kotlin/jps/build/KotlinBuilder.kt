@@ -30,6 +30,12 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.jps.incremental.messages.BuildMessage
+import org.jetbrains.jps.incremental.messages.CompilerMessage
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaBuildSession
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
+import org.jetbrains.kotlin.compilerRunner.btapi.jpsBtaBuildSessionKey
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.config.Services
@@ -66,6 +72,18 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val useDependencyGraph = System.getProperty("jps.use.dependency.graph", "false")!!.toBoolean()
         val isKotlinBuilderInDumbMode = System.getProperty("kotlin.jps.dumb.mode", "false")!!.toBoolean()
         val enableLookupStorageFillingInDumbMode = System.getProperty("kotlin.jps.enable.lookups.in.dumb.mode", "false")!!.toBoolean()
+
+        /**
+         * OSIP-499 (spike): route Kotlin/JVM compilation through the Build Tools API instead of the legacy
+         * module.xml + compiler daemon path.
+         *
+         * Off by default. Multi-target (circular) chunks always take the legacy path, because the Build Tools API
+         * has no way to describe more than one module in a single compilation.
+         *
+         * Read on every access rather than cached, so that tests can flip it around a single build.
+         */
+        val useBuildToolsApi: Boolean
+            get() = System.getProperty("kotlin.jps.useBuildToolsApi", "false")!!.toBoolean()
 
         private val classesToLoadByParentFromRegistry =
             System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
@@ -106,6 +124,39 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val reportService = JpsStatisticsReportService.create()
         context.putUserData(statisticsReportServiceKey, reportService)
         reportService.buildStarted(context)
+        if (useBuildToolsApi) {
+            context.putUserData(jpsBtaBuildSessionKey, JpsBtaBuildSession())
+            reportBuildToolsApiPath(context)
+        }
+    }
+
+    /**
+     * Says which compiler path this build takes, as a build message and not only in the log, so that the Build
+     * tool window of the IDE shows it without anyone opening `build.log`. The class path is only listed here, not
+     * loaded, so an implementation that no chunk ends up needing still costs nothing.
+     *
+     * `JPS_INFO` and not `INFO`: `CompileDriver` maps both to `CompilerMessageCategory.INFORMATION`, but only
+     * `JPS_INFO` also reaches the problems view (`CompileDriver.java:395`).
+     */
+    private fun reportBuildToolsApiPath(context: CompileContext) {
+        val classpath = JpsBtaToolchainLoader.resolveClasspath()
+        val implementationHome = System.getProperty(JpsBtaToolchainLoader.IMPL_HOME_PROPERTY)
+        val text = when {
+            classpath != null ->
+                "Compiling through the Build Tools API, ${classpath.size} implementation jars from $implementationHome"
+            implementationHome != null ->
+                "'kotlin.jps.useBuildToolsApi' is on, but $implementationHome holds no jars." +
+                        " Using the legacy compiler path."
+            else ->
+                "'kotlin.jps.useBuildToolsApi' is on, but the IDE handed over no implementation." +
+                        " Using the legacy compiler path."
+        }
+        // In the tests the implementation always comes from `jps/jps-plugin/build.gradle.kts`: falling back
+        // to the legacy path there would let the tests pass without exercising the Build Tools API at all.
+        check(classpath != null || !System.getProperty("kotlin.jps.tests").equals("true", ignoreCase = true)) { text }
+        context.processMessage(
+            CompilerMessage(CompilerRunnerConstants.KOTLIN_COMPILER_NAME, BuildMessage.Kind.JPS_INFO, text)
+        )
     }
 
     private fun logSettings(context: CompileContext) {
@@ -165,6 +216,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun buildFinished(context: CompileContext) {
         ensureKotlinContextDisposed(context)
+        context.getUserData(jpsBtaBuildSessionKey)?.let {
+            context.putUserData(jpsBtaBuildSessionKey, null)
+            it.close()
+        }
         val reportService = JpsStatisticsReportService.getFromContext(context)
         reportService.buildFinish(context)
     }
@@ -617,7 +672,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             classesToLoadByParent,
             messageCollector,
             OutputItemsCollectorImpl(),
-            ProgressReporterImpl(context, chunk)
+            ProgressReporterImpl(context, chunk),
+            context.getUserData(jpsBtaBuildSessionKey),
         )
     }
 

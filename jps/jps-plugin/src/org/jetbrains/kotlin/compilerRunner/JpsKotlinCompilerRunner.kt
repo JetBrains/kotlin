@@ -197,6 +197,24 @@ class JpsKotlinCompilerRunner {
         return res.takeUnless { it is CompileService.CallResult.Dying }?.get()
     }
 
+    /**
+     * The compiler argument strings JPS would pass to the daemon, with the same deduplication applied.
+     *
+     * Exposed for the Build Tools API path, whose `applyArgumentStrings` does no deduplication of its own.
+     */
+    internal fun argumentStringsWithAdditional(
+        compilerArgs: CommonCompilerArguments,
+        settings: CompilerSettings,
+    ): List<String> {
+        val old = compilerSettings
+        return try {
+            compilerSettings = settings
+            withAdditionalCompilerArgs(compilerArgs).toList()
+        } finally {
+            compilerSettings = old
+        }
+    }
+
     private fun withAdditionalCompilerArgs(compilerArgs: CommonCompilerArguments): Array<String> {
         val allArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs) +
                 (compilerSettings?.additionalArgumentsAsList ?: emptyList())

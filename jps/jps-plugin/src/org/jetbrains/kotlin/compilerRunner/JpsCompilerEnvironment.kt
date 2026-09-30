@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaBuildSession
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -27,5 +28,9 @@ class JpsCompilerEnvironment(
     val classesToLoadByParent: ClassCondition,
     messageCollector: MessageCollector,
     outputItemsCollector: OutputItemsCollectorImpl,
-    val progressReporter: ProgressReporter
+    val progressReporter: ProgressReporter,
+    /**
+     * The Build Tools API session of the current JPS build, or `null` when `kotlin.jps.useBuildToolsApi` is off.
+     */
+    val btaBuildSession: JpsBtaBuildSession? = null,
 ) : CompilerEnvironment(services, messageCollector, outputItemsCollector)
