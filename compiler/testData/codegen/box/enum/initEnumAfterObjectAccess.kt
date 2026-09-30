@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Wasm-js:2.3,2.4
 // ^KT-83337 Difference in behavior on nested class initialization
 
@@ -17,5 +16,10 @@ enum class Foo {
 
 fun box(): String {
     Foo.L
-    return if (l != "Foo.CO;") "FAIL: ${l}" else "OK"
+    val expected = when (BACKEND_UNDER_TEST) {
+        // KT-83337 Difference in behavior on nested class initialization
+        "JS_IR", "JS_IR_ES6" -> "Foo;Foo.CO;"
+        else                 -> "Foo.CO;"
+    }
+    return if (l != expected) "FAIL: ${l}" else "OK"
 }
