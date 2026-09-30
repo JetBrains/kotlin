@@ -41,13 +41,16 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         FirJavaGenericVarianceViolationTypeChecker,
         FirSuperCallWithDefaultsChecker,
         FirJvmSuspensionPointInsideMutexLockChecker,
-        FirJvmIdentitySensitiveCallWithValueTypeObjectChecker,
         FirJvmInconsistentOperatorFromJavaCallChecker,
         FirJvmPolymorphicSignatureCallChecker,
         FirJvmAtomicReferenceToPrimitiveCallChecker,
         FirJvmAtomicReferenceArrayToPrimitiveCallChecker,
         FirJavaSamConstructorNullabilityChecker,
         FirJavaAnnotationsConstructorCallChecker,
+    )
+
+    override val callCheckers: Set<FirCallChecker> = setOf(
+        FirJvmIdentitySensitiveCallWithValueTypeObjectChecker,
     )
 
     override val annotationCheckers: Set<FirAnnotationChecker> = setOf(
