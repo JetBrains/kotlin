@@ -80,6 +80,18 @@ public class FirStandaloneNormalAnalysisSourceModuleElementDiagnosticsTestGenera
   }
 
   @Test
+  @TestMetadata("delegatedFunctionWithImplicitReturnTypeFromOtherFile.kt")
+  public void testDelegatedFunctionWithImplicitReturnTypeFromOtherFile() {
+    run("delegatedFunctionWithImplicitReturnTypeFromOtherFile.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedPropertyWithImplicitReturnTypeFromOtherFile.kt")
+  public void testDelegatedPropertyWithImplicitReturnTypeFromOtherFile() {
+    run("delegatedPropertyWithImplicitReturnTypeFromOtherFile.kt");
+  }
+
+  @Test
   @TestMetadata("fileWithFunctionWithImplicitType.kt")
   public void testFileWithFunctionWithImplicitType() {
     run("fileWithFunctionWithImplicitType.kt");
