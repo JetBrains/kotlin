@@ -471,6 +471,12 @@ private fun KaDiagnosticConverterBuilder.addConversions3() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions4() {
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER) { firDiagnostic ->
+        JsModuleProhibitedOnMemberImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY) { firDiagnostic ->
         LateinitIntrinsicCallOnNonAccessiblePropertyImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),

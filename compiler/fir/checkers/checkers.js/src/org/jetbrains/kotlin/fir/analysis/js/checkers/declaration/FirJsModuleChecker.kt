@@ -30,13 +30,17 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         if (declaration is FirFile || !declaration.isEitherModuleOrNonModule(context.session)) return
 
+        val isNative = context.closestNonLocalWith(declaration)?.isNativeObject() ?: return
+
+        if (!context.isTopLevel) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER)
+        }
+
         if (declaration is FirProperty && declaration.isVar) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
-        val closestNonLocal = context.closestNonLocalWith(declaration) ?: return
-
-        if (!closestNonLocal.isNativeObject()) {
+        if (!isNative) {
             reporter.reportOn(declaration.source, FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE)
         }
 
