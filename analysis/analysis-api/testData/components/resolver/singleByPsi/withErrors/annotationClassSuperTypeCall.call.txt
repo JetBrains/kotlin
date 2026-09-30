@@ -1,20 +1,33 @@
 KtSuperTypeCallEntry(61,68): 'Base(1)'
-  KaSimpleCallResolutionError:
-    candidateCalls = [
-      KaDelegatedConstructorCall:
-        contextArgumentMapping = {}
-        contextArguments = []
-        dispatchReceiver = null
-        extensionReceiver = null
-        kind = SUPER_CALL
-        signature = KaFunctionSignature:
+  KaSimpleCallResolutionSuccess:
+    call = KaDelegatedConstructorCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      kind = SUPER_CALL
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = Base
+        symbol = <constructor>(x: kotlin.Int): Base
+        valueParameters = [
+          KaVariableSignature:
+            name = x
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = x: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1 -> (KaVariableSignature:
+          name = x
           receiverType = null
-          returnType = kotlin.Any
-          symbol = <constructor>(): kotlin.Any
-          valueParameters = []
+          returnType = kotlin.Int
+          symbol = x: kotlin.Int
           contextParameters = []
-          callableId = null
-        typeArgumentsMapping = {}
-        valueArgumentMapping = {}
-    ]
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): Any'.>
+          callableId = null)
+      }

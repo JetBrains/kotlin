@@ -679,7 +679,8 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                             }
                             calculatedModifiers.isAnnotation() && (classKind == ClassKind.ANNOTATION_CLASS) -> {
                                 superTypeRefs += implicitAnnotationType
-                                delegatedSuperTypeRef = implicitAnyType
+                                // A written super call is kept for red code to be resolved as written
+                                delegatedSuperTypeRef = delegatedSuperTypeRef ?: implicitAnyType
                             }
                         }
 

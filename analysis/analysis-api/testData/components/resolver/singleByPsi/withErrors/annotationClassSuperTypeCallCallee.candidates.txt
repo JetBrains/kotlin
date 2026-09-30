@@ -8,11 +8,13 @@ KtNameReferenceExpression(39,51): 'AbstractList'
       kind = SUPER_CALL
       signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Any
-        symbol = <constructor>(): kotlin.Any
+        returnType = kotlin.collections.AbstractList<kotlin.String>
+        symbol = <constructor>(): kotlin.collections.AbstractList<E>
         valueParameters = []
         contextParameters = []
         callableId = null
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        E -> (kotlin.String)
+      }
       valueArgumentMapping = {}
     isInBestCandidates = true

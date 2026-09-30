@@ -1,6 +1,5 @@
 KtSuperTypeCallEntry(61,68): 'Base(1)'
-  KaSimpleSymbolResolutionError:
-    candidateSymbols = [
-      <constructor>(): kotlin.Any
+  KaSimpleSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(x: kotlin.Int): Base
     ]
-    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'constructor(): Any'.>
