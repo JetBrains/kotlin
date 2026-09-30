@@ -2,13 +2,13 @@
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
 
-abstract value class SelfAbstract(x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>SelfAbstract<!>)
+abstract value class SelfAbstract(x: SelfAbstract)
 
-sealed value class SelfSealed(x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>SelfSealed<!>)
+sealed value class SelfSealed(x: SelfSealed)
 
-abstract value class ViaFinal(x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Final<!>)
+abstract value class ViaFinal(x: Final)
 
-value class Final(val a: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>ViaFinal<!>, val i: Int)
+value class Final(val a: ViaFinal, val i: Int)
 
 value class Recursive(val r: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>Recursive<!>, val i: Int)
 
