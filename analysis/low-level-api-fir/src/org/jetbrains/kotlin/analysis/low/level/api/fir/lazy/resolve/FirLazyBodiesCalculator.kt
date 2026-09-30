@@ -55,14 +55,14 @@ import kotlin.contracts.contract
 
 @LLFirInternals
 object FirLazyBodiesCalculator {
-    fun calculateBodies(designation: FirDesignation) {
+    internal fun calculateBodies(designation: FirDesignation) {
         designation.target.transformSingle(
             FirTargetLazyBodiesCalculatorTransformer,
             designation.path.toPersistentList(),
         )
     }
 
-    fun calculateContracts(designation: FirDesignation) {
+    internal fun calculateContracts(designation: FirDesignation) {
         designation.target.transformSingle(
             FirTargetLazyContractsCalculatorTransformer,
             designation.path.toPersistentList(),
