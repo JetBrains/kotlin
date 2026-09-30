@@ -21,15 +21,16 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
+import java.nio.file.Paths
 
 class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
-    override val suiteName: String
-        get() = "projectStructure"
+    override val suiteName: Path
+        get() = Paths.get("projectStructure", "libraryModuleScope")
 
     @Test
     fun testLibraryModuleScopeUsesParentTraversalByDefault() {
-        val libraryJar = compileToJar(testDataPath(ROOT).resolve("library"))
-        val otherLibraryJar = compileToJar(testDataPath(ROOT).resolve("otherLibrary"))
+        val libraryJar = compileToJar(testDataPath("library"))
+        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"))
 
         lateinit var libraryModule: KaLibraryModule
 
@@ -61,8 +62,8 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
     @Test
     @OptIn(StandaloneWorkaroundApi::class)
     fun testLibraryModuleScopeRespectsProviderDefaultAndModuleOverride() {
-        val libraryJar = compileToJar(testDataPath(ROOT).resolve("library"))
-        val otherLibraryJar = compileToJar(testDataPath(ROOT).resolve("otherLibrary"))
+        val libraryJar = compileToJar(testDataPath("library"))
+        val otherLibraryJar = compileToJar(testDataPath("otherLibrary"))
 
         lateinit var inheritedModule: KaLibraryModule
         lateinit var parentTraversalModule: KaLibraryModule
@@ -153,7 +154,7 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
             add(getLocalVirtualFile(libraryJar.parent))
 
             // A source file from which the library was compiled.
-            add(getLocalVirtualFile(testDataPath(ROOT).resolve("library").resolve("library.kt")))
+            add(getLocalVirtualFile(testDataPath("library").resolve("library.kt")))
         }
 
         Assertions.assertTrue(containedFiles.any { !it.isDirectory }, "The library JAR should contain at least one file.")
@@ -190,9 +191,5 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
         for (file in files.nonContainedFiles) {
             Assertions.assertFalse(scope.contains(file), "The scope of `${module.libraryName}` should not contain `$file`.")
         }
-    }
-
-    private companion object {
-        const val ROOT = "libraryModuleScope"
     }
 }
