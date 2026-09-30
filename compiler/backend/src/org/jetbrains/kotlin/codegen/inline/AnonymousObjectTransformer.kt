@@ -50,12 +50,14 @@ class AnonymousObjectTransformer(
         val fieldsToTransform = ArrayList<FieldNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
+        var originalVersion = 0
         var debugFileName: String? = null
         var debugInfo: String? = null
         var debugMetadataAnnotation: AnnotationNode? = null
 
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
+                originalVersion = version
                 classBuilder.defineClass(
                     regeneratedClassVersion(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
                 )
@@ -219,7 +221,10 @@ class AnonymousObjectTransformer(
         }
 
         innerClassNodes.forEach { node ->
-            classBuilder.visitInnerClass(node.name, node.outerName, node.innerName, node.access)
+            classBuilder.visitInnerClass(
+                node.name, node.outerName, node.innerName,
+                regeneratedInnerClassAccess(node.access, originalVersion, state.config.classFileVersion),
+            )
         }
 
         if (header != null) {

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
@@ -719,3 +721,16 @@ fun resolveCatchStoreInstruction(insn: AbstractInsnNode): AbstractInsnNode? {
 // gets the current compilation's minor version.
 internal fun regeneratedClassVersion(originalVersion: Int, classFileVersion: Int): Int =
     (classFileVersion and 0xFFFF.inv()) or maxOf(originalVersion and 0xFFFF, classFileVersion and 0xFFFF)
+
+// Identity classes have `ACC_IDENTITY` (JEP 401) in the `InnerClasses` entries of a Valhalla-compatible class file, and reflection reads a
+// nested class's identity from them. A class file of an older version has no such flag, and the classes of its entries except interfaces
+// were identity classes when it was compiled.
+internal fun regeneratedInnerClassAccess(access: Int, originalVersion: Int, classFileVersion: Int): Int =
+    if (access and Opcodes.ACC_INTERFACE == 0 && !originalVersion.isValhallaCompatible() && classFileVersion.isValhallaCompatible())
+        access or Opcodes.ACC_SUPER
+    else access
+
+private fun Int.isValhallaCompatible(): Boolean {
+    val jvmTarget = JvmTarget.entries.find { it.majorVersion == this and 0xFFFF } ?: return false
+    return isJvmTargetValhallaCompatible(jvmTarget, isJvmPreviewEnabled = this ushr 16 == 0xFFFF)
+}
