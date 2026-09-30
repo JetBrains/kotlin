@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol.OUTPUT_TRUN
 import org.jetbrains.kotlin.test.report.TestReportChecks
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -212,7 +213,7 @@ class GroupedTestsResultProtocolTest {
 
         assertTrue(result.sawStructuredBlock)
         assertTrue(result.outcomes.isEmpty())
-        assertTrue(TestReportChecks.checkNonEmpty(result.toTestReport()) is TestReportChecks.Result.Failed)
+        assertNotNull(TestReportChecks.emptyReportReason(result.toTestReport()))
     }
 
     @Test

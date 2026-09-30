@@ -383,7 +383,7 @@ abstract class AbstractWasmGroupingStageBoxRunner(
             )
         }
 
-        val emptyReportReason = (TestReportChecks.checkNonEmpty(analysis.testReport) as? TestReportChecks.Result.Failed)?.reason
+        val emptyReportReason = TestReportChecks.emptyReportReason(analysis.testReport)
         for (input in testServices.groupingStageInputs) {
             val id = computeProxyLauncherClassName(input.testServices.testInfo)
             val failure = analysis.failures[id]

@@ -6,14 +6,6 @@
 package org.jetbrains.kotlin.test.report
 
 object TestReportChecks {
-    sealed interface Result {
-        data object Passed : Result
-
-        data class Failed(val reason: String) : Result {
-            override fun toString(): String = reason
-        }
-    }
-
     fun <ID> findMissingResults(expectedTestIds: Collection<ID>, testReport: TestReport<ID>): List<ID> {
         val reported = testReport.reportedIds
         return expectedTestIds.filter { it !in reported }
@@ -24,10 +16,7 @@ object TestReportChecks {
         return testReport.reportedIds.filter { it !in expected }
     }
 
-    fun <ID> checkNonEmpty(testReport: TestReport<ID>): Result =
-        if (testReport.isEmpty()) {
-            Result.Failed("No tests have been found. Test report is empty.")
-        } else {
-            Result.Passed
-        }
+    /** The reason the report cannot be trusted, or `null` when it carries at least one outcome. */
+    fun <ID> emptyReportReason(testReport: TestReport<ID>): String? =
+        "No tests have been found. Test report is empty.".takeIf { testReport.isEmpty() }
 }
