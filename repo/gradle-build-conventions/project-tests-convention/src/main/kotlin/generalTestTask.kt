@@ -4,6 +4,7 @@
  */
 
 import org.gradle.api.Project
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
@@ -47,10 +48,39 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
     @get:Internal
     val prefix = projectName.zip(taskName) { projectName, taskName -> "${projectName}Project_${taskName}_" }
 
-    override fun asArguments(): Iterable<String?> = listOfNotNull(
-        excludesFile.orNull?.let { "-Dteamcity.build.parallelTests.excludesFile=${excludesFile.get().path}" },
-        tempDir.orNull?.let { "-Djava.io.tmpdir=" + Files.createTempDirectory(File(it).toPath(), prefix.get()).toString() },
-    )
+    /**
+     * Directory for unified JVM GC logs (`-Xlog:gc*`) of the forked test JVMs.
+     * Intentionally not an output: the logs are diagnostics for OOM investigations and must not affect caching.
+     */
+    @get:Internal
+    abstract val gcLogDirectory: DirectoryProperty
+
+    /** Major version of the JDK that launches the tests; GC logging flags differ between JDK 8 and unified logging (9+). */
+    @get:Internal
+    abstract val javaMajorVersion: Property<Int>
+
+    override fun asArguments(): Iterable<String?> = buildList {
+        excludesFile.orNull?.let { add("-Dteamcity.build.parallelTests.excludesFile=${it.path}") }
+        tempDir.orNull?.let { add("-Djava.io.tmpdir=" + Files.createTempDirectory(File(it).toPath(), prefix.get()).toString()) }
+        gcLogDirectory.orNull?.let { dir ->
+            // The JVM refuses to start if the log file cannot be created, so the directory has to exist up front.
+            val logDir = dir.asFile.apply { mkdirs() }
+            // `%p` is expanded to the PID by the JVM, so every forked test JVM writes its own file.
+            // Rotation keeps the last 100 MB per JVM, which covers the run-up to an OOM.
+            val logFile = logDir.resolve("gc-%p.log")
+            if (javaMajorVersion.get() >= 9) {
+                add("-Xlog:gc*:file=$logFile:time,uptime,level,tags:filecount=5,filesize=20m")
+            } else {
+                // JDK 8 has no unified logging (`-Xlog` is rejected as an unrecognized option).
+                add("-Xloggc:$logFile")
+                add("-XX:+PrintGCDetails")
+                add("-XX:+PrintGCDateStamps")
+                add("-XX:+UseGCLogFileRotation")
+                add("-XX:NumberOfGCLogFiles=5")
+                add("-XX:GCLogFileSize=20M")
+            }
+        }
+    }
 }
 
 val testMaxHeapSizeTiny get() = 256.MiB
@@ -131,7 +161,7 @@ internal fun Project.createGeneralTestTask(
             "-XX:+UseCodeCacheFlushing",
             "-XX:ReservedCodeCacheSize=${reservedCodeCacheSize.toJvmArg()}",
             "-XX:MaxMetaspaceSize=${maxMetaspaceSize.toJvmArg()}",
-            "-Djna.nosys=true"
+            "-Djna.nosys=true",
         )
 
         when (effectiveGC.orNull) {
@@ -166,6 +196,10 @@ internal fun Project.createGeneralTestTask(
         val testArgumentProvider = objects.newInstance<GeneralTestArgumentProvider>().also {
             it.projectName.set(project.name)
             it.taskName.set(name)
+            it.gcLogDirectory.set(project.layout.buildDirectory.dir("test-gc-logs/$name"))
+            // Read from the task's final launcher, not the `javaLauncher` parameter:
+            // some modules reassign `Test.javaLauncher` in their own configuration (e.g. fir2ir to JDK 8).
+            it.javaMajorVersion.set(this.javaLauncher.map { launcher -> launcher.metadata.languageVersion.asInt() })
         }
         jvmArgumentProviders.add(testArgumentProvider)
 
