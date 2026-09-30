@@ -213,7 +213,7 @@ fun main(args: Array<String>) {
                     pattern = KT_OR_KTS.canFreezeIDE,
                 )
                 model(
-                    "diagnostics/testsWithAnyBackend/tailrec",
+                    "diagnostics/testsWithAnyBackend",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                     pattern = KT_OR_KTS.canFreezeIDE,
                 )
