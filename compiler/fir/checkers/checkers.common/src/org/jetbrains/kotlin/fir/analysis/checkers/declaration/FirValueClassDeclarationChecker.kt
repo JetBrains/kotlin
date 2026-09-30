@@ -397,7 +397,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER,
                 )
 
-                !kind.isFullValueClass && parameterTypeRef.isInapplicableParameterType(context.session) -> {
+                parameterTypeRef.isInapplicableParameterType(context.session, kind.isFullValueClass, declaration.isFinal) -> {
                     reporter.reportOn(
                         parameterTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
@@ -515,8 +515,9 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         return isVararg || !primaryConstructorProperty.isVal || isOpen
     }
 
-    private fun FirTypeRef.isInapplicableParameterType(session: FirSession): Boolean =
-        coneType.fullyExpandedType(session).let { it.isUnit || it.isNothing }
+    // Unlike inline value classes, full value classes store their properties as fields, so `Unit` and `Nothing` are fine there.
+    private fun FirTypeRef.isInapplicableParameterType(session: FirSession, isFullValueClass: Boolean, isFinal: Boolean): Boolean =
+        coneType.fullyExpandedType(session).let { !isFullValueClass && (it.isUnit || it.isNothing) || isFinal && it is ConeDynamicType }
 
     private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
         if (this.typeArguments.firstOrNull() is ConeStarProjection || !isArrayOrPrimitiveArray())
