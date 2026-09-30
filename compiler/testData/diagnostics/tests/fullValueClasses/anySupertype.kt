@@ -2,13 +2,13 @@
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
 
-value class Final(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>Any<!>()
+value class Final(val x: Int) : Any()
 
-abstract value class Abstract : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>Any<!>()
+abstract value class Abstract : Any()
 
-sealed value class Sealed : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>Any<!>()
+sealed value class Sealed : Any()
 
-value object Object : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>Any<!>()
+value object Object : Any()
 
 @JvmInline
 value class Inline(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>Any<!>()

@@ -378,5 +378,6 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext)
     private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean =
-        isFullValueClass || isJavaValueClass(context.session) || classId.isRecordId() || isMappedToJavaValueClass(context.session)
+        classId == StandardClassIds.Any || isFullValueClass || isJavaValueClass(context.session) || classId.isRecordId() ||
+                isMappedToJavaValueClass(context.session)
 }

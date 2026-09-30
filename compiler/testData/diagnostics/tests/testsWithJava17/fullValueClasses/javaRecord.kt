@@ -31,7 +31,7 @@ class E(val x: Int, val y: Int)
 object F
 
 @JvmRecord
-value class <!JVM_RECORD_EXTENDS_CLASS!>G<!>(val x: Int, val y: Int): <!SUPERTYPE_NOT_INITIALIZED, VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>Any<!>
+value class <!JVM_RECORD_EXTENDS_CLASS!>G<!>(val x: Int, val y: Int): <!SUPERTYPE_NOT_INITIALIZED!>Any<!>
 
 @JvmRecord
 value class H(val x: Int, val y: Int): Comparable<H> {
