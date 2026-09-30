@@ -803,6 +803,40 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
         valueClass.declarations += function
     }
 
+    // The strict fields of a Valhalla value class are assigned before super(), where no branch may follow an assignment, since ASM doesn't
+    // track unset strict fields in stack map frames. Unboxing a boxed inline class value checks it for null, so the field values and the
+    // super constructor arguments are unboxed beforehand. An explicit cast keeps the unboxing in the temporary, which would otherwise be
+    // inlined back into its use.
+    private fun IrConstructor.unboxFieldValuesBeforeAssignments() {
+        val statements = (body as? IrBlockBody)?.statements ?: return
+        val superCallIndex = statements.indexOfFirst { it is IrDelegatingConstructorCall }
+        if (superCallIndex < 0) return
+        val superCall = statements[superCallIndex] as IrDelegatingConstructorCall
+        val scope = Scope(symbol)
+        fun IrExpression.unboxedInto(type: IrType, nameHint: String): IrVariable =
+            scope.createTemporaryVariable(
+                IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this), nameHint = nameHint,
+            )
+
+        val temporaries = mutableListOf<IrVariable>()
+        val fieldAssignments = statements.subList(0, superCallIndex).filterIsInstance<IrSetField>()
+        for (setField in fieldAssignments) {
+            val value = setField.value.takeIf { it.type.isInlineClassType() } ?: continue
+            val temporary = value.unboxedInto(setField.symbol.owner.type, "fieldValue")
+            temporaries += temporary
+            setField.value = IrGetValueImpl(value.startOffset, value.endOffset, temporary.symbol)
+        }
+        val parameters = superCall.symbol.owner.parameters
+        for (index in superCall.arguments.indices) {
+            val argument = superCall.arguments[index]?.takeIf { it.type.isInlineClassType() } ?: continue
+            val temporary = argument.unboxedInto(parameters[index].type.eraseTypeParameters(), "superArgument")
+            temporaries += temporary
+            superCall.arguments[index] = IrGetValueImpl(argument.startOffset, argument.endOffset, temporary.symbol)
+        }
+        val firstAssignmentIndex = fieldAssignments.firstOrNull()?.let(statements::indexOf) ?: superCallIndex
+        statements.addAll(firstAssignmentIndex, temporaries)
+    }
+
     override fun lower(irFile: IrFile) = withinScope(irFile) {
         irFile.transformChildrenVoid()
     }
@@ -827,6 +861,9 @@ internal class JvmInlineClassLowering(private val context: JvmBackendContext) : 
                         // the constructor is already exposed - no need to duplicate it.
                         // However, since it is exposed constructor, propagate @JvmExposeBoxed to it
                         function.annotations = function.annotations.withJvmExposeBoxedAnnotation(function, context)
+                        if (function.constructedClass.isKotlinValhallaValueClass(context.config.languageVersionSettings)) {
+                            function.unboxFieldValuesBeforeAssignments()
+                        }
                         return null
                     }
 
