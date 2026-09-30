@@ -55,11 +55,15 @@ internal object StubUtils {
             is KotlinFileStub -> parentStub.createTopLevelClassId(currentDeclaration)
             is KotlinScriptStub -> parentStub.createClassId(currentDeclaration)
             is KotlinPlaceHolderStub<*> if parentStub.elementType == KtNodeTypes.CLASS_BODY -> {
-                val containingClassStub = parentStub.parentStub as? KotlinClassifierStub
-                if (containingClassStub != null && currentDeclaration !is KtEnumEntry) {
-                    containingClassStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
-                } else {
-                    null
+                when (val containingStub = parentStub.parentStub) {
+                    // As in `ClassIdCalculator`, a `companion { }` block doesn't contribute to the class ID of its declarations
+                    is KotlinPlaceHolderStub<*> if containingStub.elementType == KtNodeTypes.COMPANION_BLOCK -> {
+                        containingStub.parentStub?.let { createClassId(it, currentDeclaration) }
+                    }
+                    is KotlinClassifierStub if currentDeclaration !is KtEnumEntry -> {
+                        containingStub.classId?.createNestedClassId(currentDeclaration.nameAsSafeName)
+                    }
+                    else -> null
                 }
             }
             else -> null
