@@ -85,6 +85,7 @@ static VTableElement nonRecursiveAnyMemberImpl(KRef obj, const KotlinToObjCMetho
 }
 
 +(void)initialize {
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
   if (self == [KotlinBase class]) {
     injectToRuntime(); // In case `initialize` is called before `load` (see e.g. https://youtrack.jetbrains.com/issue/KT-50982).
     Kotlin_ObjCExport_initialize();
