@@ -134,19 +134,7 @@ class JvmBinaryAnnotationDeserializer(
         typeTable: TypeTable
     ): List<FirAnnotation> {
         val signature = getCallableSignature(functionProto, nameResolver, typeTable)
-        val annotations = loadAnnotationsFromMetadataGuarded(
-            session,
-            functionProto.annotationList,
-            nameResolver,
-            LanguageFeature.AnnotationsInMetadata
-        ) ?: when {
-            noAnnotationsInBytecode(functionProto.flags) -> emptyList()
-            signature != null -> findJvmBinaryClassAndLoadMemberAnnotations(signature)
-            else -> emptyList()
-        }
-
-        val throwsAnnotation = signature?.let { getJvmBinaryClassThrowsAnnotation(it) } ?: return annotations
-        return annotations + throwsAnnotation
+        return loadAnnotationsWithThrows(functionProto.annotationList, nameResolver, functionProto.flags, signature)
     }
 
     override fun loadPropertyAnnotations(
@@ -254,17 +242,8 @@ class JvmBinaryAnnotationDeserializer(
         typeTable: TypeTable,
         getterFlags: Int
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataGuarded(
-            session,
-            propertyProto.getterAnnotationList,
-            nameResolver,
-            LanguageFeature.AnnotationsInMetadata,
-        )?.let { return it }
-
-        if (noAnnotationsInBytecode(getterFlags)) return emptyList()
-
-        val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_GETTER) ?: return emptyList()
-        return findJvmBinaryClassAndLoadMemberAnnotations(signature)
+        val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_GETTER)
+        return loadAnnotationsWithThrows(propertyProto.getterAnnotationList, nameResolver, getterFlags, signature)
     }
 
     override fun loadPropertySetterAnnotations(
@@ -274,17 +253,29 @@ class JvmBinaryAnnotationDeserializer(
         typeTable: TypeTable,
         setterFlags: Int
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataGuarded(
+        val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_SETTER)
+        return loadAnnotationsWithThrows(propertyProto.setterAnnotationList, nameResolver, setterFlags, signature)
+    }
+
+    private fun loadAnnotationsWithThrows(
+        annotationProtos: List<ProtoBuf.Annotation>,
+        nameResolver: NameResolver,
+        flags: Int,
+        signature: MemberSignature?,
+    ): List<FirAnnotation> {
+        val annotations = loadAnnotationsFromMetadataGuarded(
             session,
-            propertyProto.setterAnnotationList,
+            annotationProtos,
             nameResolver,
             LanguageFeature.AnnotationsInMetadata,
-        )?.let { return it }
+        ) ?: when {
+            noAnnotationsInBytecode(flags) -> emptyList()
+            signature != null -> findJvmBinaryClassAndLoadMemberAnnotations(signature)
+            else -> emptyList()
+        }
 
-        if (noAnnotationsInBytecode(setterFlags)) return emptyList()
-
-        val signature = getCallableSignature(propertyProto, nameResolver, typeTable, CallableKind.PROPERTY_SETTER) ?: return emptyList()
-        return findJvmBinaryClassAndLoadMemberAnnotations(signature)
+        val throwsAnnotation = signature?.let { getJvmBinaryClassThrowsAnnotation(it) } ?: return annotations
+        return annotations + throwsAnnotation
     }
 
     override fun loadValueParameterAnnotations(
