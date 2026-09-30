@@ -1,0 +1,5 @@
+/identitySensitiveOperationsMessages.kt:12:21: warning: Identity-sensitive operation on an instance of value type 'Full?' may cause unexpected behavior or errors.
+
+/identitySensitiveOperationsMessages.kt:13:17: warning: Identity-sensitive operation on an instance of value type 'Int?' may cause unexpected behavior or errors.
+
+/identitySensitiveOperationsMessages.kt:16:29: warning: Identity-sensitive operation on an instance of value type 'Full' may cause unexpected behavior or errors.
