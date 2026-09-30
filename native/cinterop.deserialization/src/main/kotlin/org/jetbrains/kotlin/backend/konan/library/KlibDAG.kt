@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.backend.common.ExternalKlibSignatureIndicesParameters
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
@@ -145,6 +146,7 @@ annotation class InternalKlibDAGApi
 class KlibDAGBuilder(parameters: Parameters) {
     class Parameters(
         val libraries: Collection<KotlinLibrary>,
+        val externalIndicesParameters: ExternalKlibSignatureIndicesParameters? = null,
         val isRoot: (KotlinLibrary) -> Boolean,
     ) {
         @InternalKlibDAGApi
@@ -376,7 +378,14 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
             else -> error("This library does not have IR and is not a C-interop library: $path")
         }
         @OptIn(InternalKlibDAGApi::class)
-        return if (parameters.useSignatureIndices) IdSignaturesExtractorFromKlibWithIndices(this, extractor) else extractor
+        return if (parameters.useSignatureIndices)
+            IdSignaturesExtractorFromKlibWithIndices(
+                library = this,
+                delegate = extractor,
+                externalIndicesParameters = parameters.externalIndicesParameters,
+            )
+        else
+            extractor
     }
 
     private enum class State {
