@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator.Companion.WASM_BASE_FILE_NAME
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
+import org.jetbrains.kotlin.wasm.test.tools.WASI_BOX_ENTRY_EXPORT
 import java.io.File
 
 data class WasmTestFailure(val name: String, val message: String?, val details: String?)
@@ -198,6 +199,22 @@ abstract class WasmBoxRunnerBase(
 
 class WasmVMException(nested: Throwable, val vmName: String) : Throwable("WasmVM $vmName failed", cause = nested)
 
+internal const val UNIT_TEST_STARTED_MARKER = "##teamcity[testStarted"
+
+/**
+ * Rejects a `// RUN_UNIT_TESTS` run whose output shows no `@Test` function starting. Such a test always has at least
+ * one: the `@Test` launcher that calls its `box()`. An empty report therefore means the VM never reached the
+ * unit-test runner, and the test would otherwise pass without a single `@Test` function having run.
+ */
+internal fun checkUnitTestsReported(output: String, executionName: String): AssertionError? {
+    if (output.contains(UNIT_TEST_STARTED_MARKER)) return null
+    return AssertionError(
+        "The unit-test runner reported no test in $executionName: its output has no `$UNIT_TEST_STARTED_MARKER` " +
+                "event, so none of the `@Test` functions of this `// RUN_UNIT_TESTS` test ran there, not even the " +
+                "launcher that calls `box()`. Output:\n$output"
+    )
+}
+
 internal fun WasmVM.runWithCaughtExceptions(
     debugMode: DebugMode,
     useNewExceptionHandling: Boolean,
@@ -206,6 +223,8 @@ internal fun WasmVM.runWithCaughtExceptions(
     jsFilePaths: List<String>,
     workingDirectory: File,
     outputCollector: MutableList<String>? = null,
+    wasiEntryExport: String = WASI_BOX_ENTRY_EXPORT,
+    expectUnitTestReport: Boolean = false,
 ): Throwable? {
     try {
         if (debugMode >= DebugMode.DEBUG) {
@@ -217,6 +236,7 @@ internal fun WasmVM.runWithCaughtExceptions(
             workingDirectory = workingDirectory,
             useNewExceptionHandling = useNewExceptionHandling,
             useStackSwitching = useStackSwitching,
+            wasiEntryExport = wasiEntryExport,
         )
         outputCollector?.add(str)
         if (debugMode >= DebugMode.DEBUG) {
@@ -224,6 +244,9 @@ internal fun WasmVM.runWithCaughtExceptions(
         }
         if (str.contains("##teamcity[testFailed")) {
             return AssertionError("Unit test failed in $vmName. Output:\n$str")
+        }
+        if (expectUnitTestReport) {
+            checkUnitTestsReported(str, vmName)?.let { return WasmVMException(it, vmName) }
         }
     } catch (e: Throwable) {
         return WasmVMException(e, vmName)
