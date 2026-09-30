@@ -53,9 +53,16 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             "script-templates", "<fully qualified class name[,]>", "Script definition template classes",
             required = false, allowMultipleOccurrences = true
         )
+        val SCRIPT_REFINEMENT_ENVIRONMENT_OPTION = CliOption(
+            "script-refinement-environment", "<key=value[,]>",
+            "Script compilation configuration refinement environment in key-value pairs (the value could be quoted and escaped)",
+            required = false, allowMultipleOccurrences = true
+        )
+
+        @Deprecated("Use SCRIPT_REFINEMENT_ENVIRONMENT_OPTION instead", ReplaceWith("SCRIPT_REFINEMENT_ENVIRONMENT_OPTION"))
         val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION = CliOption(
             "script-resolver-environment", "<key=value[,]>",
-            "Script resolver environment in key-value pairs (the value could be quoted and escaped)",
+            "Deprecated alias for 'script-refinement-environment'",
             required = false, allowMultipleOccurrences = true
         )
         val DISABLE_SCRIPT_COMPILATION_CACHE = CliOption(
@@ -96,7 +103,8 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION,
             DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION,
             LEGACY_SCRIPT_TEMPLATES_OPTION,
-            LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
+            SCRIPT_REFINEMENT_ENVIRONMENT_OPTION,
+            @Suppress("DEPRECATION") LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
             ENABLE_SCRIPT_EXPLANATION_OPTION,
             DISABLE_SCRIPT_COMPILATION_CACHE,
             REPL_SNIPPET_PRIOR_CLASS_OPTION,
@@ -146,8 +154,8 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
                 value.takeUnless { it.isBlank() }?.toBoolean() ?: false
             )
         }
-        LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION -> {
-            val currentEnv = configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION).toMutableMap()
+        SCRIPT_REFINEMENT_ENVIRONMENT_OPTION, @Suppress("DEPRECATION") LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION -> {
+            val currentEnv = configuration.getMap(ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT).toMutableMap()
             // parses key/value pairs in the form <key>=<value>, where
             //   <key> - is a single word (\w+ pattern)
             //   <value> - optionally quoted string with allowed escaped chars (only double-quote, comma and backslash chars are supported)
@@ -160,12 +168,12 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             for (envParam in splitMatches.map { it.value }.filter { it.isNotBlank() }) {
                 val match = envParseRe.matchEntire(envParam)
                 if (match == null || match.groupValues.size < 4 || match.groupValues[1].isBlank()) {
-                    throw CliOptionProcessingException("Unable to parse script-resolver-environment argument $envParam")
+                    throw CliOptionProcessingException("Unable to parse ${option.optionName} argument $envParam")
                 }
                 currentEnv[match.groupValues[1]] =
                     match.groupValues.drop(2).firstOrNull { it.isNotEmpty() }?.let { unescapeRe.replace(it, "\$1") }
             }
-            configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, currentEnv)
+            configuration.put(ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT, currentEnv)
         }
         DISABLE_SCRIPT_COMPILATION_CACHE -> {
             configuration.put(

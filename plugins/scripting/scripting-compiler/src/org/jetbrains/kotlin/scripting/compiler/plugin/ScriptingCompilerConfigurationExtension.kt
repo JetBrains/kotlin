@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.*
 import java.io.File
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.getRefinementEnvironment
 
 class ScriptingCompilerConfigurationExtension(
     val baseHostConfiguration: ScriptingHostConfiguration,
@@ -60,15 +61,16 @@ fun ScriptDefinitionProvider?.updateScriptingConfiguration(
         val projectRoot = project.run { basePath ?: baseDir?.canonicalPath }?.let(::File)
         if (projectRoot != null) {
             configuration.put(
-                ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
+                ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT,
                 "projectRoot",
                 projectRoot
             )
         }
+        val refinementEnvironment = { configuration.getMap(ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT) }
         val hostConfiguration = ScriptingHostConfiguration(baseHostConfiguration) {
-            getEnvironment {
-                configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
-            }
+            getRefinementEnvironment(refinementEnvironment)
+            // still consumed by the existing Gradle script definitions
+            @Suppress("DEPRECATION") getEnvironment(refinementEnvironment)
         }
 
         configureScriptDefinitions(configuration, hostConfiguration, classLoader)
