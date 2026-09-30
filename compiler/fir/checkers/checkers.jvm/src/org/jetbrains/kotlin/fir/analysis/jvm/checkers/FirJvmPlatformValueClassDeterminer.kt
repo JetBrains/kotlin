@@ -22,10 +22,13 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
  */
 @NoMutableState
 class FirJvmPlatformValueClassDeterminer(private val session: FirSession) : FirPlatformValueClassDeterminer() {
-    override fun isPlatformValueClass(symbol: FirRegularClassSymbol): Boolean {
-        val jvmTarget = session.jvmTargetProvider?.jvmTarget
-        val isJvmPreviewEnabled = session.languageVersionSettings.getFlag(JvmAnalysisFlags.enableJvmPreview)
-        val hasValueClasses = jvmTarget?.let { isJvmTargetValhallaCompatible(it, isJvmPreviewEnabled) } == true
-        return hasValueClasses && JvmClassName.internalNameByClassId(symbol.classId) in JDK_VALUE_CLASSES
-    }
+    override fun isPlatformValueClass(symbol: FirRegularClassSymbol): Boolean =
+        session.isJvmTargetValhallaCompatible && JvmClassName.internalNameByClassId(symbol.classId) in JDK_VALUE_CLASSES
 }
+
+// Whether the JVM target of this compilation has value classes (JEP 401).
+internal val FirSession.isJvmTargetValhallaCompatible: Boolean
+    get() {
+        val jvmTarget = jvmTargetProvider?.jvmTarget ?: return false
+        return isJvmTargetValhallaCompatible(jvmTarget, languageVersionSettings.getFlag(JvmAnalysisFlags.enableJvmPreview))
+    }

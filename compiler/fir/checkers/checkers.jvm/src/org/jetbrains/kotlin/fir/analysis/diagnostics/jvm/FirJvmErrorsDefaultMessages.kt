@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_D
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.EXTERNAL_DECLARATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FIELD_IN_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.FUNCTION_DELEGATE_MEMBER_NAME_CLASH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JVM_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE
@@ -266,6 +267,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS,
             "'@Synchronized' annotation cannot be used on classes annotated with '@WillBecomeValue'."
+        )
+        map.put(
+            IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT,
+            "Identity-sensitive operations are prohibited on instances of value type ''{0}'', which are value objects.",
+            RENDER_TYPE,
         )
         map.put(
             SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS,
