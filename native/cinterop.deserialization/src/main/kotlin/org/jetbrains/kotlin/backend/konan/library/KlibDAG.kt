@@ -142,18 +142,16 @@ annotation class InternalKlibDAGApi
  * of IR linker. This class may not be needed in the future if we decide to move the caches orchestration
  * from the compiler to the BTA.
  */
-class KlibDAGBuilder @InternalKlibDAGApi constructor(
-    libraries: Collection<KotlinLibrary>,
-    useSignatureIndices: Boolean,
-    isRoot: (KotlinLibrary) -> Boolean,
-) {
-    @OptIn(InternalKlibDAGApi::class)
-    constructor(
-        libraries: Collection<KotlinLibrary>,
-        isRoot: (KotlinLibrary) -> Boolean,
-    ) : this(libraries, useSignatureIndices = true, isRoot)
+class KlibDAGBuilder(parameters: Parameters) {
+    class Parameters(
+        val libraries: Collection<KotlinLibrary>,
+        val isRoot: (KotlinLibrary) -> Boolean,
+    ) {
+        @InternalKlibDAGApi
+        var useSignatureIndices = true
+    }
 
-    private val worker = KlibDAGBuilderImpl(libraries, useSignatureIndices, isRoot)
+    private val worker = KlibDAGBuilderImpl(parameters)
 
     /** Cache the result of the DAG computation to now compute it on each [build] invocation. */
     private val result by lazy { worker.build() }
@@ -161,30 +159,26 @@ class KlibDAGBuilder @InternalKlibDAGApi constructor(
     fun build(): KlibDAG = result
 }
 
-private class KlibDAGBuilderImpl(
-    libraries: Collection<KotlinLibrary>,
-    private val useSignatureIndices: Boolean,
-    isRoot: (KotlinLibrary) -> Boolean,
-) {
+private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Parameters) {
     private var stdlib: KotlinLibrary? = null
     private val rootsButStdlib: MutableList<KotlinLibrary> = mutableListOf()
     private val others: MutableList<KotlinLibrary> = mutableListOf()
 
     init {
         // Make sure there are no duplicates.
-        libraries.associateByCanonicalPathPreventingDuplicates()
+        parameters.libraries.associateByCanonicalPathPreventingDuplicates()
 
-        for (library in libraries) {
+        for (library in parameters.libraries) {
             // Put the library to the appropriate group.
             when {
                 library.isNativeStdlib -> stdlib = library
-                isRoot(library) -> rootsButStdlib += library
+                parameters.isRoot(library) -> rootsButStdlib += library
                 else -> others += library
             }
         }
     }
 
-    private val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = libraries.associateWith(::KlibDAGNodeImpl)
+    private val dagUnderConstruction: Map<KotlinLibrary, KlibDAGNodeImpl> = parameters.libraries.associateWith(::KlibDAGNodeImpl)
 
     // Optimization: Stdlib is a dependency for each library. We don't need to extract signatures from it.
     private val stdlibNode: KlibDAGNodeImpl? = stdlib?.let(dagUnderConstruction::get)
@@ -381,7 +375,8 @@ private class KlibDAGBuilderImpl(
             ir != null -> IdSignaturesExtractorFromRegularKlib(this)
             else -> error("This library does not have IR and is not a C-interop library: $path")
         }
-        return if (useSignatureIndices) IdSignaturesExtractorFromKlibWithIndices(this, extractor) else extractor
+        @OptIn(InternalKlibDAGApi::class)
+        return if (parameters.useSignatureIndices) IdSignaturesExtractorFromKlibWithIndices(this, extractor) else extractor
     }
 
     private enum class State {
