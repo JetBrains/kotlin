@@ -75,6 +75,8 @@ fun ScriptDefinitionProvider?.updateScriptingConfiguration(
 
         configureScriptDefinitions(configuration, hostConfiguration, classLoader)
 
+        addLegacyScriptRuntimeIfNeeded(configuration)
+
         if (this is CliScriptDefinitionProvider) {
             setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
             setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
