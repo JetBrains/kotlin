@@ -1,0 +1,2 @@
+error: the 'expect' declaration 'java.io.File.separatorChar' doesn't match the 'actual' declaration 'java.io.File.separatorChar' because actualization to Java field is prohibited.
+COMPILATION_ERROR
