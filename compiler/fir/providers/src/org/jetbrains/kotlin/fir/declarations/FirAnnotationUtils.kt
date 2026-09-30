@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.resultOrNull
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -125,6 +129,24 @@ fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId, session: Fir
 
 fun List<FirAnnotation>.getAnnotationByClassId(classId: ClassId, session: FirSession): FirAnnotation? {
     return getAnnotationsByClassId(classId, session).firstOrNull()
+}
+
+/**
+ * Given a [classId], returns the first annotation that matches it.
+ *
+ * This function is intended to be used specifically in a situation when compiler-required annotations are involved,
+ * and we don't want or aren't able to do a full annotation resolution.
+ * It performs resolve up to the compiler-required annotation stage,
+ * and then searches an annotation directly by [classId] without attempt to expand its type.
+ * Will not work when typealiases are involved.
+ *
+ * @return found annotation, or null if no annotation matches the [classId].
+ */
+@OptIn(UnresolvedExpressionTypeAccess::class)
+fun FirBasedSymbol<*>.getCompilerRequiredAnnotationByClassId(classId: ClassId): FirAnnotation? {
+    return resolvedCompilerAnnotationsWithClassIds.firstOrNull {
+        it.coneTypeOrNull?.classLikeLookupTagIfAny?.classId == classId
+    }
 }
 
 fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> =
