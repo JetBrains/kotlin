@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.parseOsType
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
@@ -31,7 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import javax.inject.Inject
 
@@ -108,15 +109,14 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
         get() {
             val userHome = providers.systemProperty("user.home")
 
-            val defaultPath = when {
-                HostManager.hostIsMingw -> providers
+            val defaultPath = when (parseOsType(providers.systemProperty("os.name").get())) {
+                OsType.WINDOWS -> providers
                     .environmentVariable("USERPROFILE")
                     .orElse(userHome)
                     .map { File(it).resolve("AppData/Local/ms-playwright") }
 
-                HostManager.hostIsMac -> userHome.map { File(it).resolve("Library/Caches/ms-playwright") }
-                HostManager.hostIsLinux -> userHome.map { File(it).resolve(".cache/ms-playwright") }
-                else -> throw IllegalStateException("Unsupported OS")
+                OsType.MAC -> userHome.map { File(it).resolve("Library/Caches/ms-playwright") }
+                OsType.LINUX, OsType.FREEBSD -> userHome.map { File(it).resolve(".cache/ms-playwright") }
             }
             return defaultPath
         }
