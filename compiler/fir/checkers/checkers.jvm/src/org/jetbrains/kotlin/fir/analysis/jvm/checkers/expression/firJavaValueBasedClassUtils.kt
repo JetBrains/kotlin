@@ -33,11 +33,10 @@ import org.jetbrains.kotlin.name.ClassId
 
 private val jdkInternalValueBasedAnnotationClassId = ClassId.fromString("jdk/internal/ValueBased")
 
+// Includes type parameters and captured types bounded by a value-based class, like value classes do.
 context(sessionHolder: SessionHolder)
-internal fun ConeKotlinType.isJavaValueBasedClass(): Boolean {
-    val classSymbol = toClassSymbol() ?: return false
-    return classSymbol.hasAnnotation(jdkInternalValueBasedAnnotationClassId, sessionHolder.session)
-}
+internal fun ConeKotlinType.isJavaValueBasedClass(): Boolean =
+    anyBound { it.toClassSymbol()?.hasAnnotation(jdkInternalValueBasedAnnotationClassId, sessionHolder.session) == true }
 
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(): Boolean {
