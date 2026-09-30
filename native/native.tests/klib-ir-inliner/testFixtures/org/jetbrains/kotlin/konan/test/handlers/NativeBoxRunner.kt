@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.computePackageName
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.native.executors.Executor
-import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.backend.handlers.NativeBinaryArtifactHandler
@@ -241,22 +240,16 @@ class PrettyResultsHandler(
         // The test report is only available when the output is parsed by the TC test output filter.
         // For other filters there is no reliable way to enumerate the executed testcases, so skip the check.
         val testReport = runResult.processOutput.stdOut.testReport ?: return
-        val executedTests = testReport.reportedIds
+        val executedTests = testReport.tests.reportedIds
         val phaseInputs = testServices.groupingStageInputs
 
         if (phaseInputs.size == 1) {
             // A single (isolated) testcase is not moved into a dedicated package, so it can't be matched by package name.
-            // Verify that exactly one outcome was reported, retaining duplicate reports for the same test name when available.
-            val reportedTestCount = runResult.processOutput.stdOut.reportedTestCount
-            if (reportedTestCount != null) {
-                check(reportedTestCount == 1) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
-                    "Expected exactly one executed testcase in the batch mode, but $reportedTestCount outcomes were " +
-                            "reported for $executedTests"
-                }
-            } else {
-                check(executedTests.size == 1) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
-                    "Expected exactly one executed testcase in the batch mode, but ${executedTests.size} were executed: $executedTests"
-                }
+            // Verify that exactly one outcome was reported, counting duplicate reports for the same test name.
+            val reportedOutcomeCount = testReport.reportedOutcomeCount
+            checkTestInfrastructure(reportedOutcomeCount == 1) {
+                "Expected exactly one executed testcase in the batch mode, but $reportedOutcomeCount outcomes were " +
+                        "reported for $executedTests"
             }
             return
         }
@@ -268,7 +261,7 @@ class PrettyResultsHandler(
         val notExecutedTestCases = phaseInputs.filter { input ->
             BatchingPackageInserter.computePackage(input.testInfo) !in executedPackages
         }
-        check(notExecutedTestCases.isEmpty()) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
+        checkTestInfrastructure(notExecutedTestCases.isEmpty()) {
             "Not all expected testcases were executed. " +
                     "Expected ${phaseInputs.size} testcase(s), but only ${phaseInputs.size - notExecutedTestCases.size} of them were actually executed. " +
                     "The following testcase(s) were not executed: ${notExecutedTestCases.map { it.testInfo }}"

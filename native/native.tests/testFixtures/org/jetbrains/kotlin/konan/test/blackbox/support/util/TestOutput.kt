@@ -17,8 +17,7 @@ interface TestOutputFilter {
 
     data class FilteredOutput(
         val filteredOutput: String,
-        val testReport: TestReport<TestName>?,
-        val reportedTestCount: Int? = null,
+        val testReport: TCTestReport?,
     )
 
     companion object {
@@ -26,6 +25,14 @@ interface TestOutputFilter {
             override fun filter(testOutput: String) = FilteredOutput(testOutput, null)
         }
     }
+}
+
+/** [tests] holds sets, so a name reported twice (e.g. after a process relaunch) collapses there; the count does not. */
+data class TCTestReport(
+    val tests: TestReport<TestName>,
+    val reportedOutcomeCount: Int,
+) {
+    override fun toString(): String = tests.toString()
 }
 
 /**
@@ -58,8 +65,10 @@ object TCTestOutputFilter : TestOutputFilter {
 
         return TestOutputFilter.FilteredOutput(
             filteredOutput = callback.nonTestOutput.toString(),
-            testReport = TestReport(callback.passedTests, callback.failedTests, callback.ignoredTests),
-            reportedTestCount = callback.reportedTestCount,
+            testReport = TCTestReport(
+                tests = TestReport(callback.passedTests, callback.failedTests, callback.ignoredTests),
+                reportedOutcomeCount = callback.reportedOutcomeCount,
+            ),
         )
     }
 }
@@ -80,7 +89,7 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
     val passedTests = mutableSetOf<TestName>()
     val failedTests = mutableSetOf<TestName>()
     val ignoredTests = mutableSetOf<TestName>()
-    var reportedTestCount = 0
+    var reportedOutcomeCount = 0
 
     val nonTestOutput = StringBuilder()
     val errors = mutableListOf<String>()
@@ -133,7 +142,7 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
                 is State.TestIgnored,
                 is State.TestFinished -> State.TestIgnored(state.testSuite, message.simpleTestName).also {
                     ignoredTests += it.testName
-                    reportedTestCount++
+                    reportedOutcomeCount++
                 }
                 else -> unexpectedMessage()
             }
@@ -148,7 +157,7 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
                     nonTestOutput.append(message.stacktrace)
                     State.TestFailed(s.testSuite, message.simpleTestName).also {
                         failedTests += it.testName
-                        reportedTestCount++
+                        reportedOutcomeCount++
                     }
                 }
                 else -> unexpectedMessage()
@@ -156,7 +165,7 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
             is TestFinished -> when (state) {
                 is State.TestStarted -> State.TestFinished(state.testSuite, message.simpleTestName).also {
                     passedTests += it.testName
-                    reportedTestCount++
+                    reportedOutcomeCount++
                 }
                 is State.TestFailed -> State.TestFinished(state.testSuite, message.simpleTestName)
                 else -> unexpectedMessage()
@@ -184,7 +193,7 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
         // The last test state is "TestStarted" this likely means that the test process terminated during test execution (SIGSEGV, etc).
         (state as? State.TestStarted)?.let {
             failedTests += it.testName
-            reportedTestCount++
+            reportedOutcomeCount++
         }
     }
 }

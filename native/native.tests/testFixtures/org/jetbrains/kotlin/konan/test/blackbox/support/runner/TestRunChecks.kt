@@ -139,9 +139,11 @@ sealed interface TestRunCheck {
     class TestFiltering(val testOutputFilter: TestOutputFilter) : TestRunCheck {
         override fun apply(testRun: TestRun, runResult: RunResult): Result {
             if (testOutputFilter != TestOutputFilter.NO_FILTERING && testOutputFilter != LLDBTestOutputFilter) {
-                val testReport = runResult.processOutput.stdOut.testReport
+                val tcTestReport = runResult.processOutput.stdOut.testReport
 
-                checkNotNull(testReport) { "TestRun has TestFiltering enabled, but test report is null" }
+                checkNotNull(tcTestReport) { "TestRun has TestFiltering enabled, but test report is null" }
+
+                val testReport = tcTestReport.tests
 
                 if (testReport.isEmpty())
                     return Result.Failed("No tests have been found. Test report is empty")
