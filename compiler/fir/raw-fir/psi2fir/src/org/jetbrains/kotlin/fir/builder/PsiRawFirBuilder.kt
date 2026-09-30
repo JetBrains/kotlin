@@ -1345,7 +1345,7 @@ open class PsiRawFirBuilder(
                     isActual = this@toFirConstructor?.hasActualModifier() == true || isImplicitlyActual
 
                     // a warning about an inner script class is reported on the class itself
-                    isInner = owner.parent.parent !is KtScript && owner.hasInnerModifier()
+                    isInner = !owner.isScriptMember && owner.hasInnerModifier()
                     isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                     isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
                 }
@@ -1849,7 +1849,7 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitClassOrObject(classOrObject: KtClassOrObject, data: FirElement?): FirElement {
-            val isLocalWithinParent = classOrObject.parent !is KtClassBody && classOrObject.isLocal
+            val isLocalWithinParent = !classOrObject.isClassBodyMember && classOrObject.isLocal
             val classIsExpect = classOrObject.hasExpectModifier() || context.containerIsExpect
             val sourceElement = classOrObject.toFirSourceElement()
             return this@PsiRawFirBuilder.context.withChildClassName(
@@ -1876,7 +1876,7 @@ open class PsiRawFirBuilder(
                     ).apply {
                         isExpect = classIsExpect
                         isActual = classOrObject.hasActualModifier()
-                        isInner = classOrObject.hasInnerModifier() && classOrObject.parent.parent !is KtScript
+                        isInner = classOrObject.hasInnerModifier() && !classOrObject.isScriptMember
                         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
                         isData = classOrObject.hasModifier(DATA_KEYWORD)
                         isInline = classOrObject.hasModifier(INLINE_KEYWORD)
@@ -1997,7 +1997,7 @@ open class PsiRawFirBuilder(
                     }
                 }
             }.also {
-                if (classOrObject.parent is KtClassBody) {
+                if (classOrObject.isClassBodyMember) {
                     it.initContainingClassForLocalAttr()
                 }
                 it.initContainingScriptOrReplAttr()
@@ -2119,7 +2119,7 @@ open class PsiRawFirBuilder(
                     }
                 }
             }.also {
-                if (typeAlias.parent is KtClassBody) {
+                if (typeAlias.isClassBodyMember) {
                     it.initContainingClassForLocalAttr()
                 }
                 if (isDirectlyInsideCompanionBlock) {
@@ -2500,7 +2500,8 @@ open class PsiRawFirBuilder(
         ): FirProperty {
             val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
             val propertyName = when {
-                (isLocal || isInsideScript) && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                // The stub-based name goes first as the name identifier forces AST loading for script properties
+                (isLocal || isInsideScript) && name == "_" && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                 else -> nameAsSafeName
             }
             val propertySymbol = if (isLocal) {
