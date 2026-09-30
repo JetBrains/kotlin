@@ -29,10 +29,8 @@ import org.jetbrains.kotlin.fir.types.ConeUnionType
 import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 
 context(sessionHolder: SessionHolder)
-internal fun ConeKotlinType.isJavaValueBasedClass(): Boolean {
-    val classSymbol = toClassSymbol() ?: return false
-    return classSymbol.hasAnnotation(JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID, sessionHolder.session)
-}
+internal fun ConeKotlinType.isJavaValueBasedClass(): Boolean =
+    anyBound { it.toClassSymbol()?.hasAnnotation(JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID, sessionHolder.session) == true }
 
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(): Boolean {
