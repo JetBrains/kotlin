@@ -10,6 +10,7 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.AbstractFileViewProvider
 import com.intellij.psi.impl.PsiManagerEx
+import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.TestWithDisposable
@@ -32,8 +33,10 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.registerA
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.analysis.test.framework.utils.singleOrZeroValue
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.test.NonGroupingStageTestConfiguration
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -223,6 +226,29 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
             action()
         } finally {
             Disposer.dispose(disposable)
+        }
+    }
+
+    /**
+     * Computes [KtClassOrObject.isLocal] for every class stub of the stub-based [file] without loading its AST.
+     * The result is supposed to be checked by [assertClassLocalityMatchesAst] once the AST is loaded.
+     */
+    protected fun collectStubBasedClassLocality(file: KtFile): Map<KtClassOrObject, Boolean> = withAstLoadingAssertion(file) {
+        buildMap {
+            fun visit(stub: StubElement<*>) {
+                (stub.psi as? KtClassOrObject)?.let { put(it, it.isLocal()) }
+                stub.childrenStubs.forEach(::visit)
+            }
+
+            visit(file.stub ?: error("Stub should be present for unloaded file"))
+        }
+    }
+
+    protected fun assertClassLocalityMatchesAst(stubBasedLocality: Map<KtClassOrObject, Boolean>, testServices: TestServices) {
+        for ([classOrObject, isLocal] in stubBasedLocality) {
+            testServices.assertions.assertEquals(KtPsiUtil.getEnclosingElementForLocalDeclaration(classOrObject) != null, isLocal) {
+                "Stub-based and AST-based locality differ for '${classOrObject.name}'"
+            }
         }
     }
 
