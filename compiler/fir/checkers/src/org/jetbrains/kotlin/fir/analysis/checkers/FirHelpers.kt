@@ -157,9 +157,11 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     // Generally, there is no need to disallow it for single-field value classes as well, so there is KT-86498 for that.
     // Below we forbid recursion for all other cases
     // Reminder: single-field value class is considered inline if it has @JvmInline annotation or if the FullValueClasses feature is disabled
-    val isSubjectForCheck = when (asRegularClass.valueClassRepresentation) {
+    val isSubjectForCheck = when (val representation = asRegularClass.valueClassRepresentation) {
         null -> false
         is InlineClassRepresentation -> true
+        // Abstract and sealed value classes have no fields.
+        is FullValueClassRepresentation if representation.underlyingPropertyNamesToTypes == null -> false
         is FullValueClassRepresentation if isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
         is FullValueClassRepresentation -> true
     }
