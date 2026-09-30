@@ -381,6 +381,50 @@ class ExportExtensionXcodeIntegrationTests {
     }
 
     @Test
+    fun `test xcode integration settings reach the swift export task`() {
+        val project = exportDslProject(withXcodeEnvironment = true) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    settings.put("SWIFT_EXPORT_CUSTOM_SETTING", "CUSTOM_VALUE")
+                }
+            }
+        }
+
+        val swiftExportTask = assertIs<SwiftExportTask>(project.tasks.findByName("iosSimulatorArm64SwiftExport"))
+        assertEquals(
+            mapOf("SWIFT_EXPORT_CUSTOM_SETTING" to "CUSTOM_VALUE"),
+            swiftExportTask.parameters.swiftExportSettings.get(),
+        )
+    }
+
+    @Test
+    fun `test xcode integration dependency overrides reach the swift export task`() {
+        val project = exportDslProject(
+            withXcodeEnvironment = true,
+            multiplatform = {
+                iosSimulatorArm64()
+                sourceSets.commonMain.dependencies {
+                    api("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0")
+                }
+            }
+        ) {
+            exportExtension.swift {
+                moduleName.set("Shared")
+                xcodeIntegration {
+                    configure("org.jetbrains.kotlinx:kotlinx-io-bytestring:0.7.0") {
+                        moduleName.set("OverriddenByteString")
+                    }
+                }
+            }
+        }
+
+        val swiftExportTask = assertIs<SwiftExportTask>(project.tasks.findByName("iosSimulatorArm64SwiftExport"))
+        val overriddenModuleNames = swiftExportTask.dependencyOptionsOverrides.get().values.map { it.moduleName }
+        assertEquals(listOf<String?>("OverriddenByteString"), overriddenModuleNames)
+    }
+
+    @Test
     fun `test the xcode integration can be activated after the module is configured`() {
         val project = exportDslProject {
             exportExtension.swift {
