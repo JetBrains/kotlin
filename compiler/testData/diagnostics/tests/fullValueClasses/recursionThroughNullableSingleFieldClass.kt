@@ -1,9 +1,9 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +FullValueClasses
 
-value class A(val a: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>B?<!>, val i: Int)
+value class A(val a: B?, val i: Int)
 
-value class B(val b: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>A<!>)
+value class B(val b: A)
 
 value class E(val e: F?)
 

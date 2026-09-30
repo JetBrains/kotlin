@@ -168,8 +168,13 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     if (!isSubjectForCheck) return null
 
     if (!visited.add(this)) return expectedRecursionType
+    // A nullable single-field value class may be represented by its underlying type made nullable, e.g. `B?` of `value class B(val a: A)`
+    // as `A?`, which is not recursive if `A` is a multi-field value class.
+    val isNullableSingleFieldClass = asRegularClass.valueClassRepresentation is FullValueClassRepresentation && isNullableType()
     val hasRecursionInParameters = primaryConstructor.valueParameterSymbols.any {
-        it.resolvedReturnType.getValueClassTypeRecursionType(visited, session) != null
+        val type = it.resolvedReturnType
+        val representedType = if (isNullableSingleFieldClass) type.withNullability(nullable = true, session.typeContext) else type
+        representedType.getValueClassTypeRecursionType(visited, session) != null
     }
     return (if (hasRecursionInParameters) expectedRecursionType else null).also { visited.remove(this) }
 }
