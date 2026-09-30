@@ -1,0 +1,18 @@
+FILE[kind=Script[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=AccessorOnScriptDestructuring, fqName=AccessorOnScriptDestructuring, isReplSnippet=false, name=AccessorOnScriptDestructuring]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      BINARY_EXPRESSION
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+        OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+      PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      BINARY_EXPRESSION
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+        OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
+        INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
+      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
