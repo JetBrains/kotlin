@@ -27,7 +27,7 @@ sourceSets {
 
 optInToK1Deprecation()
 
-testsJar {}
+testsJar()
 
 projectTests {
     testTask()

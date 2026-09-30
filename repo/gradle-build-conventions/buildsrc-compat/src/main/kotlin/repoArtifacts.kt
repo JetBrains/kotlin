@@ -35,7 +35,7 @@ import plugins.mainPublicationName
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
 
-fun Project.testsJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
+fun Project.testsJar(): TaskProvider<Jar> {
     val testsJarCfg = configurations.getOrCreate("tests-jar").extendsFrom(configurations["testApi"])
 
     return tasks.register<Jar>(MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME) {
@@ -44,7 +44,6 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
             from(testSourceSet.output)
         }
         archiveClassifier.set("tests")
-        body()
     }.also {
         project.addArtifact(testsJarCfg.name, it)
     }
