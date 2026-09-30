@@ -260,28 +260,28 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnno] get(): R|kotlin/Int|
 
     }
-    @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+    @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
             ^local Int(1)
         }
 
-        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/local|()
         ^ R|<local>/x|
     }
-     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+     [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
             ^local Int(1)
         }
 
-        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/local|()
         ^ R|<local>/x|
     }
-    ]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+    ]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = Int(2)
         ^ R|<local>/y|
     }
-     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+     [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = Int(2)
         ^ R|<local>/y|
     }
     ]) param: R|@R|one/TypeAnno|(i = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
@@ -312,28 +312,28 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnno] get(): R|kotlin/Int|
 
     }
-    @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+    @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
             ^local Int(1)
         }
 
-        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/local|()
         ^ R|<local>/x|
     }
-     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+     [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
             ^local Int(1)
         }
 
-        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/local|()
         ^ R|<local>/x|
     }
-    ]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+    ]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = Int(2)
         ^ R|<local>/y|
     }
-     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+     [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = Int(2)
         ^ R|<local>/y|
     }
     ]) param: R|@R|one/TypeAnno|(i = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
@@ -365,28 +365,28 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lambdaInsideAnnotationArgument.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAnno] get(): R|kotlin/Int|
 
     }
-    @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+    @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
             ^local Int(1)
         }
 
-        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/local|()
         ^ R|<local>/x|
     }
-     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+     [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
             ^local Int(1)
         }
 
-        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/local|()
         ^ R|<local>/x|
     }
-    ]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+    ]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = Int(2)
         ^ R|<local>/y|
     }
-     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+     [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(BODY_RESOLVE)] lval y: R|kotlin/Int| = Int(2)
         ^ R|<local>/y|
     }
     ]) param: R|@R|one/TypeAnno|(i = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
