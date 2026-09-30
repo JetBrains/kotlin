@@ -150,6 +150,10 @@ class AnonymousObjectTransformer(
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
         generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
+        val signatureTypes = fieldsToTransform.map { Type.getType(it.desc) } +
+                Type.getArgumentTypes(transformationInfo.newConstructorDescriptor) +
+                methodsToTransform.flatMap { Type.getArgumentTypes(it.desc).asList() + Type.getReturnType(it.desc) }
+        signatureTypes.filter { it.isRecompiledKotlinValueClass() }.mapTo(loadableDescriptors) { it.descriptor }
         if (loadableDescriptors.isNotEmpty()) {
             classBuilder.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
         }
@@ -424,7 +428,7 @@ class AnonymousObjectTransformer(
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
                 classBuilder.newField(null, access, info.newFieldName, desc, null, null)
-                if (info.desc.isLoadable) {
+                if (info.desc.isLoadable || info.type.isRecompiledKotlinValueClass()) {
                     loadableDescriptors.add(desc)
                 }
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)

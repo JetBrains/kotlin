@@ -32,5 +32,5 @@ fun box(): String {
     return "OK"
 }
 
-// 1 ATTRIBUTE LoadableDescriptors
-// 1 ATTRIBUTE LoadableDescriptors : Llib/V;
+// 3 ATTRIBUTE LoadableDescriptors
+// 3 ATTRIBUTE LoadableDescriptors : Llib/V;
