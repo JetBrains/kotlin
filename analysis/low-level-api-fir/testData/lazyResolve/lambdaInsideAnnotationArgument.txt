@@ -1,0 +1,399 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) param: @TypeAnno[Unresolved](LAZY_EXPRESSION) Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) param: @TypeAnno[Unresolved](LAZY_EXPRESSION) Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @Anno[Unresolved](LAZY_EXPRESSION) param: @TypeAnno[Unresolved](LAZY_EXPRESSION) Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] @Anno[Unresolved](LAZY_EXPRESSION) param: @TypeAnno[Unresolved](LAZY_EXPRESSION) Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] @Anno[Unresolved](LAZY_EXPRESSION) param: @TypeAnno[Unresolved](LAZY_EXPRESSION) Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @R|one/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] @R|one/Anno|[Types](LAZY_EXPRESSION) param: R|@R|one/TypeAnno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @R|one/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] @R|one/Anno|[Types](LAZY_EXPRESSION) param: R|@R|one/TypeAnno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @R|one/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|one/Anno|[Types](LAZY_EXPRESSION) param: R|@R|one/TypeAnno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @R|one/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] @R|one/Anno|[Types](LAZY_EXPRESSION) param: R|@R|one/TypeAnno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @R|one/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|one/Anno|[Types](LAZY_EXPRESSION) param: R|@R|one/TypeAnno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/TypeAnno.i] i: Int): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TypeAnno] get(): Int
+
+    }
+    @R|one/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo([ResolvedTo(CONSTANT_EVALUATION)] @R|one/Anno|[Types](LAZY_EXPRESSION) param: R|@R|one/TypeAnno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.i] i: R|kotlin/Int|): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TypeAnno.i] i: R|kotlin/Int|): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnno] get(): R|kotlin/Int|
+
+    }
+    @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+            ^local Int(1)
+        }
+
+        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        ^ R|<local>/x|
+    }
+     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+            ^local Int(1)
+        }
+
+        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        ^ R|<local>/x|
+    }
+    ]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+        ^ R|<local>/y|
+    }
+     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+        ^ R|<local>/y|
+    }
+    ]) param: R|@R|one/TypeAnno|(i = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+    ^ Int(3)
+}
+ [evaluated = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+    ^ Int(3)
+}
+])  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgument.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.i] i: R|kotlin/Int|): R|one/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/TypeAnno.i] i: R|kotlin/Int|): R|one/TypeAnno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TypeAnno] get(): R|kotlin/Int|
+
+    }
+    @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+            ^local Int(1)
+        }
+
+        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        ^ R|<local>/x|
+    }
+     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+            ^local Int(1)
+        }
+
+        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        ^ R|<local>/x|
+    }
+    ]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+        ^ R|<local>/y|
+    }
+     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+        ^ R|<local>/y|
+    }
+    ]) param: R|@R|one/TypeAnno|(i = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+    ^ Int(3)
+}
+ [evaluated = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+    ^ Int(3)
+}
+])  kotlin/Int|): R|kotlin/Unit| {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] lambdaInsideAnnotationArgument.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.i] i: R|kotlin/Int|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] annotation class TypeAnno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAnno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/TypeAnno.i] i: R|kotlin/Int|): R|one/TypeAnno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeAnno] get(): R|kotlin/Int|
+
+    }
+    @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+            ^local Int(1)
+        }
+
+        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        ^ R|<local>/x|
+    }
+     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+            ^local Int(1)
+        }
+
+        [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/local|()
+        ^ R|<local>/x|
+    }
+    ]) public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+        ^ R|<local>/y|
+    }
+     [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(2)
+        ^ R|<local>/y|
+    }
+    ]) param: R|@R|one/TypeAnno|(i = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+    ^ Int(3)
+}
+ [evaluated = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+    ^ Int(3)
+}
+])  kotlin/Int|): R|kotlin/Unit| {
+    }

@@ -1,0 +1,382 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(COMPANION_GENERATION)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @Anno[Unresolved](LAZY_EXPRESSION) [ResolvedTo(SUPER_TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @R|one/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(TYPES)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @R|one/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(STATUS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @R|one/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @R|one/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONTRACTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @R|one/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+CONSTANT_EVALUATION:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(TYPES)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.i] i: Int): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+        }
+
+        @R|one/Anno|[Types](LAZY_EXPRESSION) [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.i] i: R|kotlin/Int|): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+        }
+
+        @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+                ^local Int(1)
+            }
+
+            ^ R|<local>/local|()
+        }
+         [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+                ^local Int(1)
+            }
+
+            ^ R|<local>/local|()
+        }
+        ]) [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.i] i: R|kotlin/Int|): R|one/Anno| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+        }
+
+        @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+                ^local Int(1)
+            }
+
+            ^ R|<local>/local|()
+        }
+         [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+                ^local Int(1)
+            }
+
+            ^ R|<local>/local|()
+        }
+        ]) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
+        @Anno[Unresolved](LAZY_EXPRESSION) public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] lambdaInsideDestructuringAnnotationScript.kts
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-lambdaInsideDestructuringAnnotationScript.kts>
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideDestructuringAnnotationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.i] i: R|kotlin/Int|): R|one/Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+        }
+
+        @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+                ^local Int(1)
+            }
+
+            ^ R|<local>/local|()
+        }
+         [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+                ^local Int(1)
+            }
+
+            ^ R|<local>/local|()
+        }
+        ]) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
+        @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(2)
+        }
+         [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(2)
+        }
+        ]) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val second: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
