@@ -1110,7 +1110,6 @@ KClass: class kotlin.ranges.CharRange : CharProgression, ClosedRange, OpenEndRan
   declaredMembers:
     public open operator fun kotlin.ranges.CharRange.contains(kotlin.Char): kotlin.Boolean
     public open operator fun kotlin.ranges.CharRange.equals(kotlin.Any?): kotlin.Boolean
-    public open fun kotlin.ranges.CharRange.hashCode(): kotlin.Int
     public open fun kotlin.ranges.CharRange.isEmpty(): kotlin.Boolean
     public open fun kotlin.ranges.CharRange.toString(): kotlin.String
     public open val kotlin.ranges.CharRange.endExclusive: kotlin.Char
@@ -1212,7 +1211,6 @@ KClass: class kotlin.ranges.IntRange : IntProgression, ClosedRange, OpenEndRange
   declaredMembers:
     public open operator fun kotlin.ranges.IntRange.contains(kotlin.Int): kotlin.Boolean
     public open operator fun kotlin.ranges.IntRange.equals(kotlin.Any?): kotlin.Boolean
-    public open fun kotlin.ranges.IntRange.hashCode(): kotlin.Int
     public open fun kotlin.ranges.IntRange.isEmpty(): kotlin.Boolean
     public open fun kotlin.ranges.IntRange.toString(): kotlin.String
     public open val kotlin.ranges.IntRange.endExclusive: kotlin.Int
@@ -1300,7 +1298,6 @@ KClass: class kotlin.ranges.LongRange : LongProgression, ClosedRange, OpenEndRan
   declaredMembers:
     public open operator fun kotlin.ranges.LongRange.contains(kotlin.Long): kotlin.Boolean
     public open operator fun kotlin.ranges.LongRange.equals(kotlin.Any?): kotlin.Boolean
-    public open fun kotlin.ranges.LongRange.hashCode(): kotlin.Int
     public open fun kotlin.ranges.LongRange.isEmpty(): kotlin.Boolean
     public open fun kotlin.ranges.LongRange.toString(): kotlin.String
     public open val kotlin.ranges.LongRange.endExclusive: kotlin.Long

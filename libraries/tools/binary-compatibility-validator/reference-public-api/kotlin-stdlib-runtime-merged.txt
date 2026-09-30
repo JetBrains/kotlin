@@ -4903,7 +4903,6 @@ public final class kotlin/ranges/CharRange : kotlin/ranges/CharProgression, kotl
 	public synthetic fun getEndInclusive ()Ljava/lang/Comparable;
 	public fun getStart ()Ljava/lang/Character;
 	public synthetic fun getStart ()Ljava/lang/Comparable;
-	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public fun toString ()Ljava/lang/String;
 }
@@ -4964,7 +4963,6 @@ public final class kotlin/ranges/IntRange : kotlin/ranges/IntProgression, kotlin
 	public fun getEndInclusive ()Ljava/lang/Integer;
 	public synthetic fun getStart ()Ljava/lang/Comparable;
 	public fun getStart ()Ljava/lang/Integer;
-	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public fun toString ()Ljava/lang/String;
 }
@@ -5002,7 +5000,6 @@ public final class kotlin/ranges/LongRange : kotlin/ranges/LongProgression, kotl
 	public fun getEndInclusive ()Ljava/lang/Long;
 	public synthetic fun getStart ()Ljava/lang/Comparable;
 	public fun getStart ()Ljava/lang/Long;
-	public fun hashCode ()I
 	public fun isEmpty ()Z
 	public fun toString ()Ljava/lang/String;
 }

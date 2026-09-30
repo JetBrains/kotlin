@@ -2626,8 +2626,6 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
-    public open fun hashCode(): R|kotlin/Int|
-
     public open fun toString(): R|kotlin/String|
 
     public open val start: R|kotlin/Char|
@@ -2640,6 +2638,8 @@ public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges
         public get(): R|kotlin/Char|
 
     public open operator fun iterator(): R|kotlin/collections/CharIterator|
+
+    public open override fun hashCode(): R|kotlin/Int|
 
     public final val first: R|kotlin/Char|
         public get(): R|kotlin/Char|
@@ -2772,8 +2772,6 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
-    public open fun hashCode(): R|kotlin/Int|
-
     public open fun toString(): R|kotlin/String|
 
     public open val start: R|kotlin/Int|
@@ -2786,6 +2784,8 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
         public get(): R|kotlin/Int|
 
     public open operator fun iterator(): R|kotlin/collections/IntIterator|
+
+    public open override fun hashCode(): R|kotlin/Int|
 
     public final val first: R|kotlin/Int|
         public get(): R|kotlin/Int|
@@ -2899,8 +2899,6 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
 
     public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
-    public open fun hashCode(): R|kotlin/Int|
-
     public open fun toString(): R|kotlin/String|
 
     public open val start: R|kotlin/Long|
@@ -2913,6 +2911,8 @@ public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges
         public get(): R|kotlin/Long|
 
     public open operator fun iterator(): R|kotlin/collections/LongIterator|
+
+    public open override fun hashCode(): R|kotlin/Int|
 
     public final val first: R|kotlin/Long|
         public get(): R|kotlin/Long|

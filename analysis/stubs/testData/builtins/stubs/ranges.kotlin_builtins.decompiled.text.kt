@@ -62,8 +62,6 @@ public final class CharRange public constructor(start: kotlin.Char, endInclusive
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 
-    public open fun hashCode(): kotlin.Int { /* compiled code */ }
-
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
@@ -136,8 +134,6 @@ public final class IntRange public constructor(start: kotlin.Int, endInclusive: 
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
 
-    public open fun hashCode(): kotlin.Int { /* compiled code */ }
-
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
 
@@ -199,8 +195,6 @@ public final class LongRange public constructor(start: kotlin.Long, endInclusive
     public open fun isEmpty(): kotlin.Boolean { /* compiled code */ }
 
     public open operator fun equals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
-
-    public open fun hashCode(): kotlin.Int { /* compiled code */ }
 
     public open fun toString(): kotlin.String { /* compiled code */ }
 }
