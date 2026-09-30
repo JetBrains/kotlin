@@ -31,4 +31,5 @@ package kotlin
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @SinceKotlin("2.5")
+@ExperimentalValueClassesApi
 public annotation class WillBecomeValue
