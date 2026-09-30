@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.library.loader.DefaultKlibLibraryProvider
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult
 import org.jetbrains.kotlin.library.loader.KlibLoaderResult.ProblemCase
+import org.jetbrains.kotlin.library.loader.KlibLoadingCancellationChecker
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.junit.jupiter.api.AfterEach
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -781,6 +783,85 @@ abstract class AbstractKlibLoaderTest {
                 invalidFormatPaths = corruptedLibraryPaths
             )
     }
+
+    /**
+     * Test that [KlibLoader] regularly consults [KlibLoadingCancellationChecker], and that an exception thrown from
+     * [KlibLoadingCancellationChecker.checkCanceled] interrupts the loading process instead of being swallowed.
+     */
+    @Test
+    fun testCancellationOfLoading() {
+        val a = generateNewKlib(asFile = false, fileExtension = "")
+        val b = generateNewKlib(asFile = true, fileExtension = "klib")
+        val corrupted = corruptedLibraryPaths.first()
+        val nonExisting = nonExistingPaths.first()
+        val invalid = invalidPaths.first()
+
+        val allPaths = listOf(stdlib, a, corrupted, nonExisting, invalid, b)
+
+        // First, load the libraries with a checker that never requests the cancellation. The result must be
+        // exactly the same as without a checker at all. Along the way, count all the cancellation checkpoints.
+        //
+        // As of now, [KlibLoader] is expected to call `checkCanceled()`:
+        // - once per library provider: here, only the `DefaultKlibLibraryProvider` implicitly created by [KlibLoader],
+        // - once per deduplicated raw path: here, all the paths except for the repeated `a`,
+        // - once per attempt to read a library from the disk: here, `stdlib`, `a`, `corrupted` and `b`
+        //   (`nonExisting` and `invalid` are filtered out before any attempt to read them).
+        // The exact number of checkpoints is not asserted, though: It is enough that every library has its own.
+        val neverCancelingChecker = CountingCancellationChecker(cancelOnCall = null)
+
+        KlibLoader {
+            libraryPaths(allPaths)
+            cancellationChecker(neverCancelingChecker)
+        }.load()
+            .assertLoadedLibraries(stdlib, a, b)
+            .assertProblematicLibraries(
+                notFoundPaths = listOf(nonExisting, invalid),
+                invalidFormatPaths = listOf(corrupted),
+            )
+
+        val totalCheckpoints = neverCancelingChecker.calls
+        assertTrue(totalCheckpoints > allPaths.size) { "Too few cancellation checkpoints: $totalCheckpoints" }
+
+        // Now, request the cancellation at every single checkpoint, one by one.
+        for (cancelOnCall in 1..totalCheckpoints) {
+            val cancelingChecker = CountingCancellationChecker(cancelOnCall = cancelOnCall)
+
+            assertThrows<TestCancellationException> {
+                KlibLoader {
+                    libraryPaths(allPaths)
+                    cancellationChecker(cancelingChecker)
+                }.load()
+            }
+
+            // The exception must immediately escape `load()`, so there must be no checkpoints after the cancelled one.
+            assertEquals(cancelOnCall, cancelingChecker.calls)
+        }
+    }
+
+    /**
+     * Counts [checkCanceled] invocations.
+     *
+     * If [cancelOnCall] is not null, throws [TestCancellationException] on the [cancelOnCall]-th invocation and on
+     * every subsequent invocation: Once the cancellation has been requested, it is never revoked. This allows
+     * detecting the situation when the thrown exception is accidentally swallowed by [KlibLoader]: In such a case
+     * the number of recorded [calls] would exceed [cancelOnCall].
+     */
+    private class CountingCancellationChecker(private val cancelOnCall: Int?) : KlibLoadingCancellationChecker {
+        var calls: Int = 0
+            private set
+
+        override fun checkCanceled() {
+            calls++
+            if (cancelOnCall != null && calls >= cancelOnCall) throw TestCancellationException(calls)
+        }
+    }
+
+    /**
+     * Note: This is intentionally a [RuntimeException] and not an [Error], so that the test also makes sure that
+     * the cancellation is not swallowed by the `catch (_: Exception)` clauses inside [KlibLoader].
+     */
+    private class TestCancellationException(callNumber: Int) :
+        RuntimeException("Cancellation requested on checkCanceled() call #$callNumber")
 
     @Test
     fun testNewCompanionInitializationRead() {
