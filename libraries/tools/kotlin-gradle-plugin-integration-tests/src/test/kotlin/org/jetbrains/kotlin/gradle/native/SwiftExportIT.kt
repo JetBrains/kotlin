@@ -211,6 +211,13 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":copyDebugSPMIntermediates")
             }
 
+            build(
+                ":embedSwiftExportForXcode",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            ) {
+                assertTasksUpToDate(":copyDebugSPMIntermediates")
+            }
+
             source.appendText(
                 """
 
