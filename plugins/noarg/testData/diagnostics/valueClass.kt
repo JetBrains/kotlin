@@ -4,13 +4,13 @@
 annotation class NoArg
 
 @NoArg
-value class Full(val x: Int, val y: Int)
+value class <!NOARG_ON_VALUE_CLASS_ERROR!>Full<!>(val x: Int, val y: Int)
 
 @NoArg
 @JvmInline
-value class Inline(val x: Int)
+value class <!NOARG_ON_VALUE_CLASS_ERROR!>Inline<!>(val x: Int)
 
 @NoArg
-abstract value class Abstract
+abstract value class <!NOARG_ON_VALUE_CLASS_ERROR!>Abstract<!>
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration, value */
