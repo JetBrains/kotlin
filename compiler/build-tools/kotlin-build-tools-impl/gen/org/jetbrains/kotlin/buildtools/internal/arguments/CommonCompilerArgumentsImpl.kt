@@ -120,6 +120,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_ALL_WARNINGS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_OUTPUT_FILES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_REPORT_PERF
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_RETURN_VALUE_CHECKER
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_SEPARATE_KMP_COMPILATION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_SKIP_METADATA_VERSION_CHECK
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_SKIP_PRERELEASE_CHECK
@@ -297,6 +298,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_REPORT_ALL_WARNINGS in this) { arguments.reportAllWarnings = get(X_REPORT_ALL_WARNINGS)}
     if (X_REPORT_OUTPUT_FILES in this) { arguments.reportOutputFiles = get(X_REPORT_OUTPUT_FILES)}
     if (X_REPORT_PERF in this) { arguments.reportPerf = get(X_REPORT_PERF)}
+    try { if (X_RETURN_VALUE_CHECKER in this) { arguments.setUsingReflection("returnValueChecker", get(X_RETURN_VALUE_CHECKER).stringValue)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_RETURN_VALUE_CHECKER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_SEPARATE_KMP_COMPILATION in this) { arguments.separateKmpCompilationScheme = get(X_SEPARATE_KMP_COMPILATION)}
     if (X_SKIP_METADATA_VERSION_CHECK in this) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)}
     if (X_SKIP_PRERELEASE_CHECK in this) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK)}
@@ -416,6 +418,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles } catch (_: NoSuchMethodError) {  }
     try { this[X_REPORT_PERF] = arguments.reportPerf } catch (_: NoSuchMethodError) {  }
+    try { this[X_RETURN_VALUE_CHECKER] = arguments.getUsingReflection<String>("returnValueChecker").let { ReturnValueCheckerMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::returnValueChecker, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xreturn-value-checker value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_SEPARATE_KMP_COMPILATION] = arguments.separateKmpCompilationScheme } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck } catch (_: NoSuchMethodError) {  }
     try { this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck } catch (_: NoSuchMethodError) {  }
@@ -521,6 +524,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_PLUGIN in this) { arguments.pluginClasspaths = get(X_PLUGIN) ?: emptyArray()}
     if (X_RENDER_INTERNAL_DIAGNOSTIC_NAMES in this) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES)}
     try { if (X_REPL in this) { arguments.setUsingReflection("repl", get(X_REPL))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_REPL. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
+    try { if (X_RETURN_VALUE_CHECKER in this) { arguments.setUsingReflection("returnValueChecker", get(X_RETURN_VALUE_CHECKER).stringValue)} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_RETURN_VALUE_CHECKER. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     if (X_SEPARATE_KMP_COMPILATION in this) { arguments.separateKmpCompilationScheme = get(X_SEPARATE_KMP_COMPILATION)}
     if (X_SKIP_METADATA_VERSION_CHECK in this) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)}
     if (X_SKIP_PRERELEASE_CHECK in this) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK)}
@@ -823,6 +827,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_REPORT_PERF: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_REPORT_PERF")
+
+    public val X_RETURN_VALUE_CHECKER: CommonCompilerArgument<ReturnValueCheckerMode> =
+        CommonCompilerArgument("X_RETURN_VALUE_CHECKER")
 
     public val X_SEPARATE_KMP_COMPILATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_SEPARATE_KMP_COMPILATION")

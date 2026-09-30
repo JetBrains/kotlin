@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.*
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
+import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringListType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
@@ -236,6 +238,30 @@ val removedCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLe
             introducedVersion = introducedVersion,
             deprecatedVersion = introducedVersion, // According to https://github.com/JetBrains/kotlin/commit/79a2a82637064e19f81e1d837b5b7f6ff20988be
             removedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xreturn-value-checker"
+        val oldMessage =
+            "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion."
+        description = ReleaseDependent(
+            oldMessage +
+                    " 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
+            KotlinReleaseVersion.v2_2_0..KotlinReleaseVersion.v2_4_20 to oldMessage
+        )
+        val joinToString: List<ReturnValueCheckerMode>.() -> String =
+            { joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState } }
+        valueDescription = ReleaseDependent(
+            current = ReturnValueCheckerMode.entries.joinToString(),
+            KotlinReleaseVersion.v2_2_0..KotlinReleaseVersion.v2_4_20 to ReturnValueCheckerMode.entries.filterNot { it == ReturnValueCheckerMode.default }
+                .joinToString()
+        )
+        valueType = ReturnValueCheckerModeType()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+            removedVersion = KotlinReleaseVersion.v2_5_0
         )
     }
 }

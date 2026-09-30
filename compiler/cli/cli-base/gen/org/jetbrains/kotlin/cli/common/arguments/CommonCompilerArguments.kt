@@ -1123,7 +1123,6 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
 
     @Argument(
         value = "-return-value-checker",
-        deprecatedName = "-Xreturn-value-checker",
         valueDescription = "{check|full|disable|default}",
         description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
     )

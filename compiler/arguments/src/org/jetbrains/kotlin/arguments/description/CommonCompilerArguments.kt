@@ -650,25 +650,20 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
 
     compilerArgument {
         name = "return-value-checker"
-        deprecatedName = "Xreturn-value-checker"
         val oldMessage =
             "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion."
         description = ReleaseDependent(
             oldMessage +
-                    " 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
-            KotlinReleaseVersion.v2_2_0..KotlinReleaseVersion.v2_4_20 to oldMessage
-        )
+                    " 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.")
         val joinToString: List<ReturnValueCheckerMode>.() -> String =
             { joinToString(prefix = "{", separator = "|", postfix = "}") { it.modeState } }
         valueDescription = ReleaseDependent(
-            current = ReturnValueCheckerMode.entries.joinToString(),
-            KotlinReleaseVersion.v2_2_0..KotlinReleaseVersion.v2_4_20 to ReturnValueCheckerMode.entries.filterNot { it == ReturnValueCheckerMode.default }
-                .joinToString()
+            current = ReturnValueCheckerMode.entries.joinToString()
         )
         valueType = ReturnValueCheckerModeType()
 
         lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_2_0,
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
             stabilizedVersion = KotlinReleaseVersion.v2_5_0
         )
     }

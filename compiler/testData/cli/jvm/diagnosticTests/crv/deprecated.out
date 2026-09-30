@@ -1,5 +1,2 @@
-warning: argument -Xreturn-value-checker is deprecated. Please use -return-value-checker instead
-compiler/testData/cli/jvm/diagnosticTests/crv/deprecated.kt:4:5: warning: unused return value of 'basic'.
-    basic()
-    ^^^^^
+warning: the argument '-Xreturn-value-checker' was removed in Kotlin $ABI_VERSION$. It has no effect.
 OK

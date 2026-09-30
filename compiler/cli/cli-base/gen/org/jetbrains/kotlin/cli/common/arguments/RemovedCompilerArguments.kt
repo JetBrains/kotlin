@@ -133,6 +133,21 @@ class RemovedCompilerArguments {
         }
 
     @all:Deprecated(
+        message = "",
+        level = DeprecationLevel.ERROR,
+    )
+    @Argument(
+        value = "-Xreturn-value-checker",
+        valueDescription = "{check|full|disable|default}",
+        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
+        removedVersion = "2.5.0",
+    )
+    var returnValueChecker: String = "default"
+        set(value) {
+            field = value
+        }
+
+    @all:Deprecated(
         message = "This is temporary solution (see KT-63712) intended to be used only for stdlib build.",
         level = DeprecationLevel.ERROR,
     )

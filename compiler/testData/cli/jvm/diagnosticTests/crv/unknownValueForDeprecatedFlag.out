@@ -1,3 +1,5 @@
-warning: argument -Xreturn-value-checker is deprecated. Please use -return-value-checker instead
-error: unknown value for parameter -return-value-checker: 'chek'. Value should be one of {disable, check, full}
-COMPILATION_ERROR
+warning: the argument '-Xreturn-value-checker' was removed in Kotlin $ABI_VERSION$. It has no effect.
+compiler/testData/cli/jvm/diagnosticTests/crv/checker.kt:10:15: warning: unused return value of 'annotated'.
+    Annotated.annotated()
+              ^^^^^^^^^
+OK
