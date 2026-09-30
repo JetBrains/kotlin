@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
-import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -72,14 +72,14 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
             in operationsToCheckFirstTypeArgCallableIds -> when (expression) {
                 is FirFunctionCall -> {
                     val typeArgument = expression.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return
-                    checkType(typeArgument.typeRef.coneType.upperBoundIfFlexible(), typeArgument.source)
+                    checkType(typeArgument.typeRef.coneType.lowerBoundIfFlexible(), typeArgument.source)
                 }
                 is FirDelegatedConstructorCall -> {
                     val typeRef = expression.constructedTypeRef
                     val type = typeRef.coneType.typeArguments.firstOrNull()?.type ?: return
                     val userTypeRef = (typeRef as? FirResolvedTypeRef)?.delegatedTypeRef as? FirUserTypeRef
                     val typeArgumentSource = userTypeRef?.qualifier?.lastOrNull()?.typeArgumentList?.typeArguments?.firstOrNull()?.source
-                    checkType(type.upperBoundIfFlexible(), typeArgumentSource ?: typeRef.source)
+                    checkType(type.lowerBoundIfFlexible(), typeArgumentSource ?: typeRef.source)
                 }
                 else -> {}
             }
