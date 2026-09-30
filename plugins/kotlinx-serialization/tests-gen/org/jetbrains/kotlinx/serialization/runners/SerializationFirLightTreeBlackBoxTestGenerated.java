@@ -169,6 +169,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("fullValueClassWithSuperclassDefaults.kt")
+    public void testFullValueClassWithSuperclassDefaults() {
+      run("fullValueClassWithSuperclassDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
     public void testGeneratedClassifiersViaLibraryDependency() {
       run("generatedClassifiersViaLibraryDependency.kt");
