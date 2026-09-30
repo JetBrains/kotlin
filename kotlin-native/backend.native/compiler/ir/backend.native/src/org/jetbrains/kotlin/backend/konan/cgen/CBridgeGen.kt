@@ -648,8 +648,13 @@ private class CCallbackBuilder(
 
     private val cBridgeName = stubs.getUniqueCName("knbridge")
 
-    fun buildCBridgeCall(): String = cBridgeCallBuilder.build(cBridgeName)
-    fun buildCBridge(): String = context(state) {
+    fun buildCBridgeCall(): String {
+        // The C bridge is implemented in Kotlin, so the C code calling it needs a declaration.
+        state.addC(listOf("${buildCBridge()};"))
+        return cBridgeCallBuilder.build(cBridgeName)
+    }
+
+    private fun buildCBridge(): String = context(state) {
         bridgeBuilder.buildCSignature(cBridgeName)
     }
 
@@ -706,10 +711,10 @@ private fun CCallbackBuilder.buildValueReturn(function: IrSimpleFunction, valueR
     kotlinBridge.body = bridgeBuilder.kotlinIrBuilder.irBlockBody {
         kotlinBridgeStatements.forEach { +it }
     }
-    val cBridgeDeclaration = "${buildCBridge()};"
     kotlinBridge.annotations += listOf(
+            // The C bridge is declared by the C code calling it, see [CCallbackBuilder.buildCBridgeCall].
             buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner,
-                    stubs.language, cBridgeDeclaration)
+                    stubs.language, "")
     )
     stubs.addKotlin(kotlinBridge)
 }
