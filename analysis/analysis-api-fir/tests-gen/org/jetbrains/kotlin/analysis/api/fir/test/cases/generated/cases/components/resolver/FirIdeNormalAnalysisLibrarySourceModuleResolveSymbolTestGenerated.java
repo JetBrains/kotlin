@@ -1640,6 +1640,36 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveSymbolTestGenerated e
     run("whenSelectorSmartCast.kt");
   }
 
+  @Test
+  @TestMetadata("withLambdaReceiver_explicitThis.kt")
+  public void testWithLambdaReceiver_explicitThis() {
+    run("withLambdaReceiver_explicitThis.kt");
+  }
+
+  @Test
+  @TestMetadata("withLambdaReceiver_implicit.kt")
+  public void testWithLambdaReceiver_implicit() {
+    run("withLambdaReceiver_implicit.kt");
+  }
+
+  @Test
+  @TestMetadata("withLambdaReceiver_outerLabeledThis.kt")
+  public void testWithLambdaReceiver_outerLabeledThis() {
+    run("withLambdaReceiver_outerLabeledThis.kt");
+  }
+
+  @Test
+  @TestMetadata("withLambdaReceiver_outerLabeledThisExpression.kt")
+  public void testWithLambdaReceiver_outerLabeledThisExpression() {
+    run("withLambdaReceiver_outerLabeledThisExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("withLambdaReceiver_this.kt")
+  public void testWithLambdaReceiver_this() {
+    run("withLambdaReceiver_this.kt");
+  }
+
   @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/annotations")
   @TestDataPath("$PROJECT_ROOT")
