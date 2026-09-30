@@ -64,7 +64,6 @@ class CacheBuilder(
 
     // Note: It's not totally clear, but likely the libraries in `uniqueNameToLibrary` should be in the reverse topo-order.
     private val uniqueNameToLibrary by lazy { klibDag.librariesReverseTopoSorted.associateBy { it.uniqueName } }
-    private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
     private val cacheRootDirectories = mutableMapOf<KotlinLibrary, String>()
@@ -135,7 +134,7 @@ class CacheBuilder(
         val monolithicallyCachedDependencies = klibDag.getAllDependencies(library).filter {
             !it.isCachedPerFile && !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib
         }
-        return CachedLibraries.computeDependenciesFingerprint(monolithicallyCachedDependencies, uniqueNameToHash)
+        return CachedLibraries.computeDependenciesFingerprint(monolithicallyCachedDependencies)
     }
 
     private val currentCompilerFingerprint by lazy { config.distribution.compilerFingerprint }
@@ -407,7 +406,7 @@ class CacheBuilder(
         val libraryCacheDirectory = when {
             library.isImplicitlyLoadedFromKotlinNativeDistribution || library.isNativeStdlib -> config.systemCacheDirectory
             isExternal -> CachedLibraries.computeLibraryCacheDirectory(
-                    config.autoCacheDirectory, library, klibDag, uniqueNameToHash)
+                    config.autoCacheDirectory, library, klibDag)
             else -> config.incrementalCacheDirectory!!
         }
         val libraryCache = libraryCacheDirectory.resolve(
