@@ -1,0 +1,3 @@
+/jvmDeclarationMessages.kt:7:1: error: Only data classes and non-@JvmInline value classes are allowed to be marked as '@JvmRecord'.
+
+/jvmDeclarationMessages.kt:12:5: error: '@Synchronized' annotation has no effect on value classes.
