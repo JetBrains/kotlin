@@ -848,86 +848,95 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     fun convertObjectLiteral(node: Node): FirAnonymousObjectExpression {
         return context.withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
             var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
-            buildAnonymousObjectExpression {
-                source = node.toFirSourceElement()
+            val objectDeclaration = node.getChildNodesByTokenId(KtNodeTypes.OBJECT_DECLARATION_ID).first()
+            val objectSource = objectDeclaration.toFirSourceElement()
+            val anonymousObjectSymbol = FirAnonymousObjectSymbol(context.packageFqName)
+            // Type parameters are prohibited for objects, but they are kept for the FIR checker and the Analysis API
+            val firTypeParameters = objectDeclaration.getChildNodeByTokenId(KtNodeTypes.TYPE_PARAMETER_LIST_ID)
+                ?.let { convertTypeParameters(it, emptyList(), anonymousObjectSymbol) }
+                .orEmpty()
+            context.withCapturedTypeParameters(status = true, objectSource, firTypeParameters) {
+                buildAnonymousObjectExpression {
+                    source = node.toFirSourceElement()
 
-                val objectDeclaration = node.getChildNodesByTokenId(KtNodeTypes.OBJECT_DECLARATION_ID).first()
-                var modifiers: ModifierList<Node>? = null
-                var primaryConstructor: Node? = null
-                val superTypeRefs = mutableListOf<FirTypeRef>()
-                var delegatedSuperTypeRef: FirTypeRef? = null
-                var classBody: Node? = null
-                var delegatedConstructorSource: KtLightSourceElement? = null
-                var delegatedSuperCalls: List<DelegatedConstructorWrapper>? = null
-                var delegateFields: List<FirField>? = null
+                    var modifiers: ModifierList<Node>? = null
+                    var primaryConstructor: Node? = null
+                    val superTypeRefs = mutableListOf<FirTypeRef>()
+                    var delegatedSuperTypeRef: FirTypeRef? = null
+                    var classBody: Node? = null
+                    var delegatedConstructorSource: KtLightSourceElement? = null
+                    var delegatedSuperCalls: List<DelegatedConstructorWrapper>? = null
+                    var delegateFields: List<FirField>? = null
 
-                objectDeclaration.forEachChildren { child ->
-                    when (child.toTokenId()) {
-                        KtNodeTypes.MODIFIER_LIST_ID -> {
-                            modifiers = convertModifierList(child)
+                    objectDeclaration.forEachChildren { child ->
+                        when (child.toTokenId()) {
+                            KtNodeTypes.MODIFIER_LIST_ID -> {
+                                modifiers = convertModifierList(child)
+                            }
+                            KtNodeTypes.PRIMARY_CONSTRUCTOR_ID -> primaryConstructor = child
+                            KtNodeTypes.SUPER_TYPE_LIST_ID -> convertDelegationSpecifiers(child).let { specifiers ->
+                                delegatedSuperTypeRef = specifiers.superTypeCalls.lastOrNull()?.delegatedSuperTypeRef
+                                superTypeRefs += specifiers.superTypesRef
+                                delegatedConstructorSource = specifiers.superTypeCalls.lastOrNull()?.source
+                                delegateFields = specifiers.delegateFieldsMap.values.map { it.fir }
+                                delegatedFieldsMap = specifiers.delegateFieldsMap.takeIf { it.isNotEmpty() }
+                                delegatedSuperCalls = specifiers.superTypeCalls
+                            }
+                            KtNodeTypes.CLASS_BODY_ID -> classBody = child
                         }
-                        KtNodeTypes.PRIMARY_CONSTRUCTOR_ID -> primaryConstructor = child
-                        KtNodeTypes.SUPER_TYPE_LIST_ID -> convertDelegationSpecifiers(child).let { specifiers ->
-                            delegatedSuperTypeRef = specifiers.superTypeCalls.lastOrNull()?.delegatedSuperTypeRef
-                            superTypeRefs += specifiers.superTypesRef
-                            delegatedConstructorSource = specifiers.superTypeCalls.lastOrNull()?.source
-                            delegateFields = specifiers.delegateFieldsMap.values.map { it.fir }
-                            delegatedFieldsMap = specifiers.delegateFieldsMap.takeIf { it.isNotEmpty() }
-                            delegatedSuperCalls = specifiers.superTypeCalls
+                    }
+                    val companionBlockCollector = CompanionBlockCollector()
+                    anonymousObject = buildAnonymousObject {
+                        source = objectSource
+                        origin = FirDeclarationOrigin.Source
+                        moduleData = baseModuleData
+                        classKind = ClassKind.CLASS
+                        scopeProvider = baseScopeProvider
+                        symbol = anonymousObjectSymbol
+                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        typeParameters += firTypeParameters
+                        context.appendOuterTypeParameters(ignoreLastLevel = true, typeParameters)
+                        val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
+                        registerSelfType(delegatedSelfType)
+
+                        if (superTypeRefs.isEmpty()) {
+                            superTypeRefs += implicitAnyType
+                            delegatedSuperTypeRef = implicitAnyType
                         }
-                        KtNodeTypes.CLASS_BODY_ID -> classBody = child
+                        val delegatedSuperType = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource
+
+                        modifiers?.convertAnnotationsTo(annotations)
+                        this.superTypeRefs += superTypeRefs
+
+                        val classWrapper = ClassWrapper(
+                            modifiers ?: ModifierList(),
+                            ClassKind.OBJECT,
+                            this,
+                            hasSecondaryConstructor = classBody.getChildNodesByTokenId(KtNodeTypes.SECONDARY_CONSTRUCTOR_ID).isNotEmpty(),
+                            hasDefaultConstructor = false,
+                            delegatedSelfTypeRef = delegatedSelfType,
+                            delegatedSuperTypeRef = delegatedSuperType,
+                            delegatedSuperCalls = delegatedSuperCalls ?: emptyList(),
+                            companionBlockCollector,
+                        )
+                        //parse primary constructor
+                        convertPrimaryConstructor(
+                            primaryConstructor,
+                            delegatedSelfType.source,
+                            classWrapper,
+                            delegatedConstructorSource,
+                            containingClassIsExpectClass = false
+                        )?.let { this.declarations += it.firConstructor }
+                        delegateFields?.let { this.declarations += it }
+
+                        //parse declarations
+                        classBody?.let {
+                            this.declarations += convertClassBody(it, classWrapper)
+                        }
+                    }.apply {
+                        this.delegateFieldsMap = delegatedFieldsMap
+                        companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                     }
-                }
-                val companionBlockCollector = CompanionBlockCollector()
-                anonymousObject = buildAnonymousObject {
-                    source = objectDeclaration.toFirSourceElement()
-                    origin = FirDeclarationOrigin.Source
-                    moduleData = baseModuleData
-                    classKind = ClassKind.CLASS
-                    scopeProvider = baseScopeProvider
-                    symbol = FirAnonymousObjectSymbol(context.packageFqName)
-                    status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-                    context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
-                    val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
-                    registerSelfType(delegatedSelfType)
-
-                    if (superTypeRefs.isEmpty()) {
-                        superTypeRefs += implicitAnyType
-                        delegatedSuperTypeRef = implicitAnyType
-                    }
-                    val delegatedSuperType = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource
-
-                    modifiers?.convertAnnotationsTo(annotations)
-                    this.superTypeRefs += superTypeRefs
-
-                    val classWrapper = ClassWrapper(
-                        modifiers ?: ModifierList(),
-                        ClassKind.OBJECT,
-                        this,
-                        hasSecondaryConstructor = classBody.getChildNodesByTokenId(KtNodeTypes.SECONDARY_CONSTRUCTOR_ID).isNotEmpty(),
-                        hasDefaultConstructor = false,
-                        delegatedSelfTypeRef = delegatedSelfType,
-                        delegatedSuperTypeRef = delegatedSuperType,
-                        delegatedSuperCalls = delegatedSuperCalls ?: emptyList(),
-                        companionBlockCollector,
-                    )
-                    //parse primary constructor
-                    convertPrimaryConstructor(
-                        primaryConstructor,
-                        delegatedSelfType.source,
-                        classWrapper,
-                        delegatedConstructorSource,
-                        containingClassIsExpectClass = false
-                    )?.let { this.declarations += it.firConstructor }
-                    delegateFields?.let { this.declarations += it }
-
-                    //parse declarations
-                    classBody?.let {
-                        this.declarations += convertClassBody(it, classWrapper)
-                    }
-                }.apply {
-                    this.delegateFieldsMap = delegatedFieldsMap
-                    companionBlockCollector.toCompanionBlockInfoOrNull()?.let { companionBlocks = it }
                 }
             }
         }

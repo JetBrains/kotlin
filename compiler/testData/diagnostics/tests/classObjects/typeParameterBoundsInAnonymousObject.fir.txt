@@ -6,7 +6,7 @@ FILE: typeParameterBoundsInAnonymousObject.kt
 
     }
     public final val x: R|kotlin/Any| = object : R|kotlin/Any| {
-        private constructor(): R|<anonymous>| {
+        private constructor<T>(): R|<anonymous><T>| {
             super<R|kotlin/Any|>()
         }
 
@@ -17,8 +17,8 @@ FILE: typeParameterBoundsInAnonymousObject.kt
 
         public get(): R|kotlin/Any|
     public final fun <R> test(): R|kotlin/Unit| {
-        lval y: R|<anonymous><R>| = object : R|kotlin/Any| {
-            private constructor(): R|<anonymous><R>| {
+        lval y: R|<anonymous><T, K, R>| = object : R|kotlin/Any| {
+            private constructor<T : R|R|, K : R|kotlin/Comparable<K>|>(): R|<anonymous><T, K, R>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -30,8 +30,8 @@ FILE: typeParameterBoundsInAnonymousObject.kt
 
     }
     public final fun unresolvedBound(): R|kotlin/Unit| {
-        lval a: R|<anonymous>| = object : R|kotlin/Any| {
-            private constructor(): R|<anonymous>| {
+        lval a: R|<anonymous><T>| = object : R|kotlin/Any| {
+            private constructor<T : <ERROR TYPE REF: Symbol not found for Unresolved>>(): R|<anonymous><T>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -39,8 +39,8 @@ FILE: typeParameterBoundsInAnonymousObject.kt
 
     }
     public final fun ownTypeParameterBound(): R|kotlin/Unit| {
-        lval b: R|<anonymous>| = object : R|kotlin/Any| {
-            private constructor(): R|<anonymous>| {
+        lval b: R|<anonymous><T, K>| = object : R|kotlin/Any| {
+            private constructor<T, K : R|T|>(): R|<anonymous><T, K>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -48,8 +48,8 @@ FILE: typeParameterBoundsInAnonymousObject.kt
 
     }
     public final fun cyclicBound(): R|kotlin/Unit| {
-        lval c: R|<anonymous>| = object : R|kotlin/Any| {
-            private constructor(): R|<anonymous>| {
+        lval c: R|<anonymous><T>| = object : R|kotlin/Any| {
+            private constructor<T : <ERROR TYPE REF: Type parameter T has cyclic bounds>>(): R|<anonymous><T>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -57,8 +57,8 @@ FILE: typeParameterBoundsInAnonymousObject.kt
 
     }
     public final fun finalBound(): R|kotlin/Unit| {
-        lval d: R|<anonymous>| = object : R|kotlin/Any| {
-            private constructor(): R|<anonymous>| {
+        lval d: R|<anonymous><T>| = object : R|kotlin/Any| {
+            private constructor<T : R|kotlin/String|>(): R|<anonymous><T>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -66,8 +66,8 @@ FILE: typeParameterBoundsInAnonymousObject.kt
 
     }
     public final fun upperBoundViolation(): R|kotlin/Unit| {
-        lval e: R|<anonymous>| = object : R|kotlin/Any| {
-            private constructor(): R|<anonymous>| {
+        lval e: R|<anonymous><T>| = object : R|kotlin/Any| {
+            private constructor<T : R|Box<kotlin/String>|>(): R|<anonymous><T>| {
                 super<R|kotlin/Any|>()
             }
 

@@ -1,0 +1,3 @@
+val x: kotlin.Any
+
+fun <R> test()

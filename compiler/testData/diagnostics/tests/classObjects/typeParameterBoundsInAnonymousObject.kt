@@ -16,7 +16,7 @@ fun <R> test() {
 }
 
 fun unresolvedBound() {
-    val a = object<!TYPE_PARAMETERS_IN_OBJECT!><T : Unresolved><!> {}
+    val a = object<!TYPE_PARAMETERS_IN_OBJECT!><T : <!UNRESOLVED_REFERENCE!>Unresolved<!>><!> {}
 }
 
 fun ownTypeParameterBound() {
@@ -24,15 +24,15 @@ fun ownTypeParameterBound() {
 }
 
 fun cyclicBound() {
-    val c = object<!TYPE_PARAMETERS_IN_OBJECT!><T : T><!> {}
+    val c = object<!TYPE_PARAMETERS_IN_OBJECT!><<!CYCLIC_GENERIC_UPPER_BOUND!>T : T<!>><!> {}
 }
 
 fun finalBound() {
-    val d = object<!TYPE_PARAMETERS_IN_OBJECT!><T : String><!> {}
+    val d = object<!TYPE_PARAMETERS_IN_OBJECT!><T : <!FINAL_UPPER_BOUND!>String<!>><!> {}
 }
 
 fun upperBoundViolation() {
-    val e = object<!TYPE_PARAMETERS_IN_OBJECT!><T : Box<String>><!> {}
+    val e = object<!TYPE_PARAMETERS_IN_OBJECT!><T : <!FINAL_UPPER_BOUND!>Box<<!UPPER_BOUND_VIOLATED!>String<!>><!>><!> {}
 }
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, checkNotNullCall, classDeclaration, functionDeclaration, localProperty,
