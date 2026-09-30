@@ -1,0 +1,110 @@
+--- a/InitializationOrderTest.ir.txt
++++ b/InitializationOrderTest.ir.native.txt
+@@ -60,18 +60,46 @@
+         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           ARG actual: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+             TYPE_ARG T: kotlin.Int
+-            ARG <this>: PROPERTY_REFERENCE 'public final lateInitInt$volatile: kotlin.Int declared in <root>.AAA' field='FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private declared in <root>.AAA' getter='public final fun <get-lateInitInt$volatile> (): kotlin.Int declared in <root>.AAA' setter='public final fun <set-lateInitInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AAA' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-              ARG 1: GET_VAR '<this>: <root>.AAA declared in <root>.AAA' type=<root>.AAA origin=IMPLICIT_ARGUMENT
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final lateInitInt$volatile: kotlin.Int declared in <root>.AAA'
++              bound <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA' type=<root>.AAA origin=IMPLICIT_ARGUMENT
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-lateInitInt$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AAA
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-lateInitInt$volatile> (<this>: <root>.AAA): kotlin.Int declared in <root>.AAA'
++                    CALL 'public final fun <get-lateInitInt$volatile> (): kotlin.Int declared in <root>.AAA' type=kotlin.Int origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-lateInitInt$volatile>' type=<root>.AAA origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-lateInitInt$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AAA
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-lateInitInt$volatile> (<this>: <root>.AAA, p0: kotlin.Int): kotlin.Unit declared in <root>.AAA'
++                    CALL 'public final fun <set-lateInitInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AAA' type=kotlin.Unit origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<set-lateInitInt$volatile>' type=<root>.AAA origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.AAA.<set-lateInitInt$volatile>' type=kotlin.Int origin=null
+             ARG expectedValue: CONST Int type=kotlin.Int value=10
+             ARG newValue: CONST Int type=kotlin.Int value=100
+         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+           ARG expected: CONST Int type=kotlin.Int value=100
+           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'public final lateInitInt$volatile: kotlin.Int declared in <root>.AAA' field='FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private declared in <root>.AAA' getter='public final fun <get-lateInitInt$volatile> (): kotlin.Int declared in <root>.AAA' setter='public final fun <set-lateInitInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AAA' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.AAA declared in <root>.AAA' type=<root>.AAA origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='public final lateInitInt$volatile: kotlin.Int declared in <root>.AAA'
++                bound <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA' type=<root>.AAA origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-lateInitInt$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AAA
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-lateInitInt$volatile> (<this>: <root>.AAA): kotlin.Int declared in <root>.AAA'
++                      CALL 'public final fun <get-lateInitInt$volatile> (): kotlin.Int declared in <root>.AAA' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-lateInitInt$volatile>' type=<root>.AAA origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-lateInitInt$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AAA
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-lateInitInt$volatile> (<this>: <root>.AAA, p0: kotlin.Int): kotlin.Unit declared in <root>.AAA'
++                      CALL 'public final fun <set-lateInitInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AAA' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<set-lateInitInt$volatile>' type=<root>.AAA origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.AAA.<set-lateInitInt$volatile>' type=kotlin.Int origin=null
+         SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:intArr type:kotlin.concurrent.AtomicIntArray visibility:private [final] declared in <root>.AAA' type=kotlin.Unit origin=null
+           receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA' type=<root>.AAA origin=IMPLICIT_ARGUMENT
+           value: CONSTRUCTOR_CALL 'public constructor <init> (size: kotlin.Int) declared in kotlin.concurrent.AtomicIntArray' type=kotlin.concurrent.AtomicIntArray origin=null
+@@ -99,10 +127,24 @@
+           TYPE_ARG T: kotlin.Long
+           ARG expected: CONST Long type=kotlin.Long value=5
+           ARG actual: TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+               TYPE_ARG T: kotlin.Long
+-              ARG <this>: PROPERTY_REFERENCE 'private final _counter$volatile: kotlin.Long declared in <root>.AAA' field='FIELD ATOMICFU_GENERATED_FIELD name:_counter$volatile type:kotlin.Long visibility:private declared in <root>.AAA' getter='private final fun <get-_counter$volatile> (): kotlin.Long declared in <root>.AAA' setter='private final fun <set-_counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AAA' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.AAA declared in <root>.AAA' type=<root>.AAA origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final _counter$volatile: kotlin.Long declared in <root>.AAA'
++                bound <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA' type=<root>.AAA origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-_counter$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AAA
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-_counter$volatile> (<this>: <root>.AAA): kotlin.Long declared in <root>.AAA'
++                      CALL 'private final fun <get-_counter$volatile> (): kotlin.Long declared in <root>.AAA' type=kotlin.Long origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-_counter$volatile>' type=<root>.AAA origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-_counter$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AAA
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Long
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-_counter$volatile> (<this>: <root>.AAA, p0: kotlin.Long): kotlin.Unit declared in <root>.AAA'
++                      CALL 'private final fun <set-_counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AAA' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<set-_counter$volatile>' type=<root>.AAA origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.AAA.<set-_counter$volatile>' type=kotlin.Long origin=null
+         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Long
+           ARG expected: CONST Long type=kotlin.Long value=5
+@@ -151,10 +193,24 @@
+         BLOCK_BODY
+           RETURN type=kotlin.Nothing from='public final fun <get-counterValue> (): kotlin.Long declared in <root>.AAA'
+             TYPE_OP type=kotlin.Long origin=CAST typeOperand=kotlin.Long
+-              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++              CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Long origin=null
+                 TYPE_ARG T: kotlin.Long
+-                ARG <this>: PROPERTY_REFERENCE 'private final _counter$volatile: kotlin.Long declared in <root>.AAA' field='FIELD ATOMICFU_GENERATED_FIELD name:_counter$volatile type:kotlin.Long visibility:private declared in <root>.AAA' getter='private final fun <get-_counter$volatile> (): kotlin.Long declared in <root>.AAA' setter='private final fun <set-_counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AAA' type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null
+-                  ARG 1: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-counterValue>' type=<root>.AAA origin=IMPLICIT_ARGUMENT
++                ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Long> origin=null reflectionTarget='private final _counter$volatile: kotlin.Long declared in <root>.AAA'
++                  bound <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-counterValue>' type=<root>.AAA origin=IMPLICIT_ARGUMENT
++                  getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-_counter$volatile> visibility:local modality:FINAL returnType:kotlin.Long
++                    VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AAA
++                    BLOCK_BODY
++                      RETURN type=kotlin.Nothing from='local final fun <get-_counter$volatile> (<this>: <root>.AAA): kotlin.Long declared in <root>.AAA.<get-counterValue>'
++                        CALL 'private final fun <get-_counter$volatile> (): kotlin.Long declared in <root>.AAA' type=kotlin.Long origin=null
++                          ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-counterValue>.<get-_counter$volatile>' type=<root>.AAA origin=null
++                  setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-_counter$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                    VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AAA
++                    VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Long
++                    BLOCK_BODY
++                      RETURN type=kotlin.Nothing from='local final fun <set-_counter$volatile> (<this>: <root>.AAA, p0: kotlin.Long): kotlin.Unit declared in <root>.AAA.<get-counterValue>'
++                        CALL 'private final fun <set-_counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AAA' type=kotlin.Unit origin=null
++                          ARG <this>: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-counterValue>.<set-_counter$volatile>' type=<root>.AAA origin=null
++                          ARG value: GET_VAR 'p0: kotlin.Long declared in <root>.AAA.<get-counterValue>.<set-_counter$volatile>' type=kotlin.Long origin=null
+     PROPERTY name:delegateCounterValue visibility:public modality:FINAL [delegated,val]
+       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-delegateCounterValue> visibility:public modality:FINAL returnType:kotlin.Long
+         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AAA
