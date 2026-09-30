@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAnnotations
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
@@ -140,9 +141,10 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
         // The class must be annotated with a NoArg annotation
         if (!classSymbol.isAnnotatedWithNoArg()) return false
 
-        // Not for inner or local classes
+        // Not for inner, local or value classes
         if (classSymbol.isInner) return false
         if (classSymbol.isLocal) return false
+        if (classSymbol.isInlineOrValue) return false
 
         val declaredConstructors = classDeclaredMemberScope.getDeclaredConstructors()
         if (declaredConstructors.any { it.isZeroParameterConstructor() }) return false
