@@ -78,8 +78,14 @@ class SerializableIrGenerator(
             // doesn't allow using `this` before `super()`.
             val assignFieldsBeforeSuper = irClass.isFullValueClass && irClass.isFinalClass &&
                     (irClass.getSuperClassNotAny() != null || irClass.isKotlinValhallaValueClass(compilerContext.languageVersionSettings))
+            // `this` can't be read before super(), so defaults read the preceding properties from local variables.
+            val valuesBeforeSuper = mutableMapOf<Name, IrVariable>()
             val propertyByParamReplacer: (IrValueParameterSymbol) -> IrExpression? =
-                createPropertyByParamReplacer(irClass, serializableProperties, thiz)
+                if (assignFieldsBeforeSuper) {
+                    { parameter -> valuesBeforeSuper[parameter.owner.name]?.let(::irGet) }
+                } else {
+                    createPropertyByParamReplacer(irClass, serializableProperties, thiz)
+                }
 
             val initializerAdapter: (IrExpressionBody) -> IrExpression = createInitializerAdapter(irClass, propertyByParamReplacer)
 
@@ -96,19 +102,21 @@ class SerializableIrGenerator(
                 generateGoldenMaskCheck(seenVars, properties, getSerialDescriptorExprForConstructor())
             }
 
-            val propertyAssignments = (startPropOffset until serializableProperties.size).associate { index ->
-                serializableProperties[index].ir to generatePropertyAssignment(thiz, index, ctor.parameters, seenVars, initializerAdapter)
+            if (assignFieldsBeforeSuper) {
+                generateFieldAssignmentsBeforeSuper(thiz, ctor.parameters, seenVars, initializerAdapter, valuesBeforeSuper)
             }
 
-            if (assignFieldsBeforeSuper) {
-                propertyAssignments.values.forEach { +it }
+            val indicesAssignedAfterSuper = if (assignFieldsBeforeSuper) IntRange.EMPTY else startPropOffset until serializableProperties.size
+            val propertyAssignments = indicesAssignedAfterSuper.associate { index ->
+                serializableProperties[index].ir to generatePropertyAssignment(thiz, index, ctor.parameters, seenVars, initializerAdapter)
             }
 
             generateSuperConstructorCall(superClass, ctor.parameters, seenVarsOffset)
 
             statementsAfterSerializableProperty[null]?.forEach { +it }
-            for ([property, assignment] in propertyAssignments) {
-                if (!assignFieldsBeforeSuper) +assignment
+            for (index in startPropOffset until serializableProperties.size) {
+                val property = serializableProperties[index].ir
+                propertyAssignments[property]?.let { +it }
                 statementsAfterSerializableProperty[property]?.forEach { +it }
             }
 
@@ -168,7 +176,36 @@ class SerializableIrGenerator(
         )
 
     private fun defaultValueOf(prop: IrSerializableProperty, initializerAdapter: (IrExpressionBody) -> IrExpression): IrExpression =
-        requireNotNull(initializerAdapter(prop.ir.backingField?.initializer!!)) { "Optional value without an initializer" } // todo: filter abstract here
+        requireNotNull(initializerAdapter(prop.ir.defaultValueInitializer()!!)) { "Optional value without an initializer" } // todo: filter abstract here
+
+    private fun IrBlockBodyBuilder.generateFieldAssignmentsBeforeSuper(
+        thiz: IrValueParameter,
+        parameters: List<IrValueParameter>,
+        seenVars: List<IrValueParameter>,
+        initializerAdapter: (IrExpressionBody) -> IrExpression,
+        valuesBeforeSuper: MutableMap<Name, IrVariable>,
+    ) {
+        val serializableProperties = properties.serializableProperties
+        // No branch may follow an assignment of a strict field before super(): ASM doesn't track unset strict fields in frames.
+        val fieldAssignments = mutableListOf<IrExpression>()
+        for (property in irClass.properties.filter { it.isNonStaticWithField }) {
+            val index = serializableProperties.indexOfFirst { it.ir == property }
+            val prop = serializableProperties.getOrNull(index)
+            val value = when {
+                // Transient properties get their defaults.
+                prop == null -> initializerAdapter(property.defaultValueInitializer() ?: continue)
+                prop.optional -> irIfThenElse(
+                    property.backingField!!.type, propertyNotSeenTest(seenVars, index), defaultValueOf(prop, initializerAdapter),
+                    irGet(parameters[index + seenVars.size]),
+                )
+                else -> irGet(parameters[index + seenVars.size])
+            }
+            val variable = irTemporary(value, nameHint = property.name.asString())
+            valuesBeforeSuper[property.name] = variable
+            fieldAssignments += irSetField(irGet(thiz), property.backingField!!, irGet(variable))
+        }
+        fieldAssignments.forEach { +it }
+    }
 
     private fun IrBlockBodyBuilder.generatePropertyAssignment(
         thiz: IrValueParameter,
