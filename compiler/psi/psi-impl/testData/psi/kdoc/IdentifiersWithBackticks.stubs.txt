@@ -8,7 +8,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IdentifiersWithBackticksKt]]
   FUNCTION[fqName=top level, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=top level]
     VALUE_PARAMETER_LIST
     REFERENCE_EXPRESSION[referencedName=Unit]
-  OBJECT_DECLARATION[classId=/O, fqName=O, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=O, superNames=[]]
+  OBJECT_DECLARATION[classId=/O, fqName=O, isObjectLiteral=false, isTopLevel=true, name=O, superNames=[]]
     CLASS_BODY
       FUNCTION[fqName=O.with space, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=with space]
         VALUE_PARAMETER_LIST

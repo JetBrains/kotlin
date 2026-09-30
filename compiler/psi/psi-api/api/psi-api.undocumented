@@ -863,7 +863,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isExtension
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isTopLevel
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isLocal
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isTopLevel
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.superNames
 org.jetbrains.kotlin.psi.stubs.KotlinClassStub

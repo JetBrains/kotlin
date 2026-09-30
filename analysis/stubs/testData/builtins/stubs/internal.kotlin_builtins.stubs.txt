@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
       REFERENCE_EXPRESSION[referencedName=kotlin]
       REFERENCE_EXPRESSION[referencedName=internal]
   IMPORT_LIST
-  CLASS[classId=kotlin/internal/IntrinsicConstEvaluation, fqName=kotlin.internal.IntrinsicConstEvaluation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IntrinsicConstEvaluation, superNames=[Annotation]]
+  CLASS[classId=kotlin/internal/IntrinsicConstEvaluation, fqName=kotlin.internal.IntrinsicConstEvaluation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=IntrinsicConstEvaluation, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY] ]
@@ -92,7 +92,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/internal/PlatformDependent, fqName=kotlin.internal.PlatformDependent, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PlatformDependent, superNames=[Annotation]]
+  CLASS[classId=kotlin/internal/PlatformDependent, fqName=kotlin.internal.PlatformDependent, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PlatformDependent, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.FUNCTION] ]
@@ -151,7 +151,7 @@ FILE[kind=File[packageFqName=kotlin.internal]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/internal/PureReifiable, fqName=kotlin.internal.PureReifiable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PureReifiable, superNames=[Annotation]]
+  CLASS[classId=kotlin/internal/PureReifiable, fqName=kotlin.internal.PureReifiable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PureReifiable, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE_PARAMETER] ]

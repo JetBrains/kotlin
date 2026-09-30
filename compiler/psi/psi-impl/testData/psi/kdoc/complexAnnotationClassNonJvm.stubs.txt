@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=myPack]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=myPack]
   IMPORT_LIST
-  CLASS[classId=myPack/MyMetadata, fqName=myPack.MyMetadata, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyMetadata, superNames=[]]
+  CLASS[classId=myPack/MyMetadata, fqName=myPack.MyMetadata, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=MyMetadata, superNames=[]]
     MODIFIER_LIST[public annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         CONSTRUCTOR_CALLEE

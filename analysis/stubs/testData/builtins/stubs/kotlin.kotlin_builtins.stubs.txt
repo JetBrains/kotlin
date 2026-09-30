@@ -350,10 +350,10 @@ FILE[kind=File[packageFqName=kotlin]]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=String]
           isClassRef: true
-  CLASS[classId=kotlin/Annotation, fqName=kotlin.Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Annotation, superNames=[]]
+  CLASS[classId=kotlin/Annotation, fqName=kotlin.Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=Annotation, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
-  CLASS[classId=kotlin/Any, fqName=kotlin.Any, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Any, superNames=[]]
+  CLASS[classId=kotlin/Any, fqName=kotlin.Any, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Any, superNames=[]]
     MODIFIER_LIST[public open]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Any]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -394,7 +394,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/Array, fqName=kotlin.Array, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Array, superNames=[]]
+  CLASS[classId=kotlin/Array, fqName=kotlin.Array, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Array, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -484,7 +484,7 @@ FILE[kind=File[packageFqName=kotlin]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
                       isClassRef: true
-  CLASS[classId=kotlin/Boolean, fqName=kotlin.Boolean, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Boolean, superNames=[Comparable]]
+  CLASS[classId=kotlin/Boolean, fqName=kotlin.Boolean, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Boolean, superNames=[Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Boolean]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -506,7 +506,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=Boolean]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Boolean.Companion, fqName=kotlin.Boolean.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Boolean.Companion, fqName=kotlin.Boolean.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
             valueArguments: [ version -> "1.3" ]
@@ -709,7 +709,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
               isClassRef: true
-  CLASS[classId=kotlin/BooleanArray, fqName=kotlin.BooleanArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=BooleanArray, superNames=[]]
+  CLASS[classId=kotlin/BooleanArray, fqName=kotlin.BooleanArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=BooleanArray, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=BooleanArray]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -807,7 +807,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=BooleanIterator]
               isClassRef: true
-  CLASS[classId=kotlin/Byte, fqName=kotlin.Byte, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Byte, superNames=[Number, Comparable]]
+  CLASS[classId=kotlin/Byte, fqName=kotlin.Byte, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Byte, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Byte]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -836,7 +836,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=Byte]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Byte.Companion, fqName=kotlin.Byte.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Byte.Companion, fqName=kotlin.Byte.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Byte.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -2553,7 +2553,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/ByteArray, fqName=kotlin.ByteArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ByteArray, superNames=[]]
+  CLASS[classId=kotlin/ByteArray, fqName=kotlin.ByteArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ByteArray, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ByteArray]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -2651,7 +2651,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=ByteIterator]
               isClassRef: true
-  CLASS[classId=kotlin/Char, fqName=kotlin.Char, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Char, superNames=[Comparable]]
+  CLASS[classId=kotlin/Char, fqName=kotlin.Char, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Char, superNames=[Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Char]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -2673,7 +2673,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=Char]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Char.Companion, fqName=kotlin.Char.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Char.Companion, fqName=kotlin.Char.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Char.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -3528,7 +3528,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
               isClassRef: true
-  CLASS[classId=kotlin/CharArray, fqName=kotlin.CharArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=CharArray, superNames=[]]
+  CLASS[classId=kotlin/CharArray, fqName=kotlin.CharArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=CharArray, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=CharArray]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -3626,7 +3626,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=CharIterator]
               isClassRef: true
-  CLASS[classId=kotlin/CharSequence, fqName=kotlin.CharSequence, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=CharSequence, superNames=[]]
+  CLASS[classId=kotlin/CharSequence, fqName=kotlin.CharSequence, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=CharSequence, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=kotlin.CharSequence.length, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=length]
@@ -3676,7 +3676,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=CharSequence]
               isClassRef: true
-  CLASS[classId=kotlin/Comparable, fqName=kotlin.Comparable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Comparable, superNames=[]]
+  CLASS[classId=kotlin/Comparable, fqName=kotlin.Comparable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=Comparable, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=T]
@@ -3696,7 +3696,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
               isClassRef: true
-  CLASS[classId=kotlin/ContextFunctionTypeParams, fqName=kotlin.ContextFunctionTypeParams, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ContextFunctionTypeParams, superNames=[Annotation]]
+  CLASS[classId=kotlin/ContextFunctionTypeParams, fqName=kotlin.ContextFunctionTypeParams, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ContextFunctionTypeParams, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE] ]
@@ -3767,7 +3767,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/Deprecated, fqName=kotlin.Deprecated, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Deprecated, superNames=[Annotation]]
+  CLASS[classId=kotlin/Deprecated, fqName=kotlin.Deprecated, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Deprecated, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPEALIAS] ]
@@ -3890,7 +3890,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/DeprecatedSinceKotlin, fqName=kotlin.DeprecatedSinceKotlin, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DeprecatedSinceKotlin, superNames=[Annotation]]
+  CLASS[classId=kotlin/DeprecatedSinceKotlin, fqName=kotlin.DeprecatedSinceKotlin, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=DeprecatedSinceKotlin, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPEALIAS] ]
@@ -4029,7 +4029,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/DeprecationLevel, fqName=kotlin.DeprecationLevel, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DeprecationLevel, superNames=[Enum]]
+  CLASS[classId=kotlin/DeprecationLevel, fqName=kotlin.DeprecationLevel, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=DeprecationLevel, superNames=[Enum]]
     MODIFIER_LIST[public final enum]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DeprecationLevel]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -4051,10 +4051,10 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=DeprecationLevel]
                       isClassRef: true
     CLASS_BODY
-      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.WARNING, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WARNING, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.ERROR, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ERROR, superNames=[]]
-      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.HIDDEN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=HIDDEN, superNames=[]]
-  CLASS[classId=kotlin/Double, fqName=kotlin.Double, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Double, superNames=[Number, Comparable]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.WARNING, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=WARNING, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.ERROR, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=ERROR, superNames=[]]
+      ENUM_ENTRY[classId=null, fqName=kotlin.DeprecationLevel.HIDDEN, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=HIDDEN, superNames=[]]
+  CLASS[classId=kotlin/Double, fqName=kotlin.Double, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Double, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Double]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -4083,7 +4083,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=Double]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Double.Companion, fqName=kotlin.Double.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Double.Companion, fqName=kotlin.Double.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Double.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -5682,7 +5682,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/DoubleArray, fqName=kotlin.DoubleArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DoubleArray, superNames=[]]
+  CLASS[classId=kotlin/DoubleArray, fqName=kotlin.DoubleArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=DoubleArray, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=DoubleArray]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -5780,7 +5780,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=DoubleIterator]
               isClassRef: true
-  CLASS[classId=kotlin/DslMarker, fqName=kotlin.DslMarker, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=DslMarker, superNames=[Annotation]]
+  CLASS[classId=kotlin/DslMarker, fqName=kotlin.DslMarker, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=DslMarker, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.ANNOTATION_CLASS] ]
@@ -5865,7 +5865,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/Enum, fqName=kotlin.Enum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Comparable]]
+  CLASS[classId=kotlin/Enum, fqName=kotlin.Enum, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Enum, superNames=[Comparable]]
     MODIFIER_LIST[public abstract]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=E]
@@ -5913,7 +5913,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=E]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Enum.Companion, fqName=kotlin.Enum.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Enum.Companion, fqName=kotlin.Enum.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
       PROPERTY[fqName=kotlin.Enum.name, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
@@ -6001,7 +6001,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/EqualityBound, fqName=kotlin.EqualityBound, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=EqualityBound, superNames=[Annotation]]
+  CLASS[classId=kotlin/EqualityBound, fqName=kotlin.EqualityBound, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=EqualityBound, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.VALUE_PARAMETER] ]
@@ -6098,7 +6098,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/ExperimentalCollectionLiteralsApi, fqName=kotlin.ExperimentalCollectionLiteralsApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalCollectionLiteralsApi, superNames=[Annotation]]
+  CLASS[classId=kotlin/ExperimentalCollectionLiteralsApi, fqName=kotlin.ExperimentalCollectionLiteralsApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ExperimentalCollectionLiteralsApi, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=RequiresOptIn]
         valueArguments: [ level -> Level.ERROR ]
@@ -6273,7 +6273,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/ExperimentalStdlibApi, fqName=kotlin.ExperimentalStdlibApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalStdlibApi, superNames=[Annotation]]
+  CLASS[classId=kotlin/ExperimentalStdlibApi, fqName=kotlin.ExperimentalStdlibApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ExperimentalStdlibApi, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=RequiresOptIn]
         valueArguments: [ level -> Level.ERROR ]
@@ -6448,7 +6448,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/ExperimentalSubclassOptIn, fqName=kotlin.ExperimentalSubclassOptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExperimentalSubclassOptIn, superNames=[Annotation]]
+  CLASS[classId=kotlin/ExperimentalSubclassOptIn, fqName=kotlin.ExperimentalSubclassOptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ExperimentalSubclassOptIn, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS] ]
@@ -6531,7 +6531,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/ExtensionFunctionType, fqName=kotlin.ExtensionFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ExtensionFunctionType, superNames=[Annotation]]
+  CLASS[classId=kotlin/ExtensionFunctionType, fqName=kotlin.ExtensionFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ExtensionFunctionType, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE] ]
@@ -6579,7 +6579,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/Float, fqName=kotlin.Float, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Float, superNames=[Number, Comparable]]
+  CLASS[classId=kotlin/Float, fqName=kotlin.Float, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Float, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Float]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -6608,7 +6608,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=Float]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Float.Companion, fqName=kotlin.Float.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Float.Companion, fqName=kotlin.Float.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Float.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -8207,7 +8207,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/FloatArray, fqName=kotlin.FloatArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=FloatArray, superNames=[]]
+  CLASS[classId=kotlin/FloatArray, fqName=kotlin.FloatArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=FloatArray, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=FloatArray]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -8305,13 +8305,13 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=FloatIterator]
               isClassRef: true
-  CLASS[classId=kotlin/Function, fqName=kotlin.Function, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isLocal=false, isTopLevel=true, name=Function, superNames=[]]
+  CLASS[classId=kotlin/Function, fqName=kotlin.Function, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=true, isTopLevel=true, name=Function, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, name=R]
         MODIFIER_LIST[out]
     CLASS_BODY
-  CLASS[classId=kotlin/IgnorableReturnValue, fqName=kotlin.IgnorableReturnValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IgnorableReturnValue, superNames=[Annotation]]
+  CLASS[classId=kotlin/IgnorableReturnValue, fqName=kotlin.IgnorableReturnValue, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=IgnorableReturnValue, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.FUNCTION] ]
@@ -8374,7 +8374,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/Int, fqName=kotlin.Int, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Int, superNames=[Number, Comparable]]
+  CLASS[classId=kotlin/Int, fqName=kotlin.Int, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Int, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Int]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -8403,7 +8403,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=Int]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Int.Companion, fqName=kotlin.Int.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Int.Companion, fqName=kotlin.Int.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Int.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -10244,7 +10244,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/IntArray, fqName=kotlin.IntArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=IntArray, superNames=[]]
+  CLASS[classId=kotlin/IntArray, fqName=kotlin.IntArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=IntArray, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=IntArray]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -10342,7 +10342,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=IntIterator]
               isClassRef: true
-  CLASS[classId=kotlin/Long, fqName=kotlin.Long, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Long, superNames=[Number, Comparable]]
+  CLASS[classId=kotlin/Long, fqName=kotlin.Long, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Long, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Long]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -10371,7 +10371,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=Long]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Long.Companion, fqName=kotlin.Long.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Long.Companion, fqName=kotlin.Long.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Long.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -12270,7 +12270,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/LongArray, fqName=kotlin.LongArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=LongArray, superNames=[]]
+  CLASS[classId=kotlin/LongArray, fqName=kotlin.LongArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=LongArray, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=LongArray]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -12368,7 +12368,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=LongIterator]
               isClassRef: true
-  CLASS[classId=kotlin/MustUseReturnValues, fqName=kotlin.MustUseReturnValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=MustUseReturnValues, superNames=[Annotation]]
+  CLASS[classId=kotlin/MustUseReturnValues, fqName=kotlin.MustUseReturnValues, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=MustUseReturnValues, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.FILE, AnnotationTarget.CLASS] ]
@@ -12427,13 +12427,13 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/Nothing, fqName=kotlin.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Nothing, superNames=[]]
+  CLASS[classId=kotlin/Nothing, fqName=kotlin.Nothing, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Nothing, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nothing]
       MODIFIER_LIST[private MustUseReturnValue]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-  CLASS[classId=kotlin/Number, fqName=kotlin.Number, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Number, superNames=[]]
+  CLASS[classId=kotlin/Number, fqName=kotlin.Number, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Number, superNames=[]]
     MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Number]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -12566,7 +12566,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Byte]
               isClassRef: true
-  CLASS[classId=kotlin/OptIn, fqName=kotlin.OptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=OptIn, superNames=[Annotation]]
+  CLASS[classId=kotlin/OptIn, fqName=kotlin.OptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=OptIn, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS] ]
@@ -12729,7 +12729,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/ParameterName, fqName=kotlin.ParameterName, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ParameterName, superNames=[Annotation]]
+  CLASS[classId=kotlin/ParameterName, fqName=kotlin.ParameterName, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ParameterName, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE] ]
@@ -12800,7 +12800,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/PublishedApi, fqName=kotlin.PublishedApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=PublishedApi, superNames=[Annotation]]
+  CLASS[classId=kotlin/PublishedApi, fqName=kotlin.PublishedApi, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=PublishedApi, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY] ]
@@ -12906,7 +12906,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/ReplaceWith, fqName=kotlin.ReplaceWith, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ReplaceWith, superNames=[Annotation]]
+  CLASS[classId=kotlin/ReplaceWith, fqName=kotlin.ReplaceWith, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ReplaceWith, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [] ]
@@ -12985,7 +12985,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/RequiresOptIn, fqName=kotlin.RequiresOptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=RequiresOptIn, superNames=[Annotation]]
+  CLASS[classId=kotlin/RequiresOptIn, fqName=kotlin.RequiresOptIn, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=RequiresOptIn, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.ANNOTATION_CLASS] ]
@@ -13091,7 +13091,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-      CLASS[classId=kotlin/RequiresOptIn.Level, fqName=kotlin.RequiresOptIn.Level, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Level, superNames=[Enum]]
+      CLASS[classId=kotlin/RequiresOptIn.Level, fqName=kotlin.RequiresOptIn.Level, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Level, superNames=[Enum]]
         MODIFIER_LIST[public final enum]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Level]
           MODIFIER_LIST[private MustUseReturnValue]
@@ -13116,9 +13116,9 @@ FILE[kind=File[packageFqName=kotlin]]
                         REFERENCE_EXPRESSION[referencedName=Level]
                           isClassRef: true
         CLASS_BODY
-          ENUM_ENTRY[classId=null, fqName=kotlin.RequiresOptIn.Level.WARNING, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=WARNING, superNames=[]]
-          ENUM_ENTRY[classId=null, fqName=kotlin.RequiresOptIn.Level.ERROR, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ERROR, superNames=[]]
-  CLASS[classId=kotlin/Short, fqName=kotlin.Short, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Short, superNames=[Number, Comparable]]
+          ENUM_ENTRY[classId=null, fqName=kotlin.RequiresOptIn.Level.WARNING, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=WARNING, superNames=[]]
+          ENUM_ENTRY[classId=null, fqName=kotlin.RequiresOptIn.Level.ERROR, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=ERROR, superNames=[]]
+  CLASS[classId=kotlin/Short, fqName=kotlin.Short, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Short, superNames=[Number, Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Short]
       MODIFIER_LIST[private MustUseReturnValue]
@@ -13147,7 +13147,7 @@ FILE[kind=File[packageFqName=kotlin]]
                     REFERENCE_EXPRESSION[referencedName=Short]
                       isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Short.Companion, fqName=kotlin.Short.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Short.Companion, fqName=kotlin.Short.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Short.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -14864,7 +14864,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
               isClassRef: true
-  CLASS[classId=kotlin/ShortArray, fqName=kotlin.ShortArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ShortArray, superNames=[]]
+  CLASS[classId=kotlin/ShortArray, fqName=kotlin.ShortArray, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ShortArray, superNames=[]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ShortArray]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -14962,7 +14962,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=collections]
             REFERENCE_EXPRESSION[referencedName=ShortIterator]
               isClassRef: true
-  CLASS[classId=kotlin/SinceKotlin, fqName=kotlin.SinceKotlin, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SinceKotlin, superNames=[Annotation]]
+  CLASS[classId=kotlin/SinceKotlin, fqName=kotlin.SinceKotlin, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=SinceKotlin, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS] ]
@@ -15089,7 +15089,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/String, fqName=kotlin.String, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=String, superNames=[Comparable, CharSequence]]
+  CLASS[classId=kotlin/String, fqName=kotlin.String, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=String, superNames=[Comparable, CharSequence]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=String]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -15118,7 +15118,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=CharSequence]
               isClassRef: true
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/String.Companion, fqName=kotlin.String.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/String.Companion, fqName=kotlin.String.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
       PROPERTY[fqName=kotlin.String.length, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=length]
@@ -15293,7 +15293,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/SubclassOptInRequired, fqName=kotlin.SubclassOptInRequired, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SubclassOptInRequired, superNames=[Annotation]]
+  CLASS[classId=kotlin/SubclassOptInRequired, fqName=kotlin.SubclassOptInRequired, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=SubclassOptInRequired, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS] ]
@@ -15415,7 +15415,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/Suppress, fqName=kotlin.Suppress, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Suppress, superNames=[Annotation]]
+  CLASS[classId=kotlin/Suppress, fqName=kotlin.Suppress, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Suppress, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS] ]
@@ -15580,7 +15580,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/Throwable, fqName=kotlin.Throwable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Throwable, superNames=[]]
+  CLASS[classId=kotlin/Throwable, fqName=kotlin.Throwable, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Throwable, superNames=[]]
     MODIFIER_LIST[public open]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Throwable]
       MODIFIER_LIST[public MustUseReturnValue]
@@ -15645,7 +15645,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Throwable]
                 isClassRef: true
-  OBJECT_DECLARATION[classId=kotlin/Unit, fqName=kotlin.Unit, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Unit, superNames=[]]
+  OBJECT_DECLARATION[classId=kotlin/Unit, fqName=kotlin.Unit, isObjectLiteral=false, isTopLevel=true, name=Unit, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
       FUNCTION[fqName=kotlin.Unit.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
@@ -15657,7 +15657,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
               isClassRef: true
-  CLASS[classId=kotlin/UnsafeVariance, fqName=kotlin.UnsafeVariance, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=UnsafeVariance, superNames=[Annotation]]
+  CLASS[classId=kotlin/UnsafeVariance, fqName=kotlin.UnsafeVariance, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=UnsafeVariance, superNames=[Annotation]]
     MODIFIER_LIST[public final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.TYPE] ]
@@ -15727,7 +15727,7 @@ FILE[kind=File[packageFqName=kotlin]]
             REFERENCE_EXPRESSION[referencedName=Annotation]
               isClassRef: true
     CLASS_BODY
-  CLASS[classId=kotlin/WasExperimental, fqName=kotlin.WasExperimental, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WasExperimental, superNames=[Annotation]]
+  CLASS[classId=kotlin/WasExperimental, fqName=kotlin.WasExperimental, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WasExperimental, superNames=[Annotation]]
     MODIFIER_LIST[internal final annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
         valueArguments: [ allowedTargets -> [AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS] ]

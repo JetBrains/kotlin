@@ -2,7 +2,7 @@ Annotations.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Annotations, fqName=Annotations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
+    CLASS[classId=/Annotations, fqName=Annotations, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Annotations, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
           valueArguments: [ ]
@@ -52,7 +52,7 @@ Annotations.class:
                 REFERENCE_EXPRESSION[referencedName=Int]
                   isClassRef: true
       CLASS_BODY
-        OBJECT_DECLARATION[classId=/Annotations.Companion, fqName=Annotations.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        OBJECT_DECLARATION[classId=/Annotations.Companion, fqName=Annotations.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[private companion]
           CLASS_BODY
             PROPERTY[fqName=Annotations.Companion.field, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
@@ -433,7 +433,7 @@ Annotations.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
                 isClassRef: true
-        CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
+        CLASS[classId=/Annotations.Nested, fqName=Annotations.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested]
             MODIFIER_LIST[private]
@@ -446,7 +446,7 @@ Annotations.class:
                         isClassRef: true
             VALUE_PARAMETER_LIST
           CLASS_BODY
-        CLASS[classId=/Annotations.En, fqName=Annotations.En, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
+        CLASS[classId=/Annotations.En, fqName=Annotations.En, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=En, superNames=[Enum]]
           MODIFIER_LIST[public final enum]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=En]
             MODIFIER_LIST[private]
@@ -469,8 +469,8 @@ Annotations.class:
                           REFERENCE_EXPRESSION[referencedName=En]
                             isClassRef: true
           CLASS_BODY
-            ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry1, superNames=[]]
-            ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry2, superNames=[]]
+            ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Entry1, superNames=[]]
+            ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Entry2, superNames=[]]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                   valueArguments: [ ]
@@ -479,7 +479,7 @@ Annotations.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=a]
                           isClassRef: true
-            ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=Entry3, superNames=[]]
+            ENUM_ENTRY[classId=null, fqName=Annotations.En.Entry3, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Entry3, superNames=[]]
               MODIFIER_LIST[]
                 ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                   valueArguments: [ ]
@@ -495,7 +495,7 @@ Annotations.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=c]
                           isClassRef: true
-        CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
+        CLASS[classId=/Annotations.ClassWithConstructor, fqName=Annotations.ClassWithConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=ClassWithConstructor, superNames=[]]
           MODIFIER_LIST[public final]
           PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassWithConstructor]
             MODIFIER_LIST[public]
@@ -530,7 +530,7 @@ E.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/E, fqName=E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[Enum]]
+    CLASS[classId=/E, fqName=E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=E, superNames=[Enum]]
       MODIFIER_LIST[public final enum]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=E]
         MODIFIER_LIST[private]
@@ -550,15 +550,15 @@ E.class:
                       REFERENCE_EXPRESSION[referencedName=E]
                         isClassRef: true
       CLASS_BODY
-        ENUM_ENTRY[classId=null, fqName=E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
-        ENUM_ENTRY[classId=null, fqName=E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=E.E1, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E1, superNames=[]]
+        ENUM_ENTRY[classId=null, fqName=E.E2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E2, superNames=[]]
 
 
 a.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/a, fqName=a, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[Annotation]]
+    CLASS[classId=/a, fqName=a, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=a, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.FIELD] ]
@@ -664,7 +664,7 @@ b.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/b, fqName=b, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[Annotation]]
+    CLASS[classId=/b, fqName=b, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=b, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.TYPE] ]
@@ -774,7 +774,7 @@ c.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/c, fqName=c, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=c, superNames=[Annotation]]
+    CLASS[classId=/c, fqName=c, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=c, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.CLASS] ]
@@ -866,7 +866,7 @@ f.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/f, fqName=f, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=f, superNames=[Annotation]]
+    CLASS[classId=/f, fqName=f, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=f, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
           valueArguments: [ allowedTargets -> [AnnotationTarget.FIELD] ]

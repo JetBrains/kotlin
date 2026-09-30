@@ -23,7 +23,6 @@ class KotlinObjectStubImpl(
     override val classId: ClassId?,
     private val superNameRefs: Array<StringRef>,
     override val isTopLevel: Boolean,
-    override val isLocal: Boolean,
     override val isObjectLiteral: Boolean,
     override val kdocText: String?
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtNodeTypes.OBJECT_DECLARATION), KotlinObjectStub {
@@ -39,7 +38,6 @@ class KotlinObjectStubImpl(
         classId = classId,
         superNameRefs = superNameRefs,
         isTopLevel = isTopLevel,
-        isLocal = isLocal,
         isObjectLiteral = isObjectLiteral,
         kdocText = kdocText,
     )
@@ -51,7 +49,6 @@ class KotlinObjectStubImpl(
                 other.fqName == fqName &&
                 other.classId == classId &&
                 other.isTopLevel == isTopLevel &&
-                other.isLocal == isLocal &&
                 other.isObjectLiteral == isObjectLiteral &&
                 other.kdocText == kdocText &&
                 other.superNameRefs.contentEquals(superNameRefs)

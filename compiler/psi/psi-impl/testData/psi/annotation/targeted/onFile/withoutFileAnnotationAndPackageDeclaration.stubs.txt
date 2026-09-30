@@ -16,5 +16,5 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithoutFileAnnotationAndPack
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=String]
     NULL[kind=NULL, value=null]
-  CLASS[classId=/ann, fqName=ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=ann, superNames=[]]
+  CLASS[classId=/ann, fqName=ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=ann, superNames=[]]
     MODIFIER_LIST[annotation]

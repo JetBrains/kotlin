@@ -161,7 +161,6 @@ private class ClassClsStubBuilder(
                     classId = classId,
                     superTypeRefs,
                     isTopLevel = isTopLevel,
-                    isLocal = false,
                     isObjectLiteral = false,
                     kdocText = kdoc,
                 )
@@ -178,7 +177,6 @@ private class ClassClsStubBuilder(
                     superNameRefs = superTypeRefs,
                     isInterface = classKind == ProtoBuf.Class.Kind.INTERFACE,
                     isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),
-                    isLocal = false,
                     isTopLevel = isTopLevel,
                     kdocText = kdoc,
                     valueClassRepresentation = createValueClassRepresentation(),
@@ -323,7 +321,6 @@ private class ClassClsStubBuilder(
                 classBody,
                 qualifiedName = c.containerFqName.child(name).ref(),
                 name = name.ref(),
-                isLocal = false,
             )
 
             if (annotations.isNotEmpty()) {

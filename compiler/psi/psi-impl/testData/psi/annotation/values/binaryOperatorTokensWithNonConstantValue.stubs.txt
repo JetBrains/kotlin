@@ -2,7 +2,7 @@ Binary.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Binary, fqName=Binary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Binary, superNames=[]]
+    CLASS[classId=/Binary, fqName=Binary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Binary, superNames=[]]
       MODIFIER_LIST[annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Binary]
         VALUE_PARAMETER_LIST
@@ -16,7 +16,7 @@ WithElvis.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithElvis, fqName=WithElvis, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithElvis, superNames=[]]
+    CLASS[classId=/WithElvis, fqName=WithElvis, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithElvis, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -35,7 +35,7 @@ WithIdentityEquality.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithIdentityEquality, fqName=WithIdentityEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithIdentityEquality, superNames=[]]
+    CLASS[classId=/WithIdentityEquality, fqName=WithIdentityEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithIdentityEquality, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -54,7 +54,7 @@ WithInOperator.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithInOperator, fqName=WithInOperator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInOperator, superNames=[]]
+    CLASS[classId=/WithInOperator, fqName=WithInOperator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithInOperator, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -76,7 +76,7 @@ WithNotInOperator.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithNotInOperator, fqName=WithNotInOperator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNotInOperator, superNames=[]]
+    CLASS[classId=/WithNotInOperator, fqName=WithNotInOperator, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithNotInOperator, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE
@@ -98,7 +98,7 @@ WithRange.kt:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithRange, fqName=WithRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithRange, superNames=[]]
+    CLASS[classId=/WithRange, fqName=WithRange, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithRange, superNames=[]]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           CONSTRUCTOR_CALLEE

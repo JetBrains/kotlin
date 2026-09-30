@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.psiUtil.ClassIdCalculator
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isKtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 
@@ -132,7 +133,15 @@ abstract class KtClassOrObject :
     private var isLocal: Boolean? = null
 
     override fun isLocal(): Boolean {
-        greenStub?.isLocal?.let { return it }
+        val stub = greenStub
+        if (stub != null) {
+            return when {
+                stub.classId != null -> false
+                // Enum entries have no class ID, but they are as local as their enum class
+                this is KtEnumEntry -> containingClassOrObject?.isLocal() ?: false
+                else -> true
+            }
+        }
 
         isLocal?.let { return it }
 

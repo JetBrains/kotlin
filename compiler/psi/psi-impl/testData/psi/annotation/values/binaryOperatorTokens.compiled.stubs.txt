@@ -2,7 +2,7 @@ Binary.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/Binary, fqName=Binary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Binary, superNames=[Annotation]]
+    CLASS[classId=/Binary, fqName=Binary, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Binary, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Binary]
         MODIFIER_LIST[public]
@@ -42,7 +42,7 @@ WithComparison.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithComparison, fqName=WithComparison, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithComparison, superNames=[]]
+    CLASS[classId=/WithComparison, fqName=WithComparison, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithComparison, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           valueArguments: [ b -> true ]
@@ -66,7 +66,7 @@ WithEquality.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithEquality, fqName=WithEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithEquality, superNames=[]]
+    CLASS[classId=/WithEquality, fqName=WithEquality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithEquality, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           valueArguments: [ b -> false ]
@@ -90,7 +90,7 @@ WithGreaterOrEqual.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithGreaterOrEqual, fqName=WithGreaterOrEqual, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithGreaterOrEqual, superNames=[]]
+    CLASS[classId=/WithGreaterOrEqual, fqName=WithGreaterOrEqual, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithGreaterOrEqual, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           valueArguments: [ b -> false ]
@@ -114,7 +114,7 @@ WithInequality.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithInequality, fqName=WithInequality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInequality, superNames=[]]
+    CLASS[classId=/WithInequality, fqName=WithInequality, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithInequality, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           valueArguments: [ b -> true ]
@@ -138,7 +138,7 @@ WithInfixFunction.class:
   FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
-    CLASS[classId=/WithInfixFunction, fqName=WithInfixFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithInfixFunction, superNames=[]]
+    CLASS[classId=/WithInfixFunction, fqName=WithInfixFunction, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithInfixFunction, superNames=[]]
       MODIFIER_LIST[public final]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Binary]
           valueArguments: [ i -> 4 ]
