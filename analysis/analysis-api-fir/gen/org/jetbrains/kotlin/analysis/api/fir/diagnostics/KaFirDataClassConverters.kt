@@ -5468,6 +5468,13 @@ private fun KaDiagnosticConverterBuilder.addConversions118() {
             token,
         )
     }
+    add(FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT) { firDiagnostic ->
+        IdentitySensitiveOperationsWithValueObjectImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_CLASS_REFERENCE) { firDiagnostic ->
         JsNoRuntimeForbiddenClassReferenceImpl(
             firDiagnostic as KtDiagnosticWithSource,

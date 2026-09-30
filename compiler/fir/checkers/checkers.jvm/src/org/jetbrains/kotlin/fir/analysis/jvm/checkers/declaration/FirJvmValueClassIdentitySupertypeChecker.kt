@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.isFullValueClass
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
@@ -32,10 +33,8 @@ object FirJvmValueClassIdentitySupertypeChecker : FirRegularClassChecker(MppChec
         for (supertypeRef in declaration.superTypeRefs) {
             val supertypeSymbol = supertypeRef.toRegularClassSymbol(context.session) ?: continue
             if (!supertypeSymbol.isFullValueClass) continue
-
-            @OptIn(SymbolInternals::class)
-            val binaryClass = (supertypeSymbol.fir.sourceElement as? KotlinJvmBinarySourceElement)?.binaryClass as? FileBasedKotlinClass
-            val isValueClass = binaryClass?.declaresValueClass() ?: supertypeSymbol.moduleData.session.languageVersionSettings.isValhallaSupportEnabled()
+            val isValueClass = supertypeSymbol.declaresValueClassInClassFile()
+                ?: supertypeSymbol.moduleData.session.languageVersionSettings.isValhallaSupportEnabled()
             if (!isValueClass) {
                 reporter.reportOn(
                     supertypeRef.source, FirJvmErrors.VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS, supertypeRef.coneType
@@ -43,10 +42,13 @@ object FirJvmValueClassIdentitySupertypeChecker : FirRegularClassChecker(MppChec
             }
         }
     }
+}
 
-    // Only a class file of a Valhalla-compatible version without `ACC_IDENTITY` declares a value class (JEP 401).
-    private fun FileBasedKotlinClass.declaresValueClass(): Boolean {
-        val jvmTarget = JvmTarget.entries.find { it.majorVersion == majorVersion } ?: return false
-        return isJvmTargetValhallaCompatible(jvmTarget, usesPreviewFeatures()) && !hasIdentityFlag()
-    }
+// Whether the class file of this class declares a value class, or null if the class isn't read from a class file. Only a class file of a
+// Valhalla-compatible version without `ACC_IDENTITY` declares a value class (JEP 401).
+internal fun FirRegularClassSymbol.declaresValueClassInClassFile(): Boolean? {
+    @OptIn(SymbolInternals::class)
+    val binaryClass = (fir.sourceElement as? KotlinJvmBinarySourceElement)?.binaryClass as? FileBasedKotlinClass ?: return null
+    val jvmTarget = JvmTarget.entries.find { it.majorVersion == binaryClass.majorVersion } ?: return false
+    return isJvmTargetValhallaCompatible(jvmTarget, binaryClass.usesPreviewFeatures()) && !binaryClass.hasIdentityFlag()
 }

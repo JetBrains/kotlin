@@ -9255,6 +9255,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentitySensitiveOperationsWithValueObject : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IdentitySensitiveOperationsWithValueObject>
+            get() = IdentitySensitiveOperationsWithValueObject::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface SynchronizedBlockOnJavaValueBasedClass : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<SynchronizedBlockOnJavaValueBasedClass>
             get() = SynchronizedBlockOnJavaValueBasedClass::class

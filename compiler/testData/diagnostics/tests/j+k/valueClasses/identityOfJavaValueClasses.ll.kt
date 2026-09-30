@@ -1,6 +1,7 @@
 // LL_FIR_DIVERGENCE
 // LL tests don't have jvmTargetProvider, so JDK classes are not value classes there.
 // See FirJvmPlatformValueClassDeterminer
+// Neither is any class known to be a value object at run time there, see isValueObjectAtRuntime.
 // ISSUE: KT-81100
 // LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND

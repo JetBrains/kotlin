@@ -295,6 +295,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE by warning<KtElement> {
             parameter<ConeKotlinType>("type")
         }
+        val IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT by error<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
         val SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS by warning<KtElement> {
             parameter<ConeKotlinType>("type")
         }

@@ -56,7 +56,9 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
 
             in operationsToCheckFirstArgCallableIds -> {
                 val type = expression.arguments.firstOrNull()?.resolvedType ?: return
-                if (type.isValueTypeAndWarningsEnabled()) {
+                if (type.isValueObjectAtRuntime()) {
+                    reporter.reportOn(expression.argument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT, type)
+                } else if (type.isValueTypeAndWarningsEnabled()) {
                     reporter.reportOn(
                         expression.argument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )
@@ -66,7 +68,9 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
             in operationsToCheckFirstTypeArgCallableIds -> {
                 val typeArgument = expression.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return
                 val type = typeArgument.typeRef.coneType.upperBoundIfFlexible()
-                if (type.isValueTypeAndWarningsEnabled()) {
+                if (type.isValueObjectAtRuntime()) {
+                    reporter.reportOn(typeArgument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT, type)
+                } else if (type.isValueTypeAndWarningsEnabled()) {
                     reporter.reportOn(
                         typeArgument.source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type
                     )

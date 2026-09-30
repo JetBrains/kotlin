@@ -6537,6 +6537,12 @@ internal class IdentitySensitiveOperationsWithValueTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationsWithValueType
 
+internal class IdentitySensitiveOperationsWithValueObjectImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationsWithValueObject
+
 internal class SynchronizedBlockOnJavaValueBasedClassImpl(
     override val type: KaType,
     firDiagnostic: KtDiagnosticWithSource,

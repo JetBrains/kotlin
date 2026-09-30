@@ -37,18 +37,18 @@ fun structuralEquality(v: JavaVal, s: String) {
 }
 
 fun identitySensitiveOperations(v: JavaVal, abstract: JavaAbstractVal) {
-    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>v<!>)
-    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>v<!>)
-    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>JavaVal<!>, String>()
-    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>abstract<!>)
-    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>abstract<!>)
-    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>JavaAbstractVal<!>, String>()
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>v<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>v<!>)
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>JavaVal<!>, String>()
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>abstract<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>abstract<!>)
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>JavaAbstractVal<!>, String>()
 }
 
 fun <T : JavaAbstractVal> identitySensitiveOperationsThroughBounds(bounded: T) {
-    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bounded<!>)
-    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bounded<!>)
-    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>T<!>, String>()
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>bounded<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>bounded<!>)
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>T<!>, String>()
 }
 
 fun atomicReference(ref: AtomicReference<JavaVal>, v: JavaVal, abstractRef: AtomicReference<JavaAbstractVal>, abstract: JavaAbstractVal) {

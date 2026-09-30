@@ -5,13 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.isMappedToJavaValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.declaresValueClassInClassFile
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.isJavaValueClass
+import org.jetbrains.kotlin.fir.java.jvmTargetProvider
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.symbol
@@ -49,6 +56,23 @@ internal fun ConeKotlinType.isValueTypeAndWarningsEnabled(): Boolean {
         (this.isFlexiblePrimitive() || this.isValueClassOrPrimitive())
     ) return true
     return this.isJavaValueBasedClassAndWarningsEnabled()
+}
+
+// Whether instances of this type are value objects at run time (JEP 401): with a Valhalla-compatible JVM target, boxed primitives and
+// Java value classes are, and so are Kotlin value classes compiled as Valhalla value classes, as their class file or the module declaring
+// them says.
+context(sessionHolder: SessionHolder)
+internal fun ConeKotlinType.isValueObjectAtRuntime(): Boolean {
+    val session = sessionHolder.session
+    val jvmTarget = session.jvmTargetProvider?.jvmTarget ?: return false
+    if (!isJvmTargetValhallaCompatible(jvmTarget, session.languageVersionSettings.getFlag(JvmAnalysisFlags.enableJvmPreview))) return false
+    if (isFlexiblePrimitive()) return true
+    return anyBound {
+        val symbol = it.toRegularClassSymbol(session)
+        it.isPrimitiveOrNullablePrimitive || symbol?.isJavaValueClass(session) == true ||
+                symbol?.isInlineOrValue == true &&
+                (symbol.declaresValueClassInClassFile() ?: symbol.moduleData.session.languageVersionSettings.isValhallaSupportEnabled())
+    }
 }
 
 // Like javac, this includes type parameters and captured types bounded by a primitive or a value class. A flexible primitive type like
