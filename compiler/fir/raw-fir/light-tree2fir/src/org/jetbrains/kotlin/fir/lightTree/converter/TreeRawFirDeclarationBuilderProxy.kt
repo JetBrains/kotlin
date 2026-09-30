@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirAnonymousFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirNamedFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirPrimaryConstructorBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirScriptBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousObject
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.DanglingTypeConstraint
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.danglingTypeConstraints
+import org.jetbrains.kotlin.fir.declarations.utils.isCopiedDelegatedProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeContractMayNotHaveLabel
 import org.jetbrains.kotlin.fir.diagnostics.ConeContractShouldBeFirstStatement
@@ -103,6 +105,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDanglingModifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
@@ -1545,7 +1548,11 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
-    fun convertPropertyDeclaration(node: Node, classWrapper: ClassWrapper<Node>? = null): FirProperty {
+    fun convertPropertyDeclaration(
+        node: Node,
+        classWrapper: ClassWrapper<Node>? = null,
+        ownerRegularOrAnonymousObjectSymbol: FirClassSymbol<*>? = classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
+    ): FirProperty {
         var modifiers: ModifierList<Node>? = null
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -1666,7 +1673,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                     generateAccessorsByDelegate(
                         delegateBuilder,
                         baseModuleData,
-                        classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
+                        ownerRegularOrAnonymousObjectSymbol,
                         context = context,
                         isExtension = false,
                         explicitDeclarationSource = propertySource,
@@ -1747,7 +1754,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                         generateAccessorsByDelegate(
                             delegateBuilder,
                             baseModuleData,
-                            runUnless(isStatic) { classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol },
+                            runUnless(isStatic) { ownerRegularOrAnonymousObjectSymbol },
                             context,
                             isExtension = receiverTypeNode != null && !isStatic,
                             explicitDeclarationSource = propertySource,
@@ -3136,6 +3143,107 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 setup()
             }
         }
+    }
+
+    override fun convertReplSnippet(
+        script: Node,
+        scriptSource: KtSourceElement,
+        fileName: String,
+        snippetSetup: FirReplSnippetBuilder.() -> Unit,
+        functionBodySetup: FirBlockBuilder.() -> Unit,
+        statementsSetup: MutableList<FirElement>.() -> Unit,
+    ): FirReplSnippet = convertReplSnippetImpl(
+        script = script,
+        scriptSource = scriptSource,
+        fileName = fileName,
+        scopeProvider = baseScopeProvider,
+        snippetSetup = snippetSetup,
+        functionBodySetup = functionBodySetup,
+        statementsSetup = statementsSetup,
+        extractReplElements = { containingDeclarationSymbol, copiedDelegatedProperties ->
+            extractReplElements(script, containingDeclarationSymbol, copiedDelegatedProperties)
+        },
+    )
+
+    private fun extractReplElements(
+        script: Node,
+        containingDeclarationSymbol: FirRegularClassSymbol,
+        copiedDelegatedProperties: MutableMap<FirPropertySymbol, FirProperty>,
+    ): List<FirElement> {
+        val childNodes = script.getChildNodeByTokenId(KtNodeTypes.BLOCK_ID)?.getChildren().orEmpty()
+            .filter { it.toTokenId() in scriptDeclarationTokensId }
+
+        val result = mutableListOf<FirElement>()
+        val modifierLists = mutableListOf<Node>()
+        for (declarationSource in childNodes) {
+            when (declarationSource.toTokenId()) {
+                KtNodeTypes.SCRIPT_INITIALIZER_ID -> {
+                    result += convertScriptInitializer(
+                        scriptInitializer = declarationSource,
+                        containingDeclarationSymbol = containingDeclarationSymbol,
+                        isLocal = true,
+                    )
+                }
+
+                KtNodeTypes.DESTRUCTURING_DECLARATION_ID -> {
+                    val destructuringDeclaration = convertDestructingDeclaration(declarationSource)
+                    val destructuringContainerVar = generateTemporaryVariable(
+                        moduleData = baseModuleData,
+                        source = declarationSource.toFirSourceElement(),
+                        name = SpecialNames.DESTRUCT,
+                        initializer = destructuringDeclaration.initializer,
+                        extractedAnnotations = destructuringDeclaration.annotations,
+                        origin = FirDeclarationOrigin.Source,
+                    ).apply {
+                        isDestructuringDeclarationContainerVariable = true
+                    }
+                    addDestructuringStatements(
+                        result,
+                        context,
+                        baseModuleData,
+                        destructuringDeclaration,
+                        destructuringContainerVar,
+                        isTmpVariable = true,
+                        forceLocal = false,
+                    ) {
+                        configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                    }
+                }
+
+                KtNodeTypes.PROPERTY_ID -> {
+                    val firProperty = convertPropertyDeclaration(
+                        declarationSource,
+                        classWrapper = null,
+                        ownerRegularOrAnonymousObjectSymbol = containingDeclarationSymbol,
+                    )
+
+                    // See documentation on `replSnippetDelegatedPropertyCopies` attribute for why this is needed.
+                    if (firProperty.delegate != null) {
+                        val firPropertyCopy = convertPropertyDeclaration(
+                            declarationSource,
+                            classWrapper = null,
+                            ownerRegularOrAnonymousObjectSymbol = containingDeclarationSymbol,
+                        )
+
+                        @OptIn(FirImplementationDetail::class)
+                        firPropertyCopy.isCopiedDelegatedProperty = true
+                        copiedDelegatedProperties[firProperty.symbol] = firPropertyCopy
+                    }
+
+                    result += firProperty
+                }
+
+                else -> {
+                    val declarations = mutableListOf<FirDeclaration>()
+                    convertDeclarationFromClassBody(declarationSource, declarations, classWrapper = null, modifierLists)
+                    result += declarations
+                }
+            }
+        }
+        val danglingModifierLists = mutableListOf<FirDeclaration>()
+        convertDanglingModifierListsInClassBody(modifierLists, danglingModifierLists)
+        result += danglingModifierLists
+        return result
     }
 
     override fun Node.toFirSourceElement(kind: KtFakeSourceElementKind?): KtSourceElement {
