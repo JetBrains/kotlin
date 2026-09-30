@@ -13,4 +13,9 @@ value class <!NOARG_ON_VALUE_CLASS_ERROR!>Inline<!>(val x: Int)
 @NoArg
 abstract value class <!NOARG_ON_VALUE_CLASS_ERROR!>Abstract<!>
 
+abstract value class Base(x: Int)
+
+@NoArg
+value class <!NOARG_ON_VALUE_CLASS_ERROR, NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS!>Sub<!>(val x: Int, val y: Int) : Base(x)
+
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, primaryConstructor, propertyDeclaration, value */
