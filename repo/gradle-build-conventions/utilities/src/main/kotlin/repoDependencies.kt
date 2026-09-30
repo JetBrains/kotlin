@@ -88,9 +88,6 @@ fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any 
     return dependencies.project(":kotlin-test", configuration)
 }
 
-fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
-fun KotlinDependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
-
 enum class JpsDepScope {
     COMPILE, TEST, RUNTIME, PROVIDED
 }
@@ -147,26 +144,26 @@ fun DependencyHandler.jpsLikeModuleDependency(moduleName: String, scope: JpsDepS
     when (scope) {
         JpsDepScope.COMPILE -> {
             if (exported) {
-                add("testApi", projectTests(moduleName))
+                add("testApi", testFixtures(project(moduleName)))
             } else {
-                add("testImplementation", projectTests(moduleName))
+                add("testImplementation", testFixtures(project(moduleName)))
             }
         }
         JpsDepScope.TEST -> {
             if (exported) {
-                add("testApi", projectTests(moduleName))
+                add("testApi", testFixtures(project(moduleName)))
             } else {
-                add("testImplementation", projectTests(moduleName))
+                add("testImplementation", testFixtures(project(moduleName)))
             }
         }
         JpsDepScope.RUNTIME -> {
-            add("runtimeOnly", projectTests(moduleName))
+            add("runtimeOnly", testFixtures(project(moduleName)))
         }
         JpsDepScope.PROVIDED -> {
             if (exported) {
-                add("testApi", projectTests(moduleName))
+                add("testApi", testFixtures(project(moduleName)))
             } else {
-                add("testImplementation", projectTests(moduleName))
+                add("testImplementation", testFixtures(project(moduleName)))
             }
         }
     }

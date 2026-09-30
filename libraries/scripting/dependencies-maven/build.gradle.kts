@@ -17,7 +17,7 @@ dependencies {
     implementation("org.apache.maven.resolver:maven-resolver-impl:1.9.27")
     implementation(libs.apache.commons.io)
 
-    testImplementation(projectTests(":kotlin-scripting-dependencies"))
+    testImplementation(testFixtures(project(":kotlin-scripting-dependencies")))
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

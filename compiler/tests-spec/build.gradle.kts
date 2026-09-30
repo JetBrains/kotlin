@@ -31,8 +31,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-testsJar()
-
 val generateFeatureInteractionSpecTestData by generator(
     "org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt",
     testSourceSet,

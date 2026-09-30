@@ -83,5 +83,3 @@ projectTests {
     withJvmStdlibAndReflect()
     withMockJdkAnnotationsJar()
 }
-
-testsJar()

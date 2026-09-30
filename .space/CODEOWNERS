@@ -293,6 +293,7 @@
 # UNKNOWN: /generators/protobufCompare/
 /generators/test-generator/ "Kotlin Compiler"
 /generators/tests/ "Kotlin Compiler"
+/generators/testFixtures/ "Kotlin Compiler"
 /generators/tree-generator-common/ "Kotlin Frontend" "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
 /generators/wasm/ "Kotlin Wasm"
 
