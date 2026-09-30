@@ -9,17 +9,19 @@ import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.fir.analysis.checkers.isFlexiblePrimitive
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClassOrPrimitive
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.typeContext
 
 context(sessionHolder: SessionHolder)
-internal fun ConeKotlinType.isJavaValueBasedClass(): Boolean {
-    val classSymbol = toClassSymbol() ?: return false
-    return classSymbol.hasAnnotation(JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID, sessionHolder.session)
-}
+internal fun ConeKotlinType.isJavaValueBasedClass(): Boolean =
+    collectUpperBounds(sessionHolder.session.typeContext).any {
+        it.toClassSymbol()?.hasAnnotation(JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID, sessionHolder.session) == true
+    }
 
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.isJavaValueBasedClassAndWarningsEnabled(): Boolean {
