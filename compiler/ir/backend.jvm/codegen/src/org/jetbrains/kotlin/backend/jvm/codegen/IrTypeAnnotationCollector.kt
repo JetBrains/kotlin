@@ -91,9 +91,10 @@ internal class IrTypeAnnotationCollector(private val context: JvmBackendContext)
         }
     }
 
+    // The upper 16 bits of the class version hold the minor version, which is 0xFFFF in a class file that uses preview features.
     private fun isCompiledToJvm8OrHigher(source: SourceElement): Boolean =
         source !is KotlinJvmBinarySourceElement ||
-                ((source.binaryClass as? FileBasedKotlinClass)?.classVersion ?: 0) >= Opcodes.V1_8
+                ((source.binaryClass as? FileBasedKotlinClass)?.classVersion?.and(0xFFFF) ?: 0) >= Opcodes.V1_8
 
     private val IrClass.isCompiledToJvm8OrHigher: Boolean
         get() =
