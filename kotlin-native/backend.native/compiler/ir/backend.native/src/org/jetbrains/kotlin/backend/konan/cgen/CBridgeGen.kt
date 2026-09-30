@@ -61,6 +61,13 @@ internal interface KotlinStubs {
 
 internal class CBridgeGenState(val stubs: KotlinStubs) : CDeclarationScope {
     private val cLines = mutableListOf<String>()
+    private val structTypedefNames = mutableMapOf<String, String>()
+
+    override fun getStructTypedefName(spelling: String): String = structTypedefNames.getOrPut(spelling) {
+        stubs.getUniqueCName("struct").also { name ->
+            addC(listOf("typedef $spelling $name;"))
+        }
+    }
 
     fun addC(lines: List<String>) {
         cLines.addAll(lines)
@@ -826,14 +833,7 @@ private fun CBridgeGenState.createFakeKotlinExternalFunction(
 }
 
 private fun getCStructType(kotlinClass: IrClass): CType? =
-        kotlinClass.getCStructSpelling()?.let { CTypes.simple(it) }
-
-private fun CBridgeGenState.getNamedCStructType(kotlinClass: IrClass): CType? {
-    val cStructType = getCStructType(kotlinClass) ?: return null
-    val name = stubs.getUniqueCName("struct")
-    addC(listOf("typedef ${cStructType.render(name)};"))
-    return CTypes.simple(name)
-}
+        kotlinClass.getCStructSpelling()?.let { CTypes.struct(it) }
 
 private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
         type: IrType,
@@ -962,7 +962,7 @@ private fun CBridgeGenState.mapType(
             require(!type.isNullable()) { renderCompilerError(location) }
             val kotlinClass = (type as IrSimpleType).arguments.singleOrNull()?.typeOrNull?.getClass()
             require(kotlinClass != null) { renderCompilerError(location) }
-            val cStructType = getNamedCStructType(kotlinClass)
+            val cStructType = getCStructType(kotlinClass)
             require(cStructType != null) { renderCompilerError(location) }
             StructValuePassing(kotlinClass, cStructType)
         }

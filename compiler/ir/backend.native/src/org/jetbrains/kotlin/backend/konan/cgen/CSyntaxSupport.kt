@@ -4,7 +4,13 @@ package org.jetbrains.kotlin.backend.konan.cgen
  * The destination of rendered C code.
  * Rendering C code requires it, so that everything the rendered code depends on can be made available at the destination.
  */
-interface CDeclarationScope
+interface CDeclarationScope {
+    /**
+     * Returns the name of the typedef for the struct type spelled as [spelling].
+     * The typedef is declared in this scope when requested for the first time.
+     */
+    fun getStructTypedefName(spelling: String): String
+}
 
 interface CType {
     context(scope: CDeclarationScope)
@@ -29,6 +35,14 @@ object CTypes {
         context(scope: CDeclarationScope)
         override fun render(name: String): String = pointee.render("^$name")
     }
+
+    /**
+     * The struct type spelled as [spelling], e.g. `struct { int x; int y; }`.
+     *
+     * Each occurrence of an anonymous struct spelling declares a distinct C type,
+     * so the type is rendered as a typedef name declared in the scope. All usages within the scope thus denote the same type.
+     */
+    fun struct(spelling: String): CType = StructCType(spelling)
 
     val void = simple("void")
     val voidPtr = pointer(void)
@@ -58,6 +72,11 @@ private class SimpleCType(private val type: String) : CType {
 private class PointerCType(private val pointee: CType) : CType {
     context(scope: CDeclarationScope)
     override fun render(name: String): String = pointee.render("*$name")
+}
+
+private class StructCType(private val spelling: String) : CType {
+    context(scope: CDeclarationScope)
+    override fun render(name: String): String = SimpleCType(scope.getStructTypedefName(spelling)).render(name)
 }
 
 private class FunctionCType(
