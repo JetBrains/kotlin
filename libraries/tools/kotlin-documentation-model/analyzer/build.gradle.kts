@@ -2,15 +2,6 @@
  * Copyright 2014-2024 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
-import org.gradle.api.attributes.Category.DOCUMENTATION
-import org.gradle.api.attributes.DocsType.DOCS_TYPE_ATTRIBUTE
-import org.gradle.api.attributes.DocsType.SOURCES
-import org.gradle.api.attributes.Usage.JAVA_RUNTIME
-import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.tasks.Sync
-import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
@@ -88,12 +79,10 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
 }
 
-// TODO use sources directly
-//region Download and unpack the latest kotlin-stdlib JVM sources, needed by tests that verify
-// documentation generated for the standard library.
-val kotlinStdlibSourcesDir = downloadLatestKotlinStdlibJvmSources(project)
+//region Kotlin stdlib sources, needed by tests that verify documentation generated for the standard library.
+val kotlinStdlibSourcesDir: File = file("$rootDir/libraries/stdlib")
 tasks.withType<Test>().configureEach {
-    addDirectoryProperty(kotlinStdlibSourcesDir.get(), "kotlinStdlibSourcesDir")
+    addDirectoryProperty(kotlinStdlibSourcesDir, "kotlinStdlibSourcesDir")
 }
 //endregion
 
@@ -167,62 +156,3 @@ projectTests {
     }
 }
 //endregion
-
-//region Inlined build-logic utilities (previously provided by the standalone build's build-logic).
-
-@Suppress("DEPRECATION")
-private fun Configuration.declarable(visible: Boolean = false) {
-    isCanBeResolved = false
-    isCanBeConsumed = false
-    isCanBeDeclared = true
-    isVisible = visible
-}
-
-@Suppress("DEPRECATION")
-private fun Configuration.resolvable(visible: Boolean = false) {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-    isCanBeDeclared = false
-    isVisible = visible
-}
-
-/**
- * Download and unpack the latest Kotlin stdlib JVM source code.
- *
- * @returns the directory containing the unpacked sources.
- */
-private fun downloadLatestKotlinStdlibJvmSources(project: Project): Provider<File> {
-    val kotlinStdlibJvmSources: Configuration = project.configurations.create("kotlinStdlibJvmSources") {
-        description = "kotlin-stdlib JVM source code."
-        declarable()
-        defaultDependencies {
-            add(project.dependencies.create(project.kotlinStdlib()))
-        }
-    }
-
-    val kotlinStdlibJvmSourcesResolver: Configuration = project.configurations.create("kotlinStdlibJvmSourcesResolver") {
-        description = "Resolver for ${kotlinStdlibJvmSources.name}."
-        resolvable()
-        isTransitive = false
-        extendsFrom(kotlinStdlibJvmSources)
-        attributes {
-            attribute(USAGE_ATTRIBUTE, project.objects.named(JAVA_RUNTIME))
-            attribute(CATEGORY_ATTRIBUTE, project.objects.named(DOCUMENTATION))
-            attribute(DOCS_TYPE_ATTRIBUTE, project.objects.named(SOURCES))
-        }
-    }
-
-    val downloadKotlinStdlibSources = project.tasks.register<Sync>("downloadKotlinStdlibSources") {
-        description = "Download and unpacks kotlin-stdlib JVM source code."
-        val archives = project.serviceOf<ArchiveOperations>()
-        val unpackedJvmSources = kotlinStdlibJvmSourcesResolver.incoming.artifacts.resolvedArtifacts.map { artifacts ->
-            artifacts.map {
-                archives.zipTree(it.file)
-            }
-        }
-        from(unpackedJvmSources)
-        into(temporaryDir)
-    }
-
-    return downloadKotlinStdlibSources.map { it.destinationDir }
-}
