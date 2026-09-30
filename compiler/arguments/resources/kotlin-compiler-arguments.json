@@ -17465,6 +17465,96 @@
                                         "deprecatedMessage": null
                                     },
                                     {
+                                        "name": "Xgenerate-signature-indices-dir",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Path to the directory where the generated external signature indices should be stored.\nThis argument should be used together with -Xgenerate-signature-indices-from.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": "None",
+                                        "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.5.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        },
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "deprecatedMessage": null
+                                    },
+                                    {
+                                        "name": "Xgenerate-signature-indices-from",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Path to the root directory with the libraries for which external signature indices should be generated.\nThe generation of the external signature index happens only if a library does not have its own signature index.\nThis argument should be used together with -Xgenerate-signature-indices-dir.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": "None",
+                                        "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": "<path>",
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.5.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        },
+                                        "argumentType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            },
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "deprecatedMessage": null
+                                    },
+                                    {
                                         "name": "Xheader-klib-path",
                                         "shortName": null,
                                         "deprecatedName": null,

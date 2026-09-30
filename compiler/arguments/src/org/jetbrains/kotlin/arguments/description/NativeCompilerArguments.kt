@@ -984,4 +984,33 @@ The default value is 1.""".asReleaseDependent()
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     }
+
+    compilerArgument {
+        name = "Xgenerate-signature-indices-from"
+        compilerName = "generateSignatureIndicesFrom"
+        description = """Path to the root directory with the libraries for which external signature indices should be generated.
+The generation of the external signature index happens only if a library does not have its own signature index.
+This argument should be used together with -Xgenerate-signature-indices-dir.""".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<path>".asReleaseDependent()
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xgenerate-signature-indices-dir"
+        compilerName = "generateSignatureIndicesDir"
+        description = """Path to the directory where the generated external signature indices should be stored.
+This argument should be used together with -Xgenerate-signature-indices-from.""".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "<path>".asReleaseDependent()
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
 }
