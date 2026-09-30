@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -28,7 +27,7 @@ abstract class FirReplSnippetResolveExtension(
     override val componentClass: KClass<out FirExtensionSessionComponent>
         get() = FirReplSnippetResolveExtension::class
 
-    abstract fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>?
+    abstract fun getSnippetHistoryImports(snippet: FirReplSnippet): List<FirImport>
 
     abstract fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope?
 
