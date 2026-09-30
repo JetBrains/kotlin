@@ -24,9 +24,9 @@ Tower Data Context:
     Element 8
         Static scope owner symbol: FirRegularClassSymbol public final inner class Child : R|test/Outer.Base|
     Element 9
-        Scope: FirLocalScope
-            Properties:
-                FirValueParameterSymbol secondaryConstructorParameter: R|kotlin/Int|
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Child : R|test/Outer.Base|
+                Type: test.Outer.Child
 
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructor_superCallInnerClass.kt
     public final? [ResolvedTo(RAW_FIR)] class Outer : R|kotlin/Any| {

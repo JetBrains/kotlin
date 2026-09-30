@@ -54,7 +54,9 @@ KtConstructorDelegationCall(76,84): 'this(10)'
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = r/A
+        type = r.A
       extensionReceiver = null
       kind = THIS_CALL
       signature = KaFunctionSignature:
@@ -66,14 +68,16 @@ KtConstructorDelegationCall(76,84): 'this(10)'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
-    isInBestCandidates = true
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'A.constructor(): A.B'.>
+    isInBestCandidates = false
 
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = r/A
+        type = r.A
       extensionReceiver = null
       kind = THIS_CALL
       signature = KaFunctionSignature:
@@ -101,7 +105,6 @@ KtConstructorDelegationCall(76,84): 'this(10)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true
 
 KtConstructorDelegationReferenceExpression(76,80): 'this'
@@ -109,7 +112,9 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = r/A
+        type = r.A
       extensionReceiver = null
       kind = THIS_CALL
       signature = KaFunctionSignature:
@@ -121,14 +126,16 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
-    isInBestCandidates = true
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'A.constructor(): A.B'.>
+    isInBestCandidates = false
 
-  KaInapplicableCallCandidate:
+  KaApplicableCallCandidate:
     candidate = KaDelegatedConstructorCall:
       contextArgumentMapping = {}
       contextArguments = []
-      dispatchReceiver = null
+      dispatchReceiver = KaImplicitReceiverValue:
+        symbol = r/A
+        type = r.A
       extensionReceiver = null
       kind = THIS_CALL
       signature = KaFunctionSignature:
@@ -156,7 +163,6 @@ KtConstructorDelegationReferenceExpression(76,80): 'this'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INNER_CLASS_CONSTRUCTOR_NO_RECEIVER: Constructor of the inner class 'inner class B : Any' can only be called with a receiver of the containing class.>
     isInBestCandidates = true
 
 KtValueArgumentList(80,84): '(10)'
