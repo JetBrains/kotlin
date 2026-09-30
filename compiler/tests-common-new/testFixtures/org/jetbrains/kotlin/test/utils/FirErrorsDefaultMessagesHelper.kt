@@ -90,6 +90,9 @@ private val duplicateIdExclusions = listOf(
     CliDiagnostics.KOTLIN_PACKAGE_USAGE.name,
     FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION.warningFactory.name,
     FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION.errorFactory.name,
+    // Declared in both FirJsErrors and FirWasmErrors with platform-specific messages.
+    FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.warningFactory.name,
+    FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE.errorFactory.name,
 )
 
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
