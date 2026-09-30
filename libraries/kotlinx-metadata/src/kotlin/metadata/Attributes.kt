@@ -155,8 +155,9 @@ public var KmClass.isExpect: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_
 /**
  * Indicates that the corresponding class is either a pre-Kotlin-1.5 `inline` class, or a 1.5+ `value` class.
  *
- * Note that it does not imply that the class has [JvmInline] annotation and will be inlined.
- * Currently, it is impossible to declare a value class without this annotation, but this can be changed in the future.
+ * Note that it does not imply that the class has [JvmInline] annotation and will be inlined: an experimental full value class, declared
+ * without this annotation, is not inlined on JVM. Unlike a full value class, an inline class compiled by Kotlin 1.5 or later has
+ * [KmClass.inlineClassUnderlyingPropertyName].
  */
 public var KmClass.isValue: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_VALUE_CLASS))
 
