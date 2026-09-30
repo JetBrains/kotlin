@@ -27,17 +27,12 @@ class KotlinJsr223DaemonScriptEngineTest {
 
     private val compilerClasspath: List<File> = classpathFromSystemProperty("kotlinJsr223DaemonCompilerClasspath")
 
-    // The compiler needs the stdlib on the snippet compile classpath. Resolved from the test own classpath.
-    private val stdlib: File by lazy {
-        File(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
-    }
-
     private val enginesToShutDown = mutableListOf<KotlinJsr223DaemonScriptEngineImpl>()
 
     private fun newEngine(): KotlinJsr223DaemonScriptEngineImpl {
         val factory = KotlinJsr223DaemonScriptEngineFactory(
             compilerClasspath = compilerClasspath,
-            additionalClasspath = listOf(stdlib.toPath()),
+            additionalClasspath = listOf(stdlibPath),
             daemonOptions = DaemonOptions(
                 runFilesPath = daemonRunDir.resolve("run").toString(),
                 shutdownDelayMilliseconds = 0,
@@ -163,10 +158,3 @@ class KotlinJsr223DaemonScriptEngineTest {
         assertEquals(3, engine.eval(snippet))
     }
 }
-
-private fun classpathFromSystemProperty(propertyName: String): List<File> =
-    System.getProperty(propertyName)
-        ?.split(File.pathSeparator)
-        ?.filter { it.isNotBlank() }
-        ?.map { File(it) }
-        ?: error("system property '$propertyName' is not set -- run this test via its Gradle test task")

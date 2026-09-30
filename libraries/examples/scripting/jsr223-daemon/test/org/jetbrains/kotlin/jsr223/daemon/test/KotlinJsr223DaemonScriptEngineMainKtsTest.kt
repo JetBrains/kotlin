@@ -16,10 +16,12 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.script.experimental.dependencies.DependsOn
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
-import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
 /**
  * Ports a few jsr223-specific main-kts tests (see `MainKtsJsr223Test` in `kotlin-main-kts-test`) to
@@ -33,37 +35,17 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
 
     private val compilerClasspath: List<File> = classpathFromSystemProperty("kotlinJsr223DaemonCompilerClasspath")
 
-    private val stdlib: File by lazy {
-        File(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
-    }
-
-    private val scriptRuntime: File by lazy {
-        File(ScriptTemplateWithBindings::class.java.protectionDomain.codeSource.location.toURI())
-    }
-
-    private val mainKtsJar: File by lazy {
-        File(MainKtsScript::class.java.protectionDomain.codeSource.location.toURI())
-    }
-
-    private val scriptingDependenciesJar: File by lazy {
-        File(DependsOn::class.java.protectionDomain.codeSource.location.toURI())
-    }
-
     private val mainKtsScriptDefinition = createJvmScriptDefinitionFromTemplate<MainKtsScript>()
 
     private val enginesToShutDown = mutableListOf<KotlinJsr223DaemonScriptEngineImpl>()
 
+    private val dirsToDeleteAfterEngines = mutableListOf<Path>()
+
     private fun newEngine(withMainKtsOnCompileClasspath: Boolean = false): KotlinJsr223DaemonScriptEngineImpl {
         val factory = KotlinJsr223DaemonScriptEngineFactory(
             compilerClasspath = compilerClasspath,
-            additionalClasspath = buildList {
-                add(stdlib.toPath())
-                add(scriptRuntime.toPath())
-                if (withMainKtsOnCompileClasspath) {
-                    add(mainKtsJar.toPath())
-                    add(scriptingDependenciesJar.toPath())
-                }
-            },
+            additionalClasspath = listOf(stdlibPath, scriptRuntimePath) +
+                    if (withMainKtsOnCompileClasspath) mainKtsPaths else emptyList(),
             daemonOptions = DaemonOptions(
                 runFilesPath = daemonRunDir.resolve("run").toString(),
                 shutdownDelayMilliseconds = 0,
@@ -81,6 +63,11 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
             engine.forceShutdownDaemonForTests()
         }
         enginesToShutDown.clear()
+        for (dir in dirsToDeleteAfterEngines) {
+            // Best-effort: on Windows, jars loaded by the (never closed) evaluation class loader may stay locked.
+            dir.toFile().deleteRecursively()
+        }
+        dirsToDeleteAfterEngines.clear()
     }
 
     @Test
@@ -110,7 +97,45 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
     }
 
     @Test
-    @Disabled("Not supported yet")
+    fun testWithCompilerOptions() {
+        val engine = newEngine(withMainKtsOnCompileClasspath = true)
+        // Only works if the definition's `@CompilerOptions` handler runs inside the compiler.
+        val res = engine.eval(
+            """
+                @file:CompilerOptions("-opt-in=kotlin.uuid.ExperimentalUuidApi")
+                kotlin.uuid.Uuid.NIL.toString()
+            """.trimIndent()
+        )
+        assertEquals("00000000-0000-0000-0000-000000000000", res)
+    }
+
+    @Test
+    fun testWithDependsOn() {
+        // Local repository to avoid network access.
+        // Not a `@TempDir`: the evaluation class loader created for the resolved dependency is never closed, so on Windows
+        // the jar stays locked after the engine is shut down, and the strict `@TempDir` cleanup fails the test.
+        val repositoryDir = Files.createTempDirectory("jsr223-daemon-repository-")
+        dirsToDeleteAfterEngines.add(repositoryDir)
+        val artifact = singleClassJar(DependsOnProbe::class.java, repositoryDir.resolve("probe.jar").toFile())
+        val engine = newEngine(withMainKtsOnCompileClasspath = true)
+
+        // `DependsOnProbe` is not on the snippet compile classpath.
+        assertEquals(
+            DependsOnProbe.VALUE,
+            engine.eval(
+                """
+                    @file:Repository("${repositoryDir.toAbsolutePath().invariantSeparatorsPathString}")
+                    @file:DependsOn("${artifact.name}")
+                    ${DependsOnProbe::class.java.name}.VALUE
+                """.trimIndent()
+            )
+        )
+
+        assertEquals("${DependsOnProbe.VALUE}!", engine.eval("${DependsOnProbe::class.java.name}.VALUE + \"!\""))
+    }
+
+    @Test
+    @Disabled("Same-batch @file:Import snippet chaining is not supported yet (codegen of cross-snippet accesses)")
     fun testWithImport() {
         val engine = newEngine()
         val res1 = engine.eval(
@@ -125,11 +150,21 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
     }
 }
 
-private const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
+// Absolute, since `@file:Import` paths are resolved relative to the (temporary) snippet source file.
+private val TEST_DATA_ROOT = File("libraries/tools/kotlin-main-kts-test/testData").absoluteFile.invariantSeparatorsPath
 
-private fun classpathFromSystemProperty(propertyName: String): List<File> =
-    System.getProperty(propertyName)
-        ?.split(File.pathSeparator)
-        ?.filter { it.isNotBlank() }
-        ?.map { File(it) }
-        ?: error("system property '$propertyName' is not set -- run this test via its Gradle test task")
+object DependsOnProbe {
+    const val VALUE: String = "resolved"
+}
+
+private fun singleClassJar(clazz: Class<*>, target: File): File {
+    val entryName = clazz.name.replace('.', '/') + ".class"
+    JarOutputStream(target.outputStream()).use { out ->
+        out.putNextEntry(JarEntry(entryName))
+        val classBytes = clazz.classLoader.getResourceAsStream(entryName)
+            ?: error("cannot read the class file of ${clazz.name}")
+        classBytes.use { it.copyTo(out) }
+        out.closeEntry()
+    }
+    return target
+}

@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.scripting.compiler.plugin.KOTLIN_SCRIPTING_PLUGIN_ID
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptTemplateWithClasspath
+import org.jetbrains.kotlin.scripting.compiler.plugin.scriptTemplateWithClasspath
+import org.jetbrains.kotlin.scripting.compiler.plugin.withRefinedFromSnippetClass
+import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
@@ -30,10 +34,12 @@ import kotlin.io.path.name
 import kotlin.io.path.writeText
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.impl._isSyntheticSnippet
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.impl.compiledSnippetFromClassPath
 import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.script.experimental.util.LinkedSnippetImpl
 import kotlin.script.experimental.util.add
+import kotlin.script.experimental.util.toList
 
 /**
  * A [ReplCompiler] that compiles snippets out-of-process through the Build Tools API's ordinary JVM
@@ -81,6 +87,8 @@ class BtaReplCompiler(
 
     private val priorOutputDirs = mutableListOf<Path>()
     private val priorClassIds = mutableListOf<ClassId>()
+
+    private var scriptTemplateCache: Pair<Any, ScriptTemplateWithClasspath?>? = null
 
     private var lastCompiledSnippetInternal: LinkedSnippetImpl<CompiledSnippet>? = null
 
@@ -155,7 +163,7 @@ class BtaReplCompiler(
             val scriptFiles = refinedSnippets.map { sourceDir.resolve(it.name).also { file -> file.writeText(it.snippet.text) } }
 
             logger.clear()
-            val result = runCompilation(scriptFiles, outputDir, configurationFile)
+            val result = runCompilation(scriptFiles, outputDir, configurationFile, batchConfiguration)
             if (result != COMPILATION_SUCCESS) {
                 return ResultWithDiagnostics.Failure(
                     logger.messages.map { it.asErrorDiagnostics(path = refinedSnippets.last().snippet.locationId) }
@@ -165,11 +173,15 @@ class BtaReplCompiler(
             priorOutputDirs.add(outputDir)
             for ([refinedSnippet, scriptFile] in refinedSnippets.zip(scriptFiles)) {
                 val classId = snippetClassId(scriptFile)
+                // Brings in compiler-side refinement results, e.g. `@DependsOn`-resolved jars.
+                val compilationConfiguration = refinedSnippet.configuration.withRefinedFromSnippetClass(
+                    outputDir.resolve("${classId.shortClassName.asString()}.class").toFile()
+                )
                 val compiledSnippet = compiledSnippetFromClassPath(
                     classPath = listOf(outputDir.toFile()),
                     snippetClassFQName = classId.asSingleFqName().asString(),
                     snippet = refinedSnippet.snippet,
-                    compilationConfiguration = refinedSnippet.configuration,
+                    compilationConfiguration = compilationConfiguration,
                 )
                 priorClassIds += classId
                 lastCompiledSnippetInternal = lastCompiledSnippetInternal.add(compiledSnippet)
@@ -191,14 +203,14 @@ class BtaReplCompiler(
         scriptFiles: List<Path>,
         outputDir: Path,
         configurationFile: Path,
+        batchConfiguration: ScriptCompilationConfiguration,
     ): CompilationResult {
         val operation = toolchain.jvm.jvmCompilationOperationBuilder(scriptFiles, outputDir)
         operation.compilerArguments.let { arguments ->
-            arguments[JvmCompilerArguments.CLASSPATH] = additionalClasspath + priorOutputDirs
+            arguments[JvmCompilerArguments.CLASSPATH] = additionalClasspath + priorSnippetsResolvedClasspath() + priorOutputDirs
             arguments[CommonCompilerArguments.X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = true
-            arguments[CommonCompilerArguments.X_USE_FIR_LT] = false // TODO: remove after finishing KT-77583
             arguments[CommonCompilerArguments.X_SUPPRESS_VERSION_WARNINGS] = true
-            arguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(scriptingPlugin(configurationFile))
+            arguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(scriptingPlugin(configurationFile, batchConfiguration))
         }
         return session.executeOperation(operation.build(), executionPolicy, logger)
     }
@@ -207,7 +219,7 @@ class BtaReplCompiler(
      * The scripting compiler plugin declaration that switches this compilation into
      * chained-REPL-snippet mode.
      */
-    private fun scriptingPlugin(configurationFile: Path): CompilerPlugin =
+    private fun scriptingPlugin(configurationFile: Path, batchConfiguration: ScriptCompilationConfiguration): CompilerPlugin =
         CompilerPlugin(
             pluginId = KOTLIN_SCRIPTING_PLUGIN_ID,
             classpath = scriptingPluginClasspath,
@@ -217,9 +229,35 @@ class BtaReplCompiler(
                     add(CompilerPluginOption("repl-snippet-prior-class", classId.asString()))
                 }
                 add(CompilerPluginOption("repl-snippet-configuration", configurationFile.toAbsolutePath().toString()))
+                // Refinement handlers are transient and cannot travel in the configuration file, so the compiler
+                // loads the definition from its template and overrides it with the configuration from the file.
+                scriptTemplateWithClasspathOf(batchConfiguration)?.let { template ->
+                    add(CompilerPluginOption("script-definitions", template.templateClassName))
+                    add(
+                        CompilerPluginOption(
+                            "script-definitions-classpath", template.classpath.joinToString(File.pathSeparator) { it.path }
+                        )
+                    )
+                }
             },
             orderingRequirements = emptySet(),
         )
+
+    private fun scriptTemplateWithClasspathOf(configuration: ScriptCompilationConfiguration): ScriptTemplateWithClasspath? {
+        val key = configuration[ScriptCompilationConfiguration.baseClass] to
+                configuration[ScriptCompilationConfiguration.hostConfiguration]
+        scriptTemplateCache?.takeIf { it.first == key }?.let { return it.second }
+        return scriptTemplateWithClasspath(configuration).also { scriptTemplateCache = key to it }
+    }
+
+    // Includes the classpath resolved by the compiler-side refinement of the prior snippets, e.g. by `@DependsOn`.
+    private fun priorSnippetsResolvedClasspath(): List<Path> {
+        val known = additionalClasspath.toSet()
+        return lastCompiledSnippetInternal
+            .toList { it.compilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty() }
+            .flatten().filterIsInstance<JvmDependency>().flatMap { it.classpath }.map { it.toPath() }
+            .filterNot { it in known }.distinct()
+    }
 
     // The compile daemon is left to its own idle-shutdown settings, since it may be shared with
     // other clients.
