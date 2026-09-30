@@ -5,33 +5,52 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @OptIn(ExperimentalAtomicApi::class)
+@Serializable
 internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder {
-    protected abstract val options: Options
+    @SerialName("METRICS_COLLECTOR")
+    private var metricsCollector: BuildMetricsCollector? = null
+
+    @SerialName("XX_KGP_METRICS_COLLECTOR")
+    private var kgpMetricsCollector: Boolean = false
+
+    @SerialName("XX_KGP_METRICS_COLLECTOR_OUT")
+    private var kgpMetricsCollectorOut: ByteArray? = null
+
+    @SerialName("ENABLE_CLASSLOADER_CACHE")
+    private var enableClassloaderCache: Boolean = true
+
+    @Transient
     private val executionStarted = AtomicBoolean(false)
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
+    override fun <V> get(key: BuildOperation.Option<V>): V = BuildOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        BuildOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     fun execute(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger? = null,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): R {
         check(executionStarted.compareAndSet(expectedValue = false, newValue = true)) {
             "Build operation $this already started execution."
@@ -43,7 +62,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger? = null,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): R
 
     /**
@@ -54,19 +73,18 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperatio
      */
     abstract val usesApplicationEnvironment: Boolean
 
-    operator fun <V> get(key: Option<V>): V = options[key]
+    operator fun <V> get(key: Option<V>): V = BuildOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
-    @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        BuildOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     companion object {
-        val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
-        val XX_KGP_METRICS_COLLECTOR: Option<Boolean> = Option("XX_KGP_METRICS_COLLECTOR", default = false)
-        val XX_KGP_METRICS_COLLECTOR_OUT: Option<ByteArray?> = Option("XX_KGP_METRICS_COLLECTOR_OUT", default = null)
-        val ENABLE_CLASSLOADER_CACHE: Option<Boolean> = Option("ENABLE_CLASSLOADER_CACHE", true)
+        val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR")
+        val XX_KGP_METRICS_COLLECTOR: Option<Boolean> = Option("XX_KGP_METRICS_COLLECTOR")
+        val XX_KGP_METRICS_COLLECTOR_OUT: Option<ByteArray?> = Option("XX_KGP_METRICS_COLLECTOR_OUT")
+        val ENABLE_CLASSLOADER_CACHE: Option<Boolean> = Option("ENABLE_CLASSLOADER_CACHE")
     }
 }

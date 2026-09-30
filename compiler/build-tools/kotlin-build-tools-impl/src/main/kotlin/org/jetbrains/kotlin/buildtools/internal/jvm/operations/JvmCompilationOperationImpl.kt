@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -16,10 +18,13 @@ import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.OUTPUT_DIRS
@@ -49,39 +54,29 @@ import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class JvmCompilationOperationImpl private constructor(
-    override val options: Options = Options(JvmCompilationOperation::class),
+@Serializable
+internal class JvmCompilationOperationImpl(
     override val sources: List<Path>,
     override val destinationDirectory: Path,
-    compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
+    override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(compilerArguments),
+) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, K2JVMCompilerArguments>(),
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
+    @SerialName("INCREMENTAL_COMPILATION")
+    private var incrementalCompilation: JvmIncrementalCompilationConfiguration? = null
 
-    constructor(
-        sources: List<Path>,
-        destinationDirectory: Path,
-        compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
-        compilerVersion: String,
-    ) : this(
-        options = Options(JvmCompilationOperation::class),
-        sources = sources,
-        destinationDirectory = destinationDirectory,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
-        initializeOptions(this::class, options)
-    }
+    @SerialName("KOTLINSCRIPT_EXTENSIONS")
+    private var kotlinScriptExtensions: Array<String>? = null
 
     override val targetPlatform: CompileService.TargetPlatform = CompileService.TargetPlatform.JVM
 
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
+    // TODO handle new way without options - use serialization?
     override fun deepCopy(): JvmCompilationOperationImpl {
         return JvmCompilationOperationImpl(
-            options.deepCopy(),
             sources,
             destinationDirectory,
             compilerArguments.deepCopy(),
@@ -90,23 +85,23 @@ internal class JvmCompilationOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: JvmCompilationOperation.Option<V>): V = JvmCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        JvmCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun build(): JvmCompilationOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V = JvmCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        JvmCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     @Deprecated("Use `snapshotBasedIcConfigurationBuilder` instead.")
     @Suppress("DEPRECATION_ERROR")
@@ -379,9 +374,9 @@ internal class JvmCompilationOperationImpl private constructor(
 
 
     companion object {
-        val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
+        val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION")
 
-        val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
+        val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
     }
 }
 

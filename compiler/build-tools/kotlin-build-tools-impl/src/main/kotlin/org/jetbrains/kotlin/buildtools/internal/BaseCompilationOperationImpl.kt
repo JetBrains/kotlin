@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.CompilerArgumentsLogLevel
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.DAEMON_RUN_DIR_PATH
@@ -20,6 +23,8 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
 import org.jetbrains.kotlin.buildtools.internal.trackers.ImportTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
@@ -46,12 +51,30 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.rmi.RemoteException
 
-internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>(
-    override val compilerArguments: BtaCompilerArgs,
-) : CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
+@kotlinx.serialization.Serializable
+internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>() :
+    CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
+
+    abstract override val compilerArguments: BtaCompilerArgs
+
+    @SerialName("LOOKUP_TRACKER")
+    private var lookupTracker: CompilerLookupTracker? = null
+
+    @SerialName("IMPORT_TRACKER")
+    private var importTracker: CompilerImportTracker? = null
+
+    @SerialName("COMPILER_ARGUMENTS_LOG_LEVEL")
+    private var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = CompilerArgumentsLogLevel.DEBUG
+
+    @SerialName("COMPILER_MESSAGE_RENDERER")
+    private var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
+
+    @SerialName("GENERATE_COMPILER_REF_INDEX")
+    private var generateCompilerRefIndex: Boolean = false
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: BaseCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: BaseCompilationOperation.Option<V>): V =
+        BaseCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     // In-process compilation and linking run a CLICompiler, which creates and uses the shared application environment.
     override val usesApplicationEnvironment: Boolean
@@ -60,22 +83,22 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     @UseFromImplModuleRestricted
     override fun <V> set(key: BaseCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        BaseCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    operator fun <V> get(key: Option<V>): V = options[key]
+    operator fun <V> get(key: Option<V>): V = BaseCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        BaseCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     override fun executeCancellableImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): CompilationResult {
         val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
@@ -189,7 +212,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
 
         (
-            val daemon = compileService, val sessionId
+            val daemon = compileService, val sessionId,
         ) =
             KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId,
@@ -262,7 +285,10 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract fun shouldCompileIncrementally(): Boolean
 
-    protected open fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter, executionContext: ExecutionContext): CompilationResult {
+    protected open fun compileInProcess(
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        executionContext: ExecutionContext,
+    ): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         val arguments = createAndPrepareCompilerArguments()
 
@@ -334,22 +360,22 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 
     companion object {
-        val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
+        val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
 
         /*
         * Tracks imports during compilation.
         * This option partially addresses [KT-84450](https://youtrack.jetbrains.com/issue/KT-84450)
         * and is not intended to work in all cases for now.
         * */
-        val IMPORT_TRACKER: Option<CompilerImportTracker?> = Option("IMPORT_TRACKER", null)
+        val IMPORT_TRACKER: Option<CompilerImportTracker?> = Option("IMPORT_TRACKER")
 
         val COMPILER_ARGUMENTS_LOG_LEVEL: Option<CompilerArgumentsLogLevel> =
-            Option("COMPILER_ARGUMENTS_LOG_LEVEL", default = CompilerArgumentsLogLevel.DEBUG)
+            Option("COMPILER_ARGUMENTS_LOG_LEVEL")
 
         val COMPILER_MESSAGE_RENDERER: Option<CompilerMessageRenderer> =
-            Option("COMPILER_MESSAGE_RENDERER", default = DefaultCompilerMessageRenderer)
+            Option("COMPILER_MESSAGE_RENDERER")
 
-        val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX", false)
+        val GENERATE_COMPILER_REF_INDEX: Option<Boolean> = Option("GENERATE_COMPILER_REF_INDEX")
 
     }
 }
