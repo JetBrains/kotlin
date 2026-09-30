@@ -646,6 +646,34 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         assertEquals(emptyList<String>(), readLoadableDescriptors(File(output, "test/Holder.class").readBytes()))
     }
 
+    // A Kotlin abstract value class compiled without Valhalla value classes is an identity class in its class file.
+    @Test
+    fun testValueClassExtendingIdentityLibraryClass() {
+        val options = listOf(
+            K2JVMCompilerArguments::jvmTarget.cliArgument, JvmTarget.JVM_28.description,
+            K2JVMCompilerArguments::enableJvmPreview.cliArgument,
+            "-XXLanguage:+FullValueClasses",
+        )
+        val valhallaOptions = options + K2JVMCompilerArguments::valhallaValueClasses.cliArgument
+        val identityLibrary = compileLibrary("identityLibrary", additionalOptions = options, checkKotlinOutput = {})
+        val valueLibrary = compileLibrary("valueLibrary", additionalOptions = valhallaOptions, checkKotlinOutput = {})
+        val jvm17Library = compileLibrary(
+            "jvm17Library",
+            additionalOptions = listOf(K2JVMCompilerArguments::jvmTarget.cliArgument, JvmTarget.JVM_17.description, "-XXLanguage:+FullValueClasses"),
+            checkKotlinOutput = {},
+        )
+        val jdk27Library = compileLibrary(
+            "jdk27Library", destination = File(tmpdir, "jdk27Library"), additionalOptions = valhallaOptions, checkKotlinOutput = {},
+        )
+        File(jdk27Library, "lib/Jdk27Base.class").apply {
+            writeBytes(readBytes().also { it[6] = 0; it[7] = JvmTarget.JVM_27.majorVersion.toByte() })
+        }
+        compileKotlin(
+            "source.kt", tmpdir, listOf(identityLibrary, valueLibrary, jvm17Library, jdk27Library),
+            additionalOptions = valhallaOptions + CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
+        )
+    }
+
     private fun generateClassWithoutAccSuper(internalName: String): ByteArray {
         val writer = ClassWriter(0)
         writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, internalName, null, "java/lang/Object", null)
