@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isValue
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -39,8 +42,9 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
             // single-field classes. For other wrong targets 'WRONG_MODIFIER_TARGET' is reported instead.
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS)
         } else if (annotation == null && declaration.isValue && !declaration.isExpect) {
-            // do not report anything for non-class declarations, WRONG_MODIFIER will be reported anyway
+            // do not report anything for non-class declarations and local classes, WRONG_MODIFIER will be reported anyway
             if (declaration.classKind != ClassKind.CLASS) return
+            if (declaration.isLocal && !declaration.isInner && declaration.isReplSnippetDeclaration != true) return
             val isFullValueClassSupportEnabled = LanguageFeature.FullValueClasses.isEnabled()
             if (!isFullValueClassSupportEnabled) {
                 // only report if value keyword exists, this ignores the deprecated inline class syntax

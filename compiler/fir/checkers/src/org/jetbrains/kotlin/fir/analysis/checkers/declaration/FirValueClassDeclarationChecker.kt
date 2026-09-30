@@ -78,6 +78,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         val valueModifierPrefix = if (supportsFullValueClasses) "@JvmInline value" else "Value"
         val isFullValueClass = declaration.symbol.isFullValueClass
 
+        // The modifier of a local class, unless it is inner or in a REPL snippet, is reported as `WRONG_MODIFIER_TARGET`.
+        if (declaration.isLocal && !declaration.isInner && declaration.isReplSnippetDeclaration != true) return
         if (declaration.isInner || declaration.isLocal) {
             reporter.reportOn(declaration.source, FirErrors.VALUE_CLASS_NOT_TOP_LEVEL)
         }
