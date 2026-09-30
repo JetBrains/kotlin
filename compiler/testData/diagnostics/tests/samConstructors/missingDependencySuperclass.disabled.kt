@@ -41,8 +41,8 @@ import lib.ThemeCallback
 import lib.Test
 
 class FrontendThemeManager {
-    val nativeThemeCallback = <!MISSING_DEPENDENCY_SUPERCLASS!>ThemeCallback<!> {}
-    val nativeThemeCallbackConversion: ThemeCallback = <!MISSING_DEPENDENCY_SUPERCLASS!>{}<!>
+    val nativeThemeCallback = <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>ThemeCallback<!> {}
+    val nativeThemeCallbackConversion: ThemeCallback = <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>{}<!>
 }
 
 fun box(): String {
@@ -51,7 +51,7 @@ fun box(): String {
     // 'abstract void foo()' of interface dep.Callback."
     Test.test(FrontendThemeManager().nativeThemeCallback)
     Test.test(FrontendThemeManager().nativeThemeCallbackConversion)
-    Test.take <!MISSING_DEPENDENCY_SUPERCLASS!>{}<!>
+    Test.take <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>{}<!>
     return "OK"
 }
 

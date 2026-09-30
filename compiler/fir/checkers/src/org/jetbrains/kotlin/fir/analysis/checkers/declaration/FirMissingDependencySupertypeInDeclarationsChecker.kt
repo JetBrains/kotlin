@@ -23,7 +23,7 @@ object FirMissingDependencySupertypeInDeclarationsChecker : FirBasicDeclarationC
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirClass) {
-            checkMissingDependencySuperTypes(declaration.symbol, declaration.source, isEagerCheck = false)
+            checkMissingDependencySuperTypes(declaration.symbol, declaration.source)
         }
 
         if (declaration is FirTypeParameterRefsOwner) {

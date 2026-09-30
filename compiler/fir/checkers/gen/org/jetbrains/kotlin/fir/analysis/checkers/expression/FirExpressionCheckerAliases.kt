@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirFunctionTypeConversionExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
@@ -89,3 +90,4 @@ typealias FirDoWhileLoopChecker = FirExpressionChecker<FirDoWhileLoop>
 typealias FirCollectionLiteralChecker = FirExpressionChecker<FirCollectionLiteral>
 typealias FirClassReferenceExpressionChecker = FirExpressionChecker<FirClassReferenceExpression>
 typealias FirInaccessibleReceiverChecker = FirExpressionChecker<FirInaccessibleReceiverExpression>
+typealias FirFunctionTypeConversionExpressionChecker = FirExpressionChecker<FirFunctionTypeConversionExpression>

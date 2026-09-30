@@ -57,6 +57,7 @@ abstract class ExpressionCheckers {
     open val collectionLiteralCheckers: Set<FirCollectionLiteralChecker> = emptySet()
     open val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker> = emptySet()
     open val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker> = emptySet()
+    open val functionTypeConversionExpressionCheckers: Set<FirFunctionTypeConversionExpressionChecker> = emptySet()
 
     @CheckersComponentInternal internal val allBasicExpressionCheckers: Array<FirBasicExpressionChecker> by lazy { basicExpressionCheckers.toTypedArray() }
     @CheckersComponentInternal internal val allQualifiedAccessExpressionCheckers: Array<FirQualifiedAccessExpressionChecker> by lazy { (qualifiedAccessExpressionCheckers + basicExpressionCheckers).toTypedArray() as Array<FirQualifiedAccessExpressionChecker> }
@@ -97,4 +98,5 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allCollectionLiteralCheckers: Array<FirCollectionLiteralChecker> by lazy { (collectionLiteralCheckers + basicExpressionCheckers + callCheckers).toTypedArray() as Array<FirCollectionLiteralChecker> }
     @CheckersComponentInternal internal val allClassReferenceExpressionCheckers: Array<FirClassReferenceExpressionChecker> by lazy { (classReferenceExpressionCheckers + basicExpressionCheckers).toTypedArray() as Array<FirClassReferenceExpressionChecker> }
     @CheckersComponentInternal internal val allInaccessibleReceiverCheckers: Array<FirInaccessibleReceiverChecker> by lazy { (inaccessibleReceiverCheckers + basicExpressionCheckers).toTypedArray() as Array<FirInaccessibleReceiverChecker> }
+    @CheckersComponentInternal internal val allFunctionTypeConversionExpressionCheckers: Array<FirFunctionTypeConversionExpressionChecker> by lazy { (functionTypeConversionExpressionCheckers + basicExpressionCheckers).toTypedArray() as Array<FirFunctionTypeConversionExpressionChecker> }
 }

@@ -34,14 +34,14 @@ fun takeInherited(c: InheritedCallback) {}
 // FILE: main.kt
 import lib.*
 
-val themeCallback = <!MISSING_DEPENDENCY_SUPERCLASS!>ThemeCallback<!> {}
-val themeCallbackConversion: ThemeCallback = <!MISSING_DEPENDENCY_SUPERCLASS!>{}<!>
+val themeCallback = <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>ThemeCallback<!> {}
+val themeCallbackConversion: ThemeCallback = <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>{}<!>
 
 val inheritedCallback = <!INTERFACE_AS_FUNCTION!>InheritedCallback<!> {}
 val inheritedCallbackConversion: InheritedCallback <!INITIALIZER_TYPE_MISMATCH!>=<!> {}
 
 fun box(): String {
-    takeTheme <!MISSING_DEPENDENCY_SUPERCLASS!>{}<!>
+    takeTheme <!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>{}<!>
     takeInherited <!ARGUMENT_TYPE_MISMATCH!>{}<!>
     return "OK"
 }

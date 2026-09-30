@@ -114,7 +114,6 @@ fun main(args: Array<String>) {
             alias<FirStatement>("BasicExpressionChecker", false).let {
                 visitAlso<FirExpression>(it)
                 visitAlso<FirVarargArgumentsExpression>(it)
-                visitAlso<FirFunctionTypeConversionExpression>(it)
                 visitAlso<FirWrappedExpression>(it)
                 visitAlso<FirWrappedArgumentExpression>(it)
                 visitAlso<FirSpreadArgumentExpression>(it)
@@ -181,6 +180,7 @@ fun main(args: Array<String>) {
             alias<FirCollectionLiteral>("CollectionLiteralChecker")
             alias<FirClassReferenceExpression>("ClassReferenceExpressionChecker")
             alias<FirInaccessibleReceiverExpression>("InaccessibleReceiverChecker")
+            alias<FirFunctionTypeConversionExpression>("FunctionTypeConversionExpressionChecker")
         }
 
         val declarationPackage = "$basePackage.checkers.declaration"

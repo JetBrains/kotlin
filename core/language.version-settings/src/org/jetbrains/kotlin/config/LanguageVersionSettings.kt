@@ -571,6 +571,7 @@ enum class LanguageFeature(
     // 2.6
 
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),
+    ForbidSamConstructorCallsWithMissingDependencySupertype(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KT-81075"),
     ExplicitContextArguments(sinceVersion = KOTLIN_2_6, issue = "KT-81684"),
     ForbidJavaClassPropertyReferences(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-375"),
     ForbidNonTopLevelEagerInitialization(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KT-89476"),

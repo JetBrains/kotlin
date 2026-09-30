@@ -213,4 +213,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> = setOf(
         FirInlineExposedLessVisibleThisReceiverChecker
     )
+
+    override val functionTypeConversionExpressionCheckers: Set<FirFunctionTypeConversionExpressionChecker> = setOf(
+        FirMissingDependencySupertypeInSamConversionChecker,
+    )
 }

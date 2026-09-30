@@ -57,4 +57,5 @@ class FilteredExpressionCheckers(
     override val collectionLiteralCheckers: Set<FirCollectionLiteralChecker> = delegate.collectionLiteralCheckers.filterTo(mutableSetOf(), predicate)
     override val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker> = delegate.classReferenceExpressionCheckers.filterTo(mutableSetOf(), predicate)
     override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker> = delegate.inaccessibleReceiverCheckers.filterTo(mutableSetOf(), predicate)
+    override val functionTypeConversionExpressionCheckers: Set<FirFunctionTypeConversionExpressionChecker> = delegate.functionTypeConversionExpressionCheckers.filterTo(mutableSetOf(), predicate)
 }
