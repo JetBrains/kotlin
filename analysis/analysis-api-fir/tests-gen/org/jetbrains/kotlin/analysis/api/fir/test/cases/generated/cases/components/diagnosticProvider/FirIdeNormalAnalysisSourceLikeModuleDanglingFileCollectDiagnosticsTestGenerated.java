@@ -243,6 +243,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleDanglingFileCollectDiagnosticsT
   }
 
   @Test
+  @TestMetadata("inlineFromHigherPlatform.kt")
+  public void testInlineFromHigherPlatform() {
+    run("inlineFromHigherPlatform.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFromHigherPlatformUnspecifiedJvmTarget.kt")
+  public void testInlineFromHigherPlatformUnspecifiedJvmTarget() {
+    run("inlineFromHigherPlatformUnspecifiedJvmTarget.kt");
+  }
+
+  @Test
   @TestMetadata("javaInnerClass.kt")
   public void testJavaInnerClass() {
     run("javaInnerClass.kt");
