@@ -53,6 +53,8 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
         if (Directives.IGNORE_TREE_ACCESS in testServices.moduleStructure.allDirectives) return
 
         // The main file is already put into a stub-based state by the base test via the `STUB_BASED` default directive (see `configureTest`).
+        val stubBasedLocality = collectStubBasedClassLocality(mainFile)
+
         val output = withAstLoadingAssertion(mainFile) {
             withResolutionFacade(mainFile) { facade ->
                 doStubBasedTest(mainFile, mainModule, testServices, facade = facade)
@@ -63,6 +65,7 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
         clearCaches(mainFile.project)
         mainFile.calcTreeElement()
         testServices.assertions.assertTrue(mainFile.stub == null) { "Stub shouldn't be present for loaded file" }
+        assertClassLocalityMatchesAst(stubBasedLocality, testServices)
 
         withResolutionFacade(mainFile) { facade ->
             doAstBasedValidation(output, mainFile, mainModule, testServices, facade = facade)
