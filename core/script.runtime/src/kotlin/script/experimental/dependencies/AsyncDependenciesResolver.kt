@@ -19,8 +19,11 @@
 package kotlin.script.experimental.dependencies
 
 import kotlin.script.dependencies.Environment
+import kotlin.script.dependencies.LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE
 import kotlin.script.dependencies.ScriptContents
 
+@Deprecated(LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE)
+@Suppress("DEPRECATION")
 interface AsyncDependenciesResolver : DependenciesResolver {
     suspend fun resolveAsync(
             scriptContents: ScriptContents, environment: Environment
