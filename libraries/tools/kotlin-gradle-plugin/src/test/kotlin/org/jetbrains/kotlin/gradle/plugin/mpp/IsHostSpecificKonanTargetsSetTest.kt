@@ -9,15 +9,24 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 class IsHostSpecificKonanTargetsSetTest {
 
     private val hostManager = HostManager()
 
     @Test
+    fun `partially supported hosts do not change shared metadata classification`() {
+        assertFalse(
+            isHostSpecificKonanTargetsSet(listOf(KonanTarget.LINUX_X64, KonanTarget.MINGW_X64))
+        )
+    }
+
+    @Test
     fun `matches previous implementation`() {
         fun previousImplementation(konanTargets: Iterable<KonanTarget>): Boolean {
-            val enabledByHost = hostManager.enabledByHost
+            val commonTargets = hostManager.enabledByHost.getValue(KonanTarget.LINUX_X64)
+            val enabledByHost = hostManager.enabledByHost.filterValues { it.containsAll(commonTargets) }
             val allHosts = enabledByHost.keys
             fun canBeBuiltOnHosts(konanTarget: KonanTarget) = enabledByHost.filterValues { konanTarget in it }.keys
             return konanTargets.flatMapTo(mutableSetOf(), ::canBeBuiltOnHosts) != allHosts

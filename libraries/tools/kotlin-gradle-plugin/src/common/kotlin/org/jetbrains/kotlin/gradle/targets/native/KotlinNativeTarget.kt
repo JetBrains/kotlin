@@ -166,15 +166,22 @@ abstract class KotlinNativeTarget @Inject constructor(
 
 private val hostManager by lazy { HostManager() }
 
-private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.reduce { acc, targets -> acc intersect targets } }
+private val targetsEnabledOnAllFullHosts by lazy {
+    // Linux x64 supports the common Native targets. A host that initially supports only a subset
+    // must not change the metadata published for existing shared source sets on other hosts.
+    val commonTargets = hostManager.enabledByHost.getValue(KonanTarget.LINUX_X64)
+    hostManager.enabledByHost.values
+        .filter { it.containsAll(commonTargets) }
+        .reduce { acc, targets -> acc intersect targets }
+}
 
 /**
  * The set of konanTargets is considered 'host specific' if the shared compilation of said set can *not* be built
- * on *all* potential hosts. e.g. a set like (iosX64, macosX64) can only be built on macos hosts, and is therefore considered
- * 'host specific'.
+ * on all hosts supporting the common Native targets. E.g. a set like (iosX64, macosX64) can only
+ * be built on macos hosts, and is therefore considered 'host specific'.
  */
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
-    konanTargets.none { target -> target in targetsEnabledOnAllHosts }
+    konanTargets.none { target -> target in targetsEnabledOnAllFullHosts }
 
 internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
     return project.kotlinExtension.awaitSourceSets().filter {

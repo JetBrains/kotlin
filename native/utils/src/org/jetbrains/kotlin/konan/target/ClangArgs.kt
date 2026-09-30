@@ -85,6 +85,10 @@ sealed class ClangArgs(
             // Do not depend on link.exe from Visual Studio.
             add(listOf("-fuse-ld=lld"))
         }
+        if (forJni && target == KonanTarget.LINUX_ARM64 && HostManager.host == KonanTarget.LINUX_ARM64) {
+            // The AArch64 sysroot ships an x86-hosted GNU linker; host JNI libraries need the native LLVM linker.
+            add(listOf("-fuse-ld=lld", "-Wno-unused-command-line-argument"))
+        }
         add(listOf("-fno-stack-protector"))
         if (configurables is GccConfigurables) {
             add(listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}"))

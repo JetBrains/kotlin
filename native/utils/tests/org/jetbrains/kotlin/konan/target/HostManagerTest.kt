@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.target
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -32,6 +33,17 @@ class HostManagerTest {
     @Test
     fun hostIsSupportedOnKnownOs() {
         assertTrue(HostManager.hostIsSupported)
+    }
+
+    @Test
+    fun linuxArm64IsSupportedHost() {
+        withModifiedSystemProperties("os.name" to "Linux", "os.arch" to "aarch64") {
+            assertEquals(KonanTarget.LINUX_ARM64, HostManager.host)
+            assertTrue(HostManager.hostIsSupported)
+            assertTrue(HostManager.hostIsLinux)
+            assertEquals(listOf(KonanTarget.LINUX_ARM64), HostManager().enabled)
+            assertEquals("linux", HostManager.jniHostPlatformIncludeDir)
+        }
     }
 
     @Synchronized

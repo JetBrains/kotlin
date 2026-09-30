@@ -14,7 +14,7 @@ import kotlin.io.path.*
 import kotlin.io.path.isDirectory
 
 private const val ROOT_PROPERTY_NAME = "kotlin.native.llvm"
-private val supportedHosts = listOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+private val supportedHosts = listOf(KonanTarget.LINUX_X64, KonanTarget.LINUX_ARM64, KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
 
 /**
  * Which components are contained in LLVM distribution:

@@ -160,10 +160,19 @@ fun KGPBaseTest.nativeProject(
     configureSubProjects: Boolean = false,
     test: TestProject.() -> Unit = {},
 ): TestProject {
+    val localNativeHome = System.getenv("KOTLIN_NATIVE_TEST_HOME")
+    val nativeBuildOptions = if (localNativeHome != null) {
+        buildOptions.copy(
+            konanDataDir = null,
+            freeArgs = buildOptions.freeArgs + "-Pkotlin.native.home=$localNativeHome",
+        )
+    } else {
+        buildOptions
+    }
     val project = project(
         projectName = projectName,
         gradleVersion = gradleVersion,
-        buildOptions = buildOptions,
+        buildOptions = nativeBuildOptions,
         enableBuildScan = enableBuildScan,
         enableOfflineMode = enableOfflineMode,
         dependencyManagement = dependencyManagement,
