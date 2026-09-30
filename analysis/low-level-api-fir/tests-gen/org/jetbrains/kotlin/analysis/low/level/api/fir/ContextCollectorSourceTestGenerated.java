@@ -311,6 +311,30 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("secondaryConstructor_superCallArgumentInnerClass.kt")
+  public void testSecondaryConstructor_superCallArgumentInnerClass() {
+    run("secondaryConstructor_superCallArgumentInnerClass.kt");
+  }
+
+  @Test
+  @TestMetadata("secondaryConstructor_superCallArgumentListInnerClass.kt")
+  public void testSecondaryConstructor_superCallArgumentListInnerClass() {
+    run("secondaryConstructor_superCallArgumentListInnerClass.kt");
+  }
+
+  @Test
+  @TestMetadata("secondaryConstructor_superCallInnerClass.kt")
+  public void testSecondaryConstructor_superCallInnerClass() {
+    run("secondaryConstructor_superCallInnerClass.kt");
+  }
+
+  @Test
+  @TestMetadata("secondaryConstructor_thisCallInnerClass.kt")
+  public void testSecondaryConstructor_thisCallInnerClass() {
+    run("secondaryConstructor_thisCallInnerClass.kt");
+  }
+
+  @Test
   @TestMetadata("simple.kt")
   public void testSimple() {
     run("simple.kt");
@@ -605,6 +629,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     @TestMetadata("superTypeCallArgumentsExpressionInnerClass.kt")
     public void testSuperTypeCallArgumentsExpressionInnerClass() {
       run("superTypeCallArgumentsExpressionInnerClass.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeCallArgumentsExpressionInnerSuperClass.kt")
+    public void testSuperTypeCallArgumentsExpressionInnerSuperClass() {
+      run("superTypeCallArgumentsExpressionInnerSuperClass.kt");
     }
 
     @Test

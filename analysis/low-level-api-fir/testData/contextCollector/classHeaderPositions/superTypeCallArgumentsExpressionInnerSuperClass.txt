@@ -1,0 +1,55 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirPackageMemberScope
+    Element 5
+        Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public open inner class Base : R|kotlin/Any|
+                FirRegularClassSymbol public final inner class Child : R|test/Outer.Base|
+        Static scope owner symbol: FirRegularClassSymbol public final class Outer : R|kotlin/Any|
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class Outer : R|kotlin/Any|
+                Type: test.Outer
+    Element 8
+        Static scope owner symbol: FirRegularClassSymbol public final inner class Child : R|test/Outer.Base|
+    Element 9
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol primaryConstructorParameter: R|kotlin/Int|
+Expression Stability: STABLE_VALUE
+
+FILE: [ResolvedTo(IMPORTS)] superTypeCallArgumentsExpressionInnerSuperClass.kt
+    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|test/Outer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open inner [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] test/Outer.constructor([ResolvedTo(STATUS)] param: R|kotlin/Int|): R|test/Outer.Base| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+        }
+
+        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Child : R|test/Outer.Base| {
+            public [ResolvedTo(BODY_RESOLVE)] test/Outer.constructor([ResolvedTo(BODY_RESOLVE)] primaryConstructorParameter: R|kotlin/Int|): R|test/Outer.Child| {
+                this@R|test/Outer|.super<R|test/Outer.Base|>(R|<local>/primaryConstructorParameter|)
+            }
+
+            public final [ResolvedTo(STATUS)] val member: R|kotlin/Int| = LAZY_EXPRESSION
+                public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        }
+
+    }
