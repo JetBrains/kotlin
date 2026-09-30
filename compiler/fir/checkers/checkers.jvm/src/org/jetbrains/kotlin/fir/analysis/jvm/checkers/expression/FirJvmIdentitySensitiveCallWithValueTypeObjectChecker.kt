@@ -47,6 +47,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
     )
 
     private val operationsToCheckFirstTypeArgCallableIds = setOf(
+        CallableId(FqName("java.lang.ref"), FqName("ReferenceQueue"), Name.identifier("ReferenceQueue")),
         CallableId(FqName("java.util"), FqName("IdentityHashMap"), Name.identifier("IdentityHashMap")),
         CallableId(FqName("java.util"), FqName("WeakHashMap"), Name.identifier("WeakHashMap")),
     )

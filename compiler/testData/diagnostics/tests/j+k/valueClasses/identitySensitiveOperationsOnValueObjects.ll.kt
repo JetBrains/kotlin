@@ -45,7 +45,7 @@ fun test(inline: Inline, full: Full, java: JavaValue, date: LocalDate, int: Int,
     Cleaner.create().register(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>int<!>) {}
     IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Full<!>, Int>()
     WeakHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>LocalDate<!>, Int>()
-    ReferenceQueue<Full>()
+    ReferenceQueue<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Full<!>>()
     System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>zone<!>)
 }
 
