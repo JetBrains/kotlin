@@ -8,31 +8,23 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AccessorOnNonLocalDestructur
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-    PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
   DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
-      VALUE_PARAMETER_LIST
-      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
-    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
-      VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+  MODIFIER_LIST[value]
+  FUNCTION[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-    BACKING_FIELD[hasInitializer=true]
-      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=3]
   DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-    PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
   DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
@@ -47,11 +39,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AccessorOnNonLocalDestructur
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
       DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=true]
         BINARY_EXPRESSION
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-        PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
-          MODIFIER_LIST[private]
+      MODIFIER_LIST[private]

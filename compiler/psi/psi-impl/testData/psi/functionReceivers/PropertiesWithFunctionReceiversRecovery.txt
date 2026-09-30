@@ -316,14 +316,20 @@ KtFile: PropertiesWithFunctionReceiversRecovery.kt
         PsiElement(IDENTIFIER)('A')
       PsiErrorElement:Expecting ')'
         PsiElement(LT)('<')
-    PsiErrorElement:Property getter or setter expected
-      PsiElement(IDENTIFIER)('B')
-      PsiElement(GT)('>')
-      PsiElement(RPAR)(')')
-      PsiElement(DOT)('.')
-      PsiElement(IDENTIFIER)('foo')
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('B')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(GT)('>')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(DOT)('.')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('foo')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
   PsiWhiteSpace('\n\n')
   PROPERTY
     PsiElement(val)('val')

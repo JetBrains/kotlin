@@ -6,8 +6,6 @@ KtFile: accessorOnNonLocalDestructuring.kt
   DESTRUCTURING_DECLARATION
     PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
     PsiWhiteSpace('\n')
-    PsiComment(EOL_COMMENT)('// IGNORE_ERRORS_FROM_API: KT-74793')
-    PsiWhiteSpace('\n')
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiErrorElement:Destructuring declarations are only allowed for local variables/values
@@ -31,9 +29,9 @@ KtFile: accessorOnNonLocalDestructuring.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('2')
-    PsiWhiteSpace('\n    ')
-    PROPERTY_ACCESSOR
-      PsiElement(get)('get')
+  PsiWhiteSpace('\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('get')
   PsiWhiteSpace('\n\n')
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
@@ -59,29 +57,35 @@ KtFile: accessorOnNonLocalDestructuring.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('2')
-    PsiWhiteSpace('\n    ')
-    PROPERTY_ACCESSOR
-      PsiElement(get)('get')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('1')
-    PsiWhiteSpace('\n    ')
-    PROPERTY_ACCESSOR
-      PsiElement(set)('set')
-      VALUE_PARAMETER_LIST
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          PsiElement(IDENTIFIER)('value')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      BLOCK
-        PsiElement(LBRACE)('{')
-        PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('get')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EQ)('=')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('1')
+  PsiWhiteSpace('\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('set')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(LPAR)('(')
+  MODIFIER_LIST
+    PsiElement(value)('value')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  FUNCTION
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
@@ -107,14 +111,15 @@ KtFile: accessorOnNonLocalDestructuring.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('2')
-    PsiWhiteSpace('\n    ')
-    BACKING_FIELD
-      PsiElement(field)('field')
-      PsiWhiteSpace(' ')
-      PsiElement(EQ)('=')
-      PsiWhiteSpace(' ')
-      INTEGER_CONSTANT
-        PsiElement(INTEGER_LITERAL)('3')
+  PsiWhiteSpace('\n    ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('field')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(EQ)('=')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(INTEGER_LITERAL)('3')
   PsiWhiteSpace('\n\n')
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
@@ -140,10 +145,10 @@ KtFile: accessorOnNonLocalDestructuring.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('2')
-    PsiElement(SEMICOLON)(';')
-    PsiWhiteSpace(' ')
-    PROPERTY_ACCESSOR
-      PsiElement(get)('get')
+  PsiElement(SEMICOLON)(';')
+  PsiWhiteSpace(' ')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(IDENTIFIER)('get')
   PsiWhiteSpace('\n\n')
   DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
@@ -169,7 +174,7 @@ KtFile: accessorOnNonLocalDestructuring.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('2')
-    PsiElement(SEMICOLON)(';')
+  PsiElement(SEMICOLON)(';')
   PsiWhiteSpace('\n')
   PROPERTY
     PsiElement(val)('val')
@@ -213,9 +218,9 @@ KtFile: accessorOnNonLocalDestructuring.kt
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('2')
-        PsiWhiteSpace('\n        ')
-        PROPERTY_ACCESSOR
-          PsiElement(get)('get')
+      PsiWhiteSpace('\n        ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('get')
       PsiWhiteSpace('\n\n    ')
       DESTRUCTURING_DECLARATION
         PsiElement(var)('var')
@@ -241,11 +246,11 @@ KtFile: accessorOnNonLocalDestructuring.kt
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('2')
-        PsiWhiteSpace('\n        ')
-        PROPERTY_ACCESSOR
-          MODIFIER_LIST
-            PsiElement(private)('private')
-          PsiWhiteSpace(' ')
-          PsiElement(set)('set')
+      PsiWhiteSpace('\n        ')
+      MODIFIER_LIST
+        PsiElement(private)('private')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(IDENTIFIER)('set')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

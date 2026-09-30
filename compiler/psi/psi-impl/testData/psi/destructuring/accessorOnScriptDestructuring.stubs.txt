@@ -7,12 +7,17 @@ FILE[kind=Script[packageFqName=<root>]]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-      PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+    SCRIPT_INITIALIZER
+      REFERENCE_EXPRESSION[referencedName=get]
     DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
       BINARY_EXPRESSION
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-      PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+    SCRIPT_INITIALIZER
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=set]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            REFERENCE_EXPRESSION[referencedName=value]
+        LAMBDA_ARGUMENT[isSpread=false]

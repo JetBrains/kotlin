@@ -40,9 +40,10 @@ KtFile: ktij23263.kt
                 <empty list>
           PsiErrorElement:Expecting ')'
             PsiElement(OPEN_QUOTE)('"')
-        PsiErrorElement:Property getter or setter expected
-          PsiElement(REGULAR_STRING_PART)('First property')
-          PsiElement(CLOSING_QUOTE)('"')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(REGULAR_STRING_PART)('First property')
+      PsiErrorElement:Expecting member declaration
+        PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -77,8 +78,6 @@ KtFile: ktij23263.kt
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
-        PsiErrorElement:Property getter or setter expected
-          <empty list>
       PsiWhiteSpace(' ')
       FUNCTION
         PsiErrorElement:Expecting member declaration
