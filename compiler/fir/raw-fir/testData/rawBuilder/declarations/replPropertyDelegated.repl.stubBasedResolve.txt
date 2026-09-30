@@ -1,0 +1,25 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] replPropertyDelegated.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-replPropertyDelegated.repl.kts>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object ReplPropertyDelegated_repl : R|kotlin/Any| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] ReplPropertyDelegated_repl.constructor(): R|ReplPropertyDelegated_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(CONTRACTS)] [ReplPropertyCopy={/ReplPropertyDelegated_repl.foo=/ReplPropertyDelegated_repl.foo, /ReplPropertyDelegated_repl.bar=/ReplPropertyDelegated_repl.bar}] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol ReplPropertyDelegated_repl, ReplSnippetTopLevelDeclaration=true] object Provider : R|kotlin/Any| {
+                private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Provider] constructor(): R|ReplPropertyDelegated_repl.Provider| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun provideDelegate([ResolvedTo(ANNOTATION_ARGUMENTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] property: R|kotlin/reflect/KProperty<*>|): <ERROR TYPE REF: Symbol not found for Lazy> { LAZY_BLOCK }
+
+            }
+
+            public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] val foo: <implicit>by REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> { LAZY_BLOCK }
+
+            public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] val bar: <implicit>by REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=ReplPropertyDelegated_repl] get(): <implicit> { LAZY_BLOCK }
+
+        }

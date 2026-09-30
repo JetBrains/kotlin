@@ -1,0 +1,133 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-annotationRepl.repl.kts>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object AnnotationRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] AnnotationRepl_repl.constructor(): R|AnnotationRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(CONTRACTS)] fun $$eval(): <implicit> { LAZY_BLOCK }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class base : R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=base] constructor(): R|AnnotationRepl_repl.base| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|AnnotationRepl_repl.base|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationRepl_repl, ReplSnippetTopLevelDeclaration=true] class correct : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=correct] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationRepl_repl.correct.x] @R|AnnotationRepl_repl.base|[Types]() x: R|kotlin/Int|): R|AnnotationRepl_repl.correct| {
+                    super<R|kotlin/Any|>()
+                }
+
+                @R|AnnotationRepl_repl.base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=correct] get(): R|kotlin/Int|
+
+                @R|AnnotationRepl_repl.base|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=correct] constructor(): R|AnnotationRepl_repl.correct| {
+                    LAZY_this<R|AnnotationRepl_repl.correct|>
+                }
+
+                [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|AnnotationRepl_repl.base|[Types]() init { LAZY_BLOCK }
+
+            }
+
+            @R|AnnotationRepl_repl.base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationRepl_repl, ReplSnippetTopLevelDeclaration=true] enum class My : R|kotlin/Enum<AnnotationRepl_repl.My>| {
+                private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] constructor(): R|AnnotationRepl_repl.My| {
+                    super<R|kotlin/Enum<AnnotationRepl_repl.My>|>()
+                }
+
+                @R|AnnotationRepl_repl.base|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] enum entry FIRST: R|AnnotationRepl_repl.My| = object : R|AnnotationRepl_repl.My| {
+                    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                        super<R|AnnotationRepl_repl.My|>()
+                    }
+
+                }
+
+                @R|AnnotationRepl_repl.base|[Types]() public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] enum entry SECOND: R|AnnotationRepl_repl.My| = object : R|AnnotationRepl_repl.My| {
+                    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                        super<R|AnnotationRepl_repl.My|>()
+                    }
+
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] fun values(): R|kotlin/Array<AnnotationRepl_repl.My>| {
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|AnnotationRepl_repl.My| {
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationRepl_repl.My>|
+                    public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=My] get(): R|kotlin/enums/EnumEntries<AnnotationRepl_repl.My>|
+
+            }
+
+            @R|AnnotationRepl_repl.base|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|AnnotationRepl_repl.base|[Types]() y: R|@R|AnnotationRepl_repl.base|()  kotlin/Int|): R|@R|AnnotationRepl_repl.base|()  kotlin/Int| { LAZY_BLOCK }
+
+            @R|AnnotationRepl_repl.base|[Types]() public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] val z: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AnnotationRepl_repl] get(): <implicit>
+
+            @R|AnnotationRepl_repl.base|[Types]() public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] val x: R|kotlin/collections/Map<@R|AnnotationRepl_repl.base|()  kotlin/Int, kotlin/collections/List<@R|AnnotationRepl_repl.base|()  kotlin/Int>>| = REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AnnotationRepl_repl] get(): R|kotlin/collections/Map<@R|AnnotationRepl_repl.base|()  kotlin/Int, kotlin/collections/List<@R|AnnotationRepl_repl.base|()  kotlin/Int>>|
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) [evaluated = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)]) @R|AnnotationRepl_repl.base|[Types]() public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationRepl_repl, ReplSnippetTopLevelDeclaration=true] annotation class derived : R|AnnotationRepl_repl.base|, R|kotlin/Annotation| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=derived] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationRepl_repl.derived.x] x: R|kotlin/Int|): R|AnnotationRepl_repl.derived| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=derived] get(): R|kotlin/Int|
+
+            }
+
+            @R|AnnotationRepl_repl.derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingReplKey=FirReplSnippetSymbol AnnotationRepl_repl, ReplSnippetTopLevelDeclaration=true] class correctDerived : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=correctDerived] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AnnotationRepl_repl.correctDerived.x] @R|AnnotationRepl_repl.derived|[Types](x = Int(1) [evaluated = Int(1)]) x: R|@R|AnnotationRepl_repl.derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int|): R|AnnotationRepl_repl.correctDerived| {
+                    super<R|kotlin/Any|>()
+                }
+
+                @R|AnnotationRepl_repl.derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val x: R|@R|AnnotationRepl_repl.derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int| = R|<local>/x|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=correctDerived] get(): R|@R|AnnotationRepl_repl.derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int|
+
+                @R|AnnotationRepl_repl.base|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=correctDerived] constructor(): R|AnnotationRepl_repl.correctDerived| {
+                    LAZY_this<R|AnnotationRepl_repl.correctDerived|>
+                }
+
+            }
+
+            @R|AnnotationRepl_repl.derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(BODY_RESOLVE)] [ContainingReplKey=FirReplSnippetSymbol AnnotationRepl_repl, ReplSnippetTopLevelDeclaration=true] enum class MyDerived : R|kotlin/Enum<AnnotationRepl_repl.MyDerived>| {
+                private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] constructor(): R|AnnotationRepl_repl.MyDerived| {
+                    super<R|kotlin/Enum<AnnotationRepl_repl.MyDerived>|>()
+                }
+
+                @R|AnnotationRepl_repl.derived|[Types](x = Int(1) [evaluated = Int(1)]) public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] enum entry FIRST: R|AnnotationRepl_repl.MyDerived| = object : R|AnnotationRepl_repl.MyDerived| {
+                    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                        super<R|AnnotationRepl_repl.MyDerived|>()
+                    }
+
+                }
+
+                @R|AnnotationRepl_repl.derived|[Types](x = Int(1) [evaluated = Int(1)]) public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] enum entry SECOND: R|AnnotationRepl_repl.MyDerived| = object : R|AnnotationRepl_repl.MyDerived| {
+                    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                        super<R|AnnotationRepl_repl.MyDerived|>()
+                    }
+
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] fun values(): R|kotlin/Array<AnnotationRepl_repl.MyDerived>| {
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|AnnotationRepl_repl.MyDerived| {
+                }
+
+                public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived, HasBackingFieldKey=false] val entries: R|kotlin/enums/EnumEntries<AnnotationRepl_repl.MyDerived>|
+                    public static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyDerived] get(): R|kotlin/enums/EnumEntries<AnnotationRepl_repl.MyDerived>|
+
+            }
+
+            @R|AnnotationRepl_repl.derived|[Types](x = Int(1) [evaluated = Int(1)]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ReplSnippetTopLevelDeclaration=true] fun fooDerived([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|AnnotationRepl_repl.derived|[Types](x = Int(1) [evaluated = Int(1)]) y: R|@R|AnnotationRepl_repl.derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int|): R|@R|AnnotationRepl_repl.derived|(x = Int(1) [evaluated = Int(1)])  kotlin/Int| { LAZY_BLOCK }
+
+            @R|AnnotationRepl_repl.derived|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] val zDerived: <implicit> = REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AnnotationRepl_repl] get(): <implicit>
+
+            @R|AnnotationRepl_repl.derived|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ReplSnippetTopLevelDeclaration=true] val xDerived: R|kotlin/collections/Map<@R|AnnotationRepl_repl.derived|(LAZY_EXPRESSION)  kotlin/Int, kotlin/collections/List<@R|AnnotationRepl_repl.derived|(LAZY_EXPRESSION)  kotlin/Int>>| = REPL_EXPRESSION_REF
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AnnotationRepl_repl] get(): R|kotlin/collections/Map<@R|AnnotationRepl_repl.derived|(LAZY_EXPRESSION)  kotlin/Int, kotlin/collections/List<@R|AnnotationRepl_repl.derived|(LAZY_EXPRESSION)  kotlin/Int>>|
+
+        }

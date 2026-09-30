@@ -1,5 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-64899
-
 @Arrays(
     [1, 2, 3],
     [1L],
