@@ -508,6 +508,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleCompilerFacilityTestGenerated e
     }
 
     @Test
+    @TestMetadata("privateTopLevelNameClash.kt")
+    public void testPrivateTopLevelNameClash() {
+      run("privateTopLevelNameClash.kt");
+    }
+
+    @Test
+    @TestMetadata("privateTopLevelNameClashOtherFile.kt")
+    public void testPrivateTopLevelNameClashOtherFile() {
+      run("privateTopLevelNameClashOtherFile.kt");
+    }
+
+    @Test
     @TestMetadata("resultNothing.kt")
     public void testResultNothing() {
       run("resultNothing.kt");

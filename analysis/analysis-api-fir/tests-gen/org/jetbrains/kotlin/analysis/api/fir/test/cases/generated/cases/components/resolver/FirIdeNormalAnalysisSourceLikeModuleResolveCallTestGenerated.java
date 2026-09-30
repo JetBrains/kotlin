@@ -2209,6 +2209,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallTestGenerated extend
       }
 
       @Test
+      @TestMetadata("PrivateTopLevelFunctionNameClash.kt")
+      public void testPrivateTopLevelFunctionNameClash() {
+        run("PrivateTopLevelFunctionNameClash.kt");
+      }
+
+      @Test
       @TestMetadata("PropertyCall.kt")
       public void testPropertyCall() {
         run("PropertyCall.kt");
