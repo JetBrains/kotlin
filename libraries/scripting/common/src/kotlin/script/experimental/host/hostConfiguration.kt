@@ -71,6 +71,12 @@ val ScriptingHostConfigurationKeys.getScriptingClass by PropertiesCollection.key
 val ScriptingHostConfigurationKeys.getEvaluationContext by PropertiesCollection.key<GetEvaluationContext>(isTransient = true)
 
 /**
+ * Host-provided key-value environment getter, allows to pass host-specific data (e.g. project root, build tool home or options)
+ * to the script compilation configuration refinement functions
+ */
+val ScriptingHostConfigurationKeys.getRefinementEnvironment by PropertiesCollection.key<() -> Map<String, Any?>>(isTransient = true)
+
+/**
  * Whether script definitions should resolve [DependencyCoordinates] entries themselves; if not, the entries
  * are left in the compilation configuration for the host to resolve
  */

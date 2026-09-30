@@ -24,6 +24,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.getRefinementEnvironment
 import kotlin.script.experimental.impl.fromLegacyTemplate
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.JvmDependency
@@ -69,9 +70,7 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
             template.annotations.firstIsInstanceOrNull<ScriptTemplateAdditionalCompilerArguments>()?.let {
                 it.provider.primaryConstructor?.call(it.arguments.asIterable())
             }
-        }?.getAdditionalCompilerArguments(
-            hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty()
-        )
+        }?.getAdditionalCompilerArguments(hostConfiguration.refinementEnvironment())
 
         template.annotations.firstIsInstanceOrNull<SamWithReceiverAnnotations>()?.annotations?.let {
             annotationsForSamWithReceivers.put(it.map(::KotlinType))
@@ -123,6 +122,11 @@ private fun <T : Any> instantiateResolver(resolverClass: KClass<T>): T? {
     }
 }
 
+private fun ScriptingHostConfiguration.refinementEnvironment(): Map<String, Any?> =
+    this[ScriptingHostConfiguration.getRefinementEnvironment]?.invoke()
+        ?: this[@Suppress("DEPRECATION") ScriptingHostConfiguration.getEnvironment]?.invoke()
+        ?: emptyMap()
+
 private fun getResolveFunctions(): List<KFunction<*>> {
     // DependenciesResolver::resolve, ScriptDependenciesResolver::resolve, AsyncDependenciesResolver::resolveAsync
     return AsyncDependenciesResolver::class.memberFunctions.filter { it.name == "resolve" || it.name == "resolveAsync" }.also {
@@ -148,9 +152,7 @@ private fun refineWithResolver(
     dependencyResolver: DependenciesResolver,
     context: ScriptConfigurationRefinementContext,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val environment = context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
-        it[ScriptingHostConfiguration.getEnvironment]?.invoke()
-    }.orEmpty()
+    val environment = context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.refinementEnvironment().orEmpty()
 
     val [resolvedDeps, diagnostics] = runCatching {
         val result = dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)

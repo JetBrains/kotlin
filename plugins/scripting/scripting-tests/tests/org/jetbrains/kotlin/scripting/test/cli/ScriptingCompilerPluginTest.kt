@@ -28,20 +28,27 @@ class ScriptingCompilerPluginTest {
         val longStr = (1..100).joinToString("\\,") { """\" $it aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa \\""" }
         val unescapeRe = """\\(["\\,])""".toRegex()
         val cmdlineProcessor = ScriptingCommandLineProcessor()
-        val configuration = CompilerConfiguration.create()
 
-        cmdlineProcessor.processOption(
-            ScriptingCommandLineProcessor.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION as AbstractCliOption,
-            """abc=def,11="ab cd \\ \"",long="$longStr"""",
-            configuration
-        )
+        for (option in listOf(
+            ScriptingCommandLineProcessor.SCRIPT_REFINEMENT_ENVIRONMENT_OPTION,
+            @Suppress("DEPRECATION") ScriptingCommandLineProcessor.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
+        )) {
+            val configuration = CompilerConfiguration.create()
 
-        val res = configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
+            cmdlineProcessor.processOption(
+                option as AbstractCliOption,
+                """abc=def,11="ab cd \\ \"",long="$longStr"""",
+                configuration
+            )
 
-        assertEquals(
-            hashMapOf("abc" to "def", "11" to "ab cd \\ \"", "long" to unescapeRe.replace(longStr, "\$1")),
-            res
-        )
+            val res = configuration.getMap(ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT)
+
+            assertEquals(
+                hashMapOf("abc" to "def", "11" to "ab cd \\ \"", "long" to unescapeRe.replace(longStr, "\$1")),
+                res,
+                "option: ${option.optionName}"
+            )
+        }
     }
 
 }
