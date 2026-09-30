@@ -110,6 +110,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   }
 
   @Test
+  @TestMetadata("javaNestedAndInnerGenericClasses.kt")
+  public void testJavaNestedAndInnerGenericClasses() {
+    run("javaNestedAndInnerGenericClasses.kt");
+  }
+
+  @Test
   @TestMetadata("lambdaWithAnnotatedParameterName.kt")
   public void testLambdaWithAnnotatedParameterName() {
     run("lambdaWithAnnotatedParameterName.kt");
@@ -191,6 +197,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeByDeclarationReturnTypeT
   @TestMetadata("localTypeAlias.kt")
   public void testLocalTypeAlias() {
     run("localTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedAndInnerGenericClasses.kt")
+  public void testNestedAndInnerGenericClasses() {
+    run("nestedAndInnerGenericClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("nestedAndInnerGenericClassesFromLibrary.kt")
+  public void testNestedAndInnerGenericClassesFromLibrary() {
+    run("nestedAndInnerGenericClassesFromLibrary.kt");
   }
 
   @Test
