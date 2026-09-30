@@ -121,7 +121,7 @@ class SwiftExportUnitTests {
         val project = swiftExportProject()
         project.evaluate()
 
-        val swiftExportTask = project.tasks.getByName("iosSimulatorArm64DebugSwiftExport")
+        val swiftExportTask = project.tasks.getByName("iosSimulatorArm64SwiftExport")
         val generateSPMPackageTask = project.tasks.getByName("iosSimulatorArm64DebugGenerateSPMPackage")
         val buildSPMPackageTask = project.tasks.getByName("iosSimulatorArm64DebugBuildSPMPackage")
         val linkSwiftExportBinaryTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64")
@@ -239,11 +239,8 @@ class SwiftExportUnitTests {
         val iosArm64Prefix = "iosSimulatorArm64"
         val iosX64Prefix = "iosX64"
 
-        fun swiftExportExpectedTaskName(prefix: String): String = lowerCamelCaseName(
-            prefix,
-            buildTypeName,
-            "swiftExport"
-        )
+        // One run per target, so the build type isn't part of the name.
+        fun swiftExportExpectedTaskName(prefix: String): String = lowerCamelCaseName(prefix, "swiftExport")
 
         // Swift Export should be registered
         assertEquals(

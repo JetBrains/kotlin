@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftEx
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.normalizedSwiftExportModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.whenSwiftPMImportAvailable
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportConfigurationCompat
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDependencySelector
@@ -70,10 +71,8 @@ internal fun Project.registerSwiftExportTask(
     )
 
     val swiftExportTask = registerSwiftExportRun(
-        taskNamePrefix = taskNamePrefix,
         taskGroup = taskGroup,
         target = target,
-        configuration = buildConfiguration,
         swiftApiModuleName = swiftApiModuleName,
         exportConfiguration = swiftExportConfiguration.exportConfiguration.get(),
         apiConfiguration = swiftExportConfiguration.apiConfiguration.orNull,
@@ -163,10 +162,8 @@ internal fun Project.registerSwiftExportTask(
 }
 
 private fun Project.registerSwiftExportRun(
-    taskNamePrefix: String,
     taskGroup: String,
     target: KotlinNativeTarget,
-    configuration: String,
     swiftApiModuleName: Provider<String>,
     exportConfiguration: Configuration,
     apiConfiguration: Configuration?,
@@ -177,15 +174,14 @@ private fun Project.registerSwiftExportRun(
     dependencyOptionsOverrides: Provider<Map<SwiftExportDependencySelector, SwiftExportDeclaredModuleOptions>>,
     customSetting: Provider<Map<String, String>>,
 ): TaskProvider<SwiftExportTask> {
-    val swiftExportTaskName = lowerCamelCaseName(
-        taskNamePrefix,
-        "swiftExport"
-    )
+    // The run doesn't depend on the build type: the klib it translates is the same for Debug and Release.
+    // So there's one run per target, like the Kotlin compile tasks.
+    val swiftExportTaskName = target.disambiguateName("swiftExport")
 
-    val outputDirectory = layout.buildDirectory.dir("SwiftExport/${target.name}/$configuration")
+    val outputDirectory = layout.buildDirectory.dir("SwiftExport/${target.name}")
 
     return locateOrRegisterTask<SwiftExportTask>(swiftExportTaskName) { task ->
-        task.description = "Run $taskNamePrefix Swift Export process"
+        task.description = "Run ${target.name} Swift Export process"
         task.group = taskGroup
 
         // Input
