@@ -111,7 +111,6 @@ sourceSets {
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
 
 val projectDir = layout.projectDirectory
 val robolectricDependencyDir = layout.buildDirectory.dir("robolectricDependencies")

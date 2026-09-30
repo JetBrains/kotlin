@@ -77,4 +77,3 @@ tasks {
     }
 }
 
-testsJar()

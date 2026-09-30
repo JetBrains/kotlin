@@ -172,4 +172,3 @@ projectTests {
     withDist()
 }
 
-testsJar()

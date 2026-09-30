@@ -61,4 +61,3 @@ projectTests {
     testData(project.isolated, "testData")
 }
 
-testsJar()

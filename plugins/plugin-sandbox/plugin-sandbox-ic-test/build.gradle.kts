@@ -63,4 +63,3 @@ projectTests {
     testData(project(":js:js.translator").isolated, "testData/moduleEmulation.js")
 }
 
-testsJar()

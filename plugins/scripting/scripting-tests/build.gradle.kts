@@ -97,4 +97,3 @@ projectTests {
     withTestScriptDefinition()
 }
 
-testsJar()

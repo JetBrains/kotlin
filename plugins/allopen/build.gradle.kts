@@ -40,7 +40,6 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
 
 projectTests {
     testTask(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0))

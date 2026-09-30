@@ -150,4 +150,3 @@ projectTests {
     withScriptingPlugin()
 }
 
-testsJar()

@@ -98,7 +98,6 @@ projectTests {
     withTestJar()
 }
 
-testsJar()
 
 tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
     dependsOn(":compileAll")

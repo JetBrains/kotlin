@@ -78,4 +78,3 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     )
 }
 
-testsJar()

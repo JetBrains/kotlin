@@ -17,7 +17,6 @@ plugins {
     id("kgp-jacoco-offline")
 }
 
-testsJar()
 
 jvmToolchains {
     jdkVersion = JdkMajorVersion.JDK_17_0

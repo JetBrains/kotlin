@@ -25,7 +25,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar()
 
 projectTests {
     testTask(

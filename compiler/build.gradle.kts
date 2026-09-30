@@ -94,4 +94,3 @@ projectTests {
 
 val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt", testSourceSet)
 
-testsJar()

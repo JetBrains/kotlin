@@ -40,7 +40,6 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }
 
-testsJar()
 
 projectTests {
     testTask()

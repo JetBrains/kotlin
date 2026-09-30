@@ -55,4 +55,3 @@ projectTests {
 
 optInToK1Deprecation()
 
-testsJar()

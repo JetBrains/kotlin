@@ -356,7 +356,6 @@ fun Test.setupJsc() {
     )
 }
 
-testsJar()
 
 projectTests {
     testGenerator(

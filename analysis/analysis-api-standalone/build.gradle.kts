@@ -105,4 +105,3 @@ projectTests {
     testData(project(":analysis:low-level-api-fir").isolated, "testData/resolveToFirSymbolPsiClass")
 }
 
-testsJar()

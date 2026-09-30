@@ -172,7 +172,6 @@ kotlin {
     )
 }
 
-testsJar()
 
 tasks.register("analysisLowLevelApiFirAllTests") {
     dependsOn(
