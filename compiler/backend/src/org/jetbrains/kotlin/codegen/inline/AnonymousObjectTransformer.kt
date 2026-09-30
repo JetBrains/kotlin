@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -151,6 +154,9 @@ class AnonymousObjectTransformer(
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
         generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
+        val signatureTypes = fieldsToTransform.map { Type.getType(it.desc) } +
+                methodsToTransform.flatMap { Type.getArgumentTypes(it.desc).asList() + Type.getReturnType(it.desc) }
+        signatureTypes.filter { it.isRecompiledKotlinValueClass() }.mapTo(loadableDescriptors) { it.descriptor }
         if (loadableDescriptors.isNotEmpty()) {
             classBuilder.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
         }
@@ -396,6 +402,15 @@ class AnonymousObjectTransformer(
         return result
     }
 
+    // Like the classes of this compilation, a regenerated object lists the Kotlin value classes of a library compiled without Valhalla
+    // value classes, which is expected to be recompiled with them like this compilation.
+    private fun Type.isRecompiledKotlinValueClass(): Boolean {
+        if (sort != Type.OBJECT || !state.config.languageVersionSettings.isValhallaSupportEnabled()) return false
+        val irClass = state.jvmBackendClassResolver.resolveToClasses(this).singleOrNull() ?: return false
+        val languageVersionSettings = state.config.languageVersionSettings
+        return irClass.modality == Modality.FINAL && irClass.valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings)
+    }
+
     private fun generateConstructorAndFields(
         classBuilder: ClassBuilder,
         constructorInlineBuilder: ParametersBuilder,
@@ -426,7 +441,7 @@ class AnonymousObjectTransformer(
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
                 classBuilder.newField(null, access, info.newFieldName, desc, null, null)
-                if (info.desc.isLoadable) {
+                if (info.desc.isLoadable || info.type.isRecompiledKotlinValueClass()) {
                     loadableDescriptors.add(desc)
                 }
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
