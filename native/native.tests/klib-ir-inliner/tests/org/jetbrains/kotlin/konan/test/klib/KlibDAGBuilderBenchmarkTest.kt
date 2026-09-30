@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.klib
 import org.jetbrains.kotlin.backend.konan.library.InternalKlibDAGApi
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
+import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
@@ -344,8 +345,12 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
                 println("The computed DAG size is: ${latestDag!!.librariesReverseTopoSorted.size}")
             },
         ) {
-            @OptIn(InternalKlibDAGApi::class)
-            latestDag = KlibDAGBuilder(allLibraries, useSignatureIndices = mode.useSignatureIndices) { it in roots }.build()
+            latestDag = KlibDAGBuilder(
+                Parameters(libraries = allLibraries) { it in roots }.apply {
+                    @OptIn(InternalKlibDAGApi::class)
+                    useSignatureIndices = mode.useSignatureIndices
+                }
+            ).build()
         }
     }
 
