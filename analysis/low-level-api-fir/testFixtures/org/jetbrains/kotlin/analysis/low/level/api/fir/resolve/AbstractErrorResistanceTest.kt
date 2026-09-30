@@ -13,10 +13,21 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSour
 import org.jetbrains.kotlin.analysis.low.level.api.fir.withResolutionFacade
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.test.framework.utils.ignoreExceptionIfIgnoreDirectivePresent
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
+    private object Directives : SimpleDirectivesContainer() {
+        val IGNORE_ERROR_RESISTANCE by stringDirective("Temporary disable test until the issue is fixed")
+    }
+
+    override val additionalDirectives: List<DirectivesContainer>
+        get() = super.additionalDirectives + Directives
+
     override val configurator = LLSourceLikeTestConfigurator()
 
     override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
@@ -36,9 +47,11 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
                 .map { it.diagnostic }
                 .toList()
 
-            assert(diagnostics.isEmpty()) {
-                val messages = diagnostics.map { it.factoryName }
-                "There should be no diagnostics, found:\n" + messages.joinToString("\n")
+            testServices.moduleStructure.allDirectives.ignoreExceptionIfIgnoreDirectivePresent(Directives.IGNORE_ERROR_RESISTANCE) {
+                assert(diagnostics.isEmpty()) {
+                    val messages = diagnostics.map { it.factoryName }
+                    "There should be no diagnostics, found:\n" + messages.joinToString("\n")
+                }
             }
         }
     }
