@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -160,7 +161,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
             val supertypeSymbol = supertypeEntry.toRegularClassSymbol(context.session) ?: continue
-            if (supertypeSymbol.isInterface || supertypeSymbol.classId == StandardClassIds.Any) continue
+            if (supertypeSymbol.isInterface || supertypeSymbol.isAny()) continue
             if (!kind.isFullValueClass) {
                 reporter.reportOn(
                     supertypeEntry.source,
@@ -541,6 +542,11 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     private fun ClassId.isRecordId(): Boolean =
         relativeClassName == recordFqName && packageFqName == javaLangFqName
+
+    // `java.lang.Object` is `kotlin.Any`.
+    context(context: CheckerContext)
+    private fun FirRegularClassSymbol.isAny(): Boolean =
+        (context.session.platformClassMapper.getCorrespondingKotlinClass(classId) ?: classId) == StandardClassIds.Any
 
     context(context: CheckerContext)
     private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean =
