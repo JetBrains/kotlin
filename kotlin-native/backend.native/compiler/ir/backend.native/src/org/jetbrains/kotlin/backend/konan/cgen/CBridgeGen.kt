@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -50,6 +51,7 @@ internal interface KotlinStubs {
     val language: String
 
     val isSwiftExportEnabled: Boolean
+    val gcStackMapScheme: GCStackMapScheme
 
     fun addKotlin(declaration: IrDeclaration)
     fun getUniqueCName(prefix: String): String
@@ -454,7 +456,8 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
 private fun KotlinToCCallBuilder.emitCBridge() {
     val cLines = mutableListOf<String>()
 
-    cLines += "${bridgeBuilder.buildCSignature(cBridgeName)} {"
+    val noinlineAttribute = if (stubs.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN && cFunctionBuilder.variadic) "__attribute__((noinline)) " else ""
+    cLines += "$noinlineAttribute${bridgeBuilder.buildCSignature(cBridgeName)} {"
     cLines += cBridgeBodyLines
     cLines += "}"
 
