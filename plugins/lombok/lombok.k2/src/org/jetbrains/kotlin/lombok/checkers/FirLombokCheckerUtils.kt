@@ -343,8 +343,8 @@ fun checkIncludeAndExcludeAnnotations(
 
     declaredMemberScope.processAllProperties { variableSymbol ->
         val property = variableSymbol as? FirPropertySymbol ?: return@processAllProperties
-        val includeAnnotation = property.findAnnotationOnPropertyOrField(includeClassId, context.session)
-        val excludeAnnotation = property.findAnnotationOnPropertyOrField(excludeClassId, context.session)
+        val includeAnnotation = property.findAnnotationOnPropertyOrField(includeClassId)
+        val excludeAnnotation = property.findAnnotationOnPropertyOrField(excludeClassId)
 
         // Mirrors Lombok Java behaviour: "Having both @Exclude and @Include on a member generates a warning;
         // the member will be excluded in this case."

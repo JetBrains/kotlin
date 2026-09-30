@@ -364,11 +364,11 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 if (item.name.isSpecial) continue
 
                 val itemProperty = (item.symbol as? FirPropertySymbol) ?: promotedProperties[item.name]
-                val singularAnnotation = item.getAnnotationByClassId(LombokNames.SINGULAR_ID, session)
-                    ?: itemProperty?.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID, session)
+                val singularAnnotation = item.symbol.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)
+                    ?: itemProperty?.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID)
                 val singular: Singular? = singularAnnotation?.let { Singular.extract(it, session) }
                 // `@Builder.Default` is `@Target(FIELD)` alone, so it is never on the parameter itself.
-                val hasBuilderDefault = itemProperty?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID, session) != null
+                val hasBuilderDefault = itemProperty?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID) != null
 
                 generatedVariables.addIfNonClashing(item.name, existingVariableNames) {
                     if (builderSymbol.hasJavaOrigin) {

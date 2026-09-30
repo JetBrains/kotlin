@@ -12,23 +12,15 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirRegularClassChecker
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
-import org.jetbrains.kotlin.fir.declarations.processAllDeclarations
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processAllProperties
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.lombok.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.LombokNames
@@ -165,7 +157,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             if (property.fromPrimaryConstructor) return@processAllDeclarations
 
             for (annotationClassId in BUILDER_FIELD_ANNOTATION_IDS) {
-                val annotation = property.findAnnotationOnPropertyOrField(annotationClassId, context.session) ?: continue
+                val annotation = property.findAnnotationOnPropertyOrField(annotationClassId) ?: continue
                 reporter.reportOn(
                     annotation.source,
                     LombokFirDiagnostics.BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY,
@@ -212,9 +204,9 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             // The same lookup the generator does: `@Singular` is on the parameter unless it was written with a
             // `@field:` target, and `@Builder.Default` (`@Target(FIELD)`) is only ever on the promoted property.
             val property = promotedProperties[parameter.name]
-            val singularAnnotation = parameter.getAnnotationByClassId(LombokNames.SINGULAR_ID, context.session)
-                ?: property?.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID, context.session)
-            val defaultAnnotation = property?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID, context.session)
+            val singularAnnotation = parameter.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)
+                ?: property?.findAnnotationOnPropertyOrField(LombokNames.SINGULAR_ID)
+            val defaultAnnotation = property?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID)
 
             if (singularAnnotation != null) {
                 checkSingular(parameter, singularAnnotation, lombokService)
@@ -249,7 +241,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             // See the same guard in `checkClassProperties`: a parameter without a name is left alone.
             if (parameterSymbol.name.isSpecial) continue
 
-            parameterSymbol.getAnnotationByClassId(LombokNames.SINGULAR_ID, context.session)?.let { singularAnnotation ->
+            parameterSymbol.getCompilerRequiredAnnotationByClassId(LombokNames.SINGULAR_ID)?.let { singularAnnotation ->
                 checkSingular(parameterSymbol, singularAnnotation, lombokService)
             }
 

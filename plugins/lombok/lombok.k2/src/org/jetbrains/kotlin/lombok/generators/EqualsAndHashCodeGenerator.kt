@@ -248,11 +248,11 @@ class EqualsAndHashCodeGenerator(session: FirSession) : FirDeclarationGeneration
 
                 val propertyName = property.name
 
-                if (property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID, session) != null) {
+                if (property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID) != null) {
                     return@processAllProperties
                 }
 
-                val includeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID, session)
+                val includeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID)
 
                 if (includeAnnotation == null && property.isExcludedByDollarPrefix) return@processAllProperties
 

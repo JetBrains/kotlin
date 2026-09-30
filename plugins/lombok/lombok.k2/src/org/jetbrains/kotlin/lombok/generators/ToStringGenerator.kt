@@ -65,7 +65,15 @@ val FirDeclarationOrigin.isToString get() = this is FirDeclarationOrigin.Plugin 
  */
 class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val PREDICATE = DeclarationPredicate.create { annotated(listOf(LombokNames.TO_STRING)) }
+        private val PREDICATE = DeclarationPredicate.create {
+            annotated(
+                listOf(
+                    LombokNames.TO_STRING,
+                    LombokNames.TO_STRING_INCLUDE_ID.asSingleFqName(),
+                    LombokNames.TO_STRING_EXCLUDE_ID.asSingleFqName(),
+                )
+            )
+        }
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
@@ -143,11 +151,11 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
 
                 val propertyName = property.name
 
-                if (property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID, session) != null) {
+                if (property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_EXCLUDE_ID) != null) {
                     return@processAllProperties
                 }
 
-                val toStringIncludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID, session)
+                val toStringIncludeAnnotation = property.findAnnotationOnPropertyOrField(LombokNames.TO_STRING_INCLUDE_ID)
 
                 if (toStringIncludeAnnotation == null && property.isExcludedByDollarPrefix) return@processAllProperties
 
