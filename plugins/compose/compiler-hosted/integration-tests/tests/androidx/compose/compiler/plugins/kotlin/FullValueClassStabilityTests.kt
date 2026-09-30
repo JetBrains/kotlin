@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.file
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class FullValueClassStabilityTests : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
@@ -44,6 +46,12 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
 
     @Test
     fun testTypeParameterProperty() = assertStability("value class V<T>(val a: Int, val t: T)", "Parameter(T)")
+
+    @Test
+    fun testRecursiveProperty() {
+        val exception = assertThrows<Throwable> { assertStability("value class V(val a: Int, val next: V?)", "Unstable") }
+        assertTrue(generateSequence(exception) { it.cause }.any { it is StackOverflowError })
+    }
 
     /**
      * Asserts that the stability of the last type declared in [classDefSrc], normalized as for the code generation, is [stability].
