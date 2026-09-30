@@ -8,7 +8,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] setterScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-setterScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-setterScript.kts>, ScriptTopLevelDeclaration=true] annotation class Ann : R|kotlin/Annotation| {

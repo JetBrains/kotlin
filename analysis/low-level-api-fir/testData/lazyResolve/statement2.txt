@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] statement2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement2.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] statement2.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement2.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -57,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement2.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement2.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -113,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement2.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement2.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement2.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-statement2.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-statement2.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-statement2.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -286,7 +286,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-statement2.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-statement2.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -352,7 +352,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-statement2.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
@@ -385,7 +385,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] statement2.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-statement2.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-statement2.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {

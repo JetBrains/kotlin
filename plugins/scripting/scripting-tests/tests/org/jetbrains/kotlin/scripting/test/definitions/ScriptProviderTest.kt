@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.templates.standard.ScriptTemplateWithArgs
+import kotlin.script.experimental.templates.ScriptWithArgs
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -78,7 +78,7 @@ class ScriptProviderTest {
 }
 
 private open class FakeScriptDefinition(val suffix: String = ".kts") :
-    ScriptDefinition.FromTemplate(defaultJvmScriptingHostConfiguration, ScriptTemplateWithArgs::class) {
+    ScriptDefinition.FromTemplate(defaultJvmScriptingHostConfiguration, ScriptWithArgs::class) {
     val matchCounter = AtomicInteger()
     override fun isScript(script: SourceCode): Boolean {
         val path = script.locationId ?: return false

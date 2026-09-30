@@ -17,8 +17,8 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
     Element 8
         Implicit receiver:
-            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+                Type: kotlin.script.experimental.templates.ScriptWithArgs
     Element 9
         Scope: FirScriptDeclarationsScope
             Classifiers:
@@ -33,7 +33,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] topLevelDestructuring_subProperty.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-topLevelDestructuring_subProperty.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(STATUS)] class TwoValues : R|kotlin/Any| {
