@@ -10,7 +10,7 @@ external class A {
     <!JS_MODULE_PROHIBITED_ON_MEMBER!>@JsModule("p")
     val p: Int<!>
 
-    <!JS_MODULE_PROHIBITED_ON_MEMBER!>@JsModule("v")
+    <!JS_MODULE_PROHIBITED_ON_MEMBER, JS_MODULE_PROHIBITED_ON_VAR!>@JsModule("v")
     var v: Int<!>
 
     @JsModule("B")

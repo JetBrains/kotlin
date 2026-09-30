@@ -31,9 +31,8 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
 
         val isExternal = declaration.symbol.isEffectivelyExternal(context.session)
 
-        if (isExternal && !context.isTopLevel) {
+        if (!context.isTopLevel) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER)
-            return
         }
 
         // A qualified declaration is referenced through its qualifier, so a write lands on a plain JS object.
