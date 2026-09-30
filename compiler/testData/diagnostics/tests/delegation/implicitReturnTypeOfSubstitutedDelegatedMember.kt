@@ -1,12 +1,12 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-89635
 // The implicitly typed callers come first so that they trigger the implicit type resolution of the delegated members
 
 fun <B> useFunction(w: Wrap<B>) = w.id(w.produce())
 fun <B> useProperty(w: Wrap<B>) = w.prop
 
-fun checkFunction(w: Wrap<String>): String = <!RETURN_TYPE_MISMATCH!>useFunction(w)<!>
-fun checkProperty(w: Wrap<String>): String = <!RETURN_TYPE_MISMATCH!>useProperty(w)<!>
+fun checkFunction(w: Wrap<String>): String = useFunction(w)
+fun checkProperty(w: Wrap<String>): String = useProperty(w)
 
 abstract class Wrap<A>(delegate: Intf<A>) : Intf<A> by delegate {
     abstract fun produce(): A

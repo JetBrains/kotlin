@@ -234,15 +234,6 @@ open class ReturnTypeCalculatorWithJump(
             return tryCalculateReturnType(declaration.getter.delegate)
         }
 
-        val unwrappedDelegate = declaration.delegatedWrapperData?.wrapped
-        if (unwrappedDelegate != null) {
-            return tryCalculateReturnType(unwrappedDelegate).also {
-                if (declaration.returnTypeRef is FirImplicitTypeRef) {
-                    declaration.replaceReturnTypeRef(it)
-                }
-            }
-        }
-
         if (declaration.canHaveDeferredReturnTypeCalculation) {
             val resolvedTypeRef = callableCopyTypeCalculator.computeReturnType(declaration)
             requireWithAttachment(
