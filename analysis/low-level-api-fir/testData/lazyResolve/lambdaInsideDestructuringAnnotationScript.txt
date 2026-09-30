@@ -278,15 +278,15 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
 
         }
 
-        @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+        @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
                 ^local Int(1)
             }
 
             ^ R|<local>/local|()
         }
-         [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+         [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
                 ^local Int(1)
             }
 
@@ -316,15 +316,15 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideDestructuringAnnotationScript.kts
 
         }
 
-        @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+        @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
                 ^local Int(1)
             }
 
             ^ R|<local>/local|()
         }
-         [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+         [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
                 ^local Int(1)
             }
 
@@ -354,25 +354,25 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lambdaInsideDestructuringAnnotationScript.kts
 
         }
 
-        @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+        @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
                 ^local Int(1)
             }
 
             ^ R|<local>/local|()
         }
-         [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-            local final [ResolvedTo(RAW_FIR)] fun local(): R|kotlin/Int| {
+         [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
                 ^local Int(1)
             }
 
             ^ R|<local>/local|()
         }
         ]) [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
-        @R|one/Anno|[Types](i = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        @R|one/Anno|[Types](i = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
             ^ Int(2)
         }
-         [evaluated = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+         [evaluated = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Int] fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
             ^ Int(2)
         }
         ]) public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val first: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
