@@ -345,8 +345,7 @@ fun IrClass.addFunction(
 
 @DeprecatedCompilerApi(
     deprecatedSince = CompilerVersionOfApiDeprecation._2_5_20,
-    message = "Use IrFactory.buildConstructor {} from org.jetbrains.kotlin.ir.declarations.builder instead (note the word order: that package, not org.jetbrains.kotlin.ir.builders.declarations).",
-    replaceWith = "IrFactory.buildConstructor {}",
+    message = "Use IrFactory.buildConstructor {} from org.jetbrains.kotlin.ir.declarations.builder instead. A new builder was introduced in this package.",
 )
 inline fun IrFactory.buildConstructor(builder: IrFunctionBuilder.() -> Unit): IrConstructor =
     IrFunctionBuilder().run {
