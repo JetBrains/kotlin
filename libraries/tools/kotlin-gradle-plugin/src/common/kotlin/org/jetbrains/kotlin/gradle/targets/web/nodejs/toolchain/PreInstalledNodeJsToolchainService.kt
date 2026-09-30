@@ -10,9 +10,9 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.statistics.NodeJsToolchainServiceMetrics
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.reportDiagnosticWhenNodeJsVersionUnsupported
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -109,6 +109,8 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
                 PreInstalledNodeJsToolchainService::class.java
             ) { spec ->
                 spec.parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath.getOrElse("node"))
+            }.also {
+                NodeJsToolchainServiceMetrics.collectServiceCreated(project, NodeJsToolchainMode.PREINSTALLED)
             }
         }
     }

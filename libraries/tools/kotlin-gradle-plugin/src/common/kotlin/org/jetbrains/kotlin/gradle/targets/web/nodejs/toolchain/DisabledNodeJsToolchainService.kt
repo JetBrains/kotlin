@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.statistics.NodeJsToolchainServiceMetrics
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
 
 abstract class DisabledNodeJsToolchainService : NodeJsToolchainService<NodeJsToolchainService.Parameters> {
@@ -17,7 +18,9 @@ abstract class DisabledNodeJsToolchainService : NodeJsToolchainService<NodeJsToo
 
     companion object {
         internal fun registerIfAbsent(project: Project): Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>> {
-            return project.gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DisabledNodeJsToolchainService::class.java)
+            return project.gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DisabledNodeJsToolchainService::class.java).also {
+                NodeJsToolchainServiceMetrics.collectServiceCreated(project, NodeJsToolchainMode.DISABLE)
+            }
         }
     }
 }

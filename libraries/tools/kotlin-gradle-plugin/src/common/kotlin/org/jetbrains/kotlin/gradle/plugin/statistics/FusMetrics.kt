@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinDefaultJsTestLocation
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
@@ -491,6 +492,14 @@ internal object KotlinSourceSetMetrics : FusMetrics {
                         }
                     }
             }
+        }
+    }
+}
+
+internal object NodeJsToolchainServiceMetrics : FusMetrics {
+    internal fun collectServiceCreated(project: Project, mode: NodeJsToolchainMode) {
+        project.addConfigurationMetrics {
+            it.put(StringListMetrics.NODE_JS_TOOLCHAIN_SERVICE, mode.name.lowercase())
         }
     }
 }

@@ -96,10 +96,11 @@ enum class StringListMetrics(
         CONCAT,
         AllowedListAnonymizer(listOf("exposed", "hidden", "moduleName", "rootPackage", "settings"))
     ),
+    NODE_JS_TOOLCHAIN_SERVICE(CONCAT, AllowedListAnonymizer(listOf("download", "preinstalled", "disable"))),
     ;
 
 
     companion object {
-        const val VERSION = 6
+        const val VERSION = 7
     }
 }

@@ -82,7 +82,7 @@ interface NodeJsToolchainService<P : NodeJsToolchainService.Parameters> : BuildS
 
             return when (project.kotlinPropertiesProvider.nodeJsToolchainMode) {
                 NodeJsToolchainMode.DOWNLOAD -> DefaultNodeJsToolchainService.registerIfAbsent(project)
-                NodeJsToolchainMode.SYSTEM_PATH -> PreInstalledNodeJsToolchainService.registerIfAbsent(project)
+                NodeJsToolchainMode.PREINSTALLED -> PreInstalledNodeJsToolchainService.registerIfAbsent(project)
                 NodeJsToolchainMode.DISABLE -> DisabledNodeJsToolchainService.registerIfAbsent(project)
             }
         }
@@ -143,7 +143,7 @@ internal enum class NodeJsToolchainMode {
     /**
      * A pre-installed Node.js is used by [PreInstalledNodeJsToolchainService], and nothing is downloaded.
      */
-    SYSTEM_PATH,
+    PREINSTALLED,
     DISABLE,
     ;
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -14,6 +15,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 
+@ExperimentalNodeJsToolchainDsl
 class NodeJsToolchainManagementDslTest {
 
     private fun buildProjectAndDsl(): Pair<Project, NodeJsToolchainManagementDsl> =

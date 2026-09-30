@@ -15,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.statistics.NodeJsToolchainServiceMetrics
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsExecutableFile
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.reportDiagnosticWhenNodeJsVersionUnsupported
@@ -117,6 +118,8 @@ abstract class DefaultNodeJsToolchainService @Inject internal constructor(
                     )
                 )
                 spec.parameters.offline.set(project.gradle.startParameter.isOffline)
+            }.also {
+                NodeJsToolchainServiceMetrics.collectServiceCreated(project, NodeJsToolchainMode.DOWNLOAD)
             }
         }
 
