@@ -20,4 +20,4 @@ import lib.*
 // The library is compiled without Valhalla value classes, unlike this module.
 fun box(): String = if (capture(V(1, 2)).toString() == "12") "OK" else "Fail"
 
-// 0 LoadableDescriptors
+// 1 ATTRIBUTE LoadableDescriptors : Llib/V;
