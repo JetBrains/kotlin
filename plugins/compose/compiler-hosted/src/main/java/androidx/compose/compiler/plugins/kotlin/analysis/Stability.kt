@@ -517,11 +517,12 @@ class StabilityInferencer(
                 } else {
                     val primaryProperties = valueClassDeclaration.valueClassRepresentation?.underlyingPropertyNamesToTypes
                         ?: return Stability.Unstable // is abstract value class
-                    val typeArguments = valueClassDeclaration.typeParameters.map { substitutions[it.symbol] }
+                    val propertySubstitutions = substitutions + (type as IrSimpleType).substitutionMap()
+                    val typeArguments = valueClassDeclaration.typeParameters.map { propertySubstitutions[it.symbol] }
                     val symbol = SymbolForAnalysis(valueClassDeclaration.symbol, typeArguments, analysisEntryFile)
                     if (symbol in currentlyAnalyzing) return Stability.Unstable
                     Stability.Stable + primaryProperties.map { [_, type] ->
-                        stabilityOf(type, substitutions, currentlyAnalyzing + symbol, analysisEntryFile)
+                        stabilityOf(type, propertySubstitutions, currentlyAnalyzing + symbol, analysisEntryFile)
                     }
                 }
             }
@@ -535,7 +536,7 @@ class StabilityInferencer(
                 } else {
                     stabilityOf(
                         type = getInlineClassUnderlyingType(inlineClassDeclaration, treatCompatibleFullValueClassesAsInline = false),
-                        substitutions = substitutions,
+                        substitutions = substitutions + (type as IrSimpleType).substitutionMap(),
                         currentlyAnalyzing = currentlyAnalyzing,
                         analysisEntryFile
                     )
