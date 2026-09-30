@@ -94,7 +94,7 @@ class WasiBoxRunner(
         val runUnitTestsDirective = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
         val startUnitTests = useUnitTestRunnerOnly || runUnitTestsDirective
         val callGroupedTestsDriver = artifacts.hasGroupedTestsDriver
-        val standaloneEntryExport = wasiStandaloneEntryExport(callGroupedTestsDriver, runUnitTests = runUnitTestsDirective)
+        val standaloneEntryExport = wasiStandaloneEntryExport(callGroupedTestsDriver, runUnitTests = startUnitTests)
 
         val testWasiQuiet = if (useUnitTestRunnerOnly) startUnitTestsWasiScript(callGroupedTestsDriver)
         else """
@@ -199,7 +199,10 @@ open class WasmWasiFolderGroupingStageBoxRunner(
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val callGroupedTestsDriver = folderArtifact.hasGroupedTestsDriver
         val runUnitTestsDirective = RUN_UNIT_TESTS in firstNonGroupingTestServices.moduleStructure.allDirectives
-        val standaloneEntryExport = wasiStandaloneEntryExport(callGroupedTestsDriver, runUnitTests = runUnitTestsDirective)
+        val standaloneEntryExport = wasiStandaloneEntryExport(
+            callGroupedTestsDriver,
+            runUnitTests = useUnitTestRunnerOnly || runUnitTestsDirective,
+        )
 
         val testWasi = startUnitTestsWasiScript(callGroupedTestsDriver)
         File(folder, "test.mjs").writeText(testWasi)
