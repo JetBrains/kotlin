@@ -1,20 +1,20 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +FullValueClasses
 // FILE: a.kt
 
-value class Sub(val a: Int, val b: Long) : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>SBase<!>()
+value class Sub(val a: Int, val b: Long) : SBase()
 
-value class OtherSub(val a: Int) : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>OtherBase<!>(a)
+value class OtherSub(val a: Int) : OtherBase(a)
 
 // FILE: b.kt
 
-<!VALUE_CLASS_NOT_FINAL!>sealed<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class SBase
+sealed value class SBase
 
-<!VALUE_CLASS_NOT_FINAL!>abstract<!> value class OtherBase(x: Int)
+abstract value class OtherBase(x: Int)
 
-value class SameFileSub(override val a: String) : <!VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES!>SameFileBase<!>()
+value class SameFileSub(override val a: String) : SameFileBase()
 
-<!VALUE_CLASS_NOT_FINAL!>abstract<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS!>value<!> class SameFileBase {
+abstract value class SameFileBase {
     abstract val a: String
 }
 
