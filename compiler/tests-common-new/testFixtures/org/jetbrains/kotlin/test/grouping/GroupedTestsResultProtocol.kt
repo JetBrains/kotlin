@@ -199,9 +199,6 @@ object GroupedTestsResultProtocol {
             val malformedLines: List<String>,
             val missingExecutionNamesById: Map<String, List<String>>,
         ) {
-            val crashedIds: Set<String>
-                get() = testResults.filter { it.value.crashEvidence != null }.keys
-
             data class TestResult(
                 val outcomes: List<Outcome>,
                 val crashEvidence: CrashEvidence?,

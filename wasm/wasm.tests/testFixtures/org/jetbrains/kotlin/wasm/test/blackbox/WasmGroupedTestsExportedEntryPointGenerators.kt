@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.wasm.test.blackbox
 
 import org.jetbrains.kotlin.test.grouping.GroupedTestsExportedEntryPointGenerator
-import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunnerBase
-import org.jetbrains.kotlin.wasm.test.handlers.WasmWasiFolderGroupingStageBoxRunner
 
 object WasmJsGroupedTestsExportedEntryPointGenerator : GroupedTestsExportedEntryPointGenerator() {
     override fun generateExportedEntryPointSource(runAllFunctionName: String): String =

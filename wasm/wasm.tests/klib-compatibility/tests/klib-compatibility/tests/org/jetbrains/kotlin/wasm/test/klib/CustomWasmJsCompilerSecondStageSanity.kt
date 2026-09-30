@@ -9,9 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
-import org.junit.jupiter.api.Assertions
 import org.jetbrains.kotlin.test.NonGroupingStageOutput
-import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -103,22 +101,6 @@ class CustomWasmJsCompilerSecondStageSanity :
     @Test
     fun checkRecompilePasses() {
         runTest(testDataRoot + "recompile.kt")
-    }
-
-    private inline fun <reified T : Throwable> assertThrowsIfNotMuted(executable: () -> Unit): T {
-        val throwable: Throwable? = try {
-            executable()
-        } catch (caught: Throwable) {
-            caught
-        } as? Throwable
-
-        if (throwable is TestAbortedException) throw throwable
-
-        return Assertions.assertThrows(T::class.java) {
-            if (throwable != null) {
-                throw throwable
-            }
-        }
     }
 
     /**
