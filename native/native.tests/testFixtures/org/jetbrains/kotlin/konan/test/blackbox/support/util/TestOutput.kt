@@ -7,35 +7,32 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import jetbrains.buildServer.messages.serviceMessages.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
+import org.jetbrains.kotlin.test.report.TestReport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.text.ParseException
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TCTestReportParseState as State
 
-class TestReport(
-    val passedTests: Collection<TestName>,
-    val failedTests: Collection<TestName>,
-    val ignoredTests: Collection<TestName>
-) {
-    fun isEmpty(): Boolean = passedTests.isEmpty() && failedTests.isEmpty() && ignoredTests.isEmpty()
-
-    override fun toString(): String = """
-        TestReport:
-         * Passed:  $passedTests
-         * Failed:  $failedTests
-         * Ignored: $ignoredTests
-    """.trimIndent()
-}
-
 interface TestOutputFilter {
     fun filter(testOutput: String): FilteredOutput
 
-    data class FilteredOutput(val filteredOutput: String, val testReport: TestReport?)
+    data class FilteredOutput(
+        val filteredOutput: String,
+        val testReport: TCTestReport?,
+    )
 
     companion object {
         val NO_FILTERING = object : TestOutputFilter {
             override fun filter(testOutput: String) = FilteredOutput(testOutput, null)
         }
     }
+}
+
+/** [tests] holds sets, so a name reported twice (e.g. after a process relaunch) collapses there; the count does not. */
+data class TCTestReport(
+    val tests: TestReport<TestName>,
+    val reportedOutcomeCount: Int,
+) {
+    override fun toString(): String = tests.toString()
 }
 
 /**
@@ -68,7 +65,14 @@ object TCTestOutputFilter : TestOutputFilter {
 
         return TestOutputFilter.FilteredOutput(
             filteredOutput = callback.nonTestOutput.toString(),
-            testReport = TestReport(callback.passedTests, callback.failedTests, callback.ignoredTests)
+            testReport = TCTestReport(
+                tests = TestReport(
+                    callback.passedTests.toSet(),
+                    callback.failedTests.toSet(),
+                    callback.ignoredTests.toSet(),
+                ),
+                reportedOutcomeCount = with(callback) { passedTests.size + failedTests.size + ignoredTests.size },
+            ),
         )
     }
 }
