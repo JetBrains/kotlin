@@ -791,6 +791,48 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("lambdaInsideAnnotationArgument.kt")
+  public void testLambdaInsideAnnotationArgument() {
+    run("lambdaInsideAnnotationArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaInsideAnnotationArgumentScript.kts")
+  public void testLambdaInsideAnnotationArgumentScript() {
+    run("lambdaInsideAnnotationArgumentScript.kts");
+  }
+
+  @Test
+  @TestMetadata("lambdaInsideDestructuringAnnotationScript.kts")
+  public void testLambdaInsideDestructuringAnnotationScript() {
+    run("lambdaInsideDestructuringAnnotationScript.kts");
+  }
+
+  @Test
+  @TestMetadata("lambdaInsideForeignTypeAnnotation.kt")
+  public void testLambdaInsideForeignTypeAnnotation() {
+    run("lambdaInsideForeignTypeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaInsideForeignTypeAnnotationScript.kts")
+  public void testLambdaInsideForeignTypeAnnotationScript() {
+    run("lambdaInsideForeignTypeAnnotationScript.kts");
+  }
+
+  @Test
+  @TestMetadata("lambdaInsideLocalForeignTypeAnnotation.kt")
+  public void testLambdaInsideLocalForeignTypeAnnotation() {
+    run("lambdaInsideLocalForeignTypeAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("lambdaInsideLocalForeignTypeAnnotationScript.kts")
+  public void testLambdaInsideLocalForeignTypeAnnotationScript() {
+    run("lambdaInsideLocalForeignTypeAnnotationScript.kts");
+  }
+
+  @Test
   @TestMetadata("lastStatementWithDestructuringDeclarationReference.kts")
   public void testLastStatementWithDestructuringDeclarationReference() {
     run("lastStatementWithDestructuringDeclarationReference.kts");
