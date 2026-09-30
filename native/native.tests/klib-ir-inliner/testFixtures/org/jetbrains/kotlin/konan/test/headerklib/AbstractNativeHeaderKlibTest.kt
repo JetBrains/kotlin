@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.jupiter.api.Tag
 import java.io.File
 import kotlin.test.assertContentEquals
@@ -64,19 +65,25 @@ abstract class AbstractNativeHeaderKlibCompilationTest : AbstractNativeSimpleTes
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = getAbsoluteFile(testPath)
         assert(testPathFull.exists())
-        val testCaseLib: TestCase = generateTestcaseFromDirectory(testPathFull, "lib", listOf())
+        val freeCompilerArgs = testPathFull.walkTopDown().filter { it.isFile }.flatMap { freeCompilerArgs(it) }.toList()
+        val testCaseLib: TestCase = generateTestcaseFromDirectory(testPathFull, "lib", freeCompilerArgs)
         val klibLib = compileToLibrary(testCaseLib)
         val headerKlibLib = File(getHeaderPath("lib"))
         assert(headerKlibLib.exists())
         val testPathApp = testPathFull.resolve("main")
-        val klibAppFromHeader = compileToLibrary(testPathApp, TestCompilationArtifact.KLIB(headerKlibLib))
-        val klibAppFromFull = compileToLibrary(testPathApp, klibLib.resultingArtifact)
+        fun compileApp(lib: TestCompilationArtifact.KLIB) =
+            compileToLibrary(testPathApp, buildDir, TestCompilerArgs(freeCompilerArgs), listOf(lib.asLibraryDependency()))
+        val klibAppFromHeader = compileApp(TestCompilationArtifact.KLIB(headerKlibLib))
+        val klibAppFromFull = compileApp(klibLib.resultingArtifact)
         assertContentEquals(
             klibAppFromHeader.klibFile.readBytes(),
             klibAppFromFull.klibFile.readBytes()
         )
     }
 }
+
+private fun freeCompilerArgs(testDataFile: File): List<String> =
+    InTextDirectivesUtils.findListWithPrefixes(testDataFile.readText(), "// ${TestDirectives.FREE_COMPILER_ARGS.name}: ")
 
 private fun AbstractNativeSimpleTest.getHeaderPath(rev: String) = buildDir.absolutePath + "/header.$rev.klib"
 private fun AbstractNativeSimpleTest.generateTestcaseFromDirectory(source: File, rev: String, extraArgs: List<String>): TestCase {
