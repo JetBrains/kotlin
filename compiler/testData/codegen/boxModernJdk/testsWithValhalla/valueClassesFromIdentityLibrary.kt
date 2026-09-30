@@ -24,4 +24,4 @@ fun box(): String {
 }
 
 // 1 ATTRIBUTE LoadableDescriptors : Llib/Outer\$Nested;, Llib/V;
-// 2 public final static INNERCLASS lib/Outer\$Nested lib/Outer Nested
+// 2 public final static synchronized INNERCLASS lib/Outer\$Nested lib/Outer Nested
