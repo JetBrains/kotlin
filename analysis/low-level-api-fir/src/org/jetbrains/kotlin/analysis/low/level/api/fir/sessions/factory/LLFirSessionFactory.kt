@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.plugins.processCompilerPluginsOptions
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.diagnostics.KtRegisteredDiagnosticFactoriesStorage
 import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -746,7 +745,7 @@ internal class LLFirSessionFactory(
     ) {
         registerIdeComponents(project, languageVersionSettings, annotationSearchScope)
         registerCommonComponents(languageVersionSettings, isMetadataCompilation = isMetadataSession)
-        registerResolveComponents(KtRegisteredDiagnosticFactoriesStorage())
+        registerResolveComponents()
     }
 
     private fun LLFirSession.registerSourceLikeComponents() {

@@ -132,10 +132,10 @@ internal fun createScriptAnnotationResolutionSession(
         moduleData.bindSession(this@session)
         registerModuleData(moduleData)
         registerCliCompilerAndCommonComponents(configuration.languageVersionSettings, isMetadataCompilation = false)
-        registerResolveComponents(
+        registerResolveComponents()
+        registerCliCompilerOnlyResolveComponents(
             configuration.diagnosticFactoriesStorage ?: error("diagnosticFactoriesStorage is not registered in the configuration")
         )
-        registerCliCompilerOnlyResolveComponents()
         registerJavaComponents(NoJavaModulesResolver)
 
         val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)

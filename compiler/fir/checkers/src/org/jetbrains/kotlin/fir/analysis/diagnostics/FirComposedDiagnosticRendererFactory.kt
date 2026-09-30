@@ -11,6 +11,12 @@ import org.jetbrains.kotlin.fir.FirSessionComponent
 
 class FirRegisteredDiagnosticFactoriesStorage(val storage: KtRegisteredDiagnosticFactoriesStorage) : FirSessionComponent
 
-private val FirSession.firRegisteredDiagnosticFactories: FirRegisteredDiagnosticFactoriesStorage by FirSession.sessionComponentAccessor()
-val FirSession.registeredDiagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage
-    get() = firRegisteredDiagnosticFactories.storage
+private val FirSession.firRegisteredDiagnosticFactories: FirRegisteredDiagnosticFactoriesStorage? by FirSession.nullableSessionComponentAccessor()
+
+/**
+ * Registered only in the CLI compiler mode: its only reader is
+ * [org.jetbrains.kotlin.fir.analysis.checkers.config.FirSuppressedDiagnosticsCheckers],
+ * a language version settings checker which the Analysis API doesn't run.
+ */
+val FirSession.registeredDiagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage?
+    get() = firRegisteredDiagnosticFactories?.storage

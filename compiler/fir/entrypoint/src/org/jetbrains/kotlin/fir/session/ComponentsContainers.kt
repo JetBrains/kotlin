@@ -204,7 +204,6 @@ fun FirSession.registerJavaComponents(
  */
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerResolveComponents(
-    diagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage,
     lookupTracker: LookupTracker? = null,
     enumWhenTracker: EnumWhenTracker? = null,
     importTracker: ImportTracker? = null,
@@ -236,15 +235,15 @@ fun FirSession.registerResolveComponents(
         )
     }
     register(FirExpectActualMatchingContextFactory::class, FirExpectActualMatchingContextImpl.Factory)
-    register(FirRegisteredDiagnosticFactoriesStorage::class, FirRegisteredDiagnosticFactoriesStorage(diagnosticFactoriesStorage))
 }
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCliCompilerOnlyResolveComponents() {
+fun FirSession.registerCliCompilerOnlyResolveComponents(diagnosticFactoriesStorage: KtRegisteredDiagnosticFactoriesStorage) {
     register(FirNameConflictsTracker::class, FirNameConflictsTrackerImpl())
 
     // The Analysis API uses `LLCheckersFactory`.
     register(CheckersComponent::class, CheckersComponent())
+    register(FirRegisteredDiagnosticFactoriesStorage::class, FirRegisteredDiagnosticFactoriesStorage(diagnosticFactoriesStorage))
 }
 
 @OptIn(SessionConfiguration::class)
