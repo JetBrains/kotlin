@@ -229,6 +229,9 @@ class ClassCodegen private constructor(
             namedClass?.modality == Modality.ABSTRACT || namedClass?.modality == Modality.SEALED -> false
             // A Kotlin value class compiled as a Valhalla value class
             namedClass?.isKotlinValhallaValueClass(config.languageVersionSettings) == true -> true
+            // A Kotlin value class compiled as an identity class because of its superclass becomes a value class once its superclass is
+            // recompiled, so it is listed just the same, like a class annotated with `@WillBecomeValue`.
+            namedClass?.isKotlinValueClassCompiledAsIdentityClassBySuperclass(config.languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
             namedClass?.isJavaValueClass == true -> true
             // A class annotated with `@WillBecomeValue` is going to become a value class, so it is listed just the same.
