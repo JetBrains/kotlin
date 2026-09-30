@@ -17,8 +17,8 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
     Element 8
         Implicit receiver:
-            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+                Type: kotlin.script.experimental.templates.ScriptWithArgs
     Element 9
         Scope: FirScriptDeclarationsScope
             Classifiers:
@@ -48,7 +48,7 @@ Tower Data Context:
 
 FILE: [ResolvedTo(IMPORTS)] scriptStatement.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptStatement.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {

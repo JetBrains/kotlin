@@ -22,6 +22,7 @@ internal fun classpathFromSystemProperty(propertyName: String): List<File> =
 internal val stdlibPath: Path
     get() = Paths.get(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
 
+@Suppress("DEPRECATION")
 internal val scriptRuntimePath: Path
     get() = Paths.get(
         ScriptTemplateWithBindings::class.java.protectionDomain.codeSource.location.toURI()

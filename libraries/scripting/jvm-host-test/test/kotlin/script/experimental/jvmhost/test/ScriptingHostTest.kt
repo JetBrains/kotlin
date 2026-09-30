@@ -40,6 +40,7 @@ import kotlin.script.templates.standard.SimpleScriptTemplate
 import kotlin.test.*
 
 @ResourceLock(Resources.SYSTEM_OUT)
+@Suppress("DEPRECATION") // SimpleScriptTemplate: checks the mapping of the legacy standard templates
 class ScriptingHostTest {
 
     @Test
@@ -914,6 +915,7 @@ private fun evalScriptWithResult(
 ): ResultValue =
     evalScriptWithConfiguration(script, host, compilation, evaluation).throwOnFailure().valueOrNull()!!.returnValue
 
+@Suppress("DEPRECATION") // SimpleScriptTemplate
 internal fun evalScriptWithConfiguration(
     script: String,
     host: BasicScriptingHost = makeScriptingHost(),

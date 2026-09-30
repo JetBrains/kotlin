@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTopFunctionScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(COMPANION_GENERATION)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(SUPER_TYPES)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(TYPES)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(STATUS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONSTANT_EVALUATION)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| {
@@ -119,7 +119,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-typeParameterOfTopFunctionScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| {
