@@ -260,7 +260,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is not yet supported.")
         map.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions.")
         map.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions.")
-        map.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' annotation has no effect on value classes.")
+        map.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' cannot be applied to members of value classes.")
         map.put(
             SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS,
             "Synchronizing on an instance of Java value-based class ''{0}'' will produce a runtime exception in future JVM releases.",
@@ -318,7 +318,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as '@JvmRecord'.")
         map.put(
             NON_DATA_VALUE_CLASS_JVM_RECORD,
-            "Only data classes and non-@JvmInline value classes are allowed to be marked as '@JvmRecord'."
+            "Only data classes and value classes without '@JvmInline' are allowed to be marked as '@JvmRecord'."
         )
         map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype.")
         map.put(
