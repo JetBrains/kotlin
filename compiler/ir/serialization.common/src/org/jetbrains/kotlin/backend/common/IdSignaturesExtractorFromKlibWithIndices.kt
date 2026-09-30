@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
+import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.uniqueName
+import java.nio.file.Path
 
 /**
  * This is an implementation of [IdSignaturesExtractor] that allows reading top-level signatures from
@@ -15,16 +18,52 @@ import org.jetbrains.kotlin.library.KotlinLibrary
  */
 class IdSignaturesExtractorFromKlibWithIndices(
     private val library: KotlinLibrary,
-    private val delegate: IdSignaturesExtractor
+    private val delegate: IdSignaturesExtractor,
+    private val externalSignatureIndicesDir: Path? = null,
+    private val pathPrefixesForGenerationSignatureIndices: List<Path> = emptyList(),
 ) : IdSignaturesExtractor {
     override fun extractAllPublicSignatures() = delegate.extractAllPublicSignatures()
 
-    override fun extractOnlyTopLevelPublicSignatures(): ExtractedSignatures {
-        val signatureIndex = library.signatureIndex ?: return delegate.extractOnlyTopLevelPublicSignatures()
+    override fun extractOnlyTopLevelPublicSignatures() = getExtractedSignaturesFromIndexIfPossible()
+        ?: delegate.extractOnlyTopLevelPublicSignatures()
 
-        return ExtractedSignatures(
-            declaredSignatures = signatureIndex.exportedTopLevelSignatures,
-            importedSignatures = signatureIndex.importedTopLevelSignatures,
+    private fun getExtractedSignaturesFromIndexIfPossible(): ExtractedSignatures? {
+        // If there is an index inside the library, return signatures from it.
+        library.signatureIndex?.let { return it.toExtractedSignatures() }
+
+        // If there are no conditions under which an external index for the current library can be generated,
+        // return `null` to fall back to computing `ExtractedSignatures` on the fly using `delegate`.
+        if (externalSignatureIndicesDir == null || pathPrefixesForGenerationSignatureIndices.none { library.canonicalPath.startsWith(it) })
+            return null
+
+        // If there is the external index, return signatures from it.
+        KlibSignatureIndexComponent.createComponentIfDataInKlibIsAvailable(
+            KlibLayoutReader.FromDirectory(
+                externalSignatureIndicesDir,
+                ::getExternalIndexLayout
+            )
+        )?.let { return it.toExtractedSignatures() }
+
+        // Else, compute signatures and store them as the external index on the file system.
+        val [exported, imported] = delegate.extractOnlyTopLevelPublicSignatures()
+        KlibSignatureIndexComponentWriterImpl(
+            exportedTopLevelSignatures = exported,
+            importedTopLevelSignatures = imported,
+            layoutBuilder = ::getExternalIndexLayout,
+        ).writeTo(externalSignatureIndicesDir)
+        return ExtractedSignatures(exported, imported)
+    }
+
+    private fun getExternalIndexLayout(root: Path) = KlibSignatureIndexComponentLayout.ExternalIndex(
+        root = root,
+        libraryName = library.uniqueName,
+        libraryFingerprintHash = library.lazyEvaluatedFingerprintHash,
+    )
+
+    companion object {
+        private fun KlibSignatureIndexComponent.toExtractedSignatures() = ExtractedSignatures(
+            declaredSignatures = exportedTopLevelSignatures,
+            importedSignatures = importedTopLevelSignatures,
         )
     }
 }

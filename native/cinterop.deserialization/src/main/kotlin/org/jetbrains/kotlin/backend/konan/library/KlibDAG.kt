@@ -145,6 +145,8 @@ annotation class InternalKlibDAGApi
 class KlibDAGBuilder(parameters: Parameters) {
     class Parameters(
         val libraries: Collection<KotlinLibrary>,
+        val externalSignatureIndicesDir: Path? = null,
+        val pathPrefixesForGenerationSignatureIndices: List<Path> = emptyList(),
         val isRoot: (KotlinLibrary) -> Boolean,
     ) {
         @InternalKlibDAGApi
@@ -376,7 +378,15 @@ private class KlibDAGBuilderImpl(private val parameters: KlibDAGBuilder.Paramete
             else -> error("This library does not have IR and is not a C-interop library: $path")
         }
         @OptIn(InternalKlibDAGApi::class)
-        return if (parameters.useSignatureIndices) IdSignaturesExtractorFromKlibWithIndices(this, extractor) else extractor
+        return if (parameters.useSignatureIndices)
+            IdSignaturesExtractorFromKlibWithIndices(
+                library = this,
+                delegate = extractor,
+                externalSignatureIndicesDir = parameters.externalSignatureIndicesDir,
+                pathPrefixesForGenerationSignatureIndices = parameters.pathPrefixesForGenerationSignatureIndices,
+            )
+        else
+            extractor
     }
 
     private enum class State {

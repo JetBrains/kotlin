@@ -589,7 +589,13 @@ class NativeSecondStageCompilationConfig(
 
     internal var cacheSupport: CacheSupport = createCacheSupport(
             klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
-                    ?: KlibDAGBuilder(Parameters(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }).build()
+                    ?: KlibDAGBuilder(
+                            Parameters(
+                                    libraries = loadedKlibs.all,
+                                    externalSignatureIndicesDir = configuration.generateSignatureIndicesDir,
+                                    pathPrefixesForGenerationSignatureIndices = configuration.generateSignatureIndicesFrom,
+                            ) { it.isExplicitlySpecifiedByUserInCLIArgument }
+                    ).build()
     )
         private set
 
