@@ -9,7 +9,10 @@ import kotlin.internal.getProgressionLastElement
 import kotlin.random.Random
 
 /**
- * A range of values of type [CodePoint].
+ * An iterable range of values of type `CodePoint`.
+ *
+ * The range `CodePointRange` is a special case of increasing [CodePointProgression] with the step equal to 1.
+ * When being iterated, the range `CodePointRange` produces all values from [start] to [endInclusive].
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -32,12 +35,7 @@ public class CodePointRange(start: CodePoint, endInclusive: CodePoint) : CodePoi
      */
     override fun isEmpty(): Boolean = first > last
 
-    override fun equals(other: Any?): Boolean =
-        other is CodePointRange && (isEmpty() && other.isEmpty() ||
-                first == other.first && last == other.last)
-
-    override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * first.code + last.code)
+    override fun equals(other: Any?): Boolean = super.equals(other)
 
     override fun toString(): String = "$first..$last"
 
@@ -49,7 +47,13 @@ public class CodePointRange(start: CodePoint, endInclusive: CodePoint) : CodePoi
 
 
 /**
- * A progression of values of type [CodePoint].
+ * An iterable progression of values of type [CodePoint].
+ *
+ * A progression is defined by its first element [first], last element [last], and [step].
+ * It produces elements starting from the first element and incrementing by the step until the last element is reached.
+ * If the [step] is positive, the progression is increasing; if negative, the progression is decreasing.
+ *
+ * A progression doesn't store all its elements in memory. Instead, it calculates elements on-the-fly as they are requested.
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -89,6 +93,12 @@ internal constructor(
      */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
+    /**
+     * Checks if the progression is equal to the specified [other].
+     *
+     * `CodePointProgression` is considered equal to another `CodePointProgression` if they are both [empty][isEmpty]
+     * or have the same first element [first], last element [last], and [step].
+     */
     override fun equals(other: Any?): Boolean =
         other is CodePointProgression && (isEmpty() && other.isEmpty() ||
                 first == other.first && last == other.last && step == other.step)
@@ -100,7 +110,7 @@ internal constructor(
 
     public companion object {
         /**
-         * Creates UIntProgression within the specified bounds of a closed range.
+         * Creates CodePointProgression within the specified bounds of a closed range.
 
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
