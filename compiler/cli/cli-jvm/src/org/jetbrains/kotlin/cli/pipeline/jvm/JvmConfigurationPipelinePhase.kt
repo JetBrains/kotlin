@@ -60,7 +60,7 @@ object JvmConfigurationPipelinePhase : AbstractConfigurationPhase<K2JVMCompilerA
                 add("plugin:kotlin.scripting:script-templates=${arguments.scriptTemplates.joinToString(",")}")
             }
             if (arguments.scriptResolverEnvironment.isNotEmpty()) {
-                add("plugin:kotlin.scripting:script-resolver-environment=${arguments.scriptResolverEnvironment.joinToString(",")}")
+                add("plugin:kotlin.scripting:script-refinement-environment=${arguments.scriptResolverEnvironment.joinToString(",")}")
             }
         }
     }
