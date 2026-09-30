@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignat
 import org.jetbrains.kotlin.backend.common.KlibSignatureIndexConstants.KLIB_SIGNATURE_INDEX_FILE_NAME
 import org.jetbrains.kotlin.backend.common.KlibSignatureIndexConstants.KLIB_INDICES_DIR_NAME
 import org.jetbrains.kotlin.backend.common.serialization.CommonSignatureSerializer
+import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.IrStringSerializer
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
@@ -49,7 +50,7 @@ interface KlibSignatureIndexComponent : KlibComponent {
     val importedTopLevelSignatures: Set<IdSignature>
 
     companion object Kind : KlibComponent.Kind<KlibSignatureIndexComponent, KlibSignatureIndexComponentLayout> {
-        override fun createLayout(root: Path) = KlibSignatureIndexComponentLayout(root)
+        override fun createLayout(root: Path) = KlibSignatureIndexComponentLayout.IndexInLibrary(root)
 
         /**
          * Note: It is expected that every correct Klib has metadata files.
@@ -73,19 +74,22 @@ inline val Klib.signatureIndex: KlibSignatureIndexComponent?
  */
 class KlibSignatureIndexComponentWriterImpl(
     val serializedSignatureIndex: SerializedSignatureIndex,
+    private val layoutBuilder: (root: Path) -> KlibSignatureIndexComponentLayout = KlibSignatureIndexComponentLayout::IndexInLibrary,
 ) : KlibComponentWriter {
     constructor(
         exportedTopLevelSignatures: Set<IdSignature>,
         importedTopLevelSignatures: Set<IdSignature>,
+        layoutBuilder: (root: Path) -> KlibSignatureIndexComponentLayout = KlibSignatureIndexComponentLayout::IndexInLibrary,
     ) : this(
         serializeSignatures(
             exportedSignatures = exportedTopLevelSignatures,
             importedSignatures = importedTopLevelSignatures,
-        ).writeIntoMemory().let(::SerializedSignatureIndex)
+        ).writeIntoMemory().let(::SerializedSignatureIndex),
+        layoutBuilder,
     )
 
     override fun writeTo(root: Path) {
-        val layout = KlibSignatureIndexComponentLayout(root)
+        val layout = layoutBuilder(root)
         layout.indicesDir.createDirectories()
         layout.signatureIndexFile.outputStream().use { it.write(serializedSignatureIndex.signatureIndex) }
     }
@@ -153,17 +157,70 @@ fun KlibWriterSpec.includeSignatureIndex(serializedSignatureIndex: SerializedSig
     )
 }
 
-class KlibSignatureIndexComponentLayout(root: Path) : KlibComponentLayout(root) {
+sealed class KlibSignatureIndexComponentLayout(root: Path) : KlibComponentLayout(root) {
     /** The indices' directory. */
-    val indicesDir: Path
-        get() = root.resolve(KLIB_DEFAULT_COMPONENT_NAME).resolve(KLIB_INDICES_DIR_NAME)
+    abstract val indicesDir: Path
 
     /** The file with the signature index. */
     val signatureIndexFile: Path
         get() = indicesDir.resolve(KLIB_SIGNATURE_INDEX_FILE_NAME)
+
+    /**
+     * The layout for the index stored inside the library (aka "own" index).
+     */
+    class IndexInLibrary(root: Path) : KlibSignatureIndexComponentLayout(root) {
+        override val indicesDir: Path
+            get() = root.resolve(KLIB_DEFAULT_COMPONENT_NAME).resolve(KLIB_INDICES_DIR_NAME)
+    }
+
+    /**
+     * The layout for the index stored outside the library (aka "external" index).
+     *
+     * Note: There is currently a limitation that a library must have exactly one target, which will be used as an additional
+     * discriminator for storing the external index on the file system. That's important, because often libraries have group/artifact ID
+     * included into their `unique_name` property (which is passed as [libraryName]), but not the target name. For example,
+     * a library  with `org.jetbrains.kotlinx:kotlinx-coroutines-core-macosarm64:1.7.2` Maven coordinates has
+     * `unique_name=org.jetbrains.kotlinx:kotlinx-coroutines-core` in manifest. So, having external indices for several variants of
+     * the same library for different targets will end up in more records inside the same single index directory, which might cause
+     * more difficulties for investigating issues and maintaining.
+     *
+     * This limitation can be lifted in the future, if necessary.
+     *
+     * See also [ExternalKlibSignatureIndicesParameters].
+     */
+    class ExternalIndex(
+        root: Path,
+        private val libraryName: String,
+        private val targetDiscriminator: String,
+        private val libraryFingerprintHash: FingerprintHash,
+    ) : KlibSignatureIndexComponentLayout(root) {
+        override val indicesDir: Path
+            get() = root.resolve(targetDiscriminator).resolve(libraryName).resolve(libraryFingerprintHash.toString())
+    }
 }
 
-private object KlibSignatureIndexConstants {
+/**
+ * The necessary parameters to set up the generation and use of external signature indices.
+ *
+ * Note: There is currently a limitation that a library must have exactly one target, which will be used as an additional
+ * discriminator for storing the external index on the file system. That's important, because often libraries have group/artifact ID
+ * included into their `unique_name` property (which is passed as [targetDiscriminator]), but not the target name. For example,
+ * a library  with `org.jetbrains.kotlinx:kotlinx-coroutines-core-macosarm64:1.7.2` Maven coordinates has
+ * `unique_name=org.jetbrains.kotlinx:kotlinx-coroutines-core` in manifest. So, having external indices for several variants of
+ * the same library for different targets will end up in more records inside the same single index directory, which might cause
+ * more difficulties for investigating issues and maintaining.
+ *
+ * This limitation can be lifted in the future, if necessary.
+ *
+ * See also [KlibSignatureIndexComponentLayout.ExternalIndex].
+ */
+class ExternalKlibSignatureIndicesParameters(
+    val targetDiscriminator: String,
+    val externalSignatureIndicesDir: Path,
+    val pathPrefixesForGenerationSignatureIndices: List<Path>,
+)
+
+object KlibSignatureIndexConstants {
     const val KLIB_INDICES_DIR_NAME = "indices"
     const val KLIB_SIGNATURE_INDEX_FILE_NAME = "signatures.idx"
 }
