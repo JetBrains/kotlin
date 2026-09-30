@@ -63,6 +63,7 @@ private class BrokenLibraryElementFinder(project: Project) : PsiElementFinder() 
     private val manager = PsiManager.getInstance(project)
     private val brokenPackage = BrokenPackage("broken.lib", manager)
     private val brokenClass = BrokenClass(brokenPackage.qualifiedName, "Foo", manager)
+    private val brokenAnnotationClass = BrokenAnnotationClass(brokenPackage.qualifiedName, "BrokenAnnotation", manager)
 
     override fun findPackage(qualifiedName: String): PsiPackage? {
         return when (qualifiedName) {
@@ -74,6 +75,7 @@ private class BrokenLibraryElementFinder(project: Project) : PsiElementFinder() 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
         val klass = when (qualifiedName) {
             brokenClass.qualifiedName -> brokenClass
+            brokenAnnotationClass.qualifiedName -> brokenAnnotationClass
             else -> null
         }
 
@@ -95,17 +97,19 @@ private class BrokenClass(
     name: String,
     manager: PsiManager,
 ) : LightPsiClassBase(manager, JavaLanguage.INSTANCE, name) {
-    private val modifierList: PsiModifierList = LightModifierList(manager, JavaLanguage.INSTANCE, PsiModifier.PUBLIC)
     private val methods: Array<PsiMethod> = arrayOf(ConstructorMethod(this), GetterMethod(this))
+
+    override fun getMethods(): Array<PsiMethod> {
+        return methods
+    }
+
+    // region Boilerplate PsiClass members
+    private val modifierList: PsiModifierList = LightModifierList(manager, JavaLanguage.INSTANCE, PsiModifier.PUBLIC)
 
     override fun getQualifiedName(): String = "$packageName.$name"
     override fun getModifierList(): PsiModifierList = modifierList
     override fun getContainingClass(): PsiClass? = null
     override fun getTypeParameterList(): PsiTypeParameterList? = null
-
-    override fun getMethods(): Array<PsiMethod> {
-        return methods
-    }
 
     override fun getFields(): Array<PsiField> {
         return PsiField.EMPTY_ARRAY
@@ -118,6 +122,7 @@ private class BrokenClass(
     override fun getImplementsList(): PsiReferenceList? = null
 
     override fun getScope(): PsiElement? = null
+    // endregion
 
     private class ConstructorMethod(owner: PsiClass) : LightMethodBuilder(owner, JavaLanguage.INSTANCE) {
         init {
@@ -147,4 +152,41 @@ private class BrokenClass(
             return super.getTypeParameters()
         }
     }
+}
+
+/**
+ * An annotation class whose own annotations (e.g., `@Target`) cannot be read,
+ * so the analysis is interrupted when the use-site targets of its usages are computed.
+ */
+private class BrokenAnnotationClass(
+    private val packageName: String,
+    name: String,
+    manager: PsiManager,
+) : LightPsiClassBase(manager, JavaLanguage.INSTANCE, name) {
+    private val modifierList: PsiModifierList = object : LightModifierList(manager, JavaLanguage.INSTANCE, PsiModifier.PUBLIC) {
+        override fun getAnnotations(): Array<PsiAnnotation> {
+            interruptAnalysis()
+            return super.getAnnotations()
+        }
+    }
+
+    override fun getModifierList(): PsiModifierList = modifierList
+
+    // region Boilerplate PsiClass members
+    override fun getQualifiedName(): String = "$packageName.$name"
+    override fun getContainingClass(): PsiClass? = null
+    override fun getTypeParameterList(): PsiTypeParameterList? = null
+    override fun isInterface(): Boolean = true
+    override fun isAnnotationType(): Boolean = true
+
+    override fun getMethods(): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
+    override fun getFields(): Array<PsiField> = PsiField.EMPTY_ARRAY
+    override fun getInnerClasses(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
+    override fun getInitializers(): Array<PsiClassInitializer> = PsiClassInitializer.EMPTY_ARRAY
+
+    override fun getExtendsList(): PsiReferenceList? = null
+    override fun getImplementsList(): PsiReferenceList? = null
+
+    override fun getScope(): PsiElement? = null
+    // endregion
 }

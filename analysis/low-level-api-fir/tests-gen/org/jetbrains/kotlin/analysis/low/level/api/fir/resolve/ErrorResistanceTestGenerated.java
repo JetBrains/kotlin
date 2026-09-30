@@ -34,6 +34,18 @@ public class ErrorResistanceTestGenerated extends AbstractErrorResistanceTest {
   }
 
   @Test
+  @TestMetadata("memberPropertyAllTargetAnnotation.kt")
+  public void testMemberPropertyAllTargetAnnotation() {
+    run("memberPropertyAllTargetAnnotation.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyAnnotationMovedToField.kt")
+  public void testPropertyAnnotationMovedToField() {
+    run("propertyAnnotationMovedToField.kt");
+  }
+
+  @Test
   @TestMetadata("propertyDelegate.kt")
   public void testPropertyDelegate() {
     run("propertyDelegate.kt");
