@@ -6,7 +6,7 @@ import kotlin.jvm.functions.Function2;
 
 public class KotlinFunctionImplementor {
     public static class IntToString implements Function1<Integer, String> {
-        @Override public String invoke(Integer value) { return value.toString(); }
+        @Override public String invoke(Integer value) { return String.valueOf(value); }
     }
     public static class StringAndIntToBoolean implements Function2<String, Integer, Boolean> {
         @Override public Boolean invoke(String s, Integer n) { return s.length() == n; }
@@ -14,37 +14,30 @@ public class KotlinFunctionImplementor {
 }
 
 // FILE: box.kt
-// Tests that a Java class implementing a Kotlin functional interface has its invoke
-// parameter and return types reflected as proper Kotlin types (non-nullable, not platform).
+// Tests the signature of `invoke` in a Java class implementing a Kotlin function type with boxed type arguments.
+// The compiler loads such parameters as flexible, e.g. `IntToString().invoke(null)` compiles.
 
-import kotlin.reflect.full.*
-import kotlin.test.*
+import kotlin.reflect.KClass
+import kotlin.test.assertEquals
+
+private val useK1 = Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true
+
+private fun KClass<*>.invoke() = members.single { it.name == "invoke" }
 
 fun box(): String {
-    // Function1<Integer, String> implementor: invoke(Integer) → String
-    val invoke1 = KotlinFunctionImplementor.IntToString::class
-        .memberFunctions.first { it.name == "invoke" && !it.isAbstract }
+    val invoke1 = KotlinFunctionImplementor.IntToString::class.invoke()
+    val invoke2 = KotlinFunctionImplementor.StringAndIntToBoolean::class.invoke()
+    if (useK1) {
+        assertEquals("fun KotlinFunctionImplementor.IntToString.invoke(kotlin.Int!): kotlin.String!", invoke1.toString())
+        assertEquals("fun KotlinFunctionImplementor.StringAndIntToBoolean.invoke(kotlin.String!, kotlin.Int!): kotlin.Boolean!", invoke2.toString())
+    } else {
+        // TODO: flexibility is lost in the new implementation, similarly to KT-85831 and KT-85833.
+        assertEquals("fun KotlinFunctionImplementor.IntToString.invoke(kotlin.Int): kotlin.String", invoke1.toString())
+        assertEquals("fun KotlinFunctionImplementor.StringAndIntToBoolean.invoke(kotlin.String, kotlin.Int): kotlin.Boolean", invoke2.toString())
+    }
 
-    val paramType = invoke1.valueParameters.first().type.toString()
-    assertFalse(paramType.endsWith("!"),
-        "invoke parameter type should not be a platform type, got: $paramType")
-    assertEquals("kotlin.Int", paramType,
-        "invoke parameter should be kotlin.Int (not kotlin.Int! or java.lang.Integer)")
-
-    val returnType = invoke1.returnType.toString()
-    assertFalse(returnType.endsWith("!"),
-        "invoke return type should not be a platform type, got: $returnType")
-    assertEquals("kotlin.String", returnType,
-        "invoke return should be kotlin.String (not kotlin.String!)")
-
-    // Function2<String, Integer, Boolean> implementor
-    val invoke2 = KotlinFunctionImplementor.StringAndIntToBoolean::class
-        .memberFunctions.first { it.name == "invoke" && !it.isAbstract }
-
-    assertEquals(2, invoke2.valueParameters.size)
-    assertEquals("kotlin.String", invoke2.valueParameters[0].type.toString())
-    assertEquals("kotlin.Int",    invoke2.valueParameters[1].type.toString())
-    assertEquals("kotlin.Boolean", invoke2.returnType.toString())
+    assertEquals("null", invoke1.call(KotlinFunctionImplementor.IntToString(), null))
+    assertEquals(true, invoke2.call(KotlinFunctionImplementor.StringAndIntToBoolean(), "ab", 2))
 
     return "OK"
 }

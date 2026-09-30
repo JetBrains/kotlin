@@ -48,7 +48,7 @@ fun box(): String {
         createFn.instanceParameter!! to service,
         createFn.valueParameters[0] to UserId(10),
         createFn.valueParameters[1] to UserName("Carol")
-    ))
+    )) as UserRecord
     assertEquals(UserId(10), created.id)
 
     val withDefaultFn = UserService::class.memberFunctions.single { it.name == "withDefaultActive" }
@@ -57,7 +57,7 @@ fun box(): String {
         withDefaultFn.instanceParameter!! to service,
         withDefaultFn.valueParameters[0] to UserId(5),
         withDefaultFn.valueParameters[1] to UserName("Dave")
-    ))
+    )) as UserRecord
     assertTrue(withDefault.active) // default active=true
 
     // Value class parameters: their return type in reflection

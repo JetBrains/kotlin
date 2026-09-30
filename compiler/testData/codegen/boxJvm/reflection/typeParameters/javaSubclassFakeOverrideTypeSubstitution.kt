@@ -9,43 +9,43 @@ public class TypedJavaBase<T> {
 
 // FILE: box.kt
 // Tests that a Kotlin class extending a generic Java class has its inherited fake override
-// methods with type parameters correctly substituted with the concrete bound type.
+// methods with type parameters correctly substituted with the concrete type argument.
+// See also referenceToInheritedMembersInJava.kt for the opposite direction (Java class extending a generic Kotlin class).
 
-import kotlin.reflect.full.*
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.javaType
-import kotlin.test.*
+import kotlin.test.assertEquals
 
 class KotlinExtendsTyped : TypedJavaBase<String>()
 class KotlinExtendsTypedInt : TypedJavaBase<Int>()
 
+private val useK1 = Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true
+
+private fun KClass<*>.member(name: String) = members.single { it.name == name }
+
 fun box(): String {
-    // value() return type should be String, not T
-    val valueFn = KotlinExtendsTyped::class.memberFunctions.firstOrNull { it.name == "value" }
-        ?: return "Fail: 'value' not found in KotlinExtendsTyped.memberFunctions"
-
-    val returnJavaType = valueFn.returnType.javaType.typeName
-    assertFalse(returnJavaType == "T",
-        "KotlinExtendsTyped.value() return javaType must not be raw 'T', got: $returnJavaType")
-    assertEquals("java.lang.String", returnJavaType,
-        "KotlinExtendsTyped.value() return javaType should be java.lang.String")
-
-    // setValue(T) parameter type should be String
-    val setValueFn = KotlinExtendsTyped::class.memberFunctions.firstOrNull { it.name == "setValue" }
-    if (setValueFn != null) {
-        val paramType = setValueFn.valueParameters.firstOrNull()?.type?.javaType?.typeName
-        if (paramType != null) {
-            assertFalse(paramType == "T",
-                "KotlinExtendsTyped.setValue() param must not be 'T', got: $paramType")
-        }
+    val value = KotlinExtendsTyped::class.member("value")
+    assertEquals("fun KotlinExtendsTyped.value(): kotlin.String!", value.toString())
+    assertEquals(null, value.call(KotlinExtendsTyped()))
+    if (useK1) {
+        // KT-87366: javaType of fake overrides is not substituted in the K1-based implementation.
+        assertEquals("T", value.returnType.javaType.toString())
+        return "OK"
     }
+    assertEquals(String::class.java, value.returnType.javaType)
 
-    // For Int bound: value() should return int/Integer
-    val intValueFn = KotlinExtendsTypedInt::class.memberFunctions.firstOrNull { it.name == "value" }
-    if (intValueFn != null) {
-        val intReturnType = intValueFn.returnType.javaType.typeName
-        assertFalse(intReturnType == "T",
-            "KotlinExtendsTypedInt.value() return must not be raw 'T', got: $intReturnType")
-    }
+    val setValue = KotlinExtendsTyped::class.member("setValue")
+    assertEquals("fun KotlinExtendsTyped.setValue(kotlin.String!): kotlin.Unit", setValue.toString())
+    assertEquals(String::class.java, setValue.parameters[1].type.javaType)
+
+    val getList = KotlinExtendsTyped::class.member("getList")
+    assertEquals("fun KotlinExtendsTyped.getList(): kotlin.collections.(Mutable)List<kotlin.String!>!", getList.toString())
+    assertEquals("java.util.List<java.lang.String>", getList.returnType.javaType.toString())
+
+    // Substitution with a primitive-mapped type must use the wrapper class.
+    val intValue = KotlinExtendsTypedInt::class.member("value")
+    assertEquals("fun KotlinExtendsTypedInt.value(): kotlin.Int!", intValue.toString())
+    assertEquals(Int::class.javaObjectType, intValue.returnType.javaType)
 
     return "OK"
 }

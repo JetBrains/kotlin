@@ -49,8 +49,8 @@ fun box(): String {
     assertFalse(AbstractFun::class.isFun,
         "AbstractFun class should have isFun=false")
 
-    // fun interface other modifiers
-    assertFalse(StringMapper::class.isAbstract)
+    // fun interface other modifiers: like any interface, it is abstract (see classModality.kt)
+    assertTrue(StringMapper::class.isAbstract)
     assertFalse(StringMapper::class.isSealed)
     assertFalse(StringMapper::class.isData)
     assertFalse(StringMapper::class.isValue)
@@ -73,15 +73,11 @@ fun box(): String {
     assertTrue((runFn as KFunction<*>).isSuspend,
         "AsyncTask.run() should be suspend")
 
-    // SAM conversion: a lambda can be passed as the fun interface
-    val mapper: StringMapper = StringMapper { it.uppercase() }
-    assertEquals("HELLO", mapper.map("hello"))
-
-    // Reflective call on the single abstract method
-    // via a concrete implementation
-    val impl: StringMapper = StringMapper { "[$it]" }
-    val mapRef = impl::map
-    assertEquals("[test]", mapRef.invoke("test"))
+    // The abstract member obtained via reflection can be called on a SAM-converted lambda
+    val mapper = StringMapper { "[$it]" }
+    assertEquals("[test]", mapFn.call(mapper, "test"))
+    val biMapFn = BiMapper::class.members.single { it.name == "map" }
+    assertEquals("a1", biMapFn.call(BiMapper<String, Int, String> { a, b -> a + b }, "a", 1))
 
     return "OK"
 }

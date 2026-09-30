@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// FULL_JDK
 // FILE: GenericJavaHolder.java
 public class GenericJavaHolder {
     public static class Box<T> {
@@ -13,37 +14,30 @@ public class GenericJavaHolder {
 }
 
 // FILE: box.kt
-// Tests that KType.javaType correctly includes type parameters for generic Java classes.
+// Tests that KType.javaType of a Java class type parameter usage is the corresponding TypeVariable of that class.
 
-import kotlin.reflect.jvm.javaType
+import java.lang.reflect.TypeVariable
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
 import kotlin.reflect.full.*
+import kotlin.reflect.jvm.javaType
 import kotlin.test.*
 
+private fun checkTypeVariable(type: KType, owner: KClass<*>, index: Int) {
+    val javaType = type.javaType
+    assertTrue(javaType is TypeVariable<*>, "Expected a type variable: $javaType")
+    assertEquals(owner.java.typeParameters[index], javaType)
+    assertEquals(owner.typeParameters[index], type.classifier)
+}
+
 fun box(): String {
-    // Box<T>.get() → return type T; represented as a TypeVariable "T"
-    val getMethod = GenericJavaHolder.Box::class.memberFunctions.first { it.name == "get" }
-    val getJavaType = getMethod.returnType.javaType.typeName
-    assertEquals("T", getJavaType,
-        "Box.get() return javaType should be 'T', got: $getJavaType")
+    val box = GenericJavaHolder.Box::class
+    checkTypeVariable(box.memberFunctions.single { it.name == "get" }.returnType, box, 0)
+    checkTypeVariable(box.memberFunctions.single { it.name == "set" }.valueParameters.single().type, box, 0)
 
-    // Box<T>.set(T) → parameter type T
-    val setMethod = GenericJavaHolder.Box::class.memberFunctions.first { it.name == "set" }
-    val setParamType = setMethod.valueParameters.first().type.javaType.typeName
-    assertEquals("T", setParamType,
-        "Box.set() parameter javaType should be 'T', got: $setParamType")
-
-    // Pair<A, B>.first() → A, second() → B (distinct type variables)
-    val firstMethod = GenericJavaHolder.Pair::class.memberFunctions.first { it.name == "first" }
-    assertEquals("A", firstMethod.returnType.javaType.typeName,
-        "Pair.first() return javaType should be 'A'")
-
-    val secondMethod = GenericJavaHolder.Pair::class.memberFunctions.first { it.name == "second" }
-    assertEquals("B", secondMethod.returnType.javaType.typeName,
-        "Pair.second() return javaType should be 'B'")
-
-    // For the class itself as a type argument, javaType should include the parameter
-    val boxSupertype = GenericJavaHolder.Box::class.supertypes.firstOrNull()
-    // supertypes just shows Any here, but declaring class via members is tested above
+    val pair = GenericJavaHolder.Pair::class
+    checkTypeVariable(pair.memberFunctions.single { it.name == "first" }.returnType, pair, 0)
+    checkTypeVariable(pair.memberFunctions.single { it.name == "second" }.returnType, pair, 1)
 
     return "OK"
 }

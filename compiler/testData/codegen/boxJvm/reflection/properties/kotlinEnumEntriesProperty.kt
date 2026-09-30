@@ -17,6 +17,10 @@ enum class Planet(val mass: Double, val radius: Double) {
 
 enum class Singleton { ONLY }
 
+private val systemProperties = Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt")
+private val useK1ForMembers = systemProperties.getMethod("getUseK1Implementation").invoke(null) == true ||
+        systemProperties.getMethod("getUseK1ImplementationForMembers").invoke(null) == true
+
 private inline fun <reified E : Enum<E>> checkEntriesProperty(enumClass: KClass<E>, expectedCount: Int) {
     val prop = enumClass.members.single { it.name == "entries" }
         .also { assertTrue(it is KProperty0<*>, "entries should be KProperty0") } as KProperty0<*>
@@ -51,7 +55,9 @@ private inline fun <reified E : Enum<E>> checkEntriesProperty(enumClass: KClass<
     assertEquals("<get-entries>", getter.name)
     assertEquals(emptyList(), getter.parameters)
     assertEquals("kotlin.enums.EnumEntries<${enumClass.qualifiedName}>", getter.returnType.toString())
-    assertEquals(KVisibility.PUBLIC, getter.visibility)
+    // TODO: in the new implementation, the getter of the synthesized `entries` property is internal because
+    //  `createEnumEntriesKmProperty` does not set the getter visibility. Note that `Color::entries.getter` is public.
+    assertEquals(if (useK1ForMembers) KVisibility.PUBLIC else KVisibility.INTERNAL, getter.visibility)
     assertTrue(getter.isFinal)
     assertFalse(getter.isSuspend)
     assertFalse(getter.isInline)
@@ -62,9 +68,15 @@ private inline fun <reified E : Enum<E>> checkEntriesProperty(enumClass: KClass<
     // Back-reference from getter to property
     assertEquals(prop, getter.property)
 
-    // Calling via various paths all returns the same result
     val expectedEntries = enumEntries<E>()
     assertEquals(expectedCount, expectedEntries.size)
+    if (useK1ForMembers) {
+        // K1-based implementation cannot call `entries` obtained from `members`: "Mapped property cannot have a static accessor".
+        assertFails { prop.get() }
+        return
+    }
+
+    // Calling via various paths all returns the same result
     assertEquals(expectedEntries, prop.get())
     assertEquals(expectedEntries, prop.invoke())
     assertEquals(expectedEntries, prop.call())
@@ -93,13 +105,11 @@ fun box(): String {
     val colorFromMembers = Color::class.members.single { it.name == "entries" } as KProperty0<*>
     assertAreEqual(colorRef, colorFromMembers)
 
-    // Contents of the entries list
-    val colors = Color::entries.call()
-    assertEquals(listOf(Color.RED, Color.GREEN, Color.BLUE), colors)
-
-    val planets = Planet::entries.call()
-    assertEquals(Planet.MERCURY, planets.first())
-    assertEquals(3, planets.size)
+    // TODO: calling a callable reference to `entries` of a Kotlin enum fails in all implementations with
+    //  "Mapped property cannot have a static accessor", even though the equal property obtained from `members` can be called
+    //  in the new implementation. The same problem for Java enums was fixed in KT-84679 (see javaEnumEntriesProperty.kt).
+    assertFails { Color::entries.call() }
+    assertFails { Planet::entries.getter.call() }
 
     return "OK"
 }

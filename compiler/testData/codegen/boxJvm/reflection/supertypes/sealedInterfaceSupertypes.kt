@@ -12,8 +12,8 @@ data class JsonArray(val items: List<JsonElement>) : JsonElement
 data object JsonNull : JsonElement
 
 sealed interface Either<out L, out R>
-data class Left<out L>(val value: L) : Either<L, Nothing>()
-data class Right<out R>(val value: R) : Either<Nothing, R>()
+data class Left<out L>(val value: L) : Either<L, Nothing>
+data class Right<out R>(val value: R) : Either<Nothing, R>
 
 fun box(): String {
     // Sealed interface itself: sealed and an interface
@@ -26,9 +26,7 @@ fun box(): String {
     assertEquals("kotlin.Any", jsonSupertypes.single().toString())
 
     // Implementations have JsonElement in their supertypes
-    val stringSupertypes = JsonString::class.supertypes.map { it.toString() }
-    assertTrue(stringSupertypes.any { it.contains("JsonElement") },
-        "JsonString should have JsonElement as supertype: $stringSupertypes")
+    assertEquals("[JsonElement, kotlin.Any]", JsonString::class.supertypes.toString())
 
     // allSupertypes for an implementation includes the interface chain
     val stringAllSupertypes = JsonString::class.allSupertypes.map { it.toString() }
@@ -36,8 +34,7 @@ fun box(): String {
     assertTrue(stringAllSupertypes.any { it.contains("Any") })
 
     // data object implementing sealed interface
-    val nullSupertypes = JsonNull::class.supertypes.map { it.toString() }
-    assertTrue(nullSupertypes.any { it.contains("JsonElement") })
+    assertEquals("[JsonElement, kotlin.Any]", JsonNull::class.supertypes.toString())
 
     // Generic sealed interface: Either<L, R>
     assertTrue(Either::class.isSealed)
@@ -48,11 +45,11 @@ fun box(): String {
     assertEquals("R", Either::class.typeParameters[1].name)
     assertEquals(KVariance.OUT, Either::class.typeParameters[1].variance)
 
-    // Left<L> implements Either<L, Nothing>
-    val leftSupertypes = Left::class.supertypes
-    val eitherSupertype = leftSupertypes.firstOrNull { it.toString().contains("Either") }
-    assertNotNull(eitherSupertype, "Left should extend Either: $leftSupertypes")
-    assertEquals(2, eitherSupertype.arguments.size)
+    // Left<L> implements Either<L, Nothing>, and the type argument refers to Left's own type parameter
+    val eitherSupertype = Left::class.supertypes.first()
+    assertEquals("Either<L, kotlin.Nothing>", eitherSupertype.toString())
+    assertEquals(Left::class.typeParameters.single(), eitherSupertype.arguments[0].type!!.classifier)
+    assertEquals("[Either<kotlin.Nothing, R>, kotlin.Any]", Right::class.supertypes.toString())
 
     // sealedSubclasses of JsonElement
     val subs = JsonElement::class.sealedSubclasses

@@ -1,45 +1,45 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// Tests that fake override methods inherited from Enum<E> have their type parameter E
-// correctly substituted with the concrete enum type in javaType.
+// Tests that fake overrides inherited by a Kotlin enum from Enum<E> have E substituted with the enum type in javaType.
+// See javaInheritedSubstitutedMethods.kt for the same check on a Java enum.
 
-import kotlin.reflect.full.*
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.javaType
-import kotlin.test.*
+import kotlin.test.assertEquals
 
-enum class Season { SPRING, SUMMER, AUTUMN, WINTER }
+enum class Season { SPRING, SUMMER }
+
 enum class Weekday(val abbreviation: String) {
-    MON("Mon"), TUE("Tue"), WED("Wed"), THU("Thu"), FRI("Fri")
+    MON("Mon") {
+        override fun next(): Weekday = TUE
+    },
+    TUE("Tue") {
+        override fun next(): Weekday = MON
+    };
+
+    abstract fun next(): Weekday
 }
 
-fun checkEnumFakeOverrides(enumClass: kotlin.reflect.KClass<out Enum<*>>, simpleName: String) {
-    val fns = enumClass.memberFunctions.associateBy { it.name }
+private val useK1 = Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true
 
-    // getDeclaringClass() is inherited from Enum<E>; return type should be Class<EnumType>
-    val getDeclaringClass = fns["getDeclaringClass"]
-    if (getDeclaringClass != null) {
-        val jt = getDeclaringClass.returnType.javaType.typeName
-        assertTrue(
-            jt.contains(simpleName) || jt == "java.lang.Class<${enumClass.java.name}>",
-            "$simpleName.getDeclaringClass() return javaType should reference $simpleName, got: $jt"
-        )
-        assertFalse(jt == "java.lang.Class<E>" || jt.endsWith("<E>"),
-            "$simpleName.getDeclaringClass() must not use raw type variable E, got: $jt")
+private fun check(enumClass: KClass<out Enum<*>>) {
+    val getDeclaringClass = enumClass.members.single { it.name == "getDeclaringClass" }
+    val compareTo = enumClass.members.single { it.name == "compareTo" }
+    if (useK1) {
+        // KT-87366
+        assertEquals("java.lang.Class<E>", getDeclaringClass.returnType.javaType.toString())
+        assertEquals("E", compareTo.parameters[1].type.javaType.toString())
+    } else {
+        assertEquals("java.lang.Class<${enumClass.java.name}>", getDeclaringClass.returnType.javaType.toString())
+        assertEquals(enumClass.java, compareTo.parameters[1].type.javaType)
     }
-
-    // compareTo(E other) — parameter should be the concrete enum type, not E
-    val compareTo = fns["compareTo"]
-    if (compareTo != null) {
-        val paramType = compareTo.valueParameters.firstOrNull()?.type?.javaType?.typeName
-        if (paramType != null) {
-            assertFalse(paramType == "E",
-                "$simpleName.compareTo() parameter must not be raw 'E', got: $paramType")
-        }
-    }
+    assertEquals("kotlin.Int", compareTo.returnType.toString())
 }
 
 fun box(): String {
-    checkEnumFakeOverrides(Season::class,  "Season")
-    checkEnumFakeOverrides(Weekday::class, "Weekday")
+    check(Season::class)
+    // Entries with bodies are anonymous subclasses, but the members must still be substituted with the enum class itself.
+    check(Weekday::class)
+    assertEquals(Weekday::class.java, Weekday::class.members.single { it.name == "getDeclaringClass" }.call(Weekday.MON))
     return "OK"
 }

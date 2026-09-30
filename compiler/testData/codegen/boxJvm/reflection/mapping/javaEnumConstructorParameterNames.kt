@@ -2,42 +2,36 @@
 // WITH_REFLECT
 // FILE: ColorEnum.java
 public enum ColorEnum {
-    RED(255, 0, 0),
-    GREEN(0, 255, 0),
-    BLUE(0, 0, 255);
+    RED(255, 0, 0);
 
-    private final int r, g, b;
-    ColorEnum(int r, int g, int b) { this.r = r; this.g = g; this.b = b; }
-    public int getR() { return r; }
-    public int getG() { return g; }
-    public int getB() { return b; }
+    ColorEnum(int r, int g, int b) {}
+}
+
+// FILE: Plain.java
+public class Plain {
+    public Plain(int r, int g) {}
+
+    public class Inner {
+        public Inner(int x) {}
+    }
 }
 
 // FILE: box.kt
-// Tests that Java enum constructor parameters are reflected with their original
-// field names, not generic positional names like arg0, arg1, arg2.
+// Java classes here are compiled without `-parameters`, so real parameter names are not available (see realParameterNames.kt
+// for the case with `-parameters`). Synthetic JVM parameters (enum name/ordinal, outer instance) must not leak into Kotlin parameters.
 
-import kotlin.reflect.full.*
-import kotlin.test.*
+import kotlin.test.assertEquals
 
 fun box(): String {
-    val ctor = ColorEnum::class.constructors.single()
-    val paramNames = ctor.parameters.map { it.name }
+    val enumCtor = ColorEnum::class.constructors.single()
+    assertEquals(3, enumCtor.parameters.size)
+    // TODO(KT-82784): names should be null. Note that the synthetic names are counted from the JVM signature, which starts with
+    //  the synthetic `name` and `ordinal` parameters of the enum constructor.
+    assertEquals(listOf("arg2", "arg3", "arg4"), enumCtor.parameters.map { it.name })
 
-    assertEquals(3, paramNames.size,
-        "ColorEnum constructor should have 3 parameters, got: $paramNames")
-
-    // The parameter names must be the actual field names, not arg0/arg1/arg2
-    for (name in paramNames) {
-        assertFalse(name?.startsWith("arg") == true,
-            "Expected field name, got positional placeholder: paramNames=$paramNames")
-        assertNotNull(name,
-            "Constructor parameter name must not be null: paramNames=$paramNames")
-    }
-
-    // Must be the field names in declaration order
-    assertEquals(listOf("r", "g", "b"), paramNames,
-        "Constructor parameter names should match field names r, g, b")
+    // TODO(KT-82784): names should be null.
+    assertEquals(listOf("arg0", "arg1"), Plain::class.constructors.single().parameters.map { it.name })
+    assertEquals(listOf(null, "arg1"), Plain.Inner::class.constructors.single().parameters.map { it.name })
 
     return "OK"
 }
