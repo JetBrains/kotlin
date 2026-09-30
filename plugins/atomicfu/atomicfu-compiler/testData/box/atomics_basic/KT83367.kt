@@ -1,4 +1,3 @@
-// FIR_DUMP
 // MODULE: lib
 // FILE: lib.kt
 import kotlinx.atomicfu.*

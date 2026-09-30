@@ -61,12 +61,6 @@ fun main(args: Array<String>) {
             testClass<AbstractAtomicfuJvmFirLightTreeTest> {
                 model("box/")
             }
-
-            testClass<AbstractAtomicfuNativeFirLightTreeTest>(
-                annotations = listOf(*atomicfuNative())
-            ) {
-                model("box/")
-            }
         }
 
         testGroup(
