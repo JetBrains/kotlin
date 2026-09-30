@@ -368,13 +368,8 @@ object GroupedTestsResultProtocol {
                 }
 
                 rawLine.isSentinelLine(END) -> {
-                    if (!insideBlock || hasClosedBlock || activeId != null) {
-                        recordMalformedLine(rawLine)
-                        if (insideBlock && !hasClosedBlock) {
-                            insideBlock = false
-                            hasClosedBlock = true
-                        }
-                    } else {
+                    if (!insideBlock || activeId != null) recordMalformedLine(rawLine)
+                    if (insideBlock) {
                         insideBlock = false
                         hasClosedBlock = true
                     }
