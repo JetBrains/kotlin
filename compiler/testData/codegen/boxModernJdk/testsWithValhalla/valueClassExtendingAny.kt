@@ -3,6 +3,9 @@
 
 value class Point(val x: Int, val y: Int) : Any()
 
+@JvmInline
+value class Id(val value: Int) : Any()
+
 abstract value class Shape : Any() {
     abstract val size: Int
 }
@@ -11,6 +14,7 @@ value class Square(override val size: Int) : Shape()
 
 fun box(): String {
     if (!Point::class.java.isValue) return "Point is not a value class"
+    if (!Id::class.java.isValue || Id(1) != Id(1)) return "Id"
     if (!Shape::class.java.isValue) return "Shape is not a value class"
     val shape: Shape = Square(3)
     if (!shape.javaClass.isValue) return "Square is not a value class"

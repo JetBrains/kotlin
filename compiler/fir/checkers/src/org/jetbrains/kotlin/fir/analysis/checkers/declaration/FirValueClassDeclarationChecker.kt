@@ -100,7 +100,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         for (supertypeEntry in declaration.superTypeRefs) {
             if (supertypeEntry is FirImplicitAnyTypeRef || supertypeEntry is FirErrorTypeRef) continue
             val supertypeSymbol = supertypeEntry.toRegularClassSymbol(context.session) ?: continue
-            if (supertypeSymbol.isInterface) continue
+            if (supertypeSymbol.isInterface || supportsFullValueClasses && supertypeSymbol.classId == StandardClassIds.Any) continue
             if (!isFullValueClass) {
                 reporter.reportOn(
                     supertypeEntry.source,
@@ -382,6 +382,5 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext)
     private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean =
-        classId == StandardClassIds.Any || isFullValueClass || isJavaValueClass(context.session) || classId.isRecordId() ||
-                isMappedToJavaValueClass(context.session)
+        isFullValueClass || isJavaValueClass(context.session) || classId.isRecordId() || isMappedToJavaValueClass(context.session)
 }
