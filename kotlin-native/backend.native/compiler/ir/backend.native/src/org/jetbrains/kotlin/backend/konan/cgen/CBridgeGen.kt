@@ -181,9 +181,9 @@ internal fun KotlinStubs.generateCCall(
 
     val returnValuePassing = if (isInvoke) {
         val returnType = expression.typeArguments.last()!!
-        callBuilder.state.mapReturnType(returnType, expression, signature = null)
+        mapReturnType(returnType, expression, signature = null)
     } else {
-        callBuilder.state.mapReturnType(callee.returnType, expression, signature = callee)
+        mapReturnType(callee.returnType, expression, signature = callee)
     }
 
     val result = callBuilder.buildCall(targetFunctionName, returnValuePassing)
@@ -274,7 +274,7 @@ internal fun KotlinStubs.generateCGlobalDirectAccess(
         // Extract the Kotlin property type:
         val type = callee.correspondingPropertySymbol?.owner?.getter?.returnType ?: error(callee.render())
 
-        callBuilder.state.mapType(
+        mapType(
                 type,
                 retained = false,
                 variadic = false,
@@ -594,7 +594,7 @@ internal fun KotlinStubs.generateObjCCall(
 
     callBuilder.addArguments(arguments, method)
 
-    val returnValuePassing = callBuilder.state.mapReturnType(method.returnType, call, signature = method)
+    val returnValuePassing = mapReturnType(method.returnType, call, signature = method)
 
     val targetFunctionName = getUniqueCName("knbridge_targetPtr")
 
@@ -675,7 +675,7 @@ private fun CCallbackBuilder.addParameter(it: IrValueParameter, functionParamete
     val location = if (isObjCMethod) functionParameter else location
     require(!functionParameter.isVararg) { stubs.renderCompilerError(location) }
 
-    val valuePassing = state.mapFunctionParameterType(
+    val valuePassing = stubs.mapFunctionParameterType(
             it.type,
             retained = it.isObjCConsumed(),
             variadic = false,
@@ -687,7 +687,7 @@ private fun CCallbackBuilder.addParameter(it: IrValueParameter, functionParamete
 }
 
 private fun CCallbackBuilder.build(function: IrSimpleFunction, signature: IrSimpleFunction): String {
-    val valueReturning = state.mapReturnType(
+    val valueReturning = stubs.mapReturnType(
             signature.returnType,
             location = if (isObjCMethod) function else location,
             signature = signature
@@ -854,7 +854,7 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
         classifier == irBuiltIns.stringClass && parameter?.isWCStringParameter() == true ->
             WCStringArgumentPassing()
 
-        else -> state.mapFunctionParameterType(
+        else -> stubs.mapFunctionParameterType(
                 type,
                 retained = parameter?.isObjCConsumed() ?: false,
                 variadic = variadic,
@@ -863,7 +863,7 @@ private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
     }
 }
 
-private fun CBridgeGenState.mapFunctionParameterType(
+private fun KotlinStubs.mapFunctionParameterType(
         type: IrType,
         retained: Boolean,
         variadic: Boolean,
@@ -873,7 +873,7 @@ private fun CBridgeGenState.mapFunctionParameterType(
     else -> mapType(type, retained = retained, variadic = variadic, location = location)
 }
 
-private fun CBridgeGenState.mapReturnType(
+private fun KotlinStubs.mapReturnType(
         type: IrType,
         location: IrElement,
         signature: IrSimpleFunction?
@@ -882,11 +882,11 @@ private fun CBridgeGenState.mapReturnType(
     else -> mapType(type, retained = signature?.objCReturnsRetained() ?: false, variadic = false, location = location)
 }
 
-private fun CBridgeGenState.mapBlockType(
+private fun KotlinStubs.mapBlockType(
         type: IrType,
         retained: Boolean,
         location: IrElement
-): ObjCBlockPointerValuePassing = with(stubs) {
+): ObjCBlockPointerValuePassing {
     require(type is IrSimpleType) { renderCompilerError(location) }
     require(type.classifier == irBuiltIns.functionN(type.arguments.size - 1).symbol) { renderCompilerError(location) }
 
@@ -906,8 +906,8 @@ private fun CBridgeGenState.mapBlockType(
         )
     }
 
-    ObjCBlockPointerValuePassing(
-            stubs,
+    return ObjCBlockPointerValuePassing(
+            this,
             location,
             type,
             valueReturning,
@@ -916,13 +916,13 @@ private fun CBridgeGenState.mapBlockType(
     )
 }
 
-private fun CBridgeGenState.mapType(
+private fun KotlinStubs.mapType(
         type: IrType,
         retained: Boolean,
         variadic: Boolean,
         location: IrElement
-): ValuePassing = with(stubs) {
-    when {
+): ValuePassing {
+    return when {
         type.isBoolean() -> {
             val cBoolType = cBoolType(target)
             require(cBoolType != null) { renderCompilerError(location) }
@@ -977,7 +977,7 @@ private fun CBridgeGenState.mapType(
 
         type.isObjCReferenceType(target, irBuiltIns) -> ObjCReferenceValuePassing(symbols, type, retained = retained)
 
-        else -> stubs.throwCompilerError(location, "doesn't correspond to any C type: ${type.render()}")
+        else -> throwCompilerError(location, "doesn't correspond to any C type: ${type.render()}")
     }
 }
 
@@ -1287,7 +1287,7 @@ internal fun CBridgeGenState.convertBlockPtrToKotlinFunction(builder: IrBuilderW
     val copiedBlockPtr = builder.irCall(stubs.symbols.interopBlockCopy).apply {
         arguments[0] = blockPtr
     }
-    val valuePassing = mapBlockType(
+    val valuePassing = stubs.mapBlockType(
             type = functionType,
             retained = true,
             location = blockPtr
