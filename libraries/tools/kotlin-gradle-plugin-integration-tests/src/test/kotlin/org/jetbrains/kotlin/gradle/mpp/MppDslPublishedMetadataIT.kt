@@ -34,7 +34,8 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
 
                 assertTrue(publishedVariants.isNotEmpty(), "publishedVariants must not be empty")
                 publishedVariants.forEach {
-                    assertFileExists(localRepoDir.resolve("com/example/sample-lib-$it/1.0/sample-lib-$it-1.0.klib"))
+                    val artifactSuffix = it.lowercase()
+                    assertFileExists(localRepoDir.resolve("com/example/sample-lib-$artifactSuffix/1.0/sample-lib-$artifactSuffix-1.0.klib"))
                 }
                 nonPublishedVariants.forEach {
                     // check that no artifacts are published for that variant
@@ -65,7 +66,8 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
 
                 assertTrue(publishedVariants.isNotEmpty(), "publishedVariants must not be empty")
                 publishedVariants.forEach {
-                    assertFileExists(localRepoDir.resolve("com/example/sample-lib-$it/1.0/sample-lib-$it-1.0.klib"))
+                    val artifactSuffix = it.lowercase()
+                    assertFileExists(localRepoDir.resolve("com/example/sample-lib-$artifactSuffix/1.0/sample-lib-$artifactSuffix-1.0.klib"))
                 }
 
                 // check that the module metadata contains all variants:

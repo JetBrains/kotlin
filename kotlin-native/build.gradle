@@ -296,6 +296,7 @@ tasks.register("distKonanProperties", PrepareKonanProperties) {
     compilerVersion = kotlinBuildProperties.kotlinVersion.get()
     llvmVariants.put(HostManager.host, LLVMDistributionKind.ESSENTIALS)
     llvmProperties.set(LLVMDistributionSourceKt.getAsProperties(LLVMDistributionSourceKt.getLlvmDistributionSource(project)))
+    localLibffiDirectory.set(providers.gradleProperty("kotlin.native.libffi").map { rootProject.file(it).absolutePath })
 }
 
 tasks.register("crossDistRuntime") {

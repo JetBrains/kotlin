@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.supportedHosts
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
 import org.junit.jupiter.api.parallel.Isolated
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 @Isolated("Modifies system properties")
 class UnsupportedKotlinNativeHostTest {
@@ -34,13 +36,47 @@ class UnsupportedKotlinNativeHostTest {
     }
 
     @Test
-    fun `test project configuration on Linux Arm64 host`() {
-        withModifiedSystemProperties("os.name" to "Linux", "os.arch" to "aarch64") {
+    fun `test project configuration on Linux Arm64 host requires opt in`() {
+        withModifiedSystemProperties(
+            "os.name" to "Linux",
+            "os.arch" to "aarch64",
+            "kotlin.native.experimental.linuxArm64Host" to "false",
+        ) {
             with(buildProjectWithMPP()) {
                 configureRepositoriesForTests()
-                multiplatformExtension.linuxX64()
+                multiplatformExtension.linuxArm64()
                 evaluate()
                 assertContainsDiagnostic(KotlinToolingDiagnostics.NativeHostNotSupportedError)
+            }
+        }
+
+        withModifiedSystemProperties(
+            "os.name" to "Linux",
+            "os.arch" to "aarch64",
+            "kotlin.native.experimental.linuxArm64Host" to "true",
+        ) {
+            with(buildProjectWithMPP()) {
+                configureRepositoriesForTests()
+                multiplatformExtension.linuxArm64()
+                evaluate()
+                assertNoDiagnostics(KotlinToolingDiagnostics.NativeHostNotSupportedError)
+            }
+        }
+    }
+
+    @Test
+    fun `legacy native compiler download is skipped on unsupported Linux Arm64 host`() {
+        withModifiedSystemProperties(
+            "os.name" to "Linux",
+            "os.arch" to "aarch64",
+            "kotlin.native.experimental.linuxArm64Host" to "false",
+        ) {
+            with(buildProjectWithMPP(preApplyCode = {
+                extensions.extraProperties.set("kotlin.native.toolchain.enabled", "false")
+            })) {
+                assertNull(nativeProperties.userProvidedNativeHome.orNull)
+                configureRepositoriesForTests()
+                assertEquals("linuxArm64", multiplatformExtension.linuxArm64().name)
             }
         }
     }
@@ -148,6 +184,7 @@ class UnsupportedKotlinNativeHostTest {
         // it will fall back to visibleName (e.g., "linux_x64") instead of a human-readable format.
         val expectedFormattedNames = setOf(
             "Linux (x86_64)",
+            "Linux (arm64)",
             "Windows (x86_64)",
             "macOS (arm64)",
         )

@@ -16,11 +16,16 @@ internal const val PROVIDED_NATIVE_BOOTSTRAP_DISTRIBUTION_KEY = "providedNativeB
 
 /**
  * Provides a Kotlin/Native bootstrap distribution for the task.
- * This distribution is located within the build directory of the project and therefore can be used to run tests again without
- * modifying the global .konan directory.
+ * Released distributions are located within the build directory of the project and therefore can be used to run tests again without
+ * modifying the global .konan directory. A local bootstrap distribution can also be provided for a new host.
  */
 fun Task.useProvidedNativeBootstrapDistribution(configure: (Provider<NativeDistribution>) -> Unit) {
     @Suppress("UNCHECKED_CAST") val distribution = project.extra.get(PROVIDED_NATIVE_BOOTSTRAP_DISTRIBUTION_KEY) as Provider<NativeDistribution>
-    inputs.file(distribution.map { it.distributionFingerprint }).withPathSensitivity(PathSensitivity.NONE)
+    if (project.providers.gradleProperty("kotlin.native.bootstrapDistribution").isPresent) {
+        // A source-built distribution has no distribution.fingerprint; released archives get one when unpacked.
+        inputs.dir(distribution.map { it.root }).withPathSensitivity(PathSensitivity.RELATIVE)
+    } else {
+        inputs.file(distribution.map { it.distributionFingerprint }).withPathSensitivity(PathSensitivity.NONE)
+    }
     configure(distribution)
 }
