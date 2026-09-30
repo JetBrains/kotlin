@@ -23,4 +23,12 @@ final object /Delegate { // /Delegate|null[0]
 final object /DelegateProvider { // /DelegateProvider|null[0]
     final fun provideDelegate(kotlin/Any?, kotlin/Any?): /Delegate // /DelegateProvider.provideDelegate|provideDelegate(kotlin.Any?;kotlin.Any?){}[0]
 }
+abstract interface /I { // /I|null[0]
+    final var a // /I.a|#static{}a[0]
+        final fun <get-a>(): kotlin/String // /I.a.<get-a>|<get-a>#static(){}[0]
+        final fun <set-a>(kotlin/String) // /I.a.<set-a>|<set-a>#static(kotlin.String){}[0]
+    final var b // /I.b|#static{}b[0]
+        final fun <get-b>(): kotlin/String // /I.b.<get-b>|<get-b>#static(){}[0]
+        final fun <set-b>(kotlin/String) // /I.b.<set-b>|<set-b>#static(kotlin.String){}[0]
+}
 final fun /box(): kotlin/String // /box|box(){}[0]
