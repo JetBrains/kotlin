@@ -59,7 +59,7 @@ internal interface KotlinStubs {
     fun renderCompilerError(element: IrElement?, message: String = "Failed requirement."): String
 }
 
-internal class CBridgeGenState(val stubs: KotlinStubs) {
+internal class CBridgeGenState(val stubs: KotlinStubs) : CDeclarationScope {
     private val cLines = mutableListOf<String>()
 
     fun addC(lines: List<String>) {
@@ -183,9 +183,11 @@ internal fun KotlinStubs.generateCCall(
 
     if (isInvoke) {
         val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
+                .render(callBuilder.state)
         callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = ${targetPtrParameter!!};")
     } else if (!direct) {
         val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
+                .render(callBuilder.state)
         val cCallSymbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cCall, "id")!!
         callBuilder.state.addC(listOf("extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");")) // Exported from cinterop stubs.
     } else {
@@ -224,7 +226,9 @@ internal fun KotlinStubs.generateCCall(
         To work around this problem, cinterop marks `-Xcompile-source` incompatible with direct CCall.
         */
         val symbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cCallDirect, "name")!!
-        val signature = callBuilder.cFunctionBuilder.buildSignature(targetFunctionName, language)
+        val signature = context(callBuilder.state) {
+            callBuilder.cFunctionBuilder.buildSignature(targetFunctionName, language)
+        }
 
         val symbolNameLiteral = quoteAsCStringLiteral(symbolName)
         callBuilder.state.addC(listOf("$signature __asm($symbolNameLiteral);"))
@@ -288,7 +292,9 @@ internal fun KotlinStubs.generateCGlobalDirectAccess(
     val globalName = this.getUniqueCName("targetGlobal")
     val globalSymbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cGlobalAccess, "name")!!
     val globalSymbolNameLiteral = quoteAsCStringLiteral(globalSymbolName)
-    callBuilder.state.addC(listOf("extern ${globalCType.render(globalName)} __asm($globalSymbolNameLiteral);"))
+    callBuilder.state.run {
+        addC(listOf("extern ${globalCType.render(globalName)} __asm($globalSymbolNameLiteral);"))
+    }
 
     // And now generate the actual access and pass the value between C and Kotlin:
     val result: IrExpression = when {
@@ -454,7 +460,8 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
 private fun KotlinToCCallBuilder.emitCBridge() {
     val cLines = mutableListOf<String>()
 
-    cLines += "${bridgeBuilder.buildCSignature(cBridgeName)} {"
+    val cSignature = context(state) { bridgeBuilder.buildCSignature(cBridgeName) }
+    cLines += "$cSignature {"
     cLines += cBridgeBodyLines
     cLines += "}"
 
@@ -589,10 +596,12 @@ internal fun KotlinStubs.generateObjCCall(
     if (isDirect) {
         // This declares a function
         val targetFunctionVariable = CVariable(callBuilder.cFunctionBuilder.getType(), targetFunctionName)
+                .render(callBuilder.state)
         callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable __asm(\"$directSymbolName\");")
 
     } else {
         val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
+                .render(callBuilder.state)
         callBuilder.cBridgeBodyLines.add(0, "$targetFunctionVariable = $targetPtrParameter;")
     }
 
@@ -633,7 +642,9 @@ private class CCallbackBuilder(
     private val cBridgeName = stubs.getUniqueCName("knbridge")
 
     fun buildCBridgeCall(): String = cBridgeCallBuilder.build(cBridgeName)
-    fun buildCBridge(): String = bridgeBuilder.buildCSignature(cBridgeName)
+    fun buildCBridge(): String = context(state) {
+        bridgeBuilder.buildCSignature(cBridgeName)
+    }
 
     val bridgeBuilder = KotlinCBridgeBuilder(location.startOffset, location.endOffset, cBridgeName, stubs, isKotlinToC = false)
     val kotlinCallBuilder = KotlinCallBuilder(bridgeBuilder.kotlinIrBuilder, symbols)
@@ -701,7 +712,8 @@ private fun CCallbackBuilder.buildCFunction(): String {
 
     val cLines = mutableListOf<String>()
 
-    cLines += "${cFunctionBuilder.buildSignature(result, stubs.language)} {"
+    val cSignature = context(state) { cFunctionBuilder.buildSignature(result, stubs.language) }
+    cLines += "$cSignature {"
     cLines += cBodyLines
     cLines += "}"
 
@@ -999,26 +1011,32 @@ private abstract class SimpleValuePassing : ValuePassing {
             kotlinToBridged(expression)
 
     abstract fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression
+
+    context(_: CDeclarationScope)
     abstract fun bridgedToC(expression: String): String
+
+    context(_: CDeclarationScope)
     abstract fun cToBridged(expression: String): String
 
     override fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression {
         val bridgeArgument = irBuilder.kotlinToBridged(expression)
         val cBridgeValue = passThroughBridge(bridgeArgument, kotlinBridgeType, cBridgeType).name
-        return CExpression(bridgedToC(cBridgeValue), cType)
+        val cValue = context(state) { bridgedToC(cBridgeValue) }
+        return CExpression(cValue, cType)
     }
 
     override fun KotlinToCCallBuilder.returnValue(expression: String): IrExpression {
         cFunctionBuilder.setReturnType(cType)
         bridgeBuilder.setReturnType(kotlinBridgeType, cBridgeType)
-        cBridgeBodyLines.add("return ${cToBridged(expression)};")
+        val cBridgeValue = context(state) { cToBridged(expression) }
+        cBridgeBodyLines.add("return $cBridgeValue;")
         val kotlinBridgeCall = buildKotlinBridgeCall()
         return irBuilder.bridgedToKotlin(kotlinBridgeCall, symbols)
     }
 
     override fun CCallbackBuilder.receiveValue(): IrExpression {
         val cParameter = cFunctionBuilder.addParameter(callbackParameterCType)
-        val cBridgeArgument = cToBridged(cParameter.name)
+        val cBridgeArgument = context(state) { cToBridged(cParameter.name) }
         val kotlinParameter = passThroughBridge(cBridgeArgument, cBridgeType, kotlinBridgeType)
         return with(bridgeBuilder.kotlinIrBuilder) {
             bridgedToKotlin(irGet(kotlinParameter), symbols)
@@ -1033,7 +1051,8 @@ private abstract class SimpleValuePassing : ValuePassing {
             irReturn(kotlinCallbackResultToBridged(expression))
         }
         val cBridgeCall = buildCBridgeCall()
-        cBodyLines += "return ${bridgedToC(cBridgeCall)};"
+        val cValue = context(state) { bridgedToC(cBridgeCall) }
+        cBodyLines += "return $cValue;"
     }
 }
 
@@ -1045,7 +1064,11 @@ private class TrivialValuePassing(val kotlinType: IrType, override val cType: CT
 
     override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression = expression
     override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression = expression
+
+    context(_: CDeclarationScope)
     override fun bridgedToC(expression: String): String = expression
+
+    context(_: CDeclarationScope)
     override fun cToBridged(expression: String): String = expression
 }
 
@@ -1068,8 +1091,10 @@ private class BooleanValuePassing(override val cType: CType, private val irBuilt
         arguments[1] = IrConstImpl.byte(startOffset, endOffset, irBuiltIns.byteType, 0)
     })
 
+    context(_: CDeclarationScope)
     override fun bridgedToC(expression: String): String = cType.cast(expression)
 
+    context(_: CDeclarationScope)
     override fun cToBridged(expression: String): String = cBridgeType.cast(expression)
 }
 
@@ -1127,6 +1152,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
 
         val result = "callbackResult"
         val cReturnValue = CVariable(cType, result)
+                .render(state)
         cBodyLines += "$cReturnValue;"
         val kotlinPtr = passThroughBridge("&$result", CTypes.voidPtr, symbols.nativePtrType)
 
@@ -1181,7 +1207,10 @@ private class CEnumValuePassing(
         }
     }
 
+    context(_: CDeclarationScope)
     override fun bridgedToC(expression: String): String = with(baseValuePassing) { bridgedToC(expression) }
+
+    context(_: CDeclarationScope)
     override fun cToBridged(expression: String): String = with(baseValuePassing) { cToBridged(expression) }
 }
 
@@ -1227,7 +1256,10 @@ private class ObjCReferenceValuePassing(
                 }
             }
 
+    context(_: CDeclarationScope)
     override fun bridgedToC(expression: String): String = expression
+
+    context(_: CDeclarationScope)
     override fun cToBridged(expression: String): String = expression
 
 }
@@ -1502,6 +1534,7 @@ private class ObjCBlockPointerValuePassing(
 
         val blockVariableType = CTypes.blockPointer(callBuilder.cFunctionBuilder.getType())
         val blockVariable = CVariable(blockVariableType, blockVariableName)
+                .render(callBuilder.state)
         callBuilder.cBridgeBodyLines.add(0, "$blockVariable = ${rawBlockPointerParameter.name};")
 
         callBuilder.finishBuilding("")
@@ -1509,6 +1542,7 @@ private class ObjCBlockPointerValuePassing(
         return result
     }
 
+    context(_: CDeclarationScope)
     override fun bridgedToC(expression: String): String {
         val callbackBuilder = CCallbackBuilder(state, location, isObjCMethod = false)
         val kotlinFunctionHolder = "kotlinFunctionHolder"
@@ -1558,6 +1592,7 @@ private class ObjCBlockPointerValuePassing(
      * Note: [convertBlockPtrToKotlinFunction] relies on the fact that the implementation simply returns the argument.
      * See the detailed comment inside that function.
      */
+    context(_: CDeclarationScope)
     override fun cToBridged(expression: String) = expression
 
 }
@@ -1680,4 +1715,5 @@ private object IgnoredUnitArgumentPassing : ArgumentPassing {
     }
 }
 
+context(_: CDeclarationScope)
 internal fun CType.cast(expression: String): String = "((${this.render("")})$expression)"
