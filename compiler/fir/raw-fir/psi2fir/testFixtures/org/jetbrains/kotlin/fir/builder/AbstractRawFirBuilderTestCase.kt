@@ -9,6 +9,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.PsiFile
 import com.intellij.util.PathUtil
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.collectLanguageFeatureMap
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -19,10 +21,15 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
+import org.jetbrains.kotlin.fir.declarations.builder.FirReplSnippetBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.FirBlockBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.fir.extensions.PluginServicesInitialization
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
@@ -62,6 +69,28 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
         val expectedPath = expectedPath(absolutePath, ".txt")
         TestDataAssertions.assertEqualsToFile(File(expectedPath), firFileDump)
         checkAnnotationOwners(absolutePath, firFile)
+    }
+
+    /**
+     * Tree-based counterpart of `KtTestUtil.createFile` marking `*.repl.kts` PSI files with `markAsReplSnippet()`:
+     * tree-based builders decide between a script and a REPL snippet through the registered
+     * [FirReplSnippetConfiguratorExtension]s, so a no-op one accepting every source is registered for REPL fixtures.
+     */
+    @OptIn(PluginServicesInitialization::class)
+    protected fun FirSession.registerReplSnippetConfiguratorForReplFixture(filePath: String) {
+        if (!filePath.endsWith(".repl.kts")) return
+        extensionService.registerExtensions(
+            FirReplSnippetConfiguratorExtension::class,
+            listOf(FirReplSnippetConfiguratorExtension.Factory { TestReplSnippetConfigurator(it) }),
+        )
+    }
+
+    private class TestReplSnippetConfigurator(session: FirSession) : FirReplSnippetConfiguratorExtension(session) {
+        override fun isReplSnippetsSource(sourceFile: KtSourceFile?, scriptSource: KtSourceElement): Boolean = true
+        override fun FirReplSnippetBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {}
+        override fun FirReplSnippetBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {}
+        override fun FirBlockBuilder.configureEvalBody(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>) {}
+        override fun MutableList<FirElement>.configure(sourceFile: KtSourceFile?, scriptSource: KtSourceElement, context: Context<*>) {}
     }
 
     protected fun expectedPath(originalPath: String, newExtension: String): String {
