@@ -59,10 +59,10 @@ internal fun CommonToolArgumentsImpl.reportArgumentParseWarnings(
     if (argumentParseDiagnostics.isEmpty()) return
     val arguments = argumentParseDiagnostics.buildReportableArguments(finalArguments) ?: return
     collector.reportArgumentParseProblems(arguments)
-    // `REMOVED_CLI_ARG` is reported by the compiler out of `explicitArguments`, but a removed argument has no property
-    // on the arguments class, so it can never reach the compiler through the Build Tools API argument model.
+    // Removed arguments and deprecated options overridden by another option do not reach the compiler's
+    // `explicitArguments`. Report their lifecycle warnings here instead.
     for (field in arguments.explicitArguments.keys) {
-        if (field.status != ArgumentLifecycleStatus.REMOVED) continue
+        if (field.status < ArgumentLifecycleStatus.DEPRECATED || field in finalArguments.explicitArguments) continue
         val message = field.generateLifecycleWarning(forExtraHelp = false)?.first ?: continue
         collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
     }

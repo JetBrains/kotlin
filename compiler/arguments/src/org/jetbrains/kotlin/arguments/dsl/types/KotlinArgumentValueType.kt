@@ -144,12 +144,12 @@ class KotlinHeaderModeType : EnumType<HeaderMode>() {
  * A value which accepts [ReturnValueCheckerMode] type.
  */
 @Serializable
-class ReturnValueCheckerModeType : EnumType<ReturnValueCheckerMode>() {
+class ReturnValueCheckerModeType(
     override val defaultValue: ReleaseDependent<ReturnValueCheckerMode?> = ReleaseDependent(
         ReturnValueCheckerMode.default,
         KotlinReleaseVersion.v2_2_0 ..KotlinReleaseVersion.v2_4_20 to ReturnValueCheckerMode.disabled
-    )
-}
+    ),
+) : EnumType<ReturnValueCheckerMode>(ReleaseDependent(defaultValue.current == null))
 
 /**
  * A value which accepts [KlibIrInlinerMode] type.

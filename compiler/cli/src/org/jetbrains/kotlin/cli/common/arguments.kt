@@ -262,6 +262,15 @@ fun computeKotlinPaths(configuration: CompilerConfiguration, arguments: CommonCo
 }
 
 fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
+    val explicitArgumentNames = arguments.explicitArguments.keys.map { it.argument.value }
+    if ("-Xreturn-value-checker" in explicitArgumentNames && "-return-value-checker" in explicitArgumentNames) {
+        report(
+            CompilerMessageSeverity.STRONG_WARNING,
+            "Arguments '-Xreturn-value-checker' and '-return-value-checker' are both specified. " +
+                    "The last value will be used."
+        )
+    }
+
     for ([key, values] in arguments.explicitArguments) {
         if (values.size <= 1 || values.distinct().size == 1) continue
 

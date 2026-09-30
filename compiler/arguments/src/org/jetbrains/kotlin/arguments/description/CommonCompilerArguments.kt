@@ -665,9 +665,31 @@ Use the 'warning' level to issue warnings instead of errors.""".asReleaseDepende
                 .joinToString()
         )
         valueType = ReturnValueCheckerModeType()
+        deprecatedMessage = "Use '-return-value-checker' instead."
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
+            deprecatedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+    }
+
+    compilerArgument {
+        name = "return-value-checker"
+        // Keep the old compiler property for compatibility with older Build Tools API implementations.
+        compilerName = "returnValueCheckerMode"
+        description = ("Set improved unused return value checker mode. " +
+                "Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. " +
+                "'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default. " +
+                "If both this option and '-Xreturn-value-checker' are specified, the last value will be used.").asReleaseDependent()
+        valueDescription = ReturnValueCheckerMode.entries.joinToString(prefix = "{", separator = "|", postfix = "}") {
+            it.modeState
+        }.asReleaseDependent()
+        // Distinguish an explicitly selected 'default' mode from an absent stable option.
+        valueType = ReturnValueCheckerModeType(defaultValue = null.asReleaseDependent())
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+            stabilizedVersion = KotlinReleaseVersion.v2_5_0,
         )
     }
 

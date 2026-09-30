@@ -98,7 +98,9 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.reportAllWarnings = from.reportAllWarnings
     to.reportOutputFiles = from.reportOutputFiles
     to.reportPerf = from.reportPerf
+    @Suppress("DEPRECATION")
     to.returnValueChecker = from.returnValueChecker
+    to.returnValueCheckerMode = from.returnValueCheckerMode
     to.script = from.script
     to.separateKmpCompilationScheme = from.separateKmpCompilationScheme
     to.skipMetadataVersionCheck = from.skipMetadataVersionCheck

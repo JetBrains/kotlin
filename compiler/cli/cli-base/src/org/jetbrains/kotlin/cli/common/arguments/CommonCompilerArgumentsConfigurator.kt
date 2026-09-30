@@ -67,17 +67,20 @@ open class CommonCompilerArgumentsConfigurator {
             fillWarningLevelMap(arguments, reporter)
             returnValueCheckerMode(
                 languageVersion,
-                returnValueChecker,
+                arguments,
                 reporter
             )?.let { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun returnValueCheckerMode(
         languageVersion: LanguageVersion,
-        compilerArg: String,
+        arguments: CommonCompilerArguments,
         reporter: Reporter,
     ): ReturnValueCheckerMode? {
+        val compilerArg = arguments.returnValueCheckerMode ?: arguments.returnValueChecker
+        val argumentName = if (arguments.returnValueCheckerMode != null) "-return-value-checker" else "-Xreturn-value-checker"
         val stableRvVersion = LanguageFeature.ReturnValueCheckerIsStable.sinceVersion
         if (compilerArg == "default") {
             return if (stableRvVersion != null && languageVersion >= stableRvVersion) {
@@ -88,7 +91,7 @@ open class CommonCompilerArgumentsConfigurator {
         }
 
         ReturnValueCheckerMode.fromString(compilerArg)?.let { return it } ?: reporter.reportError(
-            "Unknown value for parameter -Xreturn-value-checker: '$compilerArg'. Value should be one of ${ReturnValueCheckerMode.availableValues()}"
+            "Unknown value for parameter $argumentName: '$compilerArg'. Value must be one of ${ReturnValueCheckerMode.availableValues()}."
         )
         return null
     }
@@ -119,7 +122,7 @@ open class CommonCompilerArgumentsConfigurator {
 
             returnValueCheckerMode(
                 languageVersion,
-                returnValueChecker,
+                arguments,
                 reporter
             )?.also {
                 if (it != ReturnValueCheckerMode.DISABLED)

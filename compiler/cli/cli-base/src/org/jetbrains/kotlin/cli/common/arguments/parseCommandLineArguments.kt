@@ -378,6 +378,17 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             // We can't set the value if the argument is removed because object types are incompatible.
             // Moreover, the object for removed args doesn't even exist.
             argumentField.setter(result, newValue)
+            if (result is CommonCompilerArguments) {
+                // These are separate options for compatibility, but configure the same checker.
+                // Keep only the last value effective, including after a BTA round trip.
+                when (argument.value) {
+                    "-Xreturn-value-checker" -> result.returnValueCheckerMode = null
+                    "-return-value-checker" -> {
+                        @Suppress("DEPRECATION")
+                        result.returnValueChecker = "default"
+                    }
+                }
+            }
         }
     }
 
@@ -502,4 +513,3 @@ fun validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String> {
         }
     }
 }
-

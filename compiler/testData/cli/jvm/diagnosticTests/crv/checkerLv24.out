@@ -1,3 +1,4 @@
+warning: the argument '-Xreturn-value-checker' is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. Use '-return-value-checker' instead.
 compiler/testData/cli/jvm/diagnosticTests/crv/checker.kt:10:15: warning: unused return value of 'annotated'.
     Annotated.annotated()
               ^^^^^^^^^

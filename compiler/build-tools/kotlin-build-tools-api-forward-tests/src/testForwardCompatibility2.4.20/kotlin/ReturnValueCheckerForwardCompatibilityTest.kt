@@ -72,6 +72,24 @@ internal class ReturnValueCheckerForwardCompatibilityTest : BaseCompilationTest(
         }
     }
 
+    @DisplayName("The last raw argument wins across both names through the old API")
+    @Test
+    fun testLastArgumentWins() {
+        for ([rawArguments, expectWarning] in listOf(
+            listOf("-Xreturn-value-checker=full", "-return-value-checker=disable") to false,
+            listOf("-return-value-checker=disable", "-Xreturn-value-checker=full") to true,
+        )) {
+            val logger = CapturingLogger()
+            val operation = createOperation(PLAIN_SOURCE, rawArguments = rawArguments)
+
+            assertEquals(CompilationResult.COMPILATION_SUCCESS, compile(operation, logger))
+            assertEquals(expectWarning, logger.warnings.any { it.contains(UNUSED_RETURN_VALUE_WARNING, ignoreCase = true) }) {
+                "Unexpected checker mode for $rawArguments, warnings were: ${logger.warnings}"
+            }
+            assertEquals(1, logger.warnings.count { it.contains("The last value will be used.") })
+        }
+    }
+
     @DisplayName("The impl-only 'default' enum value is reported when read through the old API")
     @Test
     fun testDefaultValueNotRepresentableInOldApiIsReported() {

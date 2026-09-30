@@ -927,10 +927,12 @@ with bodies.""",
             field = value
         }
 
+    @all:Deprecated("Use '-return-value-checker' instead.")
     @Argument(
         value = "-Xreturn-value-checker",
         valueDescription = "{check|full|disable|default}",
         description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.",
+        deprecatedVersion = "2.5.0",
     )
     var returnValueChecker: String = "default"
         set(value) {
@@ -1129,6 +1131,17 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
         set(value) {
             checkFrozen()
             field = value
+        }
+
+    @Argument(
+        value = "-return-value-checker",
+        valueDescription = "{check|full|disable|default}",
+        description = "Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default. If both this option and '-Xreturn-value-checker' are specified, the last value will be used.",
+    )
+    var returnValueCheckerMode: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(

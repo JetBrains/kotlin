@@ -248,6 +248,7 @@ where advanced options include:
   -Xreport-perf              Report detailed performance statistics.
   -Xreturn-value-checker={check|full|disable|default}
                              Set improved unused return value checker mode. Use 'check' to run checker only and use 'full' to also enable automatic annotation insertion. 'default' mode is based on the current language version: Since Kotlin 2.5, checker is enabled by default.
+                             The option is deprecated since Kotlin $ABI_VERSION$. It will be removed in one of the future releases. Use '-return-value-checker' instead.
   -Xseparate-kmp-compilation Enables the separated compilation scheme, in which common source sets are analyzed against their own dependencies
   -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
   -Xskip-prerelease-check    Allow loading pre-release classes.
