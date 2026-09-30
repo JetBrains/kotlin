@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
+import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
@@ -588,7 +589,7 @@ class NativeSecondStageCompilationConfig(
 
     internal var cacheSupport: CacheSupport = createCacheSupport(
             klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
-                    ?: KlibDAGBuilder(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }.build()
+                    ?: KlibDAGBuilder(Parameters(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }).build()
     )
         private set
 
