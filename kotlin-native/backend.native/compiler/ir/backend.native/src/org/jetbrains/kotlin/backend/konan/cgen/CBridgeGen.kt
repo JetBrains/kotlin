@@ -907,7 +907,7 @@ private fun CBridgeGenState.mapBlockType(
     }
 
     ObjCBlockPointerValuePassing(
-            this@mapBlockType,
+            stubs,
             location,
             type,
             valueReturning,
@@ -1012,7 +1012,7 @@ private abstract class SimpleValuePassing : ValuePassing {
 
     abstract fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression
 
-    context(_: CDeclarationScope)
+    context(state: CBridgeGenState)
     abstract fun bridgedToC(expression: String): String
 
     context(_: CDeclarationScope)
@@ -1065,7 +1065,7 @@ private class TrivialValuePassing(val kotlinType: IrType, override val cType: CT
     override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression = expression
     override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression = expression
 
-    context(_: CDeclarationScope)
+    context(state: CBridgeGenState)
     override fun bridgedToC(expression: String): String = expression
 
     context(_: CDeclarationScope)
@@ -1091,7 +1091,7 @@ private class BooleanValuePassing(override val cType: CType, private val irBuilt
         arguments[1] = IrConstImpl.byte(startOffset, endOffset, irBuiltIns.byteType, 0)
     })
 
-    context(_: CDeclarationScope)
+    context(state: CBridgeGenState)
     override fun bridgedToC(expression: String): String = cType.cast(expression)
 
     context(_: CDeclarationScope)
@@ -1207,7 +1207,7 @@ private class CEnumValuePassing(
         }
     }
 
-    context(_: CDeclarationScope)
+    context(state: CBridgeGenState)
     override fun bridgedToC(expression: String): String = with(baseValuePassing) { bridgedToC(expression) }
 
     context(_: CDeclarationScope)
@@ -1256,7 +1256,7 @@ private class ObjCReferenceValuePassing(
                 }
             }
 
-    context(_: CDeclarationScope)
+    context(state: CBridgeGenState)
     override fun bridgedToC(expression: String): String = expression
 
     context(_: CDeclarationScope)
@@ -1327,15 +1327,15 @@ internal fun CBridgeGenState.convertBlockPtrToKotlinFunction(builder: IrBuilderW
 }
 
 private class ObjCBlockPointerValuePassing(
-        val state: CBridgeGenState,
+        val stubs: KotlinStubs,
         private val location: IrElement,
         private val functionType: IrSimpleType,
         private val valueReturning: ValueReturning,
         private val parameterValuePassings: List<ValuePassing>,
         private val retained: Boolean
 ) : SimpleValuePassing() {
-    val symbols get() = state.stubs.symbols
-    val irBuiltIns get() = state.stubs.irBuiltIns
+    val symbols get() = stubs.symbols
+    val irBuiltIns get() = stubs.irBuiltIns
 
     override val kotlinBridgeType: IrType
         get() = symbols.nativePtrType
@@ -1393,7 +1393,7 @@ private class ObjCBlockPointerValuePassing(
                 startOffset,
                 endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
-                Name.identifier(state.stubs.getUniqueKotlinFunctionReferenceClassName("BlockFunctionImpl")),
+                Name.identifier(stubs.getUniqueKotlinFunctionReferenceClassName("BlockFunctionImpl")),
                 DescriptorVisibilities.PRIVATE,
                 IrClassSymbolImpl(),
                 ClassKind.CLASS,
@@ -1457,7 +1457,7 @@ private class ObjCBlockPointerValuePassing(
         }
 
         val parameterCount = parameterValuePassings.size
-        require(functionType.arguments.size == parameterCount + 1) { state.stubs.renderCompilerError(location) }
+        require(functionType.arguments.size == parameterCount + 1) { stubs.renderCompilerError(location) }
 
         val overriddenInvokeMethod = (functionType.classifier.owner as IrClass).simpleFunctions()
                 .single { it.name == OperatorNameConventions.INVOKE }
@@ -1513,15 +1513,15 @@ private class ObjCBlockPointerValuePassing(
             +irReturn(callBlock(blockPointer, arguments))
         }
 
-        state.stubs.addKotlin(irClass)
+        stubs.addKotlin(irClass)
         // we need to add class to stubs first, because it will implicitly initialize class parent.
-        irClass.addFakeOverrides(state.stubs.typeSystem)
+        irClass.addFakeOverrides(stubs.typeSystem)
 
         return constructor
     }
 
     private fun IrBuilderWithScope.callBlock(blockPtr: IrExpression, arguments: List<IrExpression>): IrExpression {
-        val callBuilder = KotlinToCCallBuilder(this, state.stubs, isObjCMethod = false, ForeignExceptionMode.default)
+        val callBuilder = KotlinToCCallBuilder(this, stubs, isObjCMethod = false, ForeignExceptionMode.default)
 
         val rawBlockPointerParameter =  callBuilder.passThroughBridge(blockPtr, blockPtr.type, CTypes.id)
         val blockVariableName = "block"
@@ -1542,7 +1542,7 @@ private class ObjCBlockPointerValuePassing(
         return result
     }
 
-    context(_: CDeclarationScope)
+    context(state: CBridgeGenState)
     override fun bridgedToC(expression: String): String {
         val callbackBuilder = CCallbackBuilder(state, location, isObjCMethod = false)
         val kotlinFunctionHolder = "kotlinFunctionHolder"
@@ -1563,7 +1563,7 @@ private class ObjCBlockPointerValuePassing(
             }
         }
 
-        require(functionType.isFunction()) { state.stubs.renderCompilerError(location) }
+        require(functionType.isFunction()) { stubs.renderCompilerError(location) }
         val invokeFunction = (functionType.classifier.owner as IrClass)
                 .simpleFunctions().single { it.name == OperatorNameConventions.INVOKE }
 
@@ -1571,7 +1571,7 @@ private class ObjCBlockPointerValuePassing(
 
         val block = buildString {
             append('^')
-            append(callbackBuilder.cFunctionBuilder.buildSignature("", state.stubs.language))
+            append(callbackBuilder.cFunctionBuilder.buildSignature("", stubs.language))
             append(" { ")
             callbackBuilder.cBodyLines.forEach {
                 append(it)
