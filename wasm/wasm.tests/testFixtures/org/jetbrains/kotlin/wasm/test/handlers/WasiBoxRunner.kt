@@ -372,7 +372,7 @@ open class WasmWasiFolderGroupingStageBoxRunner(
         get() = testServices.groupingStageInputs.first().testServices
     private val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
 
-    override fun shouldUseBoxExportMode(): Boolean {
+    override fun shouldUseBoxExportModeWhenDriverless(): Boolean {
         // WASI tests always use the unit-test runner, never box export mode
         return false
     }

@@ -1198,7 +1198,7 @@ class WasmGroupedStageBoxRunnerAttributionTest {
             register(GroupingStageInputsHolder::class, GroupingStageInputsHolder(batch.map { it.input }))
         }
         return object : AbstractWasmGroupingStageBoxRunner(testServices) {
-            override fun shouldUseBoxExportMode(): Boolean = boxExportMode
+            override fun shouldUseBoxExportModeWhenDriverless(): Boolean = boxExportMode
 
             override fun runTestCode(
                 artifact: BinaryArtifacts.Wasm,

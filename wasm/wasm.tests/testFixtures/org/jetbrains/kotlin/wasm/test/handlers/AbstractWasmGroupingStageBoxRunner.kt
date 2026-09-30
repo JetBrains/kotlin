@@ -53,12 +53,10 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         get() = ArtifactKinds.Wasm
 
     /**
-     * Determines whether to use
-     * - box-export mode: call `box()` directly and expect "OK" return value or
-     * - unit-test mode: run the batch via the result-collecting driver and parse the structured
-     *   [GroupedTestsResultProtocol] block from VM stdout.
+     * Whether a *driverless* artifact is run in box-export mode, calling `box()` directly and expecting "OK",
+     * rather than through the unit-test runner.
      */
-    protected abstract fun shouldUseBoxExportMode(): Boolean
+    protected abstract fun shouldUseBoxExportModeWhenDriverless(): Boolean
 
     /**
      * Runs the test code for the given artifact and returns any exceptions that occurred.
@@ -76,9 +74,9 @@ abstract class AbstractWasmGroupingStageBoxRunner(
 
     override fun processArtifact(artifact: BinaryArtifacts.Wasm) {
         val inputs = testServices.groupingStageInputs
-        // The artifact contract is authoritative: a result-collecting driver must be invoked even when a
-        // driver-linked singleton happens to satisfy a subclass's historical box-export heuristic.
-        val useBoxExportMode = !artifact.hasGroupedTestsDriver && shouldUseBoxExportMode()
+        // Run mode must be perfectly matched to the way the batch was compiled,
+        // otherwise the per-test results printed by the driver are never parsed and the batch passes for free.
+        val useBoxExportMode = !artifact.hasGroupedTestsDriver && shouldUseBoxExportModeWhenDriverless()
 
         if (useBoxExportMode) {
             // Box export mode: call box() directly and expect "OK". One `box()` call reports one verdict, so a batch

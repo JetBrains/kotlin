@@ -46,15 +46,11 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
             firstNonGroupingTestServices.targetPlatformProvider.getTargetPlatform(it).isWasmWasi()
         }
 
-    override fun shouldUseBoxExportMode(): Boolean {
+    override fun shouldUseBoxExportModeWhenDriverless(): Boolean {
         val inputs = testServices.groupingStageInputs
-        // This predicate is considered only for driverless artifacts; the base runner always honors a grouped
-        // driver's artifact metadata and keeps such an artifact on the unit-test path.
-        // A driverless batch of a single test is run as a standalone box-export test regardless of why it ended up
-        // alone (isolated, or merely a unique batch token).
-        // Single-test box tests without RUN_UNIT_TESTS are compiled without the `@Test` launcher
-        // (see `WasmJsLauncherAdditionalSourceProvider`), so they must be executed by calling
-        // `jsModule.box()` and asserting "OK", rather than driving the unit-test runner.
+        // A single-test batch is compiled without the `@Test` launcher (see `WasmJsLauncherAdditionalSourceProvider`),
+        // whether it ended up alone through isolation or merely through a unique batch token, so without a driver
+        // the only way to get its verdict is to call `box()` and assert "OK".
         val isSingleTestBatch = testServices.isSingleTestBatch()
         return isSingleTestBatch &&
                 RUN_UNIT_TESTS !in firstNonGroupingTestServices.moduleStructure.allDirectives &&
