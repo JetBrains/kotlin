@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.ExternalKlibSignatureIndicesParameters
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
-import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
@@ -388,8 +388,20 @@ class NativeSecondStageCompilationConfig(
     internal val produceStaticFramework get() = configuration.staticFramework
 
     override val loadedKlibs = loadNativeKlibs(configuration, target)
+
     internal val klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
-            ?: KlibDAGBuilder(Parameters(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }).build()
+            ?: KlibDAGBuilder(
+                    KlibDAGBuilder.Parameters(
+                            libraries = loadedKlibs.all,
+                            externalIndicesParameters = configuration.generateSignatureIndicesDir?.let {
+                                ExternalKlibSignatureIndicesParameters(
+                                        targetDiscriminator = target.name,
+                                        externalSignatureIndicesDir = it,
+                                        pathPrefixesForGenerationSignatureIndices = configuration.generateSignatureIndicesFrom,
+                                )
+                            }
+                    ) { it.isExplicitlySpecifiedByUserInCLIArgument }
+            ).build()
 
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
 

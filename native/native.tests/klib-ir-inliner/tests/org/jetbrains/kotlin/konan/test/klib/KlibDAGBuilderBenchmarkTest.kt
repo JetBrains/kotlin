@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
-import org.jetbrains.kotlin.backend.konan.library.InternalKlibDAGApi
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
-import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -42,9 +41,14 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.io.PrintWriter
 import java.nio.file.Path
 import java.util.EnumMap
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
 import kotlin.io.path.absolute
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.bufferedWriter
+import kotlin.io.path.copyToRecursively
 import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.pathString
@@ -144,6 +148,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         )
     }
 
+    @OptIn(ExperimentalPathApi::class)
     private fun generateUserLibraries(
         mode: KlibDAGBuildingBenchmarkMode,
         userLibsConfiguration: KlibDAGUserLibsConfiguration,
@@ -163,7 +168,16 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             }
             assertEquals(regularLibsNumber + cInteropLibsNumber, allPaths.size)
 
+            // Make a copy of all libraries because they can be corrupted by wiping out the indices.
+            val copiedLibrariesDir = buildDir.resolve("copied-libraries").toPath()
+            copiedLibrariesDir.deleteRecursively()
+            copiedLibrariesDir.createDirectories()
+
             return allPaths
+                .map(::Path)
+                .map { originalPath ->
+                    originalPath.copyToRecursively(copiedLibrariesDir.resolve(originalPath.name), followLinks = false, overwrite = false)
+                }.mapToSetOrEmpty { it.absolutePathString() }
         }
     }
 
@@ -340,6 +354,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         return generatedLibraries
     }
 
+    @OptIn(ExperimentalPathApi::class)
     private fun benchmark(
         testName: String,
         extraLibraryPaths: Set<String>,
@@ -347,11 +362,16 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         expectedRootsNumber: Int, // Sanity check.
         mode: KlibDAGBuildingBenchmarkMode,
         configuration: KlibDAGUserLibsConfiguration?,
-    ) {
+    ) = context(mode.dagMode) {
         repeat(2) {
             System.gc()
             Thread.sleep(100)
         }
+
+        // Remove indices if necessary.
+        val librariesWithoutOwnIndices = patchLibrariesToDropOwnIndicesIfNecessary(extraLibraryPaths.map(::Path))
+
+        externalSignatureIndicesDir.deleteRecursively() // Clean up all external indices before benchmarking.
 
         // Load libraries.
         val target = testRunSettings.get<KotlinNativeTargets>().testTarget
@@ -387,15 +407,11 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             benchmarkRounds = 40,
             pre = System::gc,
             post = {
+                assertExactNumberOfExternalIndices(librariesWithoutOwnIndices)
                 println("The computed DAG size is: ${latestDag!!.librariesReverseTopoSorted.size}")
             },
         ) {
-            latestDag = KlibDAGBuilder(
-                Parameters(libraries = allLibraries) { it in roots }.apply {
-                    @OptIn(InternalKlibDAGApi::class)
-                    useSignatureIndices = mode.dagMode.useSignatureIndices
-                }
-            ).build()
+            latestDag = KlibDAGBuilder(buildParams(libraries = allLibraries) { it in roots }).build()
         }
     }
 
@@ -567,15 +583,15 @@ private class BenchmarkResultsReporter(private val reportPath: Path) {
     }
 }
 
-@Suppress("unused") // Enum entries are not used directly in the source code.
+@Suppress("unused", "EnumEntryName") // Enum entries are not used directly in the source code.
 enum class KlibDAGBuildingBenchmarkMode(
     val dagMode: KlibDAGBuildingMode,
     val density: Double,
 ) {
-    NO_INDICES(dagMode = KlibDAGBuildingMode.NO_INDICES, density = 0.1),
-    LOW_DENSITY(dagMode = KlibDAGBuildingMode.WITH_INDICES, density = 0.1),
-    MEDIUM_DENSITY(dagMode = KlibDAGBuildingMode.WITH_INDICES, density = 0.5),
-    HIGH_DENSITY(dagMode = KlibDAGBuildingMode.WITH_INDICES, density = 0.9);
+    NoIndices_MediumDensity(dagMode = KlibDAGBuildingMode.NoIndices, density = 0.5),
+    OwnIndicesForDistNoIndicesForOthers_MediumDensity(dagMode = KlibDAGBuildingMode.OwnIndicesForDistNoIndicesForOthers, density = 0.5),
+    OwnIndicesForDistExternalIndicesForOthers_MediumDensity(dagMode = KlibDAGBuildingMode.OwnIndicesForDistExternalIndicesForOthers, density = 0.5),
+    OwnIndicesEverywhere_MediumDensity(dagMode = KlibDAGBuildingMode.OwnIndicesEverywhere, density = 0.5);
 
     init {
         check(density > 0 && density <= 1.0)
@@ -590,11 +606,14 @@ enum class KlibDAGUserLibsConfiguration(
     val cInteropLibsNumber: Int,
 ) {
     REGULAR_20(20, 0),
-    REGULAR_15_CINTEROP_5(15, 5),
-    REGULAR_10_CINTEROP_10(10, 10),
+    REGULAR_19_CINTEROP_1(20 - 1, 1),
+    REGULAR_18_CINTEROP_2(20 - 2, 2),
     REGULAR_100(100, 0),
-    REGULAR_75_CINTEROP_25(75, 25),
-    REGULAR_50_CINTEROP_50(50, 50),
+    REGULAR_95_CINTEROP_5(100 - 5, 5),
+    REGULAR_90_CINTEROP_10(100 - 10, 10),
+    REGULAR_1000(1000, 0),
+    REGULAR_990_CINTEROP_10(1000 - 10, 10),
+    REGULAR_980_CINTEROP_20(1000 - 20, 20),
     ;
 
     init {
