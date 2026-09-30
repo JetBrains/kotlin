@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.projectStructure
 
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -27,7 +28,8 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
 
     @Test
     fun testLibraryModuleScopeUsesParentTraversalByDefault() {
-        val compiledJar = compileToJar(testDataPath(ROOT).resolve("library"))
+        val libraryJar = compileToJar(testDataPath(ROOT).resolve("library"))
+        val otherLibraryJar = compileToJar(testDataPath(ROOT).resolve("otherLibrary"))
 
         lateinit var libraryModule: KaLibraryModule
 
@@ -36,24 +38,31 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
                 platform = JvmPlatforms.defaultJvmPlatform
                 libraryModule = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(compiledJar)
+                        addBinaryRoot(libraryJar)
                         platform = JvmPlatforms.defaultJvmPlatform
-                        libraryName = "dependency"
+                        libraryName = "library"
+                    }
+                )
+                addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(otherLibraryJar)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        libraryName = "otherLibrary"
                     }
                 )
             }
         }
 
-        val jarRoot = getJarRootVirtualFile(compiledJar, session)
-        val fileInJar = findFirstFileInJar(jarRoot)
+        val files = collectLibraryFiles(libraryJar, otherLibraryJar, session)
 
-        assertLibraryScopeKindAndContainment(libraryModule, "Parent-traversal library search scope", jarRoot, fileInJar)
+        assertLibraryScope(libraryModule, "Parent-traversal library search scope", files)
     }
 
     @Test
     @OptIn(StandaloneWorkaroundApi::class)
     fun testLibraryModuleScopeRespectsProviderDefaultAndModuleOverride() {
-        val compiledJar = compileToJar(testDataPath(ROOT).resolve("library"))
+        val libraryJar = compileToJar(testDataPath(ROOT).resolve("library"))
+        val otherLibraryJar = compileToJar(testDataPath(ROOT).resolve("otherLibrary"))
 
         lateinit var inheritedModule: KaLibraryModule
         lateinit var parentTraversalModule: KaLibraryModule
@@ -70,7 +79,7 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
                 // Inherits the provider-wide default.
                 inheritedModule = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(compiledJar)
+                        addBinaryRoot(libraryJar)
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "inherited"
                     }
@@ -79,7 +88,7 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
                 // The following modules each override the provider-wide default with a specific mode.
                 parentTraversalModule = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(compiledJar)
+                        addBinaryRoot(libraryJar)
                         libraryScopeConstructionMode = StandaloneLibraryScopeConstructionMode.ParentTraversal
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "parentTraversalOverride"
@@ -87,7 +96,7 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
                 )
                 trieModule = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(compiledJar)
+                        addBinaryRoot(libraryJar)
                         libraryScopeConstructionMode = StandaloneLibraryScopeConstructionMode.Trie
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "trieOverride"
@@ -95,43 +104,92 @@ class StandaloneLibraryModuleScopeTest : AbstractStandaloneTest() {
                 )
                 enumerationModule = addModule(
                     buildKtLibraryModule {
-                        addBinaryRoot(compiledJar)
+                        addBinaryRoot(libraryJar)
                         libraryScopeConstructionMode = StandaloneLibraryScopeConstructionMode.Enumeration
                         platform = JvmPlatforms.defaultJvmPlatform
                         libraryName = "enumerationOverride"
                     }
                 )
+
+                addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(otherLibraryJar)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        libraryName = "otherLibrary"
+                    }
+                )
             }
         }
 
-        val jarRoot = getJarRootVirtualFile(compiledJar, session)
-        val fileInJar = findFirstFileInJar(jarRoot)
+        val files = collectLibraryFiles(libraryJar, otherLibraryJar, session)
 
-        assertLibraryScopeKindAndContainment(inheritedModule, "Trie-based library search scope", jarRoot, fileInJar)
-        assertLibraryScopeKindAndContainment(parentTraversalModule, "Parent-traversal library search scope", jarRoot, fileInJar)
-        assertLibraryScopeKindAndContainment(trieModule, "Trie-based library search scope", jarRoot, fileInJar)
-        assertLibraryScopeKindAndContainment(enumerationModule, "Enumeration-based library search scope", jarRoot, fileInJar)
+        assertLibraryScope(inheritedModule, "Trie-based library search scope", files)
+        assertLibraryScope(parentTraversalModule, "Parent-traversal library search scope", files)
+        assertLibraryScope(trieModule, "Trie-based library search scope", files)
+        assertLibraryScope(enumerationModule, "Enumeration-based library search scope", files)
+    }
+
+    /**
+     * @property containedFiles The files which the library scope should contain.
+     * @property nonContainedFiles The files which the library scope should *not* contain.
+     */
+    private class LibraryFiles(
+        val containedFiles: Collection<VirtualFile>,
+        val nonContainedFiles: Collection<VirtualFile>,
+    )
+
+    private fun collectLibraryFiles(libraryJar: Path, otherLibraryJar: Path, session: StandaloneAnalysisAPISession): LibraryFiles {
+        val libraryJarRoot = getJarRootVirtualFile(libraryJar, session)
+        val otherLibraryJarRoot = getJarRootVirtualFile(otherLibraryJar, session)
+
+        val containedFiles = LibraryUtils.getAllVirtualFilesFromRoot(libraryJarRoot, includeRoot = true)
+
+        val nonContainedFiles = buildList {
+            // All files of a different JAR, including its root. Both JARs are called `library.jar`, but reside in different directories.
+            addAll(LibraryUtils.getAllVirtualFilesFromRoot(otherLibraryJarRoot, includeRoot = true))
+
+            // The JAR archive itself and the directory containing it, both in the local file system.
+            add(getLocalVirtualFile(libraryJar))
+            add(getLocalVirtualFile(libraryJar.parent))
+
+            // A source file from which the library was compiled.
+            add(getLocalVirtualFile(testDataPath(ROOT).resolve("library").resolve("library.kt")))
+        }
+
+        Assertions.assertTrue(containedFiles.any { !it.isDirectory }, "The library JAR should contain at least one file.")
+        Assertions.assertTrue(
+            nonContainedFiles.any { !it.isDirectory && it.url.startsWith(otherLibraryJarRoot.url) },
+            "The other library JAR should contain at least one file.",
+        )
+
+        return LibraryFiles(containedFiles, nonContainedFiles)
     }
 
     private fun getJarRootVirtualFile(jar: Path, session: StandaloneAnalysisAPISession): VirtualFile =
         StandaloneProjectFactory.getVirtualFilesForLibraryRoots(listOf(jar), session.coreApplicationEnvironment).single()
 
-    private fun findFirstFileInJar(jarRoot: VirtualFile): VirtualFile =
-        LibraryUtils.getAllVirtualFilesFromRoot(jarRoot, includeRoot = false).first()
+    private fun getLocalVirtualFile(path: Path): VirtualFile =
+        StandardFileSystems.local().findFileByPath(path.toAbsolutePath().toString())
+            ?: error("Cannot find a local virtual file for `$path`.")
 
-    private fun assertLibraryScopeKindAndContainment(
+    private fun assertLibraryScope(
         module: KaLibraryModule,
         expectedDescriptionPrefix: String,
-        jarRoot: VirtualFile,
-        fileInJar: VirtualFile,
+        files: LibraryFiles,
     ) {
         val scope = module.baseContentScope
         Assertions.assertTrue(
             scope.toString().startsWith(expectedDescriptionPrefix),
             "Expected a library scope matching \"$expectedDescriptionPrefix\", but got: $scope",
         )
-        Assertions.assertTrue(scope.contains(jarRoot), "The scope should contain the JAR root: $jarRoot")
-        Assertions.assertTrue(scope.contains(fileInJar), "The scope should contain a file from the JAR: $fileInJar")
+
+        for (file in files.containedFiles) {
+            Assertions.assertTrue(scope.contains(file), "The scope of `${module.libraryName}` should contain `$file`.")
+        }
+
+        for (file in files.nonContainedFiles) {
+            Assertions.assertFalse(scope.contains(file), "The scope of `${module.libraryName}` should not contain `$file`.")
+        }
     }
 
     private companion object {
