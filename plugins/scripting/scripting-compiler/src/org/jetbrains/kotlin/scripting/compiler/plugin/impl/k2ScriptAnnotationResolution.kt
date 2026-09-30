@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -88,8 +89,10 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
     val firFile = script.convertToFir(sessionForAnnotationResolution, diagnosticsCollector)
     firFile.declarations.forEach {
-        if (it is FirScript) {
-            it.scriptCompilationConfiguration = compilationConfiguration
+        when (it) {
+            is FirScript -> it.scriptCompilationConfiguration = compilationConfiguration
+            is FirReplSnippet -> it.scriptCompilationConfiguration = compilationConfiguration
+            else -> {}
         }
     }
     if (diagnosticsCollector.hasErrors) {

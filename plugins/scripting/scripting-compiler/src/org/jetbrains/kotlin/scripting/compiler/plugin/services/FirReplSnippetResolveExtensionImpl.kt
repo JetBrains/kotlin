@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
@@ -19,10 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.resolve.FirReplHistoryScope
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.defaultImports
 import kotlin.script.experimental.api.repl
-import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -56,18 +51,11 @@ class FirReplSnippetResolveExtensionImpl(
     override val replHistoryProvider: FirReplHistoryProvider =
         hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: FirReplHistoryProviderImpl()
 
-    private fun getImportsFromHistory(currentSnippet: FirReplSnippet): List<FirImport> =
-        replHistoryProvider.getSnippets().flatMap { snippet ->
-            if (currentSnippet == snippet) emptyList()
-            else replHistoryProvider.getSnippetImports(snippet)
-                ?: snippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(snippet)?.imports.orEmpty()
-        }
-
-    override fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>? =
-        getOrLoadConfiguration(snippet.moduleData.session, sourceFile)?.valueOrNull()?.let {
-            it[ScriptCompilationConfiguration.defaultImports]
-                ?.firImportsFromDefaultImports(snippet.source.fakeElement(KtFakeSourceElementKind.ImplicitImport)).orEmpty() +
-                    getImportsFromHistory(snippet)
+    override fun getSnippetHistoryImports(snippet: FirReplSnippet): List<FirImport> =
+        replHistoryProvider.getSnippets().flatMap { precedingSnippet ->
+            if (snippet == precedingSnippet) emptyList()
+            else replHistoryProvider.getSnippetImports(precedingSnippet)
+                ?: precedingSnippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(precedingSnippet)?.imports.orEmpty()
         }
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
