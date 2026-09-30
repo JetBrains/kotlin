@@ -1080,8 +1080,23 @@ inline fun FirElement.requireFeatureSupport(
 
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
-    get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
-        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
+    get() = !fullyExpandedType().anyBound { it.isPrimitiveOrNullablePrimitive || it.isValueClass(context.session) }
+
+// Whether [predicate] holds for this class type or, like javac checks, for a bound of a type parameter, captured, intersection or flexible type.
+fun ConeKotlinType.anyBound(
+    visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
+    predicate: (ConeClassLikeType) -> Boolean,
+): Boolean =
+    when (this) {
+        is ConeFlexibleType -> lowerBound.anyBound(visited, predicate)
+        is ConeDefinitelyNotNullType -> original.anyBound(visited, predicate)
+        is ConeIntersectionType -> intersectedTypes.any { it.anyBound(visited, predicate) }
+        is ConeTypeParameterType ->
+            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.anyBound(visited, predicate) }
+        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.anyBound(visited, predicate) }
+        is ConeClassLikeType -> predicate(this)
+        is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
+            -> false
     }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
