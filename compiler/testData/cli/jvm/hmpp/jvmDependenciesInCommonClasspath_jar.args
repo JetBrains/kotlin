@@ -4,12 +4,14 @@ $TEMP_DIR$/dependency/dep.jar
 ---
 $TESTDATA_DIR$/src/jvmDependencyConsumer_common.kt
 $TESTDATA_DIR$/src/jvmDependencyConsumer_platform.kt
+$TESTDATA_DIR$/src/accessingJdkField.kt
 -Xmulti-platform
 -Xseparate-kmp-compilation
 -Xfragments=common
 -Xfragments=platform
 -Xfragment-sources=common\:$TESTDATA_DIR$/src/jvmDependencyConsumer_common.kt
 -Xfragment-sources=platform\:$TESTDATA_DIR$/src/jvmDependencyConsumer_platform.kt
+-Xfragment-sources=platform\:$TESTDATA_DIR$/src/accessingJdkField.kt
 -Xfragment-refines=platform\:common
 -Xfragment-dependency=common\:$TEMP_DIR$/dependency/dep.jar
 -cp
