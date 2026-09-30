@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.cli.common.repl.ILineId
+import org.jetbrains.kotlin.cli.common.repl.K1_REPL_DEPRECATION_MESSAGE
 import java.rmi.Remote
 import java.rmi.RemoteException
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface ReplStateFacade : Remote {
 
     @Throws(RemoteException::class)
