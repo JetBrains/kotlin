@@ -58,7 +58,13 @@ private fun classDeclarations(classFqn: String): Set<String> {
         "Failed to run javap on $classFqn.\n\n${result.output}"
     }
 
-    return result.output.lines().map { it.trim() }.filter { it.isNotEmpty() }.drop(2).dropLast(1).toSet()
+    // the `Compiled from "..."` header is absent when a class has no single source file, e.g. a multifile class facade
+    val lines = result.output.lines().map { it.trim() }.filter { it.isNotEmpty() }
+    val classHeaderIndex = lines.indexOfFirst { it.endsWith("{") }
+    assert(classHeaderIndex >= 0 && lines.last() == "}") {
+        "Unexpected javap output for $classFqn.\n\n${result.output}"
+    }
+    return lines.subList(classHeaderIndex + 1, lines.lastIndex).toSet()
 }
 
 private fun declarationsMismatchMessage(expectedDeclarations: Set<String>, actualDeclarations: Set<String>): String {
