@@ -2552,6 +2552,96 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("annotatedDestructuringNonLocal.kt")
+    public void testAnnotatedDestructuringNonLocal() {
+      run("annotatedDestructuringNonLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalArgument.kt")
+    public void testAnnotatedDestructuringNonLocalArgument() {
+      run("annotatedDestructuringNonLocalArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntry.kt")
+    public void testAnnotatedDestructuringNonLocalEntry() {
+      run("annotatedDestructuringNonLocalEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryArgument.kt")
+    public void testAnnotatedDestructuringNonLocalEntryArgument() {
+      run("annotatedDestructuringNonLocalEntryArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryExplicitType.kt")
+    public void testAnnotatedDestructuringNonLocalEntryExplicitType() {
+      run("annotatedDestructuringNonLocalEntryExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntrySquareBrackets.kt")
+    public void testAnnotatedDestructuringNonLocalEntrySquareBrackets() {
+      run("annotatedDestructuringNonLocalEntrySquareBrackets.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryType.kt")
+    public void testAnnotatedDestructuringNonLocalEntryType() {
+      run("annotatedDestructuringNonLocalEntryType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryTypeAnnotation.kt")
+    public void testAnnotatedDestructuringNonLocalEntryTypeAnnotation() {
+      run("annotatedDestructuringNonLocalEntryTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalEntryWithExplicitType.kt")
+    public void testAnnotatedDestructuringNonLocalEntryWithExplicitType() {
+      run("annotatedDestructuringNonLocalEntryWithExplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalType.kt")
+    public void testAnnotatedDestructuringNonLocalType() {
+      run("annotatedDestructuringNonLocalType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringNonLocalUseSiteTarget.kt")
+    public void testAnnotatedDestructuringNonLocalUseSiteTarget() {
+      run("annotatedDestructuringNonLocalUseSiteTarget.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringTopLevel.kt")
+    public void testAnnotatedDestructuringTopLevel() {
+      run("annotatedDestructuringTopLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringTopLevelArgument.kt")
+    public void testAnnotatedDestructuringTopLevelArgument() {
+      run("annotatedDestructuringTopLevelArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringTopLevelEntry.kt")
+    public void testAnnotatedDestructuringTopLevelEntry() {
+      run("annotatedDestructuringTopLevelEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedDestructuringTopLevelEntryArgument.kt")
+    public void testAnnotatedDestructuringTopLevelEntryArgument() {
+      run("annotatedDestructuringTopLevelEntryArgument.kt");
+    }
+
+    @Test
     @TestMetadata("callableReferenceQualifiedWithArgument.kt")
     public void testCallableReferenceQualifiedWithArgument() {
       run("callableReferenceQualifiedWithArgument.kt");

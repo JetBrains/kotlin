@@ -1616,6 +1616,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleJSSingleSymbolByPsiTestGenerate
     }
 
     @Test
+    @TestMetadata("annotatedMemberLevelDestructuringDeclaration.kt")
+    public void testAnnotatedMemberLevelDestructuringDeclaration() {
+      run("annotatedMemberLevelDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedMemberLevelDestructuringEntry.kt")
+    public void testAnnotatedMemberLevelDestructuringEntry() {
+      run("annotatedMemberLevelDestructuringEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedTopLevelDestructuringDeclaration.kt")
+    public void testAnnotatedTopLevelDestructuringDeclaration() {
+      run("annotatedTopLevelDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedTopLevelDestructuringEntry.kt")
+    public void testAnnotatedTopLevelDestructuringEntry() {
+      run("annotatedTopLevelDestructuringEntry.kt");
+    }
+
+    @Test
     @TestMetadata("anonymousObjectInInvalidPosition.kt")
     public void testAnonymousObjectInInvalidPosition() {
       run("anonymousObjectInInvalidPosition.kt");

@@ -6960,6 +6960,18 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("annotationArgumentOnNonLocalDestructuringDeclaration.kt")
+    public void testAnnotationArgumentOnNonLocalDestructuringDeclaration() {
+      run("annotationArgumentOnNonLocalDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationArgumentOnNonLocalDestructuringEntry.kt")
+    public void testAnnotationArgumentOnNonLocalDestructuringEntry() {
+      run("annotationArgumentOnNonLocalDestructuringEntry.kt");
+    }
+
+    @Test
     @TestMetadata("annotationClassSuperTypeCall.kt")
     public void testAnnotationClassSuperTypeCall() {
       run("annotationClassSuperTypeCall.kt");
@@ -6990,9 +7002,33 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("annotationOnNonLocalDestructuringDeclaration.kt")
+    public void testAnnotationOnNonLocalDestructuringDeclaration() {
+      run("annotationOnNonLocalDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnNonLocalDestructuringEntry.kt")
+    public void testAnnotationOnNonLocalDestructuringEntry() {
+      run("annotationOnNonLocalDestructuringEntry.kt");
+    }
+
+    @Test
     @TestMetadata("annotationOnReceiver.kt")
     public void testAnnotationOnReceiver() {
       run("annotationOnReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTopLevelDestructuringDeclaration.kt")
+    public void testAnnotationOnTopLevelDestructuringDeclaration() {
+      run("annotationOnTopLevelDestructuringDeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationOnTopLevelDestructuringEntry.kt")
+    public void testAnnotationOnTopLevelDestructuringEntry() {
+      run("annotationOnTopLevelDestructuringEntry.kt");
     }
 
     @Test
