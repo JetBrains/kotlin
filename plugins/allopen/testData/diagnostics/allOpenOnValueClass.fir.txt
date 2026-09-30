@@ -5,25 +5,25 @@ FILE: allOpenOnValueClass.kt
         }
 
     }
-    @R|AllOpen|() public open value class Final : R|kotlin/Any| {
+    @R|AllOpen|() public final value class Final : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|Final| {
             super<R|kotlin/Any|>()
         }
 
-        public open val x: R|kotlin/Int| = R|<local>/x|
+        public final val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
 
-        public open fun f(): R|kotlin/Int| {
+        public final fun f(): R|kotlin/Int| {
             ^f this@R|/Final|.R|/Final.x|
         }
 
     }
-    @R|AllOpen|() @R|kotlin/jvm/JvmInline|() public open value class Inline : R|kotlin/Any| {
+    @R|AllOpen|() @R|kotlin/jvm/JvmInline|() public final value class Inline : R|kotlin/Any| {
         public constructor(x: R|kotlin/Int|): R|Inline| {
             super<R|kotlin/Any|>()
         }
 
-        public open val x: R|kotlin/Int| = R|<local>/x|
+        public final val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
 
     }
@@ -40,7 +40,7 @@ FILE: allOpenOnValueClass.kt
         }
 
     }
-    public open value class Impl : R|Abstract| {
+    public final value class Impl : R|Abstract| {
         public constructor(x: R|kotlin/Int|): R|Impl| {
             super<R|Abstract|>()
         }
