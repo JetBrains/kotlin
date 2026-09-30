@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.WRONG_JS_EXPORT_TARGET_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE
@@ -125,6 +126,10 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NESTED_JS_MODULE_PROHIBITED,
             "'@JsModule' and '@JsNonModule' cannot appear here since the file is already marked by either '@JsModule' or '@JsNonModule'."
+        )
+        map.put(
+            JS_MODULE_PROHIBITED_ON_MEMBER,
+            "'@JsModule' and '@JsNonModule' cannot be applied to a member. Apply them to the top-level declaration or to the file instead."
         )
         map.put(
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,

@@ -29,13 +29,20 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirFile || !declaration.hasAnnotation(JsModule, context.session)) return
 
+        val isExternal = declaration.symbol.isEffectivelyExternal(context.session)
+
+        if (isExternal && !context.isTopLevel) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER)
+            return
+        }
+
         // A qualified declaration is referenced through its qualifier, so a write lands on a plain JS object.
         // Without a qualifier the declaration is the default export of the module, which is never writable.
         if (declaration is FirProperty && declaration.isVar && !isQualified(declaration)) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
-        if (!declaration.symbol.isEffectivelyExternal(context.session)) {
+        if (!isExternal) {
             reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL)
         }
 
