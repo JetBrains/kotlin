@@ -49,7 +49,6 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.assignment.plugin.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
     withTestJar()

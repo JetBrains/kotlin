@@ -130,7 +130,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/loadJavaPackageAnnotations")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withThirdPartyAnnotations()
     @OptIn(KotlinCompilerDistUsage::class)

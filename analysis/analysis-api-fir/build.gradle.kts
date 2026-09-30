@@ -89,7 +89,6 @@ projectTests {
     withAnnotations()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
-    withScriptRuntime()
     withPluginSandboxAnnotations()
     withPluginSandboxJar()
     withWasmRuntime()

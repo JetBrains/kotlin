@@ -68,7 +68,6 @@ projectTests {
     withAnnotations()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
-    withScriptRuntime()
 
     @OptIn(KotlinCompilerDistUsage::class)
     withDist()
