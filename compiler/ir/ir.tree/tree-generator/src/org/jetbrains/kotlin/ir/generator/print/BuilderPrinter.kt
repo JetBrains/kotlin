@@ -109,10 +109,6 @@ internal class BuilderPrinter(printer: ImportCollectingPrinter) : AbstractBuilde
 
     override fun builderKDoc(builder: LeafBuilder<Field, Element, Implementation>): String? = buildString {
         appendLine("Collects the properties of a [${builder.implementation.element.typeName}] and builds one.")
-        appendLine()
-        appendLine("A property with no sensible default is declared `lateinit`, so building without it throws rather than")
-        appendLine("inventing a value. There is no way to express \"required\" for a property the caller assigns inside a")
-        appendLine("lambda; a constructor parameter could, at the cost of the property being settable only once.")
         if (builder.implementation.goesThroughFactory) {
             appendLine()
             append("Built by [${irFactoryType.simpleName}.build], which is where the factory comes from.")
@@ -120,11 +116,7 @@ internal class BuilderPrinter(printer: ImportCollectingPrinter) : AbstractBuilde
     }.trimEnd()
 
     override fun buildFunctionKDoc(builder: LeafBuilder<Field, Element, Implementation>): String =
-        "Builds the collected [${builder.implementation.element.typeName}].\n" +
-                "\n" +
-                "`declarationCreated` is not decoration: `IrFactoryImplForJsIC` and `IrFactoryImplForWasmIC` override it to\n" +
-                "attach an `IdSignature` to every declaration they create. Skipping it would leave declarations unsigned, and\n" +
-                "incremental compilation would cache the wrong thing without failing."
+        "Builds the collected [${builder.implementation.element.typeName}].\n"
 
     /**
      * `IrFactory.build(builder)` is not an entry point: handing one builder to it twice would produce two declarations sharing a
@@ -160,14 +152,6 @@ internal class BuilderPrinter(printer: ImportCollectingPrinter) : AbstractBuilde
 
     /**
      * A declaration is built *by* a factory, so `build` belongs to the factory rather than to the builder.
-     *
-     * The factory has no sensible default and must not be guessed: `IrFactoryImplForJsIC` and `IrFactoryImplForWasmIC` hook
-     * `declarationCreated()` to attach an `IdSignature`, so a builder that quietly fell back to `IrFactoryImpl` would hand back
-     * declarations with no signature and no error. Taking it from the receiver makes supplying it unavoidable, and keeps it out
-     * of the builder's properties, where it could shadow a `factory` in scope at the call site.
-     *
-     * Declarations that store no factory -- `IrVariable`, `IrFile` and the package fragments -- keep `build()` as a member of
-     * their builder.
      */
     override fun buildFunctionReceiver(builder: LeafBuilder<Field, Element, Implementation>): TypeRef? =
         irFactoryType.takeIf { builder.implementation.goesThroughFactory }
