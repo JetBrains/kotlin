@@ -152,23 +152,9 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean =
  *
  * Unlike [FirRegularClassSymbol.isPlatformValueClass], which checks only the class itself.
  */
-private fun ConeKotlinType.isPlatformValueClassType(
-    session: FirSession,
-    visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
-): Boolean = unwrapToSimpleTypeUsingLowerBound().isPlatformValueClassType(session, visited)
-
-private fun ConeSimpleKotlinType.isPlatformValueClassType(session: FirSession, visited: MutableSet<FirTypeParameterSymbol>): Boolean =
-    when (this) {
-        is ConeIntersectionType -> intersectedTypes.any { it.isPlatformValueClassType(session, visited) }
-        is ConeTypeParameterType ->
-            visited.add(lookupTag.symbol) &&
-                    lookupTag.symbol.resolvedBounds.any { it.coneType.isPlatformValueClassType(session, visited) }
-        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isPlatformValueClassType(session, visited) }
-        is ConeClassLikeType -> toRegularClassSymbol(session)?.let {
-            it.isPlatformValueClass(session) || it.isMappedToPlatformValueClass(session)
-        } == true
-        is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
-            -> false
+private fun ConeKotlinType.isPlatformValueClassType(session: FirSession): Boolean =
+    anyBound { type ->
+        type.toRegularClassSymbol(session)?.let { it.isPlatformValueClass(session) || it.isMappedToPlatformValueClass(session) } == true
     }
 
 fun ConeKotlinType.isFlexiblePrimitive(): Boolean {
@@ -1123,8 +1109,27 @@ inline fun FirElement.requireFeatureSupport(
 
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
-    get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
-        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
+    get() = !fullyExpandedType().isBoundedByPrimitiveOrValueClass(context.session)
+
+fun ConeKotlinType.isBoundedByPrimitiveOrValueClass(session: FirSession): Boolean =
+    anyBound { it.isPrimitiveOrNullablePrimitive || it.isValueClass(session) }
+
+// Whether [predicate] holds for this class type or, like javac checks, for a bound of a type parameter, captured, intersection or
+// flexible type.
+fun ConeKotlinType.anyBound(
+    visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
+    predicate: (ConeClassLikeType) -> Boolean,
+): Boolean =
+    when (this) {
+        is ConeFlexibleType -> lowerBound.anyBound(visited, predicate)
+        is ConeDefinitelyNotNullType -> original.anyBound(visited, predicate)
+        is ConeIntersectionType -> intersectedTypes.any { it.anyBound(visited, predicate) }
+        is ConeTypeParameterType ->
+            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.anyBound(visited, predicate) }
+        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.anyBound(visited, predicate) }
+        is ConeClassLikeType -> predicate(this)
+        is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
+            -> false
     }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.JDK_INTERNAL_VALUE_BASED_ANNOTATION_CLASS_ID
+import org.jetbrains.kotlin.fir.analysis.checkers.anyBound
+import org.jetbrains.kotlin.fir.analysis.checkers.isBoundedByPrimitiveOrValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.isFlexiblePrimitive
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.isCompiledAsIdentityClass
@@ -16,21 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.enableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.isPlatformValueClass
-import org.jetbrains.kotlin.fir.resolve.symbol
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeCapturedType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStubTypeForTypeVariableInSubtyping
-import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableType
-import org.jetbrains.kotlin.fir.types.ConeUnionType
 import org.jetbrains.kotlin.fir.types.isPrimitiveOrNullablePrimitive
 
 context(sessionHolder: SessionHolder)
@@ -68,20 +58,5 @@ internal fun ConeKotlinType.isValueObjectAtRuntime(): Boolean {
 context(sessionHolder: SessionHolder)
 internal fun ConeKotlinType.isValueClassOrPrimitive(): Boolean =
     if (isFlexiblePrimitive()) isValueClass(sessionHolder.session)
-    else anyBound { it.isPrimitiveOrNullablePrimitive || it.isValueClass(sessionHolder.session) }
+    else isBoundedByPrimitiveOrValueClass(sessionHolder.session)
 
-private fun ConeKotlinType.anyBound(
-    visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
-    predicate: (ConeClassLikeType) -> Boolean,
-): Boolean =
-    when (this) {
-        is ConeFlexibleType -> lowerBound.anyBound(visited, predicate)
-        is ConeDefinitelyNotNullType -> original.anyBound(visited, predicate)
-        is ConeIntersectionType -> intersectedTypes.any { it.anyBound(visited, predicate) }
-        is ConeTypeParameterType ->
-            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.anyBound(visited, predicate) }
-        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.anyBound(visited, predicate) }
-        is ConeClassLikeType -> predicate(this)
-        is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
-            -> false
-    }
