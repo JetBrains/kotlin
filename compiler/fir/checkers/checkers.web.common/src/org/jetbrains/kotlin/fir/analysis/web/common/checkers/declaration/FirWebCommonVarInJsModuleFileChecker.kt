@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isNativeObject
  * so the decision is left to [isNonWritableModuleImport].
  */
 abstract class FirWebCommonVarInJsModuleFileChecker : FirPropertyChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
     protected abstract val diagnostic: KtDiagnosticFactoryForDeprecation0
 
     /**
