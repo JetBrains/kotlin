@@ -1,0 +1,76 @@
+FILE: typeParameterBoundsInAnonymousObject.kt
+    public final class Box<X : R|kotlin/Number|> : R|kotlin/Any| {
+        public constructor<X : R|kotlin/Number|>(): R|Box<X>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val x: R|kotlin/Any| = object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(t: <ERROR TYPE REF: Symbol not found for T>): R|kotlin/Unit| {
+        }
+
+    }
+
+        public get(): R|kotlin/Any|
+    public final fun <R> test(): R|kotlin/Unit| {
+        lval y: R|<anonymous><R>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous><R>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(t: <ERROR TYPE REF: Symbol not found for T>): <ERROR TYPE REF: Symbol not found for K> {
+                ^foo Null(null)!!
+            }
+
+        }
+
+    }
+    public final fun unresolvedBound(): R|kotlin/Unit| {
+        lval a: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun ownTypeParameterBound(): R|kotlin/Unit| {
+        lval b: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun cyclicBound(): R|kotlin/Unit| {
+        lval c: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun finalBound(): R|kotlin/Unit| {
+        lval d: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun upperBoundViolation(): R|kotlin/Unit| {
+        lval e: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

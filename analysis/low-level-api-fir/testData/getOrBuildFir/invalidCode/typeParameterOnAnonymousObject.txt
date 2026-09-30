@@ -1,0 +1,17 @@
+KT element: KtTypeParameter
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOnAnonymousObject.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Any| = object : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|

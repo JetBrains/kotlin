@@ -2034,6 +2034,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     public void testTypeParameterOnAnonymousFunction() {
       run("typeParameterOnAnonymousFunction.kt");
     }
+
+    @Test
+    @TestMetadata("typeParameterOnAnonymousObject.kt")
+    public void testTypeParameterOnAnonymousObject() {
+      run("typeParameterOnAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterReferenceInAnonymousObject.kt")
+    public void testTypeParameterReferenceInAnonymousObject() {
+      run("typeParameterReferenceInAnonymousObject.kt");
+    }
   }
 
   @Nested

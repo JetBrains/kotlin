@@ -7558,6 +7558,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSymbolTestGenerated exte
     }
 
     @Test
+    @TestMetadata("typeParameterOfAnonymousObject.kt")
+    public void testTypeParameterOfAnonymousObject() {
+      run("typeParameterOfAnonymousObject.kt");
+    }
+
+    @Test
     @TestMetadata("typecheckerRecursiveError.kt")
     public void testTypecheckerRecursiveError() {
       run("typecheckerRecursiveError.kt");
