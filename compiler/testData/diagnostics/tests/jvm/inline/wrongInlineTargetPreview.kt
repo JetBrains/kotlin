@@ -23,8 +23,8 @@ package usage
 import a.*
 
 fun baz() {
-    inlineFun {}
-    C().inlineMember {}
+    <!INLINE_FROM_HIGHER_PLATFORM!>inlineFun<!> {}
+    C().<!INLINE_FROM_HIGHER_PLATFORM!>inlineMember<!> {}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, functionalType, inline, lambdaLiteral */
