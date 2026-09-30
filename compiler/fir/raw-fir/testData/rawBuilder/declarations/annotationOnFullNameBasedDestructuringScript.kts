@@ -1,4 +1,4 @@
-// IGNORE_TREE_ACCESS: KT-64899
+// IGNORE_TREE_ACCESS: KT-89821
 annotation class Ann(val x: String = "")
 
 data class Foo(val first: String)
