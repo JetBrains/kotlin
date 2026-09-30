@@ -10,18 +10,15 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.forEachClassId
-import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object ArrayEqualityCanBeReplacedWithContentEquals : FirBasicExpressionChecker(MppCheckerKind.Common) {
+object ArrayEqualityCanBeReplacedWithContentEquals : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
     private val ARRAY_CLASS_IDS = buildList {
         add(StandardClassIds.Array)
         addAll(StandardClassIds.primitiveArrayTypeByElementType.values)
@@ -29,8 +26,7 @@ object ArrayEqualityCanBeReplacedWithContentEquals : FirBasicExpressionChecker(M
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirStatement) {
-        if (expression !is FirEqualityOperatorCall) return
+    override fun check(expression: FirEqualityOperatorCall) {
         if (expression.operation.let { it != FirOperation.EQ && it != FirOperation.NOT_EQ }) return
         val arguments = expression.arguments
         val left = arguments.getOrNull(0) ?: return
