@@ -1,0 +1,11 @@
+KtFile: fragment.kt
+  ANNOTATED_EXPRESSION
+    ANNOTATION_ENTRY
+      PsiElement(AT)('@')
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Ann')
+    PsiErrorElement:Expecting an element
+      <empty list>

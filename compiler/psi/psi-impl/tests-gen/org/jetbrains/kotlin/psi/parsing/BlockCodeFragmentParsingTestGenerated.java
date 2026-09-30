@@ -28,6 +28,12 @@ public class BlockCodeFragmentParsingTestGenerated extends AbstractBlockCodeFrag
   }
 
   @Test
+  @TestMetadata("annotatedAssignment.kt")
+  public void testAnnotatedAssignment() {
+    run("annotatedAssignment.kt");
+  }
+
+  @Test
   @TestMetadata("expressionOnTopLevel.kt")
   public void testExpressionOnTopLevel() {
     run("expressionOnTopLevel.kt");
