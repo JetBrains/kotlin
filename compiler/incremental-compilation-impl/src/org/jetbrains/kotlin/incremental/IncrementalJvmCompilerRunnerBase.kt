@@ -157,6 +157,8 @@ abstract class IncrementalJvmCompilerRunnerBase(
             }
         }
 
+        result.addAll(cache.getObsoleteMultifileClasses().flatMap { partsByFacadeName(it) })
+
         return result
     }
 
