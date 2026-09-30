@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_FLAG
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG
+import org.jetbrains.kotlin.load.kotlin.ACC_IDENTITY
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.internalName
@@ -229,6 +230,9 @@ class ClassCodegen private constructor(
             namedClass?.modality == Modality.ABSTRACT || namedClass?.modality == Modality.SEALED -> false
             // A Kotlin value class compiled as a Valhalla value class
             namedClass?.isKotlinValhallaValueClass(config.languageVersionSettings) == true -> true
+            // A Kotlin value class compiled as an identity class because of its superclass becomes a value class once its superclass is
+            // recompiled, so it is listed just the same, like a class annotated with `@WillBecomeValue`.
+            namedClass?.isKotlinValueClassCompiledAsIdentityClassBySuperclass(config.languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
             namedClass?.isJavaValueClass == true -> true
             // A class annotated with `@WillBecomeValue` is going to become a value class, so it is listed just the same.
@@ -666,8 +670,6 @@ private fun IrClass.getSynthAccessFlag(languageVersionSettings: LanguageVersionS
         return Opcodes.ACC_SYNTHETIC
     return 0
 }
-
-const val ACC_IDENTITY = Opcodes.ACC_SUPER
 
 private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or

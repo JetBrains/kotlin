@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +FullValueClasses
 // CHECK_BYTECODE_TEXT
 // MODULE: lib

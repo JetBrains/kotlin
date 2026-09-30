@@ -19,10 +19,10 @@ abstract value class IdentityCompiled
 // FILE: main.kt
 import lib.IdentityCompiled
 
-value class Sub(val x: Int) : IdentityCompiled()
+value class Sub(val x: Int) : <!VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS!>IdentityCompiled<!>()
 
-abstract value class Middle : IdentityCompiled()
+abstract value class Middle : <!VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS!>IdentityCompiled<!>()
 
-value class SubOfMiddle(val x: Int) : Middle()
+value class SubOfMiddle(val x: Int) : <!VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS!>Middle<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, value */

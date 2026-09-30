@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -86,6 +87,11 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
+
+        val VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS by warning<KtElement> {
+            parameter<FirRegularClassSymbol>("valueClass")
+            parameter<ConeKotlinType>("superType")
+        }
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
