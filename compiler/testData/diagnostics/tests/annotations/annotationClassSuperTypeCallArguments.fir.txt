@@ -1,0 +1,51 @@
+FILE: annotationClassSuperTypeCallArguments.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class NoArgs : R|kotlin/Any| {
+        public constructor(): R|NoArgs| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface I : R|kotlin/Any| {
+    }
+    public final annotation class WithMatchingArgument : R|Base|, R|kotlin/Annotation| {
+        public constructor(): R|WithMatchingArgument| {
+            super<R|kotlin/Any|>(Int(1))
+        }
+
+    }
+    public final annotation class WithMissingArgument : R|Base|, R|kotlin/Annotation| {
+        public constructor(): R|WithMissingArgument| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class WithExtraArgument : R|NoArgs|, R|kotlin/Annotation| {
+        public constructor(): R|WithExtraArgument| {
+            super<R|kotlin/Any|>(Int(1))
+        }
+
+    }
+    public final annotation class WithMismatchedArgument : R|Base|, R|kotlin/Annotation| {
+        public constructor(): R|WithMismatchedArgument| {
+            super<R|kotlin/Any|>(String())
+        }
+
+    }
+    public final annotation class WithInterface : R|I|, R|Base|, R|kotlin/Annotation| {
+        public constructor(): R|WithInterface| {
+            super<R|kotlin/Any|>(Int(1))
+        }
+
+    }
+    public final annotation class WithAny : R|kotlin/Any|, R|kotlin/Annotation| {
+        public constructor(): R|WithAny| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
