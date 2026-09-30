@@ -115,7 +115,7 @@ class CustomWasmSecondStageFacade internal constructor(
         /**
          * groupedBatch — Non-isolated grouped batch: the common case, and the path that makes batching pay off.
          *
-         * Generates a small `ProxyBatchLauncher.kt` containing one `ProxyLauncher_<hash>` `@Test` class per test in
+         * Generates a small `ProxyBatchLauncher.kt` containing one `ProxyLauncher_<encoded-package>` `@Test` class per test in
          * the batch (each calling its `box()` via the per-test FQN, computed from [BatchingPackageInserter.computePackage]
          * + [MainFunctionForBlackBoxTestsSourceProvider.detectPackage]), plus (on WASI) a `@WasmExport fun startTest()`
          * driving every `ProxyLauncher_*.runTest()` sequentially. Only that launcher source is compiled fresh, into a
@@ -123,7 +123,7 @@ class CustomWasmSecondStageFacade internal constructor(
          * `-libraries` (deduplicated against shared `helpers.klib` artifacts from [WasmCoroutineHelpersModuleTransformer],
          * since all helper KLIBs in a batch share `unique_name=helpers`) — everything else is reused as-is from Stage 1.
          *
-         * Since `GenerateWasmTests` only visits the `launcher.klib` main module here, the per-test `Launcher_<hash>`
+         * Since `GenerateWasmTests` only visits the `launcher.klib` main module here, the per-test `Launcher_<encoded-relative-path>`
          * class is unused, so `WasmJsLauncherAdditionalSourceProvider.produceAdditionalFiles()` short-circuits to an empty list for this path.
          * Aggregated batch settings (max `LANGUAGE_VERSION`, union of `OPT_IN`s, `ALLOW_KOTLIN_PACKAGE` if requested by any test)
          * are applied to both the launcher KLIB compilation and the final link, since all tests in the batch share one compiler invocation.

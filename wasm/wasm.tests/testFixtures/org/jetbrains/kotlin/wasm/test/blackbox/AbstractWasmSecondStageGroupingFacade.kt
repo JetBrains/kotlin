@@ -92,7 +92,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
 
     /**
      * Generates the `ProxyBatchLauncher.kt` source for the groupedBatch path — one `@Test`-annotated
-     * `ProxyLauncher_<hash>` class per test in the batch, plus (on WASI) a
+     * `ProxyLauncher_<encoded-package>` class per test in the batch, plus (on WASI) a
      * `@WasmExport fun startTest()` entry point.
      *
      * Writes the result to `tempDir/ProxyBatchLauncher.kt` and returns the corresponding
@@ -390,8 +390,23 @@ abstract class AbstractWasmSecondStageGroupingFacade(
  * Computes the synthetic per-test `ProxyLauncher` class name used by the WASM grouped test infrastructure.
  * The test infrastructure tracks this name to persistently identify the test from the testInfo
  *
- * The hash is derived from the per-test additional package (see [computePackage]) so that
- * the result is short enough for filesystem paths yet uniquely identifies the test.
+ * The identifier is a collision-free encoding of the per-test additional package (see [computePackage]): unlike a
+ * hash it cannot collide, and unlike a plain hex dump it keeps the package readable, since letters and digits pass
+ * through unchanged (see [encodeToIdentifier]).
  */
 internal fun computeProxyLauncherClassName(testInfo: KotlinTestInfo): String =
-    "ProxyLauncher_${computePackage(testInfo).hashCode().toUInt().toString(36)}"
+    "ProxyLauncher_${computePackage(testInfo).encodeToIdentifier()}"
+
+/**
+ * Injectively encodes a string into a Kotlin identifier fragment: an ASCII letter or digit is kept as it is, an
+ * underscore is doubled, and every other UTF-8 byte becomes an underscore followed by its two hex digits.
+ */
+internal fun String.encodeToIdentifier(): String = buildString(length + 16) {
+    for (byte in encodeToByteArray()) {
+        when (val char = (byte.toInt() and 0xFF).toChar()) {
+            in 'A'..'Z', in 'a'..'z', in '0'..'9' -> append(char)
+            '_' -> append("__")
+            else -> append('_').append(byte.toHexString())
+        }
+    }
+}
