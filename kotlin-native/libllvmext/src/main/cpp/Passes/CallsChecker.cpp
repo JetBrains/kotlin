@@ -214,7 +214,6 @@ static constexpr StringRef GoodFunctionNames[] = {
     "objc_autoreleasePoolPush",
     "objc_autoreleaseReturnValue",
     "objc_getAssociatedObject",
-    "objc_getClass",
     "objc_getProtocol",
     "objc_lookUpClass",
     "object_getClass",
