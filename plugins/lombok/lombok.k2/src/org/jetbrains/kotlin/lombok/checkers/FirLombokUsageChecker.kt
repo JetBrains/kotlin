@@ -67,7 +67,7 @@ object FirLombokUsageChecker : FirRegularClassChecker(MppCheckerKind.Platform) {
 
             fun addConstructorFlagUsageIfNeeded(constructorCompanion: ConeAnnotationCompanion<*>, constructorFlagUsage: FlagUsageValue?) {
                 val flagUsage = maxOfFlagUsage(constructorFlagUsage, anyConstructorFlagUsage) ?: return
-                declaration.annotations.getAnnotationByClassId(constructorCompanion.name, context.session)?.let { rawAnnotation ->
+                declaration.annotations.getAnnotationByClassId(constructorCompanion.classId, context.session)?.let { rawAnnotation ->
                     add(constructorCompanion.extract(rawAnnotation, context.session) to flagUsage)
                 }
             }

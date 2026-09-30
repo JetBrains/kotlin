@@ -81,11 +81,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  * keeping processors' code unaware about configuration origin.
  */
 
-abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(val name: ClassId) {
+abstract class ConeAnnotationCompanion<T : ConeLombokAnnotation>(val classId: ClassId) {
     abstract fun extract(annotation: FirAnnotation, session: FirSession): T
 
     fun getOrNull(symbol: FirBasedSymbol<*>, session: FirSession): T? {
-        return symbol.resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(name, session)
+        return symbol.resolvedCompilerAnnotationsWithClassIds.getAnnotationByClassId(classId, session)
             ?.let { this.extract(it, session) }
     }
 }
