@@ -1,0 +1,107 @@
+public abstract class Base : java/lang/Object, android/os/Parcelable {
+    private void <init>() {
+        LABEL (L0)
+        LINENUMBER (13)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (Base, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public abstract int getId()
+}
+
+public final class Derived$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final Derived createFromParcel(android.os.Parcel parcel)
+
+    public java.lang.Object createFromParcel(android.os.Parcel source)
+
+    public final Derived[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class Derived : Base {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final int id
+
+    private final java.lang.String s
+
+    static void <clinit>()
+
+    public void <init>(int id, java.lang.String s) {
+        LABEL (L0)
+          ALOAD (2)
+          LDC (s)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+        LINENUMBER (19)
+          ALOAD (0)
+          ILOAD (1)
+          PUTFIELD (Derived, id, I)
+          ALOAD (0)
+          ALOAD (2)
+          PUTFIELD (Derived, s, Ljava/lang/String;)
+        LABEL (L2)
+        LINENUMBER (18)
+          ALOAD (0)
+          ACONST_NULL
+          INVOKESPECIAL (Base, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+        LABEL (L3)
+        LINENUMBER (19)
+          RETURN
+        LABEL (L4)
+    }
+
+    public void <init>(int id, java.lang.String s, kotlinx.parcelize.DirectInitializerMarker $marker) {
+        LABEL (L0)
+          ALOAD (2)
+          LDC (s)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (3)
+          LDC ($marker)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (0)
+          ACONST_NULL
+          INVOKESPECIAL (Base, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          ALOAD (0)
+          ILOAD (1)
+          PUTFIELD (Derived, id, I)
+          ALOAD (0)
+          ALOAD (2)
+          PUTFIELD (Derived, s, Ljava/lang/String;)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final int describeContents()
+
+    public boolean equals(java.lang.Object other)
+
+    public int getId()
+
+    public final java.lang.String getS()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+
+    public final void writeToParcel(android.os.Parcel dest, int flags)
+}
