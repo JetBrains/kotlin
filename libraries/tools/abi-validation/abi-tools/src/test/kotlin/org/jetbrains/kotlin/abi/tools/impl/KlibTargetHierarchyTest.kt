@@ -50,7 +50,9 @@ class KlibTargetHierarchyTest {
 
     @Test
     fun testAllTargetsAreMapped() {
-        val notMappedTargets = KonanTarget.predefinedTargets.keys.subtract(KlibTarget.supportedKonanNames())
+        val notMappedTargets = KonanTarget.predefinedTargets.keys
+            .subtract(KlibTarget.supportedKonanNames())
+            .minus(KonanTarget.WATCHOS_ARM32.name) // KT-87513. Deprecated with error, not supported by ABI tools
         assertEquals(emptySet(), notMappedTargets,
             "Following targets are not mapped: $notMappedTargets")
     }

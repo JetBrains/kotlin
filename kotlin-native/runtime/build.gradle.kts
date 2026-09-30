@@ -693,7 +693,7 @@ val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class)
             "-Xreturn-value-checker=full",
 
             "-Xfragment-refines=nativeMain:nativeWasm,nativeMain:nativeWasmWasi,nativeMain:common,nativeWasmWasi:nativeWasm,nativeWasm:common,nativeWasm:commonNonJvm,commonNonJvm:common",
-            "-Xmanifest-native-targets=${platformManager.targetValues.joinToString(separator = ",") { it.visibleName }}",
+            "-Xmanifest-native-targets=${platformManager.targetValues.filterNot { it.name in removedTargetNames }.joinToString(separator = ",") { it.visibleName }}",
 
             // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
             // But this produces a warning
