@@ -36,6 +36,8 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.gc = from.gc
     to.generateDebugTrampolineString = from.generateDebugTrampolineString
     to.generateNoExitTestRunner = from.generateNoExitTestRunner
+    to.generateSignatureIndicesDir = from.generateSignatureIndicesDir
+    to.generateSignatureIndicesFrom = from.generateSignatureIndicesFrom.copyOf()
     to.generateTestRunner = from.generateTestRunner
     @Suppress("DEPRECATION")
     to.generateWorkerTestRunner = from.generateWorkerTestRunner
