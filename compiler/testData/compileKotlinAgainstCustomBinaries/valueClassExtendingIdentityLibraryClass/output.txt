@@ -7,6 +7,14 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-info: using preview Java language features
 warning: following manually enabled features will force generation of pre-release binaries: FullValueClasses
-OK
+compiler/testData/compileKotlinAgainstCustomBinaries/valueClassExtendingIdentityLibraryClass/source.kt:5:49: error: value class cannot extend 'IdentityBase', which is compiled as an identity class. Recompile it with '-Xvalhalla-value-classes', JVM target 28 or later, and '-Xjvm-enable-preview'.
+value class FromIdentity(override val x: Int) : IdentityBase()
+                                                ^^^^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/valueClassExtendingIdentityLibraryClass/source.kt:9:46: error: value class cannot extend 'Jvm17Base', which is compiled as an identity class. Recompile it with '-Xvalhalla-value-classes', JVM target 28 or later, and '-Xjvm-enable-preview'.
+value class FromJvm17(override val x: Int) : Jvm17Base()
+                                             ^^^^^^^^^
+compiler/testData/compileKotlinAgainstCustomBinaries/valueClassExtendingIdentityLibraryClass/source.kt:12:46: error: value class cannot extend 'Jdk27Base', which is compiled as an identity class. Recompile it with '-Xvalhalla-value-classes', JVM target 28 or later, and '-Xjvm-enable-preview'.
+value class FromJdk27(override val x: Int) : Jdk27Base()
+                                             ^^^^^^^^^
+COMPILATION_ERROR

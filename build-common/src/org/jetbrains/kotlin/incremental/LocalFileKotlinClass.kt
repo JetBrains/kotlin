@@ -28,9 +28,10 @@ class LocalFileKotlinClass private constructor(
     private val fileContents: ByteArray,
     className: ClassId,
     classVersion: Int,
+    classAccess: Int,
     classHeader: KotlinClassHeader,
     innerClasses: InnerClassesInfo
-) : FileBasedKotlinClass(className, classVersion, classHeader, innerClasses) {
+) : FileBasedKotlinClass(className, classVersion, classAccess, classHeader, innerClasses) {
 
     companion object {
         fun create(file: File, metadataVersionFromLanguageVersion: MetadataVersion): LocalFileKotlinClass? {
@@ -38,8 +39,8 @@ class LocalFileKotlinClass private constructor(
         }
 
         fun create(file: File, fileContents: ByteArray, metadataVersionFromLanguageVersion: MetadataVersion): LocalFileKotlinClass? {
-            return create(fileContents, metadataVersionFromLanguageVersion) { className, classVersion, classHeader, innerClasses ->
-                LocalFileKotlinClass(file, fileContents, className, classVersion, classHeader, innerClasses)
+            return create(fileContents, metadataVersionFromLanguageVersion) { className, classVersion, classAccess, classHeader, innerClasses ->
+                LocalFileKotlinClass(file, fileContents, className, classVersion, classAccess, classHeader, innerClasses)
             }
         }
     }

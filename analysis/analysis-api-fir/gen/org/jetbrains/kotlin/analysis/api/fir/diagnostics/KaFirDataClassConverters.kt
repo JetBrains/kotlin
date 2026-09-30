@@ -6487,6 +6487,13 @@ private fun KaDiagnosticConverterBuilder.addConversions138() {
             token,
         )
     }
+    add(FirJvmErrors.VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS) { firDiagnostic ->
+        ValueClassExtendsValueClassCompiledAsIdentityClassImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE) { firDiagnostic ->
         IllegalJavaLangRecordSupertypeImpl(
             firDiagnostic as KtDiagnosticWithSource,

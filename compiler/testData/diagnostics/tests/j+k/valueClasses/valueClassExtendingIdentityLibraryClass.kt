@@ -19,6 +19,6 @@ abstract value class IdentityCompiled
 // FILE: main.kt
 import lib.IdentityCompiled
 
-value class Sub(val x: Int) : IdentityCompiled()
+value class Sub(val x: Int) : <!VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS!>IdentityCompiled<!>()
 
 /* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor, propertyDeclaration, value */

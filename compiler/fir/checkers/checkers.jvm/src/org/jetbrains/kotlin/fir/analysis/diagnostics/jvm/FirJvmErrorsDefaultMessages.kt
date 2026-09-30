@@ -137,6 +137,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.USELESS_JVM_EXPOSE_BOXED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WHEN_SUBJECT_CAN_BE_NULL_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.WRONG_TYPE_FOR_JAVA_OVERRIDE
@@ -304,6 +305,12 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of '@JvmRecord' class must be a 'val'.")
         map.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of '@JvmRecord' can be a vararg.")
         map.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot extend a class.", RENDER_TYPE)
+        map.put(
+            VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS,
+            "Value class cannot extend ''{0}'', which is compiled as an identity class. " +
+                    "Recompile it with ''-Xvalhalla-value-classes'', JVM target 28 or later, and ''-Xjvm-enable-preview''.",
+            RENDER_TYPE,
+        )
         map.put(INNER_JVM_RECORD, "'@JvmRecord' class cannot be inner.")
         map.put(FIELD_IN_JVM_RECORD, "Non-constructor properties with backing field in '@JvmRecord' class are prohibited.")
         map.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is prohibited for '@JvmRecord' classes.")

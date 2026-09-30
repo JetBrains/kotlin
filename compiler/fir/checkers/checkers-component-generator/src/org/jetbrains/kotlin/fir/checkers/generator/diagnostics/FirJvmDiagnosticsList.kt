@@ -86,6 +86,10 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
 
         val CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
+
+        val VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS by error<KtElement> {
+            parameter<ConeKotlinType>("superType")
+        }
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
