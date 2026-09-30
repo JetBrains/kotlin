@@ -18,13 +18,17 @@ import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigura
 import org.jetbrains.kotlin.test.services.configuration.useNewExceptionHandling
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
+import org.jetbrains.kotlin.wasm.test.tools.WASI_BOX_ENTRY_EXPORT
+import org.jetbrains.kotlin.wasm.test.tools.WASI_UNIT_TESTS_ENTRY_EXPORT
 import java.io.File
 
 /**
  * The `test.mjs` launcher script for running the WASI unit-test runner (`startUnitTests()`):
  * imports the compiled module and starts unit tests, exiting with code 1 on any uncaught exception.
+ * WasmEdge and Wasmtime bypass this script and invoke one export of the artifact directly, chosen by
+ * [wasiStandaloneEntryExport] (see [WasmVM.WasmEdge] and [WasmVM.Wasmtime]).
  */
-private fun startUnitTestsWasiScript(): String = """
+internal fun startUnitTestsWasiScript(): String = """
     try {
         let jsModule = await import('./$WASM_BASE_FILE_NAME.mjs');
         jsModule.startUnitTests();
@@ -34,6 +38,16 @@ private fun startUnitTestsWasiScript(): String = """
         process.exit(1);
     }
     """.trimIndent()
+
+/**
+ * The export the standalone WASI VMs invoke. A `// RUN_UNIT_TESTS` test is always isolated, so its binary carries no
+ * grouped `ProxyBatchLauncher`, and its `startTest` export is `wasiBoxTestRun.kt`'s glue that runs `box()` alone.
+ * Such a test runs `startUnitTests` instead: the compiler exports it from every binary with `@kotlin.test.Test`
+ * functions, and the `@Test` launcher of `WasmJsLauncherAdditionalSourceProvider` calls `box()` inside the suite, so
+ * that one export covers the unit tests and the box verdict alike.
+ */
+internal fun wasiStandaloneEntryExport(runUnitTests: Boolean): String =
+    if (runUnitTests) WASI_UNIT_TESTS_ENTRY_EXPORT else WASI_BOX_ENTRY_EXPORT
 
 // TODO reduce amount of duplicated code between this class and WasmBoxRunner
 class WasiBoxRunner(
@@ -71,7 +85,9 @@ class WasiBoxRunner(
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
 
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
-        val startUnitTests = useUnitTestRunnerOnly || RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
+        val runUnitTestsDirective = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
+        val startUnitTests = useUnitTestRunnerOnly || runUnitTestsDirective
+        val standaloneEntryExport = wasiStandaloneEntryExport(runUnitTests = runUnitTestsDirective)
 
         val testWasiQuiet = if (useUnitTestRunnerOnly) startUnitTestsWasiScript()
         else """
@@ -122,6 +138,8 @@ class WasiBoxRunner(
                     jsFilePaths = jsFilePaths,
                     workingDirectory = dir,
                     outputCollector = outputCollector,
+                    wasiEntryExport = standaloneEntryExport,
+                    expectUnitTestReport = runUnitTestsDirective && !vm.entryPointIsJsFile,
                 )
             }
 
@@ -174,6 +192,8 @@ open class WasmWasiFolderGroupingStageBoxRunner(
     ): List<Throwable> {
         val folder = (artifact as WasmFolderBinaryArtifact).folder
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
+        val runUnitTestsDirective = RUN_UNIT_TESTS in firstNonGroupingTestServices.moduleStructure.allDirectives
+        val standaloneEntryExport = wasiStandaloneEntryExport(runUnitTests = runUnitTestsDirective)
 
         val testWasi = startUnitTestsWasiScript()
         File(folder, "test.mjs").writeText(testWasi)
@@ -188,6 +208,8 @@ open class WasmWasiFolderGroupingStageBoxRunner(
                 jsFilePaths = emptyList(),
                 workingDirectory = folder,
                 outputCollector = collectedOutputs,
+                wasiEntryExport = standaloneEntryExport,
+                expectUnitTestReport = runUnitTestsDirective && !vm.entryPointIsJsFile,
             )
         }
     }
