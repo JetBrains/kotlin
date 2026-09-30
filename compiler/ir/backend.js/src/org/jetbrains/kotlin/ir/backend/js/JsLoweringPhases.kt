@@ -209,7 +209,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::createAutoboxingTransformerPhase,
     ::AutoboxingForExportedInlineClassesForExternalsLowering,
     ::JsBlockDecomposerLowering,
-    ::InvokeStaticInitializersLowering,
     ::ObjectUsageLowering,
     ::ES6AddBoxParameterToConstructorsLowering,
     ::ES6SyntheticPrimaryConstructorLowering,
