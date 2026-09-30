@@ -2877,6 +2877,18 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("accessorOnNonLocalDestructuring.kt")
+    public void testAccessorOnNonLocalDestructuring() {
+      run("accessorOnNonLocalDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("accessorOnScriptDestructuring.kts")
+    public void testAccessorOnScriptDestructuring() {
+      run("accessorOnScriptDestructuring.kts");
+    }
+
+    @Test
     public void testAllFilesPresentInDestructuring() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/destructuring"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }

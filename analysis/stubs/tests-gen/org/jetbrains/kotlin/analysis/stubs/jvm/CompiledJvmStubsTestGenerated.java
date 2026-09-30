@@ -2877,6 +2877,12 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
     }
 
     @Test
+    @TestMetadata("accessorOnNonLocalDestructuring.kt")
+    public void testAccessorOnNonLocalDestructuring() {
+      run("accessorOnNonLocalDestructuring.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInDestructuring() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/destructuring"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
