@@ -12,6 +12,10 @@ public abstract class org/jetbrains/kotlin/platform/NativePlatform : org/jetbrai
 	public fun <init> (Ljava/lang/String;)V
 }
 
+public final class org/jetbrains/kotlin/platform/NativePlatformKt {
+	public static final fun isNative (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Z
+}
+
 public final class org/jetbrains/kotlin/platform/PlatformUtilKt {
 	public static final fun getOldFashionedDescription (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/lang/String;
 	public static final fun getPresentableDescription (Lorg/jetbrains/kotlin/platform/TargetPlatform;)Ljava/lang/String;
