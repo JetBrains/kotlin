@@ -22,7 +22,23 @@ import kotlin.reflect.full.declaredMemberProperties
 
 internal fun KClass<*>.findPropertyWithSerialName(name: String): KMutableProperty<*> {
     return this.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
-        .firstOrNull { it.annotations.any { ann -> ann is SerialName && ann.value == name } } ?: error("Property with serial name $name not found in $this")
+        .firstOrNull { it.annotations.any { ann -> ann is SerialName && ann.value == name } }
+        ?: error("Property with serial name $name not found in $this")
+}
+
+internal fun <T, K : Any> KClass<K>.getPropertyWithSerialNameValue(obj: K, name: String): T {
+    @Suppress("UNCHECKED_CAST")
+    return (this.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
+        .firstOrNull { it.annotations.any { ann -> ann is SerialName && ann.value == name } }
+        ?: error("Property with serial name $name not found in $this"))
+        .getter.call(obj) as T
+}
+
+internal fun <T, K : Any> KClass<K>.setPropertyWithSerialNameValue(obj: K, name: String, value: T) {
+    (this.declaredMemberProperties.filterIsInstance<KMutableProperty<*>>()
+        .firstOrNull { it.annotations.any { ann -> ann is SerialName && ann.value == name } }
+        ?: error("Property with serial name $name not found in $this"))
+        .setter.call(obj, value)
 }
 
 internal object PathAsStringSerializer : KSerializer<Path> {
