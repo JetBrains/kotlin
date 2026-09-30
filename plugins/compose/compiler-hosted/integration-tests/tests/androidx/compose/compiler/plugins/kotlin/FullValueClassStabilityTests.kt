@@ -32,18 +32,18 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
 
     // Regression test for KT-89957
     @Test
-    fun testStableProperties() = assertStability("value class V(val a: Int, val b: String)", "")
+    fun testStableProperties() = assertStability("value class V(val a: Int, val b: String)", "Stable")
 
     @Test
     fun testUnstableProperty() = assertStability("value class V(val a: Int, val b: Unstable)", "Unstable")
 
     // Regression test for KT-89957
     @Test
-    fun testUncertainProperty() = assertStability("value class V(val a: Int, val b: List<Int>)", "")
+    fun testUncertainProperty() = assertStability("value class V(val a: Int, val b: List<Int>)", "Uncertain(List)")
 
     // Regression test for KT-89957
     @Test
-    fun testSingleUncertainProperty() = assertStability("value class V(val b: MutableList<Int>)", "")
+    fun testSingleUncertainProperty() = assertStability("value class V(val b: MutableList<Int>)", "Uncertain(MutableList)")
 
     @Test
     fun testTypeParameterProperty() = assertStability("value class V<T>(val a: Int, val t: T)", "Parameter(T)")
