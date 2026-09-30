@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +FullValueClasses
 // JVM_EXPOSE_BOXED
 
