@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_WARNING
@@ -22,9 +23,13 @@ import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.pipeline.NativeKlibConfigurationUpdater
+import java.nio.file.LinkOption
+import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments, rootDisposable: Disposable) = with(NativeConfigurationKeys) {
     NativeKlibConfigurationUpdater.fillConfiguration(arguments, rootDisposable, this@setupFromArguments)
@@ -144,6 +149,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.dumpBuiltCachesTo?.let { put(DUMP_BUILT_CACHES_TO, it) }
     put(FILES_TO_CACHE, arguments.filesToCache.toList())
     put(MAKE_PER_FILE_CACHE, arguments.makePerFileCache)
+    setUpExternalSignatureIndexOptions(arguments)
     val nThreadsRaw = parseBackendThreads(arguments.backendThreads)
     val availableProcessors = Runtime.getRuntime().availableProcessors()
     val nThreads = if (nThreadsRaw == 0) availableProcessors else nThreadsRaw
@@ -336,6 +342,30 @@ private fun parseBackendThreads(stringValue: String): Int {
     if (value < 0)
         throw KonanCompilationException("-Xbackend-threads value cannot be negative")
     return value
+}
+
+private fun CompilerConfiguration.setUpExternalSignatureIndexOptions(arguments: K2NativeCompilerArguments) {
+    fun String.parsePath(
+            errorMessagePrefix: String,
+            createIfMissing: Boolean = false,
+    ): Path {
+        val path = Path(this)
+        if (path.isDirectory())
+            return path.toRealPath()
+
+        if (createIfMissing && !path.exists(LinkOption.NOFOLLOW_LINKS))
+            return path.createDirectories().toRealPath()
+
+        reportCompilationErrorAndThrow("$errorMessagePrefix is not found or is not a directory: $this")
+    }
+
+    arguments.generateSignatureIndicesDir?.let {
+        generateSignatureIndicesDir = it.parsePath("Path to the directory where the generated external signature indices should be stored", createIfMissing = true)
+    }
+
+    generateSignatureIndicesFrom = arguments.generateSignatureIndicesFrom.map {
+        it.parsePath("Path to the root directory with the libraries for which external signature indices should be generated")
+    }
 }
 
 private fun parseDebugPrefixMap(
