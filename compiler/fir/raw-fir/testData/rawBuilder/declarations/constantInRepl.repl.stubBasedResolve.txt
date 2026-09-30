@@ -1,0 +1,27 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] constantInRepl.repl.kts
+    REPL_SNIPPET: [ResolvedTo(BODY_RESOLVE)] <snippet-constantInRepl.repl.kts>
+        public final [ResolvedTo(BODY_RESOLVE)] object ConstantInRepl_repl : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] ConstantInRepl_repl.constructor(): R|ConstantInRepl_repl| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] fun $$eval(): R|kotlin/Unit| {
+                <repl declaration reference>: /ConstantInRepl_repl.myConst1
+                <repl declaration reference>: /ConstantInRepl_repl.myConst2
+                <repl declaration reference>: /ConstantInRepl_repl.myConst3
+                <repl property initializer: /ConstantInRepl_repl.myVal> = Int(4).R|kotlin/Int.plus|(this@R|/ConstantInRepl_repl|.R|/ConstantInRepl_repl.myConst3|)
+            }
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(1), ReplSnippetTopLevelDeclaration=true] val myConst1: R|kotlin/Int| = Int(1)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConstantInRepl_repl] get(): R|kotlin/Int|
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(3), ReplSnippetTopLevelDeclaration=true] val myConst2: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(this@R|/ConstantInRepl_repl|.R|/ConstantInRepl_repl.myConst1|)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConstantInRepl_repl] get(): R|kotlin/Int|
+
+            public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(6), ReplSnippetTopLevelDeclaration=true] val myConst3: R|kotlin/Int| = Int(3).R|kotlin/Int.plus|(this@R|/ConstantInRepl_repl|.R|/ConstantInRepl_repl.myConst2|)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConstantInRepl_repl] get(): R|kotlin/Int|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [ReplSnippetTopLevelDeclaration=true] val myVal: R|kotlin/Int| = REPL_EXPRESSION_REF
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ConstantInRepl_repl] get(): R|kotlin/Int|
+
+        }

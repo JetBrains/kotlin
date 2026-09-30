@@ -1,0 +1,8 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] scriptStatementLevelDestructuringWithAnnotation.kts
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-scriptStatementLevelDestructuringWithAnnotation.kts>
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
+
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

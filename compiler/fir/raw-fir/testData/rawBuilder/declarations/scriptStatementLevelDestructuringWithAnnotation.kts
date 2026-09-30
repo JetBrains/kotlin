@@ -1,4 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-64899
 package util
 
 if (true) {

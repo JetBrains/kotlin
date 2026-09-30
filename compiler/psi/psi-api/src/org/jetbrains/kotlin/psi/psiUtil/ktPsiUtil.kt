@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi.psiUtil
 import com.intellij.extapi.psi.StubBasedPsiElementBase
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
+import com.intellij.psi.stubs.StubBase
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeTypes
@@ -684,12 +685,29 @@ fun KtStringTemplateExpression.isPlainWithEscapes() =
  * class member — for example, a member function's parameter or local, or a property accessor.
  */
 val KtDeclaration.containingClassOrObject: KtClassOrObject?
-    get() = when (val parent = parent) {
-        is KtClassBody -> parent.containingClassOrObject
-        is KtClassOrObject -> parent
-        is KtParameterList -> (parent.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
-        is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingClassOrObject
-        else -> null
+    get() {
+        // Class bodies and parameter lists are always stubbed, so they cannot be the AST parent of a dangling stub
+        if (danglingStubParent != null) return null
+
+        return when (val parent = parent) {
+            is KtClassBody -> parent.containingClassOrObject
+            is KtClassOrObject -> parent
+            is KtParameterList -> (parent.parent as? KtPrimaryConstructor)?.getContainingClassOrObject()
+            is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingClassOrObject
+            else -> null
+        }
+    }
+
+/**
+ * The PSI of the parent stub if this declaration has a dangling stub, i.e., a stub whose AST parent isn't stubbed.
+ *
+ * For instance, script declarations have dangling stubs: their AST parent is the script block, while their parent stub is the script.
+ * [PsiElement.getParent] forces AST loading for such declarations.
+ */
+private val KtDeclaration.danglingStubParent: PsiElement?
+    get() {
+        val stub = (this as? StubBasedPsiElementBase<*>)?.greenStub as? StubBase<*> ?: return null
+        return if (stub.isDangling) stub.parentStub?.psi else null
     }
 
 /**
@@ -728,10 +746,15 @@ val KtDeclarationWithReturnType.isCompanion: Boolean
  */
 @KtExperimentalApi
 val KtDeclaration.containingScript: KtScript?
-    get() = when (val parent = parent) {
-        is KtBlockExpression -> parent.containingScript
-        is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingScript
-        else -> null
+    get() {
+        // The script block is not stubbed, so the parent stub of script declarations is the script itself
+        danglingStubParent?.let { return it as? KtScript }
+
+        return when (val parent = parent) {
+            is KtBlockExpression -> parent.containingScript
+            is KtDestructuringDeclaration if this is KtDestructuringDeclarationEntry -> parent.containingScript
+            else -> null
+        }
     }
 
 /**
