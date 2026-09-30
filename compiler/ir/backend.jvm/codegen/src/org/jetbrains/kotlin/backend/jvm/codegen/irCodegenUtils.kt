@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
+import org.jetbrains.kotlin.config.isValhallaValueClassFile
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -32,6 +34,8 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -88,7 +92,7 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
     val isIdentity = context.isJvmTargetValhallaCompatible &&
             !isInterface &&
             !isAnnotationClass &&
-            !isKotlinValhallaValueClass(context.config.languageVersionSettings) &&
+            !isCompiledAsValhallaValueClass(context.config.languageVersionSettings) &&
             !isJavaValueClass
     return visibility or
             (if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
@@ -97,6 +101,14 @@ fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
             (if (isIdentity) ACC_IDENTITY else 0)
 }
 
+
+// Whether this Kotlin class is compiled as a Valhalla value class: as its class file says for a class of a dependency, and as
+// `-Xvalhalla-value-classes` says for a class of this compilation.
+internal fun IrClass.isCompiledAsValhallaValueClass(languageVersionSettings: LanguageVersionSettings): Boolean {
+    val binaryClass = (source as? KotlinJvmBinarySourceElement)?.binaryClass as? FileBasedKotlinClass
+        ?: return isKotlinValhallaValueClass(languageVersionSettings)
+    return isValue && isValhallaValueClassFile(binaryClass.majorVersion, binaryClass.usesPreviewFeatures(), binaryClass.hasIdentityFlag())
+}
 
 internal val JvmBackendContext.isJvmTargetValhallaCompatible: Boolean
     get() = isJvmTargetValhallaCompatible(config.target, configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW))

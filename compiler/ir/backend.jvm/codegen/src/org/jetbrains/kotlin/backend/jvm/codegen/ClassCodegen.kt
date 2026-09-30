@@ -240,8 +240,9 @@ class ClassCodegen private constructor(
             owner != null && namedClass == owner -> false
             // Neither is an abstract value class (matches javac): only concrete value classes can be flattened or scalarized.
             namedClass?.modality == Modality.ABSTRACT || namedClass?.modality == Modality.SEALED -> false
-            // A Kotlin value class compiled as a Valhalla value class
-            namedClass?.isKotlinValhallaValueClass(config.languageVersionSettings) == true -> true
+            // A Kotlin value class compiled as a Valhalla value class, or of a library expected to be recompiled like this compilation.
+            namedClass?.isCompiledAsValhallaValueClass(config.languageVersionSettings) == true ||
+                    namedClass?.isKotlinValhallaValueClass(config.languageVersionSettings) == true -> true
             // A value class defined in Java (`value class`, resolved from source or a binary/jar dependency).
             namedClass?.isJavaValueClass == true -> true
             // A JDK value class, also as the Java class of a Kotlin type like `Int?`, exactly like javac.

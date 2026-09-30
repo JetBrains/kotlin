@@ -22,6 +22,14 @@ fun isJvmTargetValhallaCompatible(jvmTarget: JvmTarget, isJvmPreviewEnabled: Boo
     isJvmPreviewEnabled && jvmTarget >= JvmTarget.JVM_28
 
 /**
+ * Whether a class file declares a value class (JEP 401): only a class file of a Valhalla-compatible version without `ACC_IDENTITY` does.
+ */
+fun isValhallaValueClassFile(majorVersion: Int, usesPreviewFeatures: Boolean, hasIdentityFlag: Boolean): Boolean {
+    val jvmTarget = JvmTarget.entries.find { it.majorVersion == majorVersion } ?: return false
+    return isJvmTargetValhallaCompatible(jvmTarget, usesPreviewFeatures) && !hasIdentityFlag
+}
+
+/**
  * Whether every value class is compiled to and behaves as a Project Valhalla value class, selected via `-Xvalhalla-value-classes`.
  *
  * Requires JVM target 28 or later and the `-Xjvm-enable-preview` flag. When disabled, no declaration is compiled as a Valhalla value

@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
 import org.jetbrains.kotlin.config.isValhallaSupportEnabled
+import org.jetbrains.kotlin.config.isValhallaValueClassFile
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -44,11 +43,9 @@ object FirJvmValueClassIdentitySupertypeChecker : FirRegularClassChecker(MppChec
     }
 }
 
-// Whether the class file of this class declares a value class, or null if the class isn't read from a class file. Only a class file of a
-// Valhalla-compatible version without `ACC_IDENTITY` declares a value class (JEP 401).
+// Whether the class file of this class declares a value class, or null if the class isn't read from a class file.
 internal fun FirRegularClassSymbol.declaresValueClassInClassFile(): Boolean? {
     @OptIn(SymbolInternals::class)
     val binaryClass = (fir.sourceElement as? KotlinJvmBinarySourceElement)?.binaryClass as? FileBasedKotlinClass ?: return null
-    val jvmTarget = JvmTarget.entries.find { it.majorVersion == binaryClass.majorVersion } ?: return false
-    return isJvmTargetValhallaCompatible(jvmTarget, binaryClass.usesPreviewFeatures()) && !binaryClass.hasIdentityFlag()
+    return isValhallaValueClassFile(binaryClass.majorVersion, binaryClass.usesPreviewFeatures(), binaryClass.hasIdentityFlag())
 }
