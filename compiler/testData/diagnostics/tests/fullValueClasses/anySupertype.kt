@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
 
@@ -11,6 +11,6 @@ sealed value class Sealed : Any()
 value object Object : Any()
 
 @JvmInline
-value class Inline(val x: Int) : <!VALUE_CLASS_CANNOT_EXTEND_CLASSES!>Any<!>()
+value class Inline(val x: Int) : Any()
 
 /* GENERATED_FIR_TAGS: classDeclaration, objectDeclaration, primaryConstructor, propertyDeclaration, sealed, value */
