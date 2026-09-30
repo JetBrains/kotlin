@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
-import org.jetbrains.kotlin.backend.konan.library.InternalKlibDAGApi
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
-import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
@@ -30,6 +28,9 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.pathString
 import kotlin.time.Duration
 import kotlin.time.measureTime
@@ -57,14 +58,15 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries only (no roots)`(mode: KlibDAGBuildingMode) {
+    fun `stdlib and platform libraries only (no roots)`(mode: KlibDAGBuildingMode) = context(mode) {
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = emptySet(),
             isRoot = { false },
             expectedRootsNumber = 0,
-            mode,
         )
+
+        assertExactNumberOfExternalIndices(0)
     }
 
     /**
@@ -74,19 +76,20 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 177 (stdlib + platform libs)
      * - resulting DAG size: 10
      * - median duration:
-     *   - no indices: 665 ms
-     *   - with indices: 4 ms
+     *   - NoIndices: 665 ms
+     *   - all other modes: ~4 ms
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries only (roots = stdlib + Foundation)`(mode: KlibDAGBuildingMode) {
+    fun `stdlib and platform libraries only (roots = stdlib + Foundation)`(mode: KlibDAGBuildingMode) = context(mode) {
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = emptySet(),
             isRoot = { it.isNativeStdlib || it.uniqueName.endsWith(".Foundation") },
             expectedRootsNumber = 2,
-            mode,
         )
+
+        assertExactNumberOfExternalIndices(0)
     }
 
     /**
@@ -96,12 +99,14 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
      * - resulting DAG size: 21
      * - median duration:
-     *   - no indices: 10 ms
-     *   - with indices: 5 ms
+     *   - NoIndices: 11 ms
+     *   - OwnIndicesEverywhere: 5 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 10 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 8 ms
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries (roots = 20 + 0 user libs)`(mode: KlibDAGBuildingMode) {
+    fun `stdlib and platform libraries (roots = 20 + 0 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 20, cInteropLibsNumber = 0)
 
         benchmark(
@@ -109,8 +114,63 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             extraLibraryPaths = userLibraryPaths,
             isRoot = { it.canonicalPath.pathString in userLibraryPaths },
             expectedRootsNumber = 20,
-            mode,
         )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 20)
+    }
+
+    /**
+     * Benchmarking results (Apple M2 Max):
+     * - roots: 20 regular user libs
+     * - target: macos_arm64
+     * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
+     * - resulting DAG size: 21
+     * - median duration:
+     *   - NoIndices: 25 ms
+     *   - OwnIndicesEverywhere: 5 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 24 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 8 ms
+     */
+    @ParameterizedTest
+    @EnumSource
+    fun `stdlib and platform libraries (roots = 19 + 1 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 19, cInteropLibsNumber = 1)
+
+        benchmark(
+            testName = testInfo.testMethod.get().name,
+            extraLibraryPaths = userLibraryPaths,
+            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
+            expectedRootsNumber = 20,
+        )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 20)
+    }
+
+    /**
+     * Benchmarking results (Apple M2 Max):
+     * - roots: 20 regular user libs
+     * - target: macos_arm64
+     * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
+     * - resulting DAG size: 21
+     * - median duration:
+     *   - NoIndices: 27 ms
+     *   - OwnIndicesEverywhere: 5 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 26 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 8 ms
+     */
+    @ParameterizedTest
+    @EnumSource
+    fun `stdlib and platform libraries (roots = 18 + 2 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 18, cInteropLibsNumber = 2)
+
+        benchmark(
+            testName = testInfo.testMethod.get().name,
+            extraLibraryPaths = userLibraryPaths,
+            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
+            expectedRootsNumber = 20,
+        )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 20)
     }
 
     /**
@@ -120,12 +180,14 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
      * - resulting DAG size: 21
      * - median duration:
-     *   - no indices: 74 ms
-     *   - with indices: 6 ms
+     *   - NoIndices: 70 ms
+     *   - OwnIndicesEverywhere: 6 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 68 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 9 ms
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries (roots = 15 + 5 user libs)`(mode: KlibDAGBuildingMode) {
+    fun `stdlib and platform libraries (roots = 15 + 5 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 15, cInteropLibsNumber = 5)
 
         benchmark(
@@ -133,8 +195,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             extraLibraryPaths = userLibraryPaths,
             isRoot = { it.canonicalPath.pathString in userLibraryPaths },
             expectedRootsNumber = 20,
-            mode,
         )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 20)
     }
 
     /**
@@ -144,12 +207,14 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
      * - resulting DAG size: 21
      * - median duration:
-     *   - no indices: 155 ms
-     *   - with indices: 9 ms
+     *   - NoIndices: 155 ms
+     *   - OwnIndicesEverywhere: 9 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 154 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 15 ms
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries (roots = 10 + 10 user libs)`(mode: KlibDAGBuildingMode) {
+    fun `stdlib and platform libraries (roots = 10 + 10 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 10, cInteropLibsNumber = 10)
 
         benchmark(
@@ -157,8 +222,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             extraLibraryPaths = userLibraryPaths,
             isRoot = { it.canonicalPath.pathString in userLibraryPaths },
             expectedRootsNumber = 20,
-            mode,
         )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 20)
     }
 
     /**
@@ -168,12 +234,14 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
      * - resulting DAG size: 101
      * - median duration:
-     *   - no indices: 54 ms
-     *   - with indices: 25 ms
+     *   - NoIndices: 57 ms
+     *   - OwnIndicesEverywhere: 25 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 54 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 42 ms
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries (roots = 100 + 0 user libs)`(mode: KlibDAGBuildingMode) {
+    fun `stdlib and platform libraries (roots = 100 + 0 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
         val userLibraryPaths = generateUserLibraries(regularLibsNumber = 100, cInteropLibsNumber = 0)
 
         benchmark(
@@ -181,8 +249,63 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             extraLibraryPaths = userLibraryPaths,
             isRoot = { it.canonicalPath.pathString in userLibraryPaths },
             expectedRootsNumber = 100,
-            mode,
         )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 100)
+    }
+
+    /**
+     * Benchmarking results (Apple M2 Max):
+     * - roots: 100 regular user libs
+     * - target: macos_arm64
+     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
+     * - resulting DAG size: 101
+     * - median duration:
+     *   - NoIndices: 59 ms
+     *   - OwnIndicesEverywhere: 24 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 56 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 43 ms
+     */
+    @ParameterizedTest
+    @EnumSource
+    fun `stdlib and platform libraries (roots = 99 + 1 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 99, cInteropLibsNumber = 1)
+
+        benchmark(
+            testName = testInfo.testMethod.get().name,
+            extraLibraryPaths = userLibraryPaths,
+            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
+            expectedRootsNumber = 100,
+        )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 100)
+    }
+
+    /**
+     * Benchmarking results (Apple M2 Max):
+     * - roots: 100 regular user libs
+     * - target: macos_arm64
+     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
+     * - resulting DAG size: 101
+     * - median duration:
+     *   - NoIndices: 66 ms
+     *   - OwnIndicesEverywhere: 24 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 64 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 44 ms
+     */
+    @ParameterizedTest
+    @EnumSource
+    fun `stdlib and platform libraries (roots = 98 + 2 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 98, cInteropLibsNumber = 2)
+
+        benchmark(
+            testName = testInfo.testMethod.get().name,
+            extraLibraryPaths = userLibraryPaths,
+            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
+            expectedRootsNumber = 100,
+        )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 100)
     }
 
     /**
@@ -192,21 +315,24 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
      * - resulting DAG size: 101
      * - median duration:
-     *   - no indices: 1.15 s
-     *   - with indices: 35 ms
+     *   - NoIndices: 96 ms
+     *   - OwnIndicesEverywhere: 23 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 94 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 41 ms
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries (roots = 75 + 25 user libs)`(mode: KlibDAGBuildingMode) {
-        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 75, cInteropLibsNumber = 25)
+    fun `stdlib and platform libraries (roots = 95 + 5 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 95, cInteropLibsNumber = 5)
 
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = userLibraryPaths,
             isRoot = { it.canonicalPath.pathString in userLibraryPaths },
             expectedRootsNumber = 100,
-            mode,
         )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 100)
     }
 
     /**
@@ -216,23 +342,27 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
      * - resulting DAG size: 101
      * - median duration:
-     *   - no indices: 5.19 s
-     *   - with indices: 66 ms
+     *   - NoIndices: 206 ms
+     *   - OwnIndicesEverywhere: 24 ms
+     *   - OwnIndicesForDistNoIndicesForOthers: 206 ms
+     *   - OwnIndicesForDistExternalIndicesForOthers: 43 ms
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries (roots = 50 + 50 user libs)`(mode: KlibDAGBuildingMode) {
-        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 50, cInteropLibsNumber = 50)
+    fun `stdlib and platform libraries (roots = 90 + 10 user libs)`(mode: KlibDAGBuildingMode) = context(mode) {
+        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 90, cInteropLibsNumber = 10)
 
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = userLibraryPaths,
             isRoot = { it.canonicalPath.pathString in userLibraryPaths },
             expectedRootsNumber = 100,
-            mode,
         )
+
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices = 100)
     }
 
+    context(mode: KlibDAGBuildingMode)
     private fun generateUserLibraries(regularLibsNumber: Int, cInteropLibsNumber: Int): Set<String> {
         require(regularLibsNumber + cInteropLibsNumber > 0)
 
@@ -296,15 +426,18 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
 
         assertEquals(regularLibsNumber + cInteropLibsNumber, generatedLibraries.size)
 
+        patchLibrariesToDropOwnIndicesIfNecessary(generatedLibraries.map(::Path))
+
         return generatedLibraries
     }
 
+    @OptIn(ExperimentalPathApi::class)
+    context(mode: KlibDAGBuildingMode)
     private fun benchmark(
         testName: String,
         extraLibraryPaths: Set<String>,
         isRoot: (KotlinLibrary) -> Boolean,
         expectedRootsNumber: Int, // Sanity check.
-        mode: KlibDAGBuildingMode,
     ) {
         repeat(2) {
             System.gc()
@@ -333,6 +466,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         // Sanity check.
         assertEquals(expectedRootsNumber, roots.size)
 
+        // Drop external indices if there are any.
+        externalSignatureIndicesDir.deleteRecursively()
+
         var latestDag: KlibDAG? = null
 
         // Run the benchmark.
@@ -345,12 +481,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
                 println("The computed DAG size is: ${latestDag!!.librariesReverseTopoSorted.size}")
             },
         ) {
-            latestDag = KlibDAGBuilder(
-                Parameters(libraries = allLibraries) { it in roots }.apply {
-                    @OptIn(InternalKlibDAGApi::class)
-                    useSignatureIndices = mode.useSignatureIndices
-                }
-            ).build()
+            latestDag = KlibDAGBuilder(buildParams(allLibraries) { it in roots }).build()
         }
     }
 
