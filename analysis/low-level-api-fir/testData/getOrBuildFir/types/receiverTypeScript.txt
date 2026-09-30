@@ -7,9 +7,9 @@ R|T|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] receiverTypeScript.kts
-    SCRIPT: [ResolvedTo(RAW_FIR)] <script-receiverTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(TYPES)] <script-receiverTypeScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun <@R|A|[Types]() [ResolvedTo(TYPES)] T> [ResolvedTo(TYPES)] R|T|.test(): R|kotlin/Unit| { LAZY_BLOCK }
 

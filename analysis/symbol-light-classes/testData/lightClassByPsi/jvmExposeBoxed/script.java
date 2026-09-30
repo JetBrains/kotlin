@@ -1,4 +1,4 @@
-public final class Script /* Script*/ extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
+public final class Script /* Script*/ extends kotlin.script.experimental.templates.ScriptWithArgs {
   public  Script(java.lang.String[]);//  .ctor(java.lang.String[])
 
   public static final void main(java.lang.String[]);//  main(java.lang.String[])

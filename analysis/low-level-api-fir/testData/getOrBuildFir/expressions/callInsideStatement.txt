@@ -8,7 +8,7 @@ this@R|special/anonymous|.R|/Builder.execute|()
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] callInsideStatement.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-callInsideStatement.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-callInsideStatement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {

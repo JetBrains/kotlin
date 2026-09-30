@@ -7,9 +7,9 @@ R|Anno|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverPropertyCallScript.kts
-    SCRIPT: [ResolvedTo(RAW_FIR)] <script-typeOnAnnotationOnReceiverPropertyCallScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(TYPES)] <script-typeOnAnnotationOnReceiverPropertyCallScript.kts>
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] val [ResolvedTo(TYPES)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|.i: R|kotlin/String|
             public? [ResolvedTo(TYPES)] get(): R|kotlin/String| { LAZY_BLOCK }

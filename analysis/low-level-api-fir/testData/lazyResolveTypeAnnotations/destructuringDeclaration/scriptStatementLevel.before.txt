@@ -192,7 +192,7 @@
 
 FILE: [ResolvedTo(IMPORTS)] scriptStatementLevel.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptStatementLevel.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(ANNOTATION_ARGUMENTS)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevel.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {

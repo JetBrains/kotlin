@@ -8,7 +8,7 @@ R|/A.prop|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCallScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-qualifiedCallInsideSuperCallScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-qualifiedCallInsideSuperCallScript.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
