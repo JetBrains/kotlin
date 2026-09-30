@@ -78,9 +78,12 @@ internal class LLFirIdePredicateBasedProvider(
         // LookupPredicates should never match local declarations, so we filter them early
         if (KtPsiUtil.isLocal(this)) return null
 
+        // The annotations resolver searches the whole resolution scope, but, as in the compiler, compiler plugins should only see
+        // declarations of the use-site module, not of its dependencies (including `dependsOn` modules)
         val moduleForFile = projectStructureProvider.getModule(this, session.ktModule)
-        val resolutionFacadeForFile = moduleForFile.getResolutionFacade(project)
-        return this.resolveToFirSymbol(resolutionFacadeForFile).fir
+        if (moduleForFile != session.ktModule) return null
+
+        return this.resolveToFirSymbol(moduleForFile.getResolutionFacade(project)).fir
     }
 
     override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? {
