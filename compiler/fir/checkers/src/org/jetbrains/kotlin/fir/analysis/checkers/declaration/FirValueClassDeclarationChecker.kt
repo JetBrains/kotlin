@@ -144,8 +144,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 }
 
                 is FirPropertySymbol -> when {
-                    // Companion block members are static, so they aren't a part of the value class representation.
-                    innerDeclaration.isCompanionBlockMember -> return@processAllDeclarations
+                    // Companion block members and constants are static, so they aren't a part of the value class representation.
+                    innerDeclaration.isCompanionBlockMember || innerDeclaration.isConst -> return@processAllDeclarations
 
                     innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name]) -> {
                         primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
