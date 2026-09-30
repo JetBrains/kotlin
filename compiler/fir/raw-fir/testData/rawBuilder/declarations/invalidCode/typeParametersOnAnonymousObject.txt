@@ -1,0 +1,25 @@
+FILE: typeParametersOnAnonymousObject.kt
+    public? final? val x: <implicit> = object : R|kotlin/Any| {
+        private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? fun foo(t: T): R|kotlin/Unit| {
+        }
+
+    }
+
+        public? get(): <implicit>
+    public? final? fun <R> test(): R|kotlin/Unit| {
+        lval y: <implicit> = object : R|kotlin/Any| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous><R>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? fun foo(t: T): K {
+                ^foo Null(null)!!
+            }
+
+        }
+
+    }
