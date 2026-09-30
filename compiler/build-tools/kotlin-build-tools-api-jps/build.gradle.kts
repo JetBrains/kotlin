@@ -1,6 +1,7 @@
 plugins {
     id("common-configuration")
     kotlin("jvm")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 configureKotlinCompileTasksGradleCompatibility()
