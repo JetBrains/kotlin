@@ -1,5 +1,0 @@
->>> data class Person(val name: String)
->>> var x: String? = "hello"
->>> val y = x?.let { Person(it) }
->>> y
-Person(name=hello)
