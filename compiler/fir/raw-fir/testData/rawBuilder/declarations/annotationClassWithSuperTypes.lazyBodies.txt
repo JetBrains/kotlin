@@ -15,7 +15,7 @@ FILE: annotationClassWithSuperTypes.kt
     }
     public final? annotation class SuperTypeCall : Base, R|kotlin/Annotation| {
         public? [ContainingClassKey=SuperTypeCall] constructor(): R|SuperTypeCall| {
-            LAZY_super<R|kotlin/Any|>
+            LAZY_super<Base>
         }
 
     }
@@ -33,19 +33,19 @@ FILE: annotationClassWithSuperTypes.kt
     }
     public final? annotation class SuperInterfaceAndSuperTypeCall : I, Base, R|kotlin/Annotation| {
         public? [ContainingClassKey=SuperInterfaceAndSuperTypeCall] constructor(): R|SuperInterfaceAndSuperTypeCall| {
-            LAZY_super<R|kotlin/Any|>
+            LAZY_super<Base>
         }
 
     }
     public final? annotation class AnySuperTypeCall : Any, R|kotlin/Annotation| {
         public? [ContainingClassKey=AnySuperTypeCall] constructor(): R|AnySuperTypeCall| {
-            LAZY_super<R|kotlin/Any|>
+            LAZY_super<Any>
         }
 
     }
     public final? annotation class SuperTypeCallWithPrimaryConstructor : Base, R|kotlin/Annotation| {
         public? [ContainingClassKey=SuperTypeCallWithPrimaryConstructor] constructor([CorrespondingProperty=/SuperTypeCallWithPrimaryConstructor.s] s: String): R|SuperTypeCallWithPrimaryConstructor| {
-            LAZY_super<R|kotlin/Any|>
+            LAZY_super<Base>
         }
 
         public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|

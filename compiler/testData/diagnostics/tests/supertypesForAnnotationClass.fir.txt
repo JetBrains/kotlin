@@ -9,7 +9,7 @@ FILE: supertypesForAnnotationClass.kt
     }
     public final annotation class Ann : R|SomeInterface|, R|SomeClass|, R|kotlin/Annotation| {
         public constructor(): R|Ann| {
-            super<R|kotlin/Any|>()
+            super<R|SomeClass|>()
         }
 
     }

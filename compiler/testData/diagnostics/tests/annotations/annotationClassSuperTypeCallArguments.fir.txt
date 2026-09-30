@@ -15,31 +15,31 @@ FILE: annotationClassSuperTypeCallArguments.kt
     }
     public final annotation class WithMatchingArgument : R|Base|, R|kotlin/Annotation| {
         public constructor(): R|WithMatchingArgument| {
-            super<R|kotlin/Any|>(Int(1))
+            super<R|Base|>(Int(1))
         }
 
     }
     public final annotation class WithMissingArgument : R|Base|, R|kotlin/Annotation| {
         public constructor(): R|WithMissingArgument| {
-            super<R|kotlin/Any|>()
+            super<R|Base|>()
         }
 
     }
     public final annotation class WithExtraArgument : R|NoArgs|, R|kotlin/Annotation| {
         public constructor(): R|WithExtraArgument| {
-            super<R|kotlin/Any|>(Int(1))
+            super<R|NoArgs|>(Int(1))
         }
 
     }
     public final annotation class WithMismatchedArgument : R|Base|, R|kotlin/Annotation| {
         public constructor(): R|WithMismatchedArgument| {
-            super<R|kotlin/Any|>(String())
+            super<R|Base|>(String())
         }
 
     }
     public final annotation class WithInterface : R|I|, R|Base|, R|kotlin/Annotation| {
         public constructor(): R|WithInterface| {
-            super<R|kotlin/Any|>(Int(1))
+            super<R|Base|>(Int(1))
         }
 
     }
