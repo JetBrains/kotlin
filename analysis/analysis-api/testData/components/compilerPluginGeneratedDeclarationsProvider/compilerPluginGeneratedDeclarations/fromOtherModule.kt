@@ -10,5 +10,4 @@ class Test
 // MODULE: main(dependency)
 package test
 
-// This test is currently broken, see KT-68878
-// The reasoning: main.getTopLevelGeneratedDeclarationsScope() should not contain declarations generated for dependency module
+// main.getTopLevelGeneratedDeclarationsScope() should not contain declarations generated for the dependency module, see KT-68878
