@@ -4,6 +4,7 @@ plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("java-test-fixtures")
 }
 
 jvmToolchains {
@@ -13,6 +14,11 @@ jvmToolchains {
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
+
+    testFixturesApi(project(":kotlin-scripting-common"))
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+    testFixturesImplementation(libs.kotlinx.coroutines.core)
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -24,6 +30,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
+    "testFixtures" { projectDefault() }
     "test" { projectDefault() }
 }
 
@@ -40,4 +47,3 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-testsJar()
