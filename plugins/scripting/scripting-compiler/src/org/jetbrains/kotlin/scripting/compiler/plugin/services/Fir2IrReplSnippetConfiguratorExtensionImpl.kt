@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.IrReplSnippetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.name.ClassId
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactMetadataCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.buildSnippetArtifactMetadataFromFir
+import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.importedSnippetsAttr
 import org.jetbrains.kotlin.scripting.compiler.plugin.irLowerings.replSnippetArtifactMetadataAttr
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
 import kotlin.script.experimental.api.repl
@@ -87,7 +89,15 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             usedOtherSnippets
         ).visitReplSnippet(firReplSnippet)
 
+        // Same-batch snippets are regular same-module declarations and need no lazy copies.
+        @OptIn(SymbolInternals::class)
+        fun FirReplSnippetSymbol.isFromSameBatch(): Boolean = declarationStorage.getCachedIrReplSnippet(fir) != null
+
         usedOtherSnippets.remove(firReplSnippet.symbol)
+        usedOtherSnippets.removeAll { it.isFromSameBatch() }
+        propertiesFromState.values.removeAll { it.isFromSameBatch() }
+        functionsFromState.values.removeAll { it.isFromSameBatch() }
+        classesFromState.values.removeAll { it.isFromSameBatch() }
         usedOtherSnippets.forEach {
             val packageFragment = declarationStorage.getIrExternalPackageFragment(it.packageFqName(), it.moduleData)
             classifierStorage.createAndCacheEarlierSnippetClass(it, packageFragment)
@@ -146,7 +156,24 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
 
         irSnippet.stateObject = stateObject.symbol
 
+        irSnippet.importedSnippetsAttr = collectImportedSameBatchSnippets(firReplSnippet).takeIf { it.isNotEmpty() }
+
         saveSnippetArtifactMetadataIfStateless(firReplSnippet, irSnippet)
+    }
+
+    /**
+     * The importing snippet evaluates the whole transitive closure of its imports, which are deduplicated and registered
+     * in the history in the dependency order by the REPL compiler, so a script imported several times is evaluated once.
+     * The imported snippets of the earlier batches have no IR in the current one.
+     */
+    @OptIn(SymbolInternals::class)
+    private fun Fir2IrComponents.collectImportedSameBatchSnippets(firReplSnippet: FirReplSnippet): List<IrReplSnippetSymbol> {
+        val historyProvider = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: return emptyList()
+        if (historyProvider.isImportedSnippet(firReplSnippet.symbol)) return emptyList()
+        return historyProvider.getSnippets().mapNotNull { snippetSymbol ->
+            if (!historyProvider.isImportedSnippet(snippetSymbol)) return@mapNotNull null
+            declarationStorage.getCachedIrReplSnippet(snippetSymbol.fir)?.symbol
+        }
     }
 
     private fun saveSnippetArtifactMetadataIfStateless(firReplSnippet: FirReplSnippet, irSnippet: IrReplSnippet) {
@@ -290,8 +317,7 @@ class Fir2IrReplSnippetConfiguratorExtensionImpl(
             val irReplStateParent =
                 declarationStorage.getIrExternalPackageFragment(firReplStateObject.symbol.classId.packageFqName, session.moduleData)
             lazyDeclarationsGenerator.createIrLazyClass(firReplStateObject, irReplStateParent, IrClassSymbolImpl())
-                .also { cachedStateObjectIrClass = it }
-        }
+        }.also { cachedStateObjectIrClass = it }
     }
 
     companion object {

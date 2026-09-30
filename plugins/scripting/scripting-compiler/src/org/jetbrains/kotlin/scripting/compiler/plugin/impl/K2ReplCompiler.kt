@@ -384,6 +384,13 @@ private fun compileImpl(
         return failure(messageCollector)
     }
 
+    state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.let { historyProvider ->
+        for (importedSource in newSources) {
+            val importedSnippet = sourcesToFir[importedSource]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>() ?: continue
+            historyProvider.putImportedSnippet(importedSnippet.symbol)
+        }
+    }
+
     val outputs = listOf(resolveAndCheckFir(session, rawFir, diagnosticsReporter)).also {
         it.runPlatformCheckers(diagnosticsReporter)
     }
