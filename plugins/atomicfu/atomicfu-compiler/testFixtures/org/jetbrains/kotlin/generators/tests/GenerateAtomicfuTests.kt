@@ -37,6 +37,12 @@ fun main(args: Array<String>) {
             ) {
                 model()
             }
+            testClass<AbstractAtomicfuNativeIrTextTest>(
+                suiteTestClassName = "AtomicfuNativeIrTextTestGenerated",
+                annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model()
+            }
         }
 
         testGroup(

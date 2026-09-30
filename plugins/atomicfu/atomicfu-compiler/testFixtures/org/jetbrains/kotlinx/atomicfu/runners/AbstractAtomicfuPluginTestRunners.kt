@@ -5,19 +5,22 @@
 
 package org.jetbrains.kotlinx.atomicfu.runners
 
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createSimpleTestRunSettings
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CustomKlibs
 import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.test.backend.handlers.SMAPDumpHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
-import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeFirstStageEnvironmentConfigurator
-import java.io.File
+import org.jetbrains.kotlin.utils.bind
+import org.junit.jupiter.api.extension.BeforeEachCallback
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.extension.RegisterExtension
 
 open class AbstractAtomicfuJvmFirLightTreeTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
@@ -37,8 +40,17 @@ abstract class AbstractAtomicfuFirCheckerTest : AbstractFirPsiDiagnosticTest() {
     }
 }
 
-// TODO temporarily disabled generation of FIR dumping tests, see: KT-79199
 open class AbstractAtomicfuNativeIrTextTest : AbstractLightTreeNativeIrTextTest() {
+    private lateinit var extensionContext: ExtensionContext
+
+    @RegisterExtension
+    val extensionContextCaptor = BeforeEachCallback { context ->
+        extensionContext = context
+    }
+
+    override val irDumpOnly: Boolean
+        get() = true
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -52,15 +64,9 @@ open class AbstractAtomicfuNativeIrTextTest : AbstractLightTreeNativeIrTextTest(
             }
 
             useCustomRuntimeClasspathProviders(
-                {
-                    object : RuntimeClasspathProvider(it) {
-                        override fun runtimeClassPaths(module: TestModule): List<File> {
-                            val str = System.getProperty("atomicfuNative.classpath")?.split(File.pathSeparator) ?: emptyList()
-                            val compilerPluginClasspath = System.getProperty("atomicfu.compiler.plugin")?.split(File.pathSeparator) ?: emptyList()
-                            return (str + compilerPluginClasspath).map { File(it) }
-                        }
-                    }
-                }
+                ::AtomicfuNativeRuntimeClasspathProvider.bind(
+                    extensionContext.createSimpleTestRunSettings().get<CustomKlibs>()
+                )
             )
         }
     }

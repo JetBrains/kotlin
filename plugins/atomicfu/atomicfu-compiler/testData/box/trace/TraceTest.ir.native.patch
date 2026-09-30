@@ -1,0 +1,641 @@
+--- a/TraceTest.ir.txt
++++ b/TraceTest.ir.native.txt
+@@ -124,10 +124,10 @@
+           ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) declared in kotlin.Enum'
+             TYPE_ARG E: <root>.TraceTest.Status
+           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:Status modality:FINAL visibility:private superTypes:[kotlin.Enum<<root>.TraceTest.Status>]' type=kotlin.Unit
+-      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:<root>.TraceTest.Status
++      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL returnType:<root>.TraceTest.Status [companion]
+         VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.String
+         SYNTHETIC_BODY kind=ENUM_VALUEOF
+-      FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL returnType:kotlin.Array<<root>.TraceTest.Status>
++      FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL returnType:kotlin.Array<<root>.TraceTest.Status> [companion]
+         SYNTHETIC_BODY kind=ENUM_VALUES
+       FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL returnType:kotlin.Int [fake_override,operator]
+         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.TraceTest.Status>
+@@ -148,7 +148,7 @@
+         overridden:
+           public open fun toString (): kotlin.String declared in kotlin.Enum
+       PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+-        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.TraceTest.Status>
++        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL returnType:kotlin.enums.EnumEntries<<root>.TraceTest.Status> [companion]
+           correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+           SYNTHETIC_BODY kind=ENUM_ENTRIES
+       PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [fake_override,val]
+@@ -206,25 +206,67 @@
+       BLOCK_BODY
+         VAR name:oldValue type:kotlin.Int [val]
+           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testDefaultTrace'
++                      CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace.<get-a1$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testDefaultTrace'
++                      CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testDefaultTrace.<set-a1$volatile>' type=kotlin.Int origin=null
+         VAR name:res type:kotlin.Boolean [val]
+           CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+             TYPE_ARG T: kotlin.Int
+-            ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-              ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++              bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testDefaultTrace'
++                    CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace.<get-a1$volatile>' type=<root>.TraceTest origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testDefaultTrace'
++                    CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testDefaultTrace.<set-a1$volatile>' type=kotlin.Int origin=null
+             ARG expectedValue: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testDefaultTrace' type=kotlin.Int origin=null
+             ARG newValue: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+               ARG <this>: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testDefaultTrace' type=kotlin.Int origin=null
+               ARG other: CONST Int type=kotlin.Int value=10
+         VAR name:newValue type:kotlin.Int [val]
+           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testDefaultTrace'
++                      CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace.<get-a1$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testDefaultTrace'
++                      CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testDefaultTrace.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testDefaultTrace.<set-a1$volatile>' type=kotlin.Int origin=null
+     FUN name:testMultipleAppend visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
+       BLOCK_BODY
+@@ -234,85 +276,239 @@
+           TYPE_ARG T: kotlin.Int
+           ARG expected: CONST Int type=kotlin.Int value=0
+           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testMultipleAppend'
++                      CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<get-a$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testMultipleAppend'
++                      CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=kotlin.Int origin=null
+         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+             ARG <this>: CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Int>, delta: kotlin.Int): kotlin.Int declared in kotlin.concurrent' type=kotlin.Int origin=null
+-              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testMultipleAppend'
++                      CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<get-a$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testMultipleAppend'
++                      CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=kotlin.Int origin=null
+               ARG delta: CONST Int type=kotlin.Int value=1
+             ARG other: CONST Int type=kotlin.Int value=1
+         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+           ARG expected: CONST Int type=kotlin.Int value=1
+           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testMultipleAppend'
++                      CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<get-a$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testMultipleAppend'
++                      CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=kotlin.Int origin=null
+         CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-            ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++          ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>.TraceTest'
++            bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testMultipleAppend'
++                  CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<get-a$volatile>' type=<root>.TraceTest origin=null
++            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++              VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testMultipleAppend'
++                  CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=<root>.TraceTest origin=null
++                    ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=kotlin.Int origin=null
+           ARG newValue: CONST Int type=kotlin.Int value=10
+         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+           ARG expected: CONST Int type=kotlin.Int value=10
+           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testMultipleAppend'
++                      CALL 'private final fun <get-a$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<get-a$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testMultipleAppend'
++                      CALL 'private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testMultipleAppend.<set-a$volatile>' type=kotlin.Int origin=null
+     FUN name:testNamedTrace visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
+       BLOCK_BODY
+         CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG <this>: PROPERTY_REFERENCE 'private final s$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-s$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-s$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-            ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++          ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final s$volatile: kotlin.Int declared in <root>.TraceTest'
++            bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-s$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <get-s$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testNamedTrace'
++                  CALL 'private final fun <get-s$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace.<get-s$volatile>' type=<root>.TraceTest origin=null
++            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-s$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++              VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <set-s$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testNamedTrace'
++                  CALL 'private final fun <set-s$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace.<set-s$volatile>' type=<root>.TraceTest origin=null
++                    ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testNamedTrace.<set-s$volatile>' type=kotlin.Int origin=null
+           ARG newValue: CONST Int type=kotlin.Int value=5
+         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+           CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+             TYPE_ARG T: kotlin.Int
+-            ARG <this>: PROPERTY_REFERENCE 'private final s$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-s$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-s$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-              ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final s$volatile: kotlin.Int declared in <root>.TraceTest'
++              bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-s$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-s$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testNamedTrace'
++                    CALL 'private final fun <get-s$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace.<get-s$volatile>' type=<root>.TraceTest origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-s$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-s$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testNamedTrace'
++                    CALL 'private final fun <set-s$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace.<set-s$volatile>' type=<root>.TraceTest origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testNamedTrace.<set-s$volatile>' type=kotlin.Int origin=null
+             ARG expectedValue: CONST Int type=kotlin.Int value=5
+             ARG newValue: CONST Int type=kotlin.Int value=-2
+         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+           ARG expected: CONST Int type=kotlin.Int value=-2
+           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final s$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-s$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-s$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final s$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-s$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-s$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testNamedTrace'
++                      CALL 'private final fun <get-s$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace.<get-s$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-s$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-s$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testNamedTrace'
++                      CALL 'private final fun <set-s$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testNamedTrace.<set-s$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testNamedTrace.<set-s$volatile>' type=kotlin.Int origin=null
+     FUN name:testTraceInBlock visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
+       BLOCK_BODY
+         CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+-          ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-            ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++          ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++            bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceInBlock'
++                  CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<get-a1$volatile>' type=<root>.TraceTest origin=null
++            setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++              VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++              VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++              BLOCK_BODY
++                RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceInBlock'
++                  CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                    ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                    ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=kotlin.Int origin=null
+           ARG newValue: CONST Int type=kotlin.Int value=5
+         WHEN type=kotlin.Unit origin=IF
+           BRANCH
+             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+               ARG arg0: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                   TYPE_ARG T: kotlin.Int
+-                  ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                    ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                  ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++                    bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                    getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceInBlock'
++                          CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<get-a1$volatile>' type=<root>.TraceTest origin=null
++                    setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                      VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                      VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                      BLOCK_BODY
++                        RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceInBlock'
++                          CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                            ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                            ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=kotlin.Int origin=null
+               ARG arg1: CONST Int type=kotlin.Int value=5
+             then: BLOCK type=kotlin.Unit origin=null
+               WHEN type=kotlin.Unit origin=IF
+                 BRANCH
+                   if: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+                     TYPE_ARG T: kotlin.Int
+-                    ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                      ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                    ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++                      bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceInBlock'
++                            CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<get-a1$volatile>' type=<root>.TraceTest origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceInBlock'
++                            CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=kotlin.Int origin=null
+                     ARG expectedValue: CONST Int type=kotlin.Int value=5
+                     ARG newValue: CONST Int type=kotlin.Int value=10
+                   then: BLOCK type=kotlin.Unit origin=null
+@@ -320,10 +516,24 @@
+           TYPE_ARG T: kotlin.Int
+           ARG expected: CONST Int type=kotlin.Int value=10
+           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceInBlock'
++                      CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<get-a1$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceInBlock'
++                      CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=kotlin.Int origin=null
+         WHILE label=null origin=WHILE_LOOP
+           condition: CONST Boolean type=kotlin.Boolean value=true
+           body: BLOCK type=kotlin.Unit origin=null
+@@ -331,16 +541,44 @@
+               BRANCH
+                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                   ARG arg0: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++                    CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+                       TYPE_ARG T: kotlin.Int
+-                      ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                        ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                      ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++                        bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceInBlock'
++                              CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<get-a1$volatile>' type=<root>.TraceTest origin=null
++                        setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                          VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceInBlock'
++                              CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                                ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=kotlin.Int origin=null
+                   ARG arg1: CONST Int type=kotlin.Int value=10
+                 then: BLOCK type=kotlin.Unit origin=null
+                   CALL 'internal final fun atomicSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicSetField>, newValue: T of kotlin.concurrent.atomicSetField): kotlin.Unit declared in kotlin.concurrent' type=kotlin.Unit origin=null
+                     TYPE_ARG T: kotlin.Int
+-                    ARG <this>: PROPERTY_REFERENCE 'private final a1$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                      ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                    ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a1$volatile: kotlin.Int declared in <root>.TraceTest'
++                      bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                      getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <get-a1$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceInBlock'
++                            CALL 'private final fun <get-a1$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<get-a1$volatile>' type=<root>.TraceTest origin=null
++                      setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a1$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                        VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                        VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                        BLOCK_BODY
++                          RETURN type=kotlin.Nothing from='local final fun <set-a1$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceInBlock'
++                            CALL 'private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                              ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=<root>.TraceTest origin=null
++                              ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceInBlock.<set-a1$volatile>' type=kotlin.Int origin=null
+                     ARG newValue: CONST Int type=kotlin.Int value=15
+                   BREAK label=null loop.label=null
+               BRANCH
+@@ -351,63 +589,175 @@
+       BLOCK_BODY
+         VAR name:oldValue type:kotlin.Int [val]
+           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a3$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a3$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a3$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a3$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a3$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a3$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceWithFormat'
++                      CALL 'private final fun <get-a3$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat.<get-a3$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a3$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a3$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceWithFormat'
++                      CALL 'private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat.<set-a3$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceWithFormat.<set-a3$volatile>' type=kotlin.Int origin=null
+         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           ARG actual: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+             TYPE_ARG T: kotlin.Int
+-            ARG <this>: PROPERTY_REFERENCE 'private final a3$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a3$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a3$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-              ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a3$volatile: kotlin.Int declared in <root>.TraceTest'
++              bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a3$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-a3$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceWithFormat'
++                    CALL 'private final fun <get-a3$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat.<get-a3$volatile>' type=<root>.TraceTest origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a3$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-a3$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceWithFormat'
++                    CALL 'private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat.<set-a3$volatile>' type=<root>.TraceTest origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceWithFormat.<set-a3$volatile>' type=kotlin.Int origin=null
+             ARG expectedValue: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testTraceWithFormat' type=kotlin.Int origin=null
+             ARG newValue: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+               ARG <this>: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testTraceWithFormat' type=kotlin.Int origin=null
+               ARG other: CONST Int type=kotlin.Int value=10
+         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+           CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Int>, delta: kotlin.Int): kotlin.Int declared in kotlin.concurrent' type=kotlin.Int origin=null
+-            ARG <this>: PROPERTY_REFERENCE 'private final a3$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a3$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a3$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-              ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a3$volatile: kotlin.Int declared in <root>.TraceTest'
++              bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a3$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-a3$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceWithFormat'
++                    CALL 'private final fun <get-a3$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat.<get-a3$volatile>' type=<root>.TraceTest origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a3$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-a3$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceWithFormat'
++                    CALL 'private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat.<set-a3$volatile>' type=<root>.TraceTest origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceWithFormat.<set-a3$volatile>' type=kotlin.Int origin=null
+             ARG delta: CONST Int type=kotlin.Int value=-1
+         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+           ARG expected: CONST Int type=kotlin.Int value=19
+           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a3$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a3$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a3$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a3$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a3$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a3$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceWithFormat'
++                      CALL 'private final fun <get-a3$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat.<get-a3$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a3$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a3$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceWithFormat'
++                      CALL 'private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithFormat.<set-a3$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceWithFormat.<set-a3$volatile>' type=kotlin.Int origin=null
+     FUN name:testTraceWithSize visibility:public modality:FINAL returnType:kotlin.Unit
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
+       BLOCK_BODY
+         VAR name:oldValue type:kotlin.Int [val]
+           TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a2$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a2$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a2$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a2$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a2$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a2$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceWithSize'
++                      CALL 'private final fun <get-a2$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize.<get-a2$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a2$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a2$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceWithSize'
++                      CALL 'private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize.<set-a2$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceWithSize.<set-a2$volatile>' type=kotlin.Int origin=null
+         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           ARG actual: CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+             TYPE_ARG T: kotlin.Int
+-            ARG <this>: PROPERTY_REFERENCE 'private final a2$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a2$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a2$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-              ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a2$volatile: kotlin.Int declared in <root>.TraceTest'
++              bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a2$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-a2$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceWithSize'
++                    CALL 'private final fun <get-a2$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize.<get-a2$volatile>' type=<root>.TraceTest origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a2$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-a2$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceWithSize'
++                    CALL 'private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize.<set-a2$volatile>' type=<root>.TraceTest origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceWithSize.<set-a2$volatile>' type=kotlin.Int origin=null
+             ARG expectedValue: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testTraceWithSize' type=kotlin.Int origin=null
+             ARG newValue: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
+               ARG <this>: GET_VAR 'val oldValue: kotlin.Int declared in <root>.TraceTest.testTraceWithSize' type=kotlin.Int origin=null
+               ARG other: CONST Int type=kotlin.Int value=10
+         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+           CALL 'internal final fun getAndAddField (<this>: kotlin.reflect.KMutableProperty0<kotlin.Int>, delta: kotlin.Int): kotlin.Int declared in kotlin.concurrent' type=kotlin.Int origin=null
+-            ARG <this>: PROPERTY_REFERENCE 'private final a2$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a2$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a2$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-              ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++            ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a2$volatile: kotlin.Int declared in <root>.TraceTest'
++              bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a2$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <get-a2$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceWithSize'
++                    CALL 'private final fun <get-a2$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize.<get-a2$volatile>' type=<root>.TraceTest origin=null
++              setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a2$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                BLOCK_BODY
++                  RETURN type=kotlin.Nothing from='local final fun <set-a2$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceWithSize'
++                    CALL 'private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                      ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize.<set-a2$volatile>' type=<root>.TraceTest origin=null
++                      ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceWithSize.<set-a2$volatile>' type=kotlin.Int origin=null
+             ARG delta: CONST Int type=kotlin.Int value=-1
+         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           TYPE_ARG T: kotlin.Int
+           ARG expected: CONST Int type=kotlin.Int value=9
+           ARG actual: TYPE_OP type=kotlin.Int origin=CAST typeOperand=kotlin.Int
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Int origin=null
+               TYPE_ARG T: kotlin.Int
+-              ARG <this>: PROPERTY_REFERENCE 'private final a2$volatile: kotlin.Int declared in <root>.TraceTest' field='FIELD ATOMICFU_GENERATED_FIELD name:a2$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' getter='private final fun <get-a2$volatile> (): kotlin.Int declared in <root>.TraceTest' setter='private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null
+-                ARG 1: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Int> origin=null reflectionTarget='private final a2$volatile: kotlin.Int declared in <root>.TraceTest'
++                bound <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize' type=<root>.TraceTest origin=IMPLICIT_ARGUMENT
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a2$volatile> visibility:local modality:FINAL returnType:kotlin.Int
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a2$volatile> (<this>: <root>.TraceTest): kotlin.Int declared in <root>.TraceTest.testTraceWithSize'
++                      CALL 'private final fun <get-a2$volatile> (): kotlin.Int declared in <root>.TraceTest' type=kotlin.Int origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize.<get-a2$volatile>' type=<root>.TraceTest origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a2$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.TraceTest
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a2$volatile> (<this>: <root>.TraceTest, p0: kotlin.Int): kotlin.Unit declared in <root>.TraceTest.testTraceWithSize'
++                      CALL 'private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.testTraceWithSize.<set-a2$volatile>' type=<root>.TraceTest origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Int declared in <root>.TraceTest.testTraceWithSize.<set-a2$volatile>' type=kotlin.Int origin=null
+   FUN name:box visibility:public modality:FINAL returnType:kotlin.String
+     BLOCK_BODY
+       CALL 'public final fun test (): kotlin.Unit declared in <root>.TraceTest' type=kotlin.Unit origin=null
