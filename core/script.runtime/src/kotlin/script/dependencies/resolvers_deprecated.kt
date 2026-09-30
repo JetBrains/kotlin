@@ -22,8 +22,19 @@ import java.io.File
 import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
 
+internal const val LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE =
+    "Legacy script dependencies API, use ScriptCompilationConfiguration.refineConfiguration { onAnnotations(...) } from kotlin.script.experimental.api instead"
+
+internal const val UNUSED_LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE = "Legacy script dependencies API, not used anymore"
+
+@Deprecated(
+    "Use Map<String, Any?> directly, e.g. as returned by ScriptingHostConfiguration.getRefinementEnvironment from kotlin.script.experimental.host",
+    ReplaceWith("Map<String, Any?>")
+)
 typealias Environment = Map<String, Any?>
 
+@Deprecated(LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 interface ScriptDependenciesResolver {
 
     enum class ReportSeverity { FATAL, ERROR, WARNING, INFO, DEBUG }
@@ -35,10 +46,15 @@ interface ScriptDependenciesResolver {
     ): Future<KotlinScriptExternalDependencies?> = PseudoFuture(null)
 }
 
+@Deprecated(UNUSED_LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 class BasicScriptDependenciesResolver : ScriptDependenciesResolver
 
+@Deprecated(UNUSED_LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 fun KotlinScriptExternalDependencies?.asFuture(): PseudoFuture<KotlinScriptExternalDependencies?> = PseudoFuture(this)
 
+@Deprecated(UNUSED_LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 class PseudoFuture<T>(private val value: T): Future<T> {
     override fun get(): T = value
     override fun get(p0: Long, p1: TimeUnit): T  = value
@@ -47,6 +63,7 @@ class PseudoFuture<T>(private val value: T): Future<T> {
     override fun isCancelled(): Boolean = false
 }
 
+@Deprecated(LEGACY_DEPENDENCIES_API_DEPRECATION_MESSAGE)
 interface ScriptContents {
     val file: File?
     val annotations: Iterable<Annotation>

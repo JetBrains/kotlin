@@ -848,6 +848,7 @@ internal val Path.loggerCompatiblePath: String
     get() = invariantSeparatorsPathString
 
 
+@Suppress("DEPRECATION")
 open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
 
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {

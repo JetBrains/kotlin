@@ -13,10 +13,11 @@ import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.templates.ScriptTemplateDefinition
 
 const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
 const val SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT = ".classname"
+
+private const val LEGACY_SCRIPT_TEMPLATE_DEFINITION_ANNOTATION_NAME = "ScriptTemplateDefinition"
 
 typealias MessageReporter = (ScriptDiagnostic.Severity, String) -> Unit
 
@@ -300,7 +301,7 @@ private fun loadScriptDefinition(
                 classpathWithLoader.classLoader,
                 messageReporter
             )
-        } else if (ann.name == ScriptTemplateDefinition::class.java.simpleName) {
+        } else if (ann.name == LEGACY_SCRIPT_TEMPLATE_DEFINITION_ANNOTATION_NAME) {
             val templateClass = classpathWithLoader.classLoader.loadClass(templateClassName).kotlin
 
             @Suppress("DEPRECATION")
