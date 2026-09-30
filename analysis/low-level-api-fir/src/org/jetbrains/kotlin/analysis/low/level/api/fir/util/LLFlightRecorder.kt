@@ -52,13 +52,16 @@ private const val KOTLIN_CODE_ANALYSIS_EVENT_CATEGORY = "Kotlin Code Analysis"
 
 @KaImplementationDetail
 object LLFlightRecorder {
-    private val includePhaseTraces: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        System.getProperty("kotlin.analysis.jfr.includePhaseTraces") == "true"
-                || System.getenv("KOTLIN_ANALYSIS_JFR_INCLUDE_PHASE_TRACES") == "true"
+    /**
+     * `null` if JFR is unavailable in the current runtime, e.g., in a custom JDK without the `jdk.jfr` module.
+     *
+     * [LLFlightRecorder] must not reference `jdk.jfr` directly, as otherwise its initialization would fail on such runtimes.
+     */
+    private val events: LLFlightRecorderEvents? = try {
+        LLFlightRecorderEvents()
+    } catch (_: LinkageError) {
+        null
     }
-
-    private val phaseEventType = EventType.getEventType(LLPhaseEvent::class.java)
-    private val phaseWithTraceEventType = EventType.getEventType(LLPhaseWithTraceEvent::class.java)
 
     /**
      * Notify that the [target] declaration was successfully analyzed up to the given [phase] (possibly partially).
@@ -68,6 +71,101 @@ object LLFlightRecorder {
      * @param requestedPhase The phase the declaration was analyzed to.
      */
     internal fun phase(
+        target: FirElementWithResolveState,
+        containingDeclarations: List<FirDeclaration>,
+        requestedPhase: FirResolvePhase
+    ): LLPhaseEventCompleter? {
+        return events?.phase(target, containingDeclarations, requestedPhase)
+    }
+
+    /**
+     * Notify that the [declaration]'s body is analyzed partially.
+     *
+     * @param declaration The declaration analyzed partially.
+     * @param state The current partial analysis state of the [declaration].
+     */
+    internal fun partialBodyAnalyzed(declaration: FirElementWithResolveState, state: LLPartialBodyAnalysisState) {
+        events?.partialBodyAnalyzed(declaration, state)
+    }
+
+    /**
+     * Notify that the [target] declaration was required to be analyzed up to the given [phase].
+     * However, the declaration already reached it, so no work has been performed.
+     *
+     * Use `readyPhase(target, containingDeclarations, requestedPhase, withCallableMembers)` when you have the list of containing
+     * declarations, e.g., from a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation].
+     *
+     * @param target The declaration being analyzed.
+     * @param requestedPhase The phase the declaration is already analyzed to.
+     */
+    internal fun readyPhase(target: FirElementWithResolveState, requestedPhase: FirResolvePhase) {
+        events?.readyPhase(target, requestedPhase)
+    }
+
+    /**
+     * Notify that the [target] declaration was required to be analyzed up to the given [phase].
+     * However, the declaration already reached it, so no work has been performed.
+     *
+     * @param target The declaration being analyzed.
+     * @param containingDeclarations The list of declarations enclosing [target] starting from the [FirFile].
+     * @param requestedPhase The phase the declaration is already analyzed to.
+     */
+    internal fun readyPhase(
+        target: FirElementWithResolveState,
+        containingDeclarations: List<FirDeclaration>,
+        requestedPhase: FirResolvePhase
+    ) {
+        events?.readyPhase(target, containingDeclarations, requestedPhase)
+    }
+
+    /**
+     * Notify that the current thread acknowledged the [declaration] is either finished analyzing up to [phase],
+     * or got an exception, such as [com.intellij.openapi.progress.ProcessCanceledException].
+     *
+     * @param declaration The analyzed declaration.
+     * @param requestedPhase The phase the [declaration] is being analyzed to.
+     */
+    internal fun phaseSuspension(
+        declaration: FirElementWithResolveState,
+        requestedPhase: FirResolvePhase
+    ): LLPhaseSuspensionEventCompleter? {
+        return events?.phaseSuspension(declaration, requestedPhase)
+    }
+
+    /**
+     * Notify that a stop-the-world session invalidation has been scheduled.
+     */
+    fun stopWorldSessionInvalidationScheduled() {
+        events?.stopWorldSessionInvalidation(newState = true)
+    }
+
+    /**
+     * Notify that a stop-the-world session invalidation has been completed (either after being scheduled, or immediately).
+     */
+    fun stopWorldSessionInvalidationComplete() {
+        events?.stopWorldSessionInvalidation(newState = false)
+    }
+}
+
+/**
+ * The JFR-backed implementation of [LLFlightRecorder].
+ *
+ * All `jdk.jfr` usages must stay in this class and the event classes, as its instantiation fails if `jdk.jfr` is unavailable.
+ */
+private class LLFlightRecorderEvents {
+    private val includePhaseTraces: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        System.getProperty("kotlin.analysis.jfr.includePhaseTraces") == "true"
+                || System.getenv("KOTLIN_ANALYSIS_JFR_INCLUDE_PHASE_TRACES") == "true"
+    }
+
+    private val phaseEventType = EventType.getEventType(LLPhaseEvent::class.java)
+    private val phaseWithTraceEventType = EventType.getEventType(LLPhaseWithTraceEvent::class.java)
+    private val partialBodyAnalysisEventType = EventType.getEventType(LLPartialBodyAnalysisEvent::class.java)
+    private val readyPhaseEventType = EventType.getEventType(LLReadyPhaseEvent::class.java)
+    private val phaseSuspensionEventType = EventType.getEventType(LLPhaseSuspensionEvent::class.java)
+    private val stopWorldInvalidationEventType = EventType.getEventType(LLStopWorldInvalidation::class.java)
+
+    fun phase(
         target: FirElementWithResolveState,
         containingDeclarations: List<FirDeclaration>,
         requestedPhase: FirResolvePhase
@@ -101,15 +199,7 @@ object LLFlightRecorder {
         }
     }
 
-    private val partialBodyAnalysisEventType = EventType.getEventType(LLPartialBodyAnalysisEvent::class.java)
-
-    /**
-     * Notify that the [declaration]'s body is analyzed partially.
-     *
-     * @param declaration The declaration analyzed partially.
-     * @param state The current partial analysis state of the [declaration].
-     */
-    internal fun partialBodyAnalyzed(declaration: FirElementWithResolveState, state: LLPartialBodyAnalysisState) {
+    fun partialBodyAnalyzed(declaration: FirElementWithResolveState, state: LLPartialBodyAnalysisState) {
         if (!partialBodyAnalysisEventType.isEnabled) {
             return
         }
@@ -121,19 +211,7 @@ object LLFlightRecorder {
         ).commit()
     }
 
-    private val readyPhaseEventType = EventType.getEventType(LLReadyPhaseEvent::class.java)
-
-    /**
-     * Notify that the [target] declaration was required to be analyzed up to the given [phase].
-     * However, the declaration already reached it, so no work has been performed.
-     *
-     * Use `readyPhase(target, containingDeclarations, requestedPhase, withCallableMembers)` when you have the list of containing
-     * declarations, e.g., from a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation].
-     *
-     * @param target The declaration being analyzed.
-     * @param requestedPhase The phase the declaration is already analyzed to.
-     */
-    internal fun readyPhase(target: FirElementWithResolveState, requestedPhase: FirResolvePhase) {
+    fun readyPhase(target: FirElementWithResolveState, requestedPhase: FirResolvePhase) {
         if (!readyPhaseEventType.isEnabled) {
             return
         }
@@ -148,15 +226,7 @@ object LLFlightRecorder {
         ).commit()
     }
 
-    /**
-     * Notify that the [target] declaration was required to be analyzed up to the given [phase].
-     * However, the declaration already reached it, so no work has been performed.
-     *
-     * @param target The declaration being analyzed.
-     * @param containingDeclarations The list of declarations enclosing [target] starting from the [FirFile].
-     * @param requestedPhase The phase the declaration is already analyzed to.
-     */
-    internal fun readyPhase(
+    fun readyPhase(
         target: FirElementWithResolveState,
         containingDeclarations: List<FirDeclaration>,
         requestedPhase: FirResolvePhase
@@ -173,16 +243,7 @@ object LLFlightRecorder {
         ).commit()
     }
 
-    private val phaseSuspensionEventType = EventType.getEventType(LLPhaseSuspensionEvent::class.java)
-
-    /**
-     * Notify that the current thread acknowledged the [declaration] is either finished analyzing up to [phase],
-     * or got an exception, such as [com.intellij.openapi.progress.ProcessCanceledException].
-     *
-     * @param declaration The analyzed declaration.
-     * @param requestedPhase The phase the [declaration] is being analyzed to.
-     */
-    internal fun phaseSuspension(
+    fun phaseSuspension(
         declaration: FirElementWithResolveState,
         requestedPhase: FirResolvePhase
     ): LLPhaseSuspensionEventCompleter? {
@@ -198,23 +259,7 @@ object LLFlightRecorder {
         }
     }
 
-    private val stopWorldInvalidationEventType = EventType.getEventType(LLStopWorldInvalidation::class.java)
-
-    /**
-     * Notify that a stop-the-world session invalidation has been scheduled.
-     */
-    fun stopWorldSessionInvalidationScheduled() {
-        stopWorldSessionInvalidation(newState = true)
-    }
-
-    /**
-     * Notify that a stop-the-world session invalidation has been completed (either after being scheduled, or immediately).
-     */
-    fun stopWorldSessionInvalidationComplete() {
-        stopWorldSessionInvalidation(newState = false)
-    }
-
-    private fun stopWorldSessionInvalidation(newState: Boolean) {
+    fun stopWorldSessionInvalidation(newState: Boolean) {
         if (!stopWorldInvalidationEventType.isEnabled) {
             return
         }
