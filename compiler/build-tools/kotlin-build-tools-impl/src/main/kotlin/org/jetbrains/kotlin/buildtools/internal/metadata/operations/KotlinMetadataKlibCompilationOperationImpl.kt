@@ -9,10 +9,13 @@ package org.jetbrains.kotlin.buildtools.internal.metadata.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.MetadataArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
@@ -20,35 +23,19 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(KotlinMetadataKlibCompilationOperation::class),
+internal class KotlinMetadataKlibCompilationOperationImpl(
     override val sources: List<Path>,
     override val destination: Path,
-    compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
+    override val compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(compilerArguments),
+) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(),
     KotlinMetadataKlibCompilationOperation, KotlinMetadataKlibCompilationOperation.Builder,
     DeepCopyable<KotlinMetadataKlibCompilationOperationImpl> {
-    constructor(
-        sources: List<Path>,
-        destination: Path,
-        compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
-        compilerVersion: String,
-    ) : this(
-        options = Options(KotlinMetadataKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
-        initializeOptions(this::class, options)
-    }
 
     override fun toBuilder(): KotlinMetadataKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): KotlinMetadataKlibCompilationOperationImpl {
         return KotlinMetadataKlibCompilationOperationImpl(
-            options.deepCopy(),
             sources,
             destination,
             compilerArguments.deepCopy(),
@@ -57,22 +44,25 @@ internal class KotlinMetadataKlibCompilationOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: KotlinMetadataKlibCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: KotlinMetadataKlibCompilationOperation.Option<V>): V =
+        KotlinMetadataKlibCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: KotlinMetadataKlibCompilationOperation.Option<V>, value: V) {
-        options[key] = value
+        checkOptionIsAvailableForVersion(key)
+        KotlinMetadataKlibCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun build(): KotlinMetadataKlibCompilationOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V =
+        KotlinMetadataKlibCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        KotlinMetadataKlibCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     override fun getRootProjectDir(): Path? {
         return null

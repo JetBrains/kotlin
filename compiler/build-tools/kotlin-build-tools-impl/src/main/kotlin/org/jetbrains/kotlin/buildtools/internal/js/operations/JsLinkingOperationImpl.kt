@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -18,32 +21,18 @@ import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
 
-internal class JsLinkingOperationImpl private constructor(
-    override val options: Options = Options(JsLinkingOperation::class),
+internal class JsLinkingOperationImpl(
     override val klib: Path,
     override val destination: Path,
-    compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(compilerArguments),
+    override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
-    constructor(
-        klib: Path,
-        destination: Path,
-        compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-    ) : this(
-        options = Options(JsLinkingOperation::class),
-        klib = klib,
-        destination = destination,
-        compilerArguments = compilerArguments,
-    ) {
-        initializeOptions(this::class, options)
-    }
 
     override fun toBuilder(): JsLinkingOperation.Builder = deepCopy()
 
     override fun deepCopy(): JsLinkingOperationImpl {
         return JsLinkingOperationImpl(
-            options.deepCopy(),
             klib,
             destination,
             compilerArguments.deepCopy(),
@@ -51,23 +40,25 @@ internal class JsLinkingOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JsLinkingOperation.Option<V>): V = options[key]
+    override fun <V> get(key: JsLinkingOperation.Option<V>): V =
+        JsLinkingOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsLinkingOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        JsLinkingOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun build(): JsLinkingOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V =
+        JsLinkingOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        JsLinkingOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     override fun getRootProjectDir(): Path? {
         return null

@@ -5,17 +5,21 @@
 
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
+import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.wasm.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmHistoryBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmKlibCompilationOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.BACKUP_CLASSES
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.MODULE_BUILD_DIR
@@ -42,29 +46,17 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
-internal class WasmKlibCompilationOperationImpl private constructor(
-    override val options: Options = Options(WasmKlibCompilationOperation::class),
+internal class WasmKlibCompilationOperationImpl(
     override val sources: List<Path>,
     override val destination: Path,
-    compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
+    override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(compilerArguments),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(),
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
     DeepCopyable<WasmKlibCompilationOperationImpl> {
-    constructor(
-        sources: List<Path>,
-        destination: Path,
-        compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-        compilerVersion: String,
-    ) : this(
-        options = Options(WasmKlibCompilationOperation::class),
-        sources = sources,
-        destination = destination,
-        compilerArguments = compilerArguments,
-        compilerVersion = compilerVersion,
-    ) {
-        initializeOptions(this::class, options)
-    }
+
+    @SerialName("INCREMENTAL_COMPILATION")
+    private var incrementalCompilation: WasmIncrementalCompilationConfiguration? = null
 
     override fun historyBasedIcConfigurationBuilder(
         rootProjectDir: Path,
@@ -79,7 +71,6 @@ internal class WasmKlibCompilationOperationImpl private constructor(
 
     override fun deepCopy(): WasmKlibCompilationOperationImpl {
         return WasmKlibCompilationOperationImpl(
-            options.deepCopy(),
             sources,
             destination,
             compilerArguments.deepCopy(),
@@ -88,23 +79,25 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: WasmKlibCompilationOperation.Option<V>): V = options[key]
+    override fun <V> get(key: WasmKlibCompilationOperation.Option<V>): V =
+        WasmKlibCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: WasmKlibCompilationOperation.Option<V>, value: V) {
         checkOptionIsAvailableForVersion(key)
-        options[key] = value
+        WasmKlibCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
     override fun build(): WasmKlibCompilationOperation = deepCopy()
 
-    private operator fun <V> get(key: Option<V>): V = options[key]
+    private operator fun <V> get(key: Option<V>): V =
+        WasmKlibCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     private operator fun <V> set(key: Option<V>, value: V) {
-        options[key] = value
+        WasmKlibCompilationOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
     }
 
-    class Option<V>(id: String, default: V) : BaseOptionWithDefault<V>(id, defaultValue = default)
+    class Option<V>(id: String) : BaseOption<V>(id)
 
     override fun getRootProjectDir(): Path? {
         return (get(INCREMENTAL_COMPILATION) as? WasmHistoryBasedIncrementalCompilationConfigurationImpl)?.get(ROOT_PROJECT_DIR)
@@ -292,7 +285,7 @@ internal class WasmKlibCompilationOperationImpl private constructor(
     }
 
     companion object {
-        val INCREMENTAL_COMPILATION: Option<WasmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
+        val INCREMENTAL_COMPILATION: Option<WasmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION")
     }
 }
 
