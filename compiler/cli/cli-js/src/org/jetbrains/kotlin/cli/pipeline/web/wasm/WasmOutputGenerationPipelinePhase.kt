@@ -250,7 +250,7 @@ import { WASI } from 'wasi';
 import { argv, env } from 'node:process';
 ${if (useDebuggerCustomFormatters) "import \"./custom-formatters.js\"" else ""}
 
-const wasi = new WASI({ version: 'preview1', args: argv, env, });
+const wasi = new WASI({ version: 'preview1', args: argv.splice(1), env, });
 
 const fs = await import('node:fs');
 const url = await import('node:url');
