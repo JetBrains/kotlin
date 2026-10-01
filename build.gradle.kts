@@ -281,13 +281,7 @@ tasks {
     }
 
     testLifecycleTask("gradlePluginIntegrationMasterTest", QualityGate.Master) {
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTestsGroupedByGradleVersion")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersion")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpDaemonsTestsGroupedByGradleVersion")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJvmTestsGroupedByGradleVersion")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsTestsGroupedByGradleVersion")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpMppTestsGroupedByGradleVersion")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpOtherTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion")
     }
 
 
