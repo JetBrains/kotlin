@@ -17,9 +17,9 @@ fun captured(array: Array<out Full>) {
 }
 
 fun references(full: Full) {
-    listOf(full).map(System::identityHashCode)
-    listOf(full).map(::WeakReference)
-    val reference: (Full) -> WeakReference<Full> = ::WeakReference
+    listOf(full).map(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>System::identityHashCode<!>)
+    listOf(full).map(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>::WeakReference<!>)
+    val reference: (Full) -> WeakReference<Full> = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT!>::WeakReference<!>
 }
 
 /* GENERATED_FIR_TAGS: capturedType, classDeclaration, flexibleType, functionDeclaration, functionalType, integerLiteral,

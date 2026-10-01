@@ -1,3 +1,9 @@
-/identitySensitiveOperationsMessagesAndReferences.kt:15:29: error: Identity-sensitive operations are prohibited on instances of value type 'CapturedType(out Full)', which are value objects.
+/identitySensitiveOperationsMessagesAndReferences.kt:15:29: error: Identity-sensitive operations are prohibited on instances of value type 'Full', which are value objects.
 
-/identitySensitiveOperationsMessagesAndReferences.kt:16:18: error: Synchronizing on 'CapturedType(out Full)' is forbidden.
+/identitySensitiveOperationsMessagesAndReferences.kt:16:18: error: Synchronizing on 'Full' is forbidden.
+
+/identitySensitiveOperationsMessagesAndReferences.kt:20:22: error: Identity-sensitive operations are prohibited on instances of value type 'Full', which are value objects.
+
+/identitySensitiveOperationsMessagesAndReferences.kt:21:22: error: Identity-sensitive operations are prohibited on instances of value type 'Full', which are value objects.
+
+/identitySensitiveOperationsMessagesAndReferences.kt:22:52: error: Identity-sensitive operations are prohibited on instances of value type 'Full', which are value objects.
