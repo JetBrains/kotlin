@@ -93,6 +93,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<FirRegularClassSymbol>("valueClass")
             parameter<ConeKotlinType>("superType")
         }
+
+        val SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE by warning<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME)
     }
 
     val TYPES by object : DiagnosticGroup("Types") {
