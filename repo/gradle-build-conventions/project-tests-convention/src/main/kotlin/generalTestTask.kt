@@ -55,13 +55,20 @@ abstract class GeneralTestArgumentProvider @Inject constructor() : CommandLineAr
     @get:Internal
     abstract val gcLogDirectory: DirectoryProperty
 
-    /** Major version of the JDK that launches the tests; GC logging flags differ between JDK 8 and unified logging (9+). */
+    /** Major version of the JDK that launches the tests; some GC flags exist only in a range of JDK versions. */
     @get:Internal
     abstract val javaMajorVersion: Property<Int>
 
     override fun asArguments(): Iterable<String?> = buildList {
         excludesFile.orNull?.let { add("-Dteamcity.build.parallelTests.excludesFile=${it.path}") }
         tempDir.orNull?.let { add("-Djava.io.tmpdir=" + Files.createTempDirectory(File(it).toPath(), prefix.get()).toString()) }
+        if (javaMajorVersion.get() < 25) {
+            // With many concurrent test threads, an allocation stalled by the GC locker (JNI critical sections,
+            // e.g. zip inflation) gives up after only 2 retries and throws OOM before a full GC gets a chance (JDK-8192647).
+            // JDK 25 reworked the GC locker so that a GC always runs, and removed this flag: passing it there fails JVM startup.
+            add("-XX:+UnlockDiagnosticVMOptions")
+            add("-XX:GCLockerRetryAllocationCount=100")
+        }
         gcLogDirectory.orNull?.let { dir ->
             // The JVM refuses to start if the log file cannot be created, so the directory has to exist up front.
             val logDir = dir.asFile.apply { mkdirs() }
