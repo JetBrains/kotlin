@@ -8,9 +8,12 @@ sourceSets["main"].kotlin {
     srcDir("../benchmarksReports/src/commonMain/kotlin")
 }
 
+val Project.kotlinxBenchmarkVersion: String
+    get() = property("kotlinx.benchmark.version") as String
+
 dependencies {
     val kotlinVersion = project.bootstrapKotlinVersion
-    val kotlinxBenchmarkVersion = "0.4.17"
+    val kotlinxBenchmarkVersion = project.kotlinxBenchmarkVersion
 
     compileOnly(gradleApi())
 
