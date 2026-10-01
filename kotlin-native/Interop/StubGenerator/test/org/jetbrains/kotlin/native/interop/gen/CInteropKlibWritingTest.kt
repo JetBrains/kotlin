@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor
+import org.jetbrains.kotlin.backend.common.KlibSignatureIndexComponentWriterImpl
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.konan.library.AbstractNativeKlibWriterTest
+import org.jetbrains.kotlin.library.KlibMockDSL
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -40,6 +44,8 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
         override var ir: SerializedIrModule?
             get() = null
             set(_) = abort<Nothing>("createInteropLibrary() does not support serialization of IR")
+
+        var signatureIndex: Pair<Set<IdSignature>, Set<IdSignature>> = emptySet<IdSignature>() to emptySet<IdSignature>()
     }
 
     @Test
@@ -49,6 +55,33 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
                 this.abiLevel = abiLevel
             }
         }
+    }
+
+    @Test
+    fun `Writing a klib with signature index`() {
+        fun generateSignatures(): Set<IdSignature> = List(5) { index ->
+            IdSignature.CommonSignature(
+                    packageFqName = KlibMockDSL.generateRandomPackageName(index + 1),
+                    declarationFqName = KlibMockDSL.generateRandomName(10),
+                    id = null,
+                    mask = 0,
+                    description = null
+            )
+        }.toSet()
+
+        listOf(true, false).forEach { useSignatureIndex ->
+            runTestWithParameters {
+                if (useSignatureIndex) {
+                    signatureIndex = generateSignatures() to generateSignatures()
+                }
+            }
+        }
+    }
+
+    context(dsl: KlibMockDSL)
+    override fun customizeMockKlib(parameters: CInteropParameters) {
+        super.customizeMockKlib(parameters)
+        KlibSignatureIndexComponentWriterImpl(parameters.signatureIndex.first, parameters.signatureIndex.second).writeTo(dsl.rootDir)
     }
 
     override fun writeKlib(parameters: CInteropParameters): Path {
@@ -69,6 +102,10 @@ class CInteropKlibWritingTest : AbstractNativeKlibWriterTest<CInteropParameters>
                 shortName = parameters.shortName,
                 staticLibraries = parameters.nativeIncludedBinaryFiles.map { it.file },
                 klibAbiCompatibilityLevel = parameters.abiLevel,
+                topLevelSignatures = IdSignaturesExtractor.ExtractedSignatures(
+                        declaredSignatures = parameters.signatureIndex.first,
+                        importedSignatures = parameters.signatureIndex.second
+                ),
         )
 
         return klibLocation

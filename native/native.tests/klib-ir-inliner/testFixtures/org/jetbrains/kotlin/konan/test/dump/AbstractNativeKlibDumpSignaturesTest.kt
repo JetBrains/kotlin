@@ -17,21 +17,31 @@ import java.io.File
 
 abstract class AbstractNativeKlibDumpSignaturesTest : AbstractKlibToolDumpTest() {
     override fun getDumpHandlers(): List<Constructor<AbstractKlibToolDumpHandler<*>>> =
-        KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.flatMap { signatureVersion ->
-            listOf(
-                ::KlibToolSignaturesDumpHandler.bind(/* signatureVersion= */ signatureVersion, /* onlyTopLevelSignatures= */ false),
-                ::KlibToolSignaturesDumpHandler.bind(/* signatureVersion= */ signatureVersion, /* onlyTopLevelSignatures= */ true),
-            )
+        TESTED_DUMP_MODES.flatMap { [signatureDumpMode, signatureVersions] ->
+            signatureVersions.map { signatureVersion ->
+                ::KlibToolSignaturesDumpHandler.bind(
+                    /* signatureVersion= */ signatureVersion,
+                    /* signatureDumpMode= */ signatureDumpMode,
+                )
+            }
         }
+
+    companion object {
+        val TESTED_DUMP_MODES = listOf(
+            "all" to KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS,
+            "top-level-no-indices" to KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS,
+            "top-level" to setOf(KotlinIrSignatureVersion.V1)
+        )
+    }
 }
 
 private class SignatureDumpVariation(
     val signatureVersion: KotlinIrSignatureVersion,
-    val onlyTopLevelSignatures: Boolean,
+    val signatureDumpMode: String,
 ) : KlibToolDumpHandlerVariation {
     override val dumpFileSuffix: String
         get() = buildString {
-            if (onlyTopLevelSignatures) append(".tl")
+            if (signatureDumpMode != "all") append(".tl")
             append(".v${signatureVersion.number}")
         }
 }
@@ -39,13 +49,13 @@ private class SignatureDumpVariation(
 private class KlibToolSignaturesDumpHandler(
     testServices: TestServices,
     signatureVersion: KotlinIrSignatureVersion,
-    onlyTopLevelSignatures: Boolean,
+    signatureDumpMode: String,
 ) : AbstractKlibToolDumpHandler<SignatureDumpVariation>(testServices) {
-    override val variation = SignatureDumpVariation(signatureVersion, onlyTopLevelSignatures)
+    override val variation = SignatureDumpVariation(signatureVersion, signatureDumpMode)
 
     override fun makeDump(klib: File, module: TestModule) = klib.dumpSignatures(
         testServices.testRunSettings.get<KotlinNativeClassLoader>().classLoader,
         variation.signatureVersion,
-        variation.onlyTopLevelSignatures,
+        variation.signatureDumpMode,
     )
 }

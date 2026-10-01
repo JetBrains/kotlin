@@ -32,8 +32,8 @@ and the options are:
         that is supported in the library is used.
         Supported in commands: dump-abi, dump-signatures
 
-    -only-top-level-signatures {true|false}
-        Dump IR signatures of only top-level declarations.
+    -dump-signatures-mode {all|top-level|top-level-no-indices}
+        Dump IR signatures using the specified mode.
         Supported in commands: dump-signatures
 
     -relative-path-base

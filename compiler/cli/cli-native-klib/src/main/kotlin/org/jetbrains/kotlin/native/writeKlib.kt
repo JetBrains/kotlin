@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.native
 
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
+import org.jetbrains.kotlin.backend.common.includeSignatureIndex
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.serialization.addLanguageFeaturesToManifest
 import org.jetbrains.kotlin.backend.konan.driver.NativePhaseContext
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.library.KlibFormat
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.loadSizeInfo
+import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.addMetadataFlagsToManifest
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.writer.KlibWriter
@@ -113,6 +117,9 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
         includeIr(input.serializerOutput.serializedIr)
         includeBitcode(target, config.nativeLibraries.map(::Path))
         includeNativeIncludedBinaries(target, config.includeBinaries.map(::Path))
+        if (!config.metadataKlib) {
+            includeSignatureIndex(input.serializerOutput.serializedIr?.signatureIndex)
+        }
     }.writeTo(klibPath)
 
     loadSizeInfo(klibPath)?.flatten()?.let { stats ->
