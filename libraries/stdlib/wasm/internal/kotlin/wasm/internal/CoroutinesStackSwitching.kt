@@ -47,6 +47,7 @@ internal suspend fun <T> suspendOrReturnStackSwitching(blockResult: Any?): T {
     if (coroutineImpl.resumedWhileRunning) {
         // `block` resumed the continuation itself, the result is already here -- do not park.
         coroutineImpl.resumedWhileRunning = false
+        coroutineImpl.absorbedSelfResume = true
         coroutineImpl.exception?.let { throw it }
     } else {
         coroutineImpl.isRunning = false
@@ -89,12 +90,25 @@ internal fun <R, P, T> suspendFunction2ToContref(
     implementedAsIntrinsic
 }
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun startWrappedCoroutineStackSwitchingImpl(
+internal fun startWrappedCoroutineStackSwitchingImpl(
     wasmContinuation: typedcontref<(Any?) -> Unit>,
-    completion: CoroutineImplStackSwitching<*, *>,
+    coroutine: CoroutineImplStackSwitching<*, *>,
 ): Any? {
-    completion.wasmContinuation = wasmContinuation
-    val result = completion.doResume()
-    return result
+    val result = try {
+        coroutine.wasmContinuation = wasmContinuation
+        coroutine.doResume()
+    } catch (e: Throwable) {
+        coroutine.isRunning = false
+        if (!coroutine.absorbedSelfResume) throw e
+        coroutine.completeWith(null, e)
+        return COROUTINE_SUSPENDED
+    }
+
+    if (result === COROUTINE_SUSPENDED) return result // parked; `completion` owns the contref now
+
+    coroutine.isRunning = false
+    if (!coroutine.absorbedSelfResume) return result // never suspended -- return the value directly
+
+    coroutine.completeWith(result, null)
+    return COROUTINE_SUSPENDED
 }
