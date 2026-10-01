@@ -282,6 +282,8 @@ public class SirTypeProviderImpl(
             else -> null to null
         }
         if (primaryDeclaration == null || typedListDeclarations == null) return null
+        val typedProtocol = typedListDeclarations.first ?: return null
+        val typedStruct = typedListDeclarations.third ?: return null
 
         val listClassIds = listOf(StandardClassIds.List, StandardClassIds.MutableList)
         val listType = sequence {
@@ -301,8 +303,8 @@ public class SirTypeProviderImpl(
 
         val erasedType = erasedType(primaryDeclaration, KotlinType(kaType)) ?: return null
         return SirType.Origin.ReifiedType.List(
-            typedProtocol = typedListDeclarations.first,
-            typedStruct = typedListDeclarations.third,
+            typedProtocol = typedProtocol,
+            typedStruct = typedStruct,
             elementType = elementType,
             erasedType = erasedType,
         ).reifiedType
