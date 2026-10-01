@@ -72,7 +72,7 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         if (!buildFeatures.isolatedProjects.active.get()) {
-            nodejs()
+            wasmtime()
         }
     }
 
