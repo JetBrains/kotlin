@@ -11,9 +11,7 @@ import org.gradle.api.artifacts.transform.*
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
@@ -27,12 +25,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal.ProjectStructureMetadataT
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublicationImpl.Companion.RESOURCES_ZIP_EXTENSION
 import org.jetbrains.kotlin.gradle.plugin.setUsesPlatformOf
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
+import org.jetbrains.kotlin.gradle.utils.copyPartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.listDescendants
-import java.io.File
 import java.util.zip.ZipFile
-import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout.Attributes as KarAttributes
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout.Attributes.State as KarState
 
@@ -135,9 +133,11 @@ internal fun KotlinTarget.configureTransformActionFromKarToResources() {
 
 /**
  * This transformation unpacks:
- * * All content of karFile/platform/{platformName} -> karName-{platformName}/<klib-content>
+ * * All content of karFile/platform/{platformName} -> karName-{platformName}.klib
  * * For each cinterop (located by listing of directories in karFile/cinterops/{platformName}:
- *       content of karFile/cinterop/{platformName}/{cinteropName} -> karName-{platformName}-{cinteropName}/<cinterop-klib-content>
+ *       content of karFile/cinterop/{platformName}/{cinteropName} -> karName-{platformName}-{cinteropName}.klib
+ *
+ * The outputs are packed klibs, the same shape as the legacy publication format publishes.
  */
 @DisableCachingByDefault(because = "Unpacking a .kar is not worth caching")
 internal abstract class KarToPlatformArtifactsTransformation : TransformAction<KarToPlatformArtifactsTransformation.Parameters> {
@@ -147,72 +147,32 @@ internal abstract class KarToPlatformArtifactsTransformation : TransformAction<K
         val platformName: Property<String>
     }
 
-    @get:Inject
-    abstract val archiveOperations: ArchiveOperations
-
-    @get:Inject
-    abstract val fileSystemOperations: FileSystemOperations
-
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputArtifact
     abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
         val karFile = inputArtifact.get().asFile
-        val platformPath = ensureValidZipDirectoryPath("${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/${parameters.platformName.get()}")
-        val cinteropsPath = ensureValidZipDirectoryPath("${KarLayout.CINTEROP_KLIBS_DIRECTORY_NAME}/${parameters.platformName.get()}")
+        val platformName = parameters.platformName.get()
+        val platformPath = ensureValidZipDirectoryPath("${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$platformName")
+        val cinteropsPath = ensureValidZipDirectoryPath("${KarLayout.CINTEROP_KLIBS_DIRECTORY_NAME}/$platformName")
+        val klibName = "${karFile.nameWithoutExtension}-$platformName"
 
-        val cinteropKlibNames = ZipFile(karFile).use { kar ->
-            kar.listDescendants(cinteropsPath)
+        ZipFile(karFile).use { kar ->
+            val cinteropKlibNames = kar.listDescendants(cinteropsPath)
                 .map { entry -> entry.name.removePrefix(cinteropsPath).substringBefore('/') }
                 .filter { it.isNotEmpty() }
                 .distinct()
                 .toList()
-        }
 
-
-        data class Entry(val archivePath: String, val outputDirectory: File)
-
-        /**
-         *  [outputDirectoriesByArchivePath] is a mapping of archive directory path to a fs directory where to put it's content.
-         *  Each directory in output dir should be created by outputs.dir to make Gradle correctly track them.
-         *
-         *  To make a single path though zip, we create them in advance.
-         */
-        val outputDirectoriesByArchivePath = buildList {
-            add(
-                Entry(
-                    archivePath = platformPath,
-                    outputDirectory = outputs.dir("${karFile.nameWithoutExtension}-${parameters.platformName.get()}")
-                )
-            )
+            kar.copyPartially(outputs.klibFile(klibName), platformPath)
             for (cinteropKlibName in cinteropKlibNames) {
-                add(
-                    Entry(
-                        archivePath = "$cinteropsPath$cinteropKlibName/",
-                        outputDirectory = outputs.dir("${karFile.nameWithoutExtension}-${parameters.platformName.get()}-${cinteropKlibName}")
-                    )
-                )
+                kar.copyPartially(outputs.klibFile("$klibName-$cinteropKlibName"), "$cinteropsPath$cinteropKlibName/")
             }
-        }
-        val baseDir = outputDirectoriesByArchivePath[0].outputDirectory.parentFile
-        check(outputDirectoriesByArchivePath.all { baseDir == it.outputDirectory.parentFile }) {
-            "Expected all transformed KLIB output directories to have the same parent"
-        }
-
-        fileSystemOperations.copy { copy ->
-            copy.from(archiveOperations.zipTree(karFile)) { spec ->
-                for ((archivePath, outputDirectory) in outputDirectoriesByArchivePath) {
-                    spec.include("${archivePath}**")
-                    spec.filesMatching("${archivePath}**") { file ->
-                        file.path = "${outputDirectory.name}/${file.path.removePrefix(archivePath)}"
-                    }
-                }
-                spec.includeEmptyDirs = false
-            }
-            copy.into(baseDir)
         }
     }
+
+    private fun TransformOutputs.klibFile(name: String) = file("$name.$KLIB_TYPE")
 }
 
 internal fun KotlinTarget.configureTransformActionFromKarToPlatformArtifacts() {

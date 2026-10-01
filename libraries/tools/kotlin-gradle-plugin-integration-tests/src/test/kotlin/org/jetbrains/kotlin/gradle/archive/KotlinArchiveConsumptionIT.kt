@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.archive
 
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
@@ -13,8 +16,12 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.targets.js.npm.AbstractNodeModulesCache
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
+import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
+import org.jetbrains.kotlin.gradle.testbase.build
+import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.compilationResolution
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -28,6 +35,9 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.test.assertEquals
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.readText
 
 @MppGradlePluginTests
 @DisplayName("Consumption of a project published in the Kotlin Archive format")
@@ -216,6 +226,103 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("A consumer gets the npm dependencies of a library in the Kotlin Archive format")
+    fun consumptionWithNpmDependenciesTest(gradleVersion: GradleVersion) {
+        val producer = kotlinArchiveProducer(gradleVersion, withAppleTargets = false, withNodeJs = true)
+        producer.buildScriptInjection {
+            project.applyMultiplatform {
+                sourceSets.jsMain.dependencies {
+                    api(npm("test-npm-dep", "1.1.1"))
+                }
+                sourceSets.wasmJsMain.dependencies {
+                    api(npm("test-npm-dep", "1.1.2"))
+                }
+            }
+        }
+        val publishedProject = producer.publish()
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets = false)
+        // The npm tasks only exist for a target with an engine
+        consumer.buildScriptInjection {
+            project.applyMultiplatform {
+                js { nodejs() }
+                wasmJs { nodejs() }
+            }
+        }
+
+        consumer.build("jsPackageJson", "wasmJsPackageJson") {
+            assertTasksExecuted(":jsPackageJson", ":wasmJsPackageJson")
+            assertEquals(
+                "1.1.1",
+                consumer.mainPackageJsonDependencies("js")["test-npm-dep"]
+            )
+            assertEquals(
+                "1.1.2",
+                consumer.mainPackageJsonDependencies("wasm")["test-npm-dep"]
+            )
+        }
+    }
+
+    private fun TestProject.mainPackageJsonDependencies(target: String): Map<String, String> {
+        val packageJson = projectPath.resolve("build/$target/packages")
+            .listDirectoryEntries()
+            .single { !it.name.endsWith("-test") }
+            .resolve("package.json")
+        assertFileExists(packageJson)
+        return Json.parseToJsonElement(packageJson.readText())
+            .jsonObject["dependencies"]
+            ?.jsonObject
+            ?.mapValues { it.value.jsonPrimitive.content }
+            .orEmpty()
+    }
+
+    @GradleTest
+    @DisplayName("A consumer imports the files stored inside the klib of a library in the Kotlin Archive format")
+    fun consumptionOfFilesStoredInsideKlibTest(gradleVersion: GradleVersion) {
+        val producer = kotlinArchiveProducer(
+            gradleVersion,
+            withAppleTargets = false,
+            withNodeJs = true,
+        )
+        producer.configureWebResourcesStoredInsideKlib()
+        val publishedProject = producer.publish("jsPublicPackageJson", "wasmJsPublicPackageJson")
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets = false)
+        consumer.buildScriptInjection {
+            project.applyMultiplatform {
+                this.js { nodejs() }
+                this.wasmJs { nodejs() }
+            }
+        }
+        consumer.build("jsPackageJson", "wasmJsPackageJson") {
+            assertTasksExecuted(":jsPackageJson", ":wasmJsPackageJson")
+        }
+        val importedNodeModulesList = webRootDirectories.flatMap { rootDirectory ->
+            val importedModulesFile = consumer.projectPath.resolve("build/$rootDirectory/packages_imported").toFile()
+            importedModulesFile.walkTopDown()
+                .filter { it.isFile }
+                .map { it.relativeTo(importedModulesFile).invariantSeparatorsPath }
+                // The state file of the node modules cache belongs to the build, not to a module
+                .filterNot { it.startsWith(AbstractNodeModulesCache.STATE_FILE_NAME) }
+                .map { path ->
+                    val segments = path.split("/")
+                    // A module is stored as <name>/<version>/<its files>
+                    "$rootDirectory/${segments.take(2).joinToString("/")}" to segments.drop(2).joinToString("/")
+                }
+                .toList()
+        }
+        val importedNodeModules: Map<String, List<String>> = importedNodeModulesList
+            .groupBy({ it.first }, { it.second })
+            .mapValues { it.value.sorted() }
+            .toSortedMap()
+
+        assertEquals(
+            expectedImportedNodeModules.prettyPrinted,
+            importedNodeModules.prettyPrinted,
+        )
+    }
+
     private fun TestProject.resolvedResources(): List<String> {
         val resolvedResources = projectPath.resolve("build/$RESOLVED_RESOURCES_DIRECTORY").toFile()
         return resolvedResources.walkTopDown()
@@ -345,6 +452,27 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         private val targetsWithCheckedResolution = listOf("linuxX64", "jvm")
 
         private val appleTargets = listOf("iosArm64", "macosArm64")
+
+        private val webRootDirectories = listOf("js", "wasm")
+
+        private val expectedImportedNodeModules = mapOf(
+            "js/producer/1.0.0" to listOf(
+                "package.json",
+                "stored.html",
+                "stored.js",
+                "stored.js.map",
+                "stored.mjs",
+                "stored.wasm",
+            ),
+            "wasm/producer/1.0.0" to listOf(
+                "package.json",
+                "stored.html",
+                "stored.js",
+                "stored.js.map",
+                "stored.mjs",
+                "stored.wasm",
+            ),
+        )
 
         private fun frameworkLinkTaskOf(targetName: String): String =
             ":linkDebugFramework" + targetName.replaceFirstChar { it.uppercase() }
