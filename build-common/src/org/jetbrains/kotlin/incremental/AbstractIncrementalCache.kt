@@ -33,6 +33,7 @@ import java.util.*
 interface IncrementalCacheCommon {
     val thisWithDependentCaches: Iterable<AbstractIncrementalCache<*>>
     fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName>
+    fun typealiasesFqNamesBySources(files: Iterable<File>): Collection<FqName>
     fun getSubtypesOf(className: FqName): Sequence<FqName>
     fun getSupertypesOf(className: FqName): Sequence<FqName>
     fun getSourceFileIfClass(fqName: FqName): File?
@@ -115,6 +116,9 @@ abstract class AbstractIncrementalCache<ClassName>(
 
     override fun classesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
         files.flatMapTo(mutableSetOf()) { sourceToClassesMap.getFqNames(it).orEmpty() }
+
+    override fun typealiasesFqNamesBySources(files: Iterable<File>): Collection<FqName> =
+        files.flatMapTo(mutableSetOf()) { sourceToTypealiasFqNameTwoWayMap[it].orEmpty() }
 
     override fun getSubtypesOf(className: FqName): Sequence<FqName> =
         subtypesMap[className].orEmpty().asSequence()
