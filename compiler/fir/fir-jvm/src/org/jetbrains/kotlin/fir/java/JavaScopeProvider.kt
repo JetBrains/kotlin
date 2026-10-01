@@ -221,7 +221,7 @@ object JavaScopeProvider : FirScopeProvider() {
     ): FirContainingNamesAwareScope? {
         return lazyNestedClassifierScope(
             useSiteSession,
-            klass.classId,
+            klass,
             (klass as FirJavaClass).existingNestedClassifierNames
         )
     }
