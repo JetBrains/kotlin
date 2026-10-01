@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-
 plugins {
     kotlin("multiplatform")
 }

@@ -250,10 +250,10 @@ class KotlinJvmAndJavaSourceSetTest {
     }
 
     private val KotlinMultiplatformExtension.jvmMainCompilation
-        get() = jvm().compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJvmCompilation
+        get() = jvm().compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
     private val KotlinMultiplatformExtension.jvmTestCompilation
-        get() = jvm().compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME) as KotlinJvmCompilation
+        get() = jvm().compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
 
     private fun Project.jvmSourceSet(compilation: KotlinJvmCompilation) =
         javaSourceSets.getByName(compilation.defaultSourceSet.name)

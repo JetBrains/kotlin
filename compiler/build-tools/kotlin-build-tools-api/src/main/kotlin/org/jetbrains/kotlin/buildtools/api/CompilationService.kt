@@ -7,7 +7,6 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
-import org.jetbrains.kotlin.buildtools.api.CompilationService.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.KotlinWrapperPre2_2_0
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity

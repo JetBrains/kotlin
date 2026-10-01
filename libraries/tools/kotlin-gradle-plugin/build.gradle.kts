@@ -402,7 +402,7 @@ tasks {
              * These files are required only at compilation time, but we include the modules only for runtime
              * Hack for not limiting LV to 1.8 for those modules. To be removed after KT-70247
              */
-            pivotVersion = KotlinMetadataPivotVersion(1, 9, 0)
+            pivotVersion = KotlinMetadataPivotVersion(2, 2, 0)
         }
     }
     GradlePluginVariant.values().forEach { variant ->

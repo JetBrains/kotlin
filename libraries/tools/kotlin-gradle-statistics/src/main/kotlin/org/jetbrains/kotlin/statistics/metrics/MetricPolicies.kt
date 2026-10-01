@@ -65,7 +65,7 @@ abstract class StringAnonymizationPolicy : ValueAnonymizer<String> {
             return if (t.matches(Regex(validationRegexp(separator)))) {
                 t
             } else {
-                t.split(separator).joinToString(separator.toString()) {
+                t.split(separator).joinToString(separator) {
                     if (allowedValues.contains(it))
                         it
                     else

@@ -82,7 +82,7 @@ internal abstract class PropertiesBuildService @Inject constructor(
         project: Project,
     ) = property(propertyName, project.path, project.extraProperties)
 
-    fun <T : Any?, PROP : GradleProperty<T>> property(
+    fun <T : Any, PROP : GradleProperty<out T?>> typedProperty(
         property: PROP,
         project: Project
     ): Provider<T> {
@@ -93,7 +93,6 @@ internal abstract class PropertiesBuildService @Inject constructor(
                     is NullableBooleanGradleProperty -> property.toNullableBooleanFromString(it)
                     is StringGradleProperty, is NullableStringGradleProperty -> it
                     is IntGradleProperty -> property.toIntFromString(it)
-                    else -> throw IllegalStateException("Unknown Gradle property type $property")
                 }
 
                 @Suppress("UNCHECKED_CAST")
@@ -168,7 +167,7 @@ internal abstract class PropertiesBuildService @Inject constructor(
         override fun call(): T? = value
     }
 
-    internal sealed interface GradleProperty<T : Any?> {
+    internal sealed interface GradleProperty<T> {
         val name: String
         val defaultValue: T
     }
@@ -204,13 +203,13 @@ internal abstract class PropertiesBuildService @Inject constructor(
 internal val Project.propertiesService: Provider<PropertiesBuildService>
     get() = PropertiesBuildService.registerIfAbsent(this)
 
-internal fun <T> PropertiesBuildService.propertyWithDeprecatedName(
-    nonDeprecatedProperty: PropertiesBuildService.GradleProperty<T>,
-    deprecatedProperty: PropertiesBuildService.GradleProperty<T>,
+internal fun <T : Any> PropertiesBuildService.propertyWithDeprecatedName(
+    nonDeprecatedProperty: PropertiesBuildService.GradleProperty<out T?>,
+    deprecatedProperty: PropertiesBuildService.GradleProperty<out T?>,
     project: Project,
-): Provider<T> = property(nonDeprecatedProperty, project)
+): Provider<T> = typedProperty(nonDeprecatedProperty, project)
     .orElse(
-        property(deprecatedProperty, project)
+        typedProperty(deprecatedProperty, project)
             .map {
                 project.reportDiagnosticOncePerBuild(
                     KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement(
