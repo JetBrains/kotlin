@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.assertThrows
 import kotlin.io.path.readText
@@ -149,8 +150,9 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("js-ic-basic-app")
     fun basicJsRichDtsGeneration(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        if (strategyConfig.first.getCompilerVersion() < "2.5.0") {
-            // The rich dts generation is not available in pre 2.5.0 versions of Kotlin
+        val kotlinToolingVersion = KotlinToolingVersion(strategyConfig.first.getCompilerVersion())
+        if (kotlinToolingVersion <= KotlinToolingVersion(2, 5, 0, "Beta1")) {
+            // The rich dts generation is not available in pre 2.5.0-Beta1 versions of Kotlin
             return
         }
 
