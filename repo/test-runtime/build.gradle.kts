@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.junit.jupiter.api)
     implementation(libs.junit.platform.launcher)
     compileOnly(libs.junit.jupiter.engine)
+    compileOnly(libs.junit.jupiter.params)
 
     testImplementation(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     testImplementation(kotlin("test-junit", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
@@ -99,7 +100,7 @@ dependencies {
 run {
     val junit5TestCompilation = kotlin.target.compilations.create("junit5Tests")
 
-    /* Synthetic tests may use the APIs of this module (e.g. 'ShardByMethod') */
+    /* Synthetic tests may use the APIs of this module (e.g. 'ParameterizedTestSharding') */
     junit5TestCompilation.associateWith(kotlin.target.compilations.getByName("main"))
 
     tasks.register<Test>("junit5Tests") {
