@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // LANGUAGE: +FullValueClasses
 
 abstract value class Base
@@ -12,7 +13,7 @@ fun <T : <!FINAL_UPPER_BOUND!>Value<!>> bounded(t: T) {
 }
 
 fun test(identity: Identity, value: Value) {
-    val (<!UNRESOLVED_REFERENCE!>first<!>, <!UNRESOLVED_REFERENCE!>second<!>) = identity
+    val (first, second) = identity
     val (<!UNRESOLVED_REFERENCE!>third<!>, <!UNRESOLVED_REFERENCE!>fourth<!>) = value
 }
 
