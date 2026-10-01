@@ -36,14 +36,17 @@ object SwcConfig {
         set("sourceMaps", sourceMapEnabled)
         set("inputSourceMap", sourceMapEnabled)
         set("exclude", arrayOf(".*\\.d\\.m?ts$"))
-        set("jsc", buildMap<String, Any> {
+        set("jsc", buildMap {
             set("parser", buildMap {
                 set("syntax", "ecmascript")
                 set("dynamicImport", true)
                 set("functionBind", true)
                 set("importMeta", true)
             })
-            set("loose", true)
+            // `loose: false` increases the bundle size, but makes interop with `external` code safer (e.g. extending
+            // ES6-based `external` classes, where `loose: true` strips the `new` keyword and causes runtime errors).
+            // TODO: Re-investigate using `loose: true` in the future if SWC allows finer-grained configuration.
+            set("loose", false)
             set("externalHelpers", includeExternalHelpers)
             set("target", target)
         })
