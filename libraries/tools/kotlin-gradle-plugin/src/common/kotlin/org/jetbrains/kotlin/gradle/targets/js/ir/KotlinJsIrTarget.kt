@@ -12,6 +12,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -65,6 +66,14 @@ internal constructor(
     @InternalKotlinGradlePluginApi
     override val platformNameInKotlinArchive: String
         get() = targetPreset?.name ?: error("Name in kotlin archive in unknown for $targetName")
+
+    @InternalKotlinGradlePluginApi
+    override val platformKlibFiles: FileCollection
+        get() = project.files(project.tasks.named(artifactsTaskName))
+
+    @InternalKotlinGradlePluginApi
+    override val doesPlatformKlibRequireUnpacking: Boolean
+        get() = true
 
     @Deprecated(
         "Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.",
