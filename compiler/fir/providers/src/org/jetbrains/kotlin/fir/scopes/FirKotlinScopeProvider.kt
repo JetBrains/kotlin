@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembersInSupertypes
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
@@ -44,11 +45,16 @@ class FirKotlinScopeProvider(
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope {
-        memberRequiredPhase?.let {
-            klass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, it)
-        }
+        val scopeId = useSiteSession to klass.symbol
+        scopeSession.ensureRequiredMembersPhase(
+            scopeId,
+            USE_SITE_REQUIRED_MEMBERS_PHASE,
+            memberRequiredPhase,
+            resolveOwner = { klass.lazyResolveToPhaseWithCallableMembers(it) },
+            resolveHierarchy = { klass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, it) },
+        )
 
-        return scopeSession.getOrBuild(useSiteSession to klass.symbol, USE_SITE) {
+        return scopeSession.getOrBuild(scopeId, USE_SITE) {
             // Optimization for enum entries that don't declare any members: just use the supertype scope.
             // Otherwise, we'll get quadratic memory consumption as every enum entry contains every enum entry's name in its callable name
             // cache.
@@ -408,6 +414,9 @@ private fun FirClass.scopeForClassImpl(
 }
 
 private val TYPEALIAS_CONSTRUCTOR: ScopeSessionKey<Pair<FirSession, FirTypeAliasSymbol>, FirScope> = scopeSessionKey()
+
+private val USE_SITE_REQUIRED_MEMBERS_PHASE: ScopeSessionKey<Pair<FirSession, FirClassSymbol<*>>, FirRequiredMembersPhaseStamp> =
+    requiredMembersPhaseStampKey()
 
 val FirSession.kotlinScopeProvider: FirKotlinScopeProvider by FirSession.sessionComponentAccessor()
 

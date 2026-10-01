@@ -37,11 +37,16 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope {
-        memberRequiredPhase?.let {
-            klass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, it)
-        }
-
         val symbol = klass.symbol as FirRegularClassSymbol
+        scopeSession.ensureRequiredMembersPhase(
+            symbol,
+            JAVA_REQUIRED_MEMBERS_PHASE,
+            memberRequiredPhase,
+            // Java classes are always resolved
+            resolveOwner = {},
+            resolveHierarchy = { klass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, it) },
+        )
+
         val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, memberRequiredPhase)
         if (klass.classKind == ClassKind.ANNOTATION_CLASS) {
             return buildSyntheticScopeForAnnotations(useSiteSession, symbol, scopeSession, enhancementScope)
@@ -236,3 +241,4 @@ private val JAVA_SYNTHETIC_FOR_ANNOTATIONS = scopeSessionKey<FirRegularClassSymb
 private val JAVA_ENHANCEMENT_FOR_STATIC = scopeSessionKey<FirRegularClassSymbol, JavaClassStaticEnhancementScope>()
 private val JAVA_ENHANCEMENT = scopeSessionKey<FirRegularClassSymbol, JavaClassMembersEnhancementScope>()
 private val JAVA_USE_SITE = scopeSessionKey<FirRegularClassSymbol, JavaClassUseSiteMemberScope>()
+private val JAVA_REQUIRED_MEMBERS_PHASE = requiredMembersPhaseStampKey<FirRegularClassSymbol>()
