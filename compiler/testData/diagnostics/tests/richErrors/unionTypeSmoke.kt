@@ -6,8 +6,8 @@ package kotlin
 
 abstract class RichError
 // FILE: test.kt
-<!WRONG_MODIFIER_TARGET!>error<!> class Foo
-<!WRONG_MODIFIER_TARGET!>error<!> class Bar
+error class Foo
+error class Bar
 
 fun foo(
     a: String | Foo,
@@ -17,13 +17,13 @@ fun foo(
     e: Foo | Bar,
     f: (Foo | Bar)?,
     g: String | (Nothing | Foo),
-    h: <!OTHER_ERROR!>String | (Foo | Bar)?<!>,
+    h: <!NULLABLE_NESTED_UNION_TYPE!>String | (Foo | Bar)?<!>,
     i: Foo | Foo,
     j: Nothing? | Foo,
-    k: <!OTHER_ERROR!>String | (String | Foo)<!>,
-    l: <!OTHER_ERROR!>String | Foo?<!>,
-    m: <!OTHER_ERROR!>String | Int<!>,
-    n: <!OTHER_ERROR!>String | <!OTHER_ERROR!>(Foo | Int)<!><!>,
+    k: <!NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE!>String | (String | Foo)<!>,
+    l: <!NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE!>String | Foo?<!>,
+    m: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>String | Int<!>,
+    n: <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>String | <!NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE!>(Foo | Int)<!><!>,
     o: String | RichError,
 ){
 }

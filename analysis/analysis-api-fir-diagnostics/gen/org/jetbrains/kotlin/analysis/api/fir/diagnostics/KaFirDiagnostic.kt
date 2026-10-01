@@ -6771,6 +6771,7 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass: KClass<UnnecessarySafeCall>
             get() = UnnecessarySafeCall::class
 
+        public val kind: String
         public val receiverType: KaType
     }
 
@@ -8400,6 +8401,83 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface CompanionExtensionNullableReceiver : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<CompanionExtensionNullableReceiver>
             get() = CompanionExtensionNullableReceiver::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonErrorClassExtendsRichError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NonErrorClassExtendsRichError>
+            get() = NonErrorClassExtendsRichError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ErrorClassHasSupertype : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<ErrorClassHasSupertype>
+            get() = ErrorClassHasSupertype::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ErrorClassHasTypeParameter : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<ErrorClassHasTypeParameter>
+            get() = ErrorClassHasTypeParameter::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NullableErrorComponentInUnionType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NullableErrorComponentInUnionType>
+            get() = NullableErrorComponentInUnionType::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NullableNestedUnionType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NullableNestedUnionType>
+            get() = NullableNestedUnionType::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonErrorComponentInNestedUnionType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NonErrorComponentInNestedUnionType>
+            get() = NonErrorComponentInNestedUnionType::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonErrorComponentWrongPositionInUnionType : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NonErrorComponentWrongPositionInUnionType>
+            get() = NonErrorComponentWrongPositionInUnionType::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface MultipleTypeParametersCanHoldError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<MultipleTypeParametersCanHoldError>
+            get() = MultipleTypeParametersCanHoldError::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonErrorSupertype : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NonErrorSupertype>
+            get() = NonErrorSupertype::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NonErrorGetClassCall : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NonErrorGetClassCall>
+            get() = NonErrorGetClassCall::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface ActualTypealiasToNonError : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<ActualTypealiasToNonError>
+            get() = ActualTypealiasToNonError::class
     }
 
     @KaUnstableDiagnosticApi

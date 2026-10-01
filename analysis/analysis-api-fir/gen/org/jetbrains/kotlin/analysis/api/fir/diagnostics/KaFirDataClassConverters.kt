@@ -685,6 +685,12 @@ private fun KaDiagnosticConverterBuilder.addConversions8() {
             token,
         )
     }
+    add(FirErrors.NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE) { firDiagnostic ->
+        NonErrorComponentWrongPositionInUnionTypeImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.SYNCHRONIZED_IN_INTERFACE) { firDiagnostic ->
         SynchronizedInInterfaceImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -1256,6 +1262,12 @@ private fun KaDiagnosticConverterBuilder.addConversions22() {
     add(FirErrors.USAGE_IS_NOT_INLINABLE) { firDiagnostic ->
         UsageIsNotInlinableImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE) { firDiagnostic ->
+        NullableErrorComponentInUnionTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -2832,6 +2844,12 @@ private fun KaDiagnosticConverterBuilder.addConversions61() {
             token,
         )
     }
+    add(FirErrors.NON_ERROR_GET_CLASS_CALL) { firDiagnostic ->
+        NonErrorGetClassCallImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJsErrors.JS_NO_RUNTIME_FORBIDDEN_IS_CHECK) { firDiagnostic ->
         JsNoRuntimeForbiddenIsCheckImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -3189,6 +3207,12 @@ private fun KaDiagnosticConverterBuilder.addConversions69() {
     add(FirErrors.ERROR_IN_CONTRACT_DESCRIPTION) { firDiagnostic ->
         ErrorInContractDescriptionImpl(
             firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE) { firDiagnostic ->
+        NonErrorComponentInNestedUnionTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -5306,6 +5330,12 @@ private fun KaDiagnosticConverterBuilder.addConversions114() {
             token,
         )
     }
+    add(FirErrors.NON_ERROR_SUPERTYPE) { firDiagnostic ->
+        NonErrorSupertypeImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions115() {
@@ -5339,6 +5369,12 @@ private fun KaDiagnosticConverterBuilder.addConversions115() {
     add(FirErrors.NON_PUBLIC_DATA_COPY_CALL_FROM_PUBLIC_INLINE.warningFactory) { firDiagnostic ->
         NonPublicDataCopyCallFromPublicInlineWarningImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.ERROR_CLASS_HAS_SUPERTYPE) { firDiagnostic ->
+        ErrorClassHasSupertypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -5912,6 +5948,12 @@ private fun KaDiagnosticConverterBuilder.addConversions126() {
             token,
         )
     }
+    add(FirErrors.ACTUAL_TYPEALIAS_TO_NON_ERROR) { firDiagnostic ->
+        ActualTypealiasToNonErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions127() {
@@ -6407,6 +6449,12 @@ private fun KaDiagnosticConverterBuilder.addConversions135() {
         IncompatibleClassImpl(
             firDiagnostic.a,
             firDiagnostic.b,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.NULLABLE_NESTED_UNION_TYPE) { firDiagnostic ->
+        NullableNestedUnionTypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7059,6 +7107,12 @@ private fun KaDiagnosticConverterBuilder.addConversions152() {
             token,
         )
     }
+    add(FirErrors.NON_ERROR_CLASS_EXTENDS_RICH_ERROR) { firDiagnostic ->
+        NonErrorClassExtendsRichErrorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE) { firDiagnostic ->
         NestedClassInExternalInterfaceImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -7293,7 +7347,8 @@ private fun KaDiagnosticConverterBuilder.addConversions159() {
     }
     add(FirErrors.UNNECESSARY_SAFE_CALL) { firDiagnostic ->
         UnnecessarySafeCallImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7821,6 +7876,12 @@ private fun KaDiagnosticConverterBuilder.addConversions171() {
     }
     add(FirErrors.REDUNDANT_LABEL_WARNING) { firDiagnostic ->
         RedundantLabelWarningImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR) { firDiagnostic ->
+        MultipleTypeParametersCanHoldErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8556,6 +8617,12 @@ private fun KaDiagnosticConverterBuilder.addConversions189() {
     add(FirErrors.COMPANION_EXTENSION_RECEIVER_IS_OBJECT) { firDiagnostic ->
         CompanionExtensionReceiverIsObjectImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.ERROR_CLASS_HAS_TYPE_PARAMETER) { firDiagnostic ->
+        ErrorClassHasTypeParameterImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

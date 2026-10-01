@@ -654,7 +654,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 val unionType = ConeTypeUnifier.unify(primaryType, coneTypes, ConeAttributes.Empty, session.typeContext)
                 FirTypeResolutionResult(
                     if (coneTypes.any { it.isNonRichError() }) {
-                        ConeErrorType(ConeSimpleDiagnostic("Non-rich error component must appear first"), delegatedType = unionType)
+                        ConeErrorType(
+                            ConeSimpleDiagnostic(
+                                "Non-rich error component must appear first",
+                                NonErrorComponentWrongPositionInUnionType
+                            ), delegatedType = unionType
+                        )
                     } else {
                         unionType
                     },

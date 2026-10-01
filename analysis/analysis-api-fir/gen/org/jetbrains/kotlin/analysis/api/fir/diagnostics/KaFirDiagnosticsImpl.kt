@@ -4791,6 +4791,7 @@ internal class UnexpectedSafeCallImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnexpectedSafeCall
 
 internal class UnnecessarySafeCallImpl(
+    override val kind: String,
     override val receiverType: KaType,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
@@ -5934,6 +5935,61 @@ internal class CompanionExtensionNullableReceiverImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionExtensionNullableReceiver
+
+internal class NonErrorClassExtendsRichErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonErrorClassExtendsRichError
+
+internal class ErrorClassHasSupertypeImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ErrorClassHasSupertype
+
+internal class ErrorClassHasTypeParameterImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ErrorClassHasTypeParameter
+
+internal class NullableErrorComponentInUnionTypeImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NullableErrorComponentInUnionType
+
+internal class NullableNestedUnionTypeImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NullableNestedUnionType
+
+internal class NonErrorComponentInNestedUnionTypeImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonErrorComponentInNestedUnionType
+
+internal class NonErrorComponentWrongPositionInUnionTypeImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonErrorComponentWrongPositionInUnionType
+
+internal class MultipleTypeParametersCanHoldErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.MultipleTypeParametersCanHoldError
+
+internal class NonErrorSupertypeImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonErrorSupertype
+
+internal class NonErrorGetClassCallImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NonErrorGetClassCall
+
+internal class ActualTypealiasToNonErrorImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ActualTypealiasToNonError
 
 internal class OverrideCannotBeStaticImpl(
     firDiagnostic: KtDiagnosticWithSource,

@@ -6,8 +6,8 @@ package kotlin
 
 abstract class RichError
 // FILE: test.kt
-<!WRONG_MODIFIER_TARGET!>error<!> class Foo
-<!WRONG_MODIFIER_TARGET!>error<!> class Bar
+error class Foo
+error class Bar
 
 abstract class C {
     abstract fun memberFun(): String | Bar
@@ -19,10 +19,10 @@ fun test(
     b: C | Foo,
     c: Foo | Bar,
 ) {
-    val x1 = a<!UNNECESSARY_SAFE_CALL!>|.<!>length
-    val x2 = b<!UNNECESSARY_SAFE_CALL!>|.<!>memberFun()
-    val x3 = b<!UNNECESSARY_SAFE_CALL!>|.<!>memberVal
-    val x4 = c<!UNNECESSARY_SAFE_CALL!>|.<!>toString()
+    val x1 = a|.length
+    val x2 = b|.memberFun()
+    val x3 = b|.memberVal
+    val x4 = c|.toString()
     val x5 = ""<!UNNECESSARY_SAFE_CALL!>|.<!>length
 }
 

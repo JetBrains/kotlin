@@ -85,6 +85,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_IGNORABILITY_NOT_MATCH_EXPECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPEALIAS_TO_NON_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_NOT_TO_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE
@@ -303,6 +304,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_BY_EQUALITY_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_SUSPICIOUS_BY_EQUALITY_BOUNDS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_CLASS_HAS_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_CLASS_HAS_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_FROM_JAVA_RESOLUTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_IN_CONTRACT_DESCRIPTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ERROR_SUPPRESSION
@@ -582,6 +585,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE_DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_LABELS_ARE_FORBIDDEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_OVERLOADS_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
@@ -611,6 +615,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ASCENDING_VERSION_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_CLASS_EXTENDS_RICH_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_FINAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_MEMBER_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
@@ -662,7 +669,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_THIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TYPE_ARGUMENTS_ON_RHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_VALUE_FOR_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_VARARG_OVERLOAD_OF_OPERATOR_OF
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_INLINE_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_NESTED_UNION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_ON_DEFINITELY_NOT_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_RETURN_TYPE_OF_OPERATOR_OF
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_SUPERTYPE
@@ -890,6 +899,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_INFIX_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_GET_CLASS_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_OF_NOTHING_IN_CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
@@ -3466,7 +3477,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
         )
         map.put(UNEXPECTED_SAFE_CALL, "Safe call is prohibited here.")
-        map.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type ''{0}''.", RENDER_TYPE)
+        map.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a receiver of {0} type ''{1}''.", TO_STRING, RENDER_TYPE)
         map.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type ''{0}''.", RENDER_TYPE)
         map.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) called on a lambda expression.")
         map.put(NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, "Non-null assertion (!!) called on a callable reference expression.")
@@ -4128,5 +4139,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             COMPANION_EXTENSION_NULLABLE_RECEIVER,
             "Companion extension receiver type cannot be nullable.",
         )
+        map.put(NON_ERROR_CLASS_EXTENDS_RICH_ERROR, "Non-error class cannot extend 'RichError'.")
+        map.put(ERROR_CLASS_HAS_SUPERTYPE, "Error class cannot have supertypes.")
+        map.put(ERROR_CLASS_HAS_TYPE_PARAMETER, "Error class cannot have type parameters.")
+        map.put(NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE, "Error component of union type cannot be nullable.")
+        map.put(NULLABLE_NESTED_UNION_TYPE, "Nested union types cannot be nullable.")
+        map.put(NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE, "Nested union type cannot have a non-error component.")
+        map.put(NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE, "Non-error component must appear first in union type.")
+        map.put(MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR, "Multiple type parameters in union type can be inferred to an error class.")
+        map.put(NON_ERROR_SUPERTYPE, "'NonError' cannot be used as explicit supertype.")
+        map.put(NON_ERROR_GET_CLASS_CALL, "Class literal on 'NonError' is not supported.")
+        map.put(ACTUAL_TYPEALIAS_TO_NON_ERROR, "'actual typealias' cannot expand to 'NonError'.")
     }
 }

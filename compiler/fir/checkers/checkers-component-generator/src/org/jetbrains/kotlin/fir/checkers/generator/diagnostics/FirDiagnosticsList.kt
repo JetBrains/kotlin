@@ -1993,6 +1993,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val UNEXPECTED_SAFE_CALL by error<PsiElement>(PositioningStrategy.SAFE_ACCESS)
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {
+            parameter<String>("kind")
             parameter<ConeKotlinType>("receiverType")
         }
         val UNNECESSARY_NOT_NULL_ASSERTION by warning<KtExpression>(PositioningStrategy.OPERATOR) {
@@ -2514,6 +2515,20 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val COMPANION_EXTENSION_RECEIVER_ANNOTATED by error<PsiElement>()
         val COMPANION_EXTENSION_NULLABLE_RECEIVER by error<PsiElement>()
+    }
+
+    val RICH_ERRORS by object : DiagnosticGroup("Rich Errors") {
+        val NON_ERROR_CLASS_EXTENDS_RICH_ERROR by error<PsiElement>()
+        val ERROR_CLASS_HAS_SUPERTYPE by error<PsiElement>()
+        val ERROR_CLASS_HAS_TYPE_PARAMETER by error<PsiElement>()
+        val NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE by error<PsiElement>()
+        val NULLABLE_NESTED_UNION_TYPE by error<PsiElement>()
+        val NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE by error<PsiElement>()
+        val NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE by error<PsiElement>()
+        val MULTIPLE_TYPE_PARAMETERS_CAN_HOLD_ERROR by error<PsiElement>()
+        val NON_ERROR_SUPERTYPE by error<PsiElement>()
+        val NON_ERROR_GET_CLASS_CALL by error<PsiElement>()
+        val ACTUAL_TYPEALIAS_TO_NON_ERROR by error<PsiElement>()
     }
 }
 

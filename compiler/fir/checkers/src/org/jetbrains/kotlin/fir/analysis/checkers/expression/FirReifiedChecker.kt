@@ -104,6 +104,8 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Co
     private fun ConeKotlinType.cannotBeReified(languageVersionSettings: LanguageVersionSettings): Boolean = when (this) {
         is ConeCapturedType -> true
         is ConeDynamicType -> true
+        is ConeUnionType -> true
+        else if classId == StandardClassIds.NonError -> true
         else -> unsupportedKindOfNothingAsReifiedOrInArray(languageVersionSettings) != null
     }
 

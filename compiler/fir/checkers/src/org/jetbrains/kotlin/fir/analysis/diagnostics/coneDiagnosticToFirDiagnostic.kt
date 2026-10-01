@@ -686,6 +686,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
     is ConeIntermediateDiagnostic -> null // At least some usages are accounted in FirMissingDependencyClassChecker
     is ConeContractDescriptionError -> FirErrors.ERROR_IN_CONTRACT_DESCRIPTION.createOn(source, this.reason, session)
     is ConeTypeParameterSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason, session)
+    is ConeUnionTypeInSupertype -> FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE.createOn(source, this.reason, session)
     is ConeTypeParameterInQualifiedAccess -> runIf(forNoneApplicable) { // when not for NONE_APPLICABLE, reported in various checkers
         FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.createOn(source, this.symbol, session)
     }
@@ -1141,9 +1142,13 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnos
         DiagnosticKind.AnnotationInWhereClause -> FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR
         DiagnosticKind.MultipleAnnotationWithAllTarget -> FirErrors.INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
         DiagnosticKind.UnderscoreWithoutRenamingInDestructuring -> FirErrors.NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING
+        DiagnosticKind.NullableErrorComponentInUnionType -> FirErrors.NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE
+        DiagnosticKind.NullableNestedUnionType -> FirErrors.NULLABLE_NESTED_UNION_TYPE
+        DiagnosticKind.NonErrorComponentInNestedUnionType -> FirErrors.NON_ERROR_COMPONENT_IN_NESTED_UNION_TYPE
+        DiagnosticKind.NonErrorComponentWrongPositionInUnionType -> FirErrors.NON_ERROR_COMPONENT_WRONG_POSITION_IN_UNION_TYPE
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
-        DiagnosticKind.Other
+        DiagnosticKind.Other,
             -> FirErrors.OTHER_ERROR
     }
 }
