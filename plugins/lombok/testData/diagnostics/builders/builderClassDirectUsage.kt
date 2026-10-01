@@ -11,7 +11,7 @@ public class TestJava  {
 
 // FILE: test.kt
 fun usage() {
-    val builder = TestJava.<!UNRESOLVED_REFERENCE!>TestJavaBuilder<!>()
+    val builder = TestJava.TestJavaBuilder()
     builder.a(1).build()
     val justBuilder: TestJava.TestJavaBuilder? = null
     justBuilder?.a(2)?.build()
