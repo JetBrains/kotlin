@@ -39,19 +39,22 @@ internal abstract class JavaKFunction(
     protected open val predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?
         get() = null
 
-    // Returns null if the signature of this function should not be enhanced.
-    protected open fun computeOverriddenFunctionsForEnhancement(): Collection<ReflectKFunction>? = emptyList()
+    protected open fun computeOverriddenFunctionsForEnhancement(): Collection<ReflectKFunction> = emptyList()
 
     protected val enhancedSignature: EnhancedSignature? by lazy(PUBLICATION) {
         val predefinedEnhancementInfo = predefinedEnhancementInfo
-
-        // Callables in Kotlin classes (even fake overrides of Java methods) are not enhanced from supertypes/nullability annotations.
-        // Only the predefined enhancement of additional built-in members applies to them (see `getAdditionalFunctions`).
         val isKotlinContainer = (container as KClassImpl<*>).kmClass != null
-        if (isKotlinContainer && predefinedEnhancementInfo == null) return@lazy null
-
-        val overridden = (if (isKotlinContainer) emptyList() else computeOverriddenFunctionsForEnhancement())
-            ?: return@lazy null
+        val overridden = when {
+            // Fake overrides are never enhanced.
+            overriddenStorage.isFakeOverride -> return@lazy null
+            isKotlinContainer -> {
+                // Callables in Kotlin classes are not enhanced from supertypes/nullability annotations.
+                // Only the predefined enhancement of additional built-in members applies to them (see `getAdditionalFunctions`).
+                if (predefinedEnhancementInfo == null) return@lazy null
+                emptyList()
+            }
+            else -> computeOverriddenFunctionsForEnhancement()
+        }
 
         val enhancedReturnType = originalReturnType?.let { originalReturnType ->
             val returnTypeAnnotations =
@@ -149,8 +152,8 @@ internal fun JavaKFunction.computeParameters(): List<KParameter> = buildList {
 
     val isEnumValuesValueOfMethod = member.isEnumValuesValueOfMethod()
     val unsubstitutedParameterKTypes =
-        if (overriddenStorage.isFakeOverride && overriddenStorage.overridden.size == 1)
-            overriddenStorage.overridden.single().parameters.filter { it.kind == KParameter.Kind.VALUE }.map { it.type }
+        if (overriddenStorage.isFakeOverride)
+            overriddenStorage.overridden.first().parameters.filter { it.kind == KParameter.Kind.VALUE }.map { it.type }
         else
             genericParameterTypes.map { type ->
                 val nullability = if (isEnumValuesValueOfMethod) TypeNullability.NOT_NULL else TypeNullability.FLEXIBLE
