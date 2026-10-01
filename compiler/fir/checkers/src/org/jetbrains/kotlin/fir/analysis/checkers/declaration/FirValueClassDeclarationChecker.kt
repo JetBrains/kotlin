@@ -76,8 +76,13 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
             return
         }
 
-        val valueModifierPrefix = if (supportsFullValueClasses) "@JvmInline value" else "Value"
         val isFullValueClass = declaration.symbol.isFullValueClass
+        val valueModifierPrefix = when {
+            !supportsFullValueClasses -> "Value"
+            isFullValueClass -> "Final value"
+            declaration.status.isInline -> "Inline"
+            else -> "'@JvmInline' value"
+        }
 
         // The modifier of a companion object or of a local class, unless it is inner or in a REPL snippet, is reported as
         // `WRONG_MODIFIER_TARGET`.
@@ -218,7 +223,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         val finalOrInlineClassPrefix = when {
             !supportsFullValueClasses -> "value"
             isFullValueClass -> "final value"
-            else -> "@JvmInline value"
+            declaration.status.isInline -> "inline"
+            else -> "'@JvmInline' value"
         }
         if (declaration.classKind == ClassKind.OBJECT) {
             // A value object has no primary constructor, and nothing is required from it.
