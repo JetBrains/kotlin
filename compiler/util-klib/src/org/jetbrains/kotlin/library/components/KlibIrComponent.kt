@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.components
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
+import org.jetbrains.kotlin.library.KlibComponentsContainer
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.components.KlibIrConstants.KLIB_IR_FOLDER_NAME
@@ -69,7 +70,7 @@ interface KlibIrComponent : KlibComponent {
  *
  * Note: If you don't want to check the nullability of the returned value, use [irOrFail].
  */
-inline val Klib.ir: KlibIrComponent?
+inline val KlibComponentsContainer.ir: KlibIrComponent?
     get() = getComponent(KlibIrComponent.Kind.Main)
 
 /**
@@ -85,7 +86,7 @@ inline val Klib.irOrFail: KlibIrComponent
  *
  * This component is optional: The [inlinableFunctionsIr] getter returns `null` if there is no IR of inlinable functions in the library.
  */
-inline val Klib.inlinableFunctionsIr: KlibIrComponent?
+inline val KlibComponentsContainer.inlinableFunctionsIr: KlibIrComponent?
     get() = getComponent(KlibIrComponent.Kind.InlinableFunctions)
 
 class KlibIrComponentLayout private constructor(root: Path, private val irFolderName: String) : KlibComponentLayout(root) {
