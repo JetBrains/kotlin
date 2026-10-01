@@ -14,10 +14,11 @@ value class Single(val a: Int)
 class Identity
 
 fun test(full: Full, single: Single, int: Int, identity: Identity) {
-    WeakReference(full)
-    WeakReference(single)
-    WeakReference(int)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>full<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>single<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>int<!>)
     WeakReference(identity)
+    // A cleaner runs when the cleaner itself is collected, not its resource, so the resource may be a value.
     createCleaner(full) {}
     createCleaner(identity) {}
     createCleaner(cleanupAction = {}, resource = full)
