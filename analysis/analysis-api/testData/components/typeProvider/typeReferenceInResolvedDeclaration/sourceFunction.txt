@@ -1,0 +1,20 @@
+Compiled: false
+
+@Anno
+ ^Anno(use)
+fun <T : Comparable<T>> @receiver:Anno String.foo(@Anno p: T, q: List<@Anno String>, f: (Int) -> Unit): Map<String, T?> = TODO()
+//       ^Comparable<T>(use)
+//                  ^T(use)
+//                      ^String(use)
+//                                ^Anno(use)
+//                                                 ^Anno(use)
+//                                                         ^T(use)
+//                                                               ^List<@Anno String>(use)
+//                                                                    ^@Anno String(use)
+//                                                                     ^Anno(use)
+//                                                                                      ^(Int) -> Unit(use)
+//                                                                                       ^Int(use)
+//                                                                                               ^Unit(use)
+//                                                                                                      ^Map<String, T?>(use)
+//                                                                                                          ^String(use)
+//                                                                                                                  ^T?(use)

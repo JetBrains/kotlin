@@ -594,6 +594,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
             model(it, "typeReference")
         }
 
+        test<AbstractTypeReferenceInResolvedDeclarationTest> {
+            model(it, "typeReferenceInResolvedDeclaration")
+        }
+
         test<AbstractDefaultTypeTest> {
             model(it, "defaultType")
         }

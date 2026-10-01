@@ -1,0 +1,21 @@
+Compiled: true
+Decompiled text loaded by type computation: false
+
+@lib.Anno
+ ^Anno(use)
+public fun <T : kotlin.Comparable<T>> @receiver:lib.Anno kotlin.String.foo(@lib.Anno p: T, q: kotlin.collections.List<@lib.Anno kotlin.String>, f: (kotlin.Int) -> kotlin.Unit): kotlin.collections.Map<kotlin.String, T?> { /* compiled code */ }
+//              ^Comparable<T>(use)
+//                                ^T(decl)
+//                                    ^String(use)
+//                                              ^Anno(use)
+//                                                                          ^Anno(use)
+//                                                                                      ^T(use)
+//                                                                                            ^List<@Anno String>(use)
+//                                                                                                                    ^@Anno String(use)
+//                                                                                                                     ^Anno(use)
+//                                                                                                                                                 ^(Int) -> Unit(use)
+//                                                                                                                                                  ^Int(use)
+//                                                                                                                                                                 ^Unit(use)
+//                                                                                                                                                                               ^Map<String, T?>(use)
+//                                                                                                                                                                                                      ^String(use)
+//                                                                                                                                                                                                                     ^T?(decl)
