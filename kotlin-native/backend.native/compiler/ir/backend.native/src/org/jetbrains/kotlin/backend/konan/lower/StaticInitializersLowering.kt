@@ -135,10 +135,14 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
     }
 
     fun processDeclarationContainter(container: IrDeclarationContainer) {
-        val threadLocalInitializers = mutableListOf<Pair<IrField?, IrExpression>>()
-        val globalInitializers = mutableListOf<Pair<IrField?, IrExpression>>()
-        val eagerThreadLocalInitializers = mutableListOf<Pair<IrField?, IrExpression>>()
-        val eagerGlobalInitializers = mutableListOf<Pair<IrField?, IrExpression>>()
+        // Each list is a pair of an optional `IrField` and an optional `IrExpression`. `null to null` is invalid, other combinations:
+        // * `field to expr`: initializing a `field` with an `expr`
+        // * `field to null`: the `field` does not have an initializer, but it belongs to the current scope (skipped for primitive fields as an optimization)
+        // * `null to expr`: calling another static initializer (e.g. `companion` calling `super.companion`)
+        val threadLocalInitializers = mutableListOf<Pair<IrField?, IrExpression?>>()
+        val globalInitializers = mutableListOf<Pair<IrField?, IrExpression?>>()
+        val eagerThreadLocalInitializers = mutableListOf<Pair<IrField?, IrExpression?>>()
+        val eagerGlobalInitializers = mutableListOf<Pair<IrField?, IrExpression?>>()
 
         val builder = context.irBuiltIns.createIrBuilder((container as IrSymbolOwner).symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
 
@@ -211,10 +215,10 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
                     continue
                 }
             }
-            val realInitializer = when {
-                initializer != null -> initializer
-                irField.type.binaryTypeIsReference() -> builder.irNull() // we need to initialize with something to register with GC
-                else -> continue
+            // Optimization: if a field is a primitive and doesn't have an initializer, we won't need to register it.
+            // This might help skipping generation of some static initializers, thus generating less work for the following stages.
+            if (initializer == null && !irField.type.binaryTypeIsReference()) {
+                continue
             }
             val isEager = context.shouldBeInitializedEagerly(irField)
             val initializers = when (isThreadLocal) {
@@ -223,12 +227,15 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
                 false -> globalInitializers
                 true -> threadLocalInitializers
             }
-            initializers.add(irField to builder.irSetField(
-                    receiver = null,
-                    field = irField,
-                    value = realInitializer,
-                    origin = if (isThreadLocal) StaticInitializersOrigins.INITIALIZE_THREAD_LOCAL_FIELD else StaticInitializersOrigins.INITIALIZE_GLOBAL_FIELD
-            ))
+            val expr = initializer?.let {
+                builder.irSetField(
+                        receiver = null,
+                        field = irField,
+                        value = it,
+                        origin = if (isThreadLocal) StaticInitializersOrigins.INITIALIZE_THREAD_LOCAL_FIELD else StaticInitializersOrigins.INITIALIZE_GLOBAL_FIELD
+                )
+            }
+            initializers.add(irField to expr)
             irField.initializer = null
         }
 
@@ -300,7 +307,7 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
             container: IrDeclarationContainer,
             name: String,
             origin: IrDeclarationOrigin,
-            initializers: List<Pair<IrField?, IrExpression>>
+            initializers: List<Pair<IrField?, IrExpression?>>
     ) = context.irFactory.buildFun {
         startOffset = SYNTHETIC_OFFSET
         endOffset = SYNTHETIC_OFFSET
@@ -315,7 +322,9 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
         returnType = context.irBuiltIns.unitType
     }.apply {
         parent = container
-        body = context.irFactory.createBlockBody(startOffset, endOffset, initializers.map { it.second })
+        // Even if the statements below is empty, we want to create the empty body; during code generation, we might want
+        // to add something to this body (e.g. by reading from initializedGlobals)
+        body = context.irFactory.createBlockBody(startOffset, endOffset, initializers.mapNotNull { it.second })
                 .setDeclarationsParent(this)
         container.declarations.add(0, this)
         ::initializedGlobals.set(initializers.mapNotNull { it.first }.filter { it.type.binaryTypeIsReference() }.takeIfNotEmpty())
