@@ -59,10 +59,6 @@ internal open class SirProtocolFromKtSymbol(
     override val protocols: List<SirProtocol> by lazyWithSessions {
         buildList {
             addAll(translatedProtocols)
-            val typedListDeclarations = typedListDeclarations
-            if (typedListDeclarations is SirTypedListDeclarations.Concrete) {
-                addAll(typedListDeclarations.typedListProtocols)
-            }
             if (!isUnavailable) add(existentialMarker)
         }
     }
@@ -98,7 +94,6 @@ internal open class SirProtocolFromKtSymbol(
                 it !is SirOperatorAuxiliaryDeclaration // FIXME: rectify where auxiliary declarations should go.
             })
             addAll(sealedTypeFunctions)
-            addIfNotNull((typedListDeclarations as? SirTypedListDeclarations.Concrete)?.elementTypeAlias)
         }
     }
 

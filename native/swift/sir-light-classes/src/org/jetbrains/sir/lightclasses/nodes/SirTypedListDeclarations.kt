@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirScopeDefiningDeclaration
 import org.jetbrains.kotlin.sir.SirStruct
 import org.jetbrains.kotlin.sir.SirTypeVariance
-import org.jetbrains.kotlin.sir.SirTypealias
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.builder.buildExtension
 import org.jetbrains.kotlin.sir.builder.buildGetter
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.sir.builder.buildProtocol
 import org.jetbrains.kotlin.sir.builder.buildStruct
 import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.builder.buildVariable
+import org.jetbrains.kotlin.sir.nonOptional
 import org.jetbrains.kotlin.sir.optional
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.sirModule
@@ -65,28 +65,52 @@ internal fun createSirTypedListDeclarations(
             if (isMutable && declarations.none { it.isMutable }) {
                 add(KotlinRuntimeSupportModule.typedMutableList)
             } else if (declarations.isEmpty()) {
+                // TODO: class doesn't conform to List protocol (generic interfaces are ignored) KT-88831
                 add(KotlinRuntimeSupportModule.typedList)
             }
             addAll(declarations.map { it.typedListProtocol })
         }
     }
+    val declarationType = SirNominalType(declaration)
+    val kotlinBaseType = SirNominalType(KotlinRuntimeModule.kotlinBase)
+    val conformsToType = SirFunctionalType(
+        parameterTypes = listOf(SirNominalType(SirSwiftModule.anyClass).optional()),
+        returnType = SirNominalType(SirSwiftModule.bool)
+    )
     if (elementType != null) {
-        val elementTypeAlias = buildTypealias {
-            name = "Element"
-            type = elementType.translateType(
-                SirTypeVariance.INVARIANT,
-                reportErrorType = { error("Failed to translate type: $it") },
-                reportUnsupportedType = { error("Failed to translate type: type is not supported") },
-                processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
-            )
-        }.apply { parent = declaration }
-        // TODO: Fix and test concrete list types KT-88831
-        // We need to add impl for rawCollection and conformsTo, fix multiple matches on size,
-        // explicitly add inherited conformances on _KotlinExistential, possibly more
-        return SirTypedListDeclarations.Concrete(
-            typedListProtocols = typedListProtocols,
-            elementTypeAlias = elementTypeAlias,
+        val translatedElementType = elementType.translateType(
+            SirTypeVariance.INVARIANT,
+            reportErrorType = { error("Failed to translate type: $it") },
+            reportUnsupportedType = { error("Failed to translate type: type is not supported") },
+            processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
         )
+        val typedListExtension = buildExtension {
+            extendedType = declarationType
+            protocols.addAll(typedListProtocols)
+            buildTypealias {
+                name = "Element"
+                type = translatedElementType
+            }.also(declarations::add)
+            buildVariable {
+                name = "__rawCollection"
+                type = kotlinBaseType
+                getter = buildGetter {
+                    body = SirFunctionBody(listOf("return self"))
+                }
+            }.apply { getter?.parent = this }.also(declarations::add)
+            buildVariable {
+                name = "__conformsTo"
+                type = conformsToType
+                getter = buildGetter {
+                    val elementFqName = translatedElementType.nonOptional().swiftName
+                    body = SirFunctionBody(listOf("return { $0 is $elementFqName }"))
+                }
+            }.apply { getter?.parent = this }.also(declarations::add)
+        }.apply {
+            declarations.forEach { it.parent = this }
+            this.parent = declaration.containingModule()
+        }
+        return SirTypedListDeclarations.Concrete(typedListExtension)
     } else {
         val parent = declaration.parent
         val typedListProtocol = buildProtocol {
@@ -94,7 +118,6 @@ internal fun createSirTypedListDeclarations(
             primaryAssociatedTypes.add("Element")
             protocols.addAll(typedListProtocols)
         }.apply { this.parent = parent }
-        val declarationType = SirNominalType(declaration)
         val typedListExtension = buildExtension {
             extendedType = SirNominalType(typedListProtocol)
             buildVariable {
@@ -115,12 +138,8 @@ internal fun createSirTypedListDeclarations(
             buildVariable {
                 isConstant = true
                 name = "__rawCollection"
-                type = SirNominalType(KotlinRuntimeModule.kotlinBase)
+                type = kotlinBaseType
             }.also(declarations::add)
-            val conformsToType = SirFunctionalType(
-                parameterTypes = listOf(SirNominalType(SirSwiftModule.anyClass).optional()),
-                returnType = SirNominalType(SirSwiftModule.bool)
-            )
             buildVariable {
                 isConstant = true
                 name = "__conformsTo"
@@ -153,17 +172,25 @@ internal fun createSirTypedListDeclarations(
 }
 
 internal sealed class SirTypedListDeclarations {
+
+    abstract fun asTriple(): Triple<SirProtocol?, SirExtension, SirStruct?>
+
     class Generic(
         val isMutable: Boolean,
         val typedListProtocol: SirProtocol,
         val typedListExtension: SirExtension,
         val typedListStruct: SirStruct,
-    ) : SirTypedListDeclarations()
+    ) : SirTypedListDeclarations() {
+        override fun asTriple(): Triple<SirProtocol?, SirExtension, SirStruct?> =
+            Triple(typedListProtocol, typedListExtension, typedListStruct)
+    }
 
     class Concrete(
-        val typedListProtocols: List<SirProtocol>,
-        val elementTypeAlias: SirTypealias,
-    ) : SirTypedListDeclarations()
+        val typedListExtension: SirExtension,
+    ) : SirTypedListDeclarations() {
+        override fun asTriple(): Triple<SirProtocol?, SirExtension, SirStruct?> =
+            Triple(null, typedListExtension, null)
+    }
 }
 
 context(_: KaSession)

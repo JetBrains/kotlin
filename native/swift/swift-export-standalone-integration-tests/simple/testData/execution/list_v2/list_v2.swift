@@ -213,5 +213,19 @@ func testMyMutableListImpl() throws {
     let original = myMutableListImplOf(elements: Int32(4), 8, 5, 16, 23, 42)
     original[1] = 64
     let expected = listOf(elements: Int32(4), 64, 5, 16, 23, 42)
-    try assertReversed(reversed: reverseMyListImpl(l: original), original: original)
+    try assertReversed(reversed: reverseMyListImpl(l: original), original: expected)
+}
+
+@Test
+func testBarList() throws {
+    let original = barListOf(elements: Bar(value: 4), Bar(value: 8), Bar(value: 5), Bar(value: 16), Bar(value: 23), Bar(value: 42))
+    try assertReversed(reversed: reverseBarList(l: original), original: original)
+}
+
+@Test
+func testMutableBarList() throws {
+    let original = mutableBarListOf(elements: Bar(value: 4), Bar(value: 8), Bar(value: 5), Bar(value: 16), Bar(value: 23), Bar(value: 42))
+    original[1] = Bar(value: 64)
+    let expected = listOf(elements: Bar(value: 4), Bar(value: 64), Bar(value: 5), Bar(value: 16), Bar(value: 23), Bar(value: 42))
+    try assertReversed(reversed: reverseMyListImpl(l: original), original: expected)
 }

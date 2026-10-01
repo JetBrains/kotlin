@@ -118,7 +118,6 @@ internal abstract class SirAbstractClassFromKtSymbol(
             addAll(intersectionOverrideDeclarations)
             addAll(syntheticDeclarations())
             addAll(sealedTypeFunctions)
-            addIfNotNull((typedListDeclarations as? SirTypedListDeclarations.Concrete)?.elementTypeAlias)
         }
     }
 
@@ -177,10 +176,6 @@ internal abstract class SirAbstractClassFromKtSymbol(
             for (translatedProtocol in translatedProtocols) {
                 add(translatedProtocol)
                 add(translatedProtocol.implementationMarker)
-            }
-            val typedListDeclarations = typedListDeclarations
-            if (typedListDeclarations is SirTypedListDeclarations.Concrete) {
-                addAll(typedListDeclarations.typedListProtocols)
             }
         }
     }
