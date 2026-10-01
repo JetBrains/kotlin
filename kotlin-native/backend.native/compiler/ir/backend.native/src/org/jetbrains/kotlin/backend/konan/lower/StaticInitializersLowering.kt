@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.takeIfNotEmpty
 
 internal object StaticInitializersOrigins {
     internal val STATIC_GLOBAL_INITIALIZER by IrDeclarationOriginImpl.Synthetic
@@ -72,6 +73,18 @@ internal fun ConfigChecks.shouldBeInitializedEagerly(irField: IrField): Boolean 
 }
 
 internal var IrClass.clinitTriggerFunction: IrSimpleFunctionSymbol? by irAttribute(copyByDefault = false)
+
+/**
+ * A list of static object fields, that become available after the initializer function runs.
+ *
+ * Only present on functions with origins from [StaticInitializersOrigins]. But maybe absent from those, if the list is empty.
+ *
+ * **NOTE**: Static primitive fields are currently absent from this list to keep the list smaller and to avoid generating
+ *           some initializers; primitive fields do not need to be specially registered before accessing them, so it's okay.
+ *
+ * The contract: [IrField] from this attribute must not be accessed in the whole program in any way before the function starts executing.
+ */
+internal var IrSimpleFunction.initializedGlobals: List<IrField>? by irAttribute(copyByDefault = false)
 
 @PhasePrerequisites(ExpressionBodyTransformer::class)
 internal class StaticInitializersLowering(val context: NativeLoweringContext) : FileLoweringPass {
@@ -122,10 +135,10 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
     }
 
     fun processDeclarationContainter(container: IrDeclarationContainer) {
-        val threadLocalInitializers = mutableListOf<IrExpression>()
-        val globalInitializers = mutableListOf<IrExpression>()
-        val eagerThreadLocalInitializers = mutableListOf<IrExpression>()
-        val eagerGlobalInitializers = mutableListOf<IrExpression>()
+        val threadLocalInitializers = mutableListOf<Pair<IrField?, IrExpression>>()
+        val globalInitializers = mutableListOf<Pair<IrField?, IrExpression>>()
+        val eagerThreadLocalInitializers = mutableListOf<Pair<IrField?, IrExpression>>()
+        val eagerGlobalInitializers = mutableListOf<Pair<IrField?, IrExpression>>()
 
         val builder = context.irBuiltIns.createIrBuilder((container as IrSymbolOwner).symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
 
@@ -170,8 +183,8 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
             }
             for (superClass in superClassesToInitialize) {
                 val trigger = superClass.getClinitTriggerFunction()
-                globalInitializers.add(builder.irCall(trigger))
-                threadLocalInitializers.add(builder.irCall(trigger))
+                globalInitializers.add(null to builder.irCall(trigger))
+                threadLocalInitializers.add(null to builder.irCall(trigger))
             }
         }
 
@@ -210,7 +223,7 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
                 false -> globalInitializers
                 true -> threadLocalInitializers
             }
-            initializers.add(builder.irSetField(
+            initializers.add(irField to builder.irSetField(
                     receiver = null,
                     field = irField,
                     value = realInitializer,
@@ -287,7 +300,7 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
             container: IrDeclarationContainer,
             name: String,
             origin: IrDeclarationOrigin,
-            initializers: List<IrExpression>
+            initializers: List<Pair<IrField?, IrExpression>>
     ) = context.irFactory.buildFun {
         startOffset = SYNTHETIC_OFFSET
         endOffset = SYNTHETIC_OFFSET
@@ -302,9 +315,10 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
         returnType = context.irBuiltIns.unitType
     }.apply {
         parent = container
-        body = context.irFactory.createBlockBody(startOffset, endOffset, initializers)
+        body = context.irFactory.createBlockBody(startOffset, endOffset, initializers.map { it.second })
                 .setDeclarationsParent(this)
         container.declarations.add(0, this)
+        ::initializedGlobals.set(initializers.mapNotNull { it.first }.filter { it.type.binaryTypeIsReference() }.takeIfNotEmpty())
     }
 
 }
