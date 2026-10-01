@@ -78,6 +78,14 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
         "Stable",
     )
 
+    // Regression test for KT-89968
+    @Test
+    fun testAbstractValueClass() = assertStability("abstract value class V", "Unstable")
+
+    // Regression test for KT-89968
+    @Test
+    fun testSealedValueClass() = assertStability("sealed value class V", "Unstable")
+
     // Regression test for KT-89961
     @Test
     fun testRecursiveProperty() = assertStability("value class V(val a: Int, val next: V?)", "Unstable")
