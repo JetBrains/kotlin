@@ -290,7 +290,9 @@ class MppPublicationTest {
                 js { browser() }
 
                 wasmJs { browser() }
-                wasmWasi { nodejs() }
+                wasmWasi {
+                    wasmtime()
+                }
             }
         }.evaluate()
 

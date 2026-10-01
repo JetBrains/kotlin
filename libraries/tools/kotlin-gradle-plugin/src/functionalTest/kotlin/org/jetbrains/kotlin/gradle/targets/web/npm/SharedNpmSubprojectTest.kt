@@ -24,7 +24,9 @@ class SharedNpmSubprojectTest {
             kotlin {
                 js { browser() }
                 wasmJs { browser() }
-                wasmWasi { nodejs() }
+                wasmWasi {
+                    wasmtime()
+                }
             }
         }
         project.evaluate()

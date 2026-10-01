@@ -352,7 +352,7 @@ class KotlinMultiplatformSourceSetConventionsTest {
                 nodejs()
             }
             wasmWasi {
-                nodejs()
+                wasmtime()
             }
         }
 
