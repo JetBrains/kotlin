@@ -58,19 +58,28 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     abstract override val compilerArguments: BtaCompilerArgs
 
     @SerialName("LOOKUP_TRACKER")
-    private var lookupTracker: CompilerLookupTracker? = null
+    internal var lookupTracker: CompilerLookupTracker? = null
 
     @SerialName("IMPORT_TRACKER")
-    private var importTracker: CompilerImportTracker? = null
+    internal var importTracker: CompilerImportTracker? = null
 
     @SerialName("COMPILER_ARGUMENTS_LOG_LEVEL")
-    private var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = CompilerArgumentsLogLevel.DEBUG
+    internal var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = CompilerArgumentsLogLevel.DEBUG
 
     @SerialName("COMPILER_MESSAGE_RENDERER")
-    private var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
+    internal var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 
     @SerialName("GENERATE_COMPILER_REF_INDEX")
-    private var generateCompilerRefIndex: Boolean = false
+    internal var generateCompilerRefIndex: Boolean = false
+
+    internal fun copyFrom(from: BaseCompilationOperationImpl<BtaCompilerArgs, CompilerArgs>) {
+        super.copyFrom(from)
+        lookupTracker = from.lookupTracker
+        importTracker = from.importTracker
+        compilerArgumentsLogLevel = from.compilerArgumentsLogLevel
+        compilerMessageRenderer = from.compilerMessageRenderer
+        generateCompilerRefIndex = from.generateCompilerRefIndex
+    }
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: BaseCompilationOperation.Option<V>): V =

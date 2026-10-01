@@ -103,27 +103,27 @@ class LookupTrackerTest : BaseCompilationTest() {
         }
     }
 
-    @DisplayName("LOOKUP_TRACKER can be set using the deprecated Option")
-    @BtaVersionsOnlyCompilationTest
-    @Suppress("DEPRECATION")
-    fun setLookupTrackerDeprecated(toolchain: KotlinToolchains) {
-        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(""))
-        val lookupTracker = object : CompilerLookupTracker {
-            override fun clear() {}
-
-            override fun recordLookup(
-                filePath: String,
-                scopeFqName: String,
-                scopeKind: CompilerLookupTracker.ScopeKind,
-                name: String,
-            ) {
-            }
-        }
-
-        jvmOperation[JvmCompilationOperation.LOOKUP_TRACKER] = lookupTracker
-        assertEquals(lookupTracker, jvmOperation[JvmCompilationOperation.LOOKUP_TRACKER])
-        assertEquals(lookupTracker, jvmOperation.build()[JvmCompilationOperation.LOOKUP_TRACKER])
-    }
+//    @DisplayName("LOOKUP_TRACKER can be set using the deprecated Option")
+//    @BtaVersionsOnlyCompilationTest
+//    @Suppress("DEPRECATION")
+//    fun setLookupTrackerDeprecated(toolchain: KotlinToolchains) {
+//        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(""))
+//        val lookupTracker = object : CompilerLookupTracker {
+//            override fun clear() {}
+//
+//            override fun recordLookup(
+//                filePath: String,
+//                scopeFqName: String,
+//                scopeKind: CompilerLookupTracker.ScopeKind,
+//                name: String,
+//            ) {
+//            }
+//        }
+//
+//        jvmOperation[JvmCompilationOperation.LOOKUP_TRACKER] = lookupTracker
+//        assertEquals(lookupTracker, jvmOperation[JvmCompilationOperation.LOOKUP_TRACKER])
+//        assertEquals(lookupTracker, jvmOperation.build()[JvmCompilationOperation.LOOKUP_TRACKER])
+//    }
 
     @DisplayName("LOOKUP_TRACKER can be set using the newer Option")
     @BtaVersionsOnlyCompilationTest

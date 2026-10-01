@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.wasm.operations.WasmLinkingOperation
@@ -20,11 +22,12 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
+@Serializable
 internal class WasmLinkingOperationImpl(
     override val klib: Path,
     override val destination: Path,
     override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(),
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, @Contextual KotlinWasmCompilerArguments>(),
     WasmLinkingOperation, WasmLinkingOperation.Builder,
     DeepCopyable<WasmLinkingOperationImpl> {
 
@@ -35,7 +38,7 @@ internal class WasmLinkingOperationImpl(
             klib,
             destination,
             compilerArguments.deepCopy(),
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted

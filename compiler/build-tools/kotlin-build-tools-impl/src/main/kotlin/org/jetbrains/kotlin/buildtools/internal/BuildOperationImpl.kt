@@ -23,16 +23,23 @@ import kotlin.concurrent.atomics.ExperimentalAtomicApi
 @Serializable
 internal abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder {
     @SerialName("METRICS_COLLECTOR")
-    private var metricsCollector: BuildMetricsCollector? = null
+    internal var metricsCollector: BuildMetricsCollector? = null
 
     @SerialName("XX_KGP_METRICS_COLLECTOR")
-    private var kgpMetricsCollector: Boolean = false
+    internal var kgpMetricsCollector: Boolean = false
 
     @SerialName("XX_KGP_METRICS_COLLECTOR_OUT")
-    private var kgpMetricsCollectorOut: ByteArray? = null
+    internal var kgpMetricsCollectorOut: ByteArray? = null
 
     @SerialName("ENABLE_CLASSLOADER_CACHE")
-    private var enableClassloaderCache: Boolean = true
+    internal var enableClassloaderCache: Boolean = true
+
+    internal fun copyFrom(from: BuildOperationImpl<R>) {
+        metricsCollector = from.metricsCollector
+        kgpMetricsCollector = from.kgpMetricsCollector
+        kgpMetricsCollectorOut = from.kgpMetricsCollectorOut
+        enableClassloaderCache = from.enableClassloaderCache
+    }
 
     @Transient
     private val executionStarted = AtomicBoolean(false)

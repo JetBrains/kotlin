@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.abi.operations
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import java.nio.file.Path
 
+@Serializable
 internal class CompareAbiTextFilesOperationImpl(
     private val appendable: Appendable,
     override val expectedDumpFile: Path,
@@ -42,7 +44,9 @@ internal class CompareAbiTextFilesOperationImpl(
     }
 
     override fun deepCopy(): CompareAbiTextFilesOperation {
-        return CompareAbiTextFilesOperationImpl(appendable, expectedDumpFile, actualDumpFile, abiTools)
+        return CompareAbiTextFilesOperationImpl(appendable, expectedDumpFile, actualDumpFile, abiTools).also {
+            it.copyFrom(this)
+        }
     }
 
     override fun build(): CompareAbiTextFilesOperation {

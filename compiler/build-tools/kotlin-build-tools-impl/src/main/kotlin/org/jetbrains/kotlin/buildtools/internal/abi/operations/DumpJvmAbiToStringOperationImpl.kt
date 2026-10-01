@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.internal.abi.operations
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -24,15 +25,15 @@ import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithS
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import java.nio.file.Path
 
+@Serializable
 internal class DumpJvmAbiToStringOperationImpl(
     private val appendable: Appendable,
     override val inputFiles: Iterable<Path>,
     private val abiTools: AbiTools,
+    @SerialName("PATTERN_FILTERS")
+    internal var patternFilters: AbiFilters? = null,
 ) : BuildOperationImpl<Unit>(), DumpJvmAbiToStringOperation, DumpJvmAbiToStringOperation.Builder,
     DeepCopyable<DumpJvmAbiToStringOperation> {
-
-    @SerialName("PATTERN_FILTERS")
-    private var patternFilters: AbiFilters? = null
 
     override val usesApplicationEnvironment: Boolean
         get() = false
@@ -41,7 +42,7 @@ internal class DumpJvmAbiToStringOperationImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ) {
         val filters = patternFilters?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
         abiTools.printJvmDump(appendable, inputFiles.map { it.toFile() }, filters)
@@ -70,7 +71,9 @@ internal class DumpJvmAbiToStringOperationImpl(
     }
 
     override fun deepCopy(): DumpJvmAbiToStringOperation {
-        return DumpJvmAbiToStringOperationImpl(appendable, inputFiles, abiTools)
+        return DumpJvmAbiToStringOperationImpl(appendable, inputFiles, abiTools, patternFilters).also {
+            it.copyFrom(this)
+        }
     }
 
     override fun build(): DumpJvmAbiToStringOperation {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -20,26 +21,23 @@ import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.nio.file.Path
 
+@Serializable
 internal class JvmClasspathSnapshottingOperationImpl(
     override val classpathEntry: Path,
+    @SerialName("GRANULARITY") internal var granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL,
+    @SerialName("PARSE_INLINED_LOCAL_CLASSES") internal var parseInlinedLocalClasses: Boolean = true,
+    @SerialName("EXPAND_TYPE_ALIASES") internal var expandTypeAliases: Boolean = false,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
     DeepCopyable<JvmClasspathSnapshottingOperation> {
-
-    @SerialName("GRANULARITY")
-    private var granularity: ClassSnapshotGranularity = ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
-
-    @SerialName("PARSE_INLINED_LOCAL_CLASSES")
-    private var parseInlinedLocalClasses: Boolean = true
-
-    @SerialName("EXPAND_TYPE_ALIASES")
-    private var expandTypeAliases: Boolean = false
 
     override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
 
     override fun build(): JvmClasspathSnapshottingOperation = deepCopy()
 
     override fun deepCopy(): JvmClasspathSnapshottingOperationImpl =
-        JvmClasspathSnapshottingOperationImpl(classpathEntry)
+        JvmClasspathSnapshottingOperationImpl(classpathEntry, granularity, parseInlinedLocalClasses, expandTypeAliases).also {
+            it.copyFrom(this)
+        }
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V =
@@ -58,7 +56,7 @@ internal class JvmClasspathSnapshottingOperationImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ): ClasspathEntrySnapshot {
         val granularity: ClassSnapshotGranularity = get(GRANULARITY)
         val parseInlinedLocalClasses: Boolean = get(PARSE_INLINED_LOCAL_CLASSES)

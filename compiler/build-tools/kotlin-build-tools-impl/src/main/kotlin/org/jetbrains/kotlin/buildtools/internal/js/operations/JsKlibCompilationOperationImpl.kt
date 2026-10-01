@@ -7,7 +7,9 @@
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
@@ -49,17 +51,16 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
+@Serializable
 internal class JsKlibCompilationOperationImpl(
     override val sources: List<Path>,
     override val destination: Path,
     override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
+    @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: JsIncrementalCompilationConfiguration? = null,
+) : BaseCompilationOperationImpl<JsArgumentsImpl, @Contextual K2JSCompilerArguments>(),
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
     DeepCopyable<JsKlibCompilationOperationImpl> {
-
-    @SerialName("INCREMENTAL_COMPILATION")
-    private var incrementalCompilation: JsIncrementalCompilationConfiguration? = null
 
     override fun historyBasedIcConfigurationBuilder(
         rootProjectDir: Path,
@@ -77,8 +78,9 @@ internal class JsKlibCompilationOperationImpl(
             sources,
             destination,
             compilerArguments.deepCopy(),
-            compilerVersion
-        )
+            compilerVersion,
+            incrementalCompilation, // TODO deepcopy? maybe not needed
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted

@@ -26,8 +26,17 @@ import kotlin.io.path.Path
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
 @Serializable
-internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder,
+internal class DaemonExecutionPolicyImpl private constructor(
+    @SerialName("JVM_ARGUMENTS") var jvmArguments: List<String>? = null,
+    @SerialName("SHUTDOWN_DELAY_MILLIS") var shutdownDelayMillis: Long? = null,
+    @SerialName("DAEMON_RUN_DIR_PATH") var daemonRunDirPath: Path = Path(DaemonOptions().runFilesPath),
+    @SerialName("LOGS_PATH") var logsPath: Path = Path(DEFAULT_LOG_FILE_DIRECTORY),
+    @SerialName("LOGS_FILE_SIZE_LIMIT") var logsFileSizeLimit: Long? = DEFAULT_LOG_FILE_SIZE_LIMIT,
+    @SerialName("LOGS_FILE_COUNT_LIMIT") var logsFileCountLimit: Int? = DEFAULT_LOG_FILE_COUNT_LIMIT,
+) : ExecutionPolicy.WithDaemon, ExecutionPolicy.WithDaemon.Builder,
     DeepCopyable<DaemonExecutionPolicyImpl> {
+
+    internal constructor() : this(null)
 
     @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
@@ -48,35 +57,17 @@ internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon, Execution
     operator fun <V> get(key: Option<V>): V = this::class.findPropertyWithSerialName(key.id).getter.call(this) as V
 
     override fun deepCopy(): DaemonExecutionPolicyImpl {
-        return DaemonExecutionPolicyImpl().also {
-            it.jvmArguments = jvmArguments
-            it.shutdownDelayMillis = shutdownDelayMillis
-            it.daemonRunDirPath = daemonRunDirPath
-            it.logsPath = logsPath
-            it.logsFileSizeLimit = logsFileSizeLimit
-            it.logsFileCountLimit = logsFileCountLimit
-        }
+        return DaemonExecutionPolicyImpl(
+            jvmArguments,
+            shutdownDelayMillis,
+            daemonRunDirPath,
+            logsPath,
+            logsFileSizeLimit,
+            logsFileCountLimit
+        )
     }
 
     class Option<V>(id: String) : BaseOption<V>(id)
-
-    @SerialName("JVM_ARGUMENTS")
-    var jvmArguments: List<String>? = null
-
-    @SerialName("SHUTDOWN_DELAY_MILLIS")
-    var shutdownDelayMillis: Long? = null
-
-    @SerialName("DAEMON_RUN_DIR_PATH")
-    var daemonRunDirPath: Path = Path(DaemonOptions().runFilesPath)
-
-    @SerialName("LOGS_PATH")
-    var logsPath: Path = Path(DEFAULT_LOG_FILE_DIRECTORY)
-
-    @SerialName("LOGS_FILE_SIZE_LIMIT")
-    var logsFileSizeLimit: Long? = DEFAULT_LOG_FILE_SIZE_LIMIT
-
-    @SerialName("LOGS_FILE_COUNT_LIMIT")
-    var logsFileCountLimit: Int? = DEFAULT_LOG_FILE_COUNT_LIMIT
 
     companion object {
         /**

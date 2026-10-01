@@ -27,7 +27,7 @@ internal class AbiFiltersImpl private constructor(val options: Options) : AbiFil
         options[key] = value
     }
 
-    override fun deepCopy(): AbiFilters {
+    override fun deepCopy(): AbiFiltersImpl {
         return AbiFiltersImpl(options.deepCopy())
     }
 
