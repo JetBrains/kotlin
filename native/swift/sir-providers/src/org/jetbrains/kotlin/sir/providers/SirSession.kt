@@ -198,7 +198,7 @@ public sealed interface SirTranslationResult {
     public data class RegularClass(
         public override val declaration: SirClass,
         public val sealedType: SirScopeDefiningDeclaration?,
-        public val typedListDeclarations: Triple<SirProtocol, SirExtension, SirStruct>?,
+        public val typedListDeclarations: Triple<SirProtocol?, SirExtension, SirStruct?>?,
     ) : TypeDeclaration {
         override val allDeclarations: List<SirDeclaration> = listOfNotNull(
             declaration,
@@ -272,7 +272,7 @@ public sealed interface SirTranslationResult {
         public val auxExtension: SirExtension,
         public val samConverter: SirDeclaration?,
         public val sealedType: SirScopeDefiningDeclaration?,
-        public val typedListDeclarations: Triple<SirProtocol, SirExtension, SirStruct>?,
+        public val typedListDeclarations: Triple<SirProtocol?, SirExtension, SirStruct?>?,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
         // `declaration` MUST stay first: callers use `allDeclarations.firstIsInstanceOrNull<SirProtocol>()`

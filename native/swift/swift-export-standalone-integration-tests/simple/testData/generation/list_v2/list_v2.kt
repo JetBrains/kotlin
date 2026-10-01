@@ -82,3 +82,7 @@ fun testMyListImplInt(l: MyListImpl<Int>) = l
 class MyMutableListImpl<T>(impl: MutableList<T>) : MyListImpl<T>(impl), MutableList<T> by impl
 
 fun testMyMutableListImplInt(l: MyMutableListImpl<Int>) = l
+
+class Foo(val value: Int)
+
+class FooList(impl: List<Foo>): List<Foo> by impl

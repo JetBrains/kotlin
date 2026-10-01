@@ -303,6 +303,7 @@ public extension List {
     }
 }
 
+// TODO: Also conform to RangeReplaceableCollection KT-88831
 public protocol MutableList<Element> : List, Swift.MutableCollection {
     func _set(index: Int32, element: Element) -> Element?
 }
