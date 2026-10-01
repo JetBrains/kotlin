@@ -13,6 +13,8 @@ value class VarProperty(<!VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER!
 @JvmInline
 value class UnitProperty(val u: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>Unit<!>)
 
+<!INLINE_CLASS_DEPRECATED!>inline<!> class DeprecatedInline<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>(val x: Int, val y: Int)<!>
+
 class Outer {
     inner <!VALUE_CLASS_NOT_TOP_LEVEL!>value<!> class Inner(val x: Int)
 }
