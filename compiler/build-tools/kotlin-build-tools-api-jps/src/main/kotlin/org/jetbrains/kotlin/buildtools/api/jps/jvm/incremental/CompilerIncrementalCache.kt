@@ -26,30 +26,6 @@ public interface CompilerIncrementalCache {
     public fun getObsoletePackageParts(): Collection<String>
 
     /**
-     * Classes assembled from several source files by a previous compilation whose declarations must no longer be
-     * visible.
-     *
-     * @return internal names of the classes to disregard
-     */
-    public fun getObsoleteMultifileClasses(): Collection<String>
-
-    /**
-     * The parts a class assembled from several source files was built from, for the parts that are still current.
-     *
-     * @param facadeInternalName internal name of the assembled class
-     * @return internal names of its current parts, or `null` if nothing was recorded for [facadeInternalName]
-     */
-    public fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>?
-
-    /**
-     * The declarations recorded for a class file that is not being recompiled.
-     *
-     * @param partInternalName internal name of the class
-     * @return what was recorded, or `null` if nothing was recorded for [partInternalName]
-     */
-    public fun getPackagePartData(partInternalName: String): CompilerPackagePartData?
-
-    /**
      * What a previous compilation recorded about the module as a whole.
      *
      * @return the recorded contents, or `null` if nothing was recorded
@@ -64,22 +40,4 @@ public interface CompilerIncrementalCache {
      *   or an empty map if nothing was recorded for [fragmentName]
      */
     public fun getMetadata(fragmentName: String): Map<String, ByteArray>
-
-    /**
-     * Where a class of this module belongs in its output.
-     *
-     * The path is derived from [internalClassName], so it is returned whether or not a previous compilation
-     * actually wrote the file.
-     *
-     * @param internalClassName internal name of the class
-     * @return the path the class file has in this module's output
-     */
-    public fun getClassFilePath(internalClassName: String): String
-
-    /**
-     * Called when the compiler is finished reading from this cache.
-     *
-     * A build system that keeps its storage open across compilations may leave this empty and close it itself.
-     */
-    public fun close()
 }

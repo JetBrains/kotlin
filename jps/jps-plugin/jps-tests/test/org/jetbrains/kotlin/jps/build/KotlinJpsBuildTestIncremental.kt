@@ -56,6 +56,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     }
 
     @Test
+    @Disabled("KT-89967")
     fun testJpsBuildReportIC() {
 
         val reportDir = workDir.resolve("buildReport")

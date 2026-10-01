@@ -80,6 +80,25 @@ dependencies {
     testImplementation(libs.kotlinx.serialization.json)
 }
 
+val btaImplSnapshot = configurations.dependencyScope("btaImplSnapshot")
+val btaImplSnapshotResolvable = configurations.resolvable("btaImplSnapshotResolvable") {
+    extendsFrom(btaImplSnapshot.get())
+}
+
+dependencies {
+    btaImplSnapshot(project(":compiler:build-tools:kotlin-build-tools-impl"))
+    btaImplSnapshot(project(":compiler:build-tools:kotlin-build-tools-cri-impl"))
+    // `compileOnly` in the implementation's build script, but needed at run time
+    btaImplSnapshot(project(":kotlin-reflect"))
+    btaImplSnapshot(project(":kotlin-daemon-client"))
+}
+
+val btaImplHome = layout.buildDirectory.dir("btaImplHome")
+val prepareBtaImplHome = tasks.register<Sync>("prepareBtaImplHome") {
+    from(btaImplSnapshotResolvable)
+    into(btaImplHome)
+}
+
 sourceSets {
     "main" {
         projectDefault()
@@ -109,6 +128,14 @@ jvmToolchains {
     }
 }
 
+kotlin {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+        optIn.add("org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument")
+        optIn.add("org.jetbrains.kotlin.buildtools.api.jps.InternalBuildToolsApi")
+    }
+}
+
 projectTests {
     testTask(
         javaLauncher = JdkMajorVersion.JDK_21_0,
@@ -129,6 +156,11 @@ projectTests {
         systemProperty("jvm-inc-builder.test.track.mock.annotations", true)
         // for debugging tests with in-process compiler
         systemProperty("kotlin.jps.classPrefixesToLoadByParent", "kotlin.")
+        inputs.files(prepareBtaImplHome).withPropertyName("btaImplHome").withNormalizer(ClasspathNormalizer::class)
+        systemProperty("kotlin.jps.build.tools.impl.home", btaImplHome.get().asFile.absolutePath)
+        providers.gradleProperty("kotlin.jps.build.tools.impl.home").orNull?.let {
+            systemProperty("kotlin.jps.build.tools.impl.home", it)
+        }
         jvmArgs(
             // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
             "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",

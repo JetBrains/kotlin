@@ -16,6 +16,8 @@ import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.storage.BuildDataCorruptedException
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
+import org.jetbrains.jps.incremental.messages.BuildMessage
+import org.jetbrains.jps.incremental.messages.CompilerMessage
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
@@ -30,6 +32,11 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.compilerRunner.*
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaBuildSession
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader.useBuildToolsApi
+import org.jetbrains.kotlin.compilerRunner.btapi.jpsBtaBuildSessionKey
+import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.config.Services
@@ -106,6 +113,23 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val reportService = JpsStatisticsReportService.create()
         context.putUserData(statisticsReportServiceKey, reportService)
         reportService.buildStarted(context)
+        if (useBuildToolsApi) {
+            context.putUserData(jpsBtaBuildSessionKey, JpsBtaBuildSession())
+            if (LOG.isDebugEnabled) {
+                val implementationJars = JpsBtaToolchainLoader.resolveClasspath().orEmpty()
+                LOG.debug(
+                    "Build Tools API implementation home ${JpsBtaToolchainLoader.implHomeProperty} contains " +
+                            "${implementationJars.size} jars: ${implementationJars.joinToString { it.fileName.toString() }}"
+                )
+            }
+            context.processMessage(
+                CompilerMessage(
+                    CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
+                    BuildMessage.Kind.JPS_INFO,
+                    "Compiling through the Build Tools API"
+                )
+            )
+        }
     }
 
     private fun logSettings(context: CompileContext) {
@@ -165,6 +189,10 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun buildFinished(context: CompileContext) {
         ensureKotlinContextDisposed(context)
+        context.getUserData(jpsBtaBuildSessionKey)?.let {
+            context.putUserData(jpsBtaBuildSessionKey, null)
+            it.close()
+        }
         val reportService = JpsStatisticsReportService.getFromContext(context)
         reportService.buildFinish(context)
     }
@@ -617,7 +645,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             classesToLoadByParent,
             messageCollector,
             OutputItemsCollectorImpl(),
-            ProgressReporterImpl(context, chunk)
+            ProgressReporterImpl(context, chunk),
+            context.getUserData(jpsBtaBuildSessionKey),
         )
     }
 

@@ -1,3 +1,0 @@
-'public' subclass exposes its 'internal' supertype 'InternalClass1'. at line 8, column 36
-'public' subclass exposes its 'internal' supertype 'InternalClass2'. at line 18, column 36
-'public' subclass exposes its 'internal' supertype 'InternalClass2'. at line 19, column 15

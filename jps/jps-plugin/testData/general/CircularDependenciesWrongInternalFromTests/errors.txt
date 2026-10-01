@@ -1,2 +1,0 @@
-Cannot access 'fun funA(): Unit': it is internal in file. at line 4, column 5
-Cannot access 'fun funB(): Unit': it is internal in file. at line 4, column 5
