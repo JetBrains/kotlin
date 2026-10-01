@@ -11,7 +11,8 @@ jvmToolchains {
 }
 
 dependencies {
-    api(project(":kotlin-script-runtime"))
+    compileOnly(project(":kotlin-script-runtime")) // only for the deprecated jvm/compat/diagnosticsUtil.kt
+    runtimeOnly(project(":kotlin-script-runtime")) // legacy templates support, to be dropped with the artifact deprecation
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
 
