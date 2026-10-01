@@ -416,7 +416,8 @@ class DifferenceCalculatorForPackageFacade(
         }
 
         fun PackagePartProtoData.getVisibleTypeAliasFqNames(): List<FqName> {
-            return proto.typeAliasList.filterNot { it.isPrivate }.map { nameResolver.getClassId(it.name).asSingleFqName() }
+            return proto.typeAliasList.filterNot { it.isPrivate }
+                .map { packageFqName.child(Name.identifier(nameResolver.getString(it.name))) }
         }
 
         fun PackagePartProtoData.getVisibleTypeAliasExpansions(): List<Pair<ClassId, ClassId>> {
