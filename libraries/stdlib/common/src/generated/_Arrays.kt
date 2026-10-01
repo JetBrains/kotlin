@@ -1125,6 +1125,8 @@ public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun <T> Array<out T>.first(): T {
     if (isEmpty())
@@ -1136,6 +1138,8 @@ public fun <T> Array<out T>.first(): T {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun ByteArray.first(): Byte {
     if (isEmpty())
@@ -1147,6 +1151,8 @@ public fun ByteArray.first(): Byte {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun ShortArray.first(): Short {
     if (isEmpty())
@@ -1158,6 +1164,8 @@ public fun ShortArray.first(): Short {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun IntArray.first(): Int {
     if (isEmpty())
@@ -1169,6 +1177,8 @@ public fun IntArray.first(): Int {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun LongArray.first(): Long {
     if (isEmpty())
@@ -1180,6 +1190,8 @@ public fun LongArray.first(): Long {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun FloatArray.first(): Float {
     if (isEmpty())
@@ -1191,6 +1203,8 @@ public fun FloatArray.first(): Float {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun DoubleArray.first(): Double {
     if (isEmpty())
@@ -1202,6 +1216,8 @@ public fun DoubleArray.first(): Double {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun BooleanArray.first(): Boolean {
     if (isEmpty())
@@ -1213,6 +1229,8 @@ public fun BooleanArray.first(): Boolean {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public fun CharArray.first(): Char {
     if (isEmpty())
@@ -1223,6 +1241,8 @@ public fun CharArray.first(): Char {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun <T> Array<out T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
@@ -1232,6 +1252,8 @@ public inline fun <T> Array<out T>.first(predicate: (T) -> Boolean): T {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte {
     for (element in this) if (predicate(element)) return element
@@ -1241,6 +1263,8 @@ public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short {
     for (element in this) if (predicate(element)) return element
@@ -1250,6 +1274,8 @@ public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun IntArray.first(predicate: (Int) -> Boolean): Int {
     for (element in this) if (predicate(element)) return element
@@ -1259,6 +1285,8 @@ public inline fun IntArray.first(predicate: (Int) -> Boolean): Int {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun LongArray.first(predicate: (Long) -> Boolean): Long {
     for (element in this) if (predicate(element)) return element
@@ -1268,6 +1296,8 @@ public inline fun LongArray.first(predicate: (Long) -> Boolean): Long {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float {
     for (element in this) if (predicate(element)) return element
@@ -1277,6 +1307,8 @@ public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double {
     for (element in this) if (predicate(element)) return element
@@ -1286,6 +1318,8 @@ public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return element
@@ -1295,6 +1329,8 @@ public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean {
 /**
  * Returns the first element matching the given [predicate].
  * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 public inline fun CharArray.first(predicate: (Char) -> Boolean): Char {
     for (element in this) if (predicate(element)) return element

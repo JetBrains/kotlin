@@ -21,6 +21,8 @@ import kotlin.random.*
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the progression is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.7")
 public fun UIntProgression.first(): UInt {
@@ -33,6 +35,8 @@ public fun UIntProgression.first(): UInt {
  * Returns the first element.
  * 
  * @throws NoSuchElementException if the progression is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.first
  */
 @SinceKotlin("1.7")
 public fun ULongProgression.first(): ULong {

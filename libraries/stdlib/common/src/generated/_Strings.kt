@@ -71,6 +71,8 @@ public inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char? {
  * Returns the first character.
  * 
  * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.text.Strings.first
  */
 public fun CharSequence.first(): Char {
     if (isEmpty())
@@ -81,6 +83,8 @@ public fun CharSequence.first(): Char {
 /**
  * Returns the first character matching the given [predicate].
  * @throws [NoSuchElementException] if no such character is found.
+ * 
+ * @sample samples.text.Strings.first
  */
 public inline fun CharSequence.first(predicate: (Char) -> Boolean): Char {
     for (element in this) if (predicate(element)) return element
