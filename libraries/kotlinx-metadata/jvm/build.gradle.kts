@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "Kotlin JVM metadata manipulation library"
 group = "org.jetbrains.kotlin"
@@ -46,6 +47,10 @@ kotlin {
     explicitApi()
     compilerOptions {
         freeCompilerArgs.add("-Xallow-kotlin-package")
+    }
+
+    tasks.named<KotlinCompile>("compileTestKotlin").configure {
+        compilerOptions.freeCompilerArgs.addAll("-Xcompanion-blocks", "-Xcompanion-blocks-and-extensions")
     }
 }
 
