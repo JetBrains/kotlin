@@ -116,13 +116,17 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         val supportsFullValueClasses: Boolean,
     ) {
         val valueModifierPrefix: String
-            get() = if (supportsFullValueClasses) "@JvmInline value" else "Value"
+            get() = when {
+                !supportsFullValueClasses -> "Value"
+                isFullValueClass -> "Final value"
+                else -> "Inline value"
+            }
 
         val finalOrInlineClassPrefix: String
             get() = when {
                 !supportsFullValueClasses -> "value"
                 isFullValueClass -> "final value"
-                else -> "@JvmInline value"
+                else -> "inline value"
             }
     }
 
