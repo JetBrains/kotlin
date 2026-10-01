@@ -50,7 +50,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()

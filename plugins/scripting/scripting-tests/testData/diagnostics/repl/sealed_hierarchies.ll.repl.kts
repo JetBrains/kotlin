@@ -26,11 +26,3 @@ val res2 = <!UNRESOLVED_REFERENCE!>Obj2<!>.y
 
 object IObj3 : <!UNRESOLVED_REFERENCE!>BaseObjIface<!> { val x = 3 }
 object Obj3 : <!UNRESOLVED_REFERENCE!>BaseObjClass<!>(13)
-
-// SNIPPET
-
-val resi3 = <!UNRESOLVED_REFERENCE!>IObj3<!>.x
-val res3 = <!UNRESOLVED_REFERENCE!>Obj3<!>.y
-
-// EXPECTED: resi3 == 3
-// EXPECTED: res3 == 13

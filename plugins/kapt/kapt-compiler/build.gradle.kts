@@ -91,7 +91,6 @@ projectTests {
 
     testData(isolated, "testData")
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()

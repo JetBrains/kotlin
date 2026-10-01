@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.cli.common.repl
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
@@ -21,24 +23,34 @@ import java.io.File
 import java.io.Serializable
 import java.util.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.jvm.internal.TypeIntrinsics
-import kotlin.reflect.KClass
 
+/**
+ * Deprecation message for the remnants of the removed K1 REPL implementation: these types are kept only to preserve
+ * the binary compatibility of the daemon protocol ([org.jetbrains.kotlin.daemon.common.CompileService]) and will be deleted together with it.
+ */
+const val K1_REPL_DEPRECATION_MESSAGE =
+    "The K1 REPL is removed, this API is kept only for the binary compatibility of the compiler daemon protocol and will be deleted"
+
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 const val REPL_CODE_LINE_FIRST_NO = 0
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 const val REPL_CODE_LINE_FIRST_GEN = 1
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 data class ReplCodeLine(val no: Int, val generation: Int, val code: String) : Serializable {
     companion object {
         private val serialVersionUID: Long = 8228357578L
     }
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 data class CompiledReplCodeLine(val className: String, val source: ReplCodeLine) : Serializable {
     companion object {
         private val serialVersionUID: Long = 8228307678L
     }
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 data class CompiledClassData(val path: String, val bytes: ByteArray) : Serializable {
     override fun equals(other: Any?): Boolean = (other as? CompiledClassData)?.let { path == it.path && Arrays.equals(bytes, it.bytes) } ?: false
     override fun hashCode(): Int = path.hashCode() + Arrays.hashCode(bytes)
@@ -48,16 +60,19 @@ data class CompiledClassData(val path: String, val bytes: ByteArray) : Serializa
     }
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface CreateReplStageStateAction {
     fun createState(lock: ReentrantReadWriteLock = ReentrantReadWriteLock()): IReplStageState<*>
 }
 
 // --- check
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface ReplCheckAction {
     fun check(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCheckResult
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 sealed class ReplCheckResult : Serializable {
     class Ok : ReplCheckResult() {
         companion object { private val serialVersionUID: Long = 1L }
@@ -79,10 +94,12 @@ sealed class ReplCheckResult : Serializable {
 
 // --- compile
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface ReplCompileAction {
     fun compile(state: IReplStageState<*>, codeLine: ReplCodeLine): ReplCompileResult
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 sealed class ReplCompileResult : Serializable {
     class CompiledClasses(val lineId: LineId,
                           val previousLines: List<ILineId>,
@@ -110,107 +127,8 @@ sealed class ReplCompileResult : Serializable {
     }
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface ReplCompilerWithoutCheck : ReplCompileAction, CreateReplStageStateAction
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 interface ReplCompiler : ReplCompilerWithoutCheck, ReplCheckAction
-
-// --- eval
-
-data class EvalClassWithInstanceAndLoader(val klass: KClass<*>, val instance: Any?, val classLoader: ClassLoader, val invokeWrapper: InvokeWrapper?)
-
-interface ReplEvalAction {
-    fun eval(state: IReplStageState<*>,
-             compileResult: ReplCompileResult.CompiledClasses,
-             scriptArgs: ScriptArgsWithTypes? = null,
-             invokeWrapper: InvokeWrapper? = null): ReplEvalResult
-}
-
-sealed class ReplEvalResult : Serializable {
-    class ValueResult(val name: String, val value: Any?, val type: String?, val snippetInstance: Any? = null) : ReplEvalResult() {
-        override fun toString(): String {
-            val v = if (value is Function<*>) "<function${TypeIntrinsics.getFunctionArity(value)}>" else value
-            return "$name: $type = $v"
-        }
-
-        companion object { private val serialVersionUID: Long = 1L }
-    }
-
-    class UnitResult : ReplEvalResult() {
-        companion object { private val serialVersionUID: Long = 1L }
-    }
-
-    class Incomplete(val message: String) : ReplEvalResult() {
-        companion object { private val serialVersionUID: Long = 1L }
-    }
-
-    class HistoryMismatch(val lineNo: Int) : ReplEvalResult() {
-        companion object { private val serialVersionUID: Long = 1L }
-    }
-
-    sealed class Error(val message: String) : ReplEvalResult() {
-        class Runtime(message: String, val cause: Throwable? = null) : Error(message) {
-            companion object { private val serialVersionUID: Long = 1L }
-        }
-
-        class CompileTime(message: String, val location: CompilerMessageLocation? = null) : Error(message) {
-            companion object { private val serialVersionUID: Long = 1L }
-        }
-
-        override fun toString(): String = "${this::class.simpleName}Error(message = \"$message\""
-
-        companion object { private val serialVersionUID: Long = 1L }
-    }
-
-    companion object {
-        private val serialVersionUID: Long = 8228307678L
-    }
-}
-
-interface ReplEvaluator : ReplEvalAction, CreateReplStageStateAction
-
-// --- compileAdnEval
-
-interface ReplAtomicEvalAction {
-    fun compileAndEval(state: IReplStageState<*>,
-                       codeLine: ReplCodeLine,
-                       scriptArgs: ScriptArgsWithTypes? = null,
-                       invokeWrapper: InvokeWrapper? = null): ReplEvalResult
-}
-
-interface ReplAtomicEvaluator : ReplAtomicEvalAction
-
-interface ReplDelayedEvalAction {
-    fun compileToEvaluable(state: IReplStageState<*>,
-                           codeLine: ReplCodeLine,
-                           defaultScriptArgs: ScriptArgsWithTypes? = null): Pair<ReplCompileResult, Evaluable?>
-}
-
-// other
-
-interface Evaluable {
-    val compiledCode: ReplCompileResult.CompiledClasses
-    fun eval(scriptArgs: ScriptArgsWithTypes? = null, invokeWrapper: InvokeWrapper? = null): ReplEvalResult
-}
-
-interface ReplFullEvaluator : ReplEvaluator, ReplAtomicEvaluator, ReplDelayedEvalAction
-
-/**
- * Keep args and arg types together, so as a whole they are present or absent
- */
-class ScriptArgsWithTypes(val scriptArgs: Array<out Any?>, val scriptArgsTypes: Array<out KClass<out Any>>) : Serializable {
-    init { assert(scriptArgs.size == scriptArgsTypes.size) }
-    companion object {
-        private val serialVersionUID: Long = 8529357500L
-    }
-}
-
-enum class ReplRepeatingMode {
-    NONE,
-    REPEAT_ONLY_MOST_RECENT,
-    REPEAT_ANY_PREVIOUS
-}
-
-
-interface InvokeWrapper {
-    operator fun <T> invoke(body: () -> T): T // e.g. for capturing io
-}

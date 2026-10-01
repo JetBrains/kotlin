@@ -49,7 +49,6 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.fir.TestGeneratorForLegacyFirTestsKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withMockJdkRuntime()
     withMockJdkAnnotationsJar()
     withMockJDKModifiedRuntime()

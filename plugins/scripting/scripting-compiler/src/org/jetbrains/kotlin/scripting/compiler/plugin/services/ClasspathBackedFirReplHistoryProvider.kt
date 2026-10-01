@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.impl.replMemberOverloadSig
  *    compiled in an earlier, compile call. Their `FirReplSnippetSymbol` views are reconstructed from
  *    their [ClassId]s, which are reachable via the compile's classpath. Declarations, visibilities, and
  *    imports come from each class's embedded `.kotlin_metadata` extension.
- *  * **Live, same-batch siblings** ([putSnippet]): snippets compiled in this very call.
+ *  * **Live, same-batch siblings** ([putSnippet], [putImportedSnippet]): snippets compiled in this very call.
  */
 internal class ClasspathBackedFirReplHistoryProvider(
     private val configuredPriorClassIds: List<ClassId>,
@@ -52,6 +52,9 @@ internal class ClasspathBackedFirReplHistoryProvider(
     private var classpathSnippets: List<FirReplSnippetSymbol>? = null
 
     private val liveBatchSnippets = mutableListOf<FirReplSnippetSymbol>()
+
+    /** The subset of [liveBatchSnippets] registered via [putImportedSnippet]: they do not consume the snippet numbers. */
+    private val liveImportedSnippets = HashSet<FirReplSnippetSymbol>()
 
     private val symbolToEmbeddedMetadata: MutableMap<FirReplSnippetSymbol, SnippetArtifactMetadata?> = HashMap()
 
@@ -64,7 +67,19 @@ internal class ClasspathBackedFirReplHistoryProvider(
     }
 
     override fun putSnippet(symbol: FirReplSnippetSymbol) {
-        liveBatchSnippets += symbol
+        if (symbol !in liveBatchSnippets) liveBatchSnippets += symbol
+    }
+
+    override fun putImportedSnippet(symbol: FirReplSnippetSymbol) {
+        if (symbol !in liveBatchSnippets) {
+            liveBatchSnippets += symbol
+            liveImportedSnippets += symbol
+        }
+    }
+
+    override fun removeSnippets(symbols: Collection<FirReplSnippetSymbol>) {
+        liveBatchSnippets.removeAll(symbols)
+        liveImportedSnippets.removeAll(symbols)
     }
 
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean {
@@ -74,7 +89,7 @@ internal class ClasspathBackedFirReplHistoryProvider(
     }
 
     override fun getSnippetCount(): Int =
-        (classpathSnippets?.size ?: configuredPriorClassIds.size) + liveBatchSnippets.size
+        (classpathSnippets?.size ?: configuredPriorClassIds.size) + liveBatchSnippets.size - liveImportedSnippets.size
 
     @OptIn(SymbolInternals::class)
     fun predecessorClassIdOf(symbol: FirReplSnippetSymbol): ClassId? {

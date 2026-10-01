@@ -120,16 +120,6 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                     add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
                     add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.stdlib")
                 }
-                getLibraryFromHome(
-                    kotlinPaths,
-                    KotlinPaths::scriptRuntimePath,
-                    PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-                    configuration,
-                    "'-no-stdlib'",
-                )?.let { file ->
-                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
-                    add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.script.runtime")
-                }
             }
             if (!arguments.noReflect && !arguments.noStdlib) {
                 getLibraryFromHome(

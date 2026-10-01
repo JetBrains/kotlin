@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirCliSession
-import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -45,12 +44,12 @@ import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.registerLibrarySess
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingCompilerExtensionRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.fir.FirScriptCompilationComponent
 import java.io.File
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 
@@ -62,10 +61,11 @@ internal fun createScriptingAdditionalLibrariesSession(
     sharedLibrarySession: FirSession,
     extensionRegistrars: List<FirExtensionRegistrar>,
     compilerConfiguration: CompilerConfiguration,
-    getKotlinClassFinder: () -> KotlinClassFinder,
-    getJavaFacade: (FirSession) -> FirJavaFacade,
 ) : FirSession = FirCliSession(FirSession.Kind.Library).apply session@{
     libModuleData.bindSession(this@session)
+    val libraryClasspath = moduleDataProvider.getModuleDataPaths(libModuleData)
+        ?.let { paths -> JvmClasspath.Roots(paths.map(JvmClasspathRootId::of)) }
+        ?: sessionFactoryContext.librariesClasspath
 
     registerCliCompilerAndCommonComponents(compilerConfiguration.languageVersionSettings, false)
     registerLibrarySessionComponents(sessionFactoryContext)
@@ -87,8 +87,9 @@ internal fun createScriptingAdditionalLibrariesSession(
             moduleDataProvider,
             kotlinScopeProvider,
             sessionFactoryContext.packagePartProviderForLibraries,
-            getKotlinClassFinder(),
-            getJavaFacade(this@session),
+            sessionFactoryContext.projectEnvironment.getKotlinClassFinder(libraryClasspath),
+            sessionFactoryContext.javaInterop
+                .createBinaryJavaFacade(this@session, libModuleData, sessionFactoryContext.librariesClasspath),
         )
     )
     register(
@@ -177,6 +178,26 @@ internal object NoJavaModulesResolver : JavaModuleResolver {
     override fun getAnnotationsForModuleOwnerOfClass(classId: ClassId): List<JavaAnnotation>? = null
 }
 
+@OptIn(SessionConfiguration::class)
+internal fun createScriptSourceSession(
+    moduleData: FirModuleData,
+    extensionRegistrars: List<FirExtensionRegistrar>,
+    configuration: CompilerConfiguration,
+    context: FirJvmSessionFactory.Context,
+    hostConfiguration: ScriptingHostConfiguration,
+): FirSession =
+    FirJvmSessionFactory.createSourceSession(
+        moduleData,
+        createIncrementalCompilationSymbolProviders = { null },
+        extensionRegistrars,
+        configuration,
+        context = context,
+        kmpModuleKind = KmpModuleKind.SingleModule,
+        init = {},
+    ).apply {
+        register(FirScriptCompilationComponent::class, FirScriptCompilationComponent(hostConfiguration))
+    }
+
 internal fun configureLibrarySessionIfNeeded(
     state: K2ScriptingCompilerEnvironment,
     compilerConfiguration: CompilerConfiguration,
@@ -188,25 +209,14 @@ internal fun configureLibrarySessionIfNeeded(
     compilerConfiguration.addJvmClasspathRoots(classpath)
     state.compilerContext.environment.updateClasspath(classpath.map(::JvmClasspathRoot))
     val [libModuleData, _] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
-    if (libModuleData != null) {
-        val projectEnvironment = state.sessionFactoryContext.projectEnvironment
-        val libraryClasspath = state.moduleDataProvider.getModuleDataPaths(libModuleData)
-            ?.let { paths -> JvmClasspath.Roots(paths.map(JvmClasspathRootId::of)) }
-            ?: state.sessionFactoryContext.librariesClasspath
-
-        return createScriptingAdditionalLibrariesSession(
-            libModuleData,
+    return libModuleData?.let {
+        createScriptingAdditionalLibrariesSession(
+            it,
             state.sessionFactoryContext,
             state.moduleDataProvider,
             state.sharedLibrarySession,
             state.extensionRegistrars,
             compilerConfiguration,
-            getKotlinClassFinder = { projectEnvironment.getKotlinClassFinder(libraryClasspath) },
-            getJavaFacade = {
-                state.sessionFactoryContext.javaInterop
-                    .createBinaryJavaFacade(it, libModuleData, state.sessionFactoryContext.librariesClasspath)
-            }
         )
     }
-    return null
 }

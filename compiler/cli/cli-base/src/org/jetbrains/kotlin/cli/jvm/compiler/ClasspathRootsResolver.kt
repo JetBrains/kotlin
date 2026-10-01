@@ -274,7 +274,13 @@ class ClasspathRootsResolver(
         }
 
         val allDependencies = javaModuleGraph.getAllDependencies(rootModules)
-        if (allDependencies.any { moduleName -> javaModuleFinder.findModule(moduleName) is JavaModule.Automatic }) {
+        // Compatibility, see KT-66622: the implicitly added stdlib used to come together with the automatic module
+        // `kotlin.script.runtime`, which (as any automatic module) made all observable automatic modules part of the graph.
+        // The script runtime is not added implicitly anymore, so this behavior is emulated for the implicitly added stdlib.
+        val implicitAutomaticModulesCompatibility = KOTLIN_STDLIB_MODULE_NAME in additionalModules
+        if (implicitAutomaticModulesCompatibility ||
+            allDependencies.any { moduleName -> javaModuleFinder.findModule(moduleName) is JavaModule.Automatic }
+        ) {
             // According to java.lang.module javadoc, if at least one automatic module is added to the module graph,
             // all observable automatic modules should be added.
             // There are no automatic modules in the JDK, so we select all automatic modules out of user modules

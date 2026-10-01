@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirScriptResoluti
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.KtExperimentalApi
-import org.jetbrains.kotlin.psi.KtScript
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.isSnippetDefinition
+import org.jetbrains.kotlin.scripting.compiler.plugin.services.scriptDefinitionProviderService
+import org.jetbrains.kotlin.scripting.resolve.toSourceCode
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.repl
+import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
@@ -50,12 +52,14 @@ class FirScriptingCompilerExtensionRegistrar(
             val baseHostConfiguration = (compilerConfiguration.scriptingHostConfiguration as? ScriptingHostConfiguration)
                 ?: defaultJvmScriptingHostConfiguration
 
-            // TODO: replace with PSI-free variant, part of KT-77583
-            @OptIn(KtExperimentalApi::class)
             val replHostConfiguration = ScriptingHostConfiguration(baseHostConfiguration) {
                 repl {
                     firReplHistoryProvider(historyProvider)
-                    isReplSnippetSource { _, scriptSource -> (scriptSource.psi as? KtScript)?.isReplSnippet == true }
+                    isReplSnippetSource { sourceFile, _ ->
+                        sourceFile != null && capturedSession?.scriptDefinitionProviderService
+                            ?.getBaseConfiguration(sourceFile.toSourceCode())?.valueOrNull()
+                            ?.get(ScriptCompilationConfiguration.repl.isSnippetDefinition) == true
+                    }
                 }
             }
             +FirReplSnippetConfiguratorExtension.Factory { session ->

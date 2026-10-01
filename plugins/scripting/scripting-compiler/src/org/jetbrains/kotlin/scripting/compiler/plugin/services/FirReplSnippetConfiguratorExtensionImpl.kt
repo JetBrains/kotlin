@@ -38,8 +38,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.currentSnippetNo
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 import kotlin.script.experimental.api.*
@@ -170,8 +169,7 @@ class FirReplSnippetConfiguratorExtensionImpl(
             return
         }
 
-        val script = scriptSource.psi as? KtScript
-        val replSnippetId = script?.getUserData(ScriptPriorities.PRIORITY_KEY)?.toString()
+        val replSnippetId = configuration[ScriptCompilationConfiguration.repl.currentSnippetNo]
         val resultFieldName = if (replSnippetId != null) {
             configuration[ScriptCompilationConfiguration.repl.resultFieldPrefix]
                 ?.takeIf { it.isNotBlank() }?.let { "$it$replSnippetId" }

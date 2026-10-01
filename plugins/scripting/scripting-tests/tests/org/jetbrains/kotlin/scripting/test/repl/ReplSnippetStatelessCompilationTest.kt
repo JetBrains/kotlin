@@ -18,14 +18,21 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ReplSnippetConfigurationCo
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactMetadata
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactMetadataCodec
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.mergeRefinedFromCompiler
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.readRefinedCompilationConfiguration
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.readSnippetArtifactMetadata
+import org.jetbrains.kotlin.scripting.compiler.test.TestScriptWithRequire
 import org.jetbrains.kotlin.scripting.test.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.test.runWithK2JVMCompiler
 import org.jetbrains.kotlin.scripting.test.withTempDir
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.K2ReplEvaluator
 import kotlin.script.experimental.jvm.KJvmEvaluatedSnippet
 import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleFromClassPath
@@ -254,6 +261,121 @@ class ReplSnippetStatelessCompilationTest {
     }
 
     @Test
+    fun testSnippetDefinitionIsRehydratedFromTheTransportedDefinition() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            // Refinement handlers are transient, so a definition cannot travel in a serialized
+            // configuration. The host ships its identity instead; the configuration is demoted to
+            // an overlay applied on top of the definition the compiler rebuilds from it.
+            val hostOverlay = ScriptCompilationConfiguration {
+                defaultImports("kotlin.math.PI")
+            }
+            val compiler = StatelessReplCompiler(
+                workRoot,
+                snippetConfiguration = hostOverlay,
+                definitionClass = TestScriptWithRequire::class,
+            )
+            val evaluator = K2ReplEvaluator()
+
+            // `.repl.req1.kts`, not `.repl.kts`: the extension comes from the rehydrated definition.
+            // `DependsOn` resolves through the definition's own defaultImports and `PI` through the
+            // overlay's, so both layers have to survive the merge.
+            var chain: LinkedSnippetImpl<CompiledSnippet>? = null
+            chain = chain.add(
+                compiler.compile("val x = DependsOn::class.simpleName!!.length + PI.toInt()", "s1.repl.req1.kts")
+            )
+            evalOrThrow(evaluator, chain, "snippet 1 eval failed")
+            chain = chain.add(compiler.compile("x", "s2.repl.req1.kts"))
+            val evaluated = evalOrThrow(evaluator, chain, "snippet 2 eval failed")
+            assertEquals(12, (evaluated.get().result as? ResultValue.Value)?.value)
+        }
+    }
+
+    @Test
+    fun testSnippetFileAnnotationResolvesThroughDefaultImports() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            val dependencyDir = compilePlainClass(workRoot, "class Dependency { val v = 42 }", "Dependency.kt", "Dependency.class").parentFile
+            val compiler = StatelessReplCompiler(workRoot, definitionClass = TestScriptWithRequire::class)
+
+            // `DependsOn` is visible only through the definition's defaultImports, so the refinement must give them to the snippet
+            compiler.compile("@file:DependsOn(\"${dependencyDir.invariantSeparatorsPath}\")\nval x = Dependency().v", "s1.repl.req1.kts")
+        }
+    }
+
+    @Test
+    fun testRefinedConfigurationIsReadableFromTheSnippetClassFile() {
+        if (!isK2) return
+
+        withTempDir { workRoot ->
+            val hostOverlay = ScriptCompilationConfiguration {
+                defaultImports("kotlin.math.PI")
+            }
+            val compiler = StatelessReplCompiler(
+                workRoot,
+                snippetConfiguration = hostOverlay,
+                definitionClass = TestScriptWithRequire::class,
+            )
+            compiler.compile("val x = PI", "s1.repl.req1.kts")
+            val snippetClassFile = File(compiler.lastOutputDir, "${compiler.lastClassId.shortClassName.asString()}.class")
+            assertTrue(snippetClassFile.isFile, "expected the snippet wrapper class at $snippetClassFile")
+
+            val metadata = readSnippetArtifactMetadata(snippetClassFile)
+                ?: fail("no REPL metadata in the snippet class file $snippetClassFile")
+            assertEquals(SnippetArtifactMetadata.CURRENT_VERSION, metadata.version)
+
+            // The configuration the compiler ended up with, i.e. the rehydrated definition plus the
+            // host overlay, after the definition's refinement handlers ran on the snippet.
+            val refined = readRefinedCompilationConfiguration(snippetClassFile)
+                ?: fail("no compilation configuration embedded into $snippetClassFile")
+            val refinedImports = refined[ScriptCompilationConfiguration.defaultImports].orEmpty()
+            assertTrue(
+                refinedImports.any { it.endsWith(".DependsOn") },
+                "the definition's defaultImports must come back from the compiler; got: $refinedImports"
+            )
+
+            // Merge policy: the returned configuration is the base, the host's entries win on their
+            // own keys, and the collection-valued ones are unioned.
+            val merged = hostOverlay.mergeRefinedFromCompiler(refined)
+            val mergedImports = merged[ScriptCompilationConfiguration.defaultImports].orEmpty()
+            assertTrue(mergedImports.containsAll(refinedImports), "merged imports must keep the compiler's: $mergedImports")
+            assertTrue(mergedImports.contains("kotlin.math.PI"), "merged imports must keep the host's: $mergedImports")
+
+            // Refinement runs on both sides of the boundary, so merging has to stay idempotent.
+            assertEquals(mergedImports.distinct(), mergedImports, "merged defaultImports must not contain duplicates")
+            val mergedClasspath = merged[ScriptCompilationConfiguration.dependencies].orEmpty()
+                .filterIsInstance<JvmDependency>().flatMap { it.classpath }
+            assertEquals(mergedClasspath.distinct(), mergedClasspath, "merged classpath must not contain duplicates")
+
+            // A class carrying no REPL metadata, and a file that is not a class at all, are both
+            // ordinary outcomes for a host scanning an output directory.
+            assertNull(readSnippetArtifactMetadata(compilePlainClass(workRoot, "class Plain", "Plain.kt", "Plain.class")))
+            assertNull(readSnippetArtifactMetadata(File(workRoot, "corrupted.class").also { it.writeBytes(byteArrayOf(1, 2, 3)) }))
+        }
+    }
+
+    /** Compiles [source] as a plain (non-script) Kotlin file and returns the [expectedClassFile] it emits. */
+    private fun compilePlainClass(workRoot: File, source: String, sourceName: String, expectedClassFile: String): File {
+        val outputDir = File(workRoot, "plain-out").also { it.mkdirs() }
+        val sourceFile = File(workRoot, sourceName).also { it.writeText(source) }
+        runWithK2JVMCompiler(
+            arrayOf(
+                K2JVMCompilerArguments::classpath.cliArgument,
+                ForTestCompileRuntime.runtimeJarForTests().absolutePath,
+                K2JVMCompilerArguments::destination.cliArgument,
+                outputDir.absolutePath,
+                CommonCompilerArguments::suppressVersionWarnings.cliArgument,
+                sourceFile.absolutePath,
+            )
+        )
+        return File(outputDir, expectedClassFile).also {
+            assertTrue(it.isFile, "expected a plain class file at $it")
+        }
+    }
+
+    @Test
     fun testSnippetMetadataCodecRoundtrip() {
         val original = SnippetArtifactMetadata(
             version = SnippetArtifactMetadata.CURRENT_VERSION,
@@ -390,6 +512,11 @@ private class StatelessReplCompiler(
      * leaves snippets on the default `.repl.kts` definition.
      */
     private val snippetConfiguration: ScriptCompilationConfiguration? = null,
+    /**
+     * The script definition template the host's configuration was built from, transported by its
+     * identity (FQN + classpath) exactly as the hosts do; `null` exercises the overlay-only path.
+     */
+    private val definitionClass: KClass<*>? = null,
 ) {
     private val snippetConfigurationFile: File? by lazy {
         snippetConfiguration?.let { File(workRoot, "snippet-configuration.bin").also { f -> ReplSnippetConfigurationCodec.writeTo(it, f) } }
@@ -414,9 +541,16 @@ private class StatelessReplCompiler(
         priorClassIds += classId
         lastOutputDir = outputDir
         lastClassId = classId
+        // Same as the hosts: the compiler's post-refinement configuration comes back embedded into
+        // the snippet class and is merged into the host's one.
+        val hostConfiguration = snippetConfiguration ?: ScriptCompilationConfiguration()
+        val compilerRefinedConfiguration =
+            readRefinedCompilationConfiguration(File(outputDir, "${classId.shortClassName.asString()}.class"))
         return KJvmCompiledScript(
             sourceLocationId = name,
-            compilationConfiguration = ScriptCompilationConfiguration(),
+            compilationConfiguration = compilerRefinedConfiguration
+                ?.let { hostConfiguration.mergeRefinedFromCompiler(it) }
+                ?: hostConfiguration,
             scriptClassFQName = classId.asSingleFqName().asString(),
             resultField = "\$\$result" to KotlinType("kotlin.Any"),
             otherScripts = emptyList(),
@@ -457,6 +591,15 @@ private class StatelessReplCompiler(
             snippetConfigurationFile?.let {
                 add("-P")
                 add("plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:repl-snippet-configuration=${it.absolutePath}")
+            }
+            definitionClass?.let {
+                add("-P")
+                add("plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:script-definitions=${it.java.name}")
+                add("-P")
+                add(
+                    "plugin:$KOTLIN_SCRIPTING_PLUGIN_ID:script-definitions-classpath=" +
+                            PathUtil.getResourcePathForClass(it.java).absolutePath
+                )
             }
             for (classId in if (passFullPriorChain) priorClassIds else priorClassIds.takeLast(1)) {
                 add("-P")

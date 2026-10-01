@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -28,7 +27,7 @@ abstract class FirReplSnippetResolveExtension(
     override val componentClass: KClass<out FirExtensionSessionComponent>
         get() = FirReplSnippetResolveExtension::class
 
-    abstract fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>?
+    abstract fun getSnippetHistoryImports(snippet: FirReplSnippet): List<FirImport>
 
     abstract fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope?
 
@@ -48,12 +47,26 @@ fun FirSession.containingReplSnippet(symbol: FirBasedSymbol<*>): FirReplSnippetS
 abstract class FirReplHistoryProvider : FirSessionComponent {
     abstract fun getSnippets(): Iterable<FirReplSnippetSymbol>
     abstract fun putSnippet(symbol: FirReplSnippetSymbol)
+
+    /**
+     * Imported snippets are visible to the snippets that follow them, but are not counted by [getSnippetCount].
+     */
+    open fun putImportedSnippet(symbol: FirReplSnippetSymbol): Unit = putSnippet(symbol)
+
     abstract fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean
     abstract fun getSnippetCount(): Int
+
+    /**
+     * Removes the [symbols] of failed snippets from the history, so their declarations are not visible to the later snippets.
+     */
+    abstract fun removeSnippets(symbols: Collection<FirReplSnippetSymbol>)
+
     open fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? = null
 
     /**
-     * The snippet whose class declares [declaration] directly.
+     * The snippet whose class declares [declaration] directly. A class declared inside a snippet-level class, and the members
+     * of both, have no containing snippet: they are accessed through an instance of their own class, and reporting a snippet
+     * for them makes Fir2Ir replace that instance with an error expression.
      */
     fun getContainingSnippet(declaration: FirDeclaration): FirReplSnippetSymbol? {
         if (declaration.isReplSnippetDeclaration != true) return null

@@ -28,6 +28,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("boxed_primitives_result.repl.kts")
+  public void testBoxed_primitives_result_repl() {
+    run("boxed_primitives_result.repl.kts");
+  }
+
+  @Test
   @TestMetadata("class_calls_pure_function.repl.kts")
   public void testClass_calls_pure_function_repl() {
     run("class_calls_pure_function.repl.kts");
@@ -49,6 +55,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("class_property_initializer_depends_on_expected_type.repl.kts")
   public void testClass_property_initializer_depends_on_expected_type_repl() {
     run("class_property_initializer_depends_on_expected_type.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("class_redeclaration.repl.kts")
+  public void testClass_redeclaration_repl() {
+    run("class_redeclaration.repl.kts");
   }
 
   @Test
@@ -88,6 +100,36 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("enum_class.repl.kts")
+  public void testEnum_class_repl() {
+    run("enum_class.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("enum_entry_subclass.repl.kts")
+  public void testEnum_entry_subclass_repl() {
+    run("enum_entry_subclass.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("evaluation_errors.repl.kts")
+  public void testEvaluation_errors_repl() {
+    run("evaluation_errors.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("exception_in_value_to_string.repl.kts")
+  public void testException_in_value_to_string_repl() {
+    run("exception_in_value_to_string.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("exception_in_variable_initializer.repl.kts")
+  public void testException_in_variable_initializer_repl() {
+    run("exception_in_variable_initializer.repl.kts");
+  }
+
+  @Test
   @TestMetadata("extension_function.repl.kts")
   public void testExtension_function_repl() {
     run("extension_function.repl.kts");
@@ -103,6 +145,12 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("function_inline.kts")
   public void testFunction_inline() {
     run("function_inline.kts");
+  }
+
+  @Test
+  @TestMetadata("function_overload_across_snippets.repl.kts")
+  public void testFunction_overload_across_snippets_repl() {
+    run("function_overload_across_snippets.repl.kts");
   }
 
   @Test
@@ -136,6 +184,24 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   }
 
   @Test
+  @TestMetadata("interface_declaration.repl.kts")
+  public void testInterface_declaration_repl() {
+    run("interface_declaration.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("java_synthetic_property.repl.kts")
+  public void testJava_synthetic_property_repl() {
+    run("java_synthetic_property.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("lambdas_in_separate_snippets.repl.kts")
+  public void testLambdas_in_separate_snippets_repl() {
+    run("lambdas_in_separate_snippets.repl.kts");
+  }
+
+  @Test
   @TestMetadata("lazy_property.repl.kts")
   public void testLazy_property_repl() {
     run("lazy_property.repl.kts");
@@ -163,6 +229,18 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   @TestMetadata("nested_class_via_type_alias_from_other_snippet.repl.kts")
   public void testNested_class_via_type_alias_from_other_snippet_repl() {
     run("nested_class_via_type_alias_from_other_snippet.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("nullable_let_with_data_class.repl.kts")
+  public void testNullable_let_with_data_class_repl() {
+    run("nullable_let_with_data_class.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("object_declaration.repl.kts")
+  public void testObject_declaration_repl() {
+    run("object_declaration.repl.kts");
   }
 
   @Test

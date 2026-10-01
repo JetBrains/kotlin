@@ -34,7 +34,6 @@ projectTests {
     testData(project(":compiler").isolated, "testData/builtin-classes")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withScriptingPlugin()
     withTestJar()
     withAnnotations()

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
@@ -19,10 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.resolve.FirReplHistoryScope
 import kotlin.script.experimental.api.ReplScriptingHostConfigurationKeys
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.defaultImports
 import kotlin.script.experimental.api.repl
-import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.util.PropertiesCollection
 
@@ -36,6 +31,7 @@ val ReplScriptingHostConfigurationKeys.firReplHistoryProvider by PropertiesColle
 
 class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
     private val history = LinkedHashSet<FirReplSnippetSymbol>()
+    private val importedSnippets = HashSet<FirReplSnippetSymbol>()
 
     override fun getSnippets(): Iterable<FirReplSnippetSymbol> = history.asIterable()
 
@@ -43,9 +39,18 @@ class FirReplHistoryProviderImpl : FirReplHistoryProvider() {
         history.add(symbol)
     }
 
+    override fun putImportedSnippet(symbol: FirReplSnippetSymbol) {
+        if (history.add(symbol)) importedSnippets.add(symbol)
+    }
+
+    override fun removeSnippets(symbols: Collection<FirReplSnippetSymbol>) {
+        history.removeAll(symbols)
+        importedSnippets.removeAll(symbols)
+    }
+
     override fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean = history.firstOrNull() == symbol
 
-    override fun getSnippetCount(): Int = history.size
+    override fun getSnippetCount(): Int = history.size - importedSnippets.size
 }
 
 class FirReplSnippetResolveExtensionImpl(
@@ -56,19 +61,15 @@ class FirReplSnippetResolveExtensionImpl(
     override val replHistoryProvider: FirReplHistoryProvider =
         hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider] ?: FirReplHistoryProviderImpl()
 
-    private fun getImportsFromHistory(currentSnippet: FirReplSnippet): List<FirImport> =
-        replHistoryProvider.getSnippets().flatMap { snippet ->
-            if (currentSnippet == snippet) emptyList()
-            else replHistoryProvider.getSnippetImports(snippet)
-                ?: snippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(snippet)?.imports.orEmpty()
-        }
+    // The snippets of the same batch are all in the history before resolution starts.
+    private fun getPrecedingSnippets(currentSnippet: FirReplSnippet): Sequence<FirReplSnippetSymbol> =
+        replHistoryProvider.getSnippets().asSequence().takeWhile { it != currentSnippet.symbol }
 
-    override fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>? =
-        getOrLoadConfiguration(snippet.moduleData.session, sourceFile)?.valueOrNull()?.let {
-            it[ScriptCompilationConfiguration.defaultImports]
-                ?.firImportsFromDefaultImports(snippet.source.fakeElement(KtFakeSourceElementKind.ImplicitImport)).orEmpty() +
-                    getImportsFromHistory(snippet)
-        }
+    override fun getSnippetHistoryImports(snippet: FirReplSnippet): List<FirImport> =
+        getPrecedingSnippets(snippet).flatMap { precedingSnippet ->
+            replHistoryProvider.getSnippetImports(precedingSnippet)
+                ?: precedingSnippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(precedingSnippet)?.imports.orEmpty()
+        }.toList()
 
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     override fun getSnippetScope(currentSnippet: FirReplSnippet, useSiteSession: FirSession): FirScope {
@@ -76,8 +77,7 @@ class FirReplSnippetResolveExtensionImpl(
         val properties = HashMap<Name, ArrayList<FirVariableSymbol<*>>>()
         val functions = HashMap<Name, ArrayList<FirNamedFunctionSymbol>>() // TODO: find out how overloads should work
         val classLikes = HashMap<Name, FirClassLikeSymbol<*>>()
-        replHistoryProvider.getSnippets().forEach { snippet ->
-            if (currentSnippet == snippet) return@forEach
+        getPrecedingSnippets(currentSnippet).forEach { snippet ->
             snippet.snippetClassSymbol.declarationSymbols.filter { it.isReplSnippetDeclaration == true }.forEach { symbol ->
                 val it = symbol.fir
                 when (it) {

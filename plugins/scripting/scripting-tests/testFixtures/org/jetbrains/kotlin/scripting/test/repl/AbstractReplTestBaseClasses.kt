@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryPro
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
 import org.jetbrains.kotlin.scripting.test.runners.AbstractFirScriptAndReplCodegenTest
+import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.JvmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.computeTestRuntimeClasspath
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
+import java.lang.reflect.InvocationTargetException
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
@@ -204,6 +206,7 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
                 classpath += libPathProvider.reflectJarForTests()
             }
             classpath += libPathProvider.scriptRuntimeJarForTests()
+            libPathProvider.scriptingCommonJarForTests()?.let { classpath += it }
             classpath += libPathProvider.kotlinTestJarForTests()
         }
         return GeneratedClassLoader(
@@ -223,39 +226,46 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
         val expectedOut = Regex("// EXPECTED_OUT: (.*)").findAll(ktFile.text).map {
             it.groups[1]!!.value
         }.joinToString("\n")
-        val expected = Regex("// EXPECTED: (\\S+) *== *\"?([^\"\\n]*)\"?").findAll(ktFile.text).map {
-            it.groups[1]!!.value to it.groups[2]!!.value
-        }
+        val expected = expectedValuesDirectives(ktFile.text)
+        val expectedException = expectedExceptionDirective(ktFile.text)
 
         val evalFunName = REPL_SNIPPET_EVAL_FUN_NAME.asString()
         val snippetClass = classLoader.loadClass(scriptFqName.asString())
         val eval = snippetClass.methods.find { it.name == evalFunName }!!
 
         val snippet = snippetClass.getField("INSTANCE").get(null)
+        var thrown: Throwable? = null
         val [out, err] = captureOutErrRet {
-            eval.invoke(snippet)
+            try {
+                eval.invoke(snippet)
+            } catch (e: InvocationTargetException) {
+                thrown = e.targetException
+            }
         }
+        assertions.checkExpectedException(expectedException, thrown)
 
-        for ([fieldName, expectedValue] in expected) {
-            if (expectedValue == "<missing>") {
-                try {
-                    snippetClass.getDeclaredField(fieldName)
-                    assertions.fail { "must have no field $fieldName" }
-                } catch (_: NoSuchFieldException) {
-                    continue
+        if (thrown == null) {
+            for ([fieldName, expectedValue] in expected) {
+                if (expectedValue == "<missing>") {
+                    try {
+                        snippetClass.getDeclaredField(fieldName)
+                        assertions.fail { "must have no field $fieldName" }
+                    } catch (_: NoSuchFieldException) {
+                        continue
+                    }
                 }
+                val result = if (fieldName == "<res>") {
+                    val resultField = snippetClass.fields.find { it.name == REPL_SNIPPET_RESULT_PROP_NAME.asString() }
+                    resultField?.isAccessible = true
+                    resultField?.get(snippet)
+                } else {
+                    val field = snippetClass.getDeclaredField(fieldName)
+                    field.isAccessible = true
+                    field[snippet]
+                }
+                val resultString = result?.toString() ?: "null"
+                assertions.assertEquals(expectedValue.trim(), resultString) { "comparing variable $fieldName" }
             }
-            val result = if (fieldName == "<res>") {
-                val resultField = snippetClass.fields.find { it.name == REPL_SNIPPET_RESULT_PROP_NAME.asString() }
-                resultField?.isAccessible = true
-                resultField?.get(snippet)
-            } else {
-                val field = snippetClass.getDeclaredField(fieldName)
-                field.isAccessible = true
-                field[snippet]
-            }
-            val resultString = result?.toString() ?: "null"
-            assertions.assertEquals(expectedValue.trim(), resultString) { "comparing variable $fieldName" }
         }
 
         assertions.assertEquals("", err)
@@ -313,13 +323,13 @@ private class ReplRunViaApiChecker(
             is ResultWithDiagnostics.Success<LinkedSnippet<KJvmEvaluatedSnippet>> -> {
                 val evaluatedSnippet = res.value.get()
                 val evaluationResult = evaluatedSnippet.result
-                if (evaluationResult is ResultValue.Error) {
-                    // TODO: implement expected exception (KT-74354)
-                    assertions.fail { evaluationResult.error.message ?: evaluationResult.error.toString() }
-                }
-                val expected = Regex("// EXPECTED: (\\S+) *== *\"?([^\"\\n]*)\"?").findAll(module.files.first().originalContent).map {
-                    it.groups[1]!!.value to it.groups[2]!!.value
-                }
+                val snippetText = module.files.first().originalContent
+                assertions.checkExpectedException(
+                    expectedExceptionDirective(snippetText),
+                    (evaluationResult as? ResultValue.Error)?.error
+                )
+                if (evaluationResult is ResultValue.Error) return
+                val expected = expectedValuesDirectives(snippetText)
                 val snippetClass = evaluationResult.scriptClass!!.java
                 val snippet = evaluationResult.scriptInstance
                 for ([fieldName, expectedValue] in expected) {
@@ -351,6 +361,26 @@ private class ReplRunViaApiChecker(
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 }
 
+
+private fun expectedValuesDirectives(snippetText: String): Sequence<Pair<String, String>> =
+    Regex("// EXPECTED: (\\S+) *== *\"?([^\"\\n]*)\"?").findAll(snippetText).map {
+        it.groups[1]!!.value to it.groups[2]!!.value
+    }
+
+/**
+ * The `// EXPECTED_EXCEPTION: <exception>` directive value is compared with the [Throwable.toString] of the exception
+ * thrown by the snippet evaluation, i.e. `java.lang.IllegalStateException: message` or just `java.lang.AssertionError`.
+ */
+private fun expectedExceptionDirective(snippetText: String): String? =
+    Regex("// EXPECTED_EXCEPTION: (.*)").find(snippetText)?.groups[1]?.value?.trim()
+
+private fun Assertions.checkExpectedException(expectedException: String?, thrown: Throwable?) {
+    when {
+        expectedException == null && thrown != null -> throw thrown
+        expectedException != null && thrown == null -> fail { "expected exception was not thrown: $expectedException" }
+        expectedException != null -> assertEquals(expectedException, thrown.toString()) { "comparing the thrown exception" }
+    }
+}
 
 internal fun captureOutErrRet(body: () -> Unit): Pair<String, String> {
     val outStream = ByteArrayOutputStream()

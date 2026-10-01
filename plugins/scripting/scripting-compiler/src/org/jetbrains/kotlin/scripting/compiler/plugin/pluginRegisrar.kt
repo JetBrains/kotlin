@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.extensions.CollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
-import org.jetbrains.kotlin.extensions.ExtensionPointDescriptor
 import org.jetbrains.kotlin.extensions.ProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -28,42 +26,20 @@ import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptReportSink
-import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.JvmStandardReplFactoryExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ReplLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingIrExplainGenerationExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.CollectAdditionalScriptSourcesExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.isSnippetDefinition
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys.ENABLE_SCRIPT_EXPLANATION_OPTION
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.fileExtension
-import kotlin.script.experimental.api.repl
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
-private fun <T : Any> ExtensionPointDescriptor<T>.registerExtensionIfRequired(
-    extensionStorage: CompilerPluginRegistrar.ExtensionStorage,
-    extension: T,
-) {
-    with(extensionStorage) {
-        try {
-            registerExtension(extension)
-        } catch (_: IllegalArgumentException) {
-            // ignore
-        }
-    }
-}
-
-// Scripting infrastructure still depends on project-based components, therefore we still need a separate registrar above - ScriptingCompilerConfigurationComponentRegistrar
-// TODO: refactor components and migrate the plugin to the project-independent operation
 class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
     companion object {
         fun registerComponents(extensionStorage: ExtensionStorage, compilerConfiguration: CompilerConfiguration) = with(extensionStorage) {
@@ -87,7 +63,6 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
         CollectAdditionalSourceFilesExtension.registerExtension(CollectAdditionalScriptSourcesExtension())
         CollectAdditionalSourcesExtension.registerExtension(ScriptingCollectAdditionalSourcesExtension())
         ScriptEvaluationExtension.registerExtension(JvmCliScriptEvaluationExtension())
-        ReplFactoryExtension.registerExtensionIfRequired(this, JvmStandardReplFactoryExtension())
         SyntheticResolveExtension.registerExtension(ScriptingResolveExtension())
         ExtraImportsProviderExtension.registerExtension(ScriptExtraImportsProviderExtension())
         ProcessSourcesBeforeCompilingExtension.registerExtension(ScriptingProcessSourcesBeforeCompilingExtension())
@@ -97,20 +72,6 @@ class ScriptingK2CompilerPluginRegistrar : CompilerPluginRegistrar() {
 
         val scriptDefinitionProvider = CliScriptDefinitionProvider()
         ScriptDefinitionProvider.registerExtension(scriptDefinitionProvider)
-
-        if (configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_STATELESS_MODE)) {
-            val base = configuration.get(ScriptingConfigurationKeys.REPL_SNIPPET_CONFIGURATION_FILE)
-                ?.let(ReplSnippetConfigurationCodec::readFrom)
-                ?: ScriptDefinition.getDefault(hostConfiguration).compilationConfiguration
-            val replSnippetCompilationConfiguration = ScriptCompilationConfiguration(base) {
-                fileExtension("repl." + (base[ScriptCompilationConfiguration.fileExtension] ?: "kts"))
-                repl.isSnippetDefinition(true)
-            }
-            configuration.add(
-                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ScriptDefinition.FromConfigurations(hostConfiguration, replSnippetCompilationConfiguration, null)
-            )
-        }
 
         @OptIn(MessageCollectorAccess::class) // TODO(KT-84516)
         val messageCollector = configuration[CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY]

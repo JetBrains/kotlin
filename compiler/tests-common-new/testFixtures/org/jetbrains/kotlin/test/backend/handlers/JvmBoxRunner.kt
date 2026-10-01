@@ -371,7 +371,7 @@ fun generatedTestClassLoader(
         if (withReflection) {
             classpath += libPathProvider.reflectJarForTests()
         }
-        classpath += libPathProvider.scriptRuntimeJarForTests()
+        libPathProvider.scriptingCommonJarForTests()?.let { classpath += it }
         classpath += libPathProvider.kotlinTestJarForTests()
         return GeneratedClassLoader(classFileFactory, null, *(classpath.map { it.toURI().toURL() }.toTypedArray()))
     } else {

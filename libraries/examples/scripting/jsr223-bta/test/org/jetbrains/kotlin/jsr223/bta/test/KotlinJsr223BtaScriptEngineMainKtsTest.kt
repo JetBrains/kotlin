@@ -11,6 +11,11 @@ import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
+import java.nio.file.Path
+import java.util.jar.JarEntry
+import java.util.jar.JarOutputStream
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
 
 /**
@@ -63,7 +68,41 @@ class KotlinJsr223BtaScriptEngineMainKtsTest : BtaReplTestBase() {
     }
 
     @Test
-    @Disabled("Noty supported yet")
+    fun testWithCompilerOptions() {
+        val engine = newEngine(withMainKtsOnCompileClasspath = true)
+        // Only works if the definition's `@CompilerOptions` handler runs inside the compiler.
+        val res = engine.eval(
+            """
+                @file:CompilerOptions("-opt-in=kotlin.uuid.ExperimentalUuidApi")
+                kotlin.uuid.Uuid.NIL.toString()
+            """.trimIndent()
+        )
+        assertEquals("00000000-0000-0000-0000-000000000000", res)
+    }
+
+    @Test
+    fun testWithDependsOn(@TempDir repositoryDir: Path) {
+        // Local repository to avoid network access.
+        val artifact = singleClassJar(DependsOnProbe::class.java, repositoryDir.resolve("probe.jar").toFile())
+        val engine = newEngine(withMainKtsOnCompileClasspath = true)
+
+        // `DependsOnProbe` is not on the snippet compile classpath.
+        assertEquals(
+            DependsOnProbe.VALUE,
+            engine.eval(
+                """
+                    @file:Repository("${repositoryDir.toAbsolutePath()}")
+                    @file:DependsOn("${artifact.name}")
+                    ${DependsOnProbe::class.java.name}.VALUE
+                """.trimIndent()
+            )
+        )
+
+        assertEquals("${DependsOnProbe.VALUE}!", engine.eval("${DependsOnProbe::class.java.name}.VALUE + \"!\""))
+    }
+
+    @Test
+    @Disabled("Same-batch @file:Import snippet chaining is not supported yet (codegen of cross-snippet accesses)")
     fun testWithImport() {
         val engine = newEngine()
         val res1 = engine.eval(
@@ -78,4 +117,21 @@ class KotlinJsr223BtaScriptEngineMainKtsTest : BtaReplTestBase() {
     }
 }
 
-private const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
+// Absolute, since `@file:Import` paths are resolved relative to the (temporary) snippet source file.
+private val TEST_DATA_ROOT = File("libraries/tools/kotlin-main-kts-test/testData").absolutePath
+
+object DependsOnProbe {
+    const val VALUE: String = "resolved"
+}
+
+private fun singleClassJar(clazz: Class<*>, target: File): File {
+    val entryName = clazz.name.replace('.', '/') + ".class"
+    JarOutputStream(target.outputStream()).use { out ->
+        out.putNextEntry(JarEntry(entryName))
+        val classBytes = clazz.classLoader.getResourceAsStream(entryName)
+            ?: error("cannot read the class file of ${clazz.name}")
+        classBytes.use { it.copyTo(out) }
+        out.closeEntry()
+    }
+    return target
+}

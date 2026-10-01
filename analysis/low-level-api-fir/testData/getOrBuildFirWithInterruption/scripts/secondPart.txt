@@ -13,7 +13,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondPart.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-secondPart.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
@@ -56,7 +56,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondPart.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-secondPart.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
@@ -99,7 +99,7 @@ null
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondPart.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-secondPart.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
@@ -144,7 +144,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondPart.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-secondPart.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }
@@ -191,7 +191,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondPart.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-secondPart.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(STATUS)] a: R|kotlin/Int|): R|broken/lib/Foo| { LAZY_BLOCK }

@@ -1,6 +1,6 @@
 FILE: scriptLevelDestructuringWithAnnotation.kts
     SCRIPT: <script-scriptLevelDestructuringWithAnnotation.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         lval args: R|kotlin/Array<kotlin/String>|
 
         @DestrAnno(LAZY_EXPRESSION) [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <implicit> = LAZY_EXPRESSION

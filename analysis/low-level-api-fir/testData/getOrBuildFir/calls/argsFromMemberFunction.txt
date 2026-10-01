@@ -3,12 +3,12 @@ FIR element: FirPropertyAccessExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+this@R|?|.R|kotlin/script/experimental/templates/ScriptWithArgs.args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] argsFromMemberFunction.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-argsFromMemberFunction.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-argsFromMemberFunction.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] argsFromMemberFunction.kts
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
-                this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+                this@R|?|.R|kotlin/script/experimental/templates/ScriptWithArgs.args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
             }
 
         }

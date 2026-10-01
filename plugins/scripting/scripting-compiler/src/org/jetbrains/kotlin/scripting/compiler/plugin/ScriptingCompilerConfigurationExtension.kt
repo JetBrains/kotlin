@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import com.intellij.core.CoreFileTypeRegistry
 import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -18,11 +19,15 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.applyOverlay
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.isSnippetDefinition
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.*
 import java.io.File
+import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.getRefinementEnvironment
 
 class ScriptingCompilerConfigurationExtension(
     val baseHostConfiguration: ScriptingHostConfiguration,
@@ -60,24 +65,88 @@ fun ScriptDefinitionProvider?.updateScriptingConfiguration(
         val projectRoot = project.run { basePath ?: baseDir?.canonicalPath }?.let(::File)
         if (projectRoot != null) {
             configuration.put(
-                ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
+                ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT,
                 "projectRoot",
                 projectRoot
             )
         }
+        val refinementEnvironment = { configuration.getMap(ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT) }
         val hostConfiguration = ScriptingHostConfiguration(baseHostConfiguration) {
-            getEnvironment {
-                configuration.getMap(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION)
-            }
+            getRefinementEnvironment(refinementEnvironment)
+            // still consumed by the existing Gradle script definitions
+            @Suppress("DEPRECATION") getEnvironment(refinementEnvironment)
         }
 
         configureScriptDefinitions(configuration, hostConfiguration, classLoader)
+
+        addReplSnippetDefinitionIfStateless(configuration, hostConfiguration)
+
+        addLegacyScriptRuntimeIfNeeded(configuration)
 
         if (this is CliScriptDefinitionProvider) {
             setScriptDefinitionsSources(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
             setScriptDefinitions(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
         }
     }
+}
+
+/**
+ * Builds the `.repl.<ext>` definition for the stateless REPL-snippet mode: the discovered definition, whose refinement
+ * handlers are alive, with the host overlay from `repl-snippet-configuration` applied on top.
+ * Must run after [configureScriptDefinitions] and before the definitions are passed to the provider.
+ */
+internal fun addReplSnippetDefinitionIfStateless(
+    configuration: CompilerConfiguration,
+    hostConfiguration: ScriptingHostConfiguration,
+) {
+    if (!configuration.getBoolean(ScriptingConfigurationKeys.REPL_SNIPPET_STATELESS_MODE)) return
+
+    val overlay = configuration.get(ScriptingConfigurationKeys.REPL_SNIPPET_CONFIGURATION_FILE)
+        ?.let(ReplSnippetConfigurationCodec::readFrom)
+
+    val base = selectReplSnippetBaseConfiguration(configuration, hostConfiguration, overlay)
+    val baseFileExtension = base[ScriptCompilationConfiguration.fileExtension]
+        ?: overlay?.get(ScriptCompilationConfiguration.fileExtension)
+        ?: "kts"
+
+    val snippetCompilationConfiguration = ScriptCompilationConfiguration(base) {
+        if (overlay != null) applyOverlay(overlay)
+        fileExtension("repl.$baseFileExtension")
+        repl.isSnippetDefinition(true)
+    }
+
+    // `findDefinition` takes the first matching definition, and a plain `<ext>` definition matches
+    // `.repl.<ext>` too, so the snippet definition has to precede the one it was built from.
+    val definitions = ArrayList<ScriptDefinition>()
+    definitions.add(ScriptDefinition.FromConfigurations(hostConfiguration, snippetCompilationConfiguration, null))
+    definitions.addAll(configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
+    configuration.put(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, definitions)
+}
+
+private fun selectReplSnippetBaseConfiguration(
+    configuration: CompilerConfiguration,
+    hostConfiguration: ScriptingHostConfiguration,
+    overlay: ScriptCompilationConfiguration?,
+): ScriptCompilationConfiguration {
+    val discovered = configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS).filterNot { it.isDefault }
+    val selected =
+        discovered.singleOrNull()
+            ?: overlay?.get(ScriptCompilationConfiguration.fileExtension)?.let { overlayExtension ->
+                discovered.firstOrNull { it.fileExtension == overlayExtension }
+            }
+
+    if (selected == null && configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSES).isNotEmpty()) {
+        @OptIn(MessageCollectorAccess::class) // TODO(KT-84516)
+        configuration.messageCollector.report(
+            CompilerMessageSeverity.ERROR,
+            "REPL snippet definition: none of the definitions requested via -Xscript-definition could be loaded" +
+                    " (definition classpath: ${configuration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_CLASSPATH)})"
+        )
+    }
+
+    return selected?.compilationConfiguration
+        ?: overlay
+        ?: ScriptDefinition.getDefault(hostConfiguration).compilationConfiguration
 }
 
 internal fun configureScriptDefinitions(
