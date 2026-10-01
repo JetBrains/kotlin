@@ -76,11 +76,16 @@ class TypealiasChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("Derived.kt", "change-alias-type")
 
             mod.compile {
-                // TODO(KT-28233): typealiases outside the root package get wrong FqNames, so `Base.kt` does not get into
-                //  the dirty set, and the new `Derived.foo(): String` is checked against the stale `Base.foo(): Int`.
-                //  Once fixed, it has to succeed on JVM with `assertCompiledSources("Base.kt", "Derived.kt", "types.kt")`.
-                expectFailWithError(".*Derived\\.kt:\\d+:\\d+ Return type of .* is not a subtype.*".toRegex())
-                assertCompiledSources("Derived.kt", "types.kt")
+                when (this@scenario) {
+                    is JvmScenarioDsl -> assertCompiledSources("Base.kt", "Derived.kt", "types.kt")
+                    is JsScenarioDsl, is WasmScenarioDsl -> {
+                        // TODO(KT-89851): the klib IC cache does not track typealiases, so `Base.kt` does not get into
+                        //  the dirty set, and the new `Derived.foo(): String` is checked against the stale `Base.foo(): Int`.
+                        expectFailWithError(".*Derived\\.kt:\\d+:\\d+ Return type of .* is not a subtype.*".toRegex())
+                        assertCompiledSources("Derived.kt", "types.kt")
+                    }
+                    else -> error("Unsupported scenario type: ${this@scenario}")
+                }
             }
         }
     }
