@@ -623,7 +623,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             /**
              * Existing classifier names are extracted differently for Java and Kotlin:
              *  - For Java: Names are not present in FIR declarations but can be safely retrieved
-             *    via `getNestedClassifierScope`.
+             *    via `existingNestedClassifierNames`.
              *  - For Kotlin: Names exist in FIR declarations, but calling scope functions here
              *    triggers infinite recursion.
              *
@@ -634,8 +634,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
              */
             val classFir = classSymbol.fir
             val existingClassifierNames = if (classFir is FirJavaClass) {
-                val nestedClassifierScope = classFir.scopeProvider.getNestedClassifierScope(classFir, session, ScopeSession())
-                nestedClassifierScope?.getClassifierNames()?.toSet() ?: emptySet()
+                classFir.existingNestedClassifierNames
             } else {
                 buildSet {
                     classSymbol.fir.declarations.mapNotNullTo(this) { (it as? FirClassLikeDeclaration)?.nameOrSpecialName }
