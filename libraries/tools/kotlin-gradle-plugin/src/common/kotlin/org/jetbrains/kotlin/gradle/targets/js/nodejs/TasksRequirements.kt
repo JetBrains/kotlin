@@ -42,9 +42,9 @@ class TasksRequirements : Serializable {
         val projectPath = task.compilation.target.project.path
         val compilationPath = "$projectPath:${task.compilation.disambiguatedName}"
         if (compilationPath in byCompilation) {
-            byCompilation[compilationPath]!!.addAll(requiredNpmDependencies.map { it.toDeclaration() })
+            byCompilation[compilationPath]!!.addAll(requiredNpmDependencies.map { it.toNpmDependencyDeclaration() })
         } else {
-            byCompilation[compilationPath] = requiredNpmDependencies.map { it.toDeclaration() }.toMutableSet()
+            byCompilation[compilationPath] = requiredNpmDependencies.map { it.toNpmDependencyDeclaration() }.toMutableSet()
         }
     }
 }
