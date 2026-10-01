@@ -160,6 +160,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project-test/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"umd\"",
+                    "\"loose\": false",
                     "\"sourceMaps\": true",
                     "\"outFileExtension\": \".js\"",
                 )
@@ -174,6 +175,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"umd\"",
+                    "\"loose\": false",
                     "\"sourceMaps\": true",
                     "\"outFileExtension\": \".js\"",
                 )
@@ -188,6 +190,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"umd\"",
+                    "\"loose\": false",
                     "\"sourceMaps\": true",
                     "\"outFileExtension\": \".js\"",
                 )
@@ -217,6 +220,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"umd\"",
+                    "\"loose\": false",
                     "\"outFileExtension\": \".js\"",
                 )
             }
@@ -229,6 +233,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"umd\"",
+                    "\"loose\": false",
                     "\"outFileExtension\": \".js\"",
                 )
             }
@@ -264,6 +269,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
                     "\"outFileExtension\": \".mjs\"",
+                    "\"loose\": false",
                 )
             }
 
@@ -276,6 +282,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
                     "\"outFileExtension\": \".mjs\"",
+                    "\"loose\": false",
                 )
             }
         }
@@ -305,6 +312,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
                     "\"outFileExtension\": \".mjs\"",
+                    "\"loose\": false",
                 )
             }
 
@@ -318,6 +326,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
                     "\"outFileExtension\": \".mjs\"",
+                    "\"loose\": false",
                 )
             }
 
@@ -331,6 +340,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
                     "\"outFileExtension\": \".mjs\"",
+                    "\"loose\": false",
                 )
             }
         }

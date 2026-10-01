@@ -36,14 +36,14 @@ object SwcConfig {
         set("sourceMaps", sourceMapEnabled)
         set("inputSourceMap", sourceMapEnabled)
         set("exclude", arrayOf(".*\\.d\\.m?ts$"))
-        set("jsc", buildMap<String, Any> {
+        set("jsc", buildMap {
             set("parser", buildMap {
                 set("syntax", "ecmascript")
                 set("dynamicImport", true)
                 set("functionBind", true)
                 set("importMeta", true)
             })
-            set("loose", true)
+            set("loose", false)
             set("externalHelpers", includeExternalHelpers)
             set("target", target)
         })
