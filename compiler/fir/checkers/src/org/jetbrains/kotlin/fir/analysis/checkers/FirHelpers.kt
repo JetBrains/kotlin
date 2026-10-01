@@ -1080,7 +1080,8 @@ inline fun FirElement.requireFeatureSupport(
 
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
-    get() = !fullyExpandedType().anyBound { it.isPrimitiveOrNullablePrimitive || it.isValueClass(context.session) }
+    get() = !fullyExpandedType().anyBound { it.isPrimitiveOrNullablePrimitive || it.isValueClass(context.session) } ||
+            context.session.platformValueClassDeterminer.instancesAreValueObjects(this)
 
 // Whether [predicate] holds for this class type or, like javac checks, for a bound of a type parameter, captured, intersection or flexible type.
 fun ConeKotlinType.anyBound(

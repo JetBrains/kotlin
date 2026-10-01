@@ -7,15 +7,22 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 /**
- * Determines the platform classes that are value classes in this compilation although their declarations are read as identity classes.
+ * Determines the platform classes that are value classes in this compilation although their declarations are read as identity classes,
+ * and the types whose instances are value objects at run time.
  */
 abstract class FirPlatformValueClassDeterminer : FirSessionComponent {
     abstract fun isPlatformValueClass(symbol: FirRegularClassSymbol): Boolean
 
+    // Reference equality compares such instances by their state.
+    abstract fun instancesAreValueObjects(type: ConeKotlinType): Boolean
+
     object Default : FirPlatformValueClassDeterminer() {
         override fun isPlatformValueClass(symbol: FirRegularClassSymbol): Boolean = false
+
+        override fun instancesAreValueObjects(type: ConeKotlinType): Boolean = false
     }
 }
 

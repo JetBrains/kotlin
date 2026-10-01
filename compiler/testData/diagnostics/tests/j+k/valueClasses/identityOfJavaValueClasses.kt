@@ -52,8 +52,8 @@ fun <T : JavaAbstractVal> identitySensitiveOperationsThroughBounds(bounded: T) {
 }
 
 fun atomicReference(ref: AtomicReference<JavaVal>, v: JavaVal, abstractRef: AtomicReference<JavaAbstractVal>, abstract: JavaAbstractVal) {
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ref.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>v<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>JavaVal(2)<!>)<!>
-    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>abstractRef.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>abstract<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>abstract<!>)<!>
+    ref.compareAndSet(v, JavaVal(2))
+    abstractRef.compareAndSet(abstract, abstract)
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty,
