@@ -13,12 +13,12 @@ value class Single(val a: Int)
 class Identity
 
 fun test(full: Full, single: Single, int: Int, identity: Identity) {
-    WeakReference(full)
-    WeakReference(single)
-    WeakReference(int)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>full<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>single<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>int<!>)
     WeakReference(identity)
-    createCleaner(full) {}
+    createCleaner(<!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>full<!>) {}
     createCleaner(identity) {}
-    createCleaner(cleanupAction = {}, resource = full)
+    createCleaner(cleanupAction = {}, resource = <!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>full<!>)
     createCleaner(cleanupAction = {}, resource = identity)
 }

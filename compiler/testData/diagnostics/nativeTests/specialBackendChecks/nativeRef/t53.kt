@@ -7,5 +7,5 @@ class C(val x: Int) {
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 fun foo(x: Int) {
-    createCleaner(42, C(x)::bar)
+    createCleaner(<!IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE!>42<!>, C(x)::bar)
 }
