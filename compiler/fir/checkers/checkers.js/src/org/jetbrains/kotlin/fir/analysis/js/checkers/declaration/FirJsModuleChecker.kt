@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.isEitherModuleOrNonModule
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 
@@ -34,6 +35,13 @@ object FirJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
 
         if (!context.isTopLevel) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER)
+        }
+
+        // An external interface has no runtime value, unless its companion object is imported from the module.
+        if (context.isTopLevel && isNative && declaration is FirRegularClass && declaration.isInterface &&
+            declaration.companionObjectSymbol == null
+        ) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE)
         }
 
         if (declaration is FirProperty && declaration.isVar) {

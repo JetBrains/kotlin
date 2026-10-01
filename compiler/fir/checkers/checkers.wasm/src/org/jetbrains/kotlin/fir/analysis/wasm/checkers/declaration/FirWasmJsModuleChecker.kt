@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
@@ -33,6 +30,13 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
 
         if (!context.isTopLevel) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER)
+        }
+
+        // An external interface has no runtime value, unless its companion object is imported from the module.
+        if (context.isTopLevel && isExternal && declaration is FirRegularClass && declaration.isInterface &&
+            declaration.companionObjectSymbol == null
+        ) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE)
         }
 
         // A qualified declaration is referenced through its qualifier, so a write lands on a plain JS object.

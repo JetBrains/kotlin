@@ -811,6 +811,12 @@ private fun KaDiagnosticConverterBuilder.addConversions12() {
             token,
         )
     }
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE) { firDiagnostic ->
+        JsModuleProhibitedOnExternalInterfaceImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES) { firDiagnostic ->
         ValueClassCannotExtendIdentityClassesImpl(
             firDiagnostic as KtDiagnosticWithSource,
