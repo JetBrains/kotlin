@@ -11,8 +11,8 @@ FILE: [ResolvedTo(IMPORTS)] whereClass.kt
     }
     public final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|Two|> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|Two|>([ResolvedTo(RAW_FIR)] t: T): R|Foo<T>| {
+    public final? [ResolvedTo(TYPES)] class Foo<[ResolvedTo(TYPES)] T : R|One|, R|Two|> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(TYPES)] T : R|One|, R|Two|>([ResolvedTo(RAW_FIR)] t: T): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 

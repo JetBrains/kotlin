@@ -6,7 +6,7 @@ Decompiled text loaded by type computation: false
 public final class Foo<T : kotlin.CharSequence> public constructor(@lib.Anno p: T, q: kotlin.collections.List<T>) : lib.Base<T>, kotlin.Comparable<lib.Foo<T>> where T : kotlin.Comparable<T> {
 //                         ^CharSequence(use)
 //                                                                  ^Anno(use)
-//                                                                              ^T(use)
+//                                                                              ^T(decl)
 //                                                                                    ^List<T>(use)
 //                                                                                                            ^T(decl)
 //                                                                                                                  ^Base<T>(use)
@@ -19,7 +19,7 @@ public final class Foo<T : kotlin.CharSequence> public constructor(@lib.Anno p: 
     @lib.Anno
 //   ^Anno(use)
     public final val p: T /* compiled code */
-//                      ^T(use)
+//                      ^T(decl)
 
     public open operator fun compareTo(other: lib.Foo<T>): kotlin.Int { /* compiled code */ }
 //                                            ^Foo<T>(use)

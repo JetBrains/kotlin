@@ -13,4 +13,4 @@ FILE: [ResolvedTo(IMPORTS)] functionalTypeInsideAlias.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias F = R|A.(A) -> A|
+    public final [ResolvedTo(TYPES)] typealias F = R|A.(A) -> A|

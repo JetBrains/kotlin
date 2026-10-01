@@ -7,4 +7,4 @@ R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] functionalTypeArgument.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|(kotlin/Int) -> kotlin/String| { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun x(): R|(kotlin/Int) -> kotlin/String| { LAZY_BLOCK }

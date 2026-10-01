@@ -3,17 +3,17 @@ FIR element: FirResolvedTypeRefImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|@R|Anno|(s = String(str) [evaluated = String(str)])  kotlin/Int|
+R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotatedValueParameterType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|@R|Anno|(s = String(str) [evaluated = String(str)])  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] p: R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }

@@ -7,8 +7,8 @@ R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] constructorParameterType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|kotlin/Int|): R|A| {
+    public final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(TYPES)] p: R|kotlin/Int|): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
