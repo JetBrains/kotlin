@@ -6,6 +6,7 @@ Cleaning output files:
   out/production/module/foo/DirectChild.class
 End of files
 Compiling files:
+  src/DirectInter.kt
   src/direct.kt
 End of files
 Exit code: OK
@@ -19,6 +20,7 @@ Cleaning output files:
   out/production/module/foo/ReverseChild.class
 End of files
 Compiling files:
+  src/ReverseInter.kt
   src/reverse.kt
 End of files
 Exit code: OK
