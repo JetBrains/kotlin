@@ -16,7 +16,7 @@ fun box() = abiTest {
     expectSuccess(1) { mfvcToClass1() }
     expectSuccess(2) { mfvcToClass2() }
 
-    expectSuccess(1) { valueToIdentity() }
+    expectFailure(linkage("Constructor 'ValueToIdentitySubclass.<init>' can not be called: Value class 'ValueToIdentitySubclass' has illegal inheritance from class 'ValueToIdentity'")) { valueToIdentity() }
     expectSuccess(1) { staysValue() }
 
     expectSuccess(1) { inlineToMfvcVersionOverload() }
