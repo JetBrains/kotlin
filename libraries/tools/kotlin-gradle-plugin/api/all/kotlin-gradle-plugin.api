@@ -5878,6 +5878,29 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/N
 	public final fun version (Ljava/lang/String;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl {
+	public abstract fun disable ()V
+	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public abstract fun toolchainService (Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl$DefaultImpls {
+	public static fun disable (Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl;Lorg/gradle/api/Action;)V
+}
+
+public class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDslImpl : org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl {
+	public fun <init> (Lorg/gradle/api/invocation/Gradle;)V
+	public fun disable ()V
+	public fun toolchainService (Lkotlin/jvm/functions/Function1;)V
+	public fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
+	public fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+	public fun toolchainService (Lorg/gradle/api/Action;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService : org/gradle/api/services/BuildService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainService$Companion;
 	public abstract fun request (Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsRequest;)Lorg/gradle/api/provider/Provider;
