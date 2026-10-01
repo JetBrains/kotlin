@@ -98,6 +98,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
             .librariesStdlibFirst
             .map { KlibInputModule(it.uniqueName, it.path, TypeScriptModuleConfig(outputName = it.jsOutputName)) }
 
+    @Suppress("EnumValuesSoftDeprecate")
     override fun configureFrom(linkingOperation: JsLinkingOperation) {
         check(linkingOperation is JsLinkingOperationImpl) { "Unexpected linking operation: ${linkingOperation::class}." }
 
@@ -112,7 +113,7 @@ internal class JsDtsGenerationOperationImpl private constructor(
         this[MODULE_KIND] = linkingOperation.compilerArguments[JsArgumentsImpl.MODULE_KIND]
             ?: JsModuleKind.ES.takeIf {
                 val target = linkingOperation.compilerArguments[JsArgumentsImpl.TARGET]
-                    ?.let { from -> JsEcmaVersion.entries.first { it.name == from.name } }
+                    ?.let { from -> JsEcmaVersion.values().first { it.name == from.name } }
                 target != null && target >= JsEcmaVersion.ES2015
             }
             ?: JsModuleKind.UMD
@@ -155,11 +156,13 @@ internal class JsDtsGenerationOperationImpl private constructor(
         private val defaultArgsReference = K2JSCompilerArguments()
         val TS_COMPILATION_STRATEGY: Option<JsDtsCompilationStrategy> = Option("TS_COMPILATION_STRATEGY", JsDtsCompilationStrategy.MERGED)
         val GRANULARITY: Option<JsDtsGranularity> = Option("GRANULARITY", JsDtsGranularity.WHOLE_PROGRAM)
+
+        @Suppress("EnumValuesSoftDeprecate")
         val MODULE_KIND: Option<JsModuleKind> = Option(
             "MODULE_KIND",
             defaultArgsReference.moduleKind
                 ?.let {
-                    JsModuleKind.entries.firstOrNull { entry ->
+                    JsModuleKind.values().firstOrNull { entry ->
                         entry.stringValue.equals(
                             it,
                             false
