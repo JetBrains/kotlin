@@ -24,7 +24,7 @@ internal fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturnStackSwitc
 ): Any? {
     val wrappedCompletion = CoroutineImplStackSwitching<T, T>(completion)
     val contref0 = suspendFunction0ToContref(this, wrappedCompletion)
-    return resumeWithImpl(contref0)
+    return startWrappedCoroutineStackSwitchingImpl(contref0, wrappedCompletion)
 }
 
 // Replaces `startCoroutineUninterceptedOrReturnImpl` when -Xwasm-use-stack-switching-proposal passed
@@ -35,7 +35,7 @@ internal fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturnStack
 ): Any? {
     val wrappedCompletion = CoroutineImplStackSwitching<T, T>(completion)
     val contref1 = suspendFunction1ToContref(this, receiver, wrappedCompletion)
-    return resumeWithImpl(contref1)
+    return startWrappedCoroutineStackSwitchingImpl(contref1, wrappedCompletion)
 }
 
 // Replaces `startCoroutineUninterceptedOrReturnImpl` when -Xwasm-use-stack-switching-proposal passed
@@ -47,7 +47,7 @@ internal fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturnS
 ): Any? {
     val wrappedCompletion = CoroutineImplStackSwitching<T, T>(completion)
     val contref2 = suspendFunction2ToContref(this, receiver, param, wrappedCompletion)
-    return resumeWithImpl(contref2)
+    return startWrappedCoroutineStackSwitchingImpl(contref2, wrappedCompletion)
 }
 
 // Replaces `createCoroutineUninterceptedIntrinsic0` when -Xwasm-use-stack-switching-proposal passed

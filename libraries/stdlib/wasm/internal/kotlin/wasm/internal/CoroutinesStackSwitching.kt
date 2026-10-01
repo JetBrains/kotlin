@@ -88,3 +88,13 @@ internal fun <R, P, T> suspendFunction2ToContref(
 ): typedcontref<(Any?) -> Unit> {
     implementedAsIntrinsic
 }
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun startWrappedCoroutineStackSwitchingImpl(
+    wasmContinuation: typedcontref<(Any?) -> Unit>,
+    completion: CoroutineImplStackSwitching<*, *>,
+): Any? {
+    completion.wasmContinuation = wasmContinuation
+    val result = completion.doResume()
+    return result
+}
