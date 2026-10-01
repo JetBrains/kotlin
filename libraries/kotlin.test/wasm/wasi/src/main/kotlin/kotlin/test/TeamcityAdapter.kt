@@ -30,7 +30,7 @@ private external fun wasiRawArgsSizesGet(
 ): Int
 
 @OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
-internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { allocator ->
+internal actual fun getArguments(skip: Int): List<String> = withScopedMemoryAllocator { allocator ->
     val numberOfArgumentsPtr = allocator.allocate(4)
     val sizeOfArgumentStringPtr = allocator.allocate(4)
     val argNumRes = wasiRawArgsSizesGet(
@@ -42,7 +42,7 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
     }
 
     val argumentNumber = numberOfArgumentsPtr.loadInt()
-    if (argumentNumber <= 2) return emptyList()
+    if (argumentNumber <= skip) return emptyList()
 
     val argumentStringSize = sizeOfArgumentStringPtr.loadInt()
     val stringBufferPtr = allocator.allocate(argumentStringSize)
@@ -54,7 +54,7 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
         throw IllegalStateException("Wasi error code $argNumRes")
     }
 
-    val startAddress = (argvPtr + 2 * Int.SIZE_BYTES).loadInt().toUInt()
+    val startAddress = (argvPtr + skip * Int.SIZE_BYTES).loadInt().toUInt()
     val endAddress = stringBufferPtr.address + argumentStringSize.toUInt()
     decodeStrings(argumentStringSize, startAddress, endAddress)
 }

@@ -7,7 +7,7 @@ package kotlin.test
 
 import kotlin.math.abs
 
-internal expect fun getArguments(): List<String>
+internal expect fun getArguments(skip: Int = 0): List<String>
 
 internal open class TeamcityAdapter : FrameworkAdapter {
     protected open fun runOrScheduleNext(block: () -> Unit) = block()
@@ -59,7 +59,7 @@ internal open class TeamcityAdapter : FrameworkAdapter {
         get() {
             var value = _testArguments
             if (value == null) {
-                value = FrameworkTestArguments.parse(getArguments())
+                value = FrameworkTestArguments.parse(getArguments(skip = 1))
                 _testArguments = value
             }
 
