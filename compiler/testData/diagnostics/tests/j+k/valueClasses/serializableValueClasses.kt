@@ -8,12 +8,12 @@
 // JDK_KIND: FULL_JDK_21
 import java.io.Serializable
 
-value class Full(val x: Int, val y: String) : Serializable
+value <!SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE!>class Full<!>(val x: Int, val y: String) : Serializable
 
-value object Object : Serializable
+value <!SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE!>object Object<!> : Serializable
 
 @JvmInline
-value class Inline(val s: String) : Serializable
+value <!SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE!>class Inline<!>(val s: String) : Serializable
 
 value class WithWriteReplace(val x: Int) : Serializable {
     private fun writeReplace(): Any = x
@@ -30,13 +30,13 @@ value class InheritsWriteReplace(val x: Int) : Base()
 
 abstract value class BaseWithoutWriteReplace : Serializable
 
-value class InheritsSerializable(val x: Int) : BaseWithoutWriteReplace()
+value <!SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE!>class InheritsSerializable<!>(val x: Int) : BaseWithoutWriteReplace()
 
 interface SerializableWithWriteReplace : Serializable {
     fun writeReplace(): Any = 0
 }
 
-value class InterfaceWriteReplace(val x: Int) : SerializableWithWriteReplace
+value <!SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE!>class InterfaceWriteReplace<!>(val x: Int) : SerializableWithWriteReplace
 
 value class RenamedWriteReplace(val x: Int) : Serializable {
     @JvmName("writeReplace")
