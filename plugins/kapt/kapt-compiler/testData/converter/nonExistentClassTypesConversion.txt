@@ -118,6 +118,9 @@ import kotlin.reflect.KClass;
  *   // signature: f5(LMyType;)Ljava/lang/Class;
  *   public final fun <T#1 (* T *)> MyType<T#1>.f5(): java/lang/Class<kotlin/Enum<*>>?
  *
+ *   // signature: f6()Ljava/util/List;
+ *   public final fun f6(): kotlin/collections/List<error/NonExistentClass>
+ *
  *   // field: a:Lerror/NonExistentClass;
  *   // getter: getA()Lerror/NonExistentClass;
  *   // setter: setA(Lerror/NonExistentClass;)V
@@ -269,6 +272,11 @@ import kotlin.reflect.KClass;
  *     public final get
  *     public final set
  *
+ *   // field: q:Ljava/util/List;
+ *   // getter: getQ()Ljava/util/List;
+ *   public final val q: kotlin/collections/List<error/NonExistentClass>
+ *     public final get
+ *
  *   // module name: main
  * }
  */
@@ -296,9 +304,11 @@ public final class Test<G extends java.lang.Object> {
     public ABC<java.lang.String, ABC<ABC>> coocoo31;
     public ABC nested;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.Object m = null;
+    private final error.NonExistentClass m = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String n = "";
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<error.NonExistentClass> q = null;
     public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<error.NonExistentClass>>>>>>>>>> o11;
     public java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> o10;
     public java.util.Calendar.Builder p;
@@ -458,12 +468,17 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.Object getM() {
+    public final error.NonExistentClass getM() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getN() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<error.NonExistentClass> getQ() {
         return null;
     }
 
@@ -510,7 +525,12 @@ public final class Test<G extends java.lang.Object> {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.Object f4() {
+    public final error.NonExistentClass f4() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<error.NonExistentClass> f6() {
         return null;
     }
 

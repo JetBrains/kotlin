@@ -508,6 +508,8 @@ fun FirResolvedTypeRef.withReplacedSourceAndType(newSource: KtSourceElement?, ne
                 coneType = newType
                 annotations += this@withReplacedSourceAndType.annotations
                 diagnostic = newType.diagnostic
+                // Replacing the cone type does not change what the user wrote.
+                delegatedTypeRef = this@withReplacedSourceAndType.delegatedTypeRef
                 partiallyResolvedTypeRef = originalPartiallyResolvedTypeRef
             }
         }

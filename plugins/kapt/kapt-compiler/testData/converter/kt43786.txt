@@ -46,7 +46,7 @@ public final class Application {
 
     @kotlin.jvm.JvmStatic()
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.Object getPreferencesDataStore() {
+    public static final DataStore<Preferences> getPreferencesDataStore() {
         return null;
     }
 
@@ -82,7 +82,7 @@ public final class Application {
 
         @kotlin.jvm.JvmStatic()
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.Object getPreferencesDataStore() {
+        public final DataStore<Preferences> getPreferencesDataStore() {
             return null;
         }
     }
