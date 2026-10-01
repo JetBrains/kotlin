@@ -150,6 +150,16 @@ internal fun calculateShardScore(shard: Int, key: ByteArray, seed: Int): ULong {
     return ByteBuffer.wrap(hash.digest()).getLong().toULong()
 }
 
+/**
+ * Calculates a hash which is seeded by the [seed] (`tests.shardSeed`)
+ */
+internal fun calculateHash(value: ByteArray, seed: Int): ULong {
+    val hash = hashing.get()
+    hash.reset()
+    hash.updateInt(seed)
+    hash.update(value)
+    return ByteBuffer.wrap(hash.digest()).getLong().toULong()
+}
 
 private fun MessageDigest.updateInt(value: Int) {
     update(value.toByte())
