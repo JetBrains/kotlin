@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.kapt.test.KaptEnvironmentConfigurator
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerJvmTest
@@ -42,6 +44,7 @@ class AbstractFirKotlinKaptIntegrationTestRunner(
 
         defaultDirectives {
             +KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
+            FIR_PARSER with FirParser.LightTree
         }
 
         useConfigurators(
