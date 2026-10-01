@@ -24,12 +24,7 @@ internal suspend fun <T> returnIfSuspended(argument: Any?): T =
 
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun getCoroutineContext(): CoroutineContext =
-    getCoroutineContextImpl()
-
-@PublishedApi
-internal suspend fun getCoroutineContextImpl(): CoroutineContext =
-    getContinuation<Any?>().context
+internal suspend inline fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
 // TODO: remove after bootstrap
 @Suppress("UNUSED_PARAMETER")
