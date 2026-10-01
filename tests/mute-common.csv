@@ -10,7 +10,4 @@ org.jetbrains.kotlin.native.interop.gen.ModularCinteropUnitTests.multimodular im
 org.jetbrains.kotlin.native.interop.gen.ForwardDeclarationsTests.KT-71435 objcnames classes Protocol,KT-89568,STABLE
 org.jetbrains.kotlin.native.interop.gen.ObjCMethodSignaturesTest.ObjC Direct,KT-89568,STABLE
 org.jetbrains.kotlin.native.interop.gen.ExternalSourceSymbolTests.KT49455 category marked generated_declaration - is indexed - without visitChildren pass,KT-89568,STABLE
-org.jetbrains.kotlin.konan.test.blackbox.ObjCToKotlinSteppingInLLDBTest.stepInFromObjCToKotlin___WithoutTransparentStepping___StopsAtABridgingRoutine,KT-87872,STABLE
-org.jetbrains.kotlin.konan.test.blackbox.ObjCToKotlinSteppingInLLDBTest.stepInFromObjCToKotlin___WithTransparentStepping___StepsThroughToKotlinCode,KT-87872,STABLE
-org.jetbrains.kotlin.konan.test.blackbox.ObjCToKotlinSteppingInLLDBTest.stepInFromObjCToVirtualKotlin___WithTransparentStepping___StepsThroughToKotlinCode,KT-87872,STABLE
 org.jetbrains.kotlin.konan.test.blackbox.NativeLldbTestGenerated.testKt42208WithInlinedFunInKlib,KT-88349,FLAKY
