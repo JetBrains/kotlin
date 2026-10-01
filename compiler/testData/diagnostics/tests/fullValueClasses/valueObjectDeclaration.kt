@@ -36,7 +36,7 @@ value object WithDelegatedProperty {
 
 value object ByDelegation : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>J<!> by jDelegate
 
-<!JVM_INLINE_WITHOUT_VALUE_CLASS!>@JvmInline<!>
+<!JVM_INLINE_ON_VALUE_OBJECT!>@JvmInline<!>
 value object JvmInlineObject
 
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, classDeclaration, functionDeclaration, getter, inheritanceDelegation,

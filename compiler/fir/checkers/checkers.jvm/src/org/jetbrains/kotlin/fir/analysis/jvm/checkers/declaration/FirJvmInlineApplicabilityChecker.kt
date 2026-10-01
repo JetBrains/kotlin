@@ -36,10 +36,12 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
     override fun check(declaration: FirRegularClass) {
         val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
         val isValueObject = declaration.classKind == ClassKind.OBJECT && LanguageFeature.FullValueClasses.isEnabled()
-        if (annotation != null && (!declaration.isValue || isValueObject)) {
+        if (annotation != null && isValueObject && declaration.isValue) {
+            // Value objects are full value classes rather than inline single-field classes.
+            reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_ON_VALUE_OBJECT)
+        } else if (annotation != null && !declaration.isValue) {
             // '@JvmInline' is only applicable to value *classes*, not to non-value declarations (this includes the
-            // deprecated inline class syntax) nor to value objects, which are full value classes rather than inline
-            // single-field classes. For other wrong targets 'WRONG_MODIFIER_TARGET' is reported instead.
+            // deprecated inline class syntax). For other wrong targets 'WRONG_MODIFIER_TARGET' is reported instead.
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS)
         } else if (annotation == null && declaration.isValue && !declaration.isExpect) {
             // do not report anything for non-class declarations and local classes, WRONG_MODIFIER will be reported anyway
