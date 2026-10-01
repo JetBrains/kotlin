@@ -12,7 +12,7 @@ public interface Computable<V> extends Supplier<V> {
     V compute();
     
     @Override
-    default T get() {
+    default V get() {
         return compute();
     }
 }
