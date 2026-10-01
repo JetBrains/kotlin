@@ -248,4 +248,10 @@ public class ReplViaApiEvaluationTestGenerated extends AbstractReplViaApiEvaluat
   public void testType_aliases_repl() {
     run("type_aliases.repl.kts");
   }
+
+  @Test
+  @TestMetadata("value_classes.repl.kts")
+  public void testValue_classes_repl() {
+    run("value_classes.repl.kts");
+  }
 }

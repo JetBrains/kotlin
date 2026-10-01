@@ -1,0 +1,3 @@
+/valueClassWithDynamicProperty.kt:5:27: error: @JvmInline value class cannot have value parameter of type 'dynamic'.
+
+/valueClassWithDynamicProperty.kt:7:26: error: @JvmInline value class cannot have value parameter of type 'dynamic'.
