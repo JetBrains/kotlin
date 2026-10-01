@@ -10289,12 +10289,7 @@ open annotation class kotlinx.cinterop.internal/CStruct : kotlin/Annotation { //
 
 // Targets: [native]
 open annotation class kotlinx.cinterop.internal/CToKotlinBridge : kotlin/Annotation { // kotlinx.cinterop.internal/CToKotlinBridge|null[0]
-    constructor <init>(kotlin/String, kotlin/String) // kotlinx.cinterop.internal/CToKotlinBridge.<init>|<init>(kotlin.String;kotlin.String){}[0]
-
-    final val declaration // kotlinx.cinterop.internal/CToKotlinBridge.declaration|{}declaration[0]
-        final fun <get-declaration>(): kotlin/String // kotlinx.cinterop.internal/CToKotlinBridge.declaration.<get-declaration>|<get-declaration>(){}[0]
-    final val language // kotlinx.cinterop.internal/CToKotlinBridge.language|{}language[0]
-        final fun <get-language>(): kotlin/String // kotlinx.cinterop.internal/CToKotlinBridge.language.<get-language>|<get-language>(){}[0]
+    constructor <init>() // kotlinx.cinterop.internal/CToKotlinBridge.<init>|<init>(){}[0]
 }
 
 // Targets: [native]

@@ -165,12 +165,10 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                 val newAnnotations = function.annotations.toMutableList()
                 when (bridge) {
                     is Bridge.CToKotlin -> {
-                        val language = annotation.getConstArgument<String>("language")!!
-                        val declaration = fixUpAllPlaceHolders(annotation.getConstArgument<String>("declaration")!!)
                         newAnnotations[newAnnotations.indexOf(annotation)] =
                                 buildSimpleAnnotation(
                                         context.irBuiltIns, function.startOffset, function.endOffset,
-                                        context.symbols.cToKotlinBridge.owner, language, declaration
+                                        context.symbols.cToKotlinBridge.owner
                                 )
                         newAnnotations.add(
                                 buildSimpleAnnotation(
@@ -178,8 +176,6 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                                         context.symbols.exportForCppRuntime.owner, newName
                                 )
                         )
-
-                        generationState.cStubsManager.addStub(location, listOf(declaration), language)
                     }
                     is Bridge.KotlinToC -> {
                         val language = annotation.getConstArgument<String>("language")!!

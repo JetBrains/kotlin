@@ -712,9 +712,7 @@ private fun CCallbackBuilder.buildValueReturn(function: IrSimpleFunction, valueR
         kotlinBridgeStatements.forEach { +it }
     }
     kotlinBridge.annotations += listOf(
-            // The C bridge is declared by the C code calling it, see [CCallbackBuilder.buildCBridgeCall].
-            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner,
-                    stubs.language, "")
+            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner)
     )
     stubs.addKotlin(kotlinBridge)
 }
