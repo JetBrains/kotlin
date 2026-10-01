@@ -374,6 +374,37 @@ interface KotlinDependencyHandler : HasProject {
     ): Dependency
 
     /**
+     * Declares a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module.
+     *
+     * Calling [npm] automatically adds the dependency to the enclosing dependency collector.
+     *
+     * [version] is resolved lazily, so it may be provided by a value
+     * that is not yet known when the declaration is made:
+     * ```
+     * kotlin.sourceSets["jsMain"].dependencies {
+     *     npm(
+     *         "is-odd-even",
+     *         project.providers.gradleProperty("isOddEvenVersion"),
+     *     )
+     * }
+     * ```
+     *
+     * If [version] has no value, then the build fails when the declaration is used.
+     *
+     * The version will be parsed by node-semver.
+     * See [the node-semver README](https://github.com/npm/node-semver/tree/v7.8.5#versions) for the supported syntax.
+     *
+     * Creating NPM dependencies is only relevant for Kotlin entities that target JS or WasmJS.
+     *
+     * @param name The NPM dependency name
+     * @param version The provider of the NPM dependency version
+     */
+    fun npm(
+        name: String,
+        version: Provider<String>,
+    )
+
+    /**
      * Declares a dependency on the [NPM](https://docs.npmjs.com/cli/v10/configuring-npm/package-json#dependencies) module
      * located in a local [directory].
      *
