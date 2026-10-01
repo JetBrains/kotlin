@@ -352,6 +352,7 @@ class KotlinMultiplatformSourceSetConventionsTest {
                 nodejs()
             }
             wasmWasi {
+                @Suppress("DEPRECATION")
                 nodejs()
             }
         }

@@ -96,7 +96,10 @@ class KotlinJsIrCompilationTest {
         project.kotlin {
             js { browser() }
             wasmJs { browser() }
-            wasmWasi { nodejs() }
+            wasmWasi {
+                @Suppress("DEPRECATION")
+                nodejs()
+            }
         }
 
         fun assertHasSharedNpmToolingDir(targetName: String, expected: Boolean) {

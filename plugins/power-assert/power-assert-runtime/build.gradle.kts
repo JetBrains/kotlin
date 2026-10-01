@@ -72,7 +72,6 @@ kotlin {
         }
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         if (!buildFeatures.isolatedProjects.active.get()) {
             nodejs()
@@ -82,6 +81,7 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         if (!buildFeatures.isolatedProjects.active.get()) {
+            @Suppress("DEPRECATION")
             nodejs()
         }
     }

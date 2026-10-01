@@ -40,7 +40,10 @@ class StdlibVersionAlignmentTest : SourceSetDependenciesResolution() {
                 linuxX64()
                 js { browser() }
                 wasmJs { browser() }
-                wasmWasi { nodejs() }
+                wasmWasi {
+                    @Suppress("DEPRECATION")
+                    nodejs()
+                }
             }
         }
 
@@ -276,7 +279,10 @@ class StdlibVersionAlignmentTest : SourceSetDependenciesResolution() {
                 linuxX64()
                 js { browser() }
                 wasmJs { browser() }
-                wasmWasi { nodejs() }
+                wasmWasi {
+                    @Suppress("DEPRECATION")
+                    nodejs()
+                }
             }
         }
         assertSourceSetDependenciesResolution(

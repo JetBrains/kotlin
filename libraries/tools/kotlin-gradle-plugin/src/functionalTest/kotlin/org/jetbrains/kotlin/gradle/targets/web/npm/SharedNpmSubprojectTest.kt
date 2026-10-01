@@ -24,7 +24,10 @@ class SharedNpmSubprojectTest {
             kotlin {
                 js { browser() }
                 wasmJs { browser() }
-                wasmWasi { nodejs() }
+                wasmWasi {
+                    @Suppress("DEPRECATION")
+                    nodejs()
+                }
             }
         }
         project.evaluate()

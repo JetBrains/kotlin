@@ -88,6 +88,7 @@ class JsLikeDiagnosticsFunctionalTest {
         val project = buildProjectWithMPP {
             kotlin {
                 wasmWasi {
+                    @Suppress("DEPRECATION")
                     nodejs()
                 }
             }
