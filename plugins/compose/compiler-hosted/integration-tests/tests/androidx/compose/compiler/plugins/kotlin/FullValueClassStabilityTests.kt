@@ -64,6 +64,12 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
     )
 
     @Test
+    fun testAbstractValueClass() = assertStability("abstract value class V", "Unstable")
+
+    @Test
+    fun testSealedValueClass() = assertStability("sealed value class V", "Unstable")
+
+    @Test
     fun testRecursiveProperty() = assertStability("value class V(val a: Int, val next: V?)", "Unstable")
 
     /**
