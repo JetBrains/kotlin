@@ -303,8 +303,23 @@ public var KmFunction.returnValueStatus: ReturnValueStatus by returnValueStatusD
  * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
  * and thus this flag is not related to them.
  */
+@Deprecated("Use isCompanionBlockMember instead", ReplaceWith("isCompanionBlockMember"))
+@OptIn(ExperimentalCompanionBlocks::class)
 @ExperimentalCompanionBlocksAndExtensions
-public var KmFunction.isStatic: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_FUNCTION))
+public var KmFunction.isStatic: Boolean
+    get() = isCompanionBlockMember
+    set(value) {
+        isCompanionBlockMember = value
+    }
+
+/**
+ * Indicates whether the function is a companion block member.
+ *
+ * Refer to [KEEP-449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md)
+ * for more details about companion blocks and companion block members.
+ */
+@ExperimentalCompanionBlocks
+public var KmFunction.isCompanionBlockMember: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_FUNCTION))
 
 // --- PROPERTY ---
 
@@ -416,8 +431,23 @@ public var KmProperty.returnValueStatus: ReturnValueStatus by returnValueStatusD
  * or ones produced by `@JvmStatic`, but they do not have metadata on their own,
  * and thus this flag is not related to them.
  */
+@OptIn(ExperimentalCompanionBlocks::class)
 @ExperimentalCompanionBlocksAndExtensions
-public var KmProperty.isStatic: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_PROPERTY))
+@Deprecated(message = "Use isCompanionBlockMember instead", replaceWith = ReplaceWith("isCompanionBlockMember"))
+public var KmProperty.isStatic: Boolean
+    get() = isCompanionBlockMember
+    set(value) {
+        isCompanionBlockMember = value
+    }
+
+/**
+ * Indicates whether the property is a companion block member.
+ *
+ * Refer to [KEEP-449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md)
+ * for more details about companion blocks and companion block members.
+ */
+@ExperimentalCompanionBlocks
+public var KmProperty.isCompanionBlockMember: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_STATIC_PROPERTY))
 
 // --- PROPERTY ACCESSOR ---
 
