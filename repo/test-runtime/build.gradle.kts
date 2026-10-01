@@ -31,7 +31,7 @@ kotlin.sourceSets.main.configure {
 kotlin.target.compilations.all {
     compileTaskProvider.configure {
         compilerOptions {
-            freeCompilerArgs.add("-Xsuppress-version-warnings")
+            freeCompilerArgs.addAll("-Xsuppress-version-warnings", "-Xcontext-parameters")
             languageVersion.set(KotlinVersion.KOTLIN_2_2)
             apiVersion.set(KotlinVersion.KOTLIN_2_2)
         }
