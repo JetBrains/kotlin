@@ -280,6 +280,9 @@ tasks {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAllParallelTests")
     }
 
+
+    // Gradle Plugin Integration Tests,
+    //   grouped by Gradle Version & type of test
     testLifecycleTask("gradlePluginIntegrationMasterTest", QualityGate.Master) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTestsGroupedByGradleVersion")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpAndroidTestsGroupedByGradleVersion")
@@ -291,16 +294,32 @@ tasks {
     }
 
 
+    // Gradle Plugin Integration Tests
+    //   grouped by Gradle Version
+    //   experimental: Tested against 'gradlePluginIntegrationTest' for simplicity, latency and resource usage
+    testLifecycleTask("gradlePluginIntegrationTest_master", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion_master")
+    }
+
     // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ==/
     register("gradlePluginIntegrationTest") {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
+    // Nightly Gradle Plugin Integration Tests
+    //   grouped by Gradle Version & type of test
     testLifecycleTask("gradlePluginIntegrationNightlyTest", QualityGate.Nightly) {
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftExportTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTests")
         dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
+    }
+
+    // Nightly Gradle Plugin Integration Tests
+    //   grouped by Gradle Version
+    //   experimental: Tested against 'gradlePluginIntegrationNightlyTest' for simplicity latency and resource usage
+    testLifecycleTask("gradlePluginIntegrationTest_nightly", QualityGate.Undefined) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion_nightly")
     }
 
     testLifecycleTask("jvmCompilerTest", QualityGate.Master) {

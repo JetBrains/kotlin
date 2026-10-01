@@ -274,6 +274,62 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
     val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
+    val nightlyJunitTags = setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP, JunitTag.JsBrowserKGP)
+    /*
+    Quality gate 'master' (see ':gradlePluginIntegrationMasterTest'):
+    'JsBrowserKGP' tests require a browser environment and are part of the 'nightly' quality gate
+    (see ':kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion')
+     */
+    val masterJunitTags = JunitTag.entries - nightlyJunitTags
+
+    val testsGroupedByGradleVersionMaster = tasks.register("testsGroupedByGradleVersion_master") {
+        group = gradleVersionTaskGroup
+        description = "Runs all tests for Kotlin Gradle plugins of the 'master' quality gate against all supported Gradle versions"
+    }
+
+
+    val testsGroupedByGradleVersionNightly = tasks.register("testsGroupedByGradleVersion_nightly") {
+        group = gradleVersionTaskGroup
+        description = "Runs all tests for Kotlin Gradle plugins of the 'nightly' quality gate against all supported Gradle versions"
+    }
+
+    gradleVersions.forEach { gradleVersion ->
+        val testForGradleVersionMaster = tasks.register<Test>("testsForGradle_${gradleVersion.replace(".", "_")}_master") {
+            description = "Runs all tests for Kotlin Gradle plugins of the 'master' quality gate against Gradle $gradleVersion"
+            useJUnitPlatform {
+                includeTags(*masterJunitTags.map { it.name }.toTypedArray())
+            }
+        }
+
+        val testForGradleVersionNightly = tasks.register<Test>("testsForGradle_${gradleVersion.replace(".", "_")}_nightly") {
+            description = "Runs all tests for Kotlin Gradle plugins of the 'nightly' quality gate against Gradle $gradleVersion"
+            useJUnitPlatform {
+                includeTags(*(masterJunitTags + nightlyJunitTags).map { it.name }.toTypedArray())
+            }
+        }
+
+        listOf(testForGradleVersionMaster, testForGradleVersionNightly).forEach { task ->
+            task.configure {
+                group = gradleVersionTaskGroup
+                maxParallelForks = maxParallelTestForks
+
+                classpath = sourceSets["test"].runtimeClasspath
+                testClassesDirs = sourceSets["test"].output.classesDirs
+                systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("gradle.integration.tests.gradle.versions", gradleVersions.joinToString(";"))
+                systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+            }
+        }
+
+        testsGroupedByGradleVersionMaster.configure {
+            dependsOn(testForGradleVersionMaster)
+        }
+
+        testsGroupedByGradleVersionNightly.configure {
+            dependsOn(testForGradleVersionNightly)
+        }
+    }
+
     junitTags.forEach { junitTag ->
         val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
         val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
