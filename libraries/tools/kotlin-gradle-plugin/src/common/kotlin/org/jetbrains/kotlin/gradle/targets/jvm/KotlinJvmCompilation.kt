@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.lenient
 import org.jetbrains.kotlin.gradle.utils.named
 import javax.inject.Inject
 
-@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION")
+@Suppress("TYPEALIAS_EXPANSION_DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "DEPRECATION", "DEPRECATION_ERROR")
 open class KotlinJvmCompilation @Inject internal constructor(
     compilation: KotlinCompilationImpl,
     internal val defaultJavaSourceSet: SourceSet,
