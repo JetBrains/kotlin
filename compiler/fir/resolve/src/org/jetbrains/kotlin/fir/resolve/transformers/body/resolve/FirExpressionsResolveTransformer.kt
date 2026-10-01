@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -700,6 +700,19 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 LanguageFeature.NameBasedDestructuring.isDisabled() ||
                 LanguageFeature.EnableNameBasedDestructuringShortForm.isEnabled()
 
+    // Like a full value class type, this includes flexible types, DNNs, intersection types and type parameters, type variables and captured
+    // types bounded by a full value class, but not the types of classes that only extend an abstract value class.
+    private fun ConeKotlinType.isFullValueClassOrBoundedByOne(visited: MutableSet<TypeConstructorMarker>): Boolean =
+        when (val type = lowerBoundIfFlexible()) {
+            is ConeDefinitelyNotNullType -> type.original.isFullValueClassOrBoundedByOne(visited)
+            is ConeIntersectionType -> type.intersectedTypes.any { it.isFullValueClassOrBoundedByOne(visited) }
+            is ConeClassLikeType -> type.fullyExpandedType().toRegularClassSymbol()?.isFullValueClass == true
+            else -> with(session.typeContext) {
+                val constructor = type.typeConstructor()
+                visited.add(constructor) && constructor.supertypes().any { it.isFullValueClassOrBoundedByOne(visited) }
+            }
+        }
+
     override fun transformComponentCall(componentCall: FirComponentCall, data: ResolutionMode): FirStatement {
         // Check if it's a short form destructuring with parentheses to a value class.
         // If yes, convert it to name-based destructuring.
@@ -709,11 +722,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         componentCall.transformExplicitReceiver(this, data)
         val initializerType = componentCall.explicitReceiver.resolvedType
 
-        // We just use anySuperTypeConstructor to handle flexible types, DNNs, type variables with value bounds, captured types,
-        // and intersections types.
-        val shouldUseNbd = context(session.typeContext) {
-            initializerType.anySuperTypeConstructor { it.asCone().toRegularClassSymbol()?.isFullValueClass == true }
-        }
+        val shouldUseNbd = initializerType.isFullValueClassOrBoundedByOne(mutableSetOf())
 
         if (!shouldUseNbd) return super.transformComponentCall(componentCall, data)
 
