@@ -43,7 +43,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun generateDts(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
-            gradleProperties.appendText("\nkotlin.js.rich-typescript-generator=false\n")
+            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=false\n")
             build("build") {
                 assertOutputDoesNotContain("GenerateTypeScriptDefinitions")
                 assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.js")
@@ -64,7 +64,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun generateDtsWithRichTypeScriptSchema(gradleVersion: GradleVersion) {
         project("kotlin2JsIrDtsGeneration", gradleVersion) {
-            gradleProperties.appendText("\nkotlin.js.rich-typescript-generator=true\n")
+            gradleProperties.appendText("\nkotlin.js.generateRichTypeScriptDeclarations=true\n")
             build("assemble") {
                 val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
 

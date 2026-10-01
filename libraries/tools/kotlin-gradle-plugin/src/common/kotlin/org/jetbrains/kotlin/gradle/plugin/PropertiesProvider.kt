@@ -159,8 +159,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     /**
      * Enables the metadata-based TypeScript declaration generator for Kotlin/JS.
      */
-    val jsRichTypeScriptGenerator: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_JS_RICH_TYPESCRIPT_GENERATOR) ?: true
+    val jsGenerateRichTypeScriptDeclarations: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS) ?: true
 
     val incrementalNative: Boolean?
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_INCREMENTAL_COMPILATION)
@@ -875,7 +875,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = property("kotlin.mpp.enableOptimisticNumberCommonization")
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
-        val KOTLIN_JS_RICH_TYPESCRIPT_GENERATOR = property("kotlin.js.rich-typescript-generator")
+        val KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS = property("kotlin.js.generateRichTypeScriptDeclarations")
         val KOTLIN_PLAYWRIGHT_BROWSERS_PATH = property("kotlin.gradle.playwright.browsers.path")
         val KOTLIN_JS_IDE_DEBUG_SESSION_URL = property("kotlin.internal.js.ideDebugSessionUrl")
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")

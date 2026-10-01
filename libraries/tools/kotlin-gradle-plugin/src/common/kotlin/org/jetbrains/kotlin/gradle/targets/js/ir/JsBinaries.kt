@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTa
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -56,6 +57,8 @@ sealed class JsIrBinary(
 
     val validateGeneratedTsTaskName: String = validateTypeScriptTaskName()
 
+    internal val dtsGenerationTaskName: String = dtsGenerationTaskName()
+
     @Deprecated(
         "No longer used. To enable TypeScript definitions use generateTypeScriptDefinitions() in the Kotlin JS target instead. Scheduled for removal in Kotlin 2.4.",
         level = DeprecationLevel.ERROR
@@ -71,7 +74,8 @@ sealed class JsIrBinary(
     val linkTask: TaskProvider<KotlinJsIrLink> =
         project.registerTask(linkTaskName, KotlinJsIrLink::class.java, listOf(project, target.platformType))
 
-    internal var dtsGenerationTask: TaskProvider<KotlinJsDtsGenerationTask>? = null
+    internal val dtsGenerationTask: TaskProvider<KotlinJsDtsGenerationTask>?
+        get() = project.locateTask(dtsGenerationTaskName)
 
     @Suppress("PropertyName")
     protected val _linkSyncTask: TaskProvider<DefaultIncrementalSyncTask>? =
@@ -153,6 +157,14 @@ sealed class JsIrBinary(
             compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             name,
             TypeScriptValidationTask.NAME
+        )
+
+    private fun dtsGenerationTaskName(): String =
+        lowerCamelCaseName(
+            compilation.target.disambiguationClassifier,
+            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            name,
+            KotlinJsDtsGenerationTask.NAME
         )
 
     protected fun wasmFileFromJsFile(jsFile: Provider<RegularFile>): Provider<RegularFile> {

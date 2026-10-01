@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.dsl.KotlinWasmtimeDsl
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -374,15 +375,13 @@ internal constructor(
                 it.binaries
                     .withType(JsIrBinary::class.java)
                     .all { binary ->
-                        if (propertiesProvider.jsRichTypeScriptGenerator && binary.target.wasmTargetType == null) {
+                        if (binary.target.wasmTargetType == null && propertiesProvider.jsGenerateRichTypeScriptDeclarations) {
                             val dtsTask = registerDtsGenerationTask(binary)
-                            binary.dtsGenerationTask = dtsTask
 
                             val tsValidationTask = registerTypeScriptCheckTask(
                                 binary,
                                 dtsTask.flatMap { it.outputDirectory },
                             )
-                            tsValidationTask.configure { it.mustRunAfter(binary.linkSyncTask) }
                             dtsTask.configure { it.finalizedBy(tsValidationTask) }
                             binary.linkSyncTask.configure { it.from.from(dtsTask) }
                         } else {
@@ -403,14 +402,11 @@ internal constructor(
         val linkTask = binary.linkTask
         val configurations = project.configurations
 
-        val resultTask = project.registerTask<KotlinJsDtsGenerationTask>(
-            lowerCamelCaseName(
-                binary.compilation.target.disambiguationClassifier,
-                binary.compilation.name.takeIf { it != MAIN_COMPILATION_NAME },
-                binary.name,
-                KotlinJsDtsGenerationTask.NAME,
-            ),
-        ) { task ->
+        return project.locateOrRegisterTask<KotlinJsDtsGenerationTask>(binary.dtsGenerationTaskName) { task ->
+            KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
+                linkTask.get().compilerOptions,
+                task.linkCompilerOptions,
+            )
             task.klibs.from(linkTask.map { it.libraries })
             task.entryModule.set(linkTask.flatMap { it.entryModule })
             task.granularity.set(linkTask.map { it.outputGranularity })
@@ -418,16 +414,6 @@ internal constructor(
 
             task.outputDirectory.set(binary.outputDirBase.map { it.dir(KotlinJsDtsGenerationTask.OUTPUT_DIRECTORY_NAME) })
         }
-
-        linkTask.configure { link ->
-            val dtsTask = resultTask.get()
-            KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
-                link.compilerOptions,
-                dtsTask.linkCompilerOptions,
-            )
-        }
-
-        return resultTask
     }
 
     override val compilerOptions: KotlinJsCompilerOptions = project.objects
