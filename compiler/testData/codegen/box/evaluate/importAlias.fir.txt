@@ -19,9 +19,9 @@ FILE: main.kt
             public static get(): R|kotlin/enums/EnumEntries<a/Color>|
 
     }
-    public final const [EvaluatedValue=String(renamed)] val FUN_ALIAS: R|kotlin/String| = ::R|a/original|.R|SubstitutionOverride<kotlin/reflect/KProperty0.name: R|kotlin/String|>|
+    public final const [EvaluatedValue=String(original)] val FUN_ALIAS: R|kotlin/String| = ::R|a/original|.R|SubstitutionOverride<kotlin/reflect/KProperty0.name: R|kotlin/String|>|
         public get(): R|kotlin/String|
-    public final const [EvaluatedValue=String(Dark)] val ENUM_ALIAS: R|kotlin/String| = R|a/Color.RED|.R|SubstitutionOverride<a/Color.name: R|kotlin/String|>|
+    public final const [EvaluatedValue=String(RED)] val ENUM_ALIAS: R|kotlin/String| = R|a/Color.RED|.R|SubstitutionOverride<a/Color.name: R|kotlin/String|>|
         public get(): R|kotlin/String|
     public final fun <T> R|T|.id(): R|T| {
         ^id this@R|a/id|

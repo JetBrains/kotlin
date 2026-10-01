@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -421,18 +422,18 @@ object FirExpressionEvaluator {
                             // All other objects receive the default treatment.
                             propertySymbol.callableId?.callableName == StandardNames.NAME -> {
                                 val result = evaluateOr<FirElement>(propertyAccessExpression.explicitReceiver) { return it }
+                                fun evaluateName(symbol: FirBasedSymbol<*>?): FirEvaluatorResult {
+                                    val name = when (symbol) {
+                                        is FirConstructorSymbol -> SpecialNames.INIT.asString()
+                                        is FirCallableSymbol<*> -> symbol.name.asString()
+                                        else -> return NotConst(propertyAccessExpression.source)
+                                    }
+                                    return name.toConstExpression(ConstantValueKind.String, propertyAccessExpression).wrap()
+                                }
+
                                 when (result) {
-                                    is FirPropertyAccessExpression -> {
-                                        val name = result.calleeReference.name.asString()
-                                        name.toConstExpression(ConstantValueKind.String, propertyAccessExpression).wrap()
-                                    }
-                                    is FirResolvedCallableReference -> {
-                                        val name = when (result.resolvedSymbol) {
-                                            is FirConstructorSymbol -> SpecialNames.INIT.asString()
-                                            else -> result.name.asString()
-                                        }
-                                        name.toConstExpression(ConstantValueKind.String, propertyAccessExpression).wrap()
-                                    }
+                                    is FirPropertyAccessExpression -> evaluateName(result.calleeReference.symbol)
+                                    is FirResolvedCallableReference -> evaluateName(result.resolvedSymbol)
                                     else -> NotConst(propertyAccessExpression.source)
                                 }
                             }
