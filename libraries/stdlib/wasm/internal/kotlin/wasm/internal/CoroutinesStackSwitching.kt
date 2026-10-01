@@ -52,10 +52,10 @@ internal fun nullContrefIntrinsic(): typedcontref<(Any?) -> Unit>? {
 // Replaces `suspendOrReturn` when -Xwasm-use-stack-switching-proposal passed
 @Suppress("UNCHECKED_CAST", "RedundantSuspendModifier")
 @UsedFromCompilerGeneratedCode
-internal suspend fun <T> suspendOrReturnStackSwitching(result: Any?): T {
+internal suspend fun <T> suspendOrReturnStackSwitching(blockResult: Any?): T {
     val coroutineImpl = getContinuation<T>() as CoroutineImplStackSwitching<T, T>
 
-    if (result !== COROUTINE_SUSPENDED) return result as T
+    if (blockResult !== COROUTINE_SUSPENDED) return blockResult as T
 
     if (coroutineImpl.resumedWhileRunning) {
         // `block` resumed the continuation itself, the result is already here -- do not park.
