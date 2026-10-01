@@ -483,6 +483,7 @@ object CompilerModules {
         ":kotlin-main-kts",
         ":kotlin-dom-api-compat",
         ":compiler:build-tools:kotlin-build-tools-api",
+        ":compiler:build-tools:kotlin-build-tools-api-jps",
         ":compiler:build-tools:kotlin-build-tools-impl",
         ":compiler:build-tools:kotlin-build-tools-cri-impl",
     )
