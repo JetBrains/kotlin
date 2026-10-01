@@ -71,11 +71,11 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
     fun testSealedValueClass() = assertStability("sealed value class V", "Uncertain(V)")
 
     @Test
-    fun testConfiguredStableValueClass() = assertStability("value class V(val u: Unstable)", "Unstable", externalTypes = setOf("V"))
+    fun testConfiguredStableValueClass() = assertStability("value class V(val u: Unstable)", "Stable", externalTypes = setOf("V"))
 
     @Test
     fun testConfiguredStableInlineClass() =
-        assertStability("@JvmInline value class V(val u: Unstable)\nclass W(val v: V)", "Unstable", externalTypes = setOf("V"))
+        assertStability("@JvmInline value class V(val u: Unstable)\nclass W(val v: V)", "Stable", externalTypes = setOf("V"))
 
     @Test
     fun testRecursiveProperty() = assertStability("value class V(val a: Int, val next: V?)", "Unstable")

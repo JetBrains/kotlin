@@ -515,10 +515,11 @@ class StabilityInferencer(
                 if (valueClassDeclaration.hasStableMarker()) {
                     Stability.Stable
                 } else {
+                    val propertySubstitutions = substitutions + (type as IrSimpleType).substitutionMap()
+                    valueClassDeclaration.knownStability(propertySubstitutions, currentlyAnalyzing, analysisEntryFile)?.let { return it }
                     // Like other abstract and sealed classes, abstract and sealed value classes may have subclasses of any stability.
                     val primaryProperties = valueClassDeclaration.valueClassRepresentation?.underlyingPropertyNamesToTypes
                         ?: return Stability.Unknown(valueClassDeclaration)
-                    val propertySubstitutions = substitutions + (type as IrSimpleType).substitutionMap()
                     val typeArguments = valueClassDeclaration.typeParameters.map { propertySubstitutions[it.symbol] }
                     val symbol = SymbolForAnalysis(valueClassDeclaration.symbol, typeArguments, analysisEntryFile)
                     if (symbol in currentlyAnalyzing) return Stability.Unstable
@@ -535,9 +536,14 @@ class StabilityInferencer(
                 if (inlineClassDeclaration.hasStableMarker()) {
                     Stability.Stable
                 } else {
+                    val underlyingSubstitutions = substitutions + (type as IrSimpleType).substitutionMap()
+                    // Known stable constructs like `kotlin.Result` have always taken the stability of their underlying type.
+                    inlineClassDeclaration.knownStability(
+                        underlyingSubstitutions, currentlyAnalyzing, analysisEntryFile, includeKnownConstructs = false,
+                    )?.let { return it }
                     stabilityOf(
                         type = getInlineClassUnderlyingType(inlineClassDeclaration, treatCompatibleFullValueClassesAsInline = false),
-                        substitutions = substitutions + (type as IrSimpleType).substitutionMap(),
+                        substitutions = underlyingSubstitutions,
                         currentlyAnalyzing = currentlyAnalyzing,
                         analysisEntryFile
                     )
@@ -555,6 +561,19 @@ class StabilityInferencer(
 
             else -> error("Unexpected IrType: $type")
         }
+    }
+
+    // Like other classes, value classes can be known or configured to be stable, which takes precedence over the stability of their
+    // properties.
+    private fun IrClass.knownStability(
+        substitutions: Map<IrTypeParameterSymbol, IrTypeArgument>,
+        currentlyAnalyzing: Set<SymbolForAnalysis>,
+        analysisEntryFile: IrFile?,
+        includeKnownConstructs: Boolean = true,
+    ): Stability? {
+        val mask = KnownStableConstructs.stableTypes[fqNameWhenAvailable?.toString()]?.takeIf { includeKnownConstructs }
+            ?: if (isExternalStableType()) externalTypeMatcherCollection.maskForName(fqNameWhenAvailable) ?: 0 else return null
+        return Stability.Stable.applyTypeParameterMask(mask, typeParameters, substitutions, currentlyAnalyzing, analysisEntryFile)
     }
 
     private fun IrSimpleType.substitutionMap(): Map<IrTypeParameterSymbol, IrTypeArgument> {
