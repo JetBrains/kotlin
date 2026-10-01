@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -52,7 +53,7 @@ public class ConstructorBuildingContext(
 
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
-            origin = key.origin
+            origin = owner.origin.takeIf { it is FirDeclarationOrigin.Java.Plugin } ?: key.origin
 
             owner.typeParameterSymbols.mapTo(typeParameters) { buildConstructedClassTypeParameterRef { symbol = it } }
             returnTypeRef = owner.defaultType().toFirResolvedTypeRef()
