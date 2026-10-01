@@ -656,6 +656,7 @@ tasks {
     testLifecycleTask("codebaseTests", QualityGate.Master) {
         dependsOn(":repo:auto-code-review:test")
         dependsOn(":repo:codebase-tests:test")
+        dependsOn(":repo:test-runtime:test")
     }
 
     testLifecycleTask("artifactsTest", QualityGate.Master) {
