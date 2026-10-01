@@ -105,6 +105,9 @@ private fun assembleAndRunProcess(
         }
     }
 
+    // Don't expect any process to request input via stdin.
+    process.outputStream.close()
+
     inputThread.join()
     errorThread.join()
 
