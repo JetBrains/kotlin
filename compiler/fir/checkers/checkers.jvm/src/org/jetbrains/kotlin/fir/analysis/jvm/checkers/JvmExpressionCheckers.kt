@@ -39,6 +39,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirFieldReferenceShadowedByInvisibleKotlinProperty,
             FirJavaSamInterfaceConstructorReferenceChecker,
             FirJavaClassPropertyReferenceChecker,
+            FirJvmIdentitySensitiveCallableReferenceChecker,
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
