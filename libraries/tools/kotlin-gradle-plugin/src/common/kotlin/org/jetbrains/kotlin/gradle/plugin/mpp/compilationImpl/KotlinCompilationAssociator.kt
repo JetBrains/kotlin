@@ -86,7 +86,7 @@ internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator 
 
 internal object KotlinJvmCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR")
         val shouldSkip = when {
             /*
              * Main to Test association handled already by the `java` plugin
