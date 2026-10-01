@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-75366
-// IGNORE_REVERSED_RESOLVE: KT-75366
 // FILE: A.java
 public interface A<T> {
     void foo(T t);

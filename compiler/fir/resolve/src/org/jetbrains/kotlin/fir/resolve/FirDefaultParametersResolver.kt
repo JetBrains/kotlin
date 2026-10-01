@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.itOrExpectHasDefaultParameterValue
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
@@ -40,7 +41,8 @@ class FirDefaultParametersResolver : FirSessionComponent {
                     scopeSession,
                     memberOwnerClass = containingClassSymbol,
                     memberOwnerLookupTag = containingClassSymbol.toLookupTag(),
-                    memberRequiredPhase = null,
+                    // Overridden functions are processed below, so their fake overrides require resolved statuses
+                    memberRequiredPhase = FirResolvePhase.STATUS,
                 )
             }
             else -> return false

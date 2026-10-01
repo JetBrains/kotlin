@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-75366
-// IGNORE_REVERSED_RESOLVE: KT-75366
 // FILE: K.kt
 interface K<T> {
     fun foo(t: T)
