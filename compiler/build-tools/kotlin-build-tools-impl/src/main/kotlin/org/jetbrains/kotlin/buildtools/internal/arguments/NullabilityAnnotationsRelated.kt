@@ -16,6 +16,7 @@ internal fun K2JVMCompilerArguments.applyNullabilityAnnotations(settings: List<N
 }
 
 @OptIn(ExperimentalCompilerArgument::class)
+@Suppress("EnumValuesSoftDeprecate")
 internal fun applyNullabilityAnnotations(
     currentValue: List<NullabilityAnnotation>,
     compilerArgs: K2JVMCompilerArguments,
@@ -27,7 +28,7 @@ internal fun applyNullabilityAnnotations(
         }
 
         val mode =
-            NullabilityAnnotation.Mode.entries.firstOrNull { entry -> entry.stringValue == parts[1] }
+            NullabilityAnnotation.Mode.values().firstOrNull { entry -> entry.stringValue == parts[1] }
                 ?: throw CompilerArgumentsParseException("Unknown -Xnullability-annotations mode: $item")
         NullabilityAnnotation(parts[0].removePrefix("@"), mode)
     }

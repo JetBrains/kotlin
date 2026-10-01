@@ -49,6 +49,8 @@ internal class BtaImplOptionsGenerator(
 
     private val outputs = mutableListOf<Pair<Path, String>>()
 
+    private var currentFileCallsApiEnumValues = false
+
     override fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
         parentClass: ClassName?,
@@ -57,7 +59,8 @@ internal class BtaImplOptionsGenerator(
         val apiClassName = level.name.capitalizeAsciiOnly()
         val implClassName = apiClassName + "Impl"
         val mainFileAppendable = createGeneratedFileAppendable()
-        val mainFile = FileSpec.builder(targetPackage, implClassName).apply {
+        currentFileCallsApiEnumValues = false
+        val mainFileBuilder = FileSpec.builder(targetPackage, implClassName).apply {
             // Kotlinpoet requires these aliased imports when there's a name clash in the current context or else it calls the wrong member
             addAliasedImport(MemberName("org.jetbrains.kotlin.compilerRunner", "toArgumentStrings"), "compilerToArgumentStrings")
             addAliasedImport(MemberName(ClassName("org.jetbrains.kotlin.config", "KotlinCompilerVersion"), "VERSION"), "KC_VERSION")
@@ -211,7 +214,14 @@ internal class BtaImplOptionsGenerator(
                     generateToCompilationInputsFun(level, implClassName, parentClass)
                 }
             }
-        }.build()
+        }
+        if (currentFileCallsApiEnumValues) {
+            mainFileBuilder.addAnnotation(
+                AnnotationSpec.builder(ClassName("kotlin", "Suppress"))
+                    .addMember("%S", "EnumValuesSoftDeprecate").build()
+            )
+        }
+        val mainFile = mainFileBuilder.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
         return GeneratorOutputs(ClassName(targetPackage, implClassName), outputs)
@@ -632,11 +642,14 @@ internal class BtaImplOptionsGenerator(
         }
 
         when {
+            // BTA-API and BTA-IMPL could be used with different Kotlin-stdlib versions at the runtime, but from the different classloaders,
+            // which lead to JDK linkage error for `EnumEntries` symbol. We avoiding it by explicitly using values() method instead.
             type.isGeneratedEnum -> {
+                currentFileCallsApiEnumValues = true
                 add(maybeGetNullabilitySign(argument))
                 if (!generateCompatLayer) {
                     add(
-                        $$".let { %T.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> %M(_restrictedArgViolations, arguments::%N, entry.stringValue, it) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                        $$".let { %T.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> %M(_restrictedArgViolations, arguments::%N, entry.stringValue, it) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
                         argumentTypeParameter.copy(nullable = false),
                         MemberName(targetPackage, "checkCaseMatches"),
                         effectiveCompilerName,
@@ -644,16 +657,17 @@ internal class BtaImplOptionsGenerator(
                     )
                 } else {
                     add(
-                        $$".let { %T.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                        $$".let { %T.values().firstOrNull { entry -> entry.stringValue.equals(it, true) } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
                         argumentTypeParameter.copy(nullable = false),
                         MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
                     )
                 }
             }
             type.isGeneratedEnumList() -> {
+                currentFileCallsApiEnumValues = true
                 val enumType = type.typeArguments[0]
                 add(
-                    $$".map { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                    $$".map { %T.values().firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
                     enumType.copy(nullable = false),
                     MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException")
                 )
