@@ -35,6 +35,8 @@ internal class KotlinArchiveEntry(
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val files: FileCollection,
+    @get:Input
+    val filesRequireUnpacking: Boolean = false,
 )
 
 internal class KotlinArchiveTargetCrossCompilationCheckData(
@@ -60,14 +62,17 @@ internal fun KotlinArchiveTargetCrossCompilationCheckData.isSupported(): Boolean
 @DisableCachingByDefault(because = "Assembling a Kotlin Archive is not worth caching, as it's only built for publishing, which is a rare operation")
 internal abstract class AssembleKotlinArchiveTask @Inject constructor(
     private val fileOperations: FileOperations,
+    private val archiveOperations: ArchiveOperations,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
     @get:Nested
     abstract val archiveContents: ListProperty<KotlinArchiveEntry>
 
     private fun kotlinArchiveEntryOf(path: String, files: FileCollection) = KotlinArchiveEntry(project.provider { path }, files)
 
-    fun addPlatformKlib(path: String, files: FileCollection) {
-        archiveContents.add(kotlinArchiveEntryOf("${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$path", files))
+    fun addPlatformKlib(path: String, files: FileCollection, packed: Boolean = false) {
+        archiveContents.add(
+            KotlinArchiveEntry(project.provider { "${KarLayout.PLATFORM_KLIBS_DIRECTORY_NAME}/$path" }, files, packed)
+        )
     }
 
     fun addCInterop(pathProvider: Provider<String>, files: FileCollection) {
@@ -174,7 +179,12 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
         fileOperations.sync { spec ->
             spec.into(targetDir)
             for (input in archiveContents.get()) {
-                spec.from(input.files) { inputSpec ->
+                val content = if (input.filesRequireUnpacking) {
+                    input.files.files.filter { it.exists() }.map { archiveOperations.zipTree(it) }
+                } else {
+                    listOf(input.files)
+                }
+                spec.from(content) { inputSpec ->
                     inputSpec.into(input.pathPrefix)
                 }
             }

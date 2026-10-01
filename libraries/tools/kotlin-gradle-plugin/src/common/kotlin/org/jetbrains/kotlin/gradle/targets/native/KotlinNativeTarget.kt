@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -45,6 +46,18 @@ abstract class KotlinNativeTarget @Inject constructor(
     @InternalKotlinGradlePluginApi
     override val platformNameInKotlinArchive: String
         get() = konanTarget.presetName
+
+    @InternalKotlinGradlePluginApi
+    override val platformKlibFiles: FileCollection
+        get() {
+            val compileTask = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).compileTaskProvider
+            // klibDirectory is derived from the task output, so it does not carry the task dependency
+            return project.files(compileTask.flatMap { it.klibDirectory }).builtBy(compileTask)
+        }
+
+    @InternalKotlinGradlePluginApi
+    override val doesPlatformKlibRequireUnpacking: Boolean
+        get() = false
 
     init {
         attributes.attribute(konanTargetAttribute, konanTarget.name)
