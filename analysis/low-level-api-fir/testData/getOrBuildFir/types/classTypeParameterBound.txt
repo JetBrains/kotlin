@@ -1,0 +1,15 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Number|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] classTypeParameterBound.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Number|> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Number|>(): R|A<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

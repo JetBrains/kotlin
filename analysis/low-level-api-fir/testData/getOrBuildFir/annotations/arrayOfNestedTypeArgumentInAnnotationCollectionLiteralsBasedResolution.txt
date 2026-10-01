@@ -1,0 +1,19 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/String|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] arrayOfNestedTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt
+    @R|Anno|[Types](a = R|kotlin/arrayOf|<R|kotlin/collections/List<kotlin/String>|>() [evaluated = <collectionLiteralCall>()]) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.a] a: R|kotlin/Array<kotlin/collections/List<kotlin/String>>|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Array<kotlin/collections/List<kotlin/String>>| = R|<local>/a|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Array<kotlin/collections/List<kotlin/String>>|
+
+    }
