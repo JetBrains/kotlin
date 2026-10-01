@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.sourceKindForIncOrDec
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
-import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
+import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 import org.jetbrains.kotlin.util.ArrayLiteralResolution
 import org.jetbrains.kotlin.util.OnlyForDefaultLanguageFeatureDisabled
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -744,10 +744,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         componentCall.transformExplicitReceiver(this, data)
         val initializerType = componentCall.explicitReceiver.resolvedType
 
-        // We just use anySuperTypeConstructor to handle flexible types, DNNs, type variables with value bounds, captured types,
-        // and intersections types.
-        val shouldUseNbd = context(session.typeContext) {
-            initializerType.anySuperTypeConstructor { it.asCone().toRegularClassSymbol()?.isFullValueClass == true }
+        // Flexible types, DNNs, intersection types and type parameters, type variables and captured types bounded by a full value class are
+        // destructured by name, but not the types of classes that only extend an abstract value class.
+        val shouldUseNbd = with(session.typeContext) {
+            newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true).anySupertype(
+                initializerType.lowerBoundIfFlexible(),
+                { it.asCone().toRegularClassSymbol()?.isFullValueClass == true },
+                { if (it is ConeClassLikeType) SupertypesPolicy.None else SupertypesPolicy.LowerIfFlexible },
+            )
         }
 
         if (!shouldUseNbd) return super.transformComponentCall(componentCall, data)
