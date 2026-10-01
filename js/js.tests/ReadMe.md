@@ -4,6 +4,7 @@ This module contains test runner classes and helpers for testing the Kotlin/JS c
 
 The following Gradle tasks make running tests in batch more convenient:
 - `:js:js.tests:jsTest` — run JS tests with ES5 as the target.
+- `:js:js.tests:jsSwcTest` — run JS tests with ES5 as the target, using `swc` tool as a transpiler.
 - `:js:js.tests:jsES6Test` — run JS tests with ES6 as the target.
 - `:js:js.tests:test` — run all JS tests
 
@@ -27,6 +28,19 @@ There are multiple kinds of tests. Here are some of them:
 - TypeScript export tests, located in `js/js.translator/testData/typescript-export`.
   These test that the generated `.d.ts` (TypeScript definitions) file matches the reference `.d.ts` file.
 - Also, some tests located in `compiler/testData/codegen` are shared among all backends.
+
+### Enabling swc-related tests in :test task
+
+By default, `swc` tests are excluded from a regular `:js.tests:test` Gradle task,
+because they trigger `swc` CLI tools downloading & installation, which is not something expected by default.
+Also, `swc` tests are not a part of the safe-merge aggregate.
+
+But to explicitly run such tests via Kotlin Compiler DevKit, it can be useful.
+
+To enable them, there is a special Gradle property:
+```
+kotlin.js.enable.swc.tests=true
+```
 
 ### Manually running the generated JS files
 There is a helpful tool for running and debugging JS code generated from test files right in IntelliJ IDEA.
