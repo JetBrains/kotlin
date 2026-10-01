@@ -283,7 +283,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
-                    "\"outFileExtension\": \".mjs\"",
+                    "\"outFileExtension\": \"mjs\"",
                     "\"loose\": false",
                 )
             }
@@ -296,7 +296,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-library-project/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
-                    "\"outFileExtension\": \".mjs\"",
+                    "\"outFileExtension\": \"mjs\"",
                     "\"loose\": false",
                 )
             }
@@ -326,7 +326,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project-test/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
-                    "\"outFileExtension\": \".mjs\"",
+                    "\"outFileExtension\": \"mjs\"",
                     "\"loose\": false",
                 )
             }
@@ -340,7 +340,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
-                    "\"outFileExtension\": \".mjs\"",
+                    "\"outFileExtension\": \"mjs\"",
                     "\"loose\": false",
                 )
             }
@@ -354,7 +354,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/.swcrc"),
                     "\"target\": \"es5\"",
                     "\"type\": \"nodenext\"",
-                    "\"outFileExtension\": \".mjs\"",
+                    "\"outFileExtension\": \"mjs\"",
                     "\"loose\": false",
                 )
             }
