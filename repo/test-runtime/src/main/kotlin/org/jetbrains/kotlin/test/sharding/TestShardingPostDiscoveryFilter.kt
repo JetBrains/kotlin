@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.sharding
 
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor
 import org.junit.platform.engine.FilterResult
 import org.junit.platform.engine.FilterResult.excluded
@@ -28,7 +29,7 @@ internal val testsShardByMethodTag = TestTag.create(testsShardByMethodTagKey)
  * By default, all tests of a class run on the same shard.
  *
  * A `@TestFactory` or `@TestTemplate` still runs on a single shard,
- * unless it uses [DynamicTestSharding].
+ * unless it uses [DynamicTestSharding] or [ParameterizedTestSharding].
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -103,6 +104,18 @@ internal fun TestDescriptor.shardingDistributionKey(configuration: TestShardingC
     }
 }
 
+/**
+ * Execution-time counterpart of [TestDescriptor.shardingDistributionKey], used to salt the invocations of a test template (see [shard]):
+ * the unique id of the test when sharding by method, otherwise the name of its test class.
+ * Only junit-jupiter provides an [ExtensionContext], so no other test engines need to be handled.
+ */
+internal fun ExtensionContext.shardingDistributionKey(configuration: TestShardingConfiguration): String {
+    if (configuration.shardByMethod || testsShardByMethodTagKey in tags) {
+        return uniqueId
+    }
+
+    return requiredTestClass.name
+}
 
 // MessageDigest is mutable: reuse one instance per thread, without sharing its state between threads.
 private val hashing: ThreadLocal<MessageDigest> = ThreadLocal.withInitial {
