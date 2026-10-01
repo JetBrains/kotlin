@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import kotlin.io.path.moveTo
+import kotlin.io.path.writeText
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -243,6 +244,75 @@ class JsBrowserTestsIT : KGPBaseTest() {
                 assertOutputContains("""Execute JS tests with chromium runner at URL: http.*:wasmJsTestBundleAsEsm/test.html""".toRegex())
                 assertOutputContains("chromium.JsBrowserSmokeTest.assertFails[wasmJs, browser, chromium] FAILED")
                 assertOutputContains("2 tests completed, 1 failed")
+            }
+        }
+    }
+
+    @DisplayName("KT-89269: Playwright resolves transitive npm dependencies")
+    @OptIn(ExperimentalJsTestDsl::class)
+    @GradleTest
+    fun `browser tests with transitive npm dependencies`(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser {
+                            test { it.chromium() }
+                        }
+                    }
+                    wasmJs {
+                        browser {
+                            test { it.chromium() }
+                        }
+                    }
+                    sourceSets.commonTest {
+                        dependencies {
+                            implementation(kotlin("test"))
+                            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+                        }
+                        compileSource(
+                            """
+                            import kotlinx.datetime.LocalDate
+                            import kotlin.test.Test
+                            import kotlin.test.assertEquals
+
+                            class DateTimeTest {
+                                @Test
+                                fun formatsDate() {
+                                    assertEquals("2026-01-02", LocalDate(2026, 1, 2).toString())
+                                }
+                            }
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+
+            build("jsBrowserTest", "wasmJsBrowserTest") {
+                assertTasksExecuted(":jsBrowserTest", ":wasmJsBrowserTest")
+                for (target in listOf("js", "wasmJs")) {
+                    val taskName = "${target}BrowserTest"
+                    val expectedReport = projectPath.resolve("$taskName-expected.xml").apply {
+                        writeText(
+                            """
+                            <?xml version="1.0" encoding="UTF-8"?>
+                            <results>
+                              <testsuite name="$taskName.chromium.DateTimeTest" tests="1" skipped="0" failures="0" errors="0" timestamp="..." hostname="..." time="...">
+                                <properties />
+                                <testcase name="formatsDate[$target, browser, chromium]" classname="$taskName.chromium.DateTimeTest" time="..." />
+                                <system-out />
+                                <system-err />
+                              </testsuite>
+                            </results>
+                            """.trimIndent().modifyForGradle(gradleVersion)
+                        )
+                    }
+                    assertTestResults(expectedReport, taskName)
+                }
             }
         }
     }
