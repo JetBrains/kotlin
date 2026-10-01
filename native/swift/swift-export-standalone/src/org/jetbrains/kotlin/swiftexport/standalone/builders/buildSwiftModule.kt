@@ -42,7 +42,7 @@ internal fun buildSirSession(
     unsupportedDeclarationReporter = moduleConfig.unsupportedDeclarationReporter,
     moduleProvider = SirOneToOneModuleProvider(
         platformLibs = kaModules.platformLibraries,
-        cinteropReexportLib = kaModules.cinteropReexportLibrary?.let { it to it.reexportedObjCModuleNames() },
+        cinteropReexportLib = kaModules.cinteropReexportLibrary.associateWith { it.reexportedObjCModuleNames() },
     ),
     targetPackageFqName = moduleConfig.targetPackageFqName,
     referencedTypeHandler = referenceHandler,

@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.sir.util.SirPlatformModule
  */
 public class SirOneToOneModuleProvider(
     platformLibs: Collection<KaLibraryModule>,
-    cinteropReexportLib: Pair<KaLibraryModule, List<String>>? = null,
+    cinteropReexportLib: Map<KaLibraryModule, List<String>> = emptyMap(),
 ) : SirModuleProvider {
 
     private val moduleCache: MutableMap<KaModule, SirModule> = buildMap<KaModule, SirModule> {
         platformLibs.forEach { put(it, SirPlatformModule(it.moduleName)) }
-        cinteropReexportLib?.let { put(it.first, SirCinteropModule(it.second)) }
+        cinteropReexportLib.forEach { [module, names] -> put(module, SirCinteropModule(names)) }
     }.toMutableMap()
 
     public val modules: Map<KaModule, SirModule>

@@ -34,7 +34,7 @@ public class KaModules<Config> internal constructor(
     public val useSiteModule: KaModule,
     private val modulesToInputs: Map<KaLibraryModule, KlibInputModule<Config>>,
     public val platformLibraries: List<KaLibraryModule>,
-    public val cinteropReexportLibrary: KaLibraryModule?,
+    public val cinteropReexportLibrary: List<KaLibraryModule>,
 ) : AutoCloseable {
     public val inputsToModules: Map<KlibInputModule<Config>, KaLibraryModule> = modulesToInputs.map { it.value to it.key }.toMap()
     public val mainModules: List<KaLibraryModule> = modulesToInputs.keys.toList()
@@ -61,20 +61,20 @@ public fun <Config> createKaModulesForStandaloneAnalysis(
     inputs: Collection<KlibInputModule<Config>>,
     targetPlatform: TargetPlatform,
     platformLibraries: Collection<KlibInputModule<Config>> = emptyList(),
-    cinteropReexportLibrary: KlibInputModule<Config>? = null,
+    cinteropReexportLibrary: Collection<KlibInputModule<Config>> = emptyList(),
 ): KaModules<Config> {
     val projectDisposable = Disposer.newDisposable("KaModules.project")
     lateinit var binaryModules: Map<KaLibraryModule, KlibInputModule<Config>>
     lateinit var fakeSourceModule: KaSourceModule
     var platformLibraryModules: List<KaLibraryModule> = emptyList()
-    var cinteropReexportLibraryModule: KaLibraryModule? = null
+    var cinteropReexportLibraryModule: List<KaLibraryModule> = emptyList()
 
     buildStandaloneAnalysisAPISession(projectDisposable) {
         buildKtModuleProvider {
             platform = targetPlatform
             binaryModules = inputs.associateBy { inputModuleIntoKaLibraryModule(it, targetPlatform) }
             platformLibraryModules = platformLibraries.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
-            cinteropReexportLibraryModule = cinteropReexportLibrary?.let { inputModuleIntoKaLibraryModule(it, targetPlatform) }
+            cinteropReexportLibraryModule = cinteropReexportLibrary.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
                 buildKtSourceModule {
@@ -82,7 +82,7 @@ public fun <Config> createKaModulesForStandaloneAnalysis(
                     moduleName = "fakeSourceModule"
                     binaryModules.keys.forEach(::addRegularDependency)
                     platformLibraryModules.forEach(::addRegularDependency)
-                    cinteropReexportLibraryModule?.let(::addRegularDependency)
+                    cinteropReexportLibraryModule.forEach(::addRegularDependency)
                 }
             )
         }
