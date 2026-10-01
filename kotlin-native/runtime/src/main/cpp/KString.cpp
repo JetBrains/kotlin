@@ -316,6 +316,7 @@ extern "C" OBJ_GETTER(Kotlin_String_toCharArray, KConstRef string, KRef destinat
 }
 
 extern "C" OBJ_GETTER(Kotlin_String_subSequence, KConstRef thiz, KInt startIndex, KInt endIndex) {
+    auto thisPtr = thiz;
     return encodingAware(thiz, [=](auto thiz) {
         if (startIndex < 0 || static_cast<uint32_t>(endIndex) > thiz.sizeInChars() || startIndex > endIndex) {
             // Kotlin/JVM uses StringIndexOutOfBounds, but Native doesn't have it and this is close enough.
@@ -324,6 +325,10 @@ extern "C" OBJ_GETTER(Kotlin_String_subSequence, KConstRef thiz, KInt startIndex
 
         if (startIndex == endIndex) {
             RETURN_RESULT_OF0(TheEmptyString);
+        }
+
+        if (startIndex == 0 && static_cast<uint32_t>(endIndex) == thiz.sizeInChars()) {
+            RETURN_OBJ(const_cast<KRef>(thisPtr));
         }
 
         auto start = thiz.begin() + startIndex;
