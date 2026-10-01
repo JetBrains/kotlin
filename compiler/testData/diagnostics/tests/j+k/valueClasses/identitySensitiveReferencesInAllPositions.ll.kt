@@ -38,38 +38,38 @@ fun <T> swappedSam(t: T, f: SwappedSam<Int, T>) = f.apply(t)
 fun <T> receiverSam(t: T, f: ReceiverSam<T>) = with(f) { t.apply() }
 
 fun samConversions(full: Full) {
-    javaSam(full, System::identityHashCode)
-    kotlinSam(full, System::identityHashCode)
-    swappedSam(full, System::identityHashCode)
-    receiverSam(full, System::identityHashCode)
-    Stream.of(full).mapToInt(System::identityHashCode)
+    javaSam(full, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>)
+    kotlinSam(full, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>)
+    swappedSam(full, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>)
+    receiverSam(full, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>)
+    Stream.of(full).mapToInt(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>)
 }
 
 open class Holder<T>(t: T, f: (T) -> Int)
 
-class SuperCall(full: Full) : Holder<Full>(full, System::identityHashCode)
+class SuperCall(full: Full) : Holder<Full>(full, <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>)
 
 fun nonArguments(cleaner: Cleaner): (Full) -> Int {
-    val property: (Full) -> Int = System::identityHashCode
-    val register: (Full, Runnable) -> Cleaner.Cleanable = cleaner::register
-    val unbound: (Cleaner, Full, Runnable) -> Cleaner.Cleanable = Cleaner::register
+    val property: (Full) -> Int = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>
+    val register: (Full, Runnable) -> Cleaner.Cleanable = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>cleaner::register<!>
+    val unbound: (Cleaner, Full, Runnable) -> Cleaner.Cleanable = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Cleaner::register<!>
     var assigned: (Full) -> Int = { 0 }
-    assigned = System::identityHashCode
+    assigned = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>
     val vararg = listOf<(Full) -> Int>(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>)
-    return System::identityHashCode
+    return <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>
 }
 
-fun otherPositions(flag: Boolean, full: Full, nullable: ((Full) -> Int)?, default: (Full) -> Int = System::identityHashCode) {
-    val branch: (Full) -> Int = if (flag) System::identityHashCode else { _ -> 0 }
-    val elvis: (Full) -> Int = nullable ?: System::identityHashCode
-    javaSam(f = System::identityHashCode, t = full)
+fun otherPositions(flag: Boolean, full: Full, nullable: ((Full) -> Int)?, default: (Full) -> Int = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>) {
+    val branch: (Full) -> Int = if (flag) <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!> else { _ -> 0 }
+    val elvis: (Full) -> Int = nullable ?: <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>
+    javaSam(f = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>System::identityHashCode<!>, t = full)
 }
 
 fun constructorReferences(): () -> IdentityHashMap<Full, Int> {
-    val weak: () -> WeakHashMap<Full, Int> = ::WeakHashMap
-    val queue: () -> ReferenceQueue<Full> = ::ReferenceQueue
-    lazy<IdentityHashMap<Full, Int>>(::IdentityHashMap)
-    return ::IdentityHashMap
+    val weak: () -> WeakHashMap<Full, Int> = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>::WeakHashMap<!>
+    val queue: () -> ReferenceQueue<Full> = <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>::ReferenceQueue<!>
+    lazy<IdentityHashMap<Full, Int>>(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>::IdentityHashMap<!>)
+    return <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>::IdentityHashMap<!>
 }
 
 fun identityClass(cleaner: Cleaner): (String) -> Int {
