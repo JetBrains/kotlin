@@ -1052,7 +1052,7 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass, const TypeI
   // - objc protocol counterparsts bound trough kotlin interface TypeInfo's
   RuntimeAssert(typeInfo->superType_ != nullptr, "");
 
-  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
+  kotlin::AssertThreadState(kotlin::ThreadState::kNative);
 
   int classIndex = (anonymousClassNextId++);
   std::string className = Kotlin_ObjCInterop_getUniquePrefix();
@@ -1105,9 +1105,8 @@ static void setClassEnsureInitialized(const TypeInfo* typeInfo, Class cls) {
   RuntimeAssert(cls != nullptr, "");
 
   // ObjC runtime calls +initialize under a global lock on the first access to an object.
-  // `[result self]` below will ensure ahead of time initialization
-  // we only have to make it happen in the native state
-  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(true);
+  // `[result self]` below will ensure ahead of time initialization but it has to happen in the native state.
+  kotlin::AssertThreadState(kotlin::ThreadState::kNative);
   [cls self];
 
   objCExport(typeInfo).objCClass = cls;
@@ -1119,6 +1118,8 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
   if (result != nullptr) {
     return result;
   }
+
+  kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(true);
 
   const ObjCTypeAdapter* typeAdapter = getTypeAdapter(typeInfo);
   if (typeAdapter != nullptr) {

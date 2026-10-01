@@ -213,6 +213,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "objc_getClass",
         "objc_getProtocol",
         "objc_lookUpClass",
+        "objc_getClass", // can call +initialize
         "object_getClass",
         "object_isClass",
         "_os_signpost_emit_with_name_impl",
