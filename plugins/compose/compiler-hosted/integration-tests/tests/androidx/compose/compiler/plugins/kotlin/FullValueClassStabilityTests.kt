@@ -80,11 +80,11 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
 
     // Regression test for KT-89968
     @Test
-    fun testAbstractValueClass() = assertStability("abstract value class V", "Unstable")
+    fun testAbstractValueClass() = assertStability("abstract value class V", "Uncertain(V)")
 
     // Regression test for KT-89968
     @Test
-    fun testSealedValueClass() = assertStability("sealed value class V", "Unstable")
+    fun testSealedValueClass() = assertStability("sealed value class V", "Uncertain(V)")
 
     // Regression test for KT-89961
     @Test
