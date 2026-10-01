@@ -281,7 +281,7 @@ tasks {
     }
 
     testLifecycleTask("gradlePluginIntegrationMasterTest", QualityGate.Master) {
-        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion_master")
     }
 
 
@@ -291,10 +291,7 @@ tasks {
     }
 
     testLifecycleTask("gradlePluginIntegrationNightlyTest", QualityGate.Nightly) {
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpNativeTests")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftExportTests")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpSwiftPMImportTests")
-        dependsOn(":kotlin-gradle-plugin-integration-tests:kgpJsBrowserTestsGroupedByGradleVersion")
+        dependsOn(":kotlin-gradle-plugin-integration-tests:testsGroupedByGradleVersion_nightly")
     }
 
     testLifecycleTask("jvmCompilerTest", QualityGate.Master) {

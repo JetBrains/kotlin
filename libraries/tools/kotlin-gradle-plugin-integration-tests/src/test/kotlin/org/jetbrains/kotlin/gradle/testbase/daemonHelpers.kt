@@ -26,7 +26,8 @@ import kotlin.time.TimeSource
  * If the directory remains non-empty and the [maxWaitTime] is exceeded, it sends a SIGTERM to the alive processes.
  * If that didn't help, it sends SIGKILL to the still alive processes and cleans [runFilesDirectory] itself.
  *
- * @param runFilesDirectory The path to the directory that contains the run files for the Kotlin daemon. Must be a valid directory.
+ * @param runFilesDirectory The path to the directory that contains the run files for the Kotlin daemon.
+ * If it does not exist, no daemon was started and there is nothing to wait for.
  * @param maxWaitTime The maximum duration to wait for the graceful daemon termination.
  * @param periodicCheckTime The interval at which the directory will be checked for run files. This is also converted to milliseconds during execution.
  * @param forceKillWaitTime The duration to wait after attempting to kill a process gracefully before forcibly terminating it.
@@ -37,6 +38,8 @@ fun awaitKotlinDaemonTermination(
     periodicCheckTime: Duration = 100.milliseconds,
     forceKillWaitTime: Duration = 1.seconds,
 ) {
+    if (Files.notExists(runFilesDirectory)) return
+
     require(Files.isDirectory(runFilesDirectory)) { "${runFilesDirectory.toAbsolutePath().normalize()} is not a directory." }
     require(maxWaitTime >= periodicCheckTime) { "$periodicCheckTime must be >= $maxWaitTime" }
 
