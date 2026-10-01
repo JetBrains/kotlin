@@ -78,10 +78,6 @@ internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
 
     @TaskAction
     fun run() {
-        if (!entryModule.get().asFile.exists()) {
-            return
-        }
-
         val buildSession = buildSessionService.get().getOrCreateBuildSession(
             classLoadersCachingService.get(),
             kotlinBuildToolsApiClasspath.toList()
