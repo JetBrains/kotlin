@@ -5,6 +5,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.normalize
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
@@ -86,6 +87,33 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
     @Test
     fun testSealedValueClass() = assertStability("sealed value class V", "Uncertain(V)")
 
+    // Regression test for KT-89969
+    @Test
+    fun testConfiguredStableValueClass() = assertStability("value class V(val u: Unstable)", "Unstable", externalTypes = setOf("V"))
+
+    // Regression test for KT-89969
+    @Test
+    fun testConfiguredStableInlineClass() =
+        assertStability("@JvmInline value class V(val u: Unstable)\nclass W(val v: V)", "Unstable", externalTypes = setOf("V"))
+
+    @Test
+    fun testInheritedStableMarker() = assertStability(
+        """
+            @androidx.compose.runtime.Stable sealed value class Base
+            value class V(val u: Unstable) : Base()
+        """,
+        "Unstable",
+    )
+
+    @Test
+    fun testInheritedStableMarkerInlineClass() = assertStability(
+        """
+            @androidx.compose.runtime.Stable interface Base
+            @JvmInline value class V(val u: Unstable) : Base
+        """,
+        "Unstable",
+    )
+
     // Regression test for KT-89961
     @Test
     fun testRecursiveProperty() = assertStability("value class V(val a: Int, val next: V?)", "Unstable")
@@ -94,15 +122,18 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
      * Asserts that the stability of the last type declared in [classDefSrc], normalized as for the code generation, is [stability].
      */
     @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun assertStability(@Language("kotlin") classDefSrc: String, stability: String) {
+    private fun assertStability(@Language("kotlin") classDefSrc: String, stability: String, externalTypes: Set<String> = emptySet()) {
         val source = """
             class Unstable { var value: Int = 0 }
 
             $classDefSrc
         """.trimIndent()
-        val irModule = compileToIr(listOf(SourceFile("Test.kt", source)))
+        val irModule = compileToIr(listOf(SourceFile("Test.kt", source)), registerExtensions = {
+            it.put(ComposeConfiguration.TEST_STABILITY_CONFIG_KEY, externalTypes)
+        })
         val irClass = irModule.files.last().declarations.last() as IrClass
-        val classStability = StabilityInferencer(isTargetJvm = true, emptySet()).stabilityOf(irClass.defaultType as IrType, irClass.file)
+        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, externalTypes.map { FqNameMatcher(it) }.toSet())
+        val classStability = stabilityInferencer.stabilityOf(irClass.defaultType as IrType, irClass.file)
         assertEquals(stability, classStability.normalize().toString())
     }
 }
