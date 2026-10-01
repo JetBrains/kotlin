@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.kapt.test.handlers.KaptStubConverterHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.TestDumpDirectives
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -38,6 +40,7 @@ abstract class AbstractKaptStubConverterTest(
 
         defaultDirectives {
             +MAP_DIAGNOSTIC_LOCATIONS
+            FIR_PARSER with FirParser.LightTree
             +WITH_STDLIB
             STUB_GENERATION_SCHEME with stubGenerationScheme.stringValue
             TestDumpDirectives.DUMP_CLASSIFIER with stubGenerationScheme.stringValue.lowercase()
