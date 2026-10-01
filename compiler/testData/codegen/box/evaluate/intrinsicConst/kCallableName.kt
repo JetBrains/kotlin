@@ -10,6 +10,8 @@ class A(val OK: Int, val somePropertyWithLongName: String) {
 val topLevelProp = 1
 fun Int.baz() {}
 
+fun interface FunInterface { fun foo() }
+
 const val propertyName1 = A::OK.name
 const val propertyName2 = A::somePropertyWithLongName.name
 const val methodName1 = A::foo.name
@@ -19,6 +21,7 @@ const val suspendMethodName = A::bar.name
 const val className = ::A.name
 const val topLevelPropName = ::topLevelProp.name
 const val nameInComplexExpression = A::OK.name + "!"
+const val funInterfaceName = ::FunInterface.name
 
 fun box(): String {
     if (propertyName1.id() != "OK") return "Fail propertyName1"
@@ -29,5 +32,6 @@ fun box(): String {
     if (className.id() != "<init>") return "Fail className"
     if (topLevelPropName.id() != "topLevelProp") return "Fail topLevelPropName"
     if (nameInComplexExpression.id() != "OK!") return "Fail nameInComplexExpression"
+    if (funInterfaceName.id() != "FunInterface") return "Fail FunInterface"
     return "OK"
 }
