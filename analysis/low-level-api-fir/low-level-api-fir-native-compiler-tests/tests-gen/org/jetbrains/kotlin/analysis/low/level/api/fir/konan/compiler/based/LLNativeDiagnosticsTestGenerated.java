@@ -121,6 +121,12 @@ public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnostic
   }
 
   @Test
+  @TestMetadata("identitySensitiveOperationsOnValueClasses.kt")
+  public void testIdentitySensitiveOperationsOnValueClasses() {
+    run("identitySensitiveOperationsOnValueClasses.kt");
+  }
+
+  @Test
   @TestMetadata("interfaceCompanionBlockProperty.kt")
   public void testInterfaceCompanionBlockProperty() {
     run("interfaceCompanionBlockProperty.kt");
