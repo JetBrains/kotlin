@@ -701,7 +701,7 @@ internal class CodeGeneratorVisitor(
         return
     }
 
-    fun handleStaticInitializer(declaration: IrSimpleFunction) {
+    private fun handleStaticInitializer(declaration: IrSimpleFunction) {
         val scopeState = llvm.initializersGenerationState.scopeState
         when (declaration.origin) {
             StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER -> {
@@ -726,6 +726,32 @@ internal class CodeGeneratorVisitor(
         require(declaration.returnsUnit()) { "Static initializer must return Unit" }
     }
 
+    private fun FunctionGenerationContext.handleStaticInitializerBody(declaration: IrSimpleFunction) {
+        val initializedGlobals = declaration.initializedGlobals ?: return
+        val allowedOrigins = listOf(
+                StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER,
+                StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER,
+                StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER,
+                StaticInitializersOrigins.EAGER_STATIC_GLOBAL_INITIALIZER,
+                StaticInitializersOrigins.EAGER_STATIC_THREAD_LOCAL_INITIALIZER,
+        )
+        require(declaration.origin in allowedOrigins) {
+            "initializedGlobals may only be set on static initializers. Origin is ${declaration.origin}, expected $allowedOrigins"
+        }
+        // Currently, thread-local objects are registered completely separately.
+        when (declaration.origin) {
+            StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER,
+            StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER,
+            StaticInitializersOrigins.EAGER_STATIC_THREAD_LOCAL_INITIALIZER -> return
+        }
+        initializedGlobals.forEach {
+            val field = it.owner
+            require(field.type.binaryTypeIsReference())
+            require(field.isStatic)
+            call(llvm.registerGlobalFunction, listOf(staticFieldPtr(field, functionGenerationContext)))
+        }
+    }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         context.log{"visitFunction                  : ${ir2string(declaration)}"}
 
@@ -748,6 +774,7 @@ internal class CodeGeneratorVisitor(
                     val parameterScope = ParameterScope(declaration, functionGenerationContext)
                     using(parameterScope) usingParameterScope@{
                         using(VariableScope()) usingVariableScope@{
+                            handleStaticInitializerBody(declaration)
                             when (body) {
                                 is IrBlockBody -> body.statements.forEach { generateStatement(it) }
                                 is IrExpressionBody -> compilationException("IrExpressionBody should've been lowered", declaration)
@@ -1714,9 +1741,6 @@ internal class CodeGeneratorVisitor(
             require(field.isStatic) { "A receiver expected for a non-static field: ${value.render()}" }
             address = staticFieldPtr(field, functionGenerationContext)
             alignment = generationState.llvmDeclarations.forStaticField(field).alignment
-        }
-        if (value.origin == StaticInitializersOrigins.INITIALIZE_GLOBAL_FIELD && field.type.binaryTypeIsReference()) {
-            call(llvm.registerGlobalFunction, listOf(address))
         }
         functionGenerationContext.storeAny(
                 valueToAssign, address, field.type.binaryTypeIsReference(), false,
