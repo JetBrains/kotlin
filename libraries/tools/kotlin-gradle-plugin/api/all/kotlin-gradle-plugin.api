@@ -4263,12 +4263,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCom
 	public final fun getPublicPackageJsonAttribute ()Lorg/gradle/api/attributes/Attribute;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolver$ConfigurationVisitor {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolver;)V
-	public final fun toPackageJsonProducer ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolution;
-	public final fun visit (Lorg/gradle/api/artifacts/Configuration;)V
-}
-
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinProjectNpmResolver : java/io/Serializable {
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinRootNpmResolver;)V
 	public final fun close ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolved/KotlinProjectNpmResolution;
