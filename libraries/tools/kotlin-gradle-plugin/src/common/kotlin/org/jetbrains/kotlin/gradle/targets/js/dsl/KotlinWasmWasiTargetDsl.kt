@@ -67,4 +67,28 @@ interface KotlinWasmWasiTargetDsl :
             fn.execute(this)
         }
     }
+
+    @Deprecated(
+        "Node.js does not support Wasm component model. Use wasmtime instead. Scheduled for removal in Kotlin 2.7.",
+        ReplaceWith("wasmtime()"),
+    )
+    override fun nodejs() {
+        super.nodejs()
+    }
+
+    @Deprecated(
+        "Node.js does not support Wasm component model. Use wasmtime instead. Scheduled for removal in Kotlin 2.7.",
+        ReplaceWith("wasmtime(body)"),
+    )
+    override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
+        super.nodejs(body)
+    }
+
+    @Deprecated(
+        "Node.js does not support Wasm component model. Use wasmtime instead. Scheduled for removal in Kotlin 2.7.",
+        ReplaceWith("wasmtime(fn)"),
+    )
+    override fun nodejs(fn: Action<KotlinJsNodeDsl>) {
+        super.nodejs(fn)
+    }
 }

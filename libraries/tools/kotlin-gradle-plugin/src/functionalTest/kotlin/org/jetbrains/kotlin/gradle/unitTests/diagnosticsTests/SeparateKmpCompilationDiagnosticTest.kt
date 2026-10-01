@@ -80,6 +80,7 @@ class SeparateKmpCompilationDiagnosticTest {
                 @OptIn(ExperimentalWasmDsl::class)
                 run {
                     wasmWasi {
+                        @Suppress("DEPRECATION")
                         nodejs()
                     }
                     wasmJs {

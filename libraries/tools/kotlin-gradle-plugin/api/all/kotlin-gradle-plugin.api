@@ -2521,6 +2521,9 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinWasmTarget : 
 	public fun d8 (Lorg/gradle/api/Action;)V
 	public fun getD8 ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmD8Dsl;
 	public fun isD8Configured ()Z
+	public fun nodejs ()V
+	public fun nodejs (Lkotlin/jvm/functions/Function1;)V
+	public fun nodejs (Lorg/gradle/api/Action;)V
 	public fun wasmtime ()V
 	public fun wasmtime (Lkotlin/jvm/functions/Function1;)V
 	public fun wasmtime (Lorg/gradle/api/Action;)V
@@ -2870,6 +2873,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDs
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl : org/jetbrains/kotlin/gradle/plugin/mpp/HasBinaries, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinTargetWithNodeJsDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl {
+	public abstract fun nodejs ()V
+	public abstract fun nodejs (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun nodejs (Lorg/gradle/api/Action;)V
 	public abstract fun wasmtime ()V
 	public abstract fun wasmtime (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun wasmtime (Lorg/gradle/api/Action;)V
@@ -2883,6 +2889,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTarg
 	public static synthetic fun getPreset (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)V
+	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun nodejs (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun wasmtime (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;)V
 	public static fun wasmtime (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl;Lorg/gradle/api/Action;)V

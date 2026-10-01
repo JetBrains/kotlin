@@ -33,7 +33,10 @@ class TestApiDependenciesCheckerTest {
                 js { browser() }
 
                 wasmJs { browser() }
-                wasmWasi { nodejs() }
+                wasmWasi {
+                    @Suppress("DEPRECATION")
+                    nodejs()
+                }
             }
 
             configure()
