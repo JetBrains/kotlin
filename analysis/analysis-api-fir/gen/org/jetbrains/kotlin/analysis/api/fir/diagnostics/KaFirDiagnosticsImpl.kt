@@ -5558,6 +5558,7 @@ internal class InefficientEqualsOverridingInValueClassImpl(
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InefficientEqualsOverridingInValueClass
 
 internal class InlineClassDeprecatedImpl(
+    override val replacement: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecated

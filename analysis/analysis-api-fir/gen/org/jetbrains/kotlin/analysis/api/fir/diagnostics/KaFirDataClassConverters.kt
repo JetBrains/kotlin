@@ -3960,6 +3960,7 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
     }
     add(FirErrors.INLINE_CLASS_DEPRECATED) { firDiagnostic ->
         InlineClassDeprecatedImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

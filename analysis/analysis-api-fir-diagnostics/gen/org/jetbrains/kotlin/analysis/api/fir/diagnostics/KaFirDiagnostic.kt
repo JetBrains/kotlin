@@ -7870,6 +7870,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface InlineClassDeprecated : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<InlineClassDeprecated>
             get() = InlineClassDeprecated::class
+
+        public val replacement: String
     }
 
     @KaUnstableDiagnosticApi

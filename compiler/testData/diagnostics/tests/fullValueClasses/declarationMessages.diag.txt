@@ -6,7 +6,7 @@
 
 /declarationMessages.kt:14:33: error: '@JvmInline' value class cannot have value parameter of type 'Unit'.
 
-/declarationMessages.kt:16:1: warning: 'inline' modifier is deprecated. Use 'value' instead.
+/declarationMessages.kt:16:1: warning: 'inline' modifier is deprecated. Use '@JvmInline value' instead.
 
 /declarationMessages.kt:16:30: error: Inline class must have exactly one primary constructor parameter.
 

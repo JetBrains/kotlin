@@ -2877,7 +2877,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INLINE_CLASS_DEPRECATED,
-            "'inline' modifier is deprecated. Use 'value' instead."
+            "''inline'' modifier is deprecated. Use {0} instead.",
+            STRING,
         )
         map.put(
             LESS_VISIBLE_TYPE_ACCESS_IN_INLINE,
