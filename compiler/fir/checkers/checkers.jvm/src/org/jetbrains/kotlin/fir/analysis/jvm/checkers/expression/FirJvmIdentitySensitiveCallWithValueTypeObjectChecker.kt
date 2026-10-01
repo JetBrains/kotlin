@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
@@ -72,8 +75,12 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
 
             in operationsToCheckFirstTypeArgCallableIds -> when (expression) {
                 is FirFunctionCall -> {
-                    val typeArgument = expression.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return
-                    checkType(typeArgument.typeRef.coneType.lowerBoundIfFlexible(), typeArgument.source)
+                    // A type alias may have other type arguments than the class it expands to.
+                    val type = expression.resolvedType.fullyExpandedType().typeArguments.firstOrNull()?.type ?: return
+                    val typeArgument = expression.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance
+                    val isTypeAliasConstructor = (function as? FirConstructorSymbol)?.typeAliasConstructorInfo != null
+                    val source = if (isTypeAliasConstructor) expression.calleeReference.source else typeArgument?.source
+                    checkType(type.lowerBoundIfFlexible(), source ?: expression.calleeReference.source)
                 }
                 is FirDelegatedConstructorCall -> {
                     val typeRef = expression.constructedTypeRef

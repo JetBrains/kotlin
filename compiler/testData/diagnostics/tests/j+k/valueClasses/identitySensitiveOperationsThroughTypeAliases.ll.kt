@@ -26,10 +26,10 @@ typealias FullQueue = ReferenceQueue<Full>
 typealias WeakFullKeys<V> = WeakHashMap<Full, V>
 
 fun test() {
-    ByIdentity<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Full<!>>()
-    FullKeys()
-    FullQueue()
-    WeakFullKeys<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>Int<!>>()
+    ByIdentity<Full>()
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>FullKeys<!>()
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>FullQueue<!>()
+    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>WeakFullKeys<!><Int>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, primaryConstructor, propertyDeclaration,
