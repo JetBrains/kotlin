@@ -85,6 +85,11 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
     abstract fun lazyResolveToPhaseWithCallableMembers(clazz: FirClass, toPhase: FirResolvePhase)
 
     /**
+     * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembersInSupertypes
+     */
+    abstract fun lazyResolveToPhaseWithCallableMembersInSupertypes(clazz: FirClass, useSiteSession: FirSession, toPhase: FirResolvePhase)
+
+    /**
      * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
      */
     abstract fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase)
@@ -166,6 +171,23 @@ fun FirClassSymbol<*>.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolveP
  */
 fun FirClass.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
     lazyDeclarationResolver.lazyResolveToPhaseWithCallableMembers(this, toPhase)
+}
+
+/**
+ * Lazy resolve [FirClass], all its supertypes and their callable members to [FirResolvePhase].
+ *
+ * A member scope of a class exposes callable members of the entire class hierarchy,
+ * so the phase required for its members is a guarantee for all of them rather than an input of a scope:
+ * scopes are cached regardless of the phase they are requested with.
+ *
+ * Unlike [lazyResolveToPhaseWithCallableMembers], it covers supertypes regardless of the phase and of their origin,
+ * e.g., Kotlin supertypes of a Java class.
+ *
+ * @param useSiteSession the session to look up supertypes in
+ * @see lazyResolveToPhaseWithCallableMembers
+ */
+fun FirClass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession: FirSession, toPhase: FirResolvePhase) {
+    lazyDeclarationResolver.lazyResolveToPhaseWithCallableMembersInSupertypes(this, useSiteSession, toPhase)
 }
 
 /**
