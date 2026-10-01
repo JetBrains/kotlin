@@ -166,6 +166,12 @@ public class SerializationJsBoxTestGenerated extends AbstractSerializationJsBoxT
   }
 
   @Test
+  @TestMetadata("fullValueClassInPolymorphicHierarchy.kt")
+  public void testFullValueClassInPolymorphicHierarchy() {
+    run("fullValueClassInPolymorphicHierarchy.kt");
+  }
+
+  @Test
   @TestMetadata("fullValueClassWithSuperclassDefaults.kt")
   public void testFullValueClassWithSuperclassDefaults() {
     run("fullValueClassWithSuperclassDefaults.kt");
