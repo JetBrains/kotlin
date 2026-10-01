@@ -113,6 +113,9 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val IDENTITY_HASH_CODE_ON_VALUE_TYPE by warning<KtElement> {
             parameter<ConeKotlinType>("type")
         }
+        val IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE by warning<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
         val VARIADIC_FUNCTION_POINTERS_ARE_NOT_SUPPORTED by error<KtElement> {
             parameter<FirBasedSymbol<*>>("function")
         }
