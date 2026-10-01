@@ -286,6 +286,7 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                 classpath = sourceSets["test"].runtimeClasspath
                 testClassesDirs = sourceSets["test"].output.classesDirs
                 systemProperty("gradle.integration.tests.gradle.version.filter", gradleVersion)
+                systemProperty("gradle.integration.tests.gradle.versions", gradleVersions.joinToString(";"))
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
                 useJUnitPlatform {
