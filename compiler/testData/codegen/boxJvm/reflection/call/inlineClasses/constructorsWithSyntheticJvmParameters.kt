@@ -31,7 +31,7 @@ private fun Impl.render(): String = "${name.value}:${ordinal.value}:$active:$vis
 
 fun box(): String {
     val base = Base::class.constructors.single()
-    assertEquals("[Name, Ordinal, kotlin.Boolean, kotlin.Boolean]", base.parameters.map { it.type }.toString())
+    assertEquals(listOf(Name::class, Ordinal::class, Boolean::class, Boolean::class), base.parameters.map { it.type.classifier })
     base.isAccessible = true
     assertFailsWith<InstantiationException> { base.call(Name("a"), Ordinal(1), true, false) }
     assertFailsWith<InstantiationException> {

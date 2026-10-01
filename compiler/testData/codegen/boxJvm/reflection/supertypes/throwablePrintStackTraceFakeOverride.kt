@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// Tests that Throwable, Exception, and Error expose printStackTrace(PrintStream)
-// as a properly-typed member function via reflection.
+// Tests that mapped Trowable built-ins Throwable expose the correct
+// printStackTrace as properly-typed member functions via reflection.
 
 import kotlin.reflect.full.*
 import kotlin.test.*
@@ -17,18 +17,20 @@ fun checkPrintStackTrace(klass: kotlin.reflect.KClass<*>, label: String) {
     assertTrue(fns.any { it.valueParameters.isEmpty() },
         "$label must have printStackTrace() with no parameters")
 
-    // Must have a PrintStream overload
-    val withParam = fns.firstOrNull { it.valueParameters.size == 1 }
-    assertNotNull(withParam,
-        "$label must have printStackTrace(PrintStream) overload, found: ${fns.map { it.parameters.map { p -> p.type } }}")
+    // Must have exactly two single-parameter overloads: PrintStream! and PrintWriter!
+    val withParam = fns.filter { it.valueParameters.size == 1 }
+    val paramTypes = withParam.map { it.valueParameters.single().type.toString() }
+    assertTrue(withParam.size == 2,
+        "$label must have exactly two printStackTrace(...) overloads with one parameter, found: $paramTypes")
 
-    // The PrintStream overload's parameter must be typed as PrintStream, not generic Any
-    val paramType = withParam.valueParameters.single().type.toString()
-    assertTrue(paramType.contains("PrintStream"),
-        "$label.printStackTrace(PrintStream) parameter type must contain 'PrintStream', got: $paramType")
+    assertTrue(paramTypes.any { it.contains("PrintStream") },
+        "$label must have printStackTrace(PrintStream!) overload, found: $paramTypes")
+    assertTrue(paramTypes.any { it.contains("PrintWriter") },
+        "$label must have printStackTrace(PrintWriter!) overload, found: $paramTypes")
 }
 
 fun box(): String {
+    checkPrintStackTrace(object : Throwable() {} ::class,          "object")
     checkPrintStackTrace(Throwable::class,          "Throwable")
     checkPrintStackTrace(Exception::class,           "Exception")
     checkPrintStackTrace(java.lang.Error::class,    "Error")

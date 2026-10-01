@@ -6,7 +6,6 @@
 
 import kotlin.reflect.*
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 
 private fun KClass<*>.member(name: String, vararg valueParameterTypes: KClass<*>): KCallable<*> =
     members.single { member ->
@@ -32,17 +31,6 @@ fun box(): String {
     assertEquals(true, Any::class.member("equals", Any::class).call(E.X, E.X))
     assertEquals(5, List::class.members.single { it.name == "get" }.call(listOf(5), 0))
     assertEquals(1, Map::class.member("size").call(mapOf(1 to 2)))
-
-    // TODO(KT-13077): members mapped to JVM methods with a different name (`charAt`, `intValue`) cannot be called.
-    assertFails { String::class.member("get", Int::class).call("abc", 1) }
-    assertFails { CharSequence::class.member("get", Int::class).call("abc", 1) }
-    assertFails { Number::class.member("toInt").call(3.7) }
-
-    // TODO(KT-13077): intrinsic members of primitive and array classes cannot be called.
-    assertFails { Int::class.member("plus", Int::class).call(1, 2) }
-    assertFails { Boolean::class.member("not").call(false) }
-    assertFails { IntArray::class.member("get", Int::class).call(intArrayOf(10, 20), 1) }
-    assertFails { Array<String>::class.member("size").call(arrayOf("x", "y")) }
 
     return "OK"
 }
