@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassifierTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.reflect.KClass
 
 private fun ClassId.toConeFlexibleType(
     typeArguments: Array<out ConeTypeProjection>,
@@ -76,9 +78,29 @@ internal fun JavaType?.toFirResolvedTypeRef(
     return buildResolvedTypeRef {
         coneType = toConeKotlinType(session, javaTypeParameterStack, mode, source)
             .let { if (mode == FirJavaTypeConversionMode.SUPERTYPE) it.lowerBoundIfFlexible() else it }
+            .let {
+                if (this@toFirResolvedTypeRef is JavaClassifierTypeImpl && classifier == null) {
+                    it.withAttributes(
+                        ConeAttributes.create(listOf(UnresolvedJavaType))
+                    )
+                } else it
+            }
         annotations += coneType.typeAnnotations
         this.source = source
     }
+}
+
+internal object UnresolvedJavaType : ConeAttribute<UnresolvedJavaType>() {
+    override fun union(other: UnresolvedJavaType?): UnresolvedJavaType? = null
+    override fun intersect(other: UnresolvedJavaType?): UnresolvedJavaType? = null
+    override fun add(other: UnresolvedJavaType?): UnresolvedJavaType = this
+
+    override fun isSubtypeOf(other: UnresolvedJavaType?): Boolean = false
+
+    override val key: KClass<out UnresolvedJavaType> = UnresolvedJavaType::class
+    override val keepInInferredDeclarationType: Boolean get() = false
+
+    override fun toString(): String = "???"
 }
 
 private fun JavaType?.toConeKotlinType(

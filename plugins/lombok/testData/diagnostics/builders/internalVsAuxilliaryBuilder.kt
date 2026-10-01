@@ -16,5 +16,5 @@ class TestJava {
 // FILE: test.kt
 fun foo() {
     val internalBuilder = TestJava.internalBuilder()
-    val builder = TestJava.<!MISSING_DEPENDENCY_CLASS!>builder<!>(1)
+    val builder = TestJava.builder(1)
 }
