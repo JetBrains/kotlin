@@ -7,14 +7,14 @@ R|Anno|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverPropertyCall.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|@R|Anno|(s = String(a) [evaluated = String(a)])  kotlin/Int|.i: R|kotlin/String|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| { LAZY_BLOCK }
-    @R|kotlin/annotation/Target|[Types](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+    public? final? [ResolvedTo(TYPES)] val [ResolvedTo(TYPES)] R|@R|Anno|(LAZY_EXPRESSION)  kotlin/Int|.i: R|kotlin/String|
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/String| { LAZY_BLOCK }
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](AnnotationTarget#.TYPE#) [compilerRequired = (allowedTargets = vararg(R|kotlin/annotation/AnnotationTarget.TYPE|))] public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }

@@ -24,24 +24,17 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.InvalidFirElementTypeException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.analysis.api.fir.utils.ConeTypeCompatibilityChecker.isCompatible
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.java.enhancement.EnhancedForWarningConeSubstitutor
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
@@ -166,7 +159,7 @@ internal class KaFirTypeProvider(
 
     override fun type(typeReference: KtTypeReference): KaType = withPsiValidityAssertion(typeReference) {
         with(typeReference) {
-            when (val fir = getFirBySymbols() ?: getOrBuildFir(resolutionFacade)) {
+            when (val fir = getOrBuildFir(resolutionFacade)) {
                 is FirResolvedTypeRef -> fir.coneType.asKaType()
                 is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKaType()
                 is FirTypeProjectionWithVariance -> {
@@ -199,65 +192,6 @@ internal class KaFirTypeProvider(
         )
 
         return KaFirErrorType(coneErrorType, firSymbolBuilder)
-    }
-
-    /**
-     * Try to get fir element for type reference through symbols.
-     * When the type is declared in compiled code this is faster than building FIR from decompiled text.
-     */
-    private fun KtTypeReference.getFirBySymbols(): FirElement? {
-        val parent = parent
-        return when {
-            parent is KtParameter && parent.ownerDeclaration != null && parent.typeReference === this ->
-                parent.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(resolutionFacade, FirResolvePhase.TYPES)?.fir?.returnTypeRef
-
-            parent is KtCallableDeclaration && (parent is KtNamedFunction || parent is KtProperty)
-                    && (parent.receiverTypeReference === this || parent.typeReference === this) -> {
-                val firCallable = parent.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
-                    resolutionFacade, FirResolvePhase.TYPES
-                )?.fir
-                if (parent.receiverTypeReference === this) {
-                    firCallable?.receiverParameter?.typeRef
-                } else firCallable?.returnTypeRef
-            }
-
-            parent is KtConstructorCalleeExpression && parent.parent is KtAnnotationEntry -> {
-                fun getFirDeclaration(annotationEntry: KtAnnotationEntry, ktTypeReference: KtTypeReference): FirMemberDeclaration? {
-                    if (annotationEntry.typeReference !== ktTypeReference) return null
-                    val declaration = annotationEntry.parent?.parent as? KtNamedDeclaration ?: return null
-                    return when {
-                        declaration is KtClassOrObject -> declaration.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(
-                            resolutionFacade, FirResolvePhase.TYPES
-                        )?.fir
-                        declaration is KtParameter && declaration.ownerFunction != null ->
-                            declaration.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(
-                                resolutionFacade, FirResolvePhase.TYPES
-                            )?.fir
-                        declaration is KtCallableDeclaration && (declaration is KtNamedFunction || declaration is KtProperty) -> {
-                            declaration.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
-                                resolutionFacade, FirResolvePhase.TYPES
-                            )?.fir
-                        }
-                        else -> null
-                    }
-                }
-
-                fun FirMemberDeclaration.findAnnotationTypeRef(annotationEntry: KtAnnotationEntry) = annotations.find {
-                    it.psi === annotationEntry
-                }?.annotationTypeRef
-
-                val annotationEntry = parent.parent as KtAnnotationEntry
-                val firDeclaration = getFirDeclaration(annotationEntry, this)
-                if (firDeclaration != null) {
-                    firDeclaration.findAnnotationTypeRef(annotationEntry) ?: (firDeclaration as? FirProperty)?.run {
-                        backingField?.findAnnotationTypeRef(annotationEntry)
-                            ?: getter?.findAnnotationTypeRef(annotationEntry)
-                            ?: setter?.findAnnotationTypeRef(annotationEntry)
-                    }
-                } else null
-            }
-            else -> null
-        }
     }
 
     override fun receiverType(expression: KtDoubleColonExpression): KaType? = withPsiValidityAssertion(expression) {

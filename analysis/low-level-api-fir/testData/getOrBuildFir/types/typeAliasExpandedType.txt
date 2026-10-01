@@ -7,4 +7,4 @@ R|kotlin/collections/List<kotlin/Int>|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasExpandedType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias F = R|kotlin/collections/List<kotlin/Int>|
+    public final [ResolvedTo(TYPES)] typealias F = R|kotlin/collections/List<kotlin/Int>|

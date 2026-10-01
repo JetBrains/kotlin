@@ -7,6 +7,6 @@ R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] setterParameterType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] var x: R|kotlin/Int| = LAZY_EXPRESSION
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|
+        public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

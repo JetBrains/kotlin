@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeArgument.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|A<kotlin/Int>| {
+    public final? [ResolvedTo(TYPES)] class B : R|A<kotlin/Int>| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A<R|kotlin/Int|>>
         }

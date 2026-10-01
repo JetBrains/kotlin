@@ -7,4 +7,4 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] invalidTypeArgumentsCount.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): <ERROR TYPE REF: Wrong number of type arguments> { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun x(): <ERROR TYPE REF: Wrong number of type arguments> { LAZY_BLOCK }

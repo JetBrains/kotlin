@@ -7,4 +7,4 @@ R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] valueParameterType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] p: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] p: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

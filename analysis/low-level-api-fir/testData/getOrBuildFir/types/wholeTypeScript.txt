@@ -7,8 +7,8 @@ R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] wholeTypeScript.kts
-    SCRIPT: [ResolvedTo(TYPES)] <script-wholeTypeScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-        [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(RAW_FIR)] <script-wholeTypeScript.kts>
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/collections/Map<kotlin/String, kotlin/collections/List<kotlin/Int>>| { LAZY_BLOCK }

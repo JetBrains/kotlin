@@ -7,5 +7,5 @@ R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] contextParameterType.kt
-    context([ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/String|)
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+    context([ResolvedTo(TYPES)] c: R|kotlin/String|)
+    public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

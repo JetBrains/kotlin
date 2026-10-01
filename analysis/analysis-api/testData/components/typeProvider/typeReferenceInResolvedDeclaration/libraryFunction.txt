@@ -9,7 +9,7 @@ public fun <T : kotlin.Comparable<T>> @receiver:lib.Anno kotlin.String.foo(@lib.
 //                                    ^String(use)
 //                                              ^Anno(use)
 //                                                                          ^Anno(use)
-//                                                                                      ^T(use)
+//                                                                                      ^T(decl)
 //                                                                                            ^List<@Anno String>(use)
 //                                                                                                                    ^@Anno String(use)
 //                                                                                                                     ^Anno(use)

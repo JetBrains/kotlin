@@ -7,5 +7,5 @@ R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] propertyReceiverType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val [ResolvedTo(ANNOTATION_ARGUMENTS)] R|kotlin/String|.x: R|kotlin/Int|
-        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] val [ResolvedTo(TYPES)] R|kotlin/String|.x: R|kotlin/Int|
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }
