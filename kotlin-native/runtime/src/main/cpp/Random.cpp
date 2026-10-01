@@ -28,6 +28,18 @@
 namespace {
 
 #if KONAN_LINUX || KONAN_WINDOWS
+RUNTIME_NORETURN void throwReadingRandomBytesFailedWithMessage(const char* message, size_t length) {
+    ObjHolder holder;
+    ObjHeader* string = CreateStringFromUtf8(message, length, holder.slot());
+    ThrowIllegalStateExceptionWithMessage(string);
+}
+#endif
+
+}  // namespace
+
+namespace kotlin {
+
+#if KONAN_LINUX || KONAN_WINDOWS
 RUNTIME_NORETURN __attribute__((format(printf, 1, 2))) void throwReadingRandomBytesFailed(const char* format, ...) {
     va_list args;
     va_start(args, format);
@@ -35,14 +47,11 @@ RUNTIME_NORETURN __attribute__((format(printf, 1, 2))) void throwReadingRandomBy
     kotlin::std_support::span<char> span(buffer);
     span = kotlin::VFormatToSpan(span, format, args);
     va_end(args);
-
-    ObjHolder holder;
-    ObjHeader* string = CreateStringFromUtf8(buffer.data(), buffer.size() - span.size(), holder.slot());
-    ThrowIllegalStateExceptionWithMessage(string);
+    throwReadingRandomBytesFailedWithMessage(buffer.data(), buffer.size() - span.size());
 }
 #endif
 
-}  // namespace
+}  // namespace kotlin
 
 
 extern "C" {
@@ -62,13 +71,13 @@ void Kotlin_Uuid_getRandomBytes(KRef byteArray, KInt size) {
         if (ret >= 0) {
             count += ret;
         } else if (errno != EINTR) { // repeat if interrupted
-            throwReadingRandomBytesFailed("getrandom returned a negative value: %ld, error: %s", ret, strerror(errno));
+            kotlin::throwReadingRandomBytesFailed("getrandom returned a negative value: %ld, error: %s", ret, strerror(errno));
         }
     }
 #elif KONAN_WINDOWS
     NTSTATUS status = BCryptGenRandom(NULL, (PUCHAR)address, (ULONG)size, BCRYPT_USE_SYSTEM_PREFERRED_RNG);
     if (!NT_SUCCESS(status)) {
-        throwReadingRandomBytesFailed("Unexpected failure in random bytes generation: %ld", status);
+        kotlin::throwReadingRandomBytesFailed("Unexpected failure in random bytes generation: %ld", status);
     }
 #else
 #error "How to Kotlin_Uuid_getRandomBytes()?"

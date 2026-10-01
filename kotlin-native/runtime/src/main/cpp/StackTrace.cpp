@@ -195,7 +195,7 @@ NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_s
 #include <dlfcn.h>
 #endif
 
-namespace {
+namespace kotlin {
 
 __attribute__((format(printf, 5, 6)))
 std_support::span<char> snprintf_with_addr(std_support::span<char> buffer, size_t frame, const void* addr, bool is_inline, const char *format, ...) {
@@ -231,6 +231,9 @@ std_support::span<char> snprintf_with_addr(std_support::span<char> buffer, size_
     return buffer;
 }
 
+}  // namespace kotlin
+
+namespace {
 
 /*
  * This is hack for better traces.
