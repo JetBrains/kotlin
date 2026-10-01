@@ -13,5 +13,5 @@ import kotlin.internal.UsedFromCompilerGeneratedCode
 @Suppress("UNCHECKED_CAST", "RedundantSuspendModifier")
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal suspend fun <T> suspendOrReturn(result: Any?): T =
-    result as T
+internal suspend fun <T> suspendOrReturn(blockResult: Any?): T =
+    blockResult as T
