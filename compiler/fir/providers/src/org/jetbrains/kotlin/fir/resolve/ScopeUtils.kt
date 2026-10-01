@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOpe
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveBoundsToPhaseWithCallableMembersInSupertypes
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -107,6 +108,10 @@ private fun ConeKotlinType.scope(
     }
     is ConeTypeParameterType -> {
         val symbol = lookupTag.symbol
+        requiredMembersPhase?.let {
+            symbol.lazyResolveBoundsToPhaseWithCallableMembersInSupertypes(useSiteSession, it)
+        }
+
         scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
             val intersectionType = ConeTypeIntersector.intersectTypes(
                 useSiteSession.typeContext,
