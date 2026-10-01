@@ -128,7 +128,7 @@ private fun WriteContext.writeConstructor(kmConstructor: KmConstructor): ProtoBu
     return t
 }
 
-@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionBlocksAndExtensions::class)
+@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionExtensions::class)
 private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Function.Builder {
     val t = ProtoBuf.Function.newBuilder()
     t.addAllTypeParameter(kmFunction.typeParameters.map { writeTypeParameter(it).build() })
@@ -160,7 +160,7 @@ private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Functio
     return t
 }
 
-@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionBlocksAndExtensions::class)
+@OptIn(ExperimentalContextParameters::class, ExperimentalCompanionExtensions::class)
 public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property.Builder {
     val t = ProtoBuf.Property.newBuilder()
 
