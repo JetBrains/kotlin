@@ -54,10 +54,8 @@ abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::NativeFirstStageEnvironmentConfigurator,
+            ::NativeSecondStageEnvironmentConfigurator,
         )
-        if (!irDumpOnly) {
-            useConfigurators(::NativeSecondStageEnvironmentConfigurator)
-        }
     }
 
     override fun configure(builder: TestConfigurationBuilder) {
