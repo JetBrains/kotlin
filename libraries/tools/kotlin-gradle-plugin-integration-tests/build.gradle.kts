@@ -139,6 +139,7 @@ dependencies {
     testImplementation(project(":kotlin-gradle-subplugin-example"))
     testImplementation(kotlinTest("junit5"))
     testImplementation(project(":kotlin-util-klib"))
+    testImplementation(project(":compiler:ir.serialization.common"))
 
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
