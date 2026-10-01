@@ -1,0 +1,3 @@
+/identitySensitiveOperationsMessagesAndReferences.kt:15:29: error: Identity-sensitive operations are prohibited on instances of value type 'CapturedType(out Full)', which are value objects.
+
+/identitySensitiveOperationsMessagesAndReferences.kt:16:18: error: Synchronizing on 'CapturedType(out Full)' is forbidden.
