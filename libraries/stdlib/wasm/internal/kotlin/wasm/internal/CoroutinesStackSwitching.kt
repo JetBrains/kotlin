@@ -48,13 +48,12 @@ internal suspend fun <T> suspendOrReturnStackSwitching(blockResult: Any?): T {
         // `block` resumed the continuation itself, the result is already here -- do not park.
         coroutineImpl.resumedWhileRunning = false
         coroutineImpl.absorbedSelfResume = true
-        coroutineImpl.exception?.let { throw it }
     } else {
         coroutineImpl.isRunning = false
         suspendIntrinsic()
     }
 
-    return coroutineImpl.result as T
+    return coroutineImpl.result.getOrThrow() as T
 }
 
 @UsedFromCompilerGeneratedCode
@@ -100,7 +99,7 @@ internal fun startWrappedCoroutineStackSwitchingImpl(
     } catch (e: Throwable) {
         coroutine.isRunning = false
         if (!coroutine.absorbedSelfResume) throw e
-        coroutine.completeWith(null, e)
+        coroutine.completeWith(Result.failure(e))
         return COROUTINE_SUSPENDED
     }
 
@@ -109,6 +108,6 @@ internal fun startWrappedCoroutineStackSwitchingImpl(
     coroutine.isRunning = false
     if (!coroutine.absorbedSelfResume) return result // never suspended -- return the value directly
 
-    coroutine.completeWith(result, null)
+    coroutine.completeWith(Result.success(result))
     return COROUTINE_SUSPENDED
 }

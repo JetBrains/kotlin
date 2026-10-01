@@ -82,7 +82,7 @@ private inline fun <T> createCoroutineFromSuspendFunctionStackSwitching(
         }
 
         override fun doResume(): Any? {
-            exception?.let { throw it }
+            result.throwOnFailure()
             return block()
         }
     }
