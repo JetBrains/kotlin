@@ -1449,9 +1449,9 @@ fast-deep-equal@^3.1.3:
   integrity sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==
 
 fast-uri@^3.0.1:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.1.5.tgz#610f37419a030270430cecd68d74e3d4d96725d0"
-  integrity sha512-gHwA1O9LDIcKunMKhObS/HimwtehO1nPUECKAu5TpKgaO19fcWEl4bliWe1jWxVFvIXztJjjQ4L8XQ1EU9f7Jw==
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/fast-uri/-/fast-uri-3.1.8.tgz#f7db8d942e20eead3cfe93b0beeb4eb0169e938b"
+  integrity sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==
 
 fdir@^6.5.0:
   version "6.5.0"
