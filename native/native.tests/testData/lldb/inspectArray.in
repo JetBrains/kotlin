@@ -1,0 +1,20 @@
+b main.kt:13
+r
+fr var array
+fr var -A -P 5 array
+fr var emptyArray
+fr var -A -P 5 emptyArray
+fr var boxedIntArray
+fr var -A -P 5 boxedIntArray
+fr var nestedArray
+fr var -A -P 10 nestedArray
+field_type nestedArray
+field_type nestedArray.0
+field_type nestedArray.0.0
+field_type nestedArray.0.0.0
+field_type nestedArray.0.0.0.x
+field_type nestedArray.0.0.0.y
+field_type nestedArray.0.0.1
+field_type nestedArray.0.0.1.x
+field_type nestedArray.0.0.1.y
+q

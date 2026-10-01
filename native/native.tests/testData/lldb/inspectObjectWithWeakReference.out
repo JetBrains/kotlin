@@ -1,0 +1,36 @@
+(lldb) target create <path to executable>
+Current executable set to <path to executable>.
+(lldb) settings set stop-disassembly-display never
+(lldb) command script import <path to lldb script>
+(lldb) b main.kt:18
+Breakpoint 1: where = lldb_inspectObjectWithWeakReference.kexe`kfun:#main(){} + <breakpoint offset> at main.kt:18:11, address = <memory address>
+(lldb) r
+Process <process id> launched: <path to executable>
+Process <process id> stopped
+* thread #<thread id>, stop reason = breakpoint 1.1
+    frame #0: <frame pc> lldb_inspectObjectWithWeakReference.kexe`kfun:#main(){} at main.kt:18:11
+   15  	    }
+   16  	    val stringWeakReference = WeakReference(string)
+   17  	    check(weakReference.value === box)
+-> 18  	    check(stringWeakReference.value === string)
+    	          ^
+   19  	}
+   20  	
+   21  	data class Box(val payload: Int)
+(lldb) fr var box
+(ObjHeader *) box = Box(payload=42)
+(lldb) fr var -A -P 5 box
+(ObjHeader *) box = Box(payload=42) {
+  payload = 42
+}
+(lldb) field_type box
+Box
+(lldb) field_type box.payload
+int
+(lldb) fr var string
+(ObjHeader *) string = weak string
+(lldb) fr var -A -P 5 string
+(ObjHeader *) string = weak string {
+  size_in_bytes = 11
+}
+(lldb) q
