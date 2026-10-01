@@ -47,10 +47,17 @@ object SwcConfig {
             set("externalHelpers", includeExternalHelpers)
             set("target", target)
         })
-        set("module", buildMap {
-            set("resolveFully", true)
-            set("type", if (moduleKind === ModuleKind.ES) "nodenext" else moduleKind.type)
-            set("outFileExtension", moduleKind.jsExtension)
-        })
+
+        if (moduleKind === ModuleKind.ES) {
+            set("module", buildMap {
+                set("resolveFully", true)
+                set("type", "nodenext")
+                set("outFileExtension", moduleKind.jsExtension)
+            })
+        } else {
+            // The Kotlin compiler already emits the final module system (AMD/UMD/CommonJS wrappers),
+            // so swc must treat the input as a script and not wrap it into a module once again.
+            set("isModule", false)
+        }
     }
 }
