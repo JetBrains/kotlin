@@ -12,10 +12,10 @@ import kotlin.js.*
 // Using 'globalThis.arguments' because 'arguments' can refer to current JS function arguments
 @JsFun("() => globalThis.arguments?.join?.(' ') ?? ''")
 private external fun d8Arguments(): String
-@JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2).join(' ') : ''")
-private external fun nodeArguments(): String
+@JsFun("(skip) => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(skip + 1).join(' ') : ''")
+private external fun nodeArguments(skip: Int): String
 
-internal actual fun getArguments(): List<String> = (d8Arguments().ifEmpty { nodeArguments() }).split(' ')
+internal actual fun getArguments(skip: Int): List<String> = (d8Arguments().ifEmpty { nodeArguments(skip) }).split(' ')
 
 internal class TeamcityAdapterWithPromiseSupport : TeamcityAdapter() {
     private var scheduleNextTaskAfter: Promise<JsAny?>? = null
