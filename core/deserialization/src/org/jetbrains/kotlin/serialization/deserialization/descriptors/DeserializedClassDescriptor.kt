@@ -213,7 +213,8 @@ class DeserializedClassDescriptor(
         if (!isInline && !isValue) return null
         val hasInlineClassRepresentationInMetadata = metadataVersion.isAtLeast(1, 5, 1)
         classProto.loadValueClassRepresentation(
-            tryLoadFullValueClass = false,
+            // Before 2.4.0, the metadata of a JVM class file doesn't say whether it is annotated with `@JvmInline`.
+            tryLoadFullValueClass = metadataVersion.isAtLeast(2, 4, 0),
             c.nameResolver, c.typeTable, c.typeDeserializer::simpleType, ::getValueClassPropertyType,
         )?.let { return it }
         if (!hasInlineClassRepresentationInMetadata) {
