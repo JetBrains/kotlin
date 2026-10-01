@@ -91,6 +91,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS by warning<KtElement> {
             parameter<ConeKotlinType>("superType")
         }
+
+        val SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE by warning<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME)
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

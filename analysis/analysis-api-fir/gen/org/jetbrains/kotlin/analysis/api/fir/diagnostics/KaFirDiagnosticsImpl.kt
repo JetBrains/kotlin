@@ -6279,6 +6279,11 @@ internal class ValueClassExtendsValueClassCompiledAsIdentityClassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassExtendsValueClassCompiledAsIdentityClass
 
+internal class SerializableValueClassWithoutWriteReplaceImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.SerializableValueClassWithoutWriteReplace
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,

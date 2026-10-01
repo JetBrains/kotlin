@@ -23,7 +23,7 @@ fun test(date: LocalDate, optional: Optional<String>, zone: ZoneId, number: Numb
     synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>number<!>) {}
 }
 
-value class ValueNumber(val x: Int) : Number() {
+value <!SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE!>class ValueNumber<!>(val x: Int) : Number() {
     override fun toByte(): Byte = x.toByte()
     override fun toDouble(): Double = x.toDouble()
     override fun toFloat(): Float = x.toFloat()
