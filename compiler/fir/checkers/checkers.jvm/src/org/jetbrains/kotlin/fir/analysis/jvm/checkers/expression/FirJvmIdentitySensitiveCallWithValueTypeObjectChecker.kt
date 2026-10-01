@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirCallableReferenceAccessChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.finalApproximationOrSelf
 import org.jetbrains.kotlin.fir.analysis.checkers.isFlexiblePrimitive
 import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationOnWillBecomeValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -20,13 +22,17 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.expressions.FirCall
+import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.unwrapArgument
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -40,17 +46,17 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+private val operationsToCheckFirstArgCallableIds = setOf(
+    CallableId(FqName("java.lang"), FqName("System"), Name.identifier("identityHashCode")),
+    CallableId(FqName("java.lang.ref"), FqName("Cleaner"), Name.identifier("register")),
+    CallableId(FqName("java.lang.ref"), FqName("PhantomReference"), Name.identifier("PhantomReference")),
+    CallableId(FqName("java.lang.ref"), FqName("SoftReference"), Name.identifier("SoftReference")),
+    CallableId(FqName("java.lang.ref"), FqName("WeakReference"), Name.identifier("WeakReference")),
+)
+
 object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(MppCheckerKind.Common) {
     private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
     private val lockParameterName = Name.identifier("lock")
-
-    private val operationsToCheckFirstArgCallableIds = setOf(
-        CallableId(FqName("java.lang"), FqName("System"), Name.identifier("identityHashCode")),
-        CallableId(FqName("java.lang.ref"), FqName("Cleaner"), Name.identifier("register")),
-        CallableId(FqName("java.lang.ref"), FqName("PhantomReference"), Name.identifier("PhantomReference")),
-        CallableId(FqName("java.lang.ref"), FqName("SoftReference"), Name.identifier("SoftReference")),
-        CallableId(FqName("java.lang.ref"), FqName("WeakReference"), Name.identifier("WeakReference")),
-    )
 
     private val operationsToCheckFirstTypeArgCallableIds = setOf(
         CallableId(FqName("java.lang.ref"), FqName("ReferenceQueue"), Name.identifier("ReferenceQueue")),
@@ -68,6 +74,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
             is FirDelegatedConstructorCall -> expression.calleeReference.toResolvedCallableSymbol()
             else -> null
         } ?: return
+        if (expression is FirFunctionCall) checkReferenceArguments(expression, function)
         when (function.callableId) {
             synchronizedCallableId -> if (expression is FirFunctionCall) checkSynchronizedCall(expression)
 
@@ -96,14 +103,21 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
         }
     }
 
+    // A reference to an identity-sensitive function with a parameter of a non-value type, like `list.map(System::identityHashCode)`,
+    // takes instances of the parameter type of the function type that the called function expects.
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkType(type: ConeKotlinType, source: KtSourceElement?) {
-        if (type.isValueObjectAtRuntime()) {
-            reporter.reportOn(source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT, type)
-        } else if (type.isValueTypeAndWarningsEnabled()) {
-            reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, type)
+    private fun checkReferenceArguments(expression: FirFunctionCall, function: FirCallableSymbol<*>) {
+        val typeArguments = expression.typeArguments.map { (it as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return }
+        val substitutor = substitutorByMap(function.typeParameterSymbols.zip(typeArguments).toMap(), context.session)
+        for ([argument, parameter] in expression.resolvedArgumentMapping ?: return) {
+            val reference = argument.unwrapArgument() as? FirCallableReferenceAccess ?: continue
+            val referencedFunction = reference.calleeReference.toResolvedCallableSymbol() ?: continue
+            if (referencedFunction.callableId !in operationsToCheckFirstArgCallableIds) continue
+            if (reference.firstParameterType()?.isIdentityChecked() != false) continue
+            val expectedType = substitutor.substituteOrSelf(parameter.returnTypeRef.coneType).fullyExpandedType()
+            val valueType = expectedType.typeArguments.firstOrNull()?.type ?: continue
+            checkType(valueType, reference.source)
         }
-        reportIdentitySensitiveOperationOnWillBecomeValueClass(source, type)
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -112,7 +126,7 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
     ) {
         for ([argument, parameter] in expression.resolvedArgumentMapping?.entries ?: return) {
             if (parameter.name != lockParameterName) continue
-            val type = argument.resolvedType
+            val type = argument.resolvedType.finalApproximationOrSelf()
             if (type.isValueClassOrPrimitive()) {
                 reporter.reportOn(argument.source, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE, type)
             } else if (type.isJavaValueBasedClassAndWarningsEnabled()) {
@@ -123,6 +137,37 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirCallChecker(Mp
             reportIdentitySensitiveOperationOnWillBecomeValueClass(argument.source, type)
         }
     }
+}
+
+// A reference to an identity-sensitive function, like `::WeakReference`, takes instances of the type of its first parameter.
+object FirJvmIdentitySensitiveCallableReferenceChecker : FirCallableReferenceAccessChecker(MppCheckerKind.Common) {
+    override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
+        get() = true
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCallableReferenceAccess) {
+        val function = expression.calleeReference.toResolvedCallableSymbol() ?: return
+        if (function.callableId !in operationsToCheckFirstArgCallableIds) return
+        checkType(expression.firstParameterType() ?: return, expression.source)
+    }
+}
+
+context(context: CheckerContext)
+private fun FirCallableReferenceAccess.firstParameterType(): ConeKotlinType? = resolvedType.firstExpandedTypeArgument()
+
+context(context: CheckerContext)
+private fun ConeKotlinType.isIdentityChecked(): Boolean =
+    finalApproximationOrSelf().let { it.isValueObjectAtRuntime() || it.isValueTypeAndWarningsEnabled() }
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun checkType(type: ConeKotlinType, source: KtSourceElement?) {
+    val renderedType = type.finalApproximationOrSelf()
+    if (renderedType.isValueObjectAtRuntime()) {
+        reporter.reportOn(source, FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT, renderedType)
+    } else if (renderedType.isValueTypeAndWarningsEnabled()) {
+        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, renderedType)
+    }
+    reportIdentitySensitiveOperationOnWillBecomeValueClass(source, type)
 }
 
 // A type alias may have other type arguments than the class it expands to.
