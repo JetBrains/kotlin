@@ -696,6 +696,7 @@ include(
 if (buildProperties.isSwiftImportEnabled.get()) {
     include(":native:swift:kir")
     include(":native:swift:kir:tree-generator")
+    include(":native:swift:kir-printer")
 }
 
 include(":native:swift:swift-export-embeddable")
