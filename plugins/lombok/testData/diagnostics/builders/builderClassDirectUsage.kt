@@ -21,8 +21,8 @@ fun usage() {
 import TestJava.TestJavaBuilder
 
 fun usageWithImport() {
-    val builder = <!RESOLUTION_TO_CLASSIFIER!>TestJavaBuilder<!>()
-    builder.<!UNRESOLVED_REFERENCE!>a<!>(1).build()
+    val builder = TestJavaBuilder()
+    builder.a(1).build()
     val justBuilder: TestJavaBuilder? = null
     justBuilder?.a(2)?.build()
 }
@@ -31,8 +31,8 @@ fun usageWithImport() {
 import TestJava.*
 
 fun usageWithStarImport() {
-    val builder = <!RESOLUTION_TO_CLASSIFIER!>TestJavaBuilder<!>()
-    builder.<!UNRESOLVED_REFERENCE!>a<!>(1).build()
+    val builder = TestJavaBuilder()
+    builder.a(1).build()
     val justBuilder: TestJavaBuilder? = null
     justBuilder?.a(2)?.build()
 }
