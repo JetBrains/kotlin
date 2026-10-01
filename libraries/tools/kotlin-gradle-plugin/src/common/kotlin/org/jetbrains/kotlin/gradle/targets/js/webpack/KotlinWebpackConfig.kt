@@ -8,12 +8,15 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable as JsonSerializable
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.internal.json.AnyAsJsonElementSerializer
 import org.jetbrains.kotlin.gradle.internal.json.KgpJson
-import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
@@ -175,15 +178,19 @@ data class KotlinWebpackConfig(
         val statics: List<Static>
             get() = mutableStatics.toList()
 
+        @JsonSerializable
         data class Client(
+            @JsonSerializable(AnyAsJsonElementSerializer::class)
             var overlay: Any, /* Overlay | Boolean */
         ) : Serializable {
+            @JsonSerializable
             data class Overlay(
                 var errors: Boolean,
                 var warnings: Boolean,
             ) : Serializable
         }
 
+        @JsonSerializable
         data class Proxy(
             val context: MutableList<String>,
             val target: String,
@@ -202,14 +209,19 @@ data class KotlinWebpackConfig(
     }
 
     @Suppress("unused")
+    @JsonSerializable
     data class Optimization(
+        @JsonSerializable(AnyAsJsonElementSerializer::class)
         var runtimeChunk: Any?,
+        @JsonSerializable(AnyAsJsonElementSerializer::class)
         var splitChunks: Any?,
     ) : Serializable
 
     @Suppress("unused")
+    @JsonSerializable
     data class WatchOptions(
         var aggregateTimeout: Int? = null,
+        @JsonSerializable(AnyAsJsonElementSerializer::class)
         var ignored: Any? = null,
     ) : Serializable
 
@@ -315,7 +327,7 @@ data class KotlinWebpackConfig(
         //language=JavaScript 1.8
         appendLine(
             """
-                config.watchOptions = ${json(WatchOptionsJson.serializer(), watchOptions!!.toJson())};
+                config.watchOptions = ${json(WatchOptions.serializer(), watchOptions!!)};
             """.trimIndent()
         )
     }
@@ -394,7 +406,7 @@ data class KotlinWebpackConfig(
         appendLine(
             """
                 // optimization
-                config.optimization = config.optimization || ${json(OptimizationJson.serializer(), optimization!!.toJson())};
+                config.optimization = config.optimization || ${json(Optimization.serializer(), optimization!!)};
             """.trimIndent()
         )
     }
@@ -488,99 +500,38 @@ data class KotlinWebpackConfig(
         KgpJson.prettyPrinted.encodeToString(serializer, value)
 }
 
-/*
- * The webpack config sections this plugin writes, shaped like webpack expects them. Properties typed [JsonElement]
- * are the ones webpack accepts in several shapes; their values come from users as `Any` and go through
- * [anyToJsonElement]. Null properties are left out, since webpack rejects an explicit null for most of them.
- * Only the generated serializers read these properties, hence the unused suppressions.
- */
-
+/** [KotlinWebpackConfig.DevServer] as written, with the deprecated `static` list merged into `statics`. */
+// properties are consumed by the generated serializer only
 @Suppress("unused")
-@kotlinx.serialization.Serializable
+@JsonSerializable
 internal class DevServerJson(
-    val open: JsonElement,
-    val port: Int? = null,
-    val proxy: List<ProxyJson>? = null,
-    val contentBase: List<String>? = null,
-    val client: ClientJson? = null,
-    /** A plain directory string or a [StaticJson] object. */
-    val static: List<JsonElement>? = null,
-)
-
-@Suppress("unused")
-@kotlinx.serialization.Serializable
-internal class ProxyJson(
-    val context: List<String>,
-    val target: String,
-    val pathRewrite: Map<String, String>? = null,
-    val secure: Boolean? = null,
-    val changeOrigin: Boolean? = null,
-)
-
-@Suppress("unused")
-@kotlinx.serialization.Serializable
-internal class ClientJson(
-    /** `true`/`false` or an [OverlayJson] object. */
-    val overlay: JsonElement,
-)
-
-@Suppress("unused")
-@kotlinx.serialization.Serializable
-internal class OverlayJson(
-    val errors: Boolean,
-    val warnings: Boolean,
-)
-
-@Suppress("unused")
-@kotlinx.serialization.Serializable
-internal class StaticJson(
-    val directory: String,
-    val watch: Boolean,
-)
-
-@Suppress("unused")
-@kotlinx.serialization.Serializable
-internal class OptimizationJson(
-    val runtimeChunk: JsonElement? = null,
-    val splitChunks: JsonElement? = null,
-)
-
-@Suppress("unused")
-@kotlinx.serialization.Serializable
-internal class WatchOptionsJson(
-    val aggregateTimeout: Int? = null,
-    val ignored: JsonElement? = null,
+    @JsonSerializable(AnyAsJsonElementSerializer::class)
+    val open: Any,
+    val port: Int?,
+    val proxy: List<KotlinWebpackConfig.DevServer.Proxy>?,
+    val contentBase: List<String>?,
+    val client: KotlinWebpackConfig.DevServer.Client?,
+    /** A directory string or a `{ directory, watch }` object. */
+    val static: List<JsonElement>?,
 )
 
 @Suppress("DEPRECATION")
 private fun KotlinWebpackConfig.DevServer.toJson(): DevServerJson {
     val staticEntries = static.orEmpty().map { JsonPrimitive(it) } + statics.map {
-        KgpJson.default.encodeToJsonElement(StaticJson.serializer(), StaticJson(it.directory.quoteRawJsRelativePath(), it.watch))
+        buildJsonObject {
+            put("directory", it.directory.quoteRawJsRelativePath())
+            put("watch", it.watch)
+        }
     }
     return DevServerJson(
-        open = anyToJsonElement(open),
+        open = open,
         port = port,
-        proxy = proxy?.map { ProxyJson(it.context, it.target, it.pathRewrite, it.secure, it.changeOrigin) },
+        proxy = proxy,
         contentBase = contentBase,
-        client = client?.let { client ->
-            val overlay = client.overlay
-            ClientJson(
-                if (overlay is KotlinWebpackConfig.DevServer.Client.Overlay) {
-                    KgpJson.default.encodeToJsonElement(OverlayJson.serializer(), OverlayJson(overlay.errors, overlay.warnings))
-                } else {
-                    anyToJsonElement(overlay)
-                }
-            )
-        },
+        client = client,
         static = staticEntries.takeIf { it.isNotEmpty() },
     )
 }
-
-private fun KotlinWebpackConfig.Optimization.toJson() =
-    OptimizationJson(runtimeChunk?.let(::anyToJsonElement), splitChunks?.let(::anyToJsonElement))
-
-private fun KotlinWebpackConfig.WatchOptions.toJson() =
-    WatchOptionsJson(aggregateTimeout, ignored?.let(::anyToJsonElement))
 
 /**
  * Marks a string value as a raw JavaScript expression to be embedded into the
