@@ -11,8 +11,8 @@ expect value class Full(val x: Int, val y: Int)
 expect abstract value class Abstract()
 
 fun common(a: Full, b: Full, any: Any, abstract: Abstract) {
-    <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === b<!>
-    <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === any<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>a === b<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>a === any<!>
     <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>abstract === any<!>
 }
 
