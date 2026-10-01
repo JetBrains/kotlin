@@ -19,11 +19,16 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules.Companion.JS_SUFFIX
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 import java.nio.file.LinkOption
 import java.nio.file.Path
+import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.isDirectory
+import kotlin.io.path.isSymbolicLink
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
+
 
 /**
  * A custom Gradle task for generating an import map and its corresponding loader script file
@@ -109,6 +114,14 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
     @get:Optional
     abstract val pathPrefix: Property<String>
 
+    /**
+     * Indicates whether the build is running on Windows.
+     *
+     * Windows requires special handling of links in `node_modules`, see [isSymlinkOrJunction].
+     */
+    @get:Input
+    internal abstract val getIsWindows: Property<Boolean>
+
     @TaskAction
     fun generate() {
         val importMap = mutableMapOf<String, String>()
@@ -146,7 +159,7 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
 
         return nodeModulesDir.listDirectoryEntries()
             // no follow symlinks because in node_modules we have installed workspaces, we don't need to resolve them
-            .filter { it.isDirectory(LinkOption.NOFOLLOW_LINKS) }
+            .filter { it.isDirectory() && !it.isSymlinkOrJunction() }
             .flatMap { entry ->
                 if (entry.name.startsWith("@")) {
                     if (entry.name.startsWith("@types")) return@flatMap emptyList()
@@ -160,6 +173,43 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
             }
     }
 
+    /**
+     * Checks whether this path is a link that should not be followed: either a symbolic link,
+     * or a Windows directory junction.
+     *
+     * Package managers link workspaces into `node_modules` as symbolic links on Unix-like systems,
+     * but as directory junctions on Windows.
+     *
+     * Junctions use an NTFS reparse tag different from the one used by symbolic links,
+     * so [Files.isSymbolicLink] reports `false` for them. Instead, any reparse point is reported
+     * as "other" by [BasicFileAttributes.isOther] when links are not followed.
+     */
+    private fun Path.isSymlinkOrJunction(): Boolean {
+        if (isSymbolicLink()) {
+            return true
+        }
+
+        // Junctions exist on Windows only. On other operating systems "other" files are special files,
+        // such as devices, pipes or sockets, which must not be treated as links
+        if (!getIsWindows.get()) {
+            return false
+        }
+
+        val attributes: BasicFileAttributes = try {
+            Files.readAttributes(
+                this,
+                BasicFileAttributes::class.java,
+                LinkOption.NOFOLLOW_LINKS
+            )
+        } catch (_: IOException) {
+            // the entry could be concurrently removed or be inaccessible,
+            // in this case there is nothing better to do than to treat it as a usual directory
+            return false
+        }
+
+        return attributes.isOther
+    }
+
     private fun modulePath(
         modules: NpmProjectModules,
         moduleName: String,
@@ -169,7 +219,7 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
             val nodeModulesDir = resolvedFile.nearestNodeModules()
             resolvedFile.relativeTo(nodeModulesDir)
         } else resolvedFile.relativeTo(rootDirectory.getFile())
-        return "${pathPrefix.getOrElse("")}/${relativeFile.path}"
+        return "${pathPrefix.getOrElse("")}/${relativeFile.invariantSeparatorsPath}"
     }
 
     private fun File.nearestNodeModules(): File {
