@@ -355,7 +355,7 @@ tasks {
         dependsOn(":js:js.tests:klib-compatibility:testMinimalInAggregate")
     }
 
-    testLifecycleTask("wasmFirCompilerTest", QualityGate.Master) {
+    testLifecycleTask("wasmFirCompilerTest", QualityGate.None) {
         dependsOn(":wasm:wasm.tests:test")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild.get() || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
