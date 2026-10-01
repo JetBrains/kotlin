@@ -727,7 +727,7 @@ internal class CodeGeneratorVisitor(
     }
 
     private fun FunctionGenerationContext.handleStaticInitializerBody(declaration: IrSimpleFunction) {
-        val initializedGlobals = declaration::initializedGlobals.get() ?: return
+        val initializedGlobals = declaration.initializedGlobals ?: return
         val allowedOrigins = listOf(
                 StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER,
                 StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER,
@@ -744,7 +744,8 @@ internal class CodeGeneratorVisitor(
             StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER,
             StaticInitializersOrigins.EAGER_STATIC_THREAD_LOCAL_INITIALIZER -> return
         }
-        initializedGlobals.forEach { field ->
+        initializedGlobals.forEach {
+            val field = it.owner
             require(field.type.binaryTypeIsReference())
             require(field.isStatic)
             call(llvm.registerGlobalFunction, listOf(staticFieldPtr(field, functionGenerationContext)))

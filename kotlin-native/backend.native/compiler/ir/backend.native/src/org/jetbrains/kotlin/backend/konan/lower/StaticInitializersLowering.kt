@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.*
@@ -82,9 +83,9 @@ internal var IrClass.clinitTriggerFunction: IrSimpleFunctionSymbol? by irAttribu
  * **NOTE**: Static primitive fields are currently absent from this list to keep the list smaller and to avoid generating
  *           some initializers; primitive fields do not need to be specially registered before accessing them, so it's okay.
  *
- * The contract: [IrField] from this attribute must not be accessed in the whole program in any way before the function starts executing.
+ * The contract: [IrFieldSymbol] from this attribute must not be accessed in the whole program in any way before the function starts executing.
  */
-internal var IrSimpleFunction.initializedGlobals: List<IrField>? by irAttribute(copyByDefault = false)
+internal var IrSimpleFunction.initializedGlobals: List<IrFieldSymbol>? by irAttribute(copyByDefault = false)
 
 @PhasePrerequisites(ExpressionBodyTransformer::class)
 internal class StaticInitializersLowering(val context: NativeLoweringContext) : FileLoweringPass {
@@ -327,7 +328,11 @@ internal class StaticInitializersLowering(val context: NativeLoweringContext) : 
         body = context.irFactory.createBlockBody(startOffset, endOffset, initializers.mapNotNull { it.second })
                 .setDeclarationsParent(this)
         container.declarations.add(0, this)
-        ::initializedGlobals.set(initializers.mapNotNull { it.first }.filter { it.type.binaryTypeIsReference() }.takeIfNotEmpty())
+        initializedGlobals = initializers
+                .mapNotNull { it.first }
+                .filter { it.type.binaryTypeIsReference() }
+                .map { it.symbol }
+                .takeIfNotEmpty()
     }
 
 }
