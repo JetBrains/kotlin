@@ -22,8 +22,8 @@ object SwcConfig {
         add("--env-name=${environmentCode}")
         add("--out-dir")
         add(outputDirectory)
-        add("--out-file-extension=$fileExtension")
-        add("--extensions=$fileExtension")
+        add("--out-file-extension=${fileExtension.removePrefix(".")}")
+        add("--extensions=${fileExtension.removePrefix(".")}")
     }
 
     public fun getConfigWhen(
@@ -52,7 +52,7 @@ object SwcConfig {
             set("module", buildMap {
                 set("resolveFully", true)
                 set("type", "nodenext")
-                set("outFileExtension", moduleKind.jsExtension)
+                set("outFileExtension", moduleKind.jsExtension.removePrefix("."))
             })
         } else {
             // The Kotlin compiler already emits the final module system (AMD/UMD/CommonJS wrappers),
