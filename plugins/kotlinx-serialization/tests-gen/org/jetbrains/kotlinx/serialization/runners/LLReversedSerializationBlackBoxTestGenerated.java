@@ -169,6 +169,12 @@ public class LLReversedSerializationBlackBoxTestGenerated extends AbstractLLReve
     }
 
     @Test
+    @TestMetadata("fullValueClassInPolymorphicHierarchy.kt")
+    public void testFullValueClassInPolymorphicHierarchy() {
+      run("fullValueClassInPolymorphicHierarchy.kt");
+    }
+
+    @Test
     @TestMetadata("fullValueClassWithSuperclassDefaults.kt")
     public void testFullValueClassWithSuperclassDefaults() {
       run("fullValueClassWithSuperclassDefaults.kt");
