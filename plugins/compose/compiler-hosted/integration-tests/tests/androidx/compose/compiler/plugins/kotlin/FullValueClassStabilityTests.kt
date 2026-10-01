@@ -89,12 +89,18 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
 
     // Regression test for KT-89969
     @Test
-    fun testConfiguredStableValueClass() = assertStability("value class V(val u: Unstable)", "Unstable", externalTypes = setOf("V"))
+    fun testConfiguredStableValueClass() = assertStability("value class V(val u: Unstable)", "Stable", externalTypes = setOf("V"))
 
     // Regression test for KT-89969
     @Test
-    fun testConfiguredStableInlineClass() =
-        assertStability("@JvmInline value class V(val u: Unstable)\nclass W(val v: V)", "Unstable", externalTypes = setOf("V"))
+    fun testConfiguredStableInlineClass() = assertStability(
+        """
+            @JvmInline value class V(val u: Unstable)
+            class W(val v: V)
+        """,
+        "Stable",
+        externalTypes = setOf("V"),
+    )
 
     @Test
     fun testInheritedStableMarker() = assertStability(
@@ -102,7 +108,7 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
             @androidx.compose.runtime.Stable sealed value class Base
             value class V(val u: Unstable) : Base()
         """,
-        "Unstable",
+        "Stable",
     )
 
     @Test
@@ -111,7 +117,7 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
             @androidx.compose.runtime.Stable interface Base
             @JvmInline value class V(val u: Unstable) : Base
         """,
-        "Unstable",
+        "Stable",
     )
 
     // Regression test for KT-89961
