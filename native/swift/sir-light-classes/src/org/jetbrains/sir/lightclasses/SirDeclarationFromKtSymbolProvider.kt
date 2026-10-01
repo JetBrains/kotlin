@@ -53,10 +53,7 @@ public class SirDeclarationFromKtSymbolProvider(
                             auxExtension = protocol.auxExtension,
                             samConverter = protocol.samConverter,
                             sealedType = protocol.sealedType,
-                            typedListDeclarations = protocol.typedListDeclarations?.let {
-                                if (it !is SirTypedListDeclarations.Generic) return@let null
-                                Triple(it.typedListProtocol, it.typedListExtension, it.typedListStruct)
-                            },
+                            typedListDeclarations = protocol.typedListDeclarations?.asTriple(),
                         )
                     }
                     KaClassKind.ENUM_CLASS -> {
@@ -70,10 +67,7 @@ public class SirDeclarationFromKtSymbolProvider(
                         SirTranslationResult.RegularClass(
                             declaration = declaration,
                             sealedType = declaration.sealedType,
-                            typedListDeclarations = declaration.typedListDeclarations?.let {
-                                if (it !is SirTypedListDeclarations.Generic) return@let null
-                                Triple(it.typedListProtocol, it.typedListExtension, it.typedListStruct)
-                            }
+                            typedListDeclarations = declaration.typedListDeclarations?.asTriple()
                         )
                     }
                 }

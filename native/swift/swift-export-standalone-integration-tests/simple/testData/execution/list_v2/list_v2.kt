@@ -148,3 +148,17 @@ fun myListImplOf(vararg elements: Int): MyListImpl<Int> = MyListImpl(elements.as
 fun myMutableListImplOf(vararg elements: Int): MyMutableListImpl<Int> = MyMutableListImpl(elements.toMutableList())
 
 fun reverseMyListImpl(l: MyListImpl<Int>): MyListImpl<Int> = MyListImpl(l.reversed())
+
+// FILE: barList.kt
+
+class Bar(val value: Int)
+
+open class BarList(impl: List<Bar>): List<Bar> by impl
+
+class MutableBarList(impl: MutableList<Bar>): BarList(impl), MutableList<Bar> by impl
+
+fun barListOf(vararg elements: Bar): BarList = BarList(elements.asList())
+
+fun mutableBarListOf(vararg elements: Bar): MutableBarList = MutableBarList(elements.toMutableList())
+
+fun reverseBarList(l: BarList): BarList = BarList(l.reversed())
