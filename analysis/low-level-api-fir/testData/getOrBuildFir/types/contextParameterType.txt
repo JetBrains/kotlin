@@ -1,0 +1,11 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/String|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] contextParameterType.kt
+    context([ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/String|)
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

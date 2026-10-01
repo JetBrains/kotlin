@@ -270,6 +270,54 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotationTypeReference.kt")
+    public void testAnnotationTypeReference() {
+      run("annotationTypeReference.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationTypeReferenceOnConstructorPropertyField.kt")
+    public void testAnnotationTypeReferenceOnConstructorPropertyField() {
+      run("annotationTypeReferenceOnConstructorPropertyField.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfNestedTypeArgumentInAnnotation.kt")
+    public void testArrayOfNestedTypeArgumentInAnnotation() {
+      run("arrayOfNestedTypeArgumentInAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfNestedTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt")
+    public void testArrayOfNestedTypeArgumentInAnnotationCollectionLiteralsBasedResolution() {
+      run("arrayOfNestedTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfTypeArgumentInAnnotation.kt")
+    public void testArrayOfTypeArgumentInAnnotation() {
+      run("arrayOfTypeArgumentInAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt")
+    public void testArrayOfTypeArgumentInAnnotationCollectionLiteralsBasedResolution() {
+      run("arrayOfTypeArgumentInAnnotationCollectionLiteralsBasedResolution.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfTypeArgumentInTypeAnnotation.kt")
+    public void testArrayOfTypeArgumentInTypeAnnotation() {
+      run("arrayOfTypeArgumentInTypeAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("arrayOfTypeArgumentInTypeAnnotationCollectionLiteralsBasedResolution.kt")
+    public void testArrayOfTypeArgumentInTypeAnnotationCollectionLiteralsBasedResolution() {
+      run("arrayOfTypeArgumentInTypeAnnotationCollectionLiteralsBasedResolution.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotation.kt")
     public void testDanglingAnnotation() {
       run("danglingAnnotation.kt");
@@ -2200,6 +2248,36 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("annotatedValueParameterType.kt")
+    public void testAnnotatedValueParameterType() {
+      run("annotatedValueParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("classTypeParameterBound.kt")
+    public void testClassTypeParameterBound() {
+      run("classTypeParameterBound.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorParameterType.kt")
+    public void testConstructorParameterType() {
+      run("constructorParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorPropertyType.kt")
+    public void testConstructorPropertyType() {
+      run("constructorPropertyType.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterType.kt")
+    public void testContextParameterType() {
+      run("contextParameterType.kt");
+    }
+
+    @Test
     @TestMetadata("definitelyNotNullType.kt")
     public void testDefinitelyNotNullType() {
       run("definitelyNotNullType.kt");
@@ -2233,6 +2311,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("functionalTypeInsideAlias.kt")
     public void testFunctionalTypeInsideAlias() {
       run("functionalTypeInsideAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("getterReturnType.kt")
+    public void testGetterReturnType() {
+      run("getterReturnType.kt");
     }
 
     @Test
@@ -2302,9 +2386,33 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("propertyReceiverType.kt")
+    public void testPropertyReceiverType() {
+      run("propertyReceiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyType.kt")
+    public void testPropertyType() {
+      run("propertyType.kt");
+    }
+
+    @Test
     @TestMetadata("receiverType.kt")
     public void testReceiverType() {
       run("receiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorParameterType.kt")
+    public void testSecondaryConstructorParameterType() {
+      run("secondaryConstructorParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("setterParameterType.kt")
+    public void testSetterParameterType() {
+      run("setterParameterType.kt");
     }
 
     @Test
@@ -2329,6 +2437,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("superTypeAndGeneratedProperty.kt")
     public void testSuperTypeAndGeneratedProperty() {
       run("superTypeAndGeneratedProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeArgument.kt")
+    public void testSuperTypeArgument() {
+      run("superTypeArgument.kt");
     }
 
     @Test
@@ -2374,6 +2488,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("typeAliasExpandedType.kt")
+    public void testTypeAliasExpandedType() {
+      run("typeAliasExpandedType.kt");
+    }
+
+    @Test
     @TestMetadata("typeArgument.kt")
     public void testTypeArgument() {
       run("typeArgument.kt");
@@ -2383,6 +2503,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("typeParameterBound.kt")
     public void testTypeParameterBound() {
       run("typeParameterBound.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterBoundInClassWhere.kt")
+    public void testTypeParameterBoundInClassWhere() {
+      run("typeParameterBoundInClassWhere.kt");
     }
 
     @Test
@@ -2407,6 +2533,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     @TestMetadata("unresolvedTypeConsturctorResolvedTypeArgument.kt")
     public void testUnresolvedTypeConsturctorResolvedTypeArgument() {
       run("unresolvedTypeConsturctorResolvedTypeArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("valueParameterType.kt")
+    public void testValueParameterType() {
+      run("valueParameterType.kt");
     }
 
     @Test

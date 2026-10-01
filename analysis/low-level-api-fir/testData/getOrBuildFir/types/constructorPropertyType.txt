@@ -1,0 +1,18 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|kotlin/Int|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] constructorPropertyType.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/A.p] p: R|kotlin/Int|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val p: R|kotlin/Int| = R|<local>/p|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+    }
