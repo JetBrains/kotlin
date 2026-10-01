@@ -163,6 +163,32 @@ class JsBrowserTestsIT : KGPBaseTest() {
     }
 
     @GradleTest
+    @DisplayName("KT-89521: Wasm test ESM bundle is skipped when there are no test sources")
+    fun `wasm test esm bundle is skipped without test sources`(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {}
+                        }
+                    }
+                }
+            }
+
+            build("wasmJsTest") {
+                assertTasksNoSource(":wasmJsTestBundleAsEsm")
+                assertTasksNoSource(":wasmJsTest")
+            }
+        }
+    }
+
+    @GradleTest
     fun `smoke js browser test`(
         gradleVersion: GradleVersion,
     ) {
