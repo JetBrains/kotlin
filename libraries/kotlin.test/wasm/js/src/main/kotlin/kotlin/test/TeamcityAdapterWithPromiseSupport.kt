@@ -12,7 +12,7 @@ import kotlin.js.*
 // Using 'globalThis.arguments' because 'arguments' can refer to current JS function arguments
 @JsFun("() => globalThis.arguments")
 private external fun globalThisArguments(): JsArray<JsString>?
-@JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2) : null")
+@JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv : null")
 private external fun nodeArguments(): JsArray<JsString>?
 
 internal actual fun getArguments(): List<String> = (globalThisArguments() ?: nodeArguments())
