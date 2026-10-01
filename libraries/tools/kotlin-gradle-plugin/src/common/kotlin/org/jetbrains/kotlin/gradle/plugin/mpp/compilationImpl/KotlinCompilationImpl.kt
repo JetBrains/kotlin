@@ -13,13 +13,12 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.sources.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
@@ -150,7 +149,7 @@ internal class KotlinCompilationImpl(
         level = DeprecationLevel.WARNING
     )
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
-        HasKotlinDependencies(project, configurations, defaultSourceSet.internal.npmDependenciesCollector).dependencies(configure)
+        HasKotlinDependencies(project, configurations, defaultSourceSet.npmDependenciesCollector).dependencies(configure)
     }
 
     @Deprecated(
@@ -159,7 +158,7 @@ internal class KotlinCompilationImpl(
         level = DeprecationLevel.WARNING
     )
     override fun dependencies(configure: Action<KotlinDependencyHandler>) {
-        HasKotlinDependencies(project, configurations, defaultSourceSet.internal.npmDependenciesCollector).dependencies(configure)
+        HasKotlinDependencies(project, configurations, defaultSourceSet.npmDependenciesCollector).dependencies(configure)
     }
 
     //endregion
