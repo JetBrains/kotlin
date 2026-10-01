@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 
@@ -34,10 +39,7 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
         assertLazyResolveAllowed()
         val fir = clazz as? FirRegularClass ?: return
         val session = fir.llFirResolvableSession ?: return
-        session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolveWithCallableMembers(
-            target = fir,
-            toPhase = toPhase,
-        )
+        lazyResolveWithOwnCallableMembers(fir, session, toPhase)
 
         if (toPhase == FirResolvePhase.STATUS && fir.declarations.none { it is FirCallableDeclaration }) {
             for (superType in fir.superConeTypes) {
@@ -45,6 +47,35 @@ internal class LLFirLazyDeclarationResolver : FirLazyDeclarationResolver() {
                 lazyResolveToPhaseWithCallableMembers(classSymbol.fir, toPhase)
             }
         }
+    }
+
+    override fun lazyResolveToPhaseWithCallableMembersInSupertypes(clazz: FirClass, useSiteSession: FirSession, toPhase: FirResolvePhase) {
+        assertLazyResolveAllowed()
+        lazyResolveWithOwnCallableMembers(clazz, toPhase)
+
+        // The walk visits each supertype once, so the classes are resolved without the recursion of `lazyResolveToPhaseWithCallableMembers`
+        for (superType in lookupSuperTypes(clazz, lookupInterfaces = true, deep = true, useSiteSession, substituteTypes = false)) {
+            val superClass = superType.lookupTag.toRegularClassSymbol(useSiteSession)?.fir ?: continue
+            lazyResolveWithOwnCallableMembers(superClass, toPhase)
+        }
+    }
+
+    /**
+     * Resolves [clazz] and its own callable members, but not its supertypes.
+     *
+     * Java classes are skipped as they are always resolved.
+     */
+    private fun lazyResolveWithOwnCallableMembers(clazz: FirClass, toPhase: FirResolvePhase) {
+        if (clazz !is FirRegularClass || clazz.isJava) return
+        val session = clazz.llFirResolvableSession ?: return
+        lazyResolveWithOwnCallableMembers(clazz, session, toPhase)
+    }
+
+    private fun lazyResolveWithOwnCallableMembers(clazz: FirRegularClass, session: LLFirResolvableModuleSession, toPhase: FirResolvePhase) {
+        session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolveWithCallableMembers(
+            target = clazz,
+            toPhase = toPhase,
+        )
     }
 
     override fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase) {

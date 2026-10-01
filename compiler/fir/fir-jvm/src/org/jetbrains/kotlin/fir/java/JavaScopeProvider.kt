@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScopeWithLazyNestedScope
 import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembersInSupertypes
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.fir.types.lookupTagIfAny
@@ -36,6 +37,10 @@ object JavaScopeProvider : FirScopeProvider() {
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope {
+        memberRequiredPhase?.let {
+            klass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, it)
+        }
+
         val symbol = klass.symbol as FirRegularClassSymbol
         val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, memberRequiredPhase)
         if (klass.classKind == ClassKind.ANNOTATION_CLASS) {

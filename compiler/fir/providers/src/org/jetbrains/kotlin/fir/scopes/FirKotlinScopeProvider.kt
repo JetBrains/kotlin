@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembersInSupertypes
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -45,7 +45,7 @@ class FirKotlinScopeProvider(
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope {
         memberRequiredPhase?.let {
-            klass.lazyResolveToPhaseWithCallableMembers(it)
+            klass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession, it)
         }
 
         return scopeSession.getOrBuild(useSiteSession to klass.symbol, USE_SITE) {

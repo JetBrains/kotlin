@@ -1,0 +1,19 @@
+public final override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/B.bar] fun bar([ResolvedTo(STATUS)] t: R|kotlin/String!|): R|kotlin/Unit|
+
+public final [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] t: R|T|): R|kotlin/Unit| { LAZY_BLOCK }
+
+public abstract override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/B.foo] fun foo([ResolvedTo(STATUS)] t: R|kotlin/String!|): R|kotlin/Unit|
+
+public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|T|): R|kotlin/Unit|
+
+public final override [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/B.baz] val baz: R|kotlin/String!|
+    public [ResolvedTo(STATUS)] get(): R|kotlin/String!|
+
+public final [ResolvedTo(STATUS)] val baz: R|T|
+    public [ResolvedTo(STATUS)] [ContainingClassKey=B] get(): R|T| { LAZY_BLOCK }
+
+public open operator [ResolvedTo(BODY_RESOLVE)] fun equals([ResolvedTo(BODY_RESOLVE)] other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun hashCode(): R|kotlin/Int|
+
+public open [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String|

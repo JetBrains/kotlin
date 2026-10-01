@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
@@ -16,5 +17,6 @@ object FirDummyCompilerLazyDeclarationResolver : FirLazyDeclarationResolver() {
 
     override fun lazyResolveToPhase(element: FirElementWithResolveState, toPhase: FirResolvePhase) {}
     override fun lazyResolveToPhaseWithCallableMembers(clazz: FirClass, toPhase: FirResolvePhase) {}
+    override fun lazyResolveToPhaseWithCallableMembersInSupertypes(clazz: FirClass, useSiteSession: FirSession, toPhase: FirResolvePhase) {}
     override fun lazyResolveToPhaseRecursively(element: FirElementWithResolveState, toPhase: FirResolvePhase) {}
 }
