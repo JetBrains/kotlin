@@ -529,7 +529,7 @@ object PositioningStrategies {
     @JvmField
     val SAFE_ACCESS: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
-            return markElement(element.node.findChildByType(KtTokens.SAFE_ACCESS)?.psi ?: element)
+            return markElement(element.node.findChildByType(ALL_SAFE_ACCESSES)?.psi ?: element)
         }
     }
 
@@ -983,7 +983,7 @@ object PositioningStrategies {
                     left.findDescendantOfType<KtDotQualifiedExpression>()?.let { return mark(it) }
                 }
             }
-            if (element is KtDotQualifiedExpression) {
+            if (element is KtQualifiedExpression) {
                 return mark(element.operationTokenNode.psi)
             }
             // Fallback to mark the callee reference.
