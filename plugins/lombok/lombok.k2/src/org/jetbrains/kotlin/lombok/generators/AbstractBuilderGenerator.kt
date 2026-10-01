@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.generators
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
@@ -206,7 +207,13 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val key = context.owner.generatedBuilderClassKey ?: return emptyList()
-        return listOf(createDefaultConstructor(context.owner, key, visibility = Visibilities.Internal).symbol)
+        val constructor = createDefaultConstructor(
+            context.owner,
+            key,
+            visibility = if (context.owner.hasJavaOrigin) JavaVisibilities.PackageVisibility else Visibilities.Internal,
+            generateDelegatedNoArgConstructorCall = !context.owner.hasJavaOrigin
+        )
+        return listOf(constructor.symbol)
     }
 
     /**
@@ -217,8 +224,14 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
      * [LombokCompanionObjectGenerator]'s, constructor included.
      */
     private val FirClassSymbol<*>.generatedBuilderClassKey: BuilderGeneratorKey?
-        get() = ((origin as? FirDeclarationOrigin.Plugin)?.key as? BuilderGeneratorKey)
-            ?.takeIf { it.type is BuilderDeclarationType.Class.Builder }
+        get() {
+            val key = when (val origin = origin) {
+                is FirDeclarationOrigin.Plugin -> origin.key
+                is FirDeclarationOrigin.Java.Plugin -> origin.key
+                else -> null
+            }
+            return (key as? BuilderGeneratorKey)?.takeIf { it.type is BuilderDeclarationType.Class.Builder }
+        }
 
     /**
      * Whether [owner] needs a generated companion object to host its `builder()` factories. Only a static builder
@@ -1005,6 +1018,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             FirJavaClassBuilder().apply {
                 containingClassSymbol = containingClass
                 isFromSource = true
+                key = BuilderGeneratorKey(BuilderDeclarationType.Class.Builder)
 
                 // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
                 // Don't care about outer type parameters because builder classes are always static (nested).
