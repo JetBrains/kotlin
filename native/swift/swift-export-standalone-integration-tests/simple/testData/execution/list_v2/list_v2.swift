@@ -222,6 +222,22 @@ func testMyMutableListImpl() throws {
 }
 
 @Test
+func testBarList() throws {
+    let original = barListOf(elements: Bar(value: 4), Bar(value: 8), Bar(value: 5), Bar(value: 16), Bar(value: 23), Bar(value: 42))
+    try assertReversed(reversed: reverseBarList(l: original), original: original)
+}
+
+@Test
+func testMutableBarList() throws {
+    let items = [Bar(value: 4), Bar(value: 8), Bar(value: 5), Bar(value: 16), Bar(value: 23), Bar(value: 42)]
+    let original = mutableBarListOf(elements: items[0], items[1], items[2], items[3], items[4], items[5])
+    let newBar = Bar(value: 64)
+    original[1] = newBar
+    let expected = barListOf(elements: items[0], newBar, items[2], items[3], items[4], items[5])
+    try assertReversed(reversed: reverseBarList(l: original), original: expected)
+}
+
+@Test
 func testListSubSequenceGet() throws {
     let list = listOf(elements: Int32(4), 8, 5, 16, 23, 42)
     let subList = list[1..<4]
