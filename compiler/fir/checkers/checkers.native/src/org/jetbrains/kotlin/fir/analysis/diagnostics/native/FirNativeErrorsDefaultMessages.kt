@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_CLASS_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EAGER_INITIALIZATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
@@ -182,6 +183,11 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             IDENTITY_HASH_CODE_ON_VALUE_TYPE,
             "Call to ''kotlin.native.identityHashCode'' on an instance of value type ''{0}'' can have unexpected behavior.",
+            RENDER_TYPE,
+        )
+        map.put(
+            IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE,
+            "Identity-sensitive operation on an instance of value type ''{0}'' can have unexpected behavior.",
             RENDER_TYPE,
         )
         map.put(
