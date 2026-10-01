@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.extensions.UnsafePluginApi
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
+import org.jetbrains.kotlin.fir.plugin.createDefaultConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createMemberProperty
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -209,7 +209,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val key = context.owner.generatedBuilderClassKey ?: return emptyList()
-        return listOf(createDefaultPrivateConstructor(context.owner, key).symbol)
+        return listOf(createDefaultConstructor(context.owner, key, visibility = Visibilities.Internal).symbol)
     }
 
     /**

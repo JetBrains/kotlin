@@ -18,7 +18,7 @@ FILE: builderWithSuppressedBuilderMethod_kotlin.kt
                 private get(): R|kotlin/Int|
                 private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-            private constructor(): R|Suppressed.SuppressedBuilder| {
+            internal constructor(): R|Suppressed.SuppressedBuilder| {
                 super<R|kotlin/Any|>()
             }
 
@@ -51,7 +51,7 @@ FILE: builderWithSuppressedBuilderMethod_kotlin.kt
                 private get(): R|kotlin/Int|
                 private set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-            private constructor(): R|Renamed.RenamedBuilder| {
+            internal constructor(): R|Renamed.RenamedBuilder| {
                 super<R|kotlin/Any|>()
             }
 
