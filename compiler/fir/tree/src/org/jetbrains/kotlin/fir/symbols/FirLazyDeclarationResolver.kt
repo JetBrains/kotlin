@@ -10,9 +10,11 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.util.PrivateForInline
 
 /**
@@ -88,6 +90,15 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
      * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembersInSupertypes
      */
     abstract fun lazyResolveToPhaseWithCallableMembersInSupertypes(clazz: FirClass, useSiteSession: FirSession, toPhase: FirResolvePhase)
+
+    /**
+     * @see org.jetbrains.kotlin.fir.symbols.lazyResolveBoundsToPhaseWithCallableMembersInSupertypes
+     */
+    abstract fun lazyResolveBoundsToPhaseWithCallableMembersInSupertypes(
+        typeParameter: FirTypeParameter,
+        useSiteSession: FirSession,
+        toPhase: FirResolvePhase,
+    )
 
     /**
      * @see org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
@@ -188,6 +199,22 @@ fun FirClass.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
  */
 fun FirClass.lazyResolveToPhaseWithCallableMembersInSupertypes(useSiteSession: FirSession, toPhase: FirResolvePhase) {
     lazyDeclarationResolver.lazyResolveToPhaseWithCallableMembersInSupertypes(this, useSiteSession, toPhase)
+}
+
+/**
+ * Lazy resolve the classes of the [FirTypeParameterSymbol] bounds, all their supertypes and their callable members to [FirResolvePhase].
+ *
+ * Bounds that are type parameters are traversed transitively.
+ * A type parameter scope is cached regardless of the phase as well, as are the class scopes of the bounds,
+ * so the bound classes have to be resolved before the lookup.
+ *
+ * For the compiler mode, it does nothing, without traversing the bounds.
+ *
+ * @param useSiteSession the session to look up the bound classes and their supertypes in
+ * @see lazyResolveToPhaseWithCallableMembersInSupertypes
+ */
+fun FirTypeParameterSymbol.lazyResolveBoundsToPhaseWithCallableMembersInSupertypes(useSiteSession: FirSession, toPhase: FirResolvePhase) {
+    fir.lazyDeclarationResolver.lazyResolveBoundsToPhaseWithCallableMembersInSupertypes(fir, useSiteSession, toPhase)
 }
 
 /**
