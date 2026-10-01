@@ -1044,7 +1044,7 @@ open class FirDeclarationsResolveTransformer(
 
             // A local function may still have a class or a file as the container, e.g., inside their annotation arguments
             val isLocal = namedFunction.status.visibility == Visibilities.Local
-            if (containingDeclaration != null && (isLocal || containingDeclaration !is FirClass && containingDeclaration !is FirFile && containingDeclaration !is FirScript)) {
+            if (containingDeclaration != null && isLocal) {
                 // For class members everything should be already prepared
                 prepareSignatureForBodyResolve(namedFunction)
                 namedFunction.transformStatus(this, namedFunction.resolveStatus().mode())
