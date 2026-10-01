@@ -40,7 +40,12 @@ internal open class CoroutineImplStackSwitching<T, R>(
     // Set by `resumeWith` when the coroutine resumes itself from inside its own `block`.
     internal var resumedWhileRunning = false
 
-    @Suppress("UNCHECKED_CAST")
+    /**
+     * Set when a `suspendCoroutineUninterceptedOrReturn` block resumed this continuation itself and
+     * the wasm stack kept running instead of parking.
+     */
+    internal var absorbedSelfResume = false
+
     override fun resumeWith(result: Result<T>) {
         this.result = result.getOrNull()
         exception = result.exceptionOrNull()
@@ -64,15 +69,18 @@ internal open class CoroutineImplStackSwitching<T, R>(
         }
         isRunning = false // the stack ran to completion
 
-        releaseIntercepted() // this instance is terminating
+        completeWith(this.result, exception)
+    }
 
-        val completion = resultContinuation
+    @Suppress("UNCHECKED_CAST")
+    internal fun completeWith(result: Any?, exception: Throwable?) {
+        releaseIntercepted()
 
         // top-level completion reached -- invoke and return
         if (exception != null) {
-            completion.resumeWithException(exception!!)
+            resultContinuation.resumeWithException(exception)
         } else {
-            completion.resume(this.result as R)
+            resultContinuation.resume(result as R)
         }
     }
 
