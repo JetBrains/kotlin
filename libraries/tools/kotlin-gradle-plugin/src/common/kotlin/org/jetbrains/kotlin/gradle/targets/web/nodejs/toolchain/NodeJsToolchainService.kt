@@ -16,6 +16,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.statistics.NodeJsToolchainServiceMetrics
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNodeBinDir
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
@@ -102,7 +103,9 @@ interface NodeJsToolchainService<P : NodeJsToolchainService.Parameters> : BuildS
                     task.nodeJsToolchainService.value(serviceProvider).disallowChanges()
                     task.usesService(serviceProvider)
                 }
+                NodeJsToolchainServiceMetrics.collectServiceCreated(project, serviceProvider)
             }
+
         }
 
         /**

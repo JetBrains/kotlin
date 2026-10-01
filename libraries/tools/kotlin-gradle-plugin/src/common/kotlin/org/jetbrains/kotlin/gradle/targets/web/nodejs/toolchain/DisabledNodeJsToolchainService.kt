@@ -18,9 +18,7 @@ abstract class DisabledNodeJsToolchainService : NodeJsToolchainService<NodeJsToo
 
     companion object {
         internal fun registerIfAbsent(project: Project): Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>> {
-            return project.gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DisabledNodeJsToolchainService::class.java).also {
-                NodeJsToolchainServiceMetrics.collectServiceCreated(project, NodeJsToolchainMode.DISABLE)
-            }
+            return project.gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DisabledNodeJsToolchainService::class.java)
         }
     }
 }

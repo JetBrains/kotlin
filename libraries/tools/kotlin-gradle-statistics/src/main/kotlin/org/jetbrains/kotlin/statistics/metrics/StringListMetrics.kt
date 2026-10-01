@@ -96,7 +96,7 @@ enum class StringListMetrics(
         CONCAT,
         AllowedListAnonymizer(listOf("exposed", "hidden", "moduleName", "rootPackage", "settings"))
     ),
-    NODE_JS_TOOLCHAIN_SERVICE(CONCAT, AllowedListAnonymizer(listOf("download", "preinstalled", "disable"))),
+    NODE_JS_TOOLCHAIN_SERVICE(CONCAT, AllowedListAnonymizer(listOf("download", "preinstalled", "disable", "custom"))),
     ;
 
 

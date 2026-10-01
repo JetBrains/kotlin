@@ -118,8 +118,6 @@ abstract class DefaultNodeJsToolchainService @Inject internal constructor(
                     )
                 )
                 spec.parameters.offline.set(project.gradle.startParameter.isOffline)
-            }.also {
-                NodeJsToolchainServiceMetrics.collectServiceCreated(project, NodeJsToolchainMode.DOWNLOAD)
             }
         }
 

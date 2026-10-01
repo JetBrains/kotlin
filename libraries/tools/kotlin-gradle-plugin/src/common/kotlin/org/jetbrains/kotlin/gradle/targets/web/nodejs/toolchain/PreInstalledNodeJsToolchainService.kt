@@ -109,8 +109,6 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
                 PreInstalledNodeJsToolchainService::class.java
             ) { spec ->
                 spec.parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath.getOrElse("node"))
-            }.also {
-                NodeJsToolchainServiceMetrics.collectServiceCreated(project, NodeJsToolchainMode.PREINSTALLED)
             }
         }
     }

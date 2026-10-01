@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinDefaultJsTestLocation
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.DefaultNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.DisabledNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.PreInstalledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
@@ -497,9 +500,20 @@ internal object KotlinSourceSetMetrics : FusMetrics {
 }
 
 internal object NodeJsToolchainServiceMetrics : FusMetrics {
-    internal fun collectServiceCreated(project: Project, mode: NodeJsToolchainMode) {
+    internal fun collectServiceCreated(project: Project, serviceProvider: Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>>) {
         project.addConfigurationMetrics {
-            it.put(StringListMetrics.NODE_JS_TOOLCHAIN_SERVICE, mode.name.lowercase())
+            val service = serviceProvider.orNull ?: return@addConfigurationMetrics
+            val metric = when (service) {
+                is DisabledNodeJsToolchainService -> "disable"
+                is PreInstalledNodeJsToolchainService -> "preinstalled"
+                is DefaultNodeJsToolchainService -> "download"
+                else -> "custom"
+            }
+
+            it.put(
+                StringListMetrics
+                    .NODE_JS_TOOLCHAIN_SERVICE, metric
+            )
         }
     }
 }
