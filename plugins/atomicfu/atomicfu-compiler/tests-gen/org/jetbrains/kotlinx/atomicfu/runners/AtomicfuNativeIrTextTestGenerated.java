@@ -31,7 +31,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
   @Test
   public void testAllFilesPresentInBox() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
   }
 
   @Nested
@@ -47,7 +47,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
     @Test
     public void testAllFilesPresentInAtomic_extensions() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
     @Test
     public void testAllFilesPresentInAtomics_basic() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
     }
 
     @Test
@@ -167,12 +167,6 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
     @TestMetadata("inliningAndSMAP.kt")
     public void testInliningAndSMAP() {
       run("inliningAndSMAP.kt");
-    }
-
-    @Test
-    @TestMetadata("KT83367.kt")
-    public void testKT83367() {
-      run("KT83367.kt");
     }
 
     @Test
@@ -255,7 +249,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
     @Test
     public void testAllFilesPresentInCompanion_blocks() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/companion_blocks"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/companion_blocks"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
     }
 
     @Test
@@ -308,7 +302,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
     @Test
     public void testAllFilesPresentInContext_parameters() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
     }
 
     @Test
@@ -331,7 +325,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
     @Test
     public void testAllFilesPresentInDelegated() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/delegated"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
     }
 
     @Test
@@ -360,7 +354,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
     @Test
     public void testAllFilesPresentInLocks() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/locks"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/locks"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
     }
 
     @Test
@@ -389,7 +383,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
     @Test
     public void testAllFilesPresentInTop_level() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/top-level"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/top-level"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
     }
 
     @Test
@@ -424,7 +418,7 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
 
     @Test
     public void testAllFilesPresentInTrace() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/trace"), Pattern.compile("^(.+)\\.kt$"), null, true);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/trace"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^KT83367\\.kt$"), true);
     }
 
     @Test

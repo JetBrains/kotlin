@@ -41,7 +41,9 @@ fun main(args: Array<String>) {
                 suiteTestClassName = "AtomicfuNativeIrTextTestGenerated",
                 annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
-                model()
+                // KT83367.kt is ignored because it requires klib generation, but RUN_PIPELINE_TILL is limited to TestPhase.FIR2IR in
+                // AbstractAtomicfuNativeIrTextTest because of KT-85312.
+                model(excludedPattern = """^KT83367\.kt$""")
             }
         }
 
