@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.test.sharding
 
+import org.junit.jupiter.api.extension.ExtensionContext
+import kotlin.jvm.optionals.getOrNull
+
 /**
  * The sharding of a test run:
  * - [shardIndex]: the zero-based shard index to run (`kotlin.build.test.shard.index`), or `-1` to run all tests,
@@ -14,6 +17,8 @@ package org.jetbrains.kotlin.test.sharding
  *
  * This only holds the settings: the assignment of tests to shards is implemented by [calculateTestShard].
  * The Gradle test tasks pass these as system properties (see [readTestShardingConfigurationFromSystemProperties]).
+ * Extensions read them from the JUnit configuration parameters, which fall back to the system properties
+ * (see [readTestShardingConfiguration]), so that tests can run several shards within one JVM.
  */
 internal data class TestShardingConfiguration(
     val shardIndex: Int = -1,
@@ -43,6 +48,10 @@ internal val TestShardingConfiguration.isShardingEnabled: Boolean
 
 internal fun readTestShardingConfigurationFromSystemProperties(): TestShardingConfiguration =
     readTestShardingConfiguration(System::getProperty)
+
+/** Reads the JUnit configuration parameters of the test run, which fall back to the system properties. */
+internal fun readTestShardingConfiguration(context: ExtensionContext): TestShardingConfiguration =
+    readTestShardingConfiguration { key -> context.getConfigurationParameter(key).getOrNull() }
 
 private fun readTestShardingConfiguration(value: (key: String) -> String?): TestShardingConfiguration = TestShardingConfiguration(
     shardIndex = value(shardIndexKey)?.toIntOrNull() ?: -1,

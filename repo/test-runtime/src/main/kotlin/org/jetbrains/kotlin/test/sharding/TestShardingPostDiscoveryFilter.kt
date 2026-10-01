@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.sharding
 
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor
 import org.junit.platform.engine.FilterResult
 import org.junit.platform.engine.FilterResult.excluded
@@ -17,6 +18,9 @@ import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.jvm.optionals.getOrNull
 
+internal const val testsShardParameterizedTagKey = "tests.shard.parameterized"
+internal val testsShardParameterizedTag = TestTag.create(testsShardParameterizedTagKey)
+
 internal const val testsShardByMethodTagKey = "tests.shard.byMethod"
 internal val testsShardByMethodTag = TestTag.create(testsShardByMethodTagKey)
 
@@ -24,7 +28,8 @@ internal val testsShardByMethodTag = TestTag.create(testsShardByMethodTagKey)
  * Spreads the test methods of this class across shards.
  * By default, all tests of a class run on the same shard.
  *
- * A `@TestFactory` or `@TestTemplate` still runs on a single shard.
+ * A `@TestFactory` still runs on a single shard.
+ * A `@TestTemplate` also runs on a single shard, unless it uses [ParameterizedTestSharding].
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -43,6 +48,7 @@ internal class TestShardingPostDiscoveryFilter(
         if (!configuration.isShardingEnabled) return included("No shards configured")
         val isTestMethod = test.type == TestDescriptor.Type.TEST || test.mayRegisterTests()
         if (!isTestMethod) return included("Classes/Containers are always enabled")
+        if (testsShardParameterizedTag in test.tags) return included("Test invocations are sharded by parameters")
 
         val shardIndex = configuration.shardIndex
         val distributionKey = test.shardingDistributionKey(configuration).encodeToByteArray()
@@ -92,6 +98,18 @@ internal fun TestDescriptor.shardingDistributionKey(configuration: TestShardingC
     }
 }
 
+/**
+ * Execution-time counterpart of [TestDescriptor.shardingDistributionKey], used to salt the invocations of a test template (see [shard]):
+ * the unique id of the test when sharding by method, otherwise the name of its test class.
+ * Only junit-jupiter provides an [ExtensionContext], so no other test engines need to be handled.
+ */
+internal fun ExtensionContext.shardingDistributionKey(configuration: TestShardingConfiguration): String {
+    if (configuration.shardByMethod || testsShardByMethodTagKey in tags) {
+        return uniqueId
+    }
+
+    return requiredTestClass.name
+}
 
 // MessageDigest is mutable: reuse one instance per thread, without sharing its state between threads.
 private val hashing: ThreadLocal<MessageDigest> = ThreadLocal.withInitial {
