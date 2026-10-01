@@ -55,14 +55,14 @@ internal class DirtyFilesProvider(
         dirtyFiles.add(cachedHistory.read(), "was not compiled last time")
         dirtyFiles.add(
             findSupertypeSourcesReferencingTypesFromChangedFiles(caches, changedFiles.modified + changedFiles.removed),
-            reason = "is a supertype of a class from a changed file and references classes from changed files, so its inferred types may be outdated"
+            reason = "is a supertype of a class from a changed file and references types from changed files, so its inferred types may be outdated"
         )
         return dirtyFiles
     }
 
     /**
      * Returns source files of transitive supertypes of classes declared in [changedSources]
-     * that reference classes declared in [changedSources]. This over-approximates:
+     * that reference classes or typealiases declared in [changedSources]. This over-approximates:
      * any change in such a file counts, even if the declarations themselves did not change.
      * Inferred types in these supertypes may depend on the changed files.
      */
@@ -72,7 +72,7 @@ internal class DirtyFilesProvider(
     ): List<File> {
         val platformCache = caches.platformCache
         val changedKotlinFiles = changedSources.filter { it.isKotlinFile(kotlinSourceFileExtensions) }
-        val classesFromChangedFiles = platformCache.classesFqNamesBySources(changedKotlinFiles).toSet()
+        val classesFromChangedFiles = platformCache.classesFqNamesBySources(changedKotlinFiles)
 
         val supertypeSourceFiles =
             classesFromChangedFiles
@@ -85,7 +85,12 @@ internal class DirtyFilesProvider(
 
         if (supertypeSourceFiles.isEmpty()) return emptyList()
 
-        return classesFromChangedFiles
+        val typesFromChangedFiles = buildSet {
+            addAll(classesFromChangedFiles)
+            addAll(platformCache.typealiasesFqNamesBySources(changedKotlinFiles))
+        }
+
+        return typesFromChangedFiles
             .flatMap { caches.lookupCache.get(LookupSymbol(it.shortName().asString(), it.parent().asString())) }
             .map(::File)
             .filter { it in supertypeSourceFiles }
