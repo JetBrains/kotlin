@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import kotlinx.serialization.descriptors.elementNames
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
@@ -16,9 +17,11 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
+import org.jetbrains.kotlin.gradle.targets.js.webpack.DevServerJson
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.utils.property
+import java.lang.reflect.Modifier
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -110,5 +113,17 @@ class KotlinWebpackConfigSerializationTest {
         val optimization = generated.assignedJsonObject("config.optimization =")
         assertFalse("runtimeChunk" in optimization, "expected no runtimeChunk key, got $optimization")
         assertEquals(false, optimization["splitChunks"]!!.jsonPrimitive.boolean)
+    }
+
+    @Test
+    fun `devServer writes every DevServer property`() {
+        val properties = KotlinWebpackConfig.DevServer::class.java.declaredFields
+            .filterNot { Modifier.isStatic(it.modifiers) }
+            .map { it.name }
+            .toSet()
+        val written = DevServerJson.serializer().descriptor.elementNames.toSet()
+
+        // `mutableStatics` is written under "static", merged with the deprecated `static` list
+        assertEquals(properties - "mutableStatics", written)
     }
 }
