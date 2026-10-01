@@ -515,8 +515,9 @@ class StabilityInferencer(
                 if (valueClassDeclaration.hasStableMarker()) {
                     Stability.Stable
                 } else {
+                    // Like other abstract and sealed classes, abstract and sealed value classes may have subclasses of any stability.
                     val primaryProperties = valueClassDeclaration.valueClassRepresentation?.underlyingPropertyNamesToTypes
-                        ?: return Stability.Unstable // is abstract value class
+                        ?: return Stability.Unknown(valueClassDeclaration)
                     val propertySubstitutions = substitutions + (type as IrSimpleType).substitutionMap()
                     val typeArguments = valueClassDeclaration.typeParameters.map { propertySubstitutions[it.symbol] }
                     val symbol = SymbolForAnalysis(valueClassDeclaration.symbol, typeArguments, analysisEntryFile)
