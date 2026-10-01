@@ -460,6 +460,7 @@ projectTests {
     testData(project(":js:js.translator").isolated, "testData/typescript-export/wasm/")
 
     withWasmRuntime()
+    withStdlibCommon()
 }
 
 tasks.processTestFixturesResources.configure {
