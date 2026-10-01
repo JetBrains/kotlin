@@ -14,6 +14,7 @@ import java.lang.reflect.*
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
+import kotlin.reflect.ExperimentalCompanionExtensions
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.calls.*
 
@@ -67,7 +68,7 @@ internal abstract class KotlinKProperty<out V>(
     override val isLateinit: Boolean get() = kmProperty.isLateinit
     override val isConst: Boolean get() = kmProperty.isConst
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(kotlin.metadata.ExperimentalCompanionExtensions::class)
     @ExperimentalCompanionExtensions
     override val companionExtensionClass: KClass<*>?
         get() = (kmProperty.companionExtensionReceiverType?.classifier as KmClassifier.Class?)?.let {

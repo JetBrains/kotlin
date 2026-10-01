@@ -175,7 +175,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         )
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalContracts::class, ExperimentalCompanionExtensions::class)
     fun renderFunction(function: KmFunction, printer: Printer): Unit = with(printer) {
         appendLine()
         appendOrigin(function)
@@ -202,7 +202,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class, ExperimentalCompanionBlocks::class)
+    @OptIn(ExperimentalCompanionBlocks::class, ExperimentalCompanionExtensions::class)
     fun renderFunctionModifiers(function: KmFunction, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[function.visibility])
         append(MODALITY_MAP[function.modality])
@@ -323,7 +323,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         appendLine("}")
     }
 
-    @OptIn(ExperimentalContextParameters::class, ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalContextParameters::class, ExperimentalCompanionExtensions::class)
     fun renderProperty(property: KmProperty, printer: Printer): Unit = with(printer) {
         appendLine()
         appendVersionRequirements(property.versionRequirements)
@@ -365,7 +365,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionExtensions::class, ExperimentalCompanionBlocks::class)
     fun renderPropertyModifiers(property: KmProperty, printer: Printer): Unit = with(printer) {
         append(VISIBILITY_MAP[property.visibility])
         append(MODALITY_MAP[property.modality])
@@ -376,7 +376,7 @@ abstract class Kotlinp(protected val settings: Settings) {
             property.isExternal to "external",
             property.isDelegated to "/* delegated */",
             property.isExpect to "expect",
-            property.isStatic to "static",
+            property.isCompanionBlockMember to "static",
             (property.companionExtensionReceiverType != null) to "companion"
         )
     }

@@ -72,7 +72,7 @@ internal class KotlinKNamedFunction(
     }
 
     @ExperimentalCompanionExtensions
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(kotlin.metadata.ExperimentalCompanionExtensions::class)
     override val companionExtensionClass: KClass<*>?
         get() = (kmFunction.companionExtensionReceiverType?.classifier as KmClassifier.Class?)?.let {
             container.jClass.safeClassLoader.loadKClass(it.name)

@@ -153,6 +153,9 @@ public abstract interface annotation class kotlin/metadata/ExperimentalCompanion
 public abstract interface annotation class kotlin/metadata/ExperimentalCompanionBlocksAndExtensions : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/metadata/ExperimentalCompanionExtensions : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
 }
 
