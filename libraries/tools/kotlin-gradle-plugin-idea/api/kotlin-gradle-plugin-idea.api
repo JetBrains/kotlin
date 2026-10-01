@@ -70,6 +70,7 @@ public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializ
 public final class org/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity : java/lang/Enum {
 	public static final field ERROR Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
 	public static final field WARNING Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationLogger$Severity;
 }
@@ -300,6 +301,7 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependen
 	public static final field Friend Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public static final field Regular Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public static final field serialVersionUID J
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceDependency$Type;
 }

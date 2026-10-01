@@ -289,6 +289,7 @@ class DependencyProcessor(
     fun run(archiveExtractor: ArchiveExtractor = DependencyExtractor()) {
         // We need a lock that can be shared between different classloaders (KT-39781).
         // TODO: Rework dependencies downloading to avoid storing the lock in the system properties.
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         val lock = System.getProperties().computeIfAbsent("kotlin.native.dependencies.lock") {
             // String literals are internalized so we create a new instance to avoid synchronization on a shared object.
             java.lang.String("lock")
