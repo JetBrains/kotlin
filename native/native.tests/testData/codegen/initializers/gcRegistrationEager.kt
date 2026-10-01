@@ -1,3 +1,4 @@
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:*
 // KIND: STANDALONE
 // GC from @EagerInitialization may interfere with other tests
 @file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, kotlin.experimental.ExperimentalNativeApi::class, kotlin.ExperimentalStdlibApi::class)
