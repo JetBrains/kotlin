@@ -15,13 +15,13 @@
  *  limitations under the License.
  */
 
-@file:OptIn(ExperimentalUnsignedTypes::class)
 @file:Suppress("RETURN_VALUE_NOT_USED", "NOTHING_TO_INLINE")
 
 package kotlin.internal.dtoa
 
 import kotlin.math.ceil
 import kotlin.math.pow
+import kotlin.native.concurrent.ThreadLocal
 
 private const val MAX_ACCURACY_WIDTH_DOUBLE = 17
 private const val LOG5_OF_TWO_TO_THE_N = 23
@@ -32,7 +32,7 @@ private const val INV_LOG_OF_TEN_BASE_2 = 0.30102999566398114
 private const val RM_SIZE = 21
 private const val STemp_SIZE = 22
 
-private val TENS = doubleArrayOf(
+private val TENS = doubleUnsafeArrayOf(
     1.0, 1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5, 1.0e6, 1.0e7, 1.0e8, 1.0e9,
     1.0e10, 1.0e11, 1.0e12, 1.0e13, 1.0e14, 1.0e15, 1.0e16, 1.0e17, 1.0e18,
     1.0e19, 1.0e20, 1.0e21, 1.0e22
@@ -44,23 +44,27 @@ private inline fun tenToTheE(e: Int): Double = TENS[e]
 private inline fun errorOccured(x: Double): Boolean = (x.toRawBits() shr 32).toInt() < 0
 private inline fun longBitsToDouble(bits: ULong): Double = Double.fromBits(bits.toLong())
 
+// Assumes that a string converted in createDouble is a string with at least one character in it.
+// Both def and defBackup are thread local to avoid allocation on every createDouble call.
+// There's no way to corrupt their content inside the same thread, but multiple threads may parse
+// FP-number concurrently, thus these buffers are confined to a thread. And they are small enough to
+// abstain from making them weak.
+@ThreadLocal
+private val def = ULongUnsafeArray(MAX_ACCURACY_WIDTH_DOUBLE)
+
+@ThreadLocal
+private val defBackup = ULongUnsafeArray(MAX_ACCURACY_WIDTH_DOUBLE)
+
 private fun createDouble(s: String, e: Int): Double {
     var e = e
-    /* assumes s is a string with at least one
-    * character in it */
-    val def = ULongArray(MAX_ACCURACY_WIDTH_DOUBLE)
-    val defBackup = ULongArray(MAX_ACCURACY_WIDTH_DOUBLE)
-
-    val f: ULongArray
-    var fNoOverflow: ULongArray
 
     var overflow: UInt
     val result: Double
     var index = 1
     val unprocessedDigits: Int
 
-    f = def
-    fNoOverflow = defBackup
+    val f = def
+    val fNoOverflow = defBackup
     f[0] = 0U
 
     var pS = 0
@@ -132,7 +136,7 @@ private fun createDouble(s: String, e: Int): Double {
 }
 
 
-private fun createDouble1(f: ULongArray, length: Int, e: Int): Double {
+private fun createDouble1(f: ULongUnsafeArray, length: Int, e: Int): Double {
     var numBits: Int
     var result = 0.0
 
@@ -196,17 +200,17 @@ private fun createDouble1(f: ULongArray, length: Int, e: Int): Double {
  * is currently set such that if the oscillation occurs more than twice
  * then return the original approximation.
  */
-private fun doubleAlgorithm(f: ULongArray, length: Int, e: Int, z: Double): Double {
+private fun doubleAlgorithm(f: ULongUnsafeArray, length: Int, e: Int, z: Double): Double {
     var z = z
     var m: ULong
     var k: Int
     var comparison: Int
     var comparison2: Int
 
-    var x: ULongArray
-    var y: ULongArray
-    var D: ULongArray
-    var D2: ULongArray
+    var x: ULongUnsafeArray
+    var y: ULongUnsafeArray
+    var D: ULongUnsafeArray
+    var D2: ULongUnsafeArray
 
     var xLength: Int
     var yLength: Int
@@ -218,47 +222,49 @@ private fun doubleAlgorithm(f: ULongArray, length: Int, e: Int, z: Double): Doub
     decApproxCount = 0
     incApproxCount = 0
 
+    val mArray = ULongUnsafeArray(1)
+
     do {
         m = doubleMantissa(z)
         k = doubleExponent(z)
 
         if (e >= 0 && k >= 0) {
             xLength = sizeOfTenToTheE(e) + length
-            x = ULongArray(xLength)
+            x = ULongUnsafeArray(xLength)
             f.copyInto(x, 0, 0, length)
             timesTenToTheEHighPrecision(x, xLength, e)
 
             yLength = (k shr 6) + 2
-            y = ULongArray(yLength)
+            y = ULongUnsafeArray(yLength)
             y[0] = m
             simpleShiftLeftHighPrecision(y, yLength, k)
         } else if (e >= 0) {
             xLength = sizeOfTenToTheE(e) + length + ((-k) shr 6) + 1
-            x = ULongArray(xLength)
+            x = ULongUnsafeArray(xLength)
             f.copyInto(x, 0, 0, length)
             timesTenToTheEHighPrecision(x, xLength, e)
             simpleShiftLeftHighPrecision(x, xLength, -k)
 
             yLength = 1
-            y = ULongArray(1)
+            y = ULongUnsafeArray(1)
             y[0] = m
         } else if (k >= 0) {
             xLength = length
             x = f
 
             yLength = sizeOfTenToTheE(-e) + 2 + (k shr 6)
-            y = ULongArray(yLength)
+            y = ULongUnsafeArray(yLength)
             y[0] = m
             timesTenToTheEHighPrecision(y, yLength, -e)
             simpleShiftLeftHighPrecision(y, yLength, k)
         } else {
             xLength = length + ((-k) shr 6) + 1
-            x = ULongArray(xLength)
+            x = ULongUnsafeArray(xLength)
             f.copyInto(x, 0, 0, length)
             simpleShiftLeftHighPrecision(x, xLength, -k)
 
             yLength = sizeOfTenToTheE(-e) + 1
-            y = ULongArray(yLength)
+            y = ULongUnsafeArray(yLength)
             y[0] = m
             timesTenToTheEHighPrecision(y, yLength, -e)
         }
@@ -266,24 +272,25 @@ private fun doubleAlgorithm(f: ULongArray, length: Int, e: Int, z: Double): Doub
         comparison = compareHighPrecision(x, xLength, y, yLength)
         if (comparison > 0) {                       /* x > y */
             DLength = xLength
-            D = ULongArray(DLength)
+            D = ULongUnsafeArray(DLength)
             x.copyInto(D, 0, 0, DLength)
             subtractHighPrecision(D, DLength, y, yLength)
         } else if (comparison != 0) {                       /* y > x */
             DLength = yLength
-            D = ULongArray(DLength)
+            D = ULongUnsafeArray(DLength)
             y.copyInto(D, 0, 0, DLength)
             subtractHighPrecision(D, DLength, x, xLength)
         } else {                       /* y == x */
             DLength = 1
-            D = ULongArray(1)
+            D = ULongUnsafeArray(1)
             D[0] = 0UL
         }
 
         D2Length = DLength + 1
-        D2 = ULongArray(D2Length)
+        D2 = ULongUnsafeArray(D2Length)
         m = m shl 1
-        multiplyHighPrecision(D, DLength, ulongArrayOf(m), 1, D2, D2Length)
+        mArray[0] = m
+        multiplyHighPrecision(D, DLength, mArray, 1, D2, D2Length)
         m = m shr 1
 
         comparison2 = compareHighPrecision(D2, D2Length, y, yLength)
@@ -427,11 +434,11 @@ internal fun bigIntDigitGeneratorInstImpl(
     mantissaIsZero: Boolean,
     p: Int,
 ) {
-    val R = ULongArray(RM_SIZE)
-    val S = ULongArray(STemp_SIZE)
-    val mplus = ULongArray(RM_SIZE)
-    val mminus = ULongArray(RM_SIZE)
-    val Temp = ULongArray(STemp_SIZE)
+    val R = ULongUnsafeArray(RM_SIZE)
+    val S = ULongUnsafeArray(STemp_SIZE)
+    val mplus = ULongUnsafeArray(RM_SIZE)
+    val mminus = ULongUnsafeArray(RM_SIZE)
+    val Temp = ULongUnsafeArray(STemp_SIZE)
 
     val fULong = f.toULong()
     if (e >= 0) {
