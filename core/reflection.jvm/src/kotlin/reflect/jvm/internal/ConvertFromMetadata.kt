@@ -324,10 +324,10 @@ private fun KmProperty.getManglingSuffix(container: KDeclarationContainerImpl): 
 }
 
 internal fun createUnboundProperty(property: KmProperty, container: KDeclarationContainerImpl): KotlinKProperty<*> {
-    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    @OptIn(ExperimentalCompanionBlocks::class)
     val receiverCount = when {
         property.contextParameters.isNotEmpty() -> -1
-        property.isStatic -> 0
+        property.isCompanionBlockMember -> 0
         else ->
             (if (property.receiverParameterType != null) 1 else 0) +
                     (if (container is KClassImpl<*>) 1 else 0)
