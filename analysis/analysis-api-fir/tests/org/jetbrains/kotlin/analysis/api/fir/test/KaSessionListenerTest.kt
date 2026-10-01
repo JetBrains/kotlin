@@ -4,6 +4,7 @@ import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.permissions.forbidAnalysis
 import org.jetbrains.kotlin.analysis.api.platform.KaSessionListener
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.parallel.Isolated
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @Isolated
 @Execution(ExecutionMode.SAME_THREAD)
@@ -37,6 +39,7 @@ class KaSessionListenerTest : AbstractAnalysisApiExecutionTest("testData/session
     private fun runSessionHookTest(
         mainFile: KtFile,
         testServices: TestServices,
+        wrapAnalyze: (() -> Unit) -> Unit = { it() },
         analyzeBlock: context(KaSession) () -> Unit = {},
     ): TestResult {
         val events = testServices.kaSessionListenerTestEvents.events
@@ -44,9 +47,11 @@ class KaSessionListenerTest : AbstractAnalysisApiExecutionTest("testData/session
         val simpleClass = mainFile.declarations.single { it is KtClass && it.name == "Simple" } as KtClass
         events.add("before 'analyze' block")
         try {
-            analyze(simpleClass) {
-                events.add("inside 'analyze' block")
-                analyzeBlock()
+            wrapAnalyze {
+                analyze(simpleClass) {
+                    events.add("inside 'analyze' block")
+                    analyzeBlock()
+                }
             }
         } catch (e: Throwable) {
             thrown = e
@@ -101,6 +106,37 @@ class KaSessionListenerTest : AbstractAnalysisApiExecutionTest("testData/session
                 "L2.onAnalysisException",
                 "L1.afterLeavingAnalysis",
                 "L2.afterLeavingAnalysis",
+                "caught exception",
+                "after 'analyze' block"
+            ),
+            result.trace
+        )
+    }
+
+    /**
+     * Prohibited analysis must be rejected before the session is acquired, so that no session is created for an analysis that cannot run
+     * (see KT-71359). The rejection is therefore reported as a session acquisition exception, and analysis is never entered.
+     */
+    @Test
+    @TestMetadata("testSessionListener")
+    fun testProhibitedAnalysis(mainFile: KtFile, testServices: TestServices) {
+        val result = runSessionHookTest(
+            mainFile,
+            testServices,
+            wrapAnalyze = { action -> forbidAnalysis("KaSessionListenerTest") { action() } },
+        )
+        val thrown = result.thrown
+        assertNotNull(thrown)
+        assertTrue(thrown.message.orEmpty().startsWith("Analysis is not allowed"), "Unexpected exception: $thrown")
+        assertEquals(
+            listOf(
+                "before 'analyze' block",
+                "L1.beforeAcquiringSession",
+                "L2.beforeAcquiringSession",
+                "L1.onSessionAcquisitionException",
+                "L2.onSessionAcquisitionException",
+                "L1.afterAcquiringSession",
+                "L2.afterAcquiringSession",
                 "caught exception",
                 "after 'analyze' block"
             ),
