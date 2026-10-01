@@ -7032,6 +7032,12 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
             token,
         )
     }
+    add(FirJvmErrors.SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE) { firDiagnostic ->
+        SerializableValueClassWithoutWriteReplaceImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES) { firDiagnostic ->
         JvmPackageNameNotSupportedInFilesWithClassesImpl(
             firDiagnostic as KtDiagnosticWithSource,

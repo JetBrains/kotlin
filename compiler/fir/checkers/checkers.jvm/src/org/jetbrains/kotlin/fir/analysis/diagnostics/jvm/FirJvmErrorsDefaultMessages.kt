@@ -96,6 +96,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NON_SOURCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NOT_YET_SUPPORTED_LOCAL_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NO_REFLECTION_IN_CLASS_PATH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.NULLABILITY_MISMATCH_BASED_ON_EXPLICIT_TYPE_ARGUMENTS_FOR_JAVA
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_ERROR
@@ -306,6 +307,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of '@JvmRecord' class must be a 'val'.")
         map.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of '@JvmRecord' can be a vararg.")
         map.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot extend a class.", RENDER_TYPE)
+        map.put(
+            SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE,
+            "Value class cannot be serialized as it neither declares nor inherits a 'writeReplace' method.",
+        )
         map.put(
             VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS,
             "Value class cannot extend ''{0}'', which is compiled as an identity class. " +
