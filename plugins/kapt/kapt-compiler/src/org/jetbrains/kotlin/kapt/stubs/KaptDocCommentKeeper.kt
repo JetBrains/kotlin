@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.kapt.stubs
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiRecursiveElementVisitor
-import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.DCTree
 import com.sun.tools.javac.tree.DocCommentTable
@@ -15,10 +12,9 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeScanner
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
-import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
-import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.kapt.util.kdocBody
+import org.jetbrains.kotlin.kapt.util.kdocText
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubGeneration) {
@@ -26,15 +22,15 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
 
     fun saveKDocComment(tree: JCTree, node: Any) {
         val origin = kaptContext.origins[node] ?: return
-        val psiElement = origin.element as? KtDeclaration ?: return
-        val docComment = psiElement.docComment ?: return
+        val source = kaptContext.firSourceOf(origin.declaration) ?: return
 
-        if (origin.declaration is IrConstructor && psiElement is KtClassOrObject) {
-            // We don't want the class comment to be duplicated on <init>()
+        if (origin.declaration is IrConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
+            // Do not copy class KDoc to an implicit constructor.
             return
         }
 
-        saveKDocComment(tree, docComment)
+        val docComment = source.kdocText() ?: return
+        docCommentTable.putComment(tree, KDocComment(extractComment(docComment)))
     }
 
     fun getDocTable(file: JCTree.JCCompilationUnit): DocCommentTable {
@@ -70,10 +66,9 @@ internal class KaptDocCommentKeeper(private val kaptContext: KaptContextForStubG
         return docCommentTable
     }
 
-    private fun saveKDocComment(tree: JCTree, comment: KDoc) {
-        docCommentTable.putComment(tree, KDocComment(extractComment(comment)))
-    }
 }
+
+internal val CLASS_LIKE_ELEMENT_TYPES = setOf(KtNodeTypes.CLASS, KtNodeTypes.OBJECT_DECLARATION)
 
 private class KDocComment(val body: String) : Tokens.Comment {
     override fun getSourcePos(index: Int) = -1
@@ -101,7 +96,7 @@ private class KaptDocCommentTable(map: Map<JCTree, Tokens.Comment> = emptyMap())
     }
 }
 
-fun extractComment(comment: KDoc) = escapeNestedComments(extractCommentText(comment))
+fun extractComment(comment: String) = escapeNestedComments(comment.kdocBody())
 
 
 private fun escapeNestedComments(text: String): String {
@@ -135,28 +130,3 @@ private fun escapeNestedComments(text: String): String {
 
     return result.toString()
 }
-
-private fun extractCommentText(docComment: KDoc): String {
-    return buildString {
-        docComment.accept(object : PsiRecursiveElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                if (element is LeafPsiElement) {
-                    if (element.isKDocLeadingAsterisk()) {
-                        val indent = takeLastWhile { it == ' ' || it == '\t' }.length
-                        if (indent > 0) {
-                            delete(length - indent, length)
-                        }
-                    } else if (!element.isKDocStart() && !element.isKDocEnd()) {
-                        append(element.text)
-                    }
-                }
-
-                super.visitElement(element)
-            }
-        })
-    }.trimIndent().trim()
-}
-
-private fun LeafPsiElement.isKDocStart() = elementType == KDocTokens.START
-private fun LeafPsiElement.isKDocEnd() = elementType == KDocTokens.END
-private fun LeafPsiElement.isKDocLeadingAsterisk() = elementType == KDocTokens.LEADING_ASTERISK

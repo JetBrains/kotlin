@@ -80,25 +80,25 @@ public final class C {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.Object component1() {
+    public final U2 component1() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.util.List<error.NonExistentClass> component2() {
+    public final java.util.List<U3> component2() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.Object component3() {
+    public final U1<U4> component3() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
     public final test.C copy(@org.jetbrains.annotations.NotNull()
-    java.lang.Object x, @org.jetbrains.annotations.NotNull()
-    java.util.List<error.NonExistentClass> y, @org.jetbrains.annotations.NotNull()
-    java.lang.Object z) {
+    U2 x, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends U3> y, @org.jetbrains.annotations.NotNull()
+    U1<U4> z) {
         return null;
     }
 

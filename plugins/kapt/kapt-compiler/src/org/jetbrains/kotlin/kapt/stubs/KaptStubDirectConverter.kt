@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.kapt.util.isAnnotation
 import org.jetbrains.kotlin.kapt.util.isEnum
 import org.jetbrains.kotlin.kapt.util.isInterface
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.kapt.util.kdocText
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -100,14 +99,14 @@ class KaptStubDirectConverter(
 
     private fun StringBuilder.appendKDocCommentIfNecessary(node: Any) {
         val origin = kaptContext.origins[node] ?: return
-        val psiElement = origin.element as? KtDeclaration ?: return
-        val docComment = psiElement.docComment ?: return
+        val source = kaptContext.firSourceOf(origin.declaration) ?: return
 
-        if (origin.declaration is IrConstructor && psiElement is KtClassOrObject) {
-            // We don't want the class comment to be duplicated on <init>()
+        if (origin.declaration is IrConstructor && source.elementType in CLASS_LIKE_ELEMENT_TYPES) {
+            // Do not copy class KDoc to an implicit constructor.
             return
         }
 
+        val docComment = source.kdocText() ?: return
         appendKDocComment(extractComment(docComment))
     }
 
