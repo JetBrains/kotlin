@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
@@ -46,17 +48,16 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import java.nio.file.Path
 
+@Serializable
 internal class WasmKlibCompilationOperationImpl(
     override val sources: List<Path>,
     override val destination: Path,
     override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<WasmArgumentsImpl, KotlinWasmCompilerArguments>(),
+    @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: WasmIncrementalCompilationConfiguration? = null,
+) : BaseCompilationOperationImpl<WasmArgumentsImpl, @Contextual KotlinWasmCompilerArguments>(),
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
     DeepCopyable<WasmKlibCompilationOperationImpl> {
-
-    @SerialName("INCREMENTAL_COMPILATION")
-    private var incrementalCompilation: WasmIncrementalCompilationConfiguration? = null
 
     override fun historyBasedIcConfigurationBuilder(
         rootProjectDir: Path,
@@ -74,8 +75,9 @@ internal class WasmKlibCompilationOperationImpl(
             sources,
             destination,
             compilerArguments.deepCopy(),
-            compilerVersion
-        )
+            compilerVersion,
+            (incrementalCompilation as? DeepCopyable<*>)?.deepCopy() as WasmIncrementalCompilationConfiguration?,
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted

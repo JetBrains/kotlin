@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
@@ -20,12 +22,12 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
-
+@Serializable
 internal class JsLinkingOperationImpl(
     override val klib: Path,
     override val destination: Path,
     override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
-) : BaseCompilationOperationImpl<JsArgumentsImpl, K2JSCompilerArguments>(),
+) : BaseCompilationOperationImpl<JsArgumentsImpl, @Contextual K2JSCompilerArguments>(),
     JsLinkingOperation, JsLinkingOperation.Builder,
     DeepCopyable<JsLinkingOperationImpl> {
 
@@ -36,7 +38,7 @@ internal class JsLinkingOperationImpl(
             klib,
             destination,
             compilerArguments.deepCopy(),
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted

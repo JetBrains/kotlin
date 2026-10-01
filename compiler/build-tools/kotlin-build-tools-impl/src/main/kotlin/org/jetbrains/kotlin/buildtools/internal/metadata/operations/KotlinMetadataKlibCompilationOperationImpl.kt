@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal.metadata.operations
 
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
@@ -23,12 +25,13 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
 import java.nio.file.Path
 
+@Serializable
 internal class KotlinMetadataKlibCompilationOperationImpl(
     override val sources: List<Path>,
     override val destination: Path,
     override val compilerArguments: MetadataArgumentsImpl = MetadataArgumentsImpl(),
     private val compilerVersion: String,
-) : BaseCompilationOperationImpl<MetadataArgumentsImpl, K2MetadataCompilerArguments>(),
+) : BaseCompilationOperationImpl<MetadataArgumentsImpl, @Contextual K2MetadataCompilerArguments>(),
     KotlinMetadataKlibCompilationOperation, KotlinMetadataKlibCompilationOperation.Builder,
     DeepCopyable<KotlinMetadataKlibCompilationOperationImpl> {
 
@@ -40,7 +43,7 @@ internal class KotlinMetadataKlibCompilationOperationImpl(
             destination,
             compilerArguments.deepCopy(),
             compilerVersion
-        )
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted

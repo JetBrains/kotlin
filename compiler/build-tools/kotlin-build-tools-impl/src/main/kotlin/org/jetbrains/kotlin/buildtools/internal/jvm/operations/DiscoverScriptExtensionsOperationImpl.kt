@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -20,13 +21,12 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspath
 import java.nio.file.Path
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
+@Serializable
 internal class DiscoverScriptExtensionsOperationImpl(
     override val classpath: List<Path>,
+    @SerialName("COMPILER_MESSAGE_RENDERER") internal var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer,
 ) : BuildOperationImpl<Collection<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
     DeepCopyable<DiscoverScriptExtensionsOperation> {
-
-    @SerialName("COMPILER_MESSAGE_RENDERER")
-    private var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 
     override val usesApplicationEnvironment: Boolean
         get() = false
@@ -62,7 +62,7 @@ internal class DiscoverScriptExtensionsOperationImpl(
 
     override fun build(): DiscoverScriptExtensionsOperation = deepCopy()
 
-    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(classpath)
+    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(classpath, compilerMessageRenderer)
 
     private operator fun <V> get(key: Option<V>): V =
         DiscoverScriptExtensionsOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)

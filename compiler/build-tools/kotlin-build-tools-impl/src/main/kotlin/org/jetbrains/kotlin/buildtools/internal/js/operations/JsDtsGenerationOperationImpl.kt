@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
@@ -49,20 +50,13 @@ import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import java.nio.file.Path
 
+@Serializable
 internal class JsDtsGenerationOperationImpl(
     override val klibs: List<Path>,
     override val outputDirectory: Path,
-) : BuildOperationImpl<CompilationResult>(), JsDtsGenerationOperation, JsDtsGenerationOperation.Builder,
-    DeepCopyable<JsDtsGenerationOperationImpl> {
-
-    @SerialName("TS_COMPILATION_STRATEGY")
-    private var tsCompilationStrategy: JsDtsCompilationStrategy = JsDtsCompilationStrategy.MERGED
-
-    @SerialName("GRANULARITY")
-    private var granularity: JsDtsGranularity = JsDtsGranularity.WHOLE_PROGRAM
-
-    @SerialName("MODULE_KIND")
-    private var moduleKind: JsModuleKind = defaultArgsReference.moduleKind
+    @SerialName("TS_COMPILATION_STRATEGY") internal var tsCompilationStrategy: JsDtsCompilationStrategy = MERGED,
+    @SerialName("GRANULARITY") internal var granularity: JsDtsGranularity = WHOLE_PROGRAM,
+    @SerialName("MODULE_KIND") internal var moduleKind: JsModuleKind = defaultArgsReference.moduleKind
         ?.let {
             JsModuleKind.values().firstOrNull { entry ->
                 entry.stringValue.equals(
@@ -70,22 +64,14 @@ internal class JsDtsGenerationOperationImpl(
                     false
                 )
             } ?: throw CompilerArgumentsParseException("Unknown -module-kind value: $it")
-        } ?: JsModuleKind.UMD
-
-    @SerialName("COMPILE_LONG_AS_BIG_INT")
-    private var compileLongAsBigInt: Boolean = defaultArgsReference.compileLongAsBigInt ?: false
-
-    @SerialName("IMPLEMENT_INTERFACES")
-    private var implementInterfaces: Boolean = defaultArgsReference.allowImplementableInterfacesExporting
-
-    @SerialName("EXPORT_SUSPEND_LAMBDAS")
-    private var exportSuspendLambdas: Boolean = defaultArgsReference.allowExportingSuspendLambdas
-
-    @SerialName("USE_UNKNOWN_INSTEAD_ANY")
-    private var useUnknownInsteadAny: Boolean = defaultArgsReference.useUnknownInsteadAny
-
-    @SerialName("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY")
-    private var dataClassCopyRespectsConstructorVisibility: Boolean = defaultArgsReference.consistentDataClassCopyVisibility
+        } ?: UMD,
+    @SerialName("COMPILE_LONG_AS_BIG_INT") internal var compileLongAsBigInt: Boolean = defaultArgsReference.compileLongAsBigInt ?: false,
+    @SerialName("IMPLEMENT_INTERFACES") internal var implementInterfaces: Boolean = defaultArgsReference.allowImplementableInterfacesExporting,
+    @SerialName("EXPORT_SUSPEND_LAMBDAS") internal var exportSuspendLambdas: Boolean = defaultArgsReference.allowExportingSuspendLambdas,
+    @SerialName("USE_UNKNOWN_INSTEAD_ANY") internal var useUnknownInsteadAny: Boolean = defaultArgsReference.useUnknownInsteadAny,
+    @SerialName("DATA_CLASS_COPY_RESPECTS_CONSTRUCTOR_VISIBILITY") internal var dataClassCopyRespectsConstructorVisibility: Boolean = defaultArgsReference.consistentDataClassCopyVisibility,
+) : BuildOperationImpl<CompilationResult>(), JsDtsGenerationOperation, JsDtsGenerationOperation.Builder,
+    DeepCopyable<JsDtsGenerationOperationImpl> {
 
     override fun executeImpl(
         projectId: ProjectId,
@@ -179,7 +165,20 @@ internal class JsDtsGenerationOperationImpl(
     override fun build(): JsDtsGenerationOperation = deepCopy()
 
     override fun deepCopy(): JsDtsGenerationOperationImpl =
-        JsDtsGenerationOperationImpl(klibs, outputDirectory)
+        JsDtsGenerationOperationImpl(
+            klibs = klibs,
+            outputDirectory = outputDirectory,
+            tsCompilationStrategy = tsCompilationStrategy,
+            granularity = granularity,
+            moduleKind = moduleKind,
+            compileLongAsBigInt = compileLongAsBigInt,
+            implementInterfaces = implementInterfaces,
+            exportSuspendLambdas = exportSuspendLambdas,
+            useUnknownInsteadAny = useUnknownInsteadAny,
+            dataClassCopyRespectsConstructorVisibility = dataClassCopyRespectsConstructorVisibility
+        ).also {
+            it.copyFrom(this)
+        }
 
     class Option<V>(id: String) : BaseOption<V>(id)
 

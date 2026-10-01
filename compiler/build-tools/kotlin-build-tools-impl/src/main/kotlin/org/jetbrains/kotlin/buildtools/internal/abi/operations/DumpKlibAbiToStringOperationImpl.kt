@@ -29,17 +29,11 @@ internal class DumpKlibAbiToStringOperationImpl(
     private val appendable: Appendable,
     override val klibs: Map<KlibTargetId, Path>,
     private val abiTools: AbiTools,
+    @SerialName("PATTERN_FILTERS") internal var patternFilters: AbiFiltersImpl? = null,
+    @SerialName("REFERENCE_DUMP_FILE") internal var referenceDumpFile: Path? = null,
+    @SerialName("TARGETS_TO_INFER") internal var targetsToInfer: Set<KlibTargetId> = emptySet(),
 ) : BuildOperationImpl<Unit>(), DumpKlibAbiToStringOperation, DumpKlibAbiToStringOperation.Builder,
     DeepCopyable<DumpKlibAbiToStringOperation> {
-
-    @SerialName("PATTERN_FILTERS")
-    private var patternFilters: AbiFilters? = null
-
-    @SerialName("REFERENCE_DUMP_FILE")
-    private var referenceDumpFile: Path? = null
-
-    @SerialName("TARGETS_TO_INFER")
-    private var targetsToInfer: Set<KlibTargetId> = emptySet()
 
     override val usesApplicationEnvironment: Boolean
         get() = false
@@ -48,7 +42,7 @@ internal class DumpKlibAbiToStringOperationImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
-        executionContext: ExecutionContext
+        executionContext: ExecutionContext,
     ) {
         val filters = patternFilters?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
 
@@ -100,7 +94,16 @@ internal class DumpKlibAbiToStringOperationImpl(
     }
 
     override fun deepCopy(): DumpKlibAbiToStringOperation {
-        return DumpKlibAbiToStringOperationImpl(appendable, klibs.toMap(), abiTools)
+        return DumpKlibAbiToStringOperationImpl(
+            appendable,
+            klibs.toMap(),
+            abiTools,
+            patternFilters?.deepCopy(),
+            referenceDumpFile,
+            targetsToInfer.toSet()
+        ).also {
+            it.copyFrom(this)
+        }
     }
 
     override fun build(): DumpKlibAbiToStringOperation {

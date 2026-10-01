@@ -63,15 +63,12 @@ internal class JvmCompilationOperationImpl(
     override val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val compilerVersion: String,
+    @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: JvmIncrementalCompilationConfiguration? = null,
+    @SerialName("KOTLINSCRIPT_EXTENSIONS") internal var kotlinScriptExtensions: Array<String>? = null,
 ) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, @Contextual K2JVMCompilerArguments>(),
     JvmCompilationOperation,
     JvmCompilationOperation.Builder,
     DeepCopyable<JvmCompilationOperationImpl> {
-    @SerialName("INCREMENTAL_COMPILATION")
-    private var incrementalCompilation: JvmIncrementalCompilationConfiguration? = null
-
-    @SerialName("KOTLINSCRIPT_EXTENSIONS")
-    private var kotlinScriptExtensions: Array<String>? = null
 
     override val targetPlatform: CompileService.TargetPlatform = CompileService.TargetPlatform.JVM
 
@@ -80,11 +77,13 @@ internal class JvmCompilationOperationImpl(
     // TODO handle new way without options - use serialization?
     override fun deepCopy(): JvmCompilationOperationImpl {
         return JvmCompilationOperationImpl(
-            sources,
-            destinationDirectory,
-            compilerArguments.deepCopy(),
-            compilerVersion,
-        )
+            sources = sources,
+            destinationDirectory = destinationDirectory,
+            compilerArguments = compilerArguments.deepCopy(),
+            compilerVersion = compilerVersion,
+            incrementalCompilation = incrementalCompilation, // todo deepcopy?
+            kotlinScriptExtensions = kotlinScriptExtensions?.copyOf()
+        ).also { it.copyFrom(this) }
     }
 
     @UseFromImplModuleRestricted
