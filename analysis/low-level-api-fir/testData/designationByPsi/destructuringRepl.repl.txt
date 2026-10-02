@@ -1,4 +1,0 @@
-KT element: KtDestructuringDeclaration
-Resolve target: null
-FIR:
-  null

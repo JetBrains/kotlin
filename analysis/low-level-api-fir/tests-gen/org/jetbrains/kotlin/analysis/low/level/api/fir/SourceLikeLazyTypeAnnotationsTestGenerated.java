@@ -448,12 +448,6 @@ public class SourceLikeLazyTypeAnnotationsTestGenerated extends AbstractSourceLi
     }
 
     @Test
-    @TestMetadata("propertyWithExplicitTypeRepl.repl.kts")
-    public void testPropertyWithExplicitTypeRepl_repl() {
-      run("propertyWithExplicitTypeRepl.repl.kts");
-    }
-
-    @Test
     @TestMetadata("propertyWithExplicitTypeScript.kts")
     public void testPropertyWithExplicitTypeScript() {
       run("propertyWithExplicitTypeScript.kts");
@@ -475,12 +469,6 @@ public class SourceLikeLazyTypeAnnotationsTestGenerated extends AbstractSourceLi
     @TestMetadata("propertyWithImplicitType.kt")
     public void testPropertyWithImplicitType() {
       run("propertyWithImplicitType.kt");
-    }
-
-    @Test
-    @TestMetadata("propertyWithImplicitTypeRepl.repl.kts")
-    public void testPropertyWithImplicitTypeRepl_repl() {
-      run("propertyWithImplicitTypeRepl.repl.kts");
     }
 
     @Test
@@ -531,12 +519,6 @@ public class SourceLikeLazyTypeAnnotationsTestGenerated extends AbstractSourceLi
     @TestMetadata("destructEntry.kts")
     public void testDestructEntry() {
       run("destructEntry.kts");
-    }
-
-    @Test
-    @TestMetadata("destructEntryRepl.repl.kts")
-    public void testDestructEntryRepl_repl() {
-      run("destructEntryRepl.repl.kts");
     }
 
     @Test

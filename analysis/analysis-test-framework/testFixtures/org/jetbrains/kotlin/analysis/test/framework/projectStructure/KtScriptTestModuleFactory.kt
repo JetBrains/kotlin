@@ -8,20 +8,15 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.targetPlatform
 import java.nio.file.Path
 
 /**
- * A [KtTestModuleFactory] for script and REPL snippet test modules.
+ * A [KtTestModuleFactory] for script test modules.
  *
- * Determines the [TestModuleKind] based on the file extension:
- * - `.repl.kts` files are treated as REPL snippets and marked via [KtScript.markAsReplSnippet].
- * - All other `.kts` files are treated as regular scripts.
- *
- * Note: currently only single-file snippets are supported. Multi-snippets are not yet implemented.
+ * Note: currently only single-file scripts are supported.
  *
  * @see TestModuleKind.ScriptSource
  */

@@ -70,12 +70,6 @@ public class SourceLikeNonLocalDeclarationAnchorTestGenerated extends AbstractSo
   }
 
   @Test
-  @TestMetadata("destructuringDeclarationsRepl.repl.kts")
-  public void testDestructuringDeclarationsRepl_repl() {
-    run("destructuringDeclarationsRepl.repl.kts");
-  }
-
-  @Test
   @TestMetadata("destructuringDeclarationsScript.kts")
   public void testDestructuringDeclarationsScript() {
     run("destructuringDeclarationsScript.kts");
@@ -139,12 +133,6 @@ public class SourceLikeNonLocalDeclarationAnchorTestGenerated extends AbstractSo
   @TestMetadata("localFunctionInsideSuperEntryCall.kt")
   public void testLocalFunctionInsideSuperEntryCall() {
     run("localFunctionInsideSuperEntryCall.kt");
-  }
-
-  @Test
-  @TestMetadata("replSnippet.repl.kts")
-  public void testReplSnippet_repl() {
-    run("replSnippet.repl.kts");
   }
 
   @Test

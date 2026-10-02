@@ -1,4 +1,0 @@
-KT element: KtClassInitializer
-Resolve target: classInitializerRepl.repl.kts -> <snippet-classInitializerRepl.repl.kts> -> ClassInitializerRepl_repl -> WithInit -> <init-block>
-FIR:
-  init { LAZY_BLOCK }
