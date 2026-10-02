@@ -760,20 +760,35 @@ public class SequenceTest {
         assertEquals(listOf(1, 2, 1, 3, 2, 3), sequenceOf(1, 2, 1, 3, 2, 3).toList())
     }
 
+    @OptIn(ExperimentalCollectionLiteralsApi::class)
     @Test fun sequenceOfEmpty() {
         compare(emptyList<Int>().asSequence(), sequenceOf<Int>()) {
             sequenceBehavior()
         }
-    }
 
-    @Test fun sequenceOfSingleElement() {
-        compare(listOf(42).asSequence(), sequenceOf(42)) {
+        compare(emptyList<String>().asSequence(), Sequence.of<String>()) {
             sequenceBehavior()
         }
     }
 
+    @OptIn(ExperimentalCollectionLiteralsApi::class)
+    @Test fun sequenceOfSingleElement() {
+        compare(listOf(42).asSequence(), sequenceOf(42)) {
+            sequenceBehavior()
+        }
+
+        compare(listOf(42).asSequence(), Sequence.of(42)) {
+            sequenceBehavior()
+        }
+    }
+
+    @OptIn(ExperimentalCollectionLiteralsApi::class)
     @Test fun sequenceOfVararg() {
         compare(listOf(1, 2, 3).asSequence(), sequenceOf(1, 2, 3)) {
+            sequenceBehavior()
+        }
+
+        compare(listOf(1, 2, 3).asSequence(), Sequence.of(1, 2, 3)) {
             sequenceBehavior()
         }
 

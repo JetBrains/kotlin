@@ -2376,6 +2376,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("sequenceOperator.kt")
+    public void testSequenceOperator() {
+      run("sequenceOperator.kt");
+    }
+
+    @Test
     @TestMetadata("set.kt")
     public void testSet() {
       run("set.kt");
