@@ -13,7 +13,7 @@ package kotlin.text.unicode
  * where `'\u0130'` is the LATIN CAPITAL LETTER I WITH DOT ABOVE character (`İ`).
  * If this code point has no lower case mapping, the result of `toString()` of this code point is returned.
  *
- * @sample samples.text.Chars.lowercase
+ * @sample samples.text.CodePoints.lowercase
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -26,7 +26,7 @@ public expect fun CodePoint.lowercase(): String
  * To support one-to-many character mapping, use the [lowercase] function.
  * If this code point has no lower case equivalent, the code point itself is returned.
  *
- * @sample samples.text.Chars.lowercase
+ * @sample samples.text.CodePoints.lowercase
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -40,7 +40,7 @@ public expect fun CodePoint.lowercaseCodePoint(): CodePoint
  * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
  * If this code point has no upper case mapping, the result of `toString()` of this code point is returned.
  *
- * @sample samples.text.Chars.uppercase
+ * @sample samples.text.CodePoints.uppercase
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -53,7 +53,7 @@ public expect fun CodePoint.uppercase(): String
  * To support one-to-many character mapping, use the [uppercase] function.
  * If this code point has no upper case equivalent, the code point itself is returned.
  *
- * @sample samples.text.Chars.uppercase
+ * @sample samples.text.CodePoints.uppercase
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -67,7 +67,7 @@ public expect fun CodePoint.uppercaseCodePoint(): CodePoint
  * where `'\uFB00'` is the LATIN SMALL LIGATURE FF character (`ﬀ`).
  * If this code point has no title case mapping, the result of [uppercase] is returned instead.
  *
- * @sample samples.text.Chars.titlecase
+ * @sample samples.text.CodePoints.titlecase
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -87,7 +87,7 @@ public fun CodePoint.titlecase(): String {
  * To support one-to-many character mapping, use the [titlecase] function.
  * If this code point has no title case equivalent, the result of calling [uppercaseCodePoint] is returned.
  *
- * @sample samples.text.Chars.titlecase
+ * @sample samples.text.CodePoints.titlecase
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
