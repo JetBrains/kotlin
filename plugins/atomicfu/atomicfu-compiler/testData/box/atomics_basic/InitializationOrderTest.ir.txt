@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/InitializationOrderTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_counter$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-_counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AAA'
+          RETURN type=kotlin.Nothing from='private final fun <set-_counter$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.AAA'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_counter$volatile type:kotlin.Long visibility:private declared in <root>.AAA' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<set-_counter$volatile>' type=<root>.AAA origin=null
               value: GET_VAR 'value: kotlin.Long declared in <root>.AAA.<set-_counter$volatile>' type=kotlin.Long origin=null
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/InitializationOrderTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateInitInt$volatile visibility:public modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='public final fun <set-lateInitInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AAA'
+          RETURN type=kotlin.Nothing from='public final fun <set-lateInitInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AAA'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private declared in <root>.AAA' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<set-lateInitInt$volatile>' type=<root>.AAA origin=null
               value: GET_VAR 'value: kotlin.Int declared in <root>.AAA.<set-lateInitInt$volatile>' type=kotlin.Int origin=null

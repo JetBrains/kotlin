@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/LateinitPropertiesTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LateinitPropertiesTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-a$volatile>' type=<root>.LateinitPropertiesTest origin=null
               value: GET_VAR 'value: kotlin.Int declared in <root>.LateinitPropertiesTest.<set-a$volatile>' type=kotlin.Int origin=null
@@ -37,7 +37,7 @@ FILE fqName:<root> fileName:/LateinitPropertiesTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:head$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-head$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:head$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-head$volatile>' type=<root>.LateinitPropertiesTest origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.LateinitPropertiesTest.<set-head$volatile>' type=kotlin.Any? origin=null
@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/LateinitPropertiesTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:dataRef$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-dataRef$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-dataRef$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LateinitPropertiesTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:dataRef$volatile type:kotlin.Any? visibility:private declared in <root>.LateinitPropertiesTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.LateinitPropertiesTest declared in <root>.LateinitPropertiesTest.<set-dataRef$volatile>' type=<root>.LateinitPropertiesTest origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.LateinitPropertiesTest.<set-dataRef$volatile>' type=kotlin.Any? origin=null

@@ -29,7 +29,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-a$volatile>' type=<root>.LoopTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.<set-a$volatile>' type=kotlin.Int origin=null
@@ -61,7 +61,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-b$volatile>' type=<root>.LoopTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.<set-b$volatile>' type=kotlin.Int origin=null
@@ -93,7 +93,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:c$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-c$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-c$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LoopTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:c$volatile type:kotlin.Int visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-c$volatile>' type=<root>.LoopTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.LoopTest.<set-c$volatile>' type=kotlin.Int origin=null
@@ -126,7 +126,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:r$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-r$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LoopTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-r$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LoopTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:r$volatile type:kotlin.Any? visibility:private declared in <root>.LoopTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LoopTest declared in <root>.LoopTest.<set-r$volatile>' type=<root>.LoopTest origin=null
 -              value: GET_VAR 'value: kotlin.Any? declared in <root>.LoopTest.<set-r$volatile>' type=kotlin.Any? origin=null
