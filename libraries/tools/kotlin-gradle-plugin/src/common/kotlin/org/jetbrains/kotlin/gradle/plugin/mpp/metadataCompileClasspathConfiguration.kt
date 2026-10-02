@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.usesMetadataOf
 import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.utils.*
 
@@ -71,7 +72,7 @@ private val InternalKotlinSourceSet.compileDependenciesConfigurations: List<Conf
 internal fun Configuration.configureMetadataDependenciesAttribute(project: Project): Configuration = apply {
     if (project.multiplatformExtensionOrNull != null) {
         project.launch {
-            usesPlatformOf(project.multiplatformExtension.awaitMetadataTarget())
+            usesMetadataOf(project.multiplatformExtension.awaitMetadataTarget())
         }
     }
     attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))

@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.gradle.archive
 
 import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
 import org.jetbrains.kotlin.gradle.testing.compilationResolution
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
@@ -22,6 +26,7 @@ import org.jetbrains.kotlin.gradle.uklibs.ignoreAccessViolations
 import org.jetbrains.kotlin.gradle.uklibs.publish
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.io.File
 import kotlin.test.assertEquals
 
 @MppGradlePluginTests
@@ -140,7 +145,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
     private fun consumptionWithCInteropsTestImpl(gradleVersion: GradleVersion, withAppleTargets: Boolean) {
         val producer = kotlinArchiveProducer(gradleVersion, withAppleTargets)
-        producer.configureCinteropPublication()
+        producer.configureCinterop()
         val publishedProject = producer.publish()
 
         val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets)
@@ -148,6 +153,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
         consumer.build("assemble") {
             assertTasksExecuted(expectedConsumerCompilationTasks(withAppleTargets))
+            assertNoDiagnostic(KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage)
         }
     }
 
@@ -161,6 +167,53 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.WINDOWS])
     fun consumptionWithCinteropsWithoutAppleTargetsTest(gradleVersion: GradleVersion) {
         consumptionWithCInteropsTestImpl(gradleVersion, withAppleTargets = false)
+    }
+
+    @GradleTest
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("A framework of a consumer exports a library in the Kotlin Archive format")
+    fun consumptionWithFrameworkExportTest(gradleVersion: GradleVersion) {
+        val publishedProject = kotlinArchiveProducer(gradleVersion).publish()
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, apiDependency = true)
+        consumer.exportProducerFromFrameworks(publishedProject)
+
+        consumer.build(*expectedFrameworkLinkTasks.toTypedArray()) {
+            assertTasksExecuted(expectedFrameworkLinkTasks)
+            assertNoDiagnostic(KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage)
+
+            appleTargets.forEach { targetName ->
+                assertEquals(
+                    // This is not published one, but rather unpacked from klib
+                    listOf("${publishedProject.name}-$targetName.klib"),
+                    exportedLibraryNames(frameworkLinkTaskOf(targetName)),
+                    "Unexpected libraries exported from the framework of $targetName",
+                )
+            }
+        }
+    }
+
+    private fun BuildResult.exportedLibraryNames(taskPath: String): List<String> =
+        extractNativeCompilerTaskArguments(taskPath)
+            .lines()
+            .map { it.trim() }
+            .filter { it.startsWith(EXPORT_LIBRARY_ARGUMENT) }
+            .map { File(it.removePrefix(EXPORT_LIBRARY_ARGUMENT)).name }
+            .sorted()
+
+    @GradleTest
+    @DisplayName("A consumer with its own cinterop uses a library in the Kotlin Archive format")
+    fun consumptionWithConsumerCinteropsTest(gradleVersion: GradleVersion) {
+        val publishedProject = kotlinArchiveProducer(gradleVersion, withAppleTargets = false).publish()
+
+        val consumer = kotlinArchiveConsumer(gradleVersion, publishedProject, withAppleTargets = false)
+        consumer.configureCinterop(CONSUMER_CINTEROP_NAME, CONSUMER_CINTEROP_PACKAGE)
+        consumer.cinteropsCallsSource(CONSUMER_CINTEROP_FUNCTION)
+
+        consumer.build("assemble") {
+            assertTasksExecuted(expectedConsumerCompilationTasks(withAppleTargets = false))
+            assertNoDiagnostic(KotlinToolingDiagnostics.UnsupportedKotlinArchiveUsage)
+        }
     }
 
     private fun TestProject.resolvedResources(): List<String> {
@@ -194,6 +247,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         publishedProject: PublishedProject,
         withAppleTargets: Boolean = true,
+        apiDependency: Boolean = false,
     ): TestProject = project("empty", gradleVersion) {
         plugins { kotlin("multiplatform") }
         addPublishedProjectToRepositories(publishedProject)
@@ -210,7 +264,24 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
                 kotlinArchiveTargets(withAppleTargets)
 
                 sourceSets.commonMain.dependencies {
-                    implementation(publishedProject.rootCoordinate)
+                    if (apiDependency) {
+                        api(publishedProject.rootCoordinate)
+                    } else {
+                        implementation(publishedProject.rootCoordinate)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun TestProject.exportProducerFromFrameworks(publishedProject: PublishedProject) {
+        buildScriptInjection {
+            project.applyMultiplatform {
+                appleTargets.forEach { targetName ->
+                    val target = targets.getByName(targetName) as KotlinNativeTarget
+                    target.binaries.framework {
+                        export(publishedProject.rootCoordinate)
+                    }
                 }
             }
         }
@@ -235,7 +306,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.cinteropsCallsSource() {
+    private fun TestProject.cinteropsCallsSource(cinteropFunction: String = PRODUCER_CINTEROP_FUNCTION) {
         buildScriptInjection {
             project.enableCinteropCommonization()
         }
@@ -247,7 +318,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
                 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
                 fun $functionName() {
-                    $PRODUCER_CINTEROP_FUNCTION()
+                    $cinteropFunction()
                 }
                 """.trimIndent(),
                 fileName = "${sourceSetName}Cinterop.kt",
@@ -273,6 +344,15 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
         private val targetsWithCheckedResolution = listOf("linuxX64", "jvm")
 
+        private val appleTargets = listOf("iosArm64", "macosArm64")
+
+        private fun frameworkLinkTaskOf(targetName: String): String =
+            ":linkDebugFramework" + targetName.replaceFirstChar { it.uppercase() }
+
+        private val expectedFrameworkLinkTasks = appleTargets.map(::frameworkLinkTaskOf)
+
+        private const val EXPORT_LIBRARY_ARGUMENT = "-Xexport-library="
+
         private val nativeSourceSets = setOf(
             "nativeMain",
             "appleMain",
@@ -285,6 +365,7 @@ class KotlinArchiveConsumptionIT : KGPBaseTest() {
 
         private const val RESOLVE_RESOURCES_TASK_NAME = "resolveProducerResources"
         private const val RESOLVED_RESOURCES_DIRECTORY = "resolvedProducerResources"
+
 
         /**
          * Resources of every target, merged from all the source sets it is compiled from.

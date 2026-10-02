@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.usesPlatformKlibsOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
@@ -25,7 +25,7 @@ internal val ConfigureFrameworkExportSideEffect = KotlinTargetSideEffect<KotlinN
         project.configurations.maybeCreateResolvable(framework.exportConfigurationName).apply {
             setInvisibleIfSupported()
             isTransitive = false
-            usesPlatformOf(target)
+            usesPlatformKlibsOf(target)
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             KlibPackaging.setAttributeTo(project, attributes, false)

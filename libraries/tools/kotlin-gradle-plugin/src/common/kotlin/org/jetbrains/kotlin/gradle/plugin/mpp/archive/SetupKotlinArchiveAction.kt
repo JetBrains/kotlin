@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.archivesName
 
@@ -61,16 +58,8 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
 
 
     for (target in extension.awaitTargets()) {
-        target.requestKarPlatformArtifactsForCompilation()
         target.configureTransformActionFromKarToPlatformArtifacts()
         target.configureTransformActionFromKarToResources()
-    }
-    for (sourceSet in extension.awaitSourceSets()) {
-        /**
-         * We are also doing this for platform source-sets. While they are not using metadata configuration
-         * to compile, it still exists, and can be requested for example by IDE import.
-         */
-        sourceSet.requestDecompressedKarForResolvableMetadataConfiguration()
     }
 
     configureTransformActionFromKarXzToKar()
@@ -78,33 +67,6 @@ internal val SetupKotlinArchiveAction = KotlinProjectSetupCoroutine {
 }
 
 
-/**
- * The only consumer of resolvableMetadataConfiguration is [org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation],
- * they work on top of zip archive. We can potentially extract only metadata directory into a separate archive,
- * but that would just be additional work, so we directly pass DECOMPRESSED to the task.
- */
-private fun KotlinSourceSet.requestDecompressedKarForResolvableMetadataConfiguration() {
-    internal.resolvableMetadataConfiguration.apply {
-        attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.DECOMPRESSED)
-    }
-}
-
-private fun KotlinTarget.requestKarPlatformArtifactsForCompilation() {
-    if (this !is KotlinTargetWithKotlinArchiveSupport) return
-    compilations.configureEach { compilation ->
-        val configurations = compilation.internal.configurations
-
-        configurations.compileDependencyConfiguration.apply {
-            attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
-            selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict()
-        }
-
-        configurations.runtimeDependencyConfiguration?.apply {
-            attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
-            selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict()
-        }
-    }
-}
 
 /**
  * This code tries to handle the case, where you have both "library-platform" in old publication format
@@ -148,4 +110,25 @@ private fun Configuration.selectNewKotlinArchiveComponentOnLegacyPublicationCapa
         details.selectHighestVersion()
             .because("Kotlin Archive ${replacementCandidate.id.displayName} represents the same library as ${legacyPublicationCandidate.id.displayName}")
     }
+}
+
+
+internal fun Configuration.usesPlatformKlibsOf(target: KotlinTarget) {
+    require(isCanBeResolved) { "This method should only be used on resolvable configurations"}
+    usesPlatformOf(target)
+    if (target is KotlinTargetWithKotlinArchiveSupport) {
+        attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
+        selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict()
+    }
+}
+
+/**
+ * The only consumer of resolvableMetadataConfiguration is [org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation],
+ * they work on top of zip archive. We can potentially extract only metadata directory into a separate archive,
+ * but that would just be additional work, so we directly pass DECOMPRESSED to the task.
+ */
+internal fun Configuration.usesMetadataOf(target: KotlinTarget) {
+    require(isCanBeResolved) { "This method should only be used on resolvable configurations" }
+    usesPlatformOf(target)
+    attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.DECOMPRESSED)
 }

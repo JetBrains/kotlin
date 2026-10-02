@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
+import org.jetbrains.kotlin.gradle.plugin.mpp.archive.usesPlatformKlibsOf
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
-import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
@@ -75,7 +75,7 @@ internal fun KotlinNativeTarget.exportedSwiftExportApiConfiguration(
         description = "Swift Export dependencies configuration for $name"
         extendsFrom(extendConfiguration)
         shouldResolveConsistentlyWith(extendConfiguration)
-        usesPlatformOf(this@exportedSwiftExportApiConfiguration)
+        usesPlatformKlibsOf(this@exportedSwiftExportApiConfiguration)
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(KotlinUsages.KOTLIN_API))
         KlibPackaging.setAttributeTo(project, attributes, false)
