@@ -677,13 +677,12 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library")))
 
         testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), libraryRoots, withJdk = true) {
-            // KT-89902: the supertypes from Kotlin libraries should be resolved
             val itemList = findLightClass("org.test.ItemList")!!
-            assertEquals("java.lang.Object", itemList.superClass?.qualifiedName)
+            assertEquals("kotlin.collections.AbstractList", itemList.superClass?.qualifiedName)
 
             val librarySubclass = findLightClass("org.test.LibrarySubclass")!!
-            assertEquals("java.lang.Object", librarySubclass.superClass?.qualifiedName)
-            assertEquals(emptyList(), librarySubclass.interfaces.map { it.qualifiedName })
+            assertEquals("lib.LibraryClass", librarySubclass.superClass?.qualifiedName)
+            assertEquals(listOf("lib.LibraryInterface"), librarySubclass.interfaces.map { it.qualifiedName })
         }
     }
 
@@ -698,9 +697,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), libraryRoots, withJdk = true) {
             val javaClass = JavaPsiFacade.getInstance(project).findClass("org.test.JavaClass", GlobalSearchScope.projectScope(project))!!
             val fieldTypes = javaClass.fields.map { (it.type as PsiClassReferenceType).resolve()?.qualifiedName }
-
-            // KT-89902: the references to classes from Kotlin libraries should be resolved
-            assertEquals(listOf(null, null, null), fieldTypes)
+            assertEquals(listOf("kotlin.jvm.functions.Function1", "kotlin.collections.AbstractMap", "lib.LibraryClass"), fieldTypes)
         }
     }
 
