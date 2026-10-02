@@ -7,8 +7,11 @@ sourceSets {
     "test" { none() }
 }
 
-publish()
+publish(sbom = false)
 standardPublicJars()
+
+// Libraries packed into the JAR have to be listed in the SBOM as well
+configureSbom(gradleConfigurations = setOf("runtimeClasspath", "embedded"))
 
 configurations {
     val artifactContent = dependencyScope("artifactContent")
