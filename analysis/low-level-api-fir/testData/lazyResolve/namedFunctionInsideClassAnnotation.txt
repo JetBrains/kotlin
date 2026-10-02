@@ -251,10 +251,10 @@ FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
-     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
     ]) public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class Check : R|kotlin/Any| {
@@ -279,10 +279,10 @@ FILE: [ResolvedTo(IMPORTS)] namedFunctionInsideClassAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
-     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
     ]) public abstract [ResolvedTo(BODY_RESOLVE)] class Check : R|kotlin/Any| {
@@ -307,10 +307,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] namedFunctionInsideClassAnnotation.kt
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+    @R|Anno|[Types](i = ERROR_EXPR(Argument is absent)local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
-     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+     [evaluated = ERROR_EXPR(Argument is absent)local final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
     ]) public abstract [ResolvedTo(BODY_RESOLVE)] class Check : R|kotlin/Any| {

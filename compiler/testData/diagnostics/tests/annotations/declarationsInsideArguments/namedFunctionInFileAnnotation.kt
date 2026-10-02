@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_EXTRA_CHECKERS
 // ISSUE: KT-77041
-// IGNORE_PHASE_VERIFICATION: invalid code inside annotations
 @file:Anno(i = fun <!ANONYMOUS_FUNCTION_WITH_NAME!>foo<!>() = 1)
 
 package testPack
