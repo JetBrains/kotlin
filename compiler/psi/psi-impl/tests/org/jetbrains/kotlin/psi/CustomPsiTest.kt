@@ -32,16 +32,4 @@ class CustomPsiTest : AbstractAnalysisApiExecutionTest("testData/custom") {
         replFile.calcTreeElement()
         testServices.assertions.assertEquals(true, replFile.script?.isReplSnippet)
     }
-
-    @Test
-    fun replScriptCopy(testServices: TestServices) {
-        val project = testServices.environmentManager.getProject()
-
-        val originalRepl = KtPsiFactory(project).createReplSnippet("1 + 1")
-        testServices.assertions.assertTrue(originalRepl.isReplSnippet)
-
-        val fileCopy = originalRepl.containingKtFile.copy() as KtFile
-        val scriptCopy = fileCopy.script
-        testServices.assertions.assertEquals(true, scriptCopy?.isReplSnippet)
-    }
 }

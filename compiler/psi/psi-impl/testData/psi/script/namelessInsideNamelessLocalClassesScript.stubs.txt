@@ -4,7 +4,7 @@ FILE[kind=Script[packageFqName=one.two]]
       REFERENCE_EXPRESSION[referencedName=one]
       REFERENCE_EXPRESSION[referencedName=two]
   IMPORT_LIST
-  SCRIPT[fqName=one.two.NamelessInsideNamelessLocalClassesScript, fqName=one.two.NamelessInsideNamelessLocalClassesScript, isReplSnippet=false, name=NamelessInsideNamelessLocalClassesScript]
+  SCRIPT[fqName=one.two.NamelessInsideNamelessLocalClassesScript, fqName=one.two.NamelessInsideNamelessLocalClassesScript, name=NamelessInsideNamelessLocalClassesScript]
     FUNCTION[fqName=one.two.NamelessInsideNamelessLocalClassesScript.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       VALUE_PARAMETER_LIST
       CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]

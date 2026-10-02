@@ -5003,26 +5003,6 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   }
 
   @Nested
-  @TestMetadata("compiler/psi/psi-impl/testData/psi/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("compiler/psi/psi-impl/testData/psi/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/repl"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
-    }
-
-    @Test
-    @TestMetadata("replSnippet.repl.kts")
-    public void testReplSnippet_repl() {
-      run("replSnippet.repl.kts");
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/psi/psi-impl/testData/psi/richErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class RichErrors {

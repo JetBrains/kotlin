@@ -4,7 +4,7 @@ FILE[kind=Script[packageFqName=one.two]]
       REFERENCE_EXPRESSION[referencedName=one]
       REFERENCE_EXPRESSION[referencedName=two]
   IMPORT_LIST
-  SCRIPT[fqName=one.two.DeepNestingInsideNamelessClassesScript, fqName=one.two.DeepNestingInsideNamelessClassesScript, isReplSnippet=false, name=DeepNestingInsideNamelessClassesScript]
+  SCRIPT[fqName=one.two.DeepNestingInsideNamelessClassesScript, fqName=one.two.DeepNestingInsideNamelessClassesScript, name=DeepNestingInsideNamelessClassesScript]
     CLASS[classId=one/two/A, fqName=one.two.DeepNestingInsideNamelessClassesScript.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
       CLASS_BODY
         OBJECT_DECLARATION[classId=one/two/A.<no name provided>, fqName=one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]

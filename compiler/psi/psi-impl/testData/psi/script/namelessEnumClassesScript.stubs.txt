@@ -4,7 +4,7 @@ FILE[kind=Script[packageFqName=one.two]]
       REFERENCE_EXPRESSION[referencedName=one]
       REFERENCE_EXPRESSION[referencedName=two]
   IMPORT_LIST
-  SCRIPT[fqName=one.two.NamelessEnumClassesScript, fqName=one.two.NamelessEnumClassesScript, isReplSnippet=false, name=NamelessEnumClassesScript]
+  SCRIPT[fqName=one.two.NamelessEnumClassesScript, fqName=one.two.NamelessEnumClassesScript, name=NamelessEnumClassesScript]
     CLASS[classId=one/two/<no name provided>, fqName=one.two.NamelessEnumClassesScript.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
       MODIFIER_LIST[enum]
       CLASS_BODY

@@ -44,12 +44,7 @@ internal object ClassIdCalculator {
                     break
                 }
                 is KtScript -> {
-                    @OptIn(KtExperimentalApi::class)
-                    if (element.isReplSnippet) {
-                        containingClassNames += element.name
-                    } else {
-                        // Skip script parent
-                    }
+                    // Skip script parent
                 }
                 is KtDeclaration -> {
                     // Local declarations don't have a 'ClassId'

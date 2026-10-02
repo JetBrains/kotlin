@@ -4991,20 +4991,6 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
   }
 
   @Nested
-  @TestMetadata("compiler/psi/psi-impl/testData/psi/repl")
-  @TestDataPath("$PROJECT_ROOT")
-  public class Repl {
-    private void run(String fileName) {
-      runTest("compiler/psi/psi-impl/testData/psi/repl/" + fileName);
-    }
-
-    @Test
-    public void testAllFilesPresentInRepl() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/repl"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
-    }
-  }
-
-  @Nested
   @TestMetadata("compiler/psi/psi-impl/testData/psi/richErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class RichErrors {
