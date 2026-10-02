@@ -16,9 +16,13 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
+import org.jetbrains.kotlin.codegen.inline.INLINE_MARKER_ALWAYS_TRUE
+import org.jetbrains.kotlin.codegen.inline.INLINE_MARKER_CLASS_NAME
 import org.jetbrains.kotlin.codegen.inline.getLabelToIndexMap
 import org.jetbrains.kotlin.codegen.inline.getLineNumberOrNull
 import org.jetbrains.kotlin.codegen.inline.insnText
+import org.jetbrains.kotlin.codegen.inline.isFinallyMarker
+import org.jetbrains.kotlin.codegen.optimization.boxing.isMethodInsnWith
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
 import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
@@ -37,20 +41,46 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        if (!methodNode.hasOptimizableConditions()) {
-            return
+        var hasIntJumps = false
+        var hasIntConstants = false
+        var hasFinallyMarkers = false
+        var hasInlineMarkerAlwaysTrue = false
+        for (insn in methodNode.instructions) {
+            if (insn.isIntJump()) hasIntJumps = true
+            if (insn.intConstant != null) hasIntConstants = true
+            if (isFinallyMarker(insn)) hasFinallyMarkers = true
+            if (insn.isInlineMarkerAlwaysTrue()) hasInlineMarkerAlwaysTrue = true
         }
+
+        // This better belongs to StackPeepholeOptimizationsTransformer, but this optimization
+        // should happen before redundant boxing elimination
+        if (hasInlineMarkerAlwaysTrue && !hasFinallyMarkers) {
+            for (insn in methodNode.instructions.toArray()) {
+                if (insn.isInlineMarkerAlwaysTrue()) {
+                    require(insn.next.opcode == Opcodes.IFEQ)
+                    methodNode.instructions.set(insn.next, InsnNode(Opcodes.NOP))
+                    methodNode.instructions.set(insn, InsnNode(Opcodes.NOP))
+                }
+            }
+        }
+
+        val optimizable = (hasIntJumps && hasIntConstants)
+        if (!optimizable) return
+
         do {
             val changes = ConstantConditionsOptimization(internalClassName, methodNode).runOnce()
         } while (changes)
     }
 
-    private fun MethodNode.hasOptimizableConditions(): Boolean {
-        return instructions.any { it.isIntJump() } && instructions.any { it.intConstant != null }
-    }
-
     private fun AbstractInsnNode.isIntJump() =
         opcode in Opcodes.IFEQ..Opcodes.IFLE || opcode in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE
+
+    private fun AbstractInsnNode.isInlineMarkerAlwaysTrue() =
+        isMethodInsnWith(Opcodes.INVOKESTATIC) {
+            name == INLINE_MARKER_ALWAYS_TRUE &&
+                    owner == INLINE_MARKER_CLASS_NAME &&
+                    desc == "()Z"
+        }
 
     private class ConstantConditionsOptimization(val internalClassName: String, val methodNode: MethodNode) {
         val inlineScopes by lazy(LazyThreadSafetyMode.NONE) { methodNode.computeInlineScopes() }
@@ -66,7 +96,7 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
                 val frame = frames[i]
 
                 if (frame == null) {
-                    if (insn !is LabelNode) {
+                    if (insn !is LabelNode && insn !is LineNumberNode) {
                         methodNode.instructions.remove(insn)
                     }
                     continue
