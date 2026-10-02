@@ -30,10 +30,8 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
         val fields = if (isAbstractOrSealed) {
             null
         } else {
-            val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
-            primaryConstructor.valueParameterList.map {
-                nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
-            }
+            val [names, types] = loadFullValueClassUnderlyingProperties(nameResolver, typeTable)
+            names zip types.map(typeDeserializer)
         }
         return FullValueClassRepresentation(fields)
     }
@@ -47,4 +45,17 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
     }
 
     return null
+}
+
+fun ProtoBuf.Class.loadFullValueClassUnderlyingProperties(
+    nameResolver: NameResolver,
+    typeTable: TypeTable,
+): Pair<List<Name>, List<ProtoBuf.Type>> {
+    val names = fullValueClassUnderlyingPropertyNameList.map { nameResolver.getName(it) }
+    val types = when (fullValueClassUnderlyingTypeIdCount to fullValueClassUnderlyingTypeCount) {
+        names.size to 0 -> fullValueClassUnderlyingTypeIdList.map { typeTable[it] }
+        0 to names.size -> fullValueClassUnderlyingTypeList
+        else -> error("class ${nameResolver.getName(fqName)} has illegal full value class representation")
+    }
+    return names to types
 }

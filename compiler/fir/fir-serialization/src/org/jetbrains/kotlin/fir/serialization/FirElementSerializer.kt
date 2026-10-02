@@ -284,7 +284,18 @@ class FirElementSerializer private constructor(
                     }
                 }
             }
-            is FullValueClassRepresentation, null -> {}
+            is FullValueClassRepresentation -> {
+                // Written explicitly, as a private primary constructor, which declares the underlying properties, may be stripped from
+                // the metadata, for example in ABI jars.
+                val namesToTypes = representation.underlyingPropertyNamesToTypes.orEmpty()
+                builder.addAllFullValueClassUnderlyingPropertyName(namesToTypes.map { [name, _] -> getSimpleNameIndex(name) })
+                if (useTypeTable()) {
+                    builder.addAllFullValueClassUnderlyingTypeId(namesToTypes.map { [_, type] -> typeId(type) })
+                } else {
+                    builder.addAllFullValueClassUnderlyingType(namesToTypes.map { [_, type] -> typeProto(type).build() })
+                }
+            }
+            null -> {}
         }
 
         if (klass is FirRegularClass) {

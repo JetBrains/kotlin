@@ -176,6 +176,15 @@ class DescriptorSerializer private constructor(
             }
         }
 
+        (classDescriptor.valueClassRepresentation as? FullValueClassRepresentation)?.underlyingPropertyNamesToTypes?.let { namesToTypes ->
+            builder.addAllFullValueClassUnderlyingPropertyName(namesToTypes.map { [name, _] -> getSimpleNameIndex(name) })
+            if (useTypeTable()) {
+                builder.addAllFullValueClassUnderlyingTypeId(namesToTypes.map { [_, kotlinType] -> typeId(kotlinType) })
+            } else {
+                builder.addAllFullValueClassUnderlyingType(namesToTypes.map { [_, kotlinType] -> type(kotlinType).build() })
+            }
+        }
+
         if (versionRequirementTable == null) error("Version requirements must be serialized for classes: $classDescriptor")
 
         builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(classDescriptor))
