@@ -656,7 +656,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     if (coneTypes.any { it.isNonRichError() }) {
                         ConeErrorType(
                             ConeSimpleDiagnostic(
-                                "Non-rich error component must appear first",
+                                "Non-error component must appear first",
                                 NonErrorComponentWrongPositionInUnionType
                             ), delegatedType = unionType
                         )

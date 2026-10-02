@@ -87,7 +87,7 @@ object ConeTypeUnifier {
             if (!primaryType.isNothing) {
                 val diagnostic = when {
                     primaryType.isNullableNothing -> ConeSimpleDiagnostic("Nullable nested union type", NullableNestedUnionType)
-                    else -> ConeSimpleDiagnostic("Non error component in nested union type", NonErrorComponentInNestedUnionType)
+                    else -> ConeSimpleDiagnostic("Non-error component in nested union type", NonErrorComponentInNestedUnionType)
                 }
                 return [ConeErrorType(diagnostic, delegatedType = this)]
             }
