@@ -7,10 +7,10 @@ FILE[kind=Script[packageFqName=one.two]]
   SCRIPT[fqName=one.two.CompanionsInsideNamelessClassesScript, fqName=one.two.CompanionsInsideNamelessClassesScript, isReplSnippet=false, name=CompanionsInsideNamelessClassesScript]
     CLASS[classId=one/two/<no name provided>, fqName=one.two.CompanionsInsideNamelessClassesScript.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
       CLASS_BODY
-        OBJECT_DECLARATION[classId=one/two/<no name provided>.Companion, fqName=null, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        OBJECT_DECLARATION[classId=one/two/<no name provided>.Companion, fqName=one.two.CompanionsInsideNamelessClassesScript.<no name provided>.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[companion]
           CLASS_BODY
-            CLASS[classId=one/two/<no name provided>.Companion.A, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+            CLASS[classId=one/two/<no name provided>.Companion.A, fqName=one.two.CompanionsInsideNamelessClassesScript.<no name provided>.Companion.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
     SCRIPT_INITIALIZER
       OBJECT_LITERAL
         OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
@@ -28,13 +28,13 @@ FILE[kind=Script[packageFqName=one.two]]
       CLASS_BODY
         OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
           CLASS_BODY
-            CLASS[classId=one/two/Outer.<no name provided>.Inner, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Inner, superNames=[]]
+            CLASS[classId=one/two/Outer.<no name provided>.Inner, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Inner, superNames=[]]
               CLASS_BODY
                 COMPANION_BLOCK
                   MODIFIER_LIST[companion]
                   CLASS_BODY
-                    CLASS[classId=one/two/Outer.<no name provided>.Inner.D, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
-                    TYPEALIAS[classId=one/two/Outer.<no name provided>.Inner.E, fqName=null, isTopLevel=false, name=E]
+                    CLASS[classId=one/two/Outer.<no name provided>.Inner.D, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>.Inner.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
+                    TYPEALIAS[classId=one/two/Outer.<no name provided>.Inner.E, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>.Inner.E, isTopLevel=false, name=E]
                       TYPE_REFERENCE
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=Int]
@@ -43,4 +43,4 @@ FILE[kind=Script[packageFqName=one.two]]
           CLASS_BODY
             OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
               CLASS_BODY
-                CLASS[classId=one/two/Outer.<no name provided>.F, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=F, superNames=[]]
+                CLASS[classId=one/two/Outer.<no name provided>.F, fqName=one.two.CompanionsInsideNamelessClassesScript.Outer.<no name provided>.F, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=F, superNames=[]]

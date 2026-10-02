@@ -2,11 +2,11 @@ package one.two
 
 /* ClassId: one/two/A [PsiFqName: one.two.DeepNestingInsideNamelessClassesScript.A] */class A {
     /* ClassId: one/two/A.<no name provided> [PsiFqName: one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>] */object {
-        /* ClassId: one/two/A.<no name provided>.B [PsiFqName: null] */class B {
-            /* ClassId: one/two/A.<no name provided>.B.<no name provided> [PsiFqName: null] */object {
-                /* ClassId: one/two/A.<no name provided>.B.<no name provided>.C [PsiFqName: null] */class C
-                /* ClassId: one/two/A.<no name provided>.B.<no name provided>.<no name provided> [PsiFqName: null] */object {
-                    /* ClassId: one/two/A.<no name provided>.B.<no name provided>.<no name provided>.D [PsiFqName: null] */class D
+        /* ClassId: one/two/A.<no name provided>.B [PsiFqName: one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B] */class B {
+            /* ClassId: one/two/A.<no name provided>.B.<no name provided> [PsiFqName: one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B.<no name provided>] */object {
+                /* ClassId: one/two/A.<no name provided>.B.<no name provided>.C [PsiFqName: one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B.<no name provided>.C] */class C
+                /* ClassId: one/two/A.<no name provided>.B.<no name provided>.<no name provided> [PsiFqName: one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B.<no name provided>.<no name provided>] */object {
+                    /* ClassId: one/two/A.<no name provided>.B.<no name provided>.<no name provided>.D [PsiFqName: one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B.<no name provided>.<no name provided>.D] */class D
                 }
             }
         }
@@ -27,4 +27,4 @@ package one.two
     }
 }
 
-// IGNORE_CONSISTENCY_CHECK: KTIJ-26896, KT-61887
+// IGNORE_CONSISTENCY_CHECK: KT-61887
