@@ -6,22 +6,28 @@
 package kotlin.script.experimental.jvmhost
 
 import org.jetbrains.kotlin.utils.KotlinPaths
+import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import java.io.ObjectInputStream
 import java.net.URI
 import java.net.URLClassLoader
+import java.security.MessageDigest
 import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.impl.*
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.loadDependencies
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrNull
+import kotlin.script.experimental.util.PropertiesCollection
 
 // TODO: generate execution code (main)
 
@@ -108,19 +114,30 @@ private fun CompiledScript.recursiveJvmClassPath(): List<File> {
 }
 
 fun File.loadScriptFromJar(checkMissingDependencies: Boolean = true): CompiledScript? {
-    val [className: String?, classPathUrls] = this.inputStream().use { ostr ->
-        JarInputStream(ostr).use {
-            it.manifest.mainAttributes.getValue("Main-Class") to
-                    (it.manifest.mainAttributes.getValue("Class-Path")?.split(" ") ?: emptyList())
+    val [className: String?, classPathUrls, scriptMetadata] = this.inputStream().use { ostr ->
+        JarInputStream(ostr).use { jarStream ->
+            val mainAttributes = jarStream.manifest?.mainAttributes
+            val className = mainAttributes?.getValue("Main-Class")
+            Triple(
+                className,
+                mainAttributes?.getValue("Class-Path")?.split(" ") ?: emptyList(),
+                className?.let { jarStream.readEntry(scriptMetadataPath(it)) }
+            )
         }
     }
-    if (className == null) return null
+    if (className == null || scriptMetadata == null) return null
+
+    val script = try {
+        ObjectInputStream(ByteArrayInputStream(scriptMetadata)).use { it.readObject() as KJvmCompiledScript }
+    } catch (_: Exception) {
+        return null
+    }
 
     val classPath = classPathUrls.mapNotNullTo(mutableListOf(this)) { cpEntry ->
         File(URI(cpEntry)).takeIf { it.exists() } ?: File(cpEntry).takeIf { it.exists() }
     }
     if (!checkMissingDependencies || classPathUrls.size + 1 == classPath.size) {
-        return KJvmCompiledScriptLazilyLoadedFromClasspath(className, classPath)
+        return KJvmCompiledScriptLazilyLoadedFromClasspath(script, classPath)
     } else {
         // Assuming that some script dependencies are not accessible anymore so the script is not valid and should be recompiled to reresolve dependencies
         return null
@@ -147,7 +164,7 @@ open class BasicJvmScriptJarGenerator(val outputJar: File) : ScriptEvaluator {
 }
 
 private class KJvmCompiledScriptLazilyLoadedFromClasspath(
-    private val scriptClassFQName: String,
+    private val script: KJvmCompiledScript,
     private val classPath: List<File>
 ) : CompiledScript {
 
@@ -164,24 +181,80 @@ private class KJvmCompiledScriptLazilyLoadedFromClasspath(
                 classPath.let { if (loadDependencies) it else it.take(1) }.map { it.toURI().toURL() }.toTypedArray(),
                 baseClassLoader
             )
-            loadedScript = createScriptFromClassLoader(scriptClassFQName, classLoader)
+            loadedScript = script.withModuleFromClassLoader(classLoader)
         }
         return getScriptOrError().getClass(scriptEvaluationConfiguration)
     }
 
     override val compilationConfiguration: ScriptCompilationConfiguration
-        get() = getScriptOrError().compilationConfiguration
+        get() = script.compilationConfiguration
 
     override val sourceLocationId: String?
-        get() = getScriptOrError().sourceLocationId
+        get() = script.sourceLocationId
 
     override val otherScripts: List<CompiledScript>
-        get() = getScriptOrError().otherScripts
+        get() = script.otherScripts
 
     override val resultField: Pair<String, KotlinType>?
-        get() = getScriptOrError().resultField
+        get() = script.resultField
+}
+
+private fun JarInputStream.readEntry(path: String): ByteArray? {
+    while (true) {
+        val entry = nextJarEntry ?: return null
+        if (entry.name == path) return readBytes()
+    }
 }
 
 private fun failure(msg: String) =
     ResultWithDiagnostics.Failure(msg.asErrorDiagnostics())
 
+internal fun KJvmCompiledScript.withImportedScriptsHashes(): KJvmCompiledScript {
+    val hashes = importedScriptsLocations().filterNotNull()
+        .filter { File(it).isFile }
+        .associateWith { FileScriptSource(File(it)).sourceHash() }
+    if (hashes.isEmpty()) return this
+    return KJvmCompiledScript(
+        sourceLocationId,
+        compilationConfiguration.with { importedScriptsHashes(hashes) },
+        scriptClassFQName,
+        resultField,
+        otherScripts,
+        getCompiledModule()
+    )
+}
+
+internal fun CompiledScript.importedScriptsAreUpToDate(): Boolean {
+    val hashes = compilationConfiguration[ScriptCompilationConfiguration.importedScriptsHashes].orEmpty()
+    return try {
+        importedScriptsLocations().all { location ->
+            if (location == null) return@all false
+            val file = File(location)
+            val hash = hashes[location]
+            hash != null && file.isFile && FileScriptSource(file).sourceHash() == hash
+        }
+    } catch (_: IOException) {
+        false
+    }
+}
+
+private fun CompiledScript.importedScriptsLocations(): Set<String?> {
+    val locations = linkedSetOf<String?>()
+    fun collect(script: CompiledScript) {
+        script.otherScripts.forEach { imported ->
+            locations.add(imported.sourceLocationId)
+            collect(imported)
+        }
+    }
+    collect(this)
+    return locations
+}
+
+private fun SourceCode.sourceHash(): String =
+    MessageDigest.getInstance("SHA-256").digest(text.toByteArray()).joinToString("") { "%02x".format(it) }
+
+/**
+ * The hashes of the [importScripts] sources read when storing the compiled script in the cache, keyed by the source location id.
+ * Only sources backed by an existing file are included, so that the hashes can be rechecked later.
+ */
+val ScriptCompilationConfigurationKeys.importedScriptsHashes by PropertiesCollection.key<Map<String, String>>()

@@ -21,8 +21,8 @@ open class CompiledScriptJarsCache(val scriptToFile: (SourceCode, ScriptCompilat
 
         if (!file.exists()) return null
 
-        return file.loadScriptFromJar() ?: run {
-            // invalidate cache if the script cannot be loaded
+        return file.loadScriptFromJar()?.takeIf { it.importedScriptsAreUpToDate() } ?: run {
+            // invalidate cache if the script cannot be loaded or any of its imported scripts has changed
             file.delete()
             null
         }
@@ -39,7 +39,6 @@ open class CompiledScriptJarsCache(val scriptToFile: (SourceCode, ScriptCompilat
         val jvmScript = (compiledScript as? KJvmCompiledScript)
             ?: throw IllegalArgumentException("Unsupported script type ${compiledScript::class.java.name}")
 
-        jvmScript.saveToJar(file)
+        jvmScript.withImportedScriptsHashes().saveToJar(file)
     }
 }
-
