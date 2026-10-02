@@ -51,7 +51,7 @@ internal class KlibMetadataComponentImpl(
                     when {
                         it.name.startsWith(KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME) -> ""
                         it.name.startsWith(KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX) -> {
-                            Path(it.pathString).name.removePrefix(KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX)
+                            it.name.removePrefix(KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX).trimEnd('/')
                         }
                         else -> null
                     }
