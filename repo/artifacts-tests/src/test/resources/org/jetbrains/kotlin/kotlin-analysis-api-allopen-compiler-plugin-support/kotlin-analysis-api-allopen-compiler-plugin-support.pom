@@ -3,10 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-analysis-api-surface</artifactId>
-  <version>@ARTIFACT_VERSION@</version>
-  <name>Kotlin Analysis Api Surface</name>
-  <description>Kotlin Analysis Api Surface</description>
+  <artifactId>kotlin-analysis-api-allopen-compiler-plugin-support</artifactId>
+  <version>ArtifactsTest.version</version>
+  <name>Kotlin Analysis Api Allopen Compiler Plugin Support</name>
+  <description>Kotlin Analysis Api Allopen Compiler Plugin Support</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
@@ -29,8 +29,8 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-analysis-api-intellij-api-surface-components</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <artifactId>kotlin-analysis-api-surface</artifactId>
+      <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

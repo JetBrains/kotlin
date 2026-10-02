@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-analysis-api-implementation</artifactId>
-  <version>@ARTIFACT_VERSION@</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Analysis Api Implementation</name>
   <description>Kotlin Analysis Api Implementation</description>
   <url>https://kotlinlang.org/</url>
@@ -30,25 +30,25 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-surface</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-platform-interface</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-intellij-implementation-components</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-fir-diagnostics</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

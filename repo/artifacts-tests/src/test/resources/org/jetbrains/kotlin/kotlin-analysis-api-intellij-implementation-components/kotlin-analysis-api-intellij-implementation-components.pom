@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-analysis-api-intellij-implementation-components</artifactId>
-  <version>@ARTIFACT_VERSION@</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Analysis Api Intellij Implementation Components</name>
   <description>Kotlin Analysis Api Intellij Implementation Components</description>
   <url>https://kotlinlang.org/</url>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-intellij-api-surface-components</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

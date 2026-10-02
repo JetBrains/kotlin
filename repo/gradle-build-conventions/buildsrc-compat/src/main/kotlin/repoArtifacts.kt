@@ -287,10 +287,6 @@ fun Project.idePluginPublishingLatch(block: () -> Unit) {
     specialPublishingLatch("publish.ide.plugin.dependencies", block)
 }
 
-fun Project.analysisApiPublishingLatch(block: () -> Unit) {
-    specialPublishingLatch("publish.analysis.api", block)
-}
-
 private fun Project.specialPublishingLatch(latchPropertyName: String, block: () -> Unit) {
     val shouldActivate = project.kotlinBuildProperties.booleanProperty(latchPropertyName).getOrElse(false)
     if (shouldActivate) {

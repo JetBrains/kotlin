@@ -3,10 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-analysis-api-standalone-surface</artifactId>
-  <version>@ARTIFACT_VERSION@</version>
-  <name>Kotlin Analysis Api Standalone Surface</name>
-  <description>Kotlin Analysis Api Standalone Surface</description>
+  <artifactId>kotlin-analysis-api-platform-interface</artifactId>
+  <version>ArtifactsTest.version</version>
+  <name>Kotlin Analysis Api Platform Interface</name>
+  <description>Kotlin Analysis Api Platform Interface</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
@@ -30,7 +30,19 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-surface</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <version>2.9.3</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+      <version>1.41.0</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>
