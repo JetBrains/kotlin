@@ -517,7 +517,7 @@ object FirDiagnosticRenderers {
     val UNSAFE_CALL_RECEIVER_WITH_HINT = unsafeCallRenderer { kind, renderedType ->
         when (kind) {
             Nullable -> "nullable type '$renderedType'. Consider using a safe call '?.' or non-null asserted call '!!.'"
-            Union -> "union type '$renderedType'. Consider using a safe call '|.'"
+            Union -> "union type '$renderedType'. Consider using an error-safe-call '|.'"
             NullableUnion -> "nullable union type '$renderedType'"
         }
     }
@@ -525,7 +525,7 @@ object FirDiagnosticRenderers {
     val UNSAFE_INVOKE_CALL_RECEIVER_WITH_HINT = unsafeCallRenderer { kind, renderedType ->
         when (kind) {
             Nullable -> "nullable type '$renderedType'. Consider using a safe call '?.invoke' or non-null asserted call '!!()'"
-            Union -> "union type '$renderedType'. Consider using a safe call '|.invoke'"
+            Union -> "union type '$renderedType'. Consider using an error-safe-call '|.invoke'"
             NullableUnion -> "nullable union type '$renderedType'"
         }
     }
