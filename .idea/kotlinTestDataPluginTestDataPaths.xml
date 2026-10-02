@@ -199,7 +199,7 @@
             </array>
           </value>
         </entry>
-        <entry key="Js(?!ES6).*BoxCodegen.*">
+        <entry key="Js(?!ES6).*BoxCodegen(?!WithSeparateKmp).*">
           <value>
             <array>
               <option value="JS" />
@@ -215,7 +215,7 @@
             </array>
           </value>
         </entry>
-        <entry key="Js(?!ES6).*Codegen.*">
+        <entry key="Js(?!ES6).*Codegen(?!WithSeparateKmp).*">
           <value>
             <array>
               <option value="JS" />
