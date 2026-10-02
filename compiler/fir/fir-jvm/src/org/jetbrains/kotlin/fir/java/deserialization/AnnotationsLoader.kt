@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.util.toMetadataVersion
-import kotlin.collections.map
 
 internal class AnnotationsLoader(private val session: FirSession, private val kotlinClassFinder: KotlinClassFinder) {
     private abstract inner class AnnotationsLoaderVisitorImpl : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
@@ -245,8 +244,12 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                     coneTypeOrNull = classLiteralType
                 }
             }
+            val throwableClassType = StandardClassIds.KClass.constructClassLikeType(
+                arrayOf(ConeKotlinTypeProjectionOut(session.builtinTypes.throwableType.coneType)),
+                isMarkedNullable = false,
+            )
             val exceptionClassesArray = buildCollectionLiteral {
-                coneTypeOrNull = session.builtinTypes.throwableType.coneType.createOutArrayType()
+                coneTypeOrNull = throwableClassType.createOutArrayType()
                 argumentList = buildArgumentList {
                     arguments += exceptionClassLiterals
                 }
