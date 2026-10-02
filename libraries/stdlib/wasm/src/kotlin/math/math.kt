@@ -517,12 +517,20 @@ public actual fun Double.withSign(sign: Int): Double = kotlin.wasm.internal.wasm
  * @sample samples.math.MathSamples.Doubles.discreteValues
  */
 @SinceKotlin("1.2")
-public actual val Double.ulp: Double get() = when {
-    this < 0 -> (-this).ulp
-    this.isNaN() || this == Double.POSITIVE_INFINITY -> this
-    this == Double.MAX_VALUE -> this - this.nextDown()
-    else -> this.nextUp() - this
-}
+public actual val Double.ulp: Double
+    get() {
+        val magnitude = abs(this)
+        val bits = magnitude.toRawBits()
+        // 1. Check the exponent: drop 52 fraction bits and check if what's left is 0x7ffL (the sign bit isn't set, all eight exponent bits
+        // are), if yes, it's either NaN or +Inf.
+        return if (bits shr 52 != 0x7ffL) {
+            // 2.1. If magnitude is Double.MAX_VALUE, return 2^971, otherwise the difference between magnitude.nextUp() & magnitude.
+            if (bits == 0x7fef_ffff_ffff_ffffL) Double.fromBits(0x7ca0_0000_0000_0000L) else Double.fromBits(bits + 1) - magnitude
+        } else {
+            // 2.2. If this is NaN, return as-is (abs won't change it), if this is +Inf or -Inf, return +Inf.
+            magnitude
+        }
+    }
 
 /**
  * Returns the [Double] value nearest to this value in a direction of positive infinity.
