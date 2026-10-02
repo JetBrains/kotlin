@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.psi
 
-import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.mock.MockProject
 import com.intellij.pom.PomModel
 import com.intellij.pom.core.impl.PomModelImpl
@@ -24,15 +23,10 @@ class KtPsiMutationFallbackTest : KotlinTestWithEnvironment() {
      * Makes the PSI of the [KotlinTestWithEnvironment] environment modifiable, which it isn't out of the box: PSI modifications are
      * dispatched through the [PomModel] and its [TreeAspect], and inserting an element from another tree, e.g., one created by
      * [KtPsiFactory], requires the [TreeCopyHandler] extension point.
-     *
-     * The extension point is registered in the application, which is shared between tests running in parallel, hence the lock.
      */
     @BeforeEach
-    @Suppress("UnstableApiUsage")
     fun setUp() {
-        synchronized(lock) {
-            CoreApplicationEnvironment.registerApplicationDynamicExtensionPoint(TreeCopyHandler.EP_NAME.name, TreeCopyHandler::class.java)
-        }
+        registerApplicationExtensionPoint(TreeCopyHandler.EP_NAME.name, TreeCopyHandler::class.java)
 
         val mockProject = project as MockProject
         mockProject.registerService(PomModel::class.java, PomModelImpl::class.java)
@@ -87,8 +81,4 @@ class KtPsiMutationFallbackTest : KotlinTestWithEnvironment() {
     }
 
     private fun createFile(text: String): KtFile = KtPsiFactory(project).createFile(text)
-
-    private companion object {
-        private val lock = Any()
-    }
 }
