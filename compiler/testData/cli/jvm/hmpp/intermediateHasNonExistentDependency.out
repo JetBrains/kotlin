@@ -1,2 +1,2 @@
-info: KLIB loader: Library not found: $TESTDATA_DIR$/nonExistent/
+info: [KLIB_LOADING_INFO] KLIB loader: Library not found: $TESTDATA_DIR$/nonExistent/
 OK

@@ -1,2 +1,2 @@
-error: unrecognized script type: simple.kt; Specify path to the script file as the first argument
+error: [SCRIPTING_ERROR] Unrecognized script type: simple.kt; Specify path to the script file as the first argument
 COMPILATION_ERROR

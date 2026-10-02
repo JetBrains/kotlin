@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/kmpMissingActual.common.kt:3:1: error: the 'expect' declaration 'Foo' from '<commonMain> for JVM' has no 'actual' declaration in module '<main> for JVM'.
+compiler/testData/cli/jvm/kmpMissingActual.common.kt:3:1: error: [NO_ACTUAL_FOR_EXPECT] The 'expect' declaration 'Foo' from '<commonMain> for JVM' has no 'actual' declaration in module '<main> for JVM'.
 expect interface Foo : Base1
 ^^^^^^
 COMPILATION_ERROR

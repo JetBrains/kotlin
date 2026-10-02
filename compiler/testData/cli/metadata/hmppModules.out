@@ -1,2 +1,2 @@
-error: HMPP module structure should not be passed during metadata compilation. Please remove `-Xfragments` and related flags
+error: [COMPILER_ARGUMENTS_ERROR] HMPP module structure should not be passed during metadata compilation. Please remove `-Xfragments` and related flags
 COMPILATION_ERROR

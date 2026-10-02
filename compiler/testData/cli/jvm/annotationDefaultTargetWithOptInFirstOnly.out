@@ -1,5 +1,5 @@
-warning: the argument '-Xannotation-default-target=first-only' disables a stable language feature for the current language version 2.5. Future support for this mode is not guaranteed.
-compiler/testData/cli/jvm/annotationDefaultTargetWithOptIn.kt:4:10: error: opt-in requirement marker annotation cannot be used on parameter.
+warning: [CLI_ARG_DISABLES_STABLE_FEATURE] The argument '-Xannotation-default-target=first-only' disables a stable language feature for the current language version 2.5. Future support for this mode is not guaranteed.
+compiler/testData/cli/jvm/annotationDefaultTargetWithOptIn.kt:4:10: error: [OPT_IN_MARKER_ON_WRONG_TARGET] Opt-in requirement marker annotation cannot be used on parameter.
 class My(@Marker val x: String)
          ^^^^^^^
 COMPILATION_ERROR

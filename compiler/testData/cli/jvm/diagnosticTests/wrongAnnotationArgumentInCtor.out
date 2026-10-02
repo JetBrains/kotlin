@@ -1,10 +1,10 @@
-compiler/testData/cli/jvm/diagnosticTests/wrongAnnotationArgumentInCtor.kt:4:32: error: too many arguments for 'constructor(): Anno'.
+compiler/testData/cli/jvm/diagnosticTests/wrongAnnotationArgumentInCtor.kt:4:32: error: [TOO_MANY_ARGUMENTS] Too many arguments for 'constructor(): Anno'.
 class UnresolvedArgument(@Anno(BLA) val s: Int)
                                ^^^
-compiler/testData/cli/jvm/diagnosticTests/wrongAnnotationArgumentInCtor.kt:4:32: error: unresolved reference 'BLA'.
+compiler/testData/cli/jvm/diagnosticTests/wrongAnnotationArgumentInCtor.kt:4:32: error: [UNRESOLVED_REFERENCE] Unresolved reference 'BLA'.
 class UnresolvedArgument(@Anno(BLA) val s: Int)
                                ^^^
-compiler/testData/cli/jvm/diagnosticTests/wrongAnnotationArgumentInCtor.kt:6:25: error: no value passed for parameter 'message'.
+compiler/testData/cli/jvm/diagnosticTests/wrongAnnotationArgumentInCtor.kt:6:25: error: [NO_VALUE_FOR_PARAMETER] No value passed for parameter 'message'.
 class WithoutArguments(@Deprecated val s: Int)
                         ^^^^^^^^^^
 COMPILATION_ERROR

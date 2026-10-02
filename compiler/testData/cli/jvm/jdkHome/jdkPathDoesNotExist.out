@@ -1,2 +1,2 @@
-error: JDK home directory does not exist: $TESTDATA_DIR$/abacaba
+error: [COMPILER_ARGUMENTS_ERROR] JDK home directory does not exist: $TESTDATA_DIR$/abacaba
 COMPILATION_ERROR

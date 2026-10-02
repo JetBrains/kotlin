@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/dontReportInternalDiagnosticNames.kt
+-Xrender-diagnostic-names=false
+-d
+$TEMP_DIR$

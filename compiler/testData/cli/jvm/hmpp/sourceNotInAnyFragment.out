@@ -7,5 +7,5 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-error: source '$TESTDATA_DIR$/src/b.kt' does not belong to any module
+error: [COMPILER_ARGUMENTS_ERROR] Source '$TESTDATA_DIR$/src/b.kt' does not belong to any module
 COMPILATION_ERROR
