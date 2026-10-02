@@ -28,6 +28,9 @@ package kotlin
  *
  * The annotation can be applied to final classes, to `abstract`/`sealed` classes intended as base types,
  * and to object declarations. It cannot be applied to `value class`es, interfaces, enums, or `open` classes.
+ *
+ * The annotation is experimental not because it may be renamed or otherwise changed, but because the compiler checks
+ * described above will be introduced in one of the forthcoming Kotlin releases.
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
