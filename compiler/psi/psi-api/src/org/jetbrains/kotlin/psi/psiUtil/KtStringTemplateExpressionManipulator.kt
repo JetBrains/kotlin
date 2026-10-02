@@ -32,40 +32,49 @@ class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStrin
         element: KtStringTemplateExpression,
         range: TextRange,
         newContent: String
-    ): KtStringTemplateExpression? {
-        val node = element.node
-        val oldText = node.text
-
-        fun wrapAsInOld(content: String) = oldText.substring(0, range.startOffset) + content + oldText.substring(range.endOffset)
-
-        fun makeKtExpressionFromText(text: String): KtExpression {
-            val ktExpression = KtPsiFactory(element.project).createExpression(text)
-            if (ktExpression !is KtStringTemplateExpression) {
-                LOG.error("can't create a `KtStringTemplateExpression` from '$text'")
-            }
-            return ktExpression
-        }
-
-        val newContentPreprocessed: String =
-            if (element.isSingleQuoted()) {
-                val expressionFromText = makeKtExpressionFromText("\"\"\"$newContent\"\"\"")
-                if (expressionFromText is KtStringTemplateExpression) {
-                    expressionFromText.entries.joinToString("") { entry ->
-                        when (entry) {
-                            is KtStringTemplateEntryWithExpression -> entry.text
-                            else -> StringUtil.escapeStringCharacters(entry.text)
-                        }
-                    }
-                } else newContent
-            } else newContent
-
-        val newKtExpression = makeKtExpressionFromText(wrapAsInOld(newContentPreprocessed))
-        node.replaceAllChildrenToChildrenOf(newKtExpression.node)
-
-        return node.getPsi(KtStringTemplateExpression::class.java)
-    }
+    ): KtStringTemplateExpression? = replaceStringTemplateContent(element, range, newContent)
 
     override fun getRangeInElement(element: KtStringTemplateExpression): TextRange {
         return element.getContentRange()
     }
+}
+
+/**
+ * Replaces the text in [range] of [element] with [newContent], escaping it as described in [KtStringTemplateExpressionManipulator].
+ */
+internal fun replaceStringTemplateContent(
+    element: KtStringTemplateExpression,
+    range: TextRange,
+    newContent: String
+): KtStringTemplateExpression? {
+    val node = element.node
+    val oldText = node.text
+
+    fun wrapAsInOld(content: String) = oldText.substring(0, range.startOffset) + content + oldText.substring(range.endOffset)
+
+    fun makeKtExpressionFromText(text: String): KtExpression {
+        val ktExpression = KtPsiFactory(element.project).createExpression(text)
+        if (ktExpression !is KtStringTemplateExpression) {
+            LOG.error("can't create a `KtStringTemplateExpression` from '$text'")
+        }
+        return ktExpression
+    }
+
+    val newContentPreprocessed: String =
+        if (element.isSingleQuoted()) {
+            val expressionFromText = makeKtExpressionFromText("\"\"\"$newContent\"\"\"")
+            if (expressionFromText is KtStringTemplateExpression) {
+                expressionFromText.entries.joinToString("") { entry ->
+                    when (entry) {
+                        is KtStringTemplateEntryWithExpression -> entry.text
+                        else -> StringUtil.escapeStringCharacters(entry.text)
+                    }
+                }
+            } else newContent
+        } else newContent
+
+    val newKtExpression = makeKtExpressionFromText(wrapAsInOld(newContentPreprocessed))
+    node.replaceAllChildrenToChildrenOf(newKtExpression.node)
+
+    return node.getPsi(KtStringTemplateExpression::class.java)
 }
