@@ -9,8 +9,8 @@ package one.two
         }
     };
 
-    /* ClassId: one/two/<no name provided>.Nested [PsiFqName: null] */class Nested
-    /* ClassId: one/two/<no name provided>.<no name provided> [PsiFqName: null] */object
+    /* ClassId: one/two/<no name provided>.Nested [PsiFqName: one.two.NamelessEnumClassesScript.<no name provided>.Nested] */class Nested
+    /* ClassId: one/two/<no name provided>.<no name provided> [PsiFqName: one.two.NamelessEnumClassesScript.<no name provided>.<no name provided>] */object
 }
 
 /* ClassId: null */object {
@@ -28,10 +28,10 @@ package one.two
 
 /* ClassId: one/two/Outer [PsiFqName: one.two.NamelessEnumClassesScript.Outer] */class Outer {
     /* ClassId: one/two/Outer.<no name provided> [PsiFqName: one.two.NamelessEnumClassesScript.Outer.<no name provided>] */object {
-        /* ClassId: one/two/Outer.<no name provided>.<no name provided> [PsiFqName: null] */enum class {
+        /* ClassId: one/two/Outer.<no name provided>.<no name provided> [PsiFqName: one.two.NamelessEnumClassesScript.Outer.<no name provided>.<no name provided>] */enum class {
             /* ClassId: null */D;
 
-            /* ClassId: one/two/Outer.<no name provided>.<no name provided>.Nested [PsiFqName: null] */class Nested
+            /* ClassId: one/two/Outer.<no name provided>.<no name provided>.Nested [PsiFqName: one.two.NamelessEnumClassesScript.Outer.<no name provided>.<no name provided>.Nested] */class Nested
         }
     }
 }
@@ -46,4 +46,4 @@ fun foo() {
     }
 }
 
-// IGNORE_CONSISTENCY_CHECK: KTIJ-26896, KT-61887
+// IGNORE_CONSISTENCY_CHECK: KT-61887

@@ -15,8 +15,8 @@ FILE[kind=Script[packageFqName=one.two]]
             OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
               CLASS_BODY
                 CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=InsideNamelessInEntry, superNames=[]]
-        CLASS[classId=one/two/<no name provided>.Nested, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
-        OBJECT_DECLARATION[classId=one/two/<no name provided>.<no name provided>, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+        CLASS[classId=one/two/<no name provided>.Nested, fqName=one.two.NamelessEnumClassesScript.<no name provided>.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+        OBJECT_DECLARATION[classId=one/two/<no name provided>.<no name provided>, fqName=one.two.NamelessEnumClassesScript.<no name provided>.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
     SCRIPT_INITIALIZER
       OBJECT_LITERAL
         OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
@@ -35,11 +35,11 @@ FILE[kind=Script[packageFqName=one.two]]
       CLASS_BODY
         OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.NamelessEnumClassesScript.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
           CLASS_BODY
-            CLASS[classId=one/two/Outer.<no name provided>.<no name provided>, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+            CLASS[classId=one/two/Outer.<no name provided>.<no name provided>, fqName=one.two.NamelessEnumClassesScript.Outer.<no name provided>.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
               MODIFIER_LIST[enum]
               CLASS_BODY
                 ENUM_ENTRY[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
-                CLASS[classId=one/two/Outer.<no name provided>.<no name provided>.Nested, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
+                CLASS[classId=one/two/Outer.<no name provided>.<no name provided>.Nested, fqName=one.two.NamelessEnumClassesScript.Outer.<no name provided>.<no name provided>.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Nested, superNames=[]]
     FUNCTION[fqName=one.two.NamelessEnumClassesScript.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       VALUE_PARAMETER_LIST
       CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
