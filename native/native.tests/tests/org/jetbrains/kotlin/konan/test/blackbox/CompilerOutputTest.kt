@@ -412,6 +412,9 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             "-Xadd-cache=${testRunSettings.get<KotlinNativeHome>().stdlibFile.absolutePath}",
             "-module-name", "Kt",
             "-Xcache-directory=${buildDir.absolutePath}",
+            "-Xbinary=objcExportErrorOnNameCollisions=true",
+            "-Xbinary=objcExportDisableSwiftMemberNameMangling=true",
+            "-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true",
         )
 
     private fun doTestProduceObjCCacheValidation(args: List<String>, expectedError: String) {
@@ -438,6 +441,16 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         doTestProduceObjCCacheValidation(
             objCCacheArgs - listOf("-module-name", "Kt"),
             "-produce objc_cache requires -module-name to be specified",
+        )
+    }
+
+    @Test
+    fun testProduceObjCCacheRequiresCollisionErrors() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        doTestProduceObjCCacheValidation(
+            objCCacheArgs - "-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true",
+            "-produce objc_cache requires -Xbinary=objcExportErrorOnNameCollisions=true, " +
+                    "-Xbinary=objcExportDisableSwiftMemberNameMangling=true and -Xbinary=objcExportIgnoreInterfaceMethodCollisions=true",
         )
     }
 

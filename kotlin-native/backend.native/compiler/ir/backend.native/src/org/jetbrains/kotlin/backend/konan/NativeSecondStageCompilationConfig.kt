@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
+import org.jetbrains.kotlin.backend.konan.objcexport.hasObjCCacheBinaryOptions
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.backend.konan.serialization.PartialLinkageIssueCollector
@@ -638,7 +639,7 @@ class NativeSecondStageCompilationConfig(
     }
 
     internal val objCCaches: Map<KotlinLibrary, CachedLibraries.ObjCCache> by lazy {
-        if (produce != CompilerOutputKind.FRAMEWORK || swiftExport) {
+        if (produce != CompilerOutputKind.FRAMEWORK || swiftExport || !configuration.hasObjCCacheBinaryOptions()) {
             emptyMap()
         } else {
             cachedLibraries.getObjCCaches(exportedLibrariesForObjCCache, fullExportedNamePrefix)
