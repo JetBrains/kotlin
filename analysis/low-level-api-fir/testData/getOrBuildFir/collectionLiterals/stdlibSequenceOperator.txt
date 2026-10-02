@@ -1,0 +1,13 @@
+KT element: KtValueArgument
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of|<R|kotlin/Int|>(Int(42))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] stdlibSequenceOperator.kt
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T> accept([ResolvedTo(STATUS)] set: R|kotlin/sequences/Sequence<T>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|/accept|<R|kotlin/Int|>(Q|kotlin/sequences/Sequence|.R|kotlin/sequences/Sequence.of|<R|kotlin/Int|>(Int(42)))
+    }
