@@ -19,7 +19,6 @@ data class KotlinToolingMetadata(
     /**
      * Plugin used to build (e.g.
      *  - org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
-     *  - org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
      *  - ...
      *  )
      */
