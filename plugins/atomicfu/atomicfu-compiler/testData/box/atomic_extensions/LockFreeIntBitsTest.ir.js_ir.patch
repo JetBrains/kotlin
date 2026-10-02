@@ -29,7 +29,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:bits$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits'
+-          RETURN type=kotlin.Nothing from='private final fun <set-bits$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LockFreeIntBits'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:bits$volatile type:kotlin.Int visibility:private declared in <root>.LockFreeIntBits' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.LockFreeIntBits declared in <root>.LockFreeIntBits.<set-bits$volatile>' type=<root>.LockFreeIntBits origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.LockFreeIntBits.<set-bits$volatile>' type=kotlin.Int origin=null
