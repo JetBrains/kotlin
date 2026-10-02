@@ -826,13 +826,7 @@ private fun runTestBuild(
     testFramework: TestFramework = JUnit5,
     domainsOverride: List<Domain>? = null,
 ): TestBuildResult {
-    val environment = defaultEnv().toMutableMap().apply {
-        remove(TEST_FEDERATION_ENABLED_ENV_KEY)
-        remove(TEST_FEDERATION_MODE_ENV_KEY)
-        remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
-        remove(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY)
-        remove(TEST_FEDERATION_SUBSETS_ENV_KEY)
-
+    val environment = cleanEnvironment().toMutableMap().apply {
         this["_TEST_FRAMEWORK_"] = testFramework.name
 
         if (smokeTestsIncludeAll) {
@@ -933,7 +927,7 @@ private fun cleanTest(): BuildResult {
 }
 
 private fun createGradleRunner(
-    environment: Map<String, String> = defaultEnv(),
+    environment: Map<String, String> = cleanEnvironment(),
 ): GradleRunner {
     val gradleUserHome = System.getenv("GRADLE_USER_HOME") ?: error("Missing 'GRADLE_USER_HOME' environment variable")
     return GradleRunner.create()
@@ -941,16 +935,6 @@ private fun createGradleRunner(
         .withEnvironment(System.getenv() + environment)
         .withTestKitDir(File(gradleUserHome))
         .forwardOutput()
-}
-
-private fun defaultEnv(): Map<String, String> {
-    return System.getenv().toMutableMap().apply {
-        remove(TEST_FEDERATION_ENABLED_ENV_KEY)
-        remove(TEST_FEDERATION_MODE_ENV_KEY)
-        remove(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
-        remove(TEST_FEDERATION_CHANGED_DOMAINS_ENV_KEY)
-        remove(TEST_FEDERATION_SUBSETS_ENV_KEY)
-    }
 }
 
 private fun buildCacheArgs(cache: Path) = listOf(
