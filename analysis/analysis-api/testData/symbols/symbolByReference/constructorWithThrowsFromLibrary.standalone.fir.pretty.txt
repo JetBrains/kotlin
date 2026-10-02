@@ -1,0 +1,3 @@
+@lib.Retained
+@kotlin.jvm.Throws(exceptionClasses = [java.io.IOException::class, java.lang.IllegalStateException::class])
+constructor(value: kotlin.String)

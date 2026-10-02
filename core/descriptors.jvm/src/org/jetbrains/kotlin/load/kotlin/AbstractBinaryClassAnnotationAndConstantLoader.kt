@@ -92,6 +92,8 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         return if (UnsignedTypes.isUnsignedType(expectedType)) transformToUnsignedConstant(result) else result
     }
 
+    override fun maySynthesizeExtraCallableAnnotations(kind: AnnotatedCallableKind): Boolean = false
+
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): AnnotationsContainerWithConstants<A, C> {
         val memberAnnotations = HashMap<MemberSignature, MutableList<A>>()
         val propertyConstants = HashMap<MemberSignature, C>()
@@ -153,7 +155,6 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
 
         return AnnotationsContainerWithConstants(memberAnnotations, propertyConstants, annotationParametersDefaultValues)
     }
-
 
     protected fun isRepeatableWithImplicitContainer(annotationClassId: ClassId, arguments: Map<Name, ConstantValue<*>>): Boolean {
         if (annotationClassId != SpecialJvmAnnotations.JAVA_LANG_ANNOTATION_REPEATABLE) return false

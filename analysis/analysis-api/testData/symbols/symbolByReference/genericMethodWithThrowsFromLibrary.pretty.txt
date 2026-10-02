@@ -1,0 +1,2 @@
+@kotlin.jvm.Throws(exceptionClasses = [java.io.IOException::class])
+fun get(): T

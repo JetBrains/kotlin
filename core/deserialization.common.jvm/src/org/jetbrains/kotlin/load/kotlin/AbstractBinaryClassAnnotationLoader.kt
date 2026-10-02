@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -72,7 +71,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
 
     override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<A> {
         val flags = proto.getCallableAnnotationFlags(kind)
-        if (noAnnotationsInBytecode(flags)) return emptyList()
+        if (noAnnotationsInBytecode(flags) && !maySynthesizeExtraCallableAnnotations(kind)) return emptyList()
 
         if (kind == AnnotatedCallableKind.PROPERTY) {
             return loadPropertyAnnotations(container, proto as ProtoBuf.Property, PropertyRelatedElement.PROPERTY)
@@ -81,6 +80,8 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
         return findClassAndLoadMemberAnnotations(container, signature)
     }
+
+    abstract fun maySynthesizeExtraCallableAnnotations(kind: AnnotatedCallableKind): Boolean
 
     override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<A> =
         loadAnnotationsIfPresentInBytecode(proto.flags) {
