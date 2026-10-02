@@ -198,17 +198,21 @@ class JsBrowserTestsIT : KGPBaseTest() {
                     sourceSets.commonTest {
                         dependencies {
                             implementation(kotlin("test"))
+                            // KT-89269: transitively imports @js-joda/core in Wasm browser tests.
+                            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
                         }
                     }
 
                     sourceSets.commonTest.get().compileSource(
                         """
+                        import kotlinx.datetime.LocalDate
                         import kotlin.test.*
                         
                         class JsBrowserSmokeTest {
                             @Test
                             fun assertOk() {
                                 assertTrue(42 == 42)
+                                assertEquals(LocalDate(2026, 1, 2), LocalDate.parse("2026-01-02"))
                             }
                             
                             @Test
