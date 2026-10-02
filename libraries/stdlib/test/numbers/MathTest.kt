@@ -39,6 +39,8 @@ private val Float.ulpCommon: Float
 class DoubleMathTest {
 
     @Test fun trigonometric() {
+        assertEquals(6.283185307179586, TAU)
+
         assertEquals(0.0, sin(0.0))
         assertAlmostEquals(0.0, sin(PI))
 
