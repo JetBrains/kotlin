@@ -540,7 +540,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR,
-            "An accessor will not be generated for ''{0}'', so the annotation will not be written to the class file",
+            "An accessor will not be generated for ''{0}'', so the annotation will not be written to the class file.",
             STRING,
         )
         map.put(
