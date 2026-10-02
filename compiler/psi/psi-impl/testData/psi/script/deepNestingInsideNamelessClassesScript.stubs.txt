@@ -9,14 +9,14 @@ FILE[kind=Script[packageFqName=one.two]]
       CLASS_BODY
         OBJECT_DECLARATION[classId=one/two/A.<no name provided>, fqName=one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
           CLASS_BODY
-            CLASS[classId=one/two/A.<no name provided>.B, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
+            CLASS[classId=one/two/A.<no name provided>.B, fqName=one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
               CLASS_BODY
-                OBJECT_DECLARATION[classId=one/two/A.<no name provided>.B.<no name provided>, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+                OBJECT_DECLARATION[classId=one/two/A.<no name provided>.B.<no name provided>, fqName=one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
                   CLASS_BODY
-                    CLASS[classId=one/two/A.<no name provided>.B.<no name provided>.C, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
-                    OBJECT_DECLARATION[classId=one/two/A.<no name provided>.B.<no name provided>.<no name provided>, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+                    CLASS[classId=one/two/A.<no name provided>.B.<no name provided>.C, fqName=one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B.<no name provided>.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+                    OBJECT_DECLARATION[classId=one/two/A.<no name provided>.B.<no name provided>.<no name provided>, fqName=one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B.<no name provided>.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
                       CLASS_BODY
-                        CLASS[classId=one/two/A.<no name provided>.B.<no name provided>.<no name provided>.D, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
+                        CLASS[classId=one/two/A.<no name provided>.B.<no name provided>.<no name provided>.D, fqName=one.two.DeepNestingInsideNamelessClassesScript.A.<no name provided>.B.<no name provided>.<no name provided>.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
     SCRIPT_INITIALIZER
       OBJECT_LITERAL
         OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]

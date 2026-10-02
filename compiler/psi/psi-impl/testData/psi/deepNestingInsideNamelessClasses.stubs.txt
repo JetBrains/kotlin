@@ -8,23 +8,23 @@ FILE[kind=File[packageFqName=one.two]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=one/two/A.<no name provided>, fqName=one.two.A.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
         CLASS_BODY
-          CLASS[classId=one/two/A.<no name provided>.B, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
+          CLASS[classId=one/two/A.<no name provided>.B, fqName=one.two.A.<no name provided>.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
             CLASS_BODY
-              OBJECT_DECLARATION[classId=one/two/A.<no name provided>.B.<no name provided>, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+              OBJECT_DECLARATION[classId=one/two/A.<no name provided>.B.<no name provided>, fqName=one.two.A.<no name provided>.B.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
                 CLASS_BODY
-                  CLASS[classId=one/two/A.<no name provided>.B.<no name provided>.C, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
-                  OBJECT_DECLARATION[classId=one/two/A.<no name provided>.B.<no name provided>.<no name provided>, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+                  CLASS[classId=one/two/A.<no name provided>.B.<no name provided>.C, fqName=one.two.A.<no name provided>.B.<no name provided>.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+                  OBJECT_DECLARATION[classId=one/two/A.<no name provided>.B.<no name provided>.<no name provided>, fqName=one.two.A.<no name provided>.B.<no name provided>.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
                     CLASS_BODY
-                      CLASS[classId=one/two/A.<no name provided>.B.<no name provided>.<no name provided>.D, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
+                      CLASS[classId=one/two/A.<no name provided>.B.<no name provided>.<no name provided>.D, fqName=one.two.A.<no name provided>.B.<no name provided>.<no name provided>.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
   OBJECT_DECLARATION[classId=one/two/<no name provided>, fqName=one.two.<no name provided>, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
     CLASS_BODY
-      CLASS[classId=one/two/<no name provided>.<no name provided>, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+      CLASS[classId=one/two/<no name provided>.<no name provided>, fqName=one.two.<no name provided>.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
         CLASS_BODY
-          OBJECT_DECLARATION[classId=one/two/<no name provided>.<no name provided>.<no name provided>, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+          OBJECT_DECLARATION[classId=one/two/<no name provided>.<no name provided>.<no name provided>, fqName=one.two.<no name provided>.<no name provided>.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
             CLASS_BODY
-              CLASS[classId=one/two/<no name provided>.<no name provided>.<no name provided>.E, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E, superNames=[]]
-      CLASS[classId=one/two/<no name provided>.F, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=F, superNames=[]]
+              CLASS[classId=one/two/<no name provided>.<no name provided>.<no name provided>.E, fqName=one.two.<no name provided>.<no name provided>.<no name provided>.E, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=E, superNames=[]]
+      CLASS[classId=one/two/<no name provided>.F, fqName=one.two.<no name provided>.F, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=F, superNames=[]]
         CLASS_BODY
-          CLASS[classId=one/two/<no name provided>.F.<no name provided>, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+          CLASS[classId=one/two/<no name provided>.F.<no name provided>, fqName=one.two.<no name provided>.F.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
             CLASS_BODY
-              CLASS[classId=one/two/<no name provided>.F.<no name provided>.G, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=G, superNames=[]]
+              CLASS[classId=one/two/<no name provided>.F.<no name provided>.G, fqName=one.two.<no name provided>.F.<no name provided>.G, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=G, superNames=[]]

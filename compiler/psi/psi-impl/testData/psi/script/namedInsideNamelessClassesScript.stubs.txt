@@ -19,9 +19,9 @@ FILE[kind=Script[packageFqName=one.two]]
       CLASS_BODY
         OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.NamedInsideNamelessClassesScript.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
           CLASS_BODY
-            CLASS[classId=one/two/Outer.<no name provided>.A, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
-            OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>.B, fqName=null, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
-            TYPEALIAS[classId=one/two/Outer.<no name provided>.C, fqName=null, isTopLevel=false, name=C]
+            CLASS[classId=one/two/Outer.<no name provided>.A, fqName=one.two.NamedInsideNamelessClassesScript.Outer.<no name provided>.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+            OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>.B, fqName=one.two.NamedInsideNamelessClassesScript.Outer.<no name provided>.B, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
+            TYPEALIAS[classId=one/two/Outer.<no name provided>.C, fqName=one.two.NamedInsideNamelessClassesScript.Outer.<no name provided>.C, isTopLevel=false, name=C]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Int]

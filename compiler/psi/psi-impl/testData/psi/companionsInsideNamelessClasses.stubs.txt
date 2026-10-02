@@ -6,32 +6,32 @@ FILE[kind=File[packageFqName=one.two]]
   IMPORT_LIST
   CLASS[classId=one/two/<no name provided>, fqName=one.two.<no name provided>, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=null, superNames=[]]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=one/two/<no name provided>.Companion, fqName=null, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=one/two/<no name provided>.Companion, fqName=one.two.<no name provided>.Companion, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
-          CLASS[classId=one/two/<no name provided>.Companion.A, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+          CLASS[classId=one/two/<no name provided>.Companion.A, fqName=one.two.<no name provided>.Companion.A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
   OBJECT_DECLARATION[classId=one/two/<no name provided>, fqName=one.two.<no name provided>, isObjectLiteral=false, isTopLevel=true, name=null, superNames=[]]
     CLASS_BODY
-      CLASS[classId=one/two/<no name provided>.Named, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Named, superNames=[]]
+      CLASS[classId=one/two/<no name provided>.Named, fqName=one.two.<no name provided>.Named, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Named, superNames=[]]
         CLASS_BODY
-          OBJECT_DECLARATION[classId=one/two/<no name provided>.Named.NamedCompanion, fqName=null, isObjectLiteral=false, isTopLevel=false, name=NamedCompanion, superNames=[]]
+          OBJECT_DECLARATION[classId=one/two/<no name provided>.Named.NamedCompanion, fqName=one.two.<no name provided>.Named.NamedCompanion, isObjectLiteral=false, isTopLevel=false, name=NamedCompanion, superNames=[]]
             MODIFIER_LIST[companion]
             CLASS_BODY
-              CLASS[classId=one/two/<no name provided>.Named.NamedCompanion.B, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
-              OBJECT_DECLARATION[classId=one/two/<no name provided>.Named.NamedCompanion.<no name provided>, fqName=null, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+              CLASS[classId=one/two/<no name provided>.Named.NamedCompanion.B, fqName=one.two.<no name provided>.Named.NamedCompanion.B, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=B, superNames=[]]
+              OBJECT_DECLARATION[classId=one/two/<no name provided>.Named.NamedCompanion.<no name provided>, fqName=one.two.<no name provided>.Named.NamedCompanion.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
                 CLASS_BODY
-                  CLASS[classId=one/two/<no name provided>.Named.NamedCompanion.<no name provided>.C, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+                  CLASS[classId=one/two/<no name provided>.Named.NamedCompanion.<no name provided>.C, fqName=one.two.<no name provided>.Named.NamedCompanion.<no name provided>.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
   CLASS[classId=one/two/Outer, fqName=one.two.Outer, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Outer, superNames=[]]
     CLASS_BODY
       OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
         CLASS_BODY
-          CLASS[classId=one/two/Outer.<no name provided>.Inner, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Inner, superNames=[]]
+          CLASS[classId=one/two/Outer.<no name provided>.Inner, fqName=one.two.Outer.<no name provided>.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Inner, superNames=[]]
             CLASS_BODY
               COMPANION_BLOCK
                 MODIFIER_LIST[companion]
                 CLASS_BODY
-                  CLASS[classId=one/two/Outer.<no name provided>.Inner.D, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
-                  TYPEALIAS[classId=one/two/Outer.<no name provided>.Inner.E, fqName=null, isTopLevel=false, name=E]
+                  CLASS[classId=one/two/Outer.<no name provided>.Inner.D, fqName=one.two.Outer.<no name provided>.Inner.D, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=D, superNames=[]]
+                  TYPEALIAS[classId=one/two/Outer.<no name provided>.Inner.E, fqName=one.two.Outer.<no name provided>.Inner.E, isTopLevel=false, name=E]
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Int]
@@ -40,4 +40,4 @@ FILE[kind=File[packageFqName=one.two]]
         CLASS_BODY
           OBJECT_DECLARATION[classId=one/two/Outer.<no name provided>, fqName=one.two.Outer.<no name provided>, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
             CLASS_BODY
-              CLASS[classId=one/two/Outer.<no name provided>.F, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=F, superNames=[]]
+              CLASS[classId=one/two/Outer.<no name provided>.F, fqName=one.two.Outer.<no name provided>.F, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=F, superNames=[]]
