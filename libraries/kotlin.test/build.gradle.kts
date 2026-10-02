@@ -152,7 +152,7 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         if (!buildFeatures.isolatedProjects.active.get()) {
-            nodejs()
+            wasmtime()
         }
         // cast is necessary because of KT-85971
         // update after bootstrap
