@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
+import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.ir.declarations.*
@@ -405,11 +407,14 @@ class IrInlineCodegen(
 
         var curFinallyDepth = 0
         var curInstr: AbstractInsnNode? = intoNode.instructions.first
+        var curLineNumber = -1
         while (curInstr != null) {
             processor.processInstruction(curInstr, true)
             if (isFinallyStart(curInstr)) {
                 //TODO depth index calc could be more precise
                 curFinallyDepth = getConstant(curInstr.previous)
+            } else if (curInstr is LineNumberNode) {
+                curLineNumber = curInstr.line
             }
 
             val extension = extensionPoints[curInstr]
@@ -420,6 +425,12 @@ class IrInlineCodegen(
                     nextFreeLocalIndex = max(offsetForFinallyLocalVar + local.node.index + size, nextFreeLocalIndex)
                 }
 
+                // `generateFinallyBlocks` will first emit a store instruction if return type is not Unit.
+                // Remove the last LineNumberNode if its only effect will be on that store instruction.
+                curInstr.findPreviousOrNull { it is LineNumberNode || it.isMeaningful }
+                    ?.takeIf { it is LineNumberNode }
+                    ?.let(intoNode.instructions::remove)
+
                 val start = Label()
                 val finallyNode = createEmptyMethodNode()
                 finallyNode.visitLabel(start)
@@ -427,6 +438,11 @@ class IrInlineCodegen(
                 sourceCompiler.generateFinallyBlocks(
                     finallyNode, curFinallyDepth, extension.returnType, extension.finallyIntervalEnd.label, extension.jumpTarget
                 )
+                if (curLineNumber != -1) {
+                    val label = Label()
+                    finallyNode.visitLabel(label)
+                    finallyNode.visitLineNumber(curLineNumber, label)
+                }
                 mark.dropTo()
                 insertNodeBefore(finallyNode, intoNode, curInstr)
 

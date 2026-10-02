@@ -48,5 +48,5 @@ fun box() {
 // test.kt:17 callSite
 // test.kt:12 callSite
 // test.kt:6 finallyAction
-// test.kt:12 callSite
+// test.kt:17 callSite
 // test.kt:27 box

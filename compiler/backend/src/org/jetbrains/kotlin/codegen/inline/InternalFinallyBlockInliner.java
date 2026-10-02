@@ -163,8 +163,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             AbstractInsnNode nextPrev = instrInsertFinallyBefore.getPrevious();
             assert markedReturn.getNext() instanceof LabelNode : "Label should be occurred after non-local return";
             LabelNode newFinallyEnd = (LabelNode) markedReturn.getNext();
-            AbstractInsnNode instructionAfterReturn = newFinallyEnd.getNext();
-            Integer lineNumberAfterReturn = getLineNumberOrNull(instructionAfterReturn);
+            Integer lineNumberOfReturn = getLineNumberOrNull(markedReturn);
             Type nonLocalReturnType = getReturnType(markedReturn.getOpcode());
 
             //Generally there could be several tryCatch blocks (group) on one code interval (same start and end labels, but maybe different handlers) -
@@ -181,6 +180,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             int originalDepthIndex = 0;
             List<TryCatchBlockNodeInfo> nestedUnsplitBlocksWithoutFinally = new ArrayList<>();
             List<LocalVarNodeWrapper> newLocalVarIntervals = new ArrayList<>();
+            boolean finallyInserted = false;
             while (tryCatchBlockIterator.hasNext()) {
                 TryBlockCluster<TryCatchBlockNodeInfo> clusterToFindFinally = tryCatchBlockIterator.next();
                 List<TryCatchBlockNodeInfo> clusterBlocks = clusterToFindFinally.getBlocks();
@@ -199,6 +199,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                     throw new RuntimeException("Lambda try blocks should be skipped");
                 }
 
+                finallyInserted = true;
                 originalDepthIndex++;
 
                 instructions.resetLabels();
@@ -274,11 +275,11 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 nestedUnsplitBlocksWithoutFinally.clear();
             }
 
-            // if the insertion of finally-blocks has changed the line number of the following code, restore it
-            if (lineNumberAfterReturn != null && !lineNumberAfterReturn.equals(getLineNumberOrNull(instructionAfterReturn))) {
+            // if the insertion of finally-blocks has changed the line number of the return instruction, restore it
+            if (finallyInserted && lineNumberOfReturn != null && !lineNumberOfReturn.equals(getLineNumberOrNull(instrInsertFinallyBefore))) {
                 LabelNode label = new LabelNode();
-                inlineFun.instructions.insertBefore(instructionAfterReturn, label);
-                inlineFun.instructions.insertBefore(instructionAfterReturn, new LineNumberNode(lineNumberAfterReturn, label));
+                inlineFun.instructions.insertBefore(instrInsertFinallyBefore, label);
+                inlineFun.instructions.insertBefore(instrInsertFinallyBefore, new LineNumberNode(lineNumberOfReturn, label));
             }
 
             //skip just inserted finally
@@ -289,7 +290,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             }
 
             //finally block inserted so we need split update localVarTable in lambda
-            if (instrInsertFinallyBefore.getPrevious() != nextPrev && curIns != null) {
+            if (finallyInserted && curIns != null) {
                 LabelNode startNode = new LabelNode();
                 LabelNode endNode = new LabelNode();
                 instructions.insert(curIns, startNode);
