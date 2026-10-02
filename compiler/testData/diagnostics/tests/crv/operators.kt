@@ -29,10 +29,10 @@ fun <T: Comparable<T>> comparison(a: T, b: T) {
 }
 
 fun typeOperators(a: Any) {
-    a as? Int
+    a <!RETURN_VALUE_NOT_USED!>as?<!> Int
     a as Number // result in smartcast, thus always "used"
-    a is Int
-    a !is Long
+    a <!RETURN_VALUE_NOT_USED!>is<!> Int
+    a <!RETURN_VALUE_NOT_USED!>!is<!> Long
 
     fun foo(): Number = TODO()
 
@@ -40,10 +40,10 @@ fun typeOperators(a: Any) {
         is Float -> return
     }
 
-    foo() as? Int
+    foo() <!RETURN_VALUE_NOT_USED!>as?<!> Int
     foo() as Int
-    foo() is Int
-    foo() !is Long
+    foo() <!RETURN_VALUE_NOT_USED!>is<!> Int
+    foo() <!RETURN_VALUE_NOT_USED!>!is<!> Long
 }
 
 /* GENERATED_FIR_TAGS: additiveExpression, andExpression, annotationUseSiteTargetFile, comparisonExpression,
