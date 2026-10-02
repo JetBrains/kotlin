@@ -904,7 +904,7 @@ open class FirDeclarationsResolveTransformer(
         }
     }
 
-    open fun withReplSnippet(
+    fun withReplSnippet(
         snippet: FirReplSnippet,
         action: () -> FirReplSnippet,
     ): FirReplSnippet = context.withReplSnippet(snippet) {
