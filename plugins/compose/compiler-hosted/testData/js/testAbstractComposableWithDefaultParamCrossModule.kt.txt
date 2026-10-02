@@ -117,7 +117,13 @@ local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
       }
 , $composer = $composer, $changed = 54)
       return remember<Function2<Composer, Int, Unit>>(key1 = tmp_1, calculation = local inline fun <anonymous>(): Function2<Composer, Int, Unit> {
-        return tmp_1::invoke
+        return Function2<Composer, Int, Unit>(
+          /* bound = */ [tmp_1],
+          /* invoke = */          local fun(<this>: ComposableLambda, p0: Composer, p1: Int) {
+            return <this>.invoke(p1 = p0, p2 = p1) /*~> Unit */
+          }
+        )
+
       }
 , $composer = $composer, $changed = 0)
     }
