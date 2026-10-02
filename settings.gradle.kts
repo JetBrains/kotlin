@@ -641,16 +641,6 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-standalone-implementation",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-api-surface-components",
     ":prepare:analysis-api:kotlin-analysis-api-intellij-implementation-components",
-    ":prepare:analysis-api:kotlin-analysis-api-allopen-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-assignment-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-compose-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-dataframe-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-js-plain-objects-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-kotlinx-serialization-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-lombok-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-noarg-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-parcelize-compiler-plugin-support",
-    ":prepare:analysis-api:kotlin-analysis-api-sam-with-receiver-compiler-plugin-support",
     ":prepare:analysis-api:kotlin-analysis-api-internal-test-framework",
 )
 
