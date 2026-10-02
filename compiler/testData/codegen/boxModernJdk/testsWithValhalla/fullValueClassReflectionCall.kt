@@ -2,8 +2,6 @@
 // LANGUAGE: +FullValueClasses
 // WITH_REFLECT
 
-// Unlike Kotlin inline value classes, full value classes are passed as is, so reflection calls the callables taking them as usual.
-
 import kotlin.reflect.full.primaryConstructor
 
 value class Full(val a: Int, val b: Int) {
