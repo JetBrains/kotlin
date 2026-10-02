@@ -361,9 +361,19 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     override fun getAnnotationEntries(): List<KtAnnotationEntry> =
         fileAnnotationList?.annotationEntries ?: emptyList()
 
+    /**
+     * Renames this file.
+     *
+     * When [KtPsiMutationService] is registered, as in the IntelliJ Kotlin plugin, the renaming may also update the PSI, e.g., reparse the
+     * file if the new name turns it into a script or back. Without the service, it performs only the plain platform renaming, which does
+     * not reparse the file.
+     */
     @OptIn(KtNonPublicApi::class)
     @Throws(IncorrectOperationException::class)
-    override fun setName(name: String): PsiElement = KtPsiMutationService.getInstance().setCommonFileName(this, name)
+    override fun setName(name: String): PsiElement {
+        val mutationService = KtPsiMutationService.getInstanceOrNull() ?: return super.setName(name)
+        return mutationService.setCommonFileName(this, name)
+    }
 
     override fun getPsiOrParent(): KtElement = this
 
