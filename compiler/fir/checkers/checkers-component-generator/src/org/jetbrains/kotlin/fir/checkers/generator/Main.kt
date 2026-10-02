@@ -220,7 +220,9 @@ fun main(args: Array<String>) {
             alias<FirEnumEntry>("EnumEntryChecker")
             alias<FirAnonymousObject>("AnonymousObjectChecker")
             alias<FirAnonymousInitializer>("AnonymousInitializerChecker")
-            alias<FirReceiverParameter>("ReceiverParameterChecker")
+            alias<FirReceiverParameter>("ReceiverParameterChecker").let {
+                visitAlso<FirScriptReceiverParameter>(it)
+            }
 
             additional(
                 fieldName = "controlFlowAnalyserCheckers",
