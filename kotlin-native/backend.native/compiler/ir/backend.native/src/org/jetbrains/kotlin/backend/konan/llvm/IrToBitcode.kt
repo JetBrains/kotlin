@@ -1813,7 +1813,6 @@ internal class CodeGeneratorVisitor(
             }
 
     private fun evaluateConstantValueImpl(value: IrConstantValue): ConstValue {
-        val symbols = context.symbols
         return when (value) {
             is IrConstantPrimitive -> {
                 val constructedType = value.value.type
@@ -1865,11 +1864,18 @@ internal class CodeGeneratorVisitor(
                     //
                     //  Child(constantValue) could be initialized constantly. This is required for function references.
                     val delegatedCallConstants = constructor.loweredConstructorFunction?.body?.statements
-                            ?.filterIsInstance<IrCall>()
-                            ?.singleOrNull { it.origin == LOWERED_DELEGATING_CONSTRUCTOR_CALL }
+                            ?.flatMap {
+                                when (it) {
+                                    is IrCall -> [it]
+                                    // TODO(KT-89893): Avoid just ignoring other calls in the block
+                                    //  ($init_global of KSuspendFunctionImpl).
+                                    is IrBlock -> it.statements.filterIsInstance<IrCall>()
+                                    else -> []
+                                }
+                            }?.singleOrNull { it.origin == LOWERED_DELEGATING_CONSTRUCTOR_CALL }
                             ?.getArgumentsWithIr()
                             ?.filter { it.second is IrConstantValue }
-                            ?.associate { it.first.name.toString() to it.second }
+                            ?.associate { [parameter, constant] -> parameter.name.toString() to constant }
                             .orEmpty()
                     fields.map { field ->
                         val init = if (field.isConst) {
