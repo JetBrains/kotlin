@@ -2564,6 +2564,38 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    internal object UnsupportedJsBrowserTestRunnerType : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String, runnerType: String) = build {
+            title { "Unsupported browser test runner type" }
+                .description {
+                    "Browser test runner '$runnerName' of type '$runnerType' cannot be added to the 'browserRunners' collection. " +
+                            "Only runners declared via chromium(), firefox(), or webkit() are supported. " +
+                            "Custom browser test runners are not supported yet. " +
+                            "Follow https://youtrack.jetbrains.com/issue/KT-86706 for updates on custom browser test runner support."
+                }
+                .solution { "Declare browser test runners using chromium(), firefox(), or webkit() in the 'test {}' block." }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
+    internal object ConflictingJsBrowserTestRunnerName : ToolingDiagnosticFactory(
+        predefinedSeverity = ERROR,
+        predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
+    ) {
+        operator fun invoke(runnerName: String) = build {
+            title { "Conflicting browser test runner name" }
+                .description {
+                    "Cannot declare browser test runner with name '$runnerName': " +
+                            "a browser test runner with the same name is already declared via different runner type. "
+                }
+                .solution { "Use different name for the runner." }
+                .documentationLink(URI("https://kotl.in/new-js-browser-test-dsl"))
+        }
+    }
+
     @OptIn(ExperimentalWasmDsl::class)
     internal object BrowserBundlerAlreadyDefined : ToolingDiagnosticFactory(
         predefinedSeverity = ERROR,

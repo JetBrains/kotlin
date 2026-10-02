@@ -1,0 +1,4 @@
+[ConflictingJsBrowserTestRunnerName | ERROR] Conflicting browser test runner name
+Cannot declare browser test runner with name 'same': a browser test runner with the same name is already declared via different runner type.
+Use different name for the runner.
+See https://kotl.in/new-js-browser-test-dsl for more details.
