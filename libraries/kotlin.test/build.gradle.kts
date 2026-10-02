@@ -27,6 +27,7 @@ plugins {
     id("signing-convention")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("wasmtime-configuration")
 }
 
 description = "Kotlin Test Library"
