@@ -6,23 +6,28 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.component
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimeEnv
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.WasmToolsPlugin
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
+import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import java.io.File
+import java.net.URI
 import javax.inject.Inject
 
 /**
@@ -54,6 +59,23 @@ internal constructor() : DefaultTask() {
 
     @get:Input
     abstract val executable: Property<String>
+
+    @get:Internal
+    internal abstract val env: Property<WasmtimeEnv>
+
+    @get:Input
+    internal val allowInsecureProtocol: Provider<Boolean> = env.map {
+        it.allowInsecureProtocol
+    }
+
+    @get:Input
+    @get:Optional
+    val downloadBaseUrlProvider: Provider<String> = env.mapOrNull(project.providers) {
+        it.downloadBaseUrl
+    }
+
+    @get:Input
+    internal val ivyDependencyProvider: Provider<String> = env.map { it.ivyDependency }
 
     /**
      * Core Wasm module to be turned into a component.
@@ -100,6 +122,17 @@ internal constructor() : DefaultTask() {
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
+    @get:Internal
+    abstract var adapter: Provider<Configuration>
+
+    @get:Classpath
+    @get:Optional
+    val dist: File by lazy {
+        withUrlRepo {
+            adapter.get().files.single()
+        }
+    }
+
     @TaskAction
     fun componentize() {
         val wasmTools = executable.get()
@@ -142,12 +175,7 @@ internal constructor() : DefaultTask() {
         val adaptFile = temporaryDir
             .resolve("wasi_snapshot_preview1.command.wasm")
             .also {
-                it.outputStream()
-                    .use { tmpDir ->
-                        WasmComponentizeTask::class.java
-                            .getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/wasm/component/wasi_snapshot_preview1.command.wasm")
-                            ?.copyTo(tmpDir)
-                    }
+                dist.copyTo(it)
             }
 
         val componentDirectory = outputDirectory.getFile()
@@ -187,6 +215,27 @@ internal constructor() : DefaultTask() {
                 isWitProject
             }
             .reversed()
+
+    private fun <T> withUrlRepo(action: () -> T): T {
+        val repo = downloadBaseUrlProvider.orNull?.let {
+            project.repositories.ivy { repo ->
+                repo.name = "Distributions at $it"
+                repo.url = URI(it)
+
+                repo.isAllowInsecureProtocol = allowInsecureProtocol.get()
+
+                repo.patternLayout {
+                    it.artifact("v[revision]/wasi_snapshot_preview1.command.wasm")
+                }
+                repo.metadataSources { it.artifact() }
+                repo.content { it.includeModule("bytecodealliance.wasmtime", "wasmtime") }
+            }
+        }
+
+        return action().also {
+            repo?.let { project.repositories.remove(it) }
+        }
+    }
 
     internal companion object {
         private const val EMBED_DIRECTORY_NAME = "embed"

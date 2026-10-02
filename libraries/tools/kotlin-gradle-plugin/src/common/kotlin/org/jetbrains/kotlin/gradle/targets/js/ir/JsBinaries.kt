@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistributi
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.filesProvider
@@ -363,6 +364,15 @@ internal class ExecutableWasmWasi(
         WasmComponentizeTask.register(compilation, componentTaskName()) {
             inputFile.set(wasmFileFromJsFileByMode())
             outputDirectory.set(outputDirBase.map { it.dir(COMPONENT_DIRECTORY_NAME) })
+            val wasmtimeEnv = WasmtimePlugin.applyWithEnvSpec(project)
+            env.set(wasmtimeEnv.env)
+            adapter =
+                ivyDependencyProvider.map { ivyDep ->
+                    project.configurations.detachedConfiguration(
+                        project.dependencies.create(ivyDep)
+                    )
+                        .also { conf -> conf.isTransitive = false }
+                }
         }
 
     override val mainWasmFile: Provider<RegularFile> = componentTask.flatMap {
