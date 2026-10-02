@@ -29,6 +29,7 @@ dependencies {
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
+    compileOnly(libs.guava)
     compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
