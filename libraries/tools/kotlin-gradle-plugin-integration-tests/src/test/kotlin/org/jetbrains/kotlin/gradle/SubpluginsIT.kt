@@ -63,9 +63,9 @@ class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("Allopen plugin opens classes and methods")
-    @GradleTest
-    fun testAllOpenPlugin(gradleVersion: GradleVersion) {
-        project("allOpenSimple", gradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testAllOpenPlugin(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("allOpenSimple", gradleVersion, compilerVersion = compilerVersion) {
             build("assemble") {
                 val classesDir = kotlinClassesDir()
                 val openClass = classesDir.resolve("test/OpenClass.class")
@@ -90,9 +90,9 @@ class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("Kotlin Spring plugin opens classes and methods")
-    @GradleTest
-    fun testKotlinSpringPlugin(gradleVersion: GradleVersion) {
-        project("allOpenSpring", gradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testKotlinSpringPlugin(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("allOpenSpring", gradleVersion, compilerVersion = compilerVersion) {
             build("assemble") {
 
                 val classesDir = kotlinClassesDir()
@@ -140,36 +140,36 @@ class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("NoArg: Don't invoke initializers by default")
-    @GradleTest
-    fun testNoArgKt18668(gradleVersion: GradleVersion) {
-        project("noArgKt18668", gradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testNoArgKt18668(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("noArgKt18668", gradleVersion, compilerVersion = compilerVersion) {
             build("assemble")
         }
     }
 
     @OtherGradlePluginTests
     @DisplayName("sam-with-receiver works")
-    @GradleTest
-    fun testSamWithReceiverSimple(gradleVersion: GradleVersion) {
-        project("samWithReceiverSimple", gradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testSamWithReceiverSimple(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("samWithReceiverSimple", gradleVersion, compilerVersion = compilerVersion) {
             build("assemble")
         }
     }
 
     @OtherGradlePluginTests
     @DisplayName("assignment works")
-    @GradleTest
-    fun testAssignmentSimple(gradleVersion: GradleVersion) {
-        project("assignmentSimple", gradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testAssignmentSimple(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("assignmentSimple", gradleVersion, compilerVersion = compilerVersion) {
             build("assemble")
         }
     }
 
     @OtherGradlePluginTests
     @DisplayName("Allopen plugin works when classpath dependency is not declared in current or root project ")
-    @GradleTest
-    fun testAllOpenFromNestedBuildscript(gradleVersion: GradleVersion) {
-        project("allOpenFromNestedBuildscript", gradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testAllOpenFromNestedBuildscript(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("allOpenFromNestedBuildscript", gradleVersion, compilerVersion = compilerVersion) {
             build("testClasses") {
                 val nestedSubproject = subProject("a/b")
                 assertFileExists(nestedSubproject.kotlinClassesDir().resolve("MyClass.class"))
@@ -180,9 +180,9 @@ class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("Allopen applied from script works")
-    @GradleTest
-    fun testAllopenFromScript(gradleVersion: GradleVersion) {
-        project("allOpenFromScript", gradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testAllopenFromScript(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("allOpenFromScript", gradleVersion, compilerVersion = compilerVersion) {
             build("testClasses") {
                 assertFileExists(kotlinClassesDir().resolve("MyClass.class"))
                 assertFileExists(kotlinClassesDir(sourceSet = "test").resolve("MyTestClass.class"))
@@ -226,9 +226,9 @@ class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("Lombok plugin is working")
-    @GradleTest
-    fun testLombokPlugin(gradleVersion: GradleVersion) {
-        project("lombokProject", gradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testLombokPlugin(gradleVersion: GradleVersion, compilerVersion: String) {
+        project("lombokProject", gradleVersion, compilerVersion = compilerVersion) {
             listOf(
                 subProject("yeskapt").buildGradle,
                 subProject("nokapt").buildGradle,
@@ -245,10 +245,10 @@ class SubpluginsIT : KGPBaseTest() {
 
     @OtherGradlePluginTests
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
-    @GradleTest
-    fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
+    @GradleWithCompilerVersionTest
+    fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion, compilerVersion: String) {
         val languageVersionForBuildSrc = KotlinVersion.firstNonDeprecated.name
-        project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
+        project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion, compilerVersion = compilerVersion) {
             subProject("buildSrc").buildGradleKts.modify {
                 //language=kts
                 """
