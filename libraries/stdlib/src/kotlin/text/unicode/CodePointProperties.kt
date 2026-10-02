@@ -8,6 +8,8 @@ package kotlin.text.unicode
 
 /**
  * Returns the Unicode general category of the Unicode character corresponding to this code point.
+ *
+ * @sample samples.text.CodePoints.category
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -15,6 +17,8 @@ public expect val CodePoint.category: CharCategory
 
 /**
  * Returns `true` if the Unicode character corresponding to the specified [codePoint] belongs to this category.
+ *
+ * @sample samples.text.CodePoints.category
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -43,7 +47,7 @@ public expect fun CodePoint.isDefined(): Boolean
 public expect fun CodePoint.isDigit(): Boolean
 
 /**
- * Returns `true` if the Unicode character corresponding to this code pointCodePoints is a letter.
+ * Returns `true` if the Unicode character corresponding to this code point is a letter.
  *
  * A character is considered to be a letter if its [category] is [CharCategory.UPPERCASE_LETTER],
  * [CharCategory.LOWERCASE_LETTER], [CharCategory.TITLECASE_LETTER], [CharCategory.MODIFIER_LETTER], or [CharCategory.OTHER_LETTER].
@@ -55,7 +59,7 @@ public expect fun CodePoint.isDigit(): Boolean
 public expect fun CodePoint.isLetter(): Boolean
 
 /**
- * Returns `true` if the Unicode character corresponding to this code pointCodePoints is a letter or digit.
+ * Returns `true` if the Unicode character corresponding to this code point is a letter or digit.
  *
  * @see isLetter
  * @see isDigit
@@ -67,7 +71,7 @@ public expect fun CodePoint.isLetter(): Boolean
 public expect fun CodePoint.isLetterOrDigit(): Boolean
 
 /**
- * Returns `true` if the Unicode character corresponding to this code pointCodePoints is an ISO control character.
+ * Returns `true` if the Unicode character corresponding to this code point is an ISO control character.
  *
  * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL],
  * meaning the Char is in the range `'\u0000'..'\u001F'` or in the range `'\u007F'..'\u009F'`.
@@ -79,7 +83,7 @@ public expect fun CodePoint.isLetterOrDigit(): Boolean
 public expect fun CodePoint.isISOControl(): Boolean
 
 /**
- * Returns `true` if the Unicode character corresponding to this code pointCodePoints is lower case.
+ * Returns `true` if the Unicode character corresponding to this code point is lower case.
  *
  * A character is considered to be a lower case character if its [category] is [CharCategory.LOWERCASE_LETTER],
  * or it has contributory property `Other_Lowercase` as defined by the Unicode Standard.
@@ -91,7 +95,7 @@ public expect fun CodePoint.isISOControl(): Boolean
 public expect fun CodePoint.isLowerCase(): Boolean
 
 /**
- * Returns `true` if the Unicode character corresponding to this code pointCodePoints is upper case.
+ * Returns `true` if the Unicode character corresponding to this code point is upper case.
  *
  * A character is considered to be an upper case character if its [category] is [CharCategory.UPPERCASE_LETTER],
  * or it has contributory property `Other_Uppercase` as defined by the Unicode Standard.
@@ -103,7 +107,7 @@ public expect fun CodePoint.isLowerCase(): Boolean
 public expect fun CodePoint.isUpperCase(): Boolean
 
 /**
- * Returns `true` if the Unicode character corresponding to this code pointCodePoints is a title case letter.
+ * Returns `true` if the Unicode character corresponding to this code point is a title case letter.
  *
  * A character is considered to be a title case letter if its [category] is [CharCategory.TITLECASE_LETTER].
  *
