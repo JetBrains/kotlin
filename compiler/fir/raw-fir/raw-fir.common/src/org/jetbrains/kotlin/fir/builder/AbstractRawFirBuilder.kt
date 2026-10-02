@@ -1356,7 +1356,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         target.bind(function)
     }
 
-    protected open fun <D : FirDeclaration, R : FirBasedSymbol<D>> replSnippetDeclarationSymbol(declaration: D): R {
+    protected fun <D : FirDeclaration, R : FirBasedSymbol<D>> replSnippetDeclarationSymbol(declaration: D): R {
         @Suppress("UNCHECKED_CAST")
         return declaration.symbol as R
     }
