@@ -95,6 +95,35 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
         )
     }
 
+    @GradleTest
+    @DisplayName("Only the sources of one target with enabled sources publication are published")
+    fun publicationContentWithSourcesOfSingleTargetTest(gradleVersion: GradleVersion) {
+        val publishedProject = kotlinArchiveProducer(gradleVersion)
+            .apply {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        withSourcesJar(publish = false)
+                        targets.getByName(TARGET_WITH_SOURCES).withSourcesJar(publish = true)
+                    }
+                }
+            }
+            .publish(publisherConfiguration = PublisherConfiguration(group = TEST_GROUP))
+
+        assertEquals(
+            GradleMetadata(
+                expectedRootVariants.variants.filterNot {
+                    it.name.endsWith(SOURCES_VARIANT_SUFFIX) && it.name != "$TARGET_WITH_SOURCES$SOURCES_VARIANT_SUFFIX"
+                }.toSet()
+            ).prettyPrinted,
+            publishedProject.rootComponent.gradleMetadata.parseGradleMetadata().prettyPrinted,
+        )
+
+        assertEquals(
+            expectedSourcesJarEntriesOfSingleLinuxTarget.prettyPrinted,
+            publishedProject.rootComponent.sourcesJar.zipEntries().prettyPrinted,
+        )
+    }
+
     private fun PublishedProject.publishedModules(): List<String> =
         groupDirectory().listFiles().orEmpty()
             .map { it.name }
@@ -664,6 +693,21 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
             "nativeMain/nativeMain.kt",
             "wasmJsMain/wasmJsMain.kt",
             "webMain/webMain.kt",
+        )
+
+        private const val TARGET_WITH_SOURCES = "linuxArm64"
+        private const val SOURCES_VARIANT_SUFFIX = "SourcesElements-published"
+
+        /**
+         * Only the source sets which [TARGET_WITH_SOURCES] is compiled from. The common source sets of the other targets,
+         * such as "appleMain" or "webMain", are unrelated to it, so they stay out of the archive.
+         */
+        private val expectedSourcesJarEntriesOfSingleLinuxTarget = listOf(
+            "META-INF/MANIFEST.MF",
+            "commonMain/commonMain.kt",
+            "linuxArm64Main/linuxArm64Main.kt",
+            "linuxMain/linuxMain.kt",
+            "nativeMain/nativeMain.kt",
         )
     }
 }

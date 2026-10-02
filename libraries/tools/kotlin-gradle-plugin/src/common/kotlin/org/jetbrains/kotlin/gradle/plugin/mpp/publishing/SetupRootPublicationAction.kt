@@ -49,8 +49,10 @@ private fun Project.addSourcesJarArtifactToConfiguration(
 private suspend fun KotlinMultiplatformExtension.sourcesJarContent(): Map<String, Iterable<File>> {
     KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
     return buildSet {
-        addAll(getCommonSourceSetsForMetadataCompilation(project))
-        addAll(getHostSpecificMainSharedSourceSets(project))
+        if (metadataTarget.isSourcesPublishable) {
+            addAll(getCommonSourceSetsForMetadataCompilation(project))
+            addAll(getHostSpecificMainSharedSourceSets(project))
+        }
         if (publishing.publicationFormat.get() == KotlinPublicationFormat.KOTLIN_ARCHIVE) {
             val platformCompilationsInKotlinArchive = getPublishedPlatformCompilations(
                 project,
