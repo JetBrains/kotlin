@@ -169,6 +169,18 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("fullValueClassInPolymorphicHierarchy.kt")
+    public void testFullValueClassInPolymorphicHierarchy() {
+      run("fullValueClassInPolymorphicHierarchy.kt");
+    }
+
+    @Test
+    @TestMetadata("fullValueClassWithSuperclassDefaults.kt")
+    public void testFullValueClassWithSuperclassDefaults() {
+      run("fullValueClassWithSuperclassDefaults.kt");
+    }
+
+    @Test
     @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
     public void testGeneratedClassifiersViaLibraryDependency() {
       run("generatedClassifiersViaLibraryDependency.kt");
