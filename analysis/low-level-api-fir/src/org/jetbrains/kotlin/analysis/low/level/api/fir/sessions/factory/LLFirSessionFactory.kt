@@ -426,7 +426,6 @@ internal class LLFirSessionFactory(
         }
 
         val hostConfiguration = scriptDefinition.hostConfiguration
-        registerExtensions(FirReplCompilerExtensionIdeRegistrar(hostConfiguration).configure())
 
         val compilerArguments = makeScriptCompilerArguments(scriptDefinition.compilerOptions.toList())
         val commandLineProcessors = listOf(AssignmentCommandLineProcessor())

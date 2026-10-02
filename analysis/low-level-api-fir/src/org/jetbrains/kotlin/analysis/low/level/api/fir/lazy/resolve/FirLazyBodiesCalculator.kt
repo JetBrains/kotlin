@@ -17,10 +17,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasGeneratedDelegateBody
-import org.jetbrains.kotlin.fir.declarations.utils.replSnippetDelegatedPropertyCopies
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
@@ -39,12 +37,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.Variance
@@ -184,91 +180,11 @@ private val FirCallableDeclaration.originalPsi: PsiElement? get() = unwrapFakeOv
 private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
     val simpleFunction = designation.target as FirNamedFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
-    if (simpleFunction.origin == FirDeclarationOrigin.Synthetic.ReplEvalFunction) {
-        calculateLazyBodyForEvalFunction(simpleFunction, designation)
-        return
-    }
 
     val newSimpleFunction = revive<FirNamedFunction>(designation, simpleFunction.originalPsi)
 
     replaceLazyBody(simpleFunction, newSimpleFunction)
     replaceLazyValueParameters(simpleFunction, newSimpleFunction)
-}
-
-private fun calculateLazyBodyForEvalFunction(
-    function: FirNamedFunction,
-    designation: FirDesignation,
-) {
-    val newSnippet = reviveReplSnippet(designation)
-    val newFunction = newSnippet.evalFunctionSymbol.fir
-    replaceLazyBody(function, newFunction)
-    replacePropertyCopies(function, newFunction)
-    rebindDestructuringDeclarationEntries(function, designation)
-}
-
-private fun rebindDestructuringDeclarationEntries(
-    function: FirNamedFunction,
-    designation: FirDesignation,
-) {
-    val replSnippet = designation.replSnippet
-    val map = listMultimapOf<KtDestructuringDeclaration, FirProperty>()
-    for (declaration in replSnippet.snippetClass.declarations) {
-        if (declaration !is FirProperty) continue
-        val container = declaration.destructuringDeclarationContainerVariable ?: continue
-        val destructuringDeclaration = container.source?.psi
-        requireWithAttachment(
-            condition = destructuringDeclaration is KtDestructuringDeclaration,
-            message = {
-                "Unexpected declaration: ${declaration.source?.psi?.let { it::class.simpleName }}"
-            },
-        ) {
-            withFirSymbolEntry("container", container)
-            withFirEntry("declaration", declaration)
-        }
-
-        map.put(destructuringDeclaration, declaration)
-    }
-
-    if (map.none()) {
-        return
-    }
-
-    for (statement in function.body?.statements.orEmpty()) {
-        if (statement !is FirProperty || statement.isDestructuringDeclarationContainerVariable != true) continue
-        val psi = statement.source.psi
-        requireWithAttachment(
-            condition = psi is KtDestructuringDeclaration,
-            message = { "Unexpected PSI element for destructuring declaration: ${psi?.let { it::class.simpleName }}" },
-        ) {
-            withFirEntry("statement", statement)
-        }
-
-        for (property in map[psi]) {
-            property.destructuringDeclarationContainerVariable = statement.symbol
-        }
-    }
-}
-
-private fun reviveReplSnippet(designation: FirDesignation): FirReplSnippet {
-    val replDesignation = FirDesignation(listOf(designation.file), designation.replSnippet)
-    return revive<FirReplSnippet>(replDesignation)
-}
-
-@OptIn(FirImplementationDetail::class)
-private fun replacePropertyCopies(
-    target: FirNamedFunction,
-    newFunction: FirNamedFunction,
-) {
-    val copies = target.replSnippetDelegatedPropertyCopies?.entries ?: return
-    val newProperties = newFunction.replSnippetDelegatedPropertyCopies?.values
-    requireWithAttachment(copies.size == newProperties?.size, { "Unexpected copies size" }) {
-        withFirEntry("target", target)
-        withFirEntry("newFunction", newFunction)
-    }
-
-    copies.zip(newProperties).forEach { [copy, newProperty] ->
-        copy.setValue(newProperty)
-    }
 }
 
 private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
@@ -285,19 +201,7 @@ private fun calculateLazyBodyForConstructor(designation: FirDesignation) {
     replaceLazyValueParameters(constructor, newConstructor)
 }
 
-private fun reviveConstructor(designation: FirDesignation, psi: PsiElement?): FirConstructor = when (psi) {
-    is KtScript -> {
-        val newSnippet = reviveReplSnippet(designation)
-        val snippetClass = newSnippet.snippetClass
-        snippetClass.declarations.firstNotNullOfOrNull { it as? FirPrimaryConstructor }
-            ?: errorWithAttachment("Primary constructor is not found") {
-                withFirDesignationEntry("designation", designation)
-                withFirEntry("snippet", newSnippet)
-            }
-    }
-
-    else -> revive<FirConstructor>(designation, psi)
-}
+private fun reviveConstructor(designation: FirDesignation, psi: PsiElement?): FirConstructor = revive<FirConstructor>(designation, psi)
 
 private fun calculateLazyBodyForProperty(designation: FirDesignation) {
     val firProperty = designation.target as FirProperty
@@ -360,11 +264,6 @@ private fun calculateLazyBodyForResultProperty(firProperty: FirProperty, designa
  */
 private fun rebindDelegate(newTarget: FirProperty, oldTarget: FirProperty) {
     val delegate = newTarget.delegate ?: return
-    // Repl has a reference instead of the delegate
-    if (delegate is FirReplExpressionReference) {
-        return
-    }
-
     requireWithAttachment(
         delegate is FirWrappedDelegateExpression,
         { "Unexpected delegate type: ${delegate::class.simpleName}" },
@@ -862,7 +761,7 @@ private fun <E : FirElement> FirTransformer<PersistentList<FirDeclaration>>.recu
     element: E,
     data: PersistentList<FirDeclaration>,
 ): E {
-    if (element is FirFile || element is FirScript || element is FirRegularClass || element is FirReplSnippet) {
+    if (element is FirFile || element is FirScript || element is FirRegularClass) {
         val newList = data.adding(element as FirDeclaration)
         element.transformChildren(this, newList)
     }

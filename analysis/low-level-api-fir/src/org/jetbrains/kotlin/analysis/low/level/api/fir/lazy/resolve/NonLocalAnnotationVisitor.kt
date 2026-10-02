@@ -88,10 +88,6 @@ internal abstract class NonLocalAnnotationVisitor<T> : FirVisitor<Unit, T>() {
         visitAnnotationContainer(script, data)
     }
 
-    override fun visitReplSnippet(replSnippet: FirReplSnippet, data: T) {
-        visitAnnotationContainer(replSnippet, data)
-    }
-
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: T) {
         visitAnnotationContainer(anonymousInitializer, data)
     }

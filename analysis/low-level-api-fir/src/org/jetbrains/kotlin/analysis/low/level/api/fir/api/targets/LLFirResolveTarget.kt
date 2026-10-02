@@ -66,7 +66,6 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
             when (val declaration = pathIterator.next()) {
                 is FirRegularClass -> visitor.withRegularClass(declaration) { goToTarget(pathIterator, visitor) }
                 is FirScript -> visitor.withScript(declaration) { goToTarget(pathIterator, visitor) }
-                is FirReplSnippet -> visitor.withReplSnippet(declaration) { goToTarget(pathIterator, visitor) }
                 is FirFile -> visitor.withFile(declaration) { goToTarget(pathIterator, visitor) }
                 else -> errorWithFirSpecificEntries(
                     "Unexpected declaration in path: ${declaration::class.simpleName}",
@@ -106,7 +105,6 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
                     is FirFile -> it.name
                     is FirRegularClass -> it.name
                     is FirScript -> it.name
-                    is FirReplSnippet -> it.name
                     else -> errorWithFirSpecificEntries("Unsupported path declaration: ${it::class.simpleName}", fir = it)
                 }
             }
@@ -126,7 +124,6 @@ internal sealed class LLFirResolveTarget(val designation: FirDesignation) {
         is FirAnonymousInitializer -> ("<init-block>")
         is FirFile -> fir.name
         is FirScript -> fir.name.asString()
-        is FirReplSnippet -> fir.name.asString()
         else -> "???"
     }
 }

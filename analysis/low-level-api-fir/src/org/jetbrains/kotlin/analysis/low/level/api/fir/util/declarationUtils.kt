@@ -23,11 +23,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.isAutonom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isCopiedDelegatedProperty
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
@@ -73,13 +71,10 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
 
                         declaration.containingKtFile.isScript() -> {
                             // .kts will have a single [FirScript] as a declaration. We need to unwrap statements in it.
-                            val scriptOrReplSnippet = firFile.scriptOrReplSnippet
+                            val script = firFile.script
                             when {
-                                declaration is KtScript -> return@findSourceNonLocalFirDeclarationByProvider scriptOrReplSnippet?.takeIf { it.psi == declaration }
-                                scriptOrReplSnippet == null -> null
-                                scriptOrReplSnippet is FirScript -> scriptOrReplSnippet.declarations
-                                scriptOrReplSnippet is FirReplSnippet -> scriptOrReplSnippet.snippetClass.declarations
-                                else -> errorWithAttachment("Unsupported case: ${scriptOrReplSnippet::class.simpleName}")
+                                declaration is KtScript -> return@findSourceNonLocalFirDeclarationByProvider script?.takeIf { it.psi == declaration }
+                                else -> script?.declarations
                             }
                         }
 
@@ -130,7 +125,6 @@ internal fun KtElement.findSourceByTraversingWholeTree(
                 is FirScript,
                 is FirFunction,
                 is FirProperty,
-                is FirReplSnippet,
                     -> true
 
                 else -> false
@@ -260,19 +254,14 @@ internal inline fun FirFile.forEachDeclaration(action: (FirDeclaration) -> Unit)
     declarations.forEach(action)
 }
 
-internal inline fun FirReplSnippet.forEachDeclaration(action: (FirDeclaration) -> Unit) {
-    action(snippetClass)
-}
-
 internal val FirDeclaration.isDeclarationContainer: Boolean
-    get() = this is FirRegularClass || this is FirScript || this is FirFile || this is FirReplSnippet
+    get() = this is FirRegularClass || this is FirScript || this is FirFile
 
 internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     when (this) {
         is FirRegularClass -> forEachDeclaration(action)
         is FirScript -> forEachDeclaration(action)
         is FirFile -> forEachDeclaration(action)
-        is FirReplSnippet -> forEachDeclaration(action)
         else -> errorWithFirSpecificEntries("Unsupported declarations container", fir = this)
     }
 }
@@ -310,7 +299,6 @@ internal val FirElementWithResolveState.body: FirBlock?
 /**
  * Some "local" declarations are not local from the lazy resolution perspective.
  */
-@OptIn(FirImplementationDetail::class)
 internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
     get() = when (fir.origin) {
         // Destructuring declaration container should be treated as a non-local as it is a top-level script declaration
@@ -319,12 +307,7 @@ internal val FirCallableSymbol<*>.isLocalForLazyResolutionPurposes: Boolean
         // Script parameters should be treated as non-locals as they are visible from FirScript
         FirDeclarationOrigin.ScriptCustomization.Parameter, FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass -> false
 
-        else -> isLocal || when (val fir = fir) {
-            // This is a hack to avoid lazy resolve for copied properties which are resolved as a part of the eval function
-            // TODO(KT-85633): drop once the issue is resolved
-            is FirProperty -> fir.isCopiedDelegatedProperty == true
-            else -> false
-        }
+        else -> isLocal
     }
 
 internal val PsiElement.parentsWithSelfCodeFragmentAware: Sequence<PsiElement>

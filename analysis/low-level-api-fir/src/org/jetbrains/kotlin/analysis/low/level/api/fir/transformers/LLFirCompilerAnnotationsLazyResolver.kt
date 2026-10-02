@@ -173,7 +173,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             is FirScript,
             is FirAnonymousInitializer,
             is FirDanglingModifierList,
-            is FirReplSnippet,
                 -> resolve(target, CompilerAnnotationsStateKeepers.ANNOTATION_CONTAINER)
 
             else -> throwUnexpectedFirElementError(target)
@@ -196,7 +195,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             is FirFile -> annotationTransformer.resolveFile(target) {}
             is FirRegularClass -> annotationTransformer.resolveClass(target) {}
             is FirScript -> annotationTransformer.resolveScript(target) {}
-            is FirReplSnippet -> annotationTransformer.resolveReplSnippet(target) {}
             else -> target.transformSingle(annotationTransformer, null)
         }
     }

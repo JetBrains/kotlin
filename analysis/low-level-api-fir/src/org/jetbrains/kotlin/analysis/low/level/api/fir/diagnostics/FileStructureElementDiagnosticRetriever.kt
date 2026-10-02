@@ -64,7 +64,6 @@ internal sealed class FileStructureElementDiagnosticRetriever(
                 parameter.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             }
 
-            is FirReplSnippet -> declaration.snippetClass.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             else -> {}
         }
     }
@@ -174,26 +173,6 @@ internal class ScriptDiagnosticRetriever(
         components: DiagnosticCollectorComponents,
     ) : LLFirContainerDiagnosticVisitor(
         declarationsToIgnore = script.declarationsToIgnore,
-        context = context,
-        components = components,
-    )
-}
-
-internal class ReplSnippetDiagnosticRetriever(
-    declaration: FirReplSnippet,
-    file: FirFile,
-    moduleComponents: LLFirModuleResolveComponents,
-) : FileStructureElementDiagnosticRetriever(declaration, file, moduleComponents) {
-    override fun createVisitor(context: CheckerContextForProvider, components: DiagnosticCollectorComponents): LLFirDiagnosticVisitor {
-        return Visitor(declaration as FirReplSnippet, context, components)
-    }
-
-    private class Visitor(
-        replSnippet: FirReplSnippet,
-        context: CheckerContextForProvider,
-        components: DiagnosticCollectorComponents,
-    ) : LLFirContainerDiagnosticVisitor(
-        declarationsToIgnore = replSnippet.declarationsToIgnore,
         context = context,
         components = components,
     )
