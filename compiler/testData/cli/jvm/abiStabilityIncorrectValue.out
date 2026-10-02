@@ -1,2 +1,2 @@
-error: unknown ABI stability mode: unknown, supported modes: [stable, unstable]
+error: [COMPILER_ARGUMENTS_ERROR] Unknown ABI stability mode: unknown, supported modes: [stable, unstable]
 COMPILATION_ERROR

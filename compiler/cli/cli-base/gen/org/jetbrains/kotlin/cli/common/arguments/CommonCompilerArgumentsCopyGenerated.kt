@@ -94,7 +94,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.printConfiguration = from.printConfiguration
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
-    to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
+    to.renderDiagnosticNames = from.renderDiagnosticNames
     to.reportAllWarnings = from.reportAllWarnings
     to.reportOutputFiles = from.reportOutputFiles
     to.reportPerf = from.reportPerf

@@ -1,5 +1,5 @@
 warning: argument -Xjsr305-annotations is deprecated. Please use -Xjsr305 instead
-compiler/testData/cli/jvm/Xjsr305/jsr305Usage.kt:2:11: warning: Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
+compiler/testData/cli/jvm/Xjsr305/jsr305Usage.kt:2:11: warning: [TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS] Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
     a.foo(null)
           ^^^^
 OK

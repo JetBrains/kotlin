@@ -1,2 +1,2 @@
-warning: classpath entry points to a non-existent location: not/existing/path
+warning: [ROOTS_RESOLUTION_WARNING] Classpath entry points to a non-existent location: not/existing/path
 OK

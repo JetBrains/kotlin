@@ -752,14 +752,14 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_PROFILE_PHASES", KotlinReleaseVersion(1, 3, 20))
 
     /**
-     * Render the internal names of warnings and errors.
+     * Render the string identifiers of warnings and errors, like [RETURN_TYPE_MISMATCH].
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
     @ExperimentalCompilerArgument
-    public val X_RENDER_INTERNAL_DIAGNOSTIC_NAMES: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES", KotlinReleaseVersion(1, 7, 0))
+    public val X_RENDER_DIAGNOSTIC_NAMES: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_RENDER_DIAGNOSTIC_NAMES", KotlinReleaseVersion(1, 7, 0))
 
     /**
      * Report all warnings even if errors are found.

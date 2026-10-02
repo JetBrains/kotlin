@@ -872,9 +872,10 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
-        name = "Xrender-internal-diagnostic-names"
-        description = "Render the internal names of warnings and errors.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        name = "Xrender-diagnostic-names"
+        description = "Render the string identifiers of warnings and errors, like [RETURN_TYPE_MISMATCH].".asReleaseDependent()
+        valueType = BooleanType.defaultTrue
+        deprecatedName = "Xrender-internal-diagnostic-names"
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,

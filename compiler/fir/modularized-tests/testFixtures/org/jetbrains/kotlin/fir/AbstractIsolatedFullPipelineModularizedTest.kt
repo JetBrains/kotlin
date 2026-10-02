@@ -112,7 +112,7 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
         }
         args.reportPerf = true
         args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath(config.rootPathPrefix)?.absolutePath
-        args.renderInternalDiagnosticNames = true
+        args.renderDiagnosticNames = true
         args.debugLevelCompilerChecks = config.enableSlowAssertions
 
         args.disableStandardScript = true
