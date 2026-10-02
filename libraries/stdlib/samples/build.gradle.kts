@@ -21,7 +21,6 @@ tasks.test.configure {
 
 tasks.compileTestKotlin {
     compilerOptions {
-        freeCompilerArgs.add("-Xcontext-parameters")
         optIn.addAll(
                 "kotlin.ExperimentalStdlibApi",
                 "kotlin.ExperimentalUnsignedTypes",
