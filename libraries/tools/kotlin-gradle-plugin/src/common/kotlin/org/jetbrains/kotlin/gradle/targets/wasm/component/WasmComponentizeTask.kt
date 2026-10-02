@@ -70,7 +70,7 @@ internal constructor() : DefaultTask() {
 
     @get:Input
     @get:Optional
-    val downloadBaseUrlProvider: Provider<String> = env.mapOrNull(project.providers) {
+    internal val downloadBaseUrlProvider: Provider<String> = env.mapOrNull(project.providers) {
         it.downloadBaseUrl
     }
 
@@ -127,7 +127,7 @@ internal constructor() : DefaultTask() {
 
     @get:Classpath
     @get:Optional
-    val dist: File by lazy {
+    internal val dist: File by lazy {
         withUrlRepo {
             adapter.get().files.single()
         }
