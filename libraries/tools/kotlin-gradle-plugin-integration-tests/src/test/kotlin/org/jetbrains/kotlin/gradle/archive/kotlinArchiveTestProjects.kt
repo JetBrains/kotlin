@@ -90,6 +90,10 @@ internal const val PRODUCER_CINTEROP_PACKAGE = "producercinterop"
 internal const val PRODUCER_CINTEROP_FUNCTION = "$PRODUCER_CINTEROP_PACKAGE.producerInteropFunction"
 internal const val PRODUCER_RESOURCES_PLACEMENT = "embed/producer"
 
+internal const val CONSUMER_CINTEROP_NAME = "consumerInterop"
+internal const val CONSUMER_CINTEROP_PACKAGE = "consumercinterop"
+internal const val CONSUMER_CINTEROP_FUNCTION = "$CONSUMER_CINTEROP_PACKAGE.consumerInteropFunction"
+
 internal fun TestProject.configureResourcesPublication() {
     kotlinArchiveResourcesSourceSets.forEach { sourceSetName ->
         val resourceFile = projectPath.resolve("src/$sourceSetName/multiplatformResources/$sourceSetName.txt")
@@ -103,12 +107,15 @@ internal fun TestProject.configureResourcesPublication() {
     }
 }
 
-internal fun TestProject.configureCinteropPublication() {
+internal fun TestProject.configureCinterop(
+    interopName: String = PRODUCER_CINTEROP_NAME,
+    packageName: String = PRODUCER_CINTEROP_PACKAGE,
+) {
     buildScriptInjection {
         project.enableCinteropCommonization()
         project.applyMultiplatform {
             targets.withType(KotlinNativeTarget::class.java).configureEach { target ->
-                target.createCInterop(PRODUCER_CINTEROP_NAME)
+                target.createCInterop(interopName, packageName)
             }
         }
     }
@@ -134,12 +141,12 @@ private fun KotlinMultiplatformExtension.publishResourcesOfAllSupportedTargets(p
     }
 }
 
-private fun KotlinNativeTarget.createCInterop(interopName: String) {
+private fun KotlinNativeTarget.createCInterop(interopName: String, packageName: String) {
     val definitionFile = project.layout.projectDirectory.file("$interopName.def")
     definitionFile.asFile.writeText(
         """
         language = C
-        package = $PRODUCER_CINTEROP_PACKAGE
+        package = $packageName
         ---
         void ${interopName}Function(void);
         """.trimIndent()
