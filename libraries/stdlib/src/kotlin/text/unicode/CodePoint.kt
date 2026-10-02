@@ -51,6 +51,9 @@ private const val MIN_SUPPLEMENTARY_CODE_POINT_VALUE: Int = 0x10000
  *
  * @property code The integer value of the Unicode code point, in the range `0x0..0x10FFFF`.
  * @throws IllegalArgumentException if the provided code value is outside the valid range.
+ * @constructor Returns a [CodePoint] with the specified [code] value.
+ *
+ * The value must be in range  `0..0x10FFFF`, otherwise the constructor fails with an [IllegalArgumentException].
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -336,11 +339,12 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
 /**
  * Converts this [Int] value to a [CodePoint].
  *
- * If the value is outside the valid Unicode code point range `0..0x10FFFF`,
- * it wraps around using modulo arithmetic to ensure the result is within the valid range.
+ * Unlike [CodePoint] class constructor, this function does not throw an exception
+ * when the value is outside the valid Unicode code point range `0..0x10FFFF`,
+ * but instead wraps that value around using modulo arithmetic
+ * to ensure the result is within the valid range.
  *
  * @return A [CodePoint] with the code equal to this integer value modulo `0x10FFFF + 1`.
- * @see CodePoint
  * @see Char.toCodePoint
  */
 @SinceKotlin("2.5")
@@ -412,6 +416,10 @@ public fun StringBuilder.insertCodePointAt(index: Int, value: CodePoint): String
 
 /**
  * Replaces the code point at the specified [index] in this [StringBuilder] with the specified [value] and returns this instance.
+ *
+ * Note that the length of the `StringBuilder` can change in the result of this operation,
+ * for example, when a code point that is represented by a single char is replaced
+ * with a code point represented by a surrogate pair of chars and vice versa.
  *
  * @param index The position of the code point to replace.
  * @param value The new code point to set at the specified position.
