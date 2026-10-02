@@ -48,11 +48,14 @@ private fun getRootSettings(
     // leading to the error that the root settings object is not yet available.
     // For such cases, we fall back to the included build settings object and later manual mapping for kotlinRootDir.
     val gradleInternal = (gradle as GradleInternal)
+
+    val isIncludedBuild = settings.rootProject.name in setOf(
+        "gradle-settings-conventions",
+        "gradle-build-conventions",
+        "kotlin-build-helpers",
+    )
     return when {
-        gradleInternal.isRootBuild ||
-                setOf("gradle-settings-conventions", "gradle-build-conventions").contains(settings.rootProject.name) -> {
-            settings
-        }
+        gradleInternal.isRootBuild || isIncludedBuild -> settings
         else -> {
             val gradleParent = gradle.parent ?: error("Could not get includedBuild parent build for ${settings.rootDir}!")
             getRootSettings(gradleParent.settings, gradleParent)
@@ -78,6 +81,7 @@ private val kotlinRootDir: File = when (rootSettings.rootProject.name) {
     "benchmarksAnalyzer" -> rootSettings.rootDir.parentFile.parentFile.parentFile
     "gradle-settings-conventions" -> rootSettings.rootDir.parentFile.parentFile
     "gradle-build-conventions" -> rootSettings.rootDir.parentFile.parentFile
+    "kotlin-build-helpers" -> rootSettings.rootDir.parentFile.parentFile
     "performance" -> rootSettings.rootDir.parentFile.parentFile
     "ui" -> rootSettings.rootDir.parentFile.parentFile.parentFile.parentFile
     else -> rootSettings.rootDir
