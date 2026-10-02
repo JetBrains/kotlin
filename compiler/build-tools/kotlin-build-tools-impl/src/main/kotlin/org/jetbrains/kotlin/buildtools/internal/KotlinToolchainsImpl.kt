@@ -23,11 +23,13 @@ import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.util.concurrent.*
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
 
-internal class KotlinToolchainsImpl() : KotlinToolchains {
+internal class KotlinToolchainsImpl : KotlinToolchains {
     val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
     val classloadersCache = LruClassLoadersCache(
         System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE,
@@ -71,6 +73,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         override val projectId: ProjectId,
         val classloadersCache: LruClassLoadersCache,
     ) : KotlinToolchains.BuildSession {
+        private val closeableGuard = CloseableGuard(this)
         private val sessionIsAliveFlagFile = lazy { createSessionIsAliveFlagFile() }
         private val executorDelegate = lazy {
             Executors.newCachedThreadPool()
@@ -90,6 +93,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
 
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
+            closeableGuard.requireNotClosed()
             return executeOperation(operation, logger = null)
         }
 
@@ -98,6 +102,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             executionPolicy: ExecutionPolicy,
             logger: KotlinLogger?,
         ): R {
+            closeableGuard.requireNotClosed()
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = {
                 val classloadersCacheWithLogger =
@@ -134,16 +139,18 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
 
         override fun close() {
-            if (applicationEnvironmentPin.isInitialized()) {
-                applicationEnvironmentPin.value.close()
+            closeableGuard.close {
+                if (applicationEnvironmentPin.isInitialized()) {
+                    applicationEnvironmentPin.value.close()
+                }
+                if (executorDelegate.isInitialized()) {
+                    executor.shutdown()
+                }
+                if (sessionIsAliveFlagFile.isInitialized()) {
+                    sessionIsAliveFlagFile.value.delete()
+                }
+                daemonConnectionRegistry.close()
             }
-            if (executorDelegate.isInitialized()) {
-                executor.shutdown()
-            }
-            if (sessionIsAliveFlagFile.isInitialized()) {
-                sessionIsAliveFlagFile.value.delete()
-            }
-            daemonConnectionRegistry.close()
         }
     }
 
