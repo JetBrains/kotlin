@@ -58,6 +58,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirCoroutineContextAsContextParameterDeclarationChecker,
         FirCompanionExtensionChecker,
         FirCompanionBlockMemberChecker,
+        FirMissingDependencyClassForReturnTypeChecker,
     )
 
     override val functionCheckers: Set<FirFunctionChecker> = setOf(
@@ -233,5 +234,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val enumEntryCheckers: Set<FirEnumEntryChecker> = setOf(
         FirEnumEntriesRedeclarationChecker,
         FirOptInEnumEntryChecker,
+    )
+
+    override val receiverParameterCheckers: Set<FirReceiverParameterChecker> = setOf(
+        FirMissingDependencyClassForReceiverChecker,
     )
 }
