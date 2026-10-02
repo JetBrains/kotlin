@@ -7,19 +7,22 @@ annotation class Ann
 annotation class AnnRepeat
 
 class Foo(
-    @get:Ann private val y0: Int,
-    @get:Ann private vararg val y1: String
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!> private val y0: Int,
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!> private vararg val y1: String
 ) {
-    @get:Ann
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
     private val x1 = ""
 
-    @set:Ann
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:JvmName("bar")<!>
+    private val x10: String = ""
+
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@set:Ann<!>
     private var x2 = ""
 
-    @setparam:Ann
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@setparam:Ann<!>
     private var x3 = ""
 
-    @setparam:[Ann AnnRepeat]
+    @setparam:[<!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>Ann<!> <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>AnnRepeat<!>]
     private var x4 = ""
 
     @get:Ann
@@ -28,12 +31,12 @@ class Foo(
     @get:Ann
     protected val x6 = ""
 
-    @get:Ann
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
     private val x7: String = ""
-        @AnnRepeat get
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@AnnRepeat<!> get
 
     @get:Ann
-    @set:Ann
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@set:Ann<!>
     private var x8: String = ""
         get() { return "" }
 
@@ -56,19 +59,19 @@ private class EffetivelyPrivate private constructor(
 }
 
 class PrivateToThis<in I> {
-    @get:Ann
-    @set:Ann
-    @setparam:Ann
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@set:Ann<!>
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@setparam:Ann<!>
     private var x0: I = TODO()
 }
 
 class Statics {
     companion object {
         @JvmField
-        @get:Ann
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
         val x0 = ""
 
-        @get:Ann
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
         const val x1 = ""
 
         @JvmStatic
@@ -76,11 +79,11 @@ class Statics {
         val x2 = ""
 
         @JvmStatic
-        @get:Ann
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
         private val x3 = ""
 
         @JvmStatic
-        @get:Ann
+        <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
         private val x4 = ""
     }
 }
