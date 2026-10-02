@@ -4140,7 +4140,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Companion extension receiver type cannot be nullable.",
         )
         map.put(NON_ERROR_CLASS_EXTENDS_RICH_ERROR, "Non-error class cannot extend 'RichError'.")
-        map.put(ERROR_CLASS_HAS_SUPERTYPE, "Error class cannot have supertypes.")
+        map.put(ERROR_CLASS_HAS_SUPERTYPE, "Error class cannot have any explicit supertypes except 'RichError'.")
         map.put(ERROR_CLASS_HAS_TYPE_PARAMETER, "Error class cannot have type parameters.")
         map.put(NULLABLE_ERROR_COMPONENT_IN_UNION_TYPE, "Error component of union type cannot be nullable.")
         map.put(NULLABLE_NESTED_UNION_TYPE, "Nested union types cannot be nullable.")

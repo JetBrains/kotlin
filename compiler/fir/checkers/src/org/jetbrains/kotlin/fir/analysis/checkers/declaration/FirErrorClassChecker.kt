@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isRichError
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
@@ -35,7 +36,7 @@ object FirErrorClassChecker : FirRegularClassChecker(MppCheckerKind.Common) {
         }
 
         for (superTypeRef in declaration.superTypeRefs) {
-            if (superTypeRef.coneType.classId != StandardClassIds.RichError && superTypeRef !is FirImplicitBuiltinTypeRef) {
+            if (superTypeRef.coneType.fullyExpandedType().classId != StandardClassIds.RichError && superTypeRef !is FirImplicitBuiltinTypeRef) {
                 reporter.reportOn(superTypeRef.source, FirErrors.ERROR_CLASS_HAS_SUPERTYPE)
             }
         }

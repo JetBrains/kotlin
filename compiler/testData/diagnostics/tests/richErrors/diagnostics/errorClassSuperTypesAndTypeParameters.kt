@@ -19,4 +19,8 @@ error object O1 : <!ERROR_CLASS_HAS_SUPERTYPE!>I<!>
 error object O2 : <!ERROR_CLASS_HAS_SUPERTYPE!>C<!>()
 error object O3 : <!ERROR_CLASS_HAS_SUPERTYPE!>Any<!>()
 
+typealias RE = RichError
+
+error class E6 : RE()
+
 /* GENERATED_FIR_TAGS: classDeclaration, interfaceDeclaration, objectDeclaration */
