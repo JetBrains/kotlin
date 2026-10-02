@@ -31,6 +31,7 @@ import java.nio.file.Path
 import kotlin.collections.joinToString
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
+import kotlin.io.path.name
 import kotlin.io.path.outputStream
 import kotlin.io.path.readBytes
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
@@ -196,6 +197,15 @@ sealed class KlibSignatureIndexComponentLayout(root: Path) : KlibComponentLayout
     ) : KlibSignatureIndexComponentLayout(root) {
         override val indicesDir: Path
             get() = root.resolve(targetDiscriminator).resolve(libraryName).resolve(libraryFingerprintHash.toString())
+
+        /**
+         * The lock file that guards concurrent access to the external index.
+         *
+         * Note: The lock file is located next to [indicesDir], not inside it. So the absence of [indicesDir]
+         * still means that there is no external index.
+         */
+        val lockFile: Path
+            get() = indicesDir.resolveSibling("${indicesDir.name}.lock")
     }
 }
 
