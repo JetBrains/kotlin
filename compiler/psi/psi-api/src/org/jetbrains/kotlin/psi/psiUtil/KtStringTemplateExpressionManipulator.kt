@@ -16,6 +16,14 @@ import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 private val LOG = Logger.getInstance(KtStringTemplateExpressionManipulator::class.java)
 
+/**
+ * The [ElementManipulator][com.intellij.psi.ElementManipulator] of [KtStringTemplateExpression], which edits the content of a string
+ * literal, e.g., when a language fragment injected into the string is edited or a reference contributed to the string is renamed.
+ *
+ * The IntelliJ Kotlin plugin registers it as the element manipulator of [KtStringTemplateExpression]. By default, it edits the
+ * [content][getContentRange] between the quotes. In a single-quoted string, it escapes quotes, backslashes, and control characters in the
+ * new content, but keeps interpolated expressions (`$name` and `${...}`) as is. In a raw string, it inserts the new content as is.
+ */
 class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
     override fun handleContentChange(
         element: KtStringTemplateExpression,
