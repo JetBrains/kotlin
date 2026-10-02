@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.registerNodeJsToolchainServiceIfAbsent
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.currentHostPlatform
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import kotlin.reflect.KClass
 
 /**
@@ -88,11 +88,11 @@ internal class NodeJsPluginApplier(
             .unameExecResult
 
         extension.platform.value(
-            project.providers.systemProperty("os.name")
+            project.providers.currentHostPlatform()
                 .zip(
                     project.providers.systemProperty("os.arch")
-                ) { name, arch ->
-                    parsePlatform(name, arch, uname)
+                ) { osType, arch ->
+                    parsePlatform(osType, arch, uname)
                 }
         ).disallowChanges()
     }
