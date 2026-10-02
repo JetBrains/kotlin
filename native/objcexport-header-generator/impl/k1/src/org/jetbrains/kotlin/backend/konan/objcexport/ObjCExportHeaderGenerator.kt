@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -40,6 +43,9 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
 
     private var recordedEvents: MutableList<ObjCExportUnitEvent>? = null
     private var liveAssembler: ObjCExportHeaderAssembler? = null
+    private val nameRecords = LinkedHashMap<Pair<ObjCExportNameKind, Any>, ObjCExportNameRecord>()
+    private val nameClaims = HashMap<Any, ObjCExportMemberClaim>()
+    private val recordedClassClaims = LinkedHashMap<String, ObjCExportClassClaim>()
     private val referencedClasses = mutableMapOf<String, ClassDescriptor>()
     private val insertedLines = mutableListOf<Pair<Int, List<String>>>()
     private var protocolStubs: Pair<List<String>, Set<ClassDescriptor>>? = null
@@ -163,6 +169,40 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             }
         }
         return ObjCExportHeaderAssembler.Entries(classes, categoryMembers, files)
+    }
+
+    @InternalKotlinNativeApi
+    fun recordName(kind: ObjCExportNameKind, element: Any, name: String) {
+        val id = kind to element
+        if (id !in nameRecords) nameRecords[id] = createNameRecord(kind, element, name)
+    }
+
+    @InternalKotlinNativeApi
+    fun cacheUnits(units: ObjCExportUnits, hasCollisions: Boolean, typeParameterClashes: List<String>): ObjCExportUnits = ObjCExportUnits(
+        units.classes, units.categoryMembers, units.files, units.classForwardDeclarations, units.protocolForwardDeclarations,
+        recordedClassClaims.values.toList(), nameRecords.values.toList(), hasCollisions, typeParameterClashes,
+    )
+
+    private fun createNameRecord(kind: ObjCExportNameKind, element: Any, name: String): ObjCExportNameRecord {
+        val key = objCExportNameKey(element) ?: error("Cannot record the Objective-C name of $element in an Objective-C cache")
+        val claim = when (kind) {
+            ObjCExportNameKind.SELECTOR, ObjCExportNameKind.PROPERTY ->
+                nameClaims.getOrPut(element) {
+                    val member = element as CallableMemberDescriptor
+                    mapper.claimOwner(member)?.let { owner ->
+                        val classId = owner.classId.toString()
+                        if (classId !in recordedClassClaims) recordedClassClaims[classId] = classClaim(owner)
+                    }
+                    if (member is PropertyDescriptor) mapper.propertyClaim(member) else mapper.memberClaim(member as FunctionDescriptor)
+                }
+            else -> null
+        }
+        val container = when (kind) {
+            ObjCExportNameKind.TYPE_PARAMETER ->
+                ((element as DeclarationDescriptor).containingDeclaration as? ClassDescriptor)?.classId?.toString().orEmpty()
+            else -> ""
+        }
+        return ObjCExportNameRecord(kind, key, name, container, claim)
     }
 
     @InternalKotlinNativeApi

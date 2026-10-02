@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.konan.CacheSupport.Companion.cacheFileId
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportUnits
+import org.jetbrains.kotlin.backend.konan.objcexport.objCExportNamingConfiguration
 import org.jetbrains.kotlin.backend.common.lazyEvaluatedFingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.serialization.*
@@ -273,6 +274,7 @@ class CachedLibraries(
 
     fun getObjCCaches(exportedLibraries: Set<KotlinLibrary>, moduleName: String): Map<KotlinLibrary, ObjCCache> {
         val directoriesByName = cacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists() }.groupBy { it.name }
+        val namingConfiguration = objCExportNamingConfiguration(configuration)
         return exportedLibraries.mapNotNull { library ->
             val found = findObjCCache(library, moduleName, directoriesByName) ?: return@mapNotNull null
             if (getLibraryCache(library)?.kind != Kind.STATIC) {
@@ -290,6 +292,14 @@ class CachedLibraries(
                         CliDiagnostics.KONAN_ARGUMENT_WARNING,
                         "Objective-C cache at ${Path(cache.binaryPath).parent.parent} was built exporting [${cache.metadata.exportedLibraries.joinToString()}] " +
                                 "of the dependencies of ${library.uniqueName}, but this compilation exports [${expected.joinToString()}]. Ignoring cache."
+                )
+                return@mapNotNull null
+            }
+            if (cache.units.namingConfiguration != namingConfiguration) {
+                configuration.report(
+                        CliDiagnostics.KONAN_ARGUMENT_WARNING,
+                        "Objective-C cache at ${Path(cache.binaryPath).parent.parent} was built with the Objective-C export options " +
+                                "[${cache.units.namingConfiguration}], but this compilation uses [$namingConfiguration]. Ignoring cache."
                 )
                 return@mapNotNull null
             }
