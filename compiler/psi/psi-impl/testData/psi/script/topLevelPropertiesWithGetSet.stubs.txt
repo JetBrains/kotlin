@@ -1,7 +1,7 @@
 FILE[kind=Script[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  SCRIPT[fqName=TopLevelPropertiesWithGetSet, fqName=TopLevelPropertiesWithGetSet, isReplSnippet=false, name=TopLevelPropertiesWithGetSet]
+  SCRIPT[fqName=TopLevelPropertiesWithGetSet, fqName=TopLevelPropertiesWithGetSet, name=TopLevelPropertiesWithGetSet]
     PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVal, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testVal]
       TYPE_REFERENCE
         USER_TYPE

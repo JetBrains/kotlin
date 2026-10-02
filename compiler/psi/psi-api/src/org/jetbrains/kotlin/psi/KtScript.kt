@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
@@ -45,28 +44,9 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
         }
 
         val containingKtFile = containingKtFile
-        val fileName = containingKtFile.name
-
-        @OptIn(KtExperimentalApi::class)
-        val fileBasedName = if (isReplSnippet) {
-            NameUtils.getSnippetTargetClassName(fileName)
-        } else {
-            NameUtils.getScriptNameForFile(fileName)
-        }
-
+        val fileBasedName = NameUtils.getScriptNameForFile(containingKtFile.name)
         return containingKtFile.packageFqName.child(fileBasedName)
     }
-
-    /**
-     * The [ClassId] of the class that represents this script if it [isReplSnippet].
-     */
-    @KtExperimentalApi
-    val replSnippetClassId: ClassId?
-        get() = if (isReplSnippet) {
-            ClassId.topLevel(fqName)
-        } else {
-            null
-        }
 
     override fun getName(): String = fqName.shortName().asString()
 
@@ -89,16 +69,14 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
      * Determines whether a [KtScript] should be treated as a REPL snippet or not.
      */
     @KtExperimentalApi
-    @OptIn(KtImplementationDetail::class)
     val isReplSnippet: Boolean
-        get() = greenStub?.isReplSnippet ?: containingKtFile.isMarkedAsReplSnippet
+        get() = containingKtFile.isMarkedAsReplSnippet
 
     /**
      * Marks the [KtScript] as a REPL snippet, so it is treated by the compiler accordingly.
      */
     @KtNonPublicApi
     fun markAsReplSnippet() {
-        containingKtFile.putCopyableUserData(REPL_SNIPPET_KEY, true)
         containingKtFile.replSnippetMarkFile.putUserData(REPL_SNIPPET_KEY, true)
     }
 }
@@ -106,24 +84,16 @@ open class KtScript : KtNamedDeclarationStub<KotlinScriptStub>, KtDeclarationCon
 private val REPL_SNIPPET_KEY = Key.create<Boolean>("REPL_SNIPPET")
 
 /**
- * Being a REPL snippet is a property of the whole file, so the mark is stored on the file and not on [KtScript] itself,
- * as the script element is recreated on every tree reloading.
- *
- * The mark is duplicated on purpose:
- * - copyable data on the file survives [com.intellij.psi.PsiElement.copy]
- * - data on [replSnippetMarkFile] survives tree reloading and is visible during stub building,
- *   which builds its own tree from the file content
+ * Being a REPL snippet is a property of the whole file, so the mark is stored on the file's [VirtualFile]
+ * and not on [KtScript] itself, as the script element is recreated on every tree reloading.
  *
  * @see com.intellij.psi.impl.source.PsiFileImpl.loadTreeElement
- * @see com.intellij.psi.impl.source.PsiFileImpl.getVirtualFile
  */
 private val KtFile.isMarkedAsReplSnippet: Boolean
-    get() = getCopyableUserData(REPL_SNIPPET_KEY) == true || replSnippetMarkFile.getUserData(REPL_SNIPPET_KEY) == true
+    get() = replSnippetMarkFile.getUserData(REPL_SNIPPET_KEY) == true
 
 /**
- * [com.intellij.psi.impl.source.PsiFileImpl.getVirtualFile] returns the original file during stub building,
- * so the mark is visible there as well.
- * Non-physical files have no such file, so the view provider one is used as a fallback.
+ * Non-physical files have no [KtFile.getVirtualFile], so the view provider one is used as a fallback.
  */
 private val KtFile.replSnippetMarkFile: VirtualFile
     get() = virtualFile ?: viewProvider.virtualFile

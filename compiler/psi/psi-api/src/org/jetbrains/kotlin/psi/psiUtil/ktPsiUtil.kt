@@ -777,21 +777,13 @@ val KtBlockExpression.containingScript: KtScript?
     get() = parent as? KtScript
 
 /**
- * The containing [ClassId] for this declaration. REPL [KtScript]s are supported.
+ * The containing [ClassId] for this declaration.
  *
- * @see containingScript
  * @see containingClassOrObject
  */
 @KtExperimentalApi
 val KtDeclaration.containingClassId: ClassId?
-    get() {
-        containingClassOrObject?.let {
-            return it.getClassId()
-        }
-
-        val script = containingScript?.takeIf(KtScript::isReplSnippet) ?: return null
-        return ClassId.topLevel(script.fqName)
-    }
+    get() = containingClassOrObject?.getClassId()
 
 
 /**

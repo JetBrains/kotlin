@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStubElement
 class KotlinScriptStubImpl(
     parent: StubElement<*>?,
     private val fqNameRef: StringRef,
-    override val isReplSnippet: Boolean,
 ) : KotlinStubBaseImpl<KtScript>(parent, KtNodeTypes.SCRIPT), KotlinScriptStub {
     override fun getName(): String = fqName.shortName().asString()
     override val fqName: FqName get() = FqName(fqNameRef.string)
@@ -27,12 +26,10 @@ class KotlinScriptStubImpl(
     override fun copyInto(newParent: StubElement<*>?): KotlinScriptStubImpl = KotlinScriptStubImpl(
         parent = newParent,
         fqNameRef = fqNameRef,
-        isReplSnippet = isReplSnippet,
     )
 
     @KtImplementationDetail
     override fun isEquivalentTo(other: KotlinStubElement<*>): Boolean =
         other is KotlinScriptStubImpl &&
-                other.isReplSnippet == isReplSnippet &&
                 other.fqNameRef == fqNameRef
 }

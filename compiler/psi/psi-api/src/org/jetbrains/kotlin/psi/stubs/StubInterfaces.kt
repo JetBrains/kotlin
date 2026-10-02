@@ -391,14 +391,6 @@ interface KotlinFunctionTypeStub : KotlinStubElement<KtFunctionType>
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
     @KtIdeApi
     override val fqName: FqName
-
-    /**
-     * Whether the script is a REPL snippet.
-     *
-     * @see KtScript.isReplSnippet
-     */
-    @KtImplementationDetail
-    val isReplSnippet: Boolean
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)
