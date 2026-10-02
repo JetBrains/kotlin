@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
@@ -172,10 +174,29 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
      *      adaptResult(foo(adaptParameter(x)));
      *
      *  fun foo(x: KotlinType): KotlinType { <original-body> }
+     *
+     *  For parameters with default values, we evaluate the default value in the adapter if the
+     *  argument is omitted or explicitly passed in as undefined in JS.
+     *
+     *  @JsExport
+     *  fun foo(x: KotlinType, y: KotlinType = <default>): KotlinType { <original-body> }
+     *
+     *  ->
+     *
+     *  @JsExport
+     *  @JsName("foo")
+     *  fun foo__JsExportAdapter(x: JsType, y: JsType): JsType {
+     *      val x' = adaptParameter(x)
+     *      val y' = if (y === undefined) <default>[x := x'] else adaptParameter(y)
+     *      return adaptResult(foo(x', y'))
+     *  }
+     *
+     *  fun foo(x: KotlinType, y: KotlinType = <default>): KotlinType { <original-body> }
      */
     fun transformExportFunction(function: IrSimpleFunction): List<IrDeclaration>? {
+        val hasDefaultValues = function.parameters.any { it.defaultValue != null }
         val valueParametersAdapters = function.parameters.map {
-            it.type.jsToKotlinAdapterIfNeeded(isReturn = false)
+            it.type.jsToKotlinAdapterIfNeeded(isReturn = false, canBeUndefined = it.defaultValue != null)
         }
         val resultAdapter =
             function.returnType.kotlinToJsAdapterIfNeeded(isReturn = true)
@@ -203,7 +224,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
 
         // Delegate new function to old function:
         val builder: DeclarationIrBuilder = context.createIrBuilder(newFun.symbol)
-        newFun.body = createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
+        newFun.body = if (hasDefaultValues) {
+            createExportAdapterFunctionBodyWithDefaultValues(builder, newFun, function, valueParametersAdapters, resultAdapter)
+        } else {
+            createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
+        }
 
         newFun.annotations += builder.irAnnotation(jsRelatedSymbols.jsNameConstructor, typeArguments = emptyList()).also {
             it.arguments[0] = builder.irString(function.getJsNameOrKotlinName().identifier)
@@ -227,6 +252,55 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 for ([index, valueParameter] in function.parameters.withIndex()) {
                     val get = irGet(valueParameter)
                     call.arguments[index] = valueParametersAdapters[index].adaptIfNeeded(get, builder)
+                }
+                resultAdapter.adaptIfNeeded(call, builder)
+            }
+        )
+    }
+
+    private fun createExportAdapterFunctionBodyWithDefaultValues(
+        builder: DeclarationIrBuilder,
+        adapterFunction: IrSimpleFunction,
+        function: IrSimpleFunction,
+        valueParametersAdapters: List<InteropTypeAdapter?>,
+        resultAdapter: InteropTypeAdapter?
+    ) = builder.irBlockBody {
+        val typeParameterRemapper = IrTypeParameterRemapper(function.typeParameters.zip(adapterFunction.typeParameters).toMap())
+
+        // Default values can refer to the preceding parameters, so they should see the already adapted values.
+        val adaptedParameters = mutableMapOf<IrValueSymbol, IrValueSymbol>()
+        val adaptedVariables = function.parameters.mapIndexed { index, parameter ->
+            val adapterParameter = adapterFunction.parameters[index]
+            val adaptedValue = valueParametersAdapters[index].adaptIfNeeded(irGet(adapterParameter), this)
+
+            // Only JS references can be `undefined`.
+            val defaultValue = parameter.defaultValue?.takeIf { isExternalType(adapterParameter.type) }
+            val value = if (defaultValue != null) {
+                val defaultExpression = defaultValue.expression
+                    .deepCopyWithSymbols(adapterFunction)
+                    .transform(ValueRemapper(adaptedParameters), null)
+                    .also { it.remapTypes(typeParameterRemapper) }
+
+                irIfThenElse(
+                    type = typeParameterRemapper.remapType(parameter.type),
+                    condition = irCall(adapters.jsIsUndefinedAdapter).also { it.arguments[0] = irGet(adapterParameter) },
+                    thenPart = defaultExpression,
+                    elsePart = adaptedValue,
+                )
+            } else {
+                adaptedValue
+            }
+
+            irTemporary(value, nameHint = parameter.name.asStringStripSpecialMarkers()).also {
+                adaptedParameters[parameter.symbol] = it.symbol
+            }
+        }
+
+        +irReturn(
+            irCall(function).let { call ->
+                call.passTypeArgumentsFrom(adapterFunction)
+                for ([index, adaptedVariable] in adaptedVariables.withIndex()) {
+                    call.arguments[index] = irGet(adaptedVariable)
                 }
                 resultAdapter.adaptIfNeeded(call, builder)
             }
@@ -369,31 +443,33 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         return SendKotlinObjectToJsAdapter(this)
     }
 
+    private fun createExternRefToPrimitiveAdapter(notNullType: IrType, valueAdapter: InteropTypeAdapter?): InteropTypeAdapter {
+        val externRefToPrimitiveAdapter = when (notNullType) {
+            builtIns.floatType -> adapters.externRefToKotlinFloatAdapter.owner
+            builtIns.doubleType -> adapters.externRefToKotlinDoubleAdapter.owner
+            builtIns.longType -> adapters.externRefToKotlinLongAdapter.owner
+            builtIns.booleanType -> adapters.externRefToKotlinBooleanAdapter.owner
+
+            builtIns.ubyteType -> adapters.externRefToKotlinUByteAdapter.owner
+            builtIns.ushortType -> adapters.externRefToKotlinUShortAdapter.owner
+            builtIns.uintType -> adapters.externRefToKotlinUIntAdapter.owner
+            builtIns.ulongType -> adapters.externRefToKotlinULongAdapter.owner
+
+            else -> adapters.externRefToKotlinIntAdapter.owner
+        }
+
+        val externalToPrimitiveAdapter = FunctionBasedAdapter(externRefToPrimitiveAdapter)
+
+        return valueAdapter?.let { CombineAdapter(it, externalToPrimitiveAdapter) } ?: externalToPrimitiveAdapter
+    }
+
     private fun createNullableAdapter(
         notNullType: IrType,
         isPrimitiveOrUnsigned: Boolean,
         valueAdapter: InteropTypeAdapter?
     ): InteropTypeAdapter {
         return if (isPrimitiveOrUnsigned) { //nullable primitive should be checked and adapt to target type
-            val externRefToPrimitiveAdapter = when (notNullType) {
-                builtIns.floatType -> adapters.externRefToKotlinFloatAdapter.owner
-                builtIns.doubleType -> adapters.externRefToKotlinDoubleAdapter.owner
-                builtIns.longType -> adapters.externRefToKotlinLongAdapter.owner
-                builtIns.booleanType -> adapters.externRefToKotlinBooleanAdapter.owner
-
-                builtIns.ubyteType -> adapters.externRefToKotlinUByteAdapter.owner
-                builtIns.ushortType -> adapters.externRefToKotlinUShortAdapter.owner
-                builtIns.uintType -> adapters.externRefToKotlinUIntAdapter.owner
-                builtIns.ulongType -> adapters.externRefToKotlinULongAdapter.owner
-
-                else -> adapters.externRefToKotlinIntAdapter.owner
-            }
-
-            val externalToPrimitiveAdapter = FunctionBasedAdapter(externRefToPrimitiveAdapter)
-
-            NullOrAdapter(
-                adapter = valueAdapter?.let { CombineAdapter(it, externalToPrimitiveAdapter) } ?: externalToPrimitiveAdapter
-            )
+            NullOrAdapter(createExternRefToPrimitiveAdapter(notNullType, valueAdapter))
         } else { //nullable reference should not be checked
             val nullableValueAdapter = valueAdapter?.let(::NullOrAdapter)
             val undefinedToNullAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
@@ -406,10 +482,17 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     private fun createNotNullAdapter(
         notNullType: IrType,
         isPrimitiveOrUnsigned: Boolean,
-        valueAdapter: InteropTypeAdapter?
+        valueAdapter: InteropTypeAdapter?,
+        canBeUndefined: Boolean,
     ): InteropTypeAdapter? {
-        // !nullable primitive checked by wasm signature
-        if (isPrimitiveOrUnsigned) return valueAdapter
+        if (isPrimitiveOrUnsigned) {
+            // we may get undefined for parameters with default arguments.
+            if (canBeUndefined) {
+                return CheckNotNullAndAdapter(createExternRefToPrimitiveAdapter(notNullType, valueAdapter))
+            }
+            // !nullable primitive checked by wasm signature
+            return valueAdapter
+        }
 
         // !nullable reference should be null checked
         // notNullAdapter((undefined -> null)!!)
@@ -426,7 +509,11 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         )
     }
 
-    private fun IrType.jsToKotlinAdapterIfNeeded(isReturn: Boolean): InteropTypeAdapter? {
+    /**
+     * @param canBeUndefined whether `undefined` passed from JS has to be distinguishable from any value of the type,
+     * which is the case for parameters with default values.
+     */
+    private fun IrType.jsToKotlinAdapterIfNeeded(isReturn: Boolean, canBeUndefined: Boolean = false): InteropTypeAdapter? {
         if (isReturn && this == builtIns.unitType)
             return null
 
@@ -437,7 +524,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         return if (isNullable())
             createNullableAdapter(notNullType, isPrimitiveOrUnsigned, valueAdapter)
         else
-            createNotNullAdapter(notNullType, isPrimitiveOrUnsigned, valueAdapter)
+            createNotNullAdapter(notNullType, isPrimitiveOrUnsigned, valueAdapter, canBeUndefined)
     }
 
     private fun IrType.jsToKotlinAdapterIfNeededNotNullable(isReturn: Boolean): InteropTypeAdapter? {

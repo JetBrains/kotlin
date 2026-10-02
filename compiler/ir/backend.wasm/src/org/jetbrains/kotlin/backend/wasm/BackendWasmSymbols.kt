@@ -325,6 +325,7 @@ class BackendWasmSymbols(
         val numberToDoubleAdapter by CallableIds.numberToDoubleAdapter.functionSymbol()
 
         val jsCheckIsNullOrUndefinedAdapter by CallableIds.jsCheckIsNullOrUndefinedAdapter.functionSymbol()
+        val jsIsUndefinedAdapter by CallableIds.jsIsUndefinedAdapter.functionSymbol()
 
         val jsToKotlinStringAdapter by CallableIds.jsToKotlinStringAdapter.functionSymbol()
         val jsToKotlinAnyAdapter by CallableIds.jsToKotlinAnyAdapter.functionSymbol()
@@ -581,6 +582,7 @@ private object CallableIds {
     val kotlinToJsAnyAdapter = "kotlinToJsAnyAdapter".wasmCallableId
     val numberToDoubleAdapter = "numberToDoubleAdapter".wasmCallableId
     val jsCheckIsNullOrUndefinedAdapter = "jsCheckIsNullOrUndefinedAdapter".wasmCallableId
+    val jsIsUndefinedAdapter = "jsIsUndefinedAdapter".wasmCallableId
     val jsToKotlinStringAdapter = "jsToKotlinStringAdapter".wasmCallableId
     val jsToKotlinAnyAdapter = "jsToKotlinAnyAdapter".wasmCallableId
     val jsToKotlinByteAdapter = "jsToKotlinByteAdapter".wasmCallableId
