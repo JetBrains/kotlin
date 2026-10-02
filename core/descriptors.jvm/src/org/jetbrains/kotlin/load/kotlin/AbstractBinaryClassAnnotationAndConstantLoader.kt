@@ -100,7 +100,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         val annotationParametersDefaultValues = HashMap<MemberSignature, C>()
 
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
+            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>): KotlinJvmBinaryClass.MethodAnnotationVisitor {
                 return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
             }
 
@@ -164,4 +164,3 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         return isImplicitRepeatableContainer(normalClass.classId)
     }
 }
-

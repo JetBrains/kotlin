@@ -4,6 +4,7 @@ public abstract interface lib/A : java/lang/Object {
     ()TT;
     public abstract java.lang.Object foo()
         throws java/io/IOException
+      @Llib/RuntimeAnnotation;([])
 }
 
 <T::Ljava/lang/CharSequence;>Ljava/lang/Object;Llib/A<TT;>;
@@ -13,10 +14,16 @@ public class lib/B : java/lang/Object, lib/A {
     ()TT;
     public java.lang.CharSequence foo()
         throws java/io/FileNotFoundException
+      @Llib/RuntimeAnnotation;([])
       @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
     public java.lang.Object foo()
         throws java/io/IOException
+      @Llib/RuntimeAnnotation;([])
+}
+
+public abstract interface lib/RuntimeAnnotation : java/lang/Object, java/lang/annotation/Annotation {
+
 }
 Module: main
 Ljava/lang/Object;Llib/A<Ljava/lang/String;>;
