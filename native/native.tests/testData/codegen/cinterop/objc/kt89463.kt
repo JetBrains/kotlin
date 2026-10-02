@@ -4,9 +4,6 @@
 // IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4
 // ^^^ KT-89463: Unable to compile C bridge
 
-// KT-89463
-// IGNORE_BACKEND: NATIVE
-
 // MODULE: cinterop
 // FILE: lib.def
 language = Objective-C
