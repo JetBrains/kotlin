@@ -95,7 +95,7 @@ interface NodeJsToolchainManagementDsl {
 }
 
 @ExperimentalNodeJsToolchainDsl
-open class NodeJsToolchainManagementDslImpl(
+class NodeJsToolchainManagementDslImpl(
     private val gradle: Gradle,
 ) : NodeJsToolchainManagementDsl {
 
@@ -118,8 +118,6 @@ open class NodeJsToolchainManagementDslImpl(
         }
         configured = true
 
-        gradle.sharedServices.registerIfAbsent(nodeJsServiceName, serviceClass.java) { spec ->
-            configure(spec.parameters)
-        }
+        NodeJsToolchainService.registerIfAbsent(gradle, serviceClass.java, configure)
     }
 }

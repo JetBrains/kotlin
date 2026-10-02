@@ -24,9 +24,9 @@ import org.gradle.kotlin.dsl.property
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
@@ -284,9 +284,7 @@ abstract class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
         configureToolchain(installationsPath, server.downloadBaseUrl)
 
         buildScriptInjection {
-            // The Node.js toolchain service is wired into every task that uses it by the Node.js plugin.
-            // It is the only plugin applied, so that nothing but the toolchain is under test.
-            project.plugins.apply(NodeJsPlugin::class.java)
+            project.applyMultiplatform {}
 
             abstract class ProvisionNodeJsTask @Inject constructor(
                 objects: ObjectFactory,

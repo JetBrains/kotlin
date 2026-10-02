@@ -9,13 +9,13 @@ import org.gradle.api.Project
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.statistics.NodeJsToolchainServiceMetrics
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsExecutableFile
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.reportDiagnosticWhenNodeJsVersionUnsupported
@@ -108,16 +108,23 @@ abstract class DefaultNodeJsToolchainService @Inject internal constructor(
     }
 
     companion object {
-        internal fun registerIfAbsent(project: Project): Provider<DefaultNodeJsToolchainService> {
+        internal fun registerIfAbsent(
+            gradle: Gradle,
+            configureBuildServiceParameters: (Parameters) -> Unit,
+        ): Provider<DefaultNodeJsToolchainService> {
+            return gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DefaultNodeJsToolchainService::class.java) { spec ->
+                spec.parameters.downloadBaseUrl.convention(OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL)
+                spec.parameters.offline.convention(gradle.startParameter.isOffline)
+                configureBuildServiceParameters(spec.parameters)
+            }
+        }
 
-            return project.gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DefaultNodeJsToolchainService::class.java) { spec ->
-                spec.parameters.installationDir.fileProvider(project.nodeJsToolchainInstallationDir)
-                spec.parameters.downloadBaseUrl.set(
-                    project.kotlinPropertiesProvider.nodeJsToolchainDefaultDownloadUrl.orElse(
-                        OFFICIAL_NODE_JS_DOWNLOAD_BASE_URL
-                    )
+        internal fun registerIfAbsent(project: Project): Provider<DefaultNodeJsToolchainService> {
+            return registerIfAbsent(project.gradle) { parameters ->
+                parameters.installationDir.fileProvider(project.nodeJsToolchainInstallationDir)
+                parameters.downloadBaseUrl.set(
+                    project.kotlinPropertiesProvider.nodeJsToolchainDefaultDownloadUrl
                 )
-                spec.parameters.offline.set(project.gradle.startParameter.isOffline)
             }
         }
 

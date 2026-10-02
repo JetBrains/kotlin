@@ -36,8 +36,6 @@ internal class NodeJsPluginApplier(
 ) {
 
     fun apply(project: Project) {
-        registerNodeJsToolchainServiceIfAbsent(project)
-
         //TODO KT-89605: if NodeJsToolchainService is used, no need to configure node js old way
 
         val nodeJs = project.createNodeJsEnvSpec(nodeJsEnvSpecKlass, nodeJsEnvSpecName)

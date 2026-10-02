@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -73,6 +74,33 @@ interface NodeJsToolchainService<P : NodeJsToolchainService.Parameters> : BuildS
         private val serviceClass = NodeJsToolchainService::class.java
         internal val nodeJsServiceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
+        internal fun <P : Parameters, T : NodeJsToolchainService<P>> registerIfAbsent(
+            gradle: Gradle,
+            nodeJsToolchainClass: Class<T>,
+            configureBuildServiceParameters: (P) -> Unit,
+        ): Provider<out NodeJsToolchainService<out Parameters>> {
+            gradle.sharedServices.registrations.findByName(nodeJsServiceName)?.let {
+                @Suppress("UNCHECKED_CAST")
+                return it.service as Provider<NodeJsToolchainService<out Parameters>>
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            return when (nodeJsToolchainClass) {
+                DefaultNodeJsToolchainService::class.java -> DefaultNodeJsToolchainService.registerIfAbsent(
+                    gradle,
+                    configureBuildServiceParameters as (DefaultNodeJsToolchainService.Parameters) -> Unit
+                )
+                PreInstalledNodeJsToolchainService::class.java -> PreInstalledNodeJsToolchainService.registerIfAbsent(
+                    gradle,
+                    configureBuildServiceParameters as (PreInstalledNodeJsToolchainService.Parameters) -> Unit
+                )
+                DisabledNodeJsToolchainService::class.java -> DisabledNodeJsToolchainService.registerIfAbsent(gradle)
+                else -> gradle.sharedServices.registerIfAbsent(nodeJsServiceName, nodeJsToolchainClass) { spec ->
+                    configureBuildServiceParameters(spec.parameters)
+                }
+            }
+        }
+
         private fun registerIfAbsent(
             project: Project,
         ): Provider<out NodeJsToolchainService<out Parameters>> {
@@ -84,7 +112,7 @@ interface NodeJsToolchainService<P : NodeJsToolchainService.Parameters> : BuildS
             return when (project.kotlinPropertiesProvider.nodeJsToolchainMode) {
                 NodeJsToolchainMode.DOWNLOAD -> DefaultNodeJsToolchainService.registerIfAbsent(project)
                 NodeJsToolchainMode.PREINSTALLED -> PreInstalledNodeJsToolchainService.registerIfAbsent(project)
-                NodeJsToolchainMode.DISABLE -> DisabledNodeJsToolchainService.registerIfAbsent(project)
+                NodeJsToolchainMode.DISABLE -> DisabledNodeJsToolchainService.registerIfAbsent(project.gradle)
             }
         }
 
@@ -120,8 +148,8 @@ interface NodeJsToolchainService<P : NodeJsToolchainService.Parameters> : BuildS
             if (installedMajorVersion != null && installedMajorVersion < MINIMAL_SUPPORTED_NODE_JS_MAJOR_VERSION) {
                 warn(
                     "Node.js $installedVersion is not supported by the Kotlin Gradle Plugin. " +
-                    "The minimal supported version is $MINIMAL_SUPPORTED_NODE_JS_MAJOR_VERSION. " +
-                    "Please use Node.js $MINIMAL_SUPPORTED_NODE_JS_MAJOR_VERSION or a newer version."
+                            "The minimal supported version is $MINIMAL_SUPPORTED_NODE_JS_MAJOR_VERSION. " +
+                            "Please use Node.js $MINIMAL_SUPPORTED_NODE_JS_MAJOR_VERSION or a newer version."
                 )
             }
         }

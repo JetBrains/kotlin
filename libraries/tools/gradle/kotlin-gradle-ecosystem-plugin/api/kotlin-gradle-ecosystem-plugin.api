@@ -1,8 +1,3 @@
-public final class org/gradle/kotlin/dsl/SettingsKotlinExtensionsKt {
-	public static final fun kotlin (Lorg/gradle/api/initialization/Settings;Lkotlin/jvm/functions/Function1;)V
-	public static final fun kotlin (Lorg/gradle/api/initialization/Settings;Lorg/gradle/api/Action;)V
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemExtension {
 	public abstract fun toolchainManagement (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun toolchainManagement (Lorg/gradle/api/Action;)V

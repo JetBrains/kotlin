@@ -5892,7 +5892,7 @@ public final class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/Node
 	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl;Lorg/gradle/api/Action;)V
 }
 
-public class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDslImpl : org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl {
+public final class org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDslImpl : org/jetbrains/kotlin/gradle/targets/web/nodejs/toolchain/NodeJsToolchainManagementDsl {
 	public fun <init> (Lorg/gradle/api/invocation/Gradle;)V
 	public fun disable ()V
 	public fun toolchainService (Lkotlin/jvm/functions/Function1;)V
