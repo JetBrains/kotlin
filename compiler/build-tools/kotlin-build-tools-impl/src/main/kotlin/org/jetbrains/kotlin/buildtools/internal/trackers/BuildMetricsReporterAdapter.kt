@@ -110,11 +110,29 @@ private val droppedHierarchyElements = setOf(
     INCREMENTAL_COMPILATION_DAEMON, // reports metrics unrelated to IC and daemon
 )
 
-private fun BuildPerformanceMetric.hierarchicalReadableName(): String {
-    var node: BuildPerformanceMetric? = this
+private val droppedNames = droppedHierarchyElements.mapTo(mutableSetOf()) { it.name }
+
+private fun BuildPerformanceMetric.hierarchicalReadableName(): String =
+    if (this is GradleBuildTimeMetricStart) {
+        "Start time of \"${measuredMetricHierarchicalReadableName()}\""
+    } else {
+        hierarchicalReadableName(this, parent)
+    }
+
+private fun GradleBuildTimeMetricStart.measuredMetricHierarchicalReadableName(): String =
+    hierarchicalReadableName(this, measuredMetricParent, measuredMetricName, measuredMetricReadableString)
+
+private fun hierarchicalReadableName(
+    metric: BuildPerformanceMetric,
+    parent: BuildPerformanceMetric?,
+    name: String = metric.name,
+    readableString: String = metric.readableString,
+): String {
+    var node = parent
     return buildList {
+        if (name !in droppedNames) add(readableString)
         while (node != null) {
-            if (node !in droppedHierarchyElements) {
+            if (node.name !in droppedNames) {
                 add(node.readableString)
             }
             node = node.parent

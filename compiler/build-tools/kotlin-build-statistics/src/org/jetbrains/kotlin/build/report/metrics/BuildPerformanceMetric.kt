@@ -89,9 +89,18 @@ sealed class GradleBuildPerformanceMetric(
 ) :
     BuildPerformanceMetric(name, readableString, type, parent)
 
-class GradleBuildTimeMetricStart(name: String, readableString: String) : GradleBuildPerformanceMetric(
-    name = "${name}_START",
-    readableString = "Start time of ${readableString.replaceFirstChar(Char::lowercaseChar)}",
+/**
+ * Timestamp of the moment when the measurement of the [GradleBuildTimeMetric] with [measuredMetricName] was started.
+ * [measuredMetricParent] is kept to be able to reproduce the hierarchy of the measured metric in the metric's name,
+ * it is not a [parent] of this metric as a timestamp is not a part of the parent's value.
+ */
+class GradleBuildTimeMetricStart(
+    val measuredMetricName: String,
+    val measuredMetricReadableString: String,
+    val measuredMetricParent: GradleBuildTimeMetric?,
+) : GradleBuildPerformanceMetric(
+    name = "${measuredMetricName}_START",
+    readableString = "Start time of ${measuredMetricReadableString.replaceFirstChar(Char::lowercaseChar)}",
     type = ValueType.TIME
 ) {
     override fun equals(other: Any?): Boolean = other is GradleBuildTimeMetricStart && other.name == name

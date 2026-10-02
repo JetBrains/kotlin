@@ -22,7 +22,13 @@ class BuildPerformanceMetrics<T : BuildPerformanceMetric> : Serializable {
     }
 
     fun addLong(metric: T, value: Long = 1) {
-        myBuildMetrics[metric] = myBuildMetrics.getOrDefault(metric, 0) + value
+        val current = myBuildMetrics[metric]
+        myBuildMetrics[metric] = when {
+            current == null -> value
+            // Timestamps must not be summed: the earliest start of the measurement is kept
+            metric is GradleBuildTimeMetricStart -> minOf(current, value)
+            else -> current + value
+        }
     }
 
     fun asMap(): Map<T, Long> = myBuildMetrics

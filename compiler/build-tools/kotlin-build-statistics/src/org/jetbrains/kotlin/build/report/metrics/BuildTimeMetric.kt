@@ -43,7 +43,7 @@ object JPS_CODE_GENERATION :
 
 
 sealed class GradleBuildTimeMetric(parent: GradleBuildTimeMetric? = null, readableString: String, name: String) :
-    BuildTimeMetric<GradleBuildPerformanceMetric>(name, readableString, parent, GradleBuildTimeMetricStart(name, readableString))
+    BuildTimeMetric<GradleBuildPerformanceMetric>(name, readableString, parent, GradleBuildTimeMetricStart(name, readableString, parent))
 
 object GRADLE_TASK : GradleBuildTimeMetric(readableString = "Total Gradle task time", name = "GRADLE_TASK") {
     private fun readResolve(): Any = GRADLE_TASK
