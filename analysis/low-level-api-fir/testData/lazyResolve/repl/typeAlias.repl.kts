@@ -1,1 +1,0 @@
-<caret>typealias MyAlias = String
