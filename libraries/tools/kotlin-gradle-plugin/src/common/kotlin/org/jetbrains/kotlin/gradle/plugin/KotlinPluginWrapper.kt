@@ -262,9 +262,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         if (projectExtensionClass == KotlinAndroidProjectExtension::class) project.runAgpWithBuiltInKotlinIfAppliedCheck()
         if (projectExtensionClass == KotlinMultiplatformExtension::class) project.runKmpAgpWithBuiltInKotlinIfAppliedCheck()
 
-        project.createKotlinExtension(projectExtensionClass).apply {
-            coreLibrariesVersion = pluginVersion
-        }
+        project.createKotlinExtension(projectExtensionClass)
 
         project.extensions.add(KotlinTestsRegistry.PROJECT_EXTENSION_NAME, createTestRegistry(project))
 
