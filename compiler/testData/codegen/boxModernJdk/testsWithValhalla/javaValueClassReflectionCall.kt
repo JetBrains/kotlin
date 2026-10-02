@@ -29,16 +29,16 @@ fun mixed(k: KInline, d: LocalDate): Int = k.x + d.year
 fun LocalDate.plusInline(k: KInline): LocalDate = plusDays(k.x.toLong())
 
 fun box(): String {
-    if (!LocalDate::class.isValue || !JavaVal::class.isValue) return "isValue"
+    if (!LocalDate::class.isValue || !JavaVal::class.isValue) return "Fail: isValue"
     val date = LocalDate.of(2020, 1, 2)
     val withLocalDate = WithLocalDate::class.primaryConstructor!!
-    if (withLocalDate.call(date).d != date) return "WithLocalDate.call"
-    if (withLocalDate.callBy(mapOf(withLocalDate.parameters.single() to date)).d != date) return "WithLocalDate.callBy"
-    if (WithOptional::class.primaryConstructor!!.call(Optional.of("o")).o.get() != "o") return "WithOptional"
-    if (WithJavaVal::class.primaryConstructor!!.call(JavaVal(1)).j.x != 1) return "WithJavaVal"
-    if (Event::class.primaryConstructor!!.call("e", date) != Event("e", date)) return "Event"
-    if (::mixed.call(KInline(1), date) != 2021) return "mixed"
-    if (LocalDate::plusInline.call(date, KInline(1)) != LocalDate.of(2020, 1, 3)) return "plusInline"
-    if (date::plusInline.call(KInline(2)) != LocalDate.of(2020, 1, 4)) return "bound plusInline"
+    if (withLocalDate.call(date).d != date) return "Fail: WithLocalDate.call"
+    if (withLocalDate.callBy(mapOf(withLocalDate.parameters.single() to date)).d != date) return "Fail: WithLocalDate.callBy"
+    if (WithOptional::class.primaryConstructor!!.call(Optional.of("o")).o.get() != "o") return "Fail: WithOptional"
+    if (WithJavaVal::class.primaryConstructor!!.call(JavaVal(1)).j.x != 1) return "Fail: WithJavaVal"
+    if (Event::class.primaryConstructor!!.call("e", date) != Event("e", date)) return "Fail: Event"
+    if (::mixed.call(KInline(1), date) != 2021) return "Fail: mixed"
+    if (LocalDate::plusInline.call(date, KInline(1)) != LocalDate.of(2020, 1, 3)) return "Fail: plusInline"
+    if (date::plusInline.call(KInline(2)) != LocalDate.of(2020, 1, 4)) return "Fail: bound plusInline"
     return "OK"
 }
