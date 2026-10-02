@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.backend.common.IdSignaturesExtractor.ExtractedSignatures
+import org.jetbrains.kotlin.io.withExclusiveFileLock
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
-import java.nio.file.Path
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.deleteRecursively
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * This is an implementation of [IdSignaturesExtractor] that allows reading top-level signatures from
@@ -30,6 +33,17 @@ class IdSignaturesExtractorFromKlibWithIndices(
         // If there is an index inside the library, return signatures from it.
         library.signatureIndex?.let { return it.toExtractedSignatures() }
 
+        // Otherwise, let's try to access an external index.
+        val externalIndexLayout = getExternalIndexLayoutIfPossible() ?: return null
+
+        // The external index can be concurrently read or written by other threads or processes.
+        // So, access it only under the lock.
+        return withExclusiveFileLock(externalIndexLayout.lockFile, retryTimeout = 20.milliseconds) {
+            getExtractedSignaturesFromExternalIndex(externalIndexLayout)
+        }
+    }
+
+    private fun getExternalIndexLayoutIfPossible(): KlibSignatureIndexComponentLayout.ExternalIndex? {
         // If there are no conditions under which an external index for the current library can be generated,
         // return `null` to fall back to computing `ExtractedSignatures` on the fly using `delegate`.
         if (externalIndicesParameters == null ||
@@ -38,30 +52,43 @@ class IdSignaturesExtractorFromKlibWithIndices(
             return null
         }
 
-        // If there is the external index, return signatures from it.
+        return KlibSignatureIndexComponentLayout.ExternalIndex(
+            root = externalIndicesParameters.externalSignatureIndicesDir,
+            libraryName = library.uniqueName,
+            targetDiscriminator = externalIndicesParameters.targetDiscriminator,
+            libraryFingerprintHash = library.lazyEvaluatedFingerprintHash,
+        )
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    private fun getExtractedSignaturesFromExternalIndex(
+        externalIndexLayout: KlibSignatureIndexComponentLayout.ExternalIndex,
+    ): ExtractedSignatures {
+        // If there is the external index (possibly, just written by another thread or process), return signatures from it.
         KlibSignatureIndexComponent.createComponentIfDataInKlibIsAvailable(
-            KlibLayoutReader.FromDirectory(
-                externalIndicesParameters.externalSignatureIndicesDir,
-                ::getExternalIndexLayout
+            layoutReader = KlibLayoutReader.FromDirectory(
+                klibDir = externalIndexLayout.root,
+                layoutBuilder = { externalIndexLayout }
             )
         )?.let { return it.toExtractedSignatures() }
 
         // Else, compute signatures and store them as the external index on the file system.
         val [exported, imported] = delegate.extractOnlyTopLevelPublicSignatures()
-        KlibSignatureIndexComponentWriterImpl(
-            exportedTopLevelSignatures = exported,
-            importedTopLevelSignatures = imported,
-            layoutBuilder = ::getExternalIndexLayout,
-        ).writeTo(externalIndicesParameters.externalSignatureIndicesDir)
+
+        try {
+            KlibSignatureIndexComponentWriterImpl(
+                exportedTopLevelSignatures = exported,
+                importedTopLevelSignatures = imported,
+                layoutBuilder = { externalIndexLayout },
+            ).writeTo(externalIndexLayout.root)
+        } catch (e: Throwable) {
+            // Don't leave a partially written index on the file system.
+            runCatching { externalIndexLayout.indicesDir.deleteRecursively() }
+            throw e
+        }
+
         return ExtractedSignatures(exported, imported)
     }
-
-    private fun getExternalIndexLayout(root: Path) = KlibSignatureIndexComponentLayout.ExternalIndex(
-        root = root,
-        libraryName = library.uniqueName,
-        targetDiscriminator = externalIndicesParameters!!.targetDiscriminator,
-        libraryFingerprintHash = library.lazyEvaluatedFingerprintHash,
-    )
 
     companion object {
         private fun KlibSignatureIndexComponent.toExtractedSignatures() = ExtractedSignatures(
