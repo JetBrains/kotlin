@@ -218,13 +218,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
 
-        project.whenJsOrMppEnabled {
-            KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-            KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-            KlibPackaging.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-        }
-
         project.whenMppEnabled {
+            KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(this)
+            KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(this)
+            KlibPackaging.setupAttributesMatchingStrategy(this)
             CInteropKlibLibraryElements.setupAttributesMatchingStrategy(this)
             CommonizerTargetAttribute.setupAttributesMatchingStrategy(this)
             CInteropCommonizerArtifactTypeAttribute.setupTransform(project)
