@@ -61,6 +61,24 @@ internal interface KotlinStubs {
 
 internal class CBridgeGenState(val stubs: KotlinStubs) : CDeclarationScope {
     private val cLines = mutableListOf<String>()
+    private val structTypedefNames = mutableMapOf<String, String>()
+
+    /**
+     * Declares the given struct with a typedef if needed, using a unique name.
+     *
+     * So, the "same" struct in different [CBridgeGenState]s will get different typedef names.
+     * Also, structs with the same spelling but different [StructCType] will get the same name.
+     *
+     * Both are harmless, as each state has all referenced declarations.
+     * And having a unique name also helps to keep the different states truly independent.
+     *
+     * Also, this is the easiest way to get the job done.
+     */
+    override fun getStructTypedefName(spelling: String): String = structTypedefNames.getOrPut(spelling) {
+        stubs.getUniqueCName("struct").also { name ->
+            addC(listOf("typedef $spelling $name;"))
+        }
+    }
 
     fun addC(lines: List<String>) {
         cLines.addAll(lines)
@@ -833,14 +851,7 @@ private fun CBridgeGenState.createFakeKotlinExternalFunction(
 }
 
 private fun getCStructType(kotlinClass: IrClass): CType? =
-        kotlinClass.getCStructSpelling()?.let { CTypes.simple(it) }
-
-private fun CBridgeGenState.getNamedCStructType(kotlinClass: IrClass): CType? {
-    val cStructType = getCStructType(kotlinClass) ?: return null
-    val name = stubs.getUniqueCName("struct")
-    addC(listOf("typedef ${cStructType.render(name)};"))
-    return CTypes.simple(name)
-}
+        kotlinClass.getCStructSpelling()?.let { CTypes.struct(it) }
 
 private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
         type: IrType,
@@ -969,7 +980,7 @@ private fun CBridgeGenState.mapType(
             require(!type.isNullable()) { renderCompilerError(location) }
             val kotlinClass = (type as IrSimpleType).arguments.singleOrNull()?.typeOrNull?.getClass()
             require(kotlinClass != null) { renderCompilerError(location) }
-            val cStructType = getNamedCStructType(kotlinClass)
+            val cStructType = getCStructType(kotlinClass)
             require(cStructType != null) { renderCompilerError(location) }
             StructValuePassing(kotlinClass, cStructType)
         }
