@@ -100,13 +100,7 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
      */
     @Override
     public void delete() throws IncorrectOperationException {
-        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
-        if (mutationService != null) {
-            mutationService.deleteBlockExpression(this);
-        }
-        else {
-            rawDelete();
-        }
+        KtPsiMutationServiceKt.deleteWithMutationService(this, mutationService -> mutationService.deleteBlockExpression(this));
     }
 
     @Override

@@ -153,13 +153,7 @@ public class KtEnumEntry extends KtClass implements KtDeclarationWithReturnType 
      */
     @Override
     public void delete() {
-        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
-        if (mutationService != null) {
-            mutationService.deleteEnumEntry(this);
-        }
-        else {
-            rawDelete();
-        }
+        KtPsiMutationServiceKt.deleteWithMutationService(this, mutationService -> mutationService.deleteEnumEntry(this));
     }
 
     @Override

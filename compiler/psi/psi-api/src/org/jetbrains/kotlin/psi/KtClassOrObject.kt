@@ -212,12 +212,7 @@ abstract class KtClassOrObject :
      * the service, it performs only the plain platform deletion.
      */
     override fun delete() {
-        val mutationService = KtPsiMutationService.getInstanceOrNull()
-        if (mutationService != null) {
-            mutationService.deleteClassOrObject(this)
-        } else {
-            rawDelete()
-        }
+        deleteWithMutationService(this) { it.deleteClassOrObject(this) }
     }
 
     override fun subtreeChanged() {
