@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 
 fun klibIrComponentFromFiles(files: List<SerializedIrFile>): KlibIrComponent {
-    return KlibIrComponentInMemoryImpl(files)
+    return KlibIrInMemoryComponentImpl(files)
 }
 
-internal class KlibIrComponentInMemoryImpl(
+internal class KlibIrInMemoryComponentImpl(
     files: List<SerializedIrFile>
 ) : AbstractKlibIrComponentImpl() {
     override val irFiles: IrArrayReader by lazy {

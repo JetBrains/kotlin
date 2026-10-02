@@ -62,6 +62,9 @@ inline fun <KCL : KlibComponentLayout> IrMultiArrayReader(
 ): IrMultiArrayReader = IrMultiArrayReader { layoutReader.readInPlace { it.getFile().readBytes() } }
 
 interface IrMultiArrayReader {
+    fun rowCount(): Int
+    fun columnCount(rowIndex: Int): Int
+
     fun tableItemBytes(index: Int): ByteArray
     fun tableItemBytes(rowIndex: Int, columnIndex: Int): ByteArray
 }
@@ -70,8 +73,8 @@ private class IrMultiArrayReaderFromBuffer(private val buffer: ReadByteBufferPro
     private val indexToOffset: IndexToOffset = buffer.use { it.readIndexToOffset(0) }
     private val indexToIndexToOffset: IndexToIndexToOffset = mutableMapOf()
 
-    fun rowCount() = indexToOffset.size - 1
-    fun columnCount(rowIndex: Int): Int = buffer.use { it.readColumnIndexToOffset(indexToOffset, indexToIndexToOffset, rowIndex).size - 1 }
+    override fun rowCount() = indexToOffset.size - 1
+    override fun columnCount(rowIndex: Int): Int = buffer.use { it.readColumnIndexToOffset(indexToOffset, indexToIndexToOffset, rowIndex).size - 1 }
 
     override fun tableItemBytes(index: Int): ByteArray = buffer.use { it.readTableItemBytes(indexToOffset, index) }
     override fun tableItemBytes(rowIndex: Int, columnIndex: Int): ByteArray =
@@ -79,6 +82,9 @@ private class IrMultiArrayReaderFromBuffer(private val buffer: ReadByteBufferPro
 }
 
 private class IrMultiArrayReaderFromMemory(private val bytes: List<ByteArray>) : IrMultiArrayReader {
+    override fun rowCount(): Int = bytes.size
+    override fun columnCount(rowIndex: Int): Int = IrArrayReader(bytes[rowIndex]).entryCount()
+
     override fun tableItemBytes(index: Int): ByteArray = bytes[index]
     override fun tableItemBytes(rowIndex: Int, columnIndex: Int): ByteArray = IrArrayReader(bytes[rowIndex]).tableItemBytes(columnIndex)
 }
