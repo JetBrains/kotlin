@@ -432,6 +432,10 @@ tasks.withType<Test>().configureEach {
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
+    // These tests only consume the Parcelize runtime's root metadata and JVM variant. Using its
+    // aggregate `install` task here would compile and publish every JS, Wasm, and Native target.
+    dependsOn(":plugins:parcelize:parcelize-runtime:publishKotlinMultiplatformPublicationToMavenLocal")
+    dependsOn(":plugins:parcelize:parcelize-runtime:publishJvmPublicationToMavenLocal")
     dependsOn(":gradle:android-test-fixes:install")
     dependsOn(":gradle:gradle-warnings-detector:install")
     dependsOn(":gradle:kotlin-compiler-args-properties:install")
