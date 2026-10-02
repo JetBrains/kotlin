@@ -32,6 +32,12 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
     protected val betaSource = "package libb\nimport liba.Alpha\nclass Beta(val alpha: Alpha, val count: Int)"
     protected val frameworkMarkerSource = "package app\nfun frameworkMarker() = 1"
 
+    protected val objCCacheBinaryOptions = listOf(
+        "-Xbinary=objcExportErrorOnNameCollisions=true",
+        "-Xbinary=objcExportDisableSwiftMemberNameMangling=true",
+        "-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true",
+    )
+
     @BeforeEach
     fun assumeAppleTarget() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
@@ -92,7 +98,7 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
         frameworkName: String = "Kt",
         expectedExitCode: ExitCode = ExitCode.OK,
     ): String = runCompiler(
-        cacheArgs("objc_cache", klib, cacheDir) + listOf("-module-name", frameworkName) + extraArgs,
+        cacheArgs("objc_cache", klib, cacheDir) + listOf("-module-name", frameworkName) + objCCacheBinaryOptions + extraArgs,
         expectedExitCode,
     )
 
@@ -140,6 +146,7 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
         extraArgs: List<String> = emptyList(),
         source: String = frameworkMarkerSource,
         dir: File = buildDir,
+        binaryOptions: List<String> = objCCacheBinaryOptions,
     ): Framework {
         val sourceDir = dir.resolve("framework").apply { mkdirs() }
         val sourceFile = sourceDir.resolve("framework.kt").apply { writeText(source.trimIndent()) }
@@ -158,7 +165,7 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
                     "-module-name", "Kt",
                     "-Xcache-directory=${libraries.cacheDir.absolutePath}".takeIf { withCaches },
                     "-Xdisable-ir-checkers=IrVisibilityChecker",
-                ) + included.map { "-Xinclude=${libraries.klib(it).absolutePath}" } + extraArgs
+                ) + included.map { "-Xinclude=${libraries.klib(it).absolutePath}" } + binaryOptions + extraArgs
             ),
             sourceModules = testCase.modules,
             dependencies = linked.map { libraries.klibs.getValue(it.name).asLibraryDependency() },
@@ -530,7 +537,7 @@ class ObjCCacheTest : ObjCCacheTestBase() {
             "-produce", "dynamic", "-module-name", "Kt", "-output", outputDir.resolve("kt").absolutePath, "-library", klib,
             "-Xexport-library=$klib", "-Xcache-directory=${libraries.cacheDir.absolutePath}", source.absolutePath,
         )
-        runCompiler(args)
+        runCompiler(args + objCCacheBinaryOptions)
     }
 
     @Test
@@ -716,6 +723,12 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         val framework = linkFramework(libraries)
         framework.assertObjCCachesLinked("libA", "libB")
         framework.runSwift("let alpha: Alpha = Beta().hidden()\ntry assertEquals(actual: alpha.name, expected: \"fromBeta\")")
+    }
+
+    @Test
+    fun testNotUsedWithoutCollisionErrors() {
+        val framework = linkFramework(compileLibraries(testLibrary()), binaryOptions = emptyList())
+        framework.assertObjCCachesLinked("library", linked = false)
     }
 }
 
