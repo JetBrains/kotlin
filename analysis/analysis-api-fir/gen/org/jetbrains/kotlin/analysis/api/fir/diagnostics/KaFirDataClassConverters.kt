@@ -1173,6 +1173,12 @@ private fun KaDiagnosticConverterBuilder.addConversions21() {
             token,
         )
     }
+    add(FirErrors.COMPANION_BLOCK_LATEINIT_IN_INTERFACE) { firDiagnostic ->
+        CompanionBlockLateinitInInterfaceImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.JVM_RECORD_NOT_LAST_VARARG_PARAMETER) { firDiagnostic ->
         JvmRecordNotLastVarargParameterImpl(
             firDiagnostic as KtDiagnosticWithSource,

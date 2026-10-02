@@ -92,7 +92,7 @@ interface J {
 
         <!WRONG_MODIFIER_TARGET!>suspend<!> val suspend = 1
         <!WRONG_MODIFIER_TARGET!>external<!> val external = 1
-        lateinit var lateinit: Any
+        <!COMPANION_BLOCK_LATEINIT_IN_INTERFACE!>lateinit<!> var lateinit: Any
         <!WRONG_MODIFIER_TARGET!>tailrec<!> val tailrec = 1
         const val const = 1
         <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> val expect: String
