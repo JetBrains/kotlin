@@ -49,6 +49,7 @@ dependencies {
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":kotlin-util-klib")))
     testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
     testImplementation(project(":kotlin-metadata")) { isTransitive = false }
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
