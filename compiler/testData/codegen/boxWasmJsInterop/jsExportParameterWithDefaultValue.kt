@@ -20,3 +20,6 @@ import {
 if (parameterWithDefaultValue(42, null) != 42) {
     throw "Fail 1";
 }
+if (parameterWithDefaultValue(42) != 42) {
+    throw "Fail 2";
+}
