@@ -14,22 +14,12 @@ kotlin {
                 implementation(project(":kotlin-stdlib-common"))
             }
             kotlin.srcDir("src/main/kotlin")
-            compilerOptions {
-                freeCompilerArgs.add("-Xname-based-destructuring=complete")
-                freeCompilerArgs.add("-Xcollection-literals")
-                freeCompilerArgs.add("-Xcontext-sensitive-resolution")
-            }
         }
         commonTest {
             dependencies {
                 implementation(project(":kotlin-test"))
             }
             kotlin.srcDir("src/tests")
-            compilerOptions {
-                freeCompilerArgs.add("-Xname-based-destructuring=complete")
-                freeCompilerArgs.add("-Xcollection-literals")
-                freeCompilerArgs.add("-Xcontext-sensitive-resolution")
-            }
         }
         jvm {
             compilations["main"].defaultSourceSet {
@@ -54,6 +44,9 @@ kotlin {
                 }
             }
         }
+    }
+    compilerOptions {
+        freeCompilerArgs.addAll(dogfoodedExperimentalFeatures)
     }
 }
 

@@ -191,21 +191,10 @@ fun Project.configureKotlinCompilationOptions() {
                         "-opt-in=kotlin.RequiresOptIn",
                         "-progressive".takeIf { project.kotlinBuildProperties.booleanProperty("test.progressive.mode", false).get() },
                         "-Xdont-warn-on-error-suppression",
-                        "-Xcontext-parameters".takeUnless { skipNewLanguageFeatures }, // KT-72222
-                        "-Xexplicit-backing-fields".takeUnless { skipNewLanguageFeatures }, // KT-14663
-                        "-Xname-based-destructuring=complete".takeUnless { skipNewLanguageFeatures },
-                        "-Xcollection-literals".takeUnless { skipNewLanguageFeatures },
-                        "-Xcontext-sensitive-resolution".takeUnless { skipNewLanguageFeatures },
-                        "-Xexplicit-context-arguments".takeUnless { skipNewLanguageFeatures },
-                        // Between making a language feature stable and the next bootstrap, we need to keep providing the compiler argument.
-                        // But this produces a warning
-                        // "The argument ... is redundant for the current language version ..."
-                        // in the bootstrap test and fails because of -Werror.
-                        // To work around it, we suppress the warning.
-                        @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
-                        "-Xwarning-level=REDUNDANT_CLI_ARG:disabled".takeIf {
-                            project.kotlinExtension.compilerVersion.get() == project.kotlinToolingVersion.toString()
-                        },
+
+                        *if (skipNewLanguageFeatures) emptyArray() else dogfoodedExperimentalFeatures.toTypedArray(),
+                        "-Xallow-pre-17-runtime-jdk", // KT-88174
+                        redundantCliArgWarningSuppression.takeUnless { skipNewLanguageFeatures },
                     )
                 }
 
