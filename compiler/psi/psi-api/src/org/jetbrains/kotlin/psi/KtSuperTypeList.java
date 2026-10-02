@@ -82,9 +82,22 @@ public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtS
         KtPsiMutationService.getInstance().removeSuperType(this, entry);
     }
 
+    /**
+     * Deletes this super type list.
+     * <p>
+     * When {@link KtPsiMutationService} is registered, as in the IntelliJ Kotlin plugin, the deletion may also adjust the surrounding code,
+     * e.g., delete the colon before the list. Without the service, it performs only the plain platform deletion, which leaves the colon in
+     * place.
+     */
     @Override
     public void delete() throws IncorrectOperationException {
-        KtPsiMutationService.getInstance().deleteSuperTypeList(this);
+        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
+        if (mutationService != null) {
+            mutationService.deleteSuperTypeList(this);
+        }
+        else {
+            rawDelete();
+        }
     }
 
     /** Returns the entries of the super type list, in source order; empty if there are none. */

@@ -204,8 +204,20 @@ abstract class KtClassOrObject :
         KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD, KtTokens.OBJECT_KEYWORD
     )
 
+    /**
+     * Deletes this class or object.
+     *
+     * When [KtPsiMutationService] is registered, as in the IntelliJ Kotlin plugin, the deletion may also adjust the surrounding code, e.g.,
+     * delete a semicolon that follows the declaration, or delete the whole file instead if the declaration is the only one in it. Without
+     * the service, it performs only the plain platform deletion.
+     */
     override fun delete() {
-        KtPsiMutationService.getInstance().deleteClassOrObject(this)
+        val mutationService = KtPsiMutationService.getInstanceOrNull()
+        if (mutationService != null) {
+            mutationService.deleteClassOrObject(this)
+        } else {
+            rawDelete()
+        }
     }
 
     override fun subtreeChanged() {
