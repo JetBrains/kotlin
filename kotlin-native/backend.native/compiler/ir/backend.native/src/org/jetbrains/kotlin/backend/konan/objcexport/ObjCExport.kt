@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportBlockCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.io.deleteOnExit
@@ -141,6 +142,14 @@ internal fun produceObjCExportInterface(
 
     return headerGenerator.buildInterface()
 }
+
+internal fun CompilerConfiguration.hasObjCCacheBinaryOptions(): Boolean =
+        getBoolean(BinaryOptions.objcExportErrorOnNameCollisions) &&
+                getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling) &&
+                getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
+
+internal const val OBJC_CACHE_BINARY_OPTIONS = "-Xbinary=objcExportErrorOnNameCollisions=true, " +
+        "-Xbinary=objcExportDisableSwiftMemberNameMangling=true and -Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"
 
 private class ObjCExportCompilerProblemCollector(val context: NativeBackendPhaseContext) : ObjCExportProblemCollector {
     private val DeclarationDescriptor.psiLocation

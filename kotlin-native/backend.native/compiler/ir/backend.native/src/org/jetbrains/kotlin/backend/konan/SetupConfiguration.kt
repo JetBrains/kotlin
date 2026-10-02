@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.backend.konan.objcexport.OBJC_CACHE_BINARY_OPTIONS
+import org.jetbrains.kotlin.backend.konan.objcexport.hasObjCCacheBinaryOptions
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING
 import org.jetbrains.kotlin.cli.CliDiagnostics.KONAN_ARGUMENT_WARNING
@@ -69,6 +71,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         }
         if (getBoolean(BinaryOptions.swiftExport)) {
             report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not support Swift Export (-Xbinary=swiftExport=true)")
+        }
+        if (!hasObjCCacheBinaryOptions()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache requires $OBJC_CACHE_BINARY_OPTIONS")
         }
         if (arguments.moduleName.isNullOrEmpty()) {
             report(KONAN_ARGUMENT_ERROR, "-produce objc_cache requires -module-name to be specified")
