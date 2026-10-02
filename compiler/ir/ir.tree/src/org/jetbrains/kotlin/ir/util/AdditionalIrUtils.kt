@@ -149,9 +149,10 @@ val IrAnnotation.classId: ClassId get() = classSymbol.classIdWhenAvailable!!
 fun IrClass.hasEqualClassId(classId: ClassId): Boolean {
     fun compare(declaration: IrDeclarationWithName, packageFqName: FqName, relativeName: FqName): Boolean {
         if (declaration.name != relativeName.shortName()) return false
+        val relativeParent = relativeName.parent()
         return when (val parent = declaration.parent) {
-            is IrPackageFragment -> parent.packageFqName == packageFqName && relativeName.parent().isRoot
-            is IrClass -> !relativeName.parent().isRoot && compare(parent, packageFqName, relativeName.parent())
+            is IrPackageFragment -> parent.packageFqName == packageFqName && relativeParent.isRoot
+            is IrClass -> !relativeParent.isRoot && compare(parent, packageFqName, relativeParent)
             else -> false
         }
     }
