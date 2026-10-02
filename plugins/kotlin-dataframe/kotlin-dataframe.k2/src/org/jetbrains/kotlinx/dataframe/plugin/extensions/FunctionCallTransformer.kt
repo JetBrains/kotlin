@@ -473,8 +473,9 @@ class FunctionCallTransformer(
         }
 
         val newCall1 = buildFunctionCall {
-            // source = call.source makes IDE navigate to `let` declaration
-            source = null
+            // source = call.source makes IDE navigate to `let` declaration.
+            // A fake source is still needed: checkers report type mismatches of the whole expression on it, KDF#1490
+            source = call.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
             this.coneTypeOrNull = returnType
             if (receiverType != null) {
                 typeArguments += buildTypeProjectionWithVariance {

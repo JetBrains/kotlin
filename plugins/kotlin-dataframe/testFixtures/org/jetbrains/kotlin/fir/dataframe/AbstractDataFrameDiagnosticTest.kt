@@ -32,7 +32,16 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
         builder.useConfigurators(
             ::DataFrameEnvironmentConfigurator
         )
-        builder.forTestsNotMatching("schemaInfo.kt|structuralCast.kt|selectDuringTyping.kt|dataSchemaVisibility.kt|localDataFrameReturnType.kt") {
+        builder.forTestsNotMatching(
+            listOf(
+                "schemaInfo.kt",
+                "structuralCast.kt",
+                "selectDuringTyping.kt",
+                "dataSchemaVisibility.kt",
+                "localDataFrameReturnType.kt",
+                "refinedCallReturnTypeMismatch.kt"
+            ).joinToString("|"),
+        ) {
             enableLazyResolvePhaseChecking()
         }
         builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
