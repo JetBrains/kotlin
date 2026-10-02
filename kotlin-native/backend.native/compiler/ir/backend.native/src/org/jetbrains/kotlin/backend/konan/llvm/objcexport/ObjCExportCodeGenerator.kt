@@ -39,9 +39,7 @@ import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
-import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
-import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
@@ -282,32 +280,13 @@ internal class ObjCExportCodeGenerator(
         val mapper: ObjCExportMapper
 ) : ObjCExportCodeGeneratorBase(codegen) {
 
-    private val objCCaches by lazy {
-        generationState.config.objCCaches
-    }
-
-    private fun isFromObjCCache(klib: KotlinLibrary?): Boolean = klib != null && klib in objCCaches
+    private val objCCaches get() = generationState.config.objCCaches
 
     internal val objCCacheClassAdapters = mutableListOf<ObjCCacheAdapterEntry>()
     internal val objCCacheProtocolAdapters = mutableListOf<ObjCCacheAdapterEntry>()
     internal val objCCacheCategoryAdapters = mutableListOf<ObjCCacheAdapterEntry>()
     internal val objCCacheExtraClassAdapters = mutableListOf<ObjCCacheAdapterEntry>()
     internal val objCCacheExtraProtocolAdapters = mutableListOf<ObjCCacheAdapterEntry>()
-
-    private val extraClassAdaptersFromObjCCaches by lazy {
-        objCCaches.values.flatMap { it.metadata.extraClassAdapters }.associateBy { it.objcName }
-    }
-    private val extraProtocolAdaptersFromObjCCaches by lazy {
-        objCCaches.values.flatMap { it.metadata.extraProtocolAdapters }.associateBy { it.objcName }
-    }
-
-    private fun extraAdapterFromObjCCache(type: ObjCTypeForKotlinType): ObjCCacheAdapterEntry? {
-        if (generationState.config.produce.isObjCCache || isFromObjCCache(type.owningLibrary)) return null
-        val adapters = if (type is ObjCProtocolForKotlinInterface) extraProtocolAdaptersFromObjCCaches else extraClassAdaptersFromObjCCaches
-        return adapters[type.binaryName]
-    }
-
-    private val usedExtraAdaptersFromObjCCaches = mutableListOf<ObjCCacheAdapterEntry>()
 
     inline fun <reified T: IrFunction> T.getLowered(): T = when (this) {
         is IrSimpleFunction -> when {
@@ -427,20 +406,19 @@ internal class ObjCExportCodeGenerator(
 
         val isObjCCache = generationState.config.produce.isObjCCache
         val libraryToCache = generationState.config.librariesToCache.keys.singleOrNull()
+        val typesFromObjCCaches = spec?.typesFromObjCCaches.orEmpty()
+        val namesFromObjCCaches = typesFromObjCCaches.mapTo(hashSetOf()) { it.adapter.objcName to it.adapter.isInterface }
 
         val typesToGenerate = types.filter { type ->
-            when {
-                type == objCClassForAny -> !isObjCCache
-                isObjCCache -> true
-                else -> !isFromObjCCache(type.owningLibrary) && extraAdapterFromObjCCache(type) == null
+            when (type) {
+                objCClassForAny -> !isObjCCache
+                else -> (type.binaryName to (type is ObjCProtocolForKotlinInterface)) !in namesFromObjCCaches
             }
         }
 
-        types.forEach { type ->
-            val entry = extraAdapterFromObjCCache(type) ?: return@forEach
-            usedExtraAdaptersFromObjCCaches += entry
-            if (type is ObjCClassForKotlinClass) {
-                dataGenerator.emitEmptyClass(type.binaryName, (type.superClassNotAny ?: objCClassForAny).binaryName)
+        typesFromObjCCaches.forEach { type ->
+            if (!type.adapter.isInterface) {
+                dataGenerator.emitEmptyClass(type.adapter.objcName, type.superClassBinaryName ?: objCClassForAny.binaryName)
             }
         }
 
@@ -457,10 +435,9 @@ internal class ObjCExportCodeGenerator(
                     val superClass = it.superClassNotAny ?: objCClassForAny
                     val irClass = it.irClassSymbol.owner
                     val klib = irClass.moduleFragment.kotlinLibrary
-                    val isAlreadyEmittedInCache = isFromObjCCache(klib)
                     val isExtraTypeOfObjCCache = isObjCCache && klib?.uniqueName != libraryToCache?.uniqueName
 
-                    if (!isAlreadyEmittedInCache && !isExtraTypeOfObjCCache) {
+                    if (!isExtraTypeOfObjCCache) {
                         dataGenerator.emitEmptyClass(it.binaryName, superClass.binaryName)
                     }
                     // Note: it is generated only to be visible for linker.
@@ -479,34 +456,14 @@ internal class ObjCExportCodeGenerator(
 
         objCTypeAdapters += generateTypeAdaptersForKotlinTypes(spec)
 
-        val isObjCCache = generationState.config.produce.isObjCCache
-        val libraryToCache = generationState.config.librariesToCache.keys.singleOrNull()
-
-        val filesToGenerate = spec?.files.orEmpty().filter { file ->
-            val klib = file.owningLibrary
-            if (isObjCCache) {
-                klib != null && klib.uniqueName == libraryToCache?.uniqueName
-            } else {
-                !isFromObjCCache(klib)
-            }
-        }
-
-        filesToGenerate.forEach {
+        spec?.files?.forEach {
             objCTypeAdapters += createTypeAdapterForFileClass(it)
             dataGenerator.emitEmptyClass(it.binaryName, namer.kotlinAnyName.binaryName)
         }
 
-        val categoriesToGenerate = spec?.categories.orEmpty().filter { category ->
-            val klib = category.owningLibrary
-            if (isObjCCache) {
-                klib != null && klib.uniqueName == libraryToCache?.uniqueName
-            } else {
-                !isFromObjCCache(klib)
-            }
-        }
-        val categoryAdapters = categoriesToGenerate.map { createCategoryAdapter(it) }
+        val categoryAdapters = spec?.categories.orEmpty().map { createCategoryAdapter(it) }
 
-        emitTypeAdapters(objCTypeAdapters, categoryAdapters)
+        emitTypeAdapters(objCTypeAdapters, categoryAdapters, spec?.typesFromObjCCaches.orEmpty().map { it.adapter })
     }
 
     internal fun generate(spec: ObjCExportCodeSpec?) {
@@ -534,18 +491,10 @@ internal class ObjCExportCodeGenerator(
         emitKt42254Hint()
     }
 
-    private val ObjCTypeForKotlinType.owningLibrary: KotlinLibrary?
-        get() = irClassSymbol.owner.moduleFragment.kotlinLibrary
-
-    private val ObjCClassForKotlinFile.owningLibrary: KotlinLibrary?
-        get() = (sourceFile as? DeserializedSourceFile)?.library
-
-    private val ObjCCategoryForKotlinClass.owningLibrary: KotlinLibrary?
-        get() = methods.firstOrNull()?.baseMethod?.symbol?.owner?.moduleFragment?.kotlinLibrary
-
     private fun emitTypeAdapters(
             objCTypeAdapters: List<ObjCTypeAdapter>,
             objCCategoryAdapters: List<ObjCTypeAdapter>,
+            extraAdaptersFromObjCCaches: List<ObjCCacheAdapterEntry>,
     ) {
         val isObjCCache = generationState.config.produce.isObjCCache
         val placedClassAdapters = mutableMapOf<String, ConstPointer>()
@@ -591,7 +540,7 @@ internal class ObjCExportCodeGenerator(
             }
             descriptorToAdapter[adapter.objCName] = typeAdapter
 
-            if (!isObjCCache && irClass != null && !isFromObjCCache(irClass.moduleFragment.kotlinLibrary)) {
+            if (!isObjCCache && irClass != null) {
                 if (!generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
                     try {
                         codegen.bindObjCExportTypeAdapterTo(irClass, typeAdapter)
@@ -626,10 +575,7 @@ internal class ObjCExportCodeGenerator(
             metadata.categoryAdapters.forEach { placedCategoryAdapters += it.objcName to externalAdapterGlobal(it.symbolName) }
         }
 
-        usedExtraAdaptersFromObjCCaches.forEach { entry ->
-            val placedAdapters = if (entry.isInterface) placedInterfaceAdapters else placedClassAdapters
-            placedAdapters.putIfAbsent(entry.objcName, externalAdapterGlobal(entry.symbolName))
-        }
+        extraAdaptersFromObjCCaches.forEach { (if (it.isInterface) placedInterfaceAdapters else placedClassAdapters).placeExternal(it) }
 
         // The following two also contain stuff from swift-export
         generationState.bindClassToObjCNameClassAdapters.forEach { [name, ptr] ->
