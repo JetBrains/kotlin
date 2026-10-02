@@ -1,0 +1,18 @@
+FILE[kind=Facade[packageFqName=one.two, facadeFqName=one.two.NamedInsideNamelessLocalClassesKt]]
+  facadeFqName: one.two.NamedInsideNamelessLocalClassesKt
+  partSimpleName: "NamedInsideNamelessLocalClassesKt"
+  PACKAGE_DIRECTIVE
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION[referencedName=one]
+      REFERENCE_EXPRESSION[referencedName=two]
+  IMPORT_LIST
+  FUNCTION[fqName=one.two.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
+    VALUE_PARAMETER_LIST
+    CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=null, superNames=[]]
+      CLASS_BODY
+        CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=A, superNames=[]]
+        OBJECT_DECLARATION[classId=null, fqName=null, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
+        TYPEALIAS[classId=null, fqName=null, isTopLevel=false, name=C]
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Int]
