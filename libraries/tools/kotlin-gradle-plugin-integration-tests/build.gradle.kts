@@ -188,6 +188,9 @@ tasks.register<Delete>("cleanTestKitCache") {
     delete(layout.buildDirectory.dir("kgpTestInfra"))
 }
 
+val parcelizeRuntimeKmpPublication =
+    ":plugins:parcelize:parcelize-runtime:publishKotlinMultiplatformPublicationToMavenLocal"
+
 val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::class) {
     description = "Only runs on CI. " +
             "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
@@ -197,6 +200,10 @@ val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::clas
 
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
     delete(userHomeKonanDir)
+
+    // Publishing the root KMP metadata commonizes the Native distribution and may use ~/.konan.
+    // Clean afterward so failures only report default-home usage by the tests themselves.
+    mustRunAfter(parcelizeRuntimeKmpPublication)
 
     doLast {
         logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
@@ -432,6 +439,10 @@ tasks.withType<Test>().configureEach {
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
+    // These tests only consume the Parcelize runtime's root metadata and JVM variant. Using its
+    // aggregate `install` task here would compile and publish every JS, Wasm, and Native target.
+    dependsOn(parcelizeRuntimeKmpPublication)
+    dependsOn(":plugins:parcelize:parcelize-runtime:publishJvmPublicationToMavenLocal")
     dependsOn(":gradle:android-test-fixes:install")
     dependsOn(":gradle:gradle-warnings-detector:install")
     dependsOn(":gradle:kotlin-compiler-args-properties:install")
