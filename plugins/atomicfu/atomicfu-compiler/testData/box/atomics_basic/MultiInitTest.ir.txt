@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/MultiInitTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit'
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.<set-a$volatile>' type=<root>.MultiInit origin=null
               value: GET_VAR 'value: kotlin.Int declared in <root>.MultiInit.<set-a$volatile>' type=kotlin.Int origin=null
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/MultiInitTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:b$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit'
+          RETURN type=kotlin.Nothing from='private final fun <set-b$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.MultiInit'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:b$volatile type:kotlin.Int visibility:private declared in <root>.MultiInit' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.MultiInit declared in <root>.MultiInit.<set-b$volatile>' type=<root>.MultiInit origin=null
               value: GET_VAR 'value: kotlin.Int declared in <root>.MultiInit.<set-b$volatile>' type=kotlin.Int origin=null
