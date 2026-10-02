@@ -63,7 +63,7 @@ object MemoryLeakDetector {
                 if (isParanoid || data.age >= 5) {
                     // Inspect statics just once.
                     // Note the 'data' is not added to 'nextClassLoaderData' used the next time.
-                    inspectStatics(classLoader)
+                    memoryLeaks += inspectStatics(classLoader)
                 } else {
                     newClassLoaderData += data
                 }

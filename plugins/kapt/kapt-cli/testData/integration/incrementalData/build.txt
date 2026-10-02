@@ -1,0 +1,27 @@
+# mkdir
+output/stubs
+output/classes
+output/sources
+output/incremental-data
+output/check
+
+# kapt
+Test.kt
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-incremental-data=output/incremental-data
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.IncrementalProcessor
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/check
+Check.kt
+
+# java
+-cp output/check:%KOTLIN_STDLIB%
+CheckKt
+
+# after
