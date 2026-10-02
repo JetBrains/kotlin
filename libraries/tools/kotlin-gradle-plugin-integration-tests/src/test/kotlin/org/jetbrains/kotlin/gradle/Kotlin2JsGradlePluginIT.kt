@@ -172,6 +172,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 """
                 |
                 |kotlin.js.delegated.transpilation=true
+                |kotlin.js.generateRichTypeScriptDeclarations=true
                 """.trimMargin()
             )
 
@@ -197,6 +198,10 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     "\"type\": \"umd\"",
                     "\"sourceMaps\": true",
                     "\"outFileExtension\": \".js\"",
+                )
+                assertFileContains(
+                    projectPath.resolve("build/js/packages/kotlin-js-multiplatform-app-project/kotlin/kotlin-js-multiplatform-app-project.d.ts"),
+                    "function best(): number",
                 )
             }
 

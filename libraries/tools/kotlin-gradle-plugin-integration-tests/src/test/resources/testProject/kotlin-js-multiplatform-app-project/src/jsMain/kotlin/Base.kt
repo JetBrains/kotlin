@@ -5,6 +5,7 @@
 
 package com.example
 
+@JsExport
 fun best(): Int {
     return 42
 }

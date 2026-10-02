@@ -9,6 +9,7 @@ repositories {
 
 kotlin {
     js {
+        generateTypeScriptDefinitions()
         nodejs()
         binaries.executable()
     }

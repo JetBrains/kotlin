@@ -371,8 +371,8 @@ internal constructor(
     override fun generateTypeScriptDefinitions() {
         shouldGenerateTypeScriptDefinitions.set(true)
         compilations
-            .all {
-                it.binaries
+            .all { compilation ->
+                compilation.binaries
                     .withType(JsIrBinary::class.java)
                     .all { binary ->
                         if (binary.target.wasmTargetType == null && propertiesProvider.jsGenerateRichTypeScriptDeclarations) {

@@ -50,6 +50,12 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind as BtaJs
 internal abstract class KotlinJsDtsGenerationTask @Inject constructor(
     objectFactory: ObjectFactory,
 ) : DefaultTask(), UsesClassLoadersCachingBuildService, UsesBuildSessionService {
+    init {
+        onlyIf("TypeScript generating is skipped (the same as the KotlinJsIrLink task) in case of the entry klib doesn't exist") {
+            (it as KotlinJsDtsGenerationTask).entryModule.get().asFile.exists()
+        }
+    }
+
     @get:Internal
     abstract val klibs: ConfigurableFileCollection
 
