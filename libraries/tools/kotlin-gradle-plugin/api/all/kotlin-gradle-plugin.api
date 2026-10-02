@@ -5514,12 +5514,14 @@ public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSet
 
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentizeTask : org/gradle/api/DefaultTask {
 	public final fun componentize ()V
+	public abstract fun getAdapter ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getComponentEmbedArguments ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getComponentNewArguments ()Lorg/gradle/api/provider/ListProperty;
 	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
 	public abstract fun getInputFile ()Lorg/gradle/api/file/RegularFileProperty;
 	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
 	public abstract fun getWitProjects ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun setAdapter (Lorg/gradle/api/provider/Provider;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
