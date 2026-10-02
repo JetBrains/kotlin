@@ -114,17 +114,8 @@ class JvmBinaryAnnotationDeserializer(
         nameResolver: NameResolver,
         typeTable: TypeTable
     ): List<FirAnnotation> {
-        loadAnnotationsFromMetadataGuarded(
-            session,
-            constructorProto.annotationList,
-            nameResolver,
-            LanguageFeature.AnnotationsInMetadata,
-        )?.let { return it }
-
-        if (noAnnotationsInBytecode(constructorProto.flags)) return emptyList()
-
-        val signature = getCallableSignature(constructorProto, nameResolver, typeTable) ?: return emptyList()
-        return findJvmBinaryClassAndLoadMemberAnnotations(signature)
+        val signature = getCallableSignature(constructorProto, nameResolver, typeTable)
+        return loadAnnotationsWithThrows(constructorProto.annotationList, nameResolver, constructorProto.flags, signature)
     }
 
     override fun loadFunctionAnnotations(
