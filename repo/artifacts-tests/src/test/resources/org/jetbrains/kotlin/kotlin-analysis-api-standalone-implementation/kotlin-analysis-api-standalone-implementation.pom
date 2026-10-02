@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
   <artifactId>kotlin-analysis-api-standalone-implementation</artifactId>
-  <version>@ARTIFACT_VERSION@</version>
+  <version>ArtifactsTest.version</version>
   <name>Kotlin Analysis Api Standalone Implementation</name>
   <description>Kotlin Analysis Api Standalone Implementation</description>
   <url>https://kotlinlang.org/</url>
@@ -30,13 +30,13 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-standalone-surface</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-implementation</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
     </dependency>
   </dependencies>

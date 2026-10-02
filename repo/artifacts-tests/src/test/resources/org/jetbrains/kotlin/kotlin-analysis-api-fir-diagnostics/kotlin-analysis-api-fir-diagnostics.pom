@@ -3,10 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-analysis-api-dataframe-compiler-plugin-support</artifactId>
-  <version>@ARTIFACT_VERSION@</version>
-  <name>Kotlin Analysis Api Dataframe Compiler Plugin Support</name>
-  <description>Kotlin Analysis Api Dataframe Compiler Plugin Support</description>
+  <artifactId>kotlin-analysis-api-fir-diagnostics</artifactId>
+  <version>ArtifactsTest.version</version>
+  <name>Kotlin Analysis Api Fir Diagnostics</name>
+  <description>Kotlin Analysis Api Fir Diagnostics</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
@@ -30,7 +30,7 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-surface</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>
   </dependencies>

@@ -3,10 +3,10 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-analysis-api-kotlinx-serialization-compiler-plugin-support</artifactId>
-  <version>@ARTIFACT_VERSION@</version>
-  <name>Kotlin Analysis Api Kotlinx Serialization Compiler Plugin Support</name>
-  <description>Kotlin Analysis Api Kotlinx Serialization Compiler Plugin Support</description>
+  <artifactId>kotlin-analysis-api</artifactId>
+  <version>ArtifactsTest.version</version>
+  <name>Kotlin Analysis Api</name>
+  <description>Kotlin Analysis Api</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
@@ -30,8 +30,26 @@
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-analysis-api-surface</artifactId>
-      <version>@ARTIFACT_VERSION@</version>
+      <version>ArtifactsTest.version</version>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-analysis-api-standalone-surface</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-analysis-api-implementation</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-analysis-api-standalone-implementation</artifactId>
+      <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
     </dependency>
   </dependencies>
 </project>
