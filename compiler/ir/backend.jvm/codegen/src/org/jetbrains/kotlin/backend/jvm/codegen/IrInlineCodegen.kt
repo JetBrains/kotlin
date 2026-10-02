@@ -405,11 +405,14 @@ class IrInlineCodegen(
 
         var curFinallyDepth = 0
         var curInstr: AbstractInsnNode? = intoNode.instructions.first
+        var curLineNumber = -1
         while (curInstr != null) {
             processor.processInstruction(curInstr, true)
             if (isFinallyStart(curInstr)) {
                 //TODO depth index calc could be more precise
                 curFinallyDepth = getConstant(curInstr.previous)
+            } else if (curInstr is LineNumberNode) {
+                curLineNumber = curInstr.line
             }
 
             val extension = extensionPoints[curInstr]
@@ -435,6 +438,12 @@ class IrInlineCodegen(
                 processor.localVarsMetaInfo.splitAndRemoveCurrentIntervals(splitBy, true)
                 finallyNode.localVariables.forEach {
                     processor.localVarsMetaInfo.addNewInterval(LocalVarNodeWrapper(it))
+                }
+
+                LabelNode().let { lbl ->
+                    val returnInsn = if (curInstr.opcode in Opcodes.IRETURN..Opcodes.RETURN) curInstr else curInstr.next
+                    intoNode.instructions.insert(returnInsn, lbl)
+                    intoNode.instructions.insert(returnInsn, LineNumberNode(curLineNumber, lbl))
                 }
             }
 
