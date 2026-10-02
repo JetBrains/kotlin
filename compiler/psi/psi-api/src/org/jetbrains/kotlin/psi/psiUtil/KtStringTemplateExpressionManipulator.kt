@@ -10,10 +10,12 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.AbstractElementManipulator
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtIdeApi
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
+@OptIn(KtIdeApi::class)
 private val LOG = Logger.getInstance(KtStringTemplateExpressionManipulator::class.java)
 
 /**
@@ -24,6 +26,7 @@ private val LOG = Logger.getInstance(KtStringTemplateExpressionManipulator::clas
  * [content][getContentRange] between the quotes. In a single-quoted string, it escapes quotes, backslashes, and control characters in the
  * new content, but keeps interpolated expressions (`$name` and `${...}`) as is. In a raw string, it inserts the new content as is.
  */
+@KtIdeApi
 class KtStringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
     override fun handleContentChange(
         element: KtStringTemplateExpression,

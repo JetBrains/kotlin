@@ -3771,14 +3771,6 @@ public final class org/jetbrains/kotlin/psi/psiUtil/KtPsiUtilKt {
 	public static final fun visibilityModifierTypeOrDefault (Lorg/jetbrains/kotlin/psi/KtModifierListOwner;)Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 }
 
-public final class org/jetbrains/kotlin/psi/psiUtil/KtStringTemplateExpressionManipulator : com/intellij/psi/AbstractElementManipulator {
-	public fun <init> ()V
-	public synthetic fun getRangeInElement (Lcom/intellij/psi/PsiElement;)Lcom/intellij/openapi/util/TextRange;
-	public fun getRangeInElement (Lorg/jetbrains/kotlin/psi/KtStringTemplateExpression;)Lcom/intellij/openapi/util/TextRange;
-	public synthetic fun handleContentChange (Lcom/intellij/psi/PsiElement;Lcom/intellij/openapi/util/TextRange;Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
-	public fun handleContentChange (Lorg/jetbrains/kotlin/psi/KtStringTemplateExpression;Lcom/intellij/openapi/util/TextRange;Ljava/lang/String;)Lorg/jetbrains/kotlin/psi/KtStringTemplateExpression;
-}
-
 public final class org/jetbrains/kotlin/psi/psiUtil/PsiChildRange : kotlin/sequences/Sequence {
 	public static final field Companion Lorg/jetbrains/kotlin/psi/psiUtil/PsiChildRange$Companion;
 	public fun <init> (Lcom/intellij/psi/PsiElement;Lcom/intellij/psi/PsiElement;)V

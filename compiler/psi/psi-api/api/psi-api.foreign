@@ -12,7 +12,6 @@ com/intellij/openapi/util/Key
 com/intellij/openapi/util/TextRange
 com/intellij/openapi/util/UserDataHolder
 com/intellij/openapi/vfs/VirtualFile
-com/intellij/psi/AbstractElementManipulator
 com/intellij/psi/ContributedReferenceHost
 com/intellij/psi/FileViewProvider
 com/intellij/psi/JavaCodeFragment
