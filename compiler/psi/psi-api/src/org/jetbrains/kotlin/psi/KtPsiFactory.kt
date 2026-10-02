@@ -396,18 +396,6 @@ class KtPsiFactory private constructor(
     }
 
     /**
-     * Creates a REPL snippet [KtScript] from the specified text content.
-     */
-    @KtExperimentalApi
-    @OptIn(KtNonPublicApi::class)
-    fun createReplSnippet(@NonNls text: String): KtScript {
-        val file = doCreateFile("snippet.repl.kts", text)
-        val script = file.script!!
-        script.markAsReplSnippet()
-        return script
-    }
-
-    /**
      * Creates a property from its parts: optional [modifiers], [name], optional [type], mutability ([isVar]), and optional [initializer].
      */
     fun createProperty(
