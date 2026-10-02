@@ -1,0 +1,214 @@
+KtFile: namelessEnumClasses.kt
+  PsiComment(EOL_COMMENT)('// COMPILATION_ERRORS')
+  PsiWhiteSpace('\n')
+  PACKAGE_DIRECTIVE
+    PsiElement(package)('package')
+    PsiWhiteSpace(' ')
+    DOT_QUALIFIED_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('one')
+      PsiElement(DOT)('.')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('two')
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n\n')
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiErrorElement:Name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        PsiElement(IDENTIFIER)('A')
+        PsiElement(COMMA)(',')
+      PsiWhiteSpace('\n    ')
+      ENUM_ENTRY
+        PsiElement(IDENTIFIER)('B')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          CLASS
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('InsideEntry')
+          PsiWhiteSpace('\n        ')
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiErrorElement:Name expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              CLASS
+                PsiElement(class)('class')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('InsideNamelessInEntry')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+        PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Nested')
+      PsiWhiteSpace('\n    ')
+      OBJECT_DECLARATION
+        PsiElement(object)('object')
+        PsiErrorElement:Name expected
+          <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiErrorElement:Name expected
+      <empty list>
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        MODIFIER_LIST
+          PsiElement(enum)('enum')
+        PsiWhiteSpace(' ')
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('NamedEnum')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          ENUM_ENTRY
+            PsiElement(IDENTIFIER)('C')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              CLASS
+                PsiElement(class)('class')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('InsideEntry')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+            PsiElement(SEMICOLON)(';')
+          PsiWhiteSpace('\n\n        ')
+          CLASS
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('Nested')
+          PsiWhiteSpace('\n        ')
+          OBJECT_DECLARATION
+            PsiElement(object)('object')
+            PsiErrorElement:Name expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              CLASS
+                PsiElement(class)('class')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('InsideNameless')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Outer')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      OBJECT_DECLARATION
+        PsiElement(object)('object')
+        PsiErrorElement:Name expected
+          <empty list>
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          CLASS
+            MODIFIER_LIST
+              PsiElement(enum)('enum')
+            PsiWhiteSpace(' ')
+            PsiElement(class)('class')
+            PsiErrorElement:Name expected
+              <empty list>
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              ENUM_ENTRY
+                PsiElement(IDENTIFIER)('D')
+                PsiElement(SEMICOLON)(';')
+              PsiWhiteSpace('\n\n            ')
+              CLASS
+                PsiElement(class)('class')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('Nested')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  FUNCTION
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        MODIFIER_LIST
+          PsiElement(enum)('enum')
+        PsiWhiteSpace(' ')
+        PsiElement(class)('class')
+        PsiErrorElement:Name expected
+          <empty list>
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          ENUM_ENTRY
+            PsiElement(IDENTIFIER)('E')
+            PsiWhiteSpace(' ')
+            CLASS_BODY
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n            ')
+              CLASS
+                PsiElement(class)('class')
+                PsiWhiteSpace(' ')
+                PsiElement(IDENTIFIER)('InsideEntry')
+              PsiWhiteSpace('\n        ')
+              PsiElement(RBRACE)('}')
+            PsiElement(SEMICOLON)(';')
+          PsiWhiteSpace('\n\n        ')
+          CLASS
+            PsiElement(class)('class')
+            PsiWhiteSpace(' ')
+            PsiElement(IDENTIFIER)('Nested')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

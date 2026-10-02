@@ -1,4 +1,4 @@
-// IGNORE_CONSISTENCY_CHECK: KTIJ-26902
+// IGNORE_CONSISTENCY_CHECK: KT-61887
 package one.two
 
 /* ClassId: one/two/<no name provided> [PsiFqName: one.two.NamelessClassesScript.<no name provided>] */class

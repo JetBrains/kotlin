@@ -221,6 +221,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   }
 
   @Test
+  @TestMetadata("companionsInsideNamelessClasses.kt")
+  public void testCompanionsInsideNamelessClasses() {
+    run("companionsInsideNamelessClasses.kt");
+  }
+
+  @Test
   @TestMetadata("complicateLTGT.kt")
   public void testComplicateLTGT() {
     run("complicateLTGT.kt");
@@ -266,6 +272,18 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   @TestMetadata("dataObject.kt")
   public void testDataObject() {
     run("dataObject.kt");
+  }
+
+  @Test
+  @TestMetadata("deepNestingInsideNamelessClasses.kt")
+  public void testDeepNestingInsideNamelessClasses() {
+    run("deepNestingInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("deepNestingInsideNamelessLocalClasses.kt")
+  public void testDeepNestingInsideNamelessLocalClasses() {
+    run("deepNestingInsideNamelessLocalClasses.kt");
   }
 
   @Test
@@ -896,6 +914,36 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
   @TestMetadata("namedCompanionObject.kt")
   public void testNamedCompanionObject() {
     run("namedCompanionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("namedInsideNamelessClasses.kt")
+  public void testNamedInsideNamelessClasses() {
+    run("namedInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namedInsideNamelessLocalClasses.kt")
+  public void testNamedInsideNamelessLocalClasses() {
+    run("namedInsideNamelessLocalClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessEnumClasses.kt")
+  public void testNamelessEnumClasses() {
+    run("namelessEnumClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessInsideNamelessClasses.kt")
+  public void testNamelessInsideNamelessClasses() {
+    run("namelessInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessInsideNamelessLocalClasses.kt")
+  public void testNamelessInsideNamelessLocalClasses() {
+    run("namelessInsideNamelessLocalClasses.kt");
   }
 
   @Test
@@ -5032,9 +5080,27 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("companionsInsideNamelessClassesScript.kts")
+    public void testCompanionsInsideNamelessClassesScript() {
+      run("companionsInsideNamelessClassesScript.kts");
+    }
+
+    @Test
     @TestMetadata("ComplexScript.kts")
     public void testComplexScript() {
       run("ComplexScript.kts");
+    }
+
+    @Test
+    @TestMetadata("deepNestingInsideNamelessClassesScript.kts")
+    public void testDeepNestingInsideNamelessClassesScript() {
+      run("deepNestingInsideNamelessClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("deepNestingInsideNamelessLocalClassesScript.kts")
+    public void testDeepNestingInsideNamelessLocalClassesScript() {
+      run("deepNestingInsideNamelessLocalClassesScript.kts");
     }
 
     @Test
@@ -5059,6 +5125,36 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     @TestMetadata("manyAnnotationsOnFile.kts")
     public void testManyAnnotationsOnFile() {
       run("manyAnnotationsOnFile.kts");
+    }
+
+    @Test
+    @TestMetadata("namedInsideNamelessClassesScript.kts")
+    public void testNamedInsideNamelessClassesScript() {
+      run("namedInsideNamelessClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("namedInsideNamelessLocalClassesScript.kts")
+    public void testNamedInsideNamelessLocalClassesScript() {
+      run("namedInsideNamelessLocalClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("namelessEnumClassesScript.kts")
+    public void testNamelessEnumClassesScript() {
+      run("namelessEnumClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("namelessInsideNamelessClassesScript.kts")
+    public void testNamelessInsideNamelessClassesScript() {
+      run("namelessInsideNamelessClassesScript.kts");
+    }
+
+    @Test
+    @TestMetadata("namelessInsideNamelessLocalClassesScript.kts")
+    public void testNamelessInsideNamelessLocalClassesScript() {
+      run("namelessInsideNamelessLocalClassesScript.kts");
     }
 
     @Test

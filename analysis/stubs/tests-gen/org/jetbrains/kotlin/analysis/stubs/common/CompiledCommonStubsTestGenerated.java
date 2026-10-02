@@ -221,6 +221,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   }
 
   @Test
+  @TestMetadata("companionsInsideNamelessClasses.kt")
+  public void testCompanionsInsideNamelessClasses() {
+    run("companionsInsideNamelessClasses.kt");
+  }
+
+  @Test
   @TestMetadata("complicateLTGT.kt")
   public void testComplicateLTGT() {
     run("complicateLTGT.kt");
@@ -266,6 +272,18 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   @TestMetadata("dataObject.kt")
   public void testDataObject() {
     run("dataObject.kt");
+  }
+
+  @Test
+  @TestMetadata("deepNestingInsideNamelessClasses.kt")
+  public void testDeepNestingInsideNamelessClasses() {
+    run("deepNestingInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("deepNestingInsideNamelessLocalClasses.kt")
+  public void testDeepNestingInsideNamelessLocalClasses() {
+    run("deepNestingInsideNamelessLocalClasses.kt");
   }
 
   @Test
@@ -896,6 +914,36 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
   @TestMetadata("namedCompanionObject.kt")
   public void testNamedCompanionObject() {
     run("namedCompanionObject.kt");
+  }
+
+  @Test
+  @TestMetadata("namedInsideNamelessClasses.kt")
+  public void testNamedInsideNamelessClasses() {
+    run("namedInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namedInsideNamelessLocalClasses.kt")
+  public void testNamedInsideNamelessLocalClasses() {
+    run("namedInsideNamelessLocalClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessEnumClasses.kt")
+  public void testNamelessEnumClasses() {
+    run("namelessEnumClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessInsideNamelessClasses.kt")
+  public void testNamelessInsideNamelessClasses() {
+    run("namelessInsideNamelessClasses.kt");
+  }
+
+  @Test
+  @TestMetadata("namelessInsideNamelessLocalClasses.kt")
+  public void testNamelessInsideNamelessLocalClasses() {
+    run("namelessInsideNamelessLocalClasses.kt");
   }
 
   @Test
