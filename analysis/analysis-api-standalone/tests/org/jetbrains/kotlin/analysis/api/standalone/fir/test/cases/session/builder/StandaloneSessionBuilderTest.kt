@@ -60,6 +60,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.nameWithoutExtension
 import kotlin.test.assertEquals
 
 @OptIn(KaExperimentalApi::class)
@@ -732,6 +733,25 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         checkKotlinPsiClass(kotlinPsiClass)
     }
 
+    /**
+     * KT-89902: Kotlin classes from binary libraries must be found by [JavaPsiFacade], e.g., to resolve supertypes of light classes.
+     */
+    @Test
+    fun testJvmLightClassesWithKotlinLibrarySupertypes() {
+        val root = testDataPath("lightClassesWithKotlinLibrarySupertypes")
+        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library")))
+
+        testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), libraryRoots, withJdk = true) {
+            // KT-89902: the supertypes from Kotlin libraries should be resolved
+            val itemList = findLightClass("org.test.ItemList")!!
+            assertEquals("java.lang.Object", itemList.superClass?.qualifiedName)
+
+            val librarySubclass = findLightClass("org.test.LibrarySubclass")!!
+            assertEquals("java.lang.Object", librarySubclass.superClass?.qualifiedName)
+            assertEquals(emptyList(), librarySubclass.interfaces.map { it.qualifiedName })
+        }
+    }
+
     @Test
     fun testJavaScriptLightClasses() = testLightClasses(JsPlatforms.defaultJsPlatform) { mainModule ->
         // By default, light classes are not available for non-JVM platforms
@@ -771,15 +791,42 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     private fun StandaloneAnalysisAPISession.findLightClass(fqName: String): PsiClass? =
         JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.projectScope(project))
 
-    private fun testLightClasses(platform: TargetPlatform, block: StandaloneAnalysisAPISession.(KaModule) -> Unit) {
-        val root = "lightClasses"
-
+    private fun testLightClasses(
+        platform: TargetPlatform,
+        sourceRoot: Path = testDataPath("lightClasses"),
+        libraryRoots: List<Path> = emptyList(),
+        withJdk: Boolean = false,
+        block: StandaloneAnalysisAPISession.(KaModule) -> Unit,
+    ) {
         val session = buildStandaloneAnalysisAPISession(disposable) {
             buildKtModuleProvider {
                 this.platform = platform
+                val jdkModule = if (withJdk) {
+                    addModule(
+                        buildKtSdkModule {
+                            addBinaryRootsFromJdkHome(Paths.get(System.getProperty("java.home")), isJre = false)
+                            this.platform = platform
+                            libraryName = "JDK"
+                        }
+                    )
+                } else {
+                    null
+                }
+                val libraryModules = libraryRoots.map { libraryRoot ->
+                    addModule(
+                        buildKtLibraryModule {
+                            addBinaryRoot(libraryRoot)
+                            this.platform = platform
+                            libraryName = libraryRoot.nameWithoutExtension
+                        }
+                    )
+                }
                 addModule(
                     buildKtSourceModule {
-                        addSourceRoot(testDataPath(root))
+                        addSourceRoot(sourceRoot)
+                        for (dependency in listOfNotNull(jdkModule) + libraryModules) {
+                            addRegularDependency(dependency)
+                        }
                         this.platform = platform
                         moduleName = "main"
                     }
