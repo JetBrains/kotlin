@@ -1,4 +1,3 @@
-// EMIT_JVM_TYPE_ANNOTATIONS
 // JVM_DEFAULT_MODE: no-compatibility
 // JVM_TARGET: 1.8
 // RENDER_ANNOTATIONS
@@ -13,12 +12,18 @@ package lib
 import java.io.IOException
 import java.io.FileNotFoundException
 
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FUNCTION)
+annotation class RuntimeAnnotation
+
 interface A<T> {
+    @RuntimeAnnotation
     @Throws(IOException::class)
     fun foo() : T
 }
 
 open class B<T : CharSequence> : A<T> {
+    @RuntimeAnnotation
     @Throws(FileNotFoundException::class)
     override fun foo() : T = throw FileNotFoundException()
 }

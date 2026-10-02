@@ -249,11 +249,11 @@ private class JvmClsAnnotationLoader(
 
         ProgressManager.checkCanceled()
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor {
+            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>): KotlinJvmBinaryClass.MethodAnnotationVisitor {
                 ProgressManager.checkCanceled()
 
                 val signature = MemberSignature.fromMethodNameAndDesc(name.asString(), desc)
-                val extraSynthesizedAnnotations: List<AnnotationWithArgs> = if (!exceptions.isNullOrEmpty()) {
+                val extraSynthesizedAnnotations: List<AnnotationWithArgs> = if (exceptions.isNotEmpty()) {
                     listOf(
                         AnnotationWithArgs(
                             JvmStandardClassIds.Annotations.Throws,

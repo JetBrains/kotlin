@@ -454,7 +454,7 @@ private fun FirSession.loadMemberAnnotations(
     val annotationMethodsDefaultValues = hashMapOf<MemberSignature, FirExpression>()
 
     kotlinBinaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-        override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor {
+        override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>): KotlinJvmBinaryClass.MethodAnnotationVisitor {
             return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
         }
 
@@ -520,8 +520,8 @@ private fun FirSession.loadMemberThrowsAnnotations(
     val annotationsLoader = AnnotationsLoader(this, kotlinClassFinder)
 
     kotlinBinaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-        override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
-            if (!exceptions.isNullOrEmpty()) {
+        override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
+            if (exceptions.isNotEmpty()) {
                 val signature = MemberSignature.fromMethodNameAndDesc(name.asString(), desc)
                 memberThrowsAnnotations[signature] = annotationsLoader.convertToThrowsAnnotations(exceptions)
             }

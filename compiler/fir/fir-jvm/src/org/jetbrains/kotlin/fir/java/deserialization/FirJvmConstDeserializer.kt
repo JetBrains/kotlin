@@ -39,7 +39,11 @@ class FirJvmConstDeserializer(
         }
 
         binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
+            override fun visitMethod(
+                name: Name,
+                desc: String,
+                exceptions: List<ClassId>,
+            ): KotlinJvmBinaryClass.MethodAnnotationVisitor? = null
 
             override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
                 if (initializer != null) {
