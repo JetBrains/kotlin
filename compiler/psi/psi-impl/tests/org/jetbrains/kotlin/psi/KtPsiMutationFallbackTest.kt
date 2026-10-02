@@ -9,6 +9,7 @@ import com.intellij.pom.PomModel
 import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.psi.impl.source.tree.TreeCopyHandler
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -135,6 +136,48 @@ class KtPsiMutationFallbackTest : KotlinTestWithEnvironment() {
         val file = createFile("class A")
         file.setName("renamed.kt")
         Assertions.assertEquals("renamed.kt", file.name)
+    }
+
+    @Test
+    fun testUpdateTextOfStringTemplate() {
+        val file = createFile("val s = \"a\"")
+        file.findDescendantOfType<KtStringTemplateExpression>()!!.updateText("\"b\"")
+        Assertions.assertEquals("val s = \"b\"", file.text)
+    }
+
+    @Test
+    fun testUpdateTextOfStringTemplateWithContent() {
+        val file = createFile("val s = \"a\"")
+        file.findDescendantOfType<KtStringTemplateExpression>()!!.updateText("b")
+        Assertions.assertEquals("val s = \"b\"", file.text)
+    }
+
+    @Test
+    fun testUpdateTextOfStringTemplateWithContentToEscape() {
+        val file = createFile("val s = \"a\"")
+        file.findDescendantOfType<KtStringTemplateExpression>()!!.updateText("b\"c\\d")
+        Assertions.assertEquals("val s = \"b\\\"c\\\\d\"", file.text)
+    }
+
+    @Test
+    fun testUpdateTextOfStringTemplateWithInterpolatedContent() {
+        val file = createFile("val s = \"a\"")
+        file.findDescendantOfType<KtStringTemplateExpression>()!!.updateText($$"${\"b\"}")
+        Assertions.assertEquals($$"val s = \"${\"b\"}\"", file.text)
+    }
+
+    @Test
+    fun testUpdateTextOfRawStringTemplateWithContent() {
+        val file = createFile("val s = \"\"\"a\"\"\"")
+        file.findDescendantOfType<KtStringTemplateExpression>()!!.updateText("b\"c\\d")
+        Assertions.assertEquals("val s = \"\"\"b\"c\\d\"\"\"", file.text)
+    }
+
+    @Test
+    fun testUpdateTextOfKDocSection() {
+        val file = createFile("/** a */\nfun f() {}")
+        val section = file.findDescendantOfType<KDocSection>()!!.updateText("b")
+        Assertions.assertEquals("b", section.text.trim())
     }
 
     private fun createFile(text: String): KtFile = KtPsiFactory(project).createFile(text)

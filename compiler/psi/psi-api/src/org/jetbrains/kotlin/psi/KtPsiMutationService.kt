@@ -17,8 +17,9 @@ import java.util.function.Consumer
  * Service responsible for Kotlin PSI mutation operations whose implementation is provided by the Kotlin plugin environment.
  *
  * When the service is not registered (e.g., when the Kotlin PSI is used outside the IntelliJ Kotlin plugin), Kotlin PSI overrides of
- * [PsiElement.delete], [PsiElement.replace] and [com.intellij.psi.PsiNamedElement.setName] fall back to plain operations without
- * Kotlin-specific adjustments like removing dangling separators or adding parentheses. Other mutation methods require the service.
+ * platform mutation methods, such as [PsiElement.delete], [PsiElement.replace], [com.intellij.psi.PsiNamedElement.setName] and
+ * [PsiLanguageInjectionHost.updateText], fall back to plain operations without Kotlin-specific adjustments like removing dangling
+ * separators or adding parentheses. Kotlin-specific mutation methods require the service.
  */
 @KtNonPublicApi
 interface KtPsiMutationService {

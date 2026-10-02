@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 
 /**
@@ -80,7 +81,14 @@ public class KtStringTemplateExpression extends KtExpressionImplStub<KotlinPlace
 
     @Override
     public PsiLanguageInjectionHost updateText(@NotNull String text) {
-        return KtPsiMutationService.getInstance().updateStringTemplateText(this, text);
+        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
+        if (mutationService != null) return mutationService.updateStringTemplateText(this, text);
+
+        KtExpression newExpression = new KtPsiFactory(getProject()).createExpressionIfPossible(text);
+        if (newExpression instanceof KtStringTemplateExpression) return (KtStringTemplateExpression) replace(newExpression);
+
+        // Environments without the service don't register the manipulator either, so call it directly
+        return new KtStringTemplateExpressionManipulator().handleContentChange(this, text);
     }
 
     @NotNull
