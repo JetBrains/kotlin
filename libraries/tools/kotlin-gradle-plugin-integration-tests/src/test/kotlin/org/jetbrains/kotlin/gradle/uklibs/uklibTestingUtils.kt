@@ -12,6 +12,7 @@ import org.gradle.api.initialization.ConfigurableIncludedBuild
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
@@ -139,6 +140,7 @@ fun TestProject.publish(
         group = "default_kotlin_${generateIdentifier()}"
     ),
     deriveBuildOptions: TestProject.() -> BuildOptions = { buildOptions },
+    buildAssertions: BuildResult.() -> Unit = {},
 ): PublishedProject {
     val repositoryIdentifier = "_KotlinPublication_${generateIdentifier()}_"
     return publishReturn(
@@ -149,6 +151,7 @@ fun TestProject.publish(
         "-P${repositoryIdentifier}",
         *buildArguments,
         deriveBuildOptions = deriveBuildOptions,
+        buildAssertions = buildAssertions,
     )
 }
 

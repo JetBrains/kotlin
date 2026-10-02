@@ -37,7 +37,10 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
     @GradleTest
     fun publicationContentTest(gradleVersion: GradleVersion) {
         val publishedProject = kotlinArchiveProducer(gradleVersion)
-            .publish(publisherConfiguration = PublisherConfiguration(group = TEST_GROUP))
+            .publish(
+                publisherConfiguration = PublisherConfiguration(group = TEST_GROUP),
+                buildAssertions = { assertOutputDoesNotContain("pom metadata warnings") },
+            )
 
         assertEquals(
             listOf("producer", "producer-jvm").prettyPrinted,

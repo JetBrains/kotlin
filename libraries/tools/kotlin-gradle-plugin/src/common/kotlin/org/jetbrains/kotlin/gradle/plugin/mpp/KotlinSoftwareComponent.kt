@@ -44,12 +44,24 @@ abstract class KotlinSoftwareComponent(
         return referencedSoftwareComponents.getOrThrow().toSet()
     }
 
+    private fun Collection<UsageContext>.suppressPomMetadataWarningsIfNecessary() {
+        for (usage in this) {
+            // This can happen for Kotlin Archive platform-specific variants. We don't care about pom in that case,
+            // so let's suppress the warning to avoid noise in build log.
+            if (usage.capabilities.size > 1) {
+                publicationDelegate?.suppressPomMetadataWarningsFor(usage.name)
+            }
+        }
+    }
+
     override fun getUsages(): Set<UsageContext> {
         return buildSet {
             for (component in embeddedSoftwareComponents.getOrThrow()) {
                 addAll((component as SoftwareComponentInternal).usages)
             }
             addAll(uklibUsages.getOrThrow())
+        }.also {
+            it.suppressPomMetadataWarningsIfNecessary()
         }
     }
 
