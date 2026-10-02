@@ -49,6 +49,9 @@ import org.junit.jupiter.params.provider.EnumSource
 import java.io.File
 import java.nio.file.Files.createDirectories
 import java.nio.file.Path
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.collections.set
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
@@ -366,6 +369,53 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             // OK
         }
     }
+
+    @Test
+    fun `external indices are generated correctly when DAGs are built concurrently`() =
+        context(KlibDAGBuildingMode.OwnIndicesForDistExternalIndicesForOthers) {
+            val userLibraryPaths: MutableList<Path> = mutableListOf()
+
+            newSourceModules {
+                addRegularModule("A")
+                addRegularModule("B") { dependsOn("A") }
+                addRegularModule("C") { dependsOn("A") }
+                addRegularModule("D") { dependsOn("B", "C") }
+            }.compileToKlibsViaCli { _, successKlib ->
+                userLibraryPaths.add(successKlib.resultingArtifact.klibFile.toPath())
+            }
+            assertEquals(4, userLibraryPaths.size)
+
+            val librariesWithoutOwnIndices = patchLibrariesToDropOwnIndicesIfNecessary(userLibraryPaths)
+            assertEquals(userLibraryPaths.size, librariesWithoutOwnIndices)
+
+            val libraries = loadLibraries(others = userLibraryPaths)
+
+            // Build the DAG for the same set of libraries simultaneously in several threads.
+            val numberOfThreads = 8
+            val startLatch = CountDownLatch(1)
+            val executor = Executors.newFixedThreadPool(numberOfThreads)
+            val serializedDags: List<SerializedKlibDAG> = try {
+                val futures = List(numberOfThreads) {
+                    executor.submit<SerializedKlibDAG> {
+                        startLatch.await()
+                        KlibDAGBuilder(buildParams(libraries)).build().serialize()
+                    }
+                }
+                startLatch.countDown()
+                futures.map { it.get(1, TimeUnit.MINUTES) }
+            } finally {
+                executor.shutdownNow()
+            }
+
+            // All DAGs must be the same.
+            assertEquals(1, serializedDags.toSet().size)
+
+            // Exactly one external index and one lock file per library without own index.
+            assertExactNumberOfExternalIndices(librariesWithoutOwnIndices)
+
+            val numberOfLockFiles = externalSignatureIndicesDir.walk().count { it.isRegularFile() && it.name.endsWith(".lock") }
+            assertEquals(librariesWithoutOwnIndices, numberOfLockFiles)
+        }
 
     @Test
     fun `SerializedKlibDAG creation sanity test (positive)`() {
