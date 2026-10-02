@@ -3,38 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("EnumValuesSoftDeprecate")
+
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsEcmaVersion
-import org.jetbrains.kotlin.buildtools.api.arguments.enums.JsModuleKind
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
-import org.jetbrains.kotlin.buildtools.api.CompilationResult
-import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsCompilationStrategy
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsGranularity
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsDtsGenerationOperation
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
-import org.jetbrains.kotlin.buildtools.internal.BaseOptionWithDefault
-import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
-import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
-import org.jetbrains.kotlin.buildtools.internal.Options
-import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentValueAdapter
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
-import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
-import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
-import org.jetbrains.kotlin.buildtools.internal.checkOptionIsAvailableForVersion
-import org.jetbrains.kotlin.buildtools.internal.initializeOptions
+import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
+import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.js.config.JsGenerationGranularity
 import org.jetbrains.kotlin.js.config.ModuleKind
@@ -142,10 +130,11 @@ internal class JsDtsGenerationOperationImpl(
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     @UseFromImplModuleRestricted
     override fun <V> get(key: JsDtsGenerationOperation.Option<V>): V = JsArgumentValueAdapter.toApi(
         JsDtsGenerationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
-    )
+    ) as V
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JsDtsGenerationOperation.Option<V>, value: V) {

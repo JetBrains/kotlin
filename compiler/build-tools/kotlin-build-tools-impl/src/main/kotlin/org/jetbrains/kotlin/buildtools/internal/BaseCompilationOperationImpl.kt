@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
-import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
-import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
-import org.jetbrains.kotlin.buildtools.internal.trackers.ImportTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -75,9 +72,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     @SerialName("LOOKUP_TRACKER_PLACEHOLDER")
     private var lookupTrackerPlaceholder: CompilerLookupTrackerPlaceholder? = null
 
-    @SerialName("IMPORT_TRACKER")
-    internal var importTracker: CompilerImportTracker? = null
-
     @SerialName("COMPILER_ARGUMENTS_LOG_LEVEL")
     internal var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = CompilerArgumentsLogLevel.DEBUG
 
@@ -90,7 +84,6 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     internal fun copyFrom(from: BaseCompilationOperationImpl<BtaCompilerArgs, CompilerArgs>) {
         super.copyFrom(from)
         lookupTracker = from.lookupTracker
-        importTracker = from.importTracker
         compilerArgumentsLogLevel = from.compilerArgumentsLogLevel
         compilerMessageRenderer = from.compilerMessageRenderer
         generateCompilerRefIndex = from.generateCompilerRefIndex

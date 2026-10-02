@@ -14,8 +14,6 @@ internal fun K2JVMCompilerArguments.applyNullabilityAnnotations(settings: List<N
     this.nullabilityAnnotations = settings.map { item -> "${item.annotationFqName}:${item.mode.stringValue}" }.toTypedArray()
 }
 
-
-@OptIn(ExperimentalCompilerArgument::class)
 @Suppress("EnumValuesSoftDeprecate")
 internal fun applyNullabilityAnnotations(
     currentValue: List<NullabilityAnnotationImpl>,
