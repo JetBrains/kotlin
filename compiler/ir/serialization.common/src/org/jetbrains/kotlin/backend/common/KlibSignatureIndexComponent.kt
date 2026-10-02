@@ -187,8 +187,12 @@ private class KlibSignatureIndexComponentImpl(
             val multiReader = IrMultiArrayReader(signatureIndexFile.readBytes())
 
             when (val rowCount = multiReader.rowCount()) {
-                3 -> Unit // OK
-                else -> error("Unexpected row count in signature index: $rowCount")
+                in 0..2 -> error("Unexpected row count in signature index: $rowCount")
+                in 3..Int.MAX_VALUE -> {
+                    // OK. The number of arrays greater than the current compiler expects means we are dealing with
+                    // the future version of the index, which has more entries with some extra data in them.
+                    // We just wouldn't read that data.
+                }
             }
 
             val stringArray = multiReader.deserializeStringArray()
