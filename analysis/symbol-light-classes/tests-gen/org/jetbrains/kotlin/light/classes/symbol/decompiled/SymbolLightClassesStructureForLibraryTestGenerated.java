@@ -64,6 +64,12 @@ public class SymbolLightClassesStructureForLibraryTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("KotlinAbstractListSupertype.kt")
+  public void testKotlinAbstractListSupertype() {
+    run("KotlinAbstractListSupertype.kt");
+  }
+
+  @Test
   @TestMetadata("NestedClasses.kt")
   public void testNestedClasses() {
     run("NestedClasses.kt");
