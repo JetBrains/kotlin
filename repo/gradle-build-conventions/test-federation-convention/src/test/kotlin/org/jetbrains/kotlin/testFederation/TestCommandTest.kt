@@ -12,31 +12,20 @@ import kotlin.test.assertFailsWith
 class TestCommandTest {
 
     @Test
-    fun `test - command contributes to affected domains after expansion`() = listOf("test", "affects").forEach { command ->
-        val changedDomains = inferChangedDomains(emptyList())
-
-        assertEquals(emptySet(), changedDomains)
-        assertEquals(
-            setOf(Domain.CommonBackend),
-            inferAffectedDomains(changedDomains, listOf("^$command: CommonBackend")),
-        )
-    }
-
-    @Test
     fun `test - no command`() {
-        assertEquals(emptySet(), resolveAffectedDomainsFromCommitMessages(listOf("no test command")))
+        assertEquals(emptySet(), resolveDomainsFromCommitMessages(listOf("no test command")))
     }
 
     @Test
     fun `test - single domain`() = listOf("test", "affects").forEach { command ->
-        assertEquals(setOf(Domain.Gradle), resolveAffectedDomainsFromCommitMessages(listOf("^$command: Gradle")))
+        assertEquals(setOf(Domain.Gradle), resolveDomainsFromCommitMessages(listOf("^$command: Gradle")))
     }
 
     @Test
     fun `test - multiple domains - different separators`() = listOf("test", "affects").forEach { command ->
         assertEquals(
             setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.CompilerInfrastructure),
-            resolveAffectedDomainsFromCommitMessages(listOf("^$command: Gradle, IntelliJ AnalysisApi; CompilerInfrastructure"))
+            resolveDomainsFromCommitMessages(listOf("^$command: Gradle, IntelliJ AnalysisApi; CompilerInfrastructure"))
         )
     }
 
@@ -44,7 +33,7 @@ class TestCommandTest {
     fun `test - multiple commands - in multiple messages`() = listOf("test", "affects").forEach { command ->
         assertEquals(
             setOf(Domain.Gradle, Domain.IntelliJ, Domain.AnalysisApi, Domain.CompilerInfrastructure),
-            resolveAffectedDomainsFromCommitMessages(
+            resolveDomainsFromCommitMessages(
                 listOf(
                     """
                     ^$command: Gradle
@@ -63,21 +52,21 @@ class TestCommandTest {
 
     @Test
     fun `test - star notation`() = listOf("test", "affects").forEach { command ->
-        assertEquals(Domain.entries.toSet(), resolveAffectedDomainsFromCommitMessages(listOf("^$command: *")))
+        assertEquals(Domain.entries.toSet(), resolveDomainsFromCommitMessages(listOf("^$command: *")))
     }
 
     @Test
     fun `test - mixed commands`() {
         assertEquals(
             setOf(Domain.Gradle, Domain.AnalysisApi),
-            resolveAffectedDomainsFromCommitMessages(listOf("^test: Gradle\n^affects: AnalysisApi")),
+            resolveDomainsFromCommitMessages(listOf("^test: Gradle\n^affects: AnalysisApi")),
         )
     }
 
     @Test
     fun `test - invalid domain`() = listOf("test", "affects").forEach { command ->
         assertFailsWith<IllegalArgumentException> {
-            resolveAffectedDomainsFromCommitMessages(listOf("^$command: NotADomain"))
+            resolveDomainsFromCommitMessages(listOf("^$command: NotADomain"))
         }
     }
 }
