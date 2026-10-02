@@ -10,6 +10,7 @@ dependencies {
     implementation(kotlinStdlib())
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":analysis:decompiled:decompiler"))
+    implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:frontend.java"))
     implementation(project(":compiler:psi:parser"))

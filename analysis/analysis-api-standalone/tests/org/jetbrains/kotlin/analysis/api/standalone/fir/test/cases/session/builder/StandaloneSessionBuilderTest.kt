@@ -742,13 +742,12 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath(), compileToJar(root.resolve("library")))
 
         testLightClasses(JvmPlatforms.defaultJvmPlatform, root.resolve("main"), libraryRoots, withJdk = true) {
-            // KT-89729: the supertypes from Kotlin libraries should be resolved
             val itemList = findLightClass("org.test.ItemList")!!
-            assertEquals("java.lang.Object", itemList.superClass?.qualifiedName)
+            assertEquals("kotlin.collections.AbstractList", itemList.superClass?.qualifiedName)
 
             val librarySubclass = findLightClass("org.test.LibrarySubclass")!!
-            assertEquals("java.lang.Object", librarySubclass.superClass?.qualifiedName)
-            assertEquals(emptyList(), librarySubclass.interfaces.map { it.qualifiedName })
+            assertEquals("lib.LibraryClass", librarySubclass.superClass?.qualifiedName)
+            assertEquals(listOf("lib.LibraryInterface"), librarySubclass.interfaces.map { it.qualifiedName })
         }
     }
 
