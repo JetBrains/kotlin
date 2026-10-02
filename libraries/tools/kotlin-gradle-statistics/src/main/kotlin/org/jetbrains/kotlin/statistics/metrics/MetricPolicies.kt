@@ -65,8 +65,9 @@ abstract class StringAnonymizationPolicy : ValueAnonymizer<String> {
             return if (t.matches(Regex(validationRegexp(separator)))) {
                 t
             } else {
+                val singleItemRegex = Regex("${UNEXPECTED_VALUE}|${allowedValues.joinToString("|")}")
                 t.split(separator).joinToString(separator) {
-                    if (allowedValues.contains(it))
+                    if (singleItemRegex.matches(it))
                         it
                     else
                         UNEXPECTED_VALUE
