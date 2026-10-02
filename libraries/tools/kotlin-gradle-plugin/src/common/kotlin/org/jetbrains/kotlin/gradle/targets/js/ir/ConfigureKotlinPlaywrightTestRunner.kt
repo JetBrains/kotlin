@@ -37,6 +37,7 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
 
         val browserRunners = browserTestDsl.browserRunners
+        KotlinJsBrowserTestMetrics.collectMetrics(project, browserRunners)
 
         if (browserRunners.isEmpty()) {
             project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework(targetName = target.name))
