@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_EXTRA_CHECKERS
 // ISSUE: KT-77041
-// IGNORE_PHASE_VERIFICATION: invalid code inside annotations
 
 @Target(AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.TYPE)
 annotation class Anno(val i: Int)
