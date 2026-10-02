@@ -111,7 +111,7 @@ class KotlinArchiveIdeDependencyResolutionIT : KGPBaseTest() {
             ),
             "wasmJsMain" to listOf(
                 kotlinStdlibDependencies,
-                platformDependency("wasmjs"),
+                platformDependency("wasm-js"),
                 anyDependsOnDependency(),
             ),
             "jvmMain" to listOf(

@@ -570,7 +570,7 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                     capabilities = setOf(
                         Capability(
                             group = "kotlinArchiveTest",
-                            name = "producer-wasmjs",
+                            name = "producer-wasm-js",
                             version = "1.0",
                         ),
                         Capability(
@@ -600,7 +600,7 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                     capabilities = setOf(
                         Capability(
                             group = "kotlinArchiveTest",
-                            name = "producer-wasmjs",
+                            name = "producer-wasm-js",
                             version = "1.0",
                         ),
                         Capability(
@@ -631,7 +631,7 @@ class KotlinArchivePublicationIT : KGPBaseTest() {
                     capabilities = setOf(
                         Capability(
                             group = "kotlinArchiveTest",
-                            name = "producer-wasmjs",
+                            name = "producer-wasm-js",
                             version = "1.0",
                         ),
                         Capability(
