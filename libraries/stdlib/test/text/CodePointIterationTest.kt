@@ -254,18 +254,26 @@ class CodePointIterationTest {
         testIterator({ StringBuilder(it) }, CharSequence::codePointIterator)
         testIterator({ it.toCharArray() }, CharArray::codePointIterator)
 
+        fun CodePointIterator.collectToString() = buildString { forEach(::appendCodePoint) }
+
         run {
             val charArray = string.toCharArray()
             val c = "😀".codePointAt(0)
             assertEquals(c, charArray.codePointIterator(charArray.size, startIndex = 0, endIndex = charArray.size).apply { advanceByCodePoints(-4) }.next())
             assertEquals(c, charArray.codePointIterator(charArray.size, startIndex = 0, endIndex = charArray.size).apply { advanceByCodePoints(-3) }.previous())
-            assertEquals(c.lowSurrogate(), charArray.codePointIterator(5, startIndex = 4).previous().toSingleChar())
-            assertEquals(c.highSurrogate(), charArray.codePointIterator(3, endIndex = 4).next().toSingleChar())
+            assertEquals(c.lowSurrogate(), charArray.codePointIterator(index = 5, startIndex = 4).previous().toSingleChar())
+            assertEquals(c.highSurrogate(), charArray.codePointIterator(index = 3, endIndex = 4).next().toSingleChar())
 
-            assertFailsWith<IndexOutOfBoundsException> { charArray.codePointIterator(0, startIndex = 1) }
-            assertFailsWith<IndexOutOfBoundsException> { charArray.codePointIterator(2, endIndex = 1) }
-            assertFailsWith<IndexOutOfBoundsException> { charArray.codePointIterator(1, startIndex = -1) }
-            assertFailsWith<IndexOutOfBoundsException> { charArray.codePointIterator(1, endIndex = charArray.size + 1) }
+            assertEquals(string, charArray.codePointIterator().collectToString())
+            assertEquals("😀def", charArray.codePointIterator(startIndex = 3).collectToString())
+
+            assertTrue(charArray.codePointIterator(index = 3, endIndex = 4).hasPrevious())
+            assertFalse(charArray.codePointIterator(3, endIndex = 4).hasPrevious())
+
+            assertFailsWith<IndexOutOfBoundsException> { charArray.codePointIterator(index = 0, startIndex = 1) }
+            assertFailsWith<IndexOutOfBoundsException> { charArray.codePointIterator(index = 2, endIndex = 1) }
+            assertFailsWith<IndexOutOfBoundsException> { charArray.codePointIterator(index = 1, startIndex = -1) }
+            assertFailsWith<IndexOutOfBoundsException> { charArray.codePointIterator(index = 1, endIndex = charArray.size + 1) }
             assertFailsWith<IllegalArgumentException> { charArray.codePointIterator(1, startIndex = 1, endIndex = 0) }
         }
     }
