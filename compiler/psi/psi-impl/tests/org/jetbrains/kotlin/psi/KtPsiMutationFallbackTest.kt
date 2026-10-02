@@ -80,5 +80,20 @@ class KtPsiMutationFallbackTest : KotlinTestWithEnvironment() {
         Assertions.assertEquals("class A : ", file.text)
     }
 
+    @Test
+    fun testReplaceStubBasedExpression() {
+        val file = createFile("val v = a * b")
+        val reference = file.findDescendantOfType<KtNameReferenceExpression> { it.getReferencedName() == "a" }!!
+        reference.replace(KtPsiFactory(project).createExpression("x + y"))
+        Assertions.assertEquals("val v = x + y * b", file.text)
+    }
+
+    @Test
+    fun testReplaceNonStubExpression() {
+        val file = createFile("val v = if (c) 1 else 2")
+        file.findDescendantOfType<KtIfExpression>()!!.replace(KtPsiFactory(project).createExpression("3"))
+        Assertions.assertEquals("val v = 3", file.text)
+    }
+
     private fun createFile(text: String): KtFile = KtPsiFactory(project).createFile(text)
 }
