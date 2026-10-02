@@ -83,6 +83,28 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `browser install is up to date when the browsers are already installed`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions,
+        ) {
+            jsProject {
+                chromium()
+            }
+
+            build(":kotlinInstallPlaywrightChromium") {
+                assertTasksExecuted(":kotlinInstallPlaywrightChromium")
+            }
+
+            // the browsers are already installed, so the Playwright CLI must not be invoked again
+            build(":kotlinInstallPlaywrightChromium") {
+                assertTasksUpToDate(":kotlinInstallPlaywrightChromium")
+            }
+        }
+    }
+
+    @GradleTest
     fun `verify launchArgs configuration with browser api access`(gradleVersion: GradleVersion) {
         project(
             "empty",

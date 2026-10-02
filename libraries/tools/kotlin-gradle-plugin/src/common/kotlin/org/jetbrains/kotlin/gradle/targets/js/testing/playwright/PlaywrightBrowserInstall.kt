@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -22,6 +24,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.dependsOnNpmTooling
 import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.parseOsType
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
@@ -29,7 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import javax.inject.Inject
 
@@ -59,6 +62,8 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 
     init {
         onlyIf { browsers.get().isNotEmpty() }
+        // The marker is a per-task output, so it is only valid while the shared browsers directory still exists.
+        outputs.upToDateWhen { outputDir.get().asFile.exists() }
     }
 
     @get:Internal
@@ -78,7 +83,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
             dependsOnNpmTooling(compilation)
         }
 
-    // this is intentional to prevent gradle warnings about tasks writing to the same location
+    // The shared browsers directory is intentionally not a declared output to prevent gradle warnings about tasks writing to the same location.
     // FIXME: KT-87599 Design host-wide toolchain management
     @get:Internal
     internal val outputDir: DirectoryProperty = objects.directoryProperty().fileProvider(
@@ -88,19 +93,30 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
             .orElse(defaultPlaywrightBrowserDir)
     )
 
+    // A successful installation is recorded in a marker owned by this task alone, so Gradle can skip
+    // the Playwright CLI when nothing changed (KT-89686). It is written only after the install succeeds,
+    // so a failed installation is retried on the next build.
+    @get:OutputFile
+    internal val installationMarker: RegularFileProperty = objects.fileProperty().convention(
+        compilation.project.layout.buildDirectory.file("kotlin/playwright-install/$name.installed")
+    )
+
+    // Changing the browsers location must trigger a new installation.
+    @get:Input
+    internal val browsersPath: Provider<String> = outputDir.map { it.asFile.absolutePath }
+
     private val defaultPlaywrightBrowserDir: Provider<File>
         get() {
             val userHome = providers.systemProperty("user.home")
 
-            val defaultPath = when {
-                HostManager.hostIsMingw -> providers
+            val defaultPath = when (parseOsType(providers.systemProperty("os.name").get())) {
+                OsType.WINDOWS -> providers
                     .environmentVariable("USERPROFILE")
                     .orElse(userHome)
                     .map { File(it).resolve("AppData/Local/ms-playwright") }
 
-                HostManager.hostIsMac -> userHome.map { File(it).resolve("Library/Caches/ms-playwright") }
-                HostManager.hostIsLinux -> userHome.map { File(it).resolve(".cache/ms-playwright") }
-                else -> throw IllegalStateException("Unsupported OS")
+                OsType.MAC -> userHome.map { File(it).resolve("Library/Caches/ms-playwright") }
+                OsType.LINUX, OsType.FREEBSD -> userHome.map { File(it).resolve(".cache/ms-playwright") }
             }
             return defaultPath
         }
@@ -127,6 +143,11 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
                 spec.args(args)
                 spec.environment("PLAYWRIGHT_BROWSERS_PATH", outputDir.get().asFile.absolutePath)
             }
+        }
+
+        installationMarker.getFile().apply {
+            parentFile.mkdirs()
+            writeText(browsers.get().sorted().joinToString("\n"))
         }
     }
 }
