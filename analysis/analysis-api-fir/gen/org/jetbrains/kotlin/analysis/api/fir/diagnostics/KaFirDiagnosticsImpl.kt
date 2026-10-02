@@ -5864,6 +5864,11 @@ internal class CompanionBlockMemberExtensionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionBlockMemberExtension
 
+internal class CompanionBlockLateinitInInterfaceImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CompanionBlockLateinitInInterface
+
 internal class PrivateConstInInterfaceImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,

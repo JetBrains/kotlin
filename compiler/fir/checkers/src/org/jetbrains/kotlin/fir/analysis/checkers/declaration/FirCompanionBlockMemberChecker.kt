@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanionBlockMember
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
 
@@ -27,8 +28,14 @@ object FirCompanionBlockMemberChecker : FirCallableDeclarationChecker(MppChecker
             reporter.reportOn(declaration.source, FirErrors.COMPANION_BLOCK_MEMBER_EXTENSION)
         }
 
+        val containingClassIsInterface = declaration.getContainingClass()?.isInterface == true
+
+        if (declaration.isLateInit && containingClassIsInterface) {
+            reporter.reportOn(declaration.source, FirErrors.COMPANION_BLOCK_LATEINIT_IN_INTERFACE)
+        }
+
         if (declaration.isConst &&
-            declaration.getContainingClass()?.isInterface == true &&
+            containingClassIsInterface &&
             declaration.visibility == Visibilities.Private
         ) {
             reporter.reportOn(declaration.source, FirErrors.PRIVATE_CONST_IN_INTERFACE)
