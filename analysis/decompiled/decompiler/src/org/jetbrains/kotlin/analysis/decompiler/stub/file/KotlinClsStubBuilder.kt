@@ -29,10 +29,12 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.psi.stubs.impl.createConstantValue
+import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -164,6 +166,10 @@ private class JvmClsAnnotationLoader(
         return storage(binaryClass).container
     }
 
+    // @kotlin.jvm.Throws may be synthesized from bytecode Exceptions attribute
+    override fun maySynthesizeExtraCallableAnnotations(kind: AnnotatedCallableKind): Boolean =
+        kind != PROPERTY
+
     override fun loadPropertyInitializer(container: ProtoContainer, proto: ProtoBuf.Property): ConstantValue<*>? {
         val specialCase = getSpecialCaseContainerClass(
             container, property = true, field = true,
@@ -243,12 +249,28 @@ private class JvmClsAnnotationLoader(
 
         ProgressManager.checkCanceled()
         kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
-            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
+            override fun visitMethod(name: Name, desc: String, exceptions: List<ClassId>?): KotlinJvmBinaryClass.MethodAnnotationVisitor {
                 ProgressManager.checkCanceled()
+
+                val signature = MemberSignature.fromMethodNameAndDesc(name.asString(), desc)
+                val extraSynthesizedAnnotations: List<AnnotationWithArgs> = if (!exceptions.isNullOrEmpty()) {
+                    listOf(
+                        AnnotationWithArgs(
+                            JvmStandardClassIds.Annotations.Throws,
+                            mapOf(Name.identifier("exceptionClasses") to ArrayValue(exceptions.map {
+                                KClassValue(
+                                    it,
+                                    arrayDimensions = 0
+                                )
+                            })),
+                        )
+                    )
+                } else emptyList()
 
                 return AnnotationVisitorForMethod(
                     methodName = name,
-                    signature = MemberSignature.fromMethodNameAndDesc(name.asString(), desc),
+                    signature = signature,
+                    extraAnnotations = extraSynthesizedAnnotations
                 )
             }
 
@@ -260,13 +282,14 @@ private class JvmClsAnnotationLoader(
                 }
 
                 val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
-                return MemberAnnotationVisitor(signature)
+                return MemberAnnotationVisitor(signature, emptyList())
             }
 
             inner class AnnotationVisitorForMethod(
                 private val methodName: Name,
                 signature: MemberSignature,
-            ) : MemberAnnotationVisitor(signature),
+                extraAnnotations: List<AnnotationWithArgs>
+            ) : MemberAnnotationVisitor(signature, extraAnnotations),
                 KotlinJvmBinaryClass.MethodAnnotationVisitor {
 
                 override fun visitParameterAnnotation(
@@ -293,8 +316,10 @@ private class JvmClsAnnotationLoader(
                 }
             }
 
-            open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {
-                private val result = ArrayList<AnnotationWithArgs>()
+            open inner class MemberAnnotationVisitor(protected val signature: MemberSignature, extraAnnotations: List<AnnotationWithArgs>) :
+                KotlinJvmBinaryClass.AnnotationVisitor {
+
+                private val result = ArrayList<AnnotationWithArgs>().apply { addAll(extraAnnotations) }
 
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                     return loadAnnotationIfNotSpecial(classId, source, result)
