@@ -40,6 +40,7 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
         check(actionWasSet) { "onCancel action was already set. Setting it again is an error." }
     }
 
+    @Transient
     protected val cancellationHandle = object : CompilationCanceledStatus {
         override fun checkCanceled() {
             if (isCancelled.load()) {

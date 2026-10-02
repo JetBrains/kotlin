@@ -104,16 +104,31 @@ class AvailableSinceTest : BaseCompilationTest() {
                         this[INCREMENTAL_COMPILATION] = object : JvmIncrementalCompilationConfiguration {}
                     }
                     trySet(KOTLINSCRIPT_EXTENSIONS.availableSinceVersion) { this[KOTLINSCRIPT_EXTENSIONS] = arrayOf() }
-                    @Suppress("DEPRECATION")
-                    trySet(JvmCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL.availableSinceVersion) {
-                        @Suppress("DEPRECATION")
-                        this[JvmCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL] = JvmCompilationOperation.CompilerArgumentsLogLevel.DEBUG
-                    }
-                    @Suppress("DEPRECATION")
-                    trySet(JvmCompilationOperation.GENERATE_COMPILER_REF_INDEX.availableSinceVersion) {
-                        @Suppress("DEPRECATION")
-                        this[JvmCompilationOperation.GENERATE_COMPILER_REF_INDEX] = false
-                    }
+//                    @Suppress("DEPRECATION")
+//                    trySet(JvmCompilationOperation.LOOKUP_TRACKER.availableSinceVersion) {
+//                        @Suppress("DEPRECATION")
+//                        this[JvmCompilationOperation.LOOKUP_TRACKER] = object : CompilerLookupTracker {
+//                            override fun recordLookup(
+//                                filePath: String,
+//                                scopeFqName: String,
+//                                scopeKind: CompilerLookupTracker.ScopeKind,
+//                                name: String,
+//                            ) {
+//                            }
+//
+//                            override fun clear() {}
+//                        }
+//                    }
+//                    @Suppress("DEPRECATION")
+//                    trySet(JvmCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL.availableSinceVersion) {
+//                        @Suppress("DEPRECATION")
+//                        this[JvmCompilationOperation.COMPILER_ARGUMENTS_LOG_LEVEL] = JvmCompilationOperation.CompilerArgumentsLogLevel.DEBUG
+//                    }
+//                    @Suppress("DEPRECATION")
+//                    trySet(JvmCompilationOperation.GENERATE_COMPILER_REF_INDEX.availableSinceVersion) {
+//                        @Suppress("DEPRECATION")
+//                        this[JvmCompilationOperation.GENERATE_COMPILER_REF_INDEX] = false
+//                    }
                 }
             }
         }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.CompilerImportTracker
@@ -41,12 +42,38 @@ import java.nio.file.Path
 
 @kotlinx.serialization.Serializable
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>() :
-    CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
+    CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder, BtaSerializable {
 
     abstract override val compilerArguments: BtaCompilerArgs
 
+    @kotlinx.serialization.Serializable
+    private class CompilerLookupTrackerPlaceholder(private val operationId: Int) : CompilerLookupTracker {
+        override fun recordLookup(
+            filePath: String,
+            scopeFqName: String,
+            scopeKind: CompilerLookupTracker.ScopeKind,
+            name: String,
+        ) {
+            error("Do not call directly")
+        }
+
+        override fun clear() {
+            error("Do not call directly")
+        }
+    }
+
+    override fun prepareForSerialization(): CompilerLookupTracker? {
+        lookupTrackerPlaceholder = lookupTracker?.let { CompilerLookupTrackerPlaceholder(100) } // TODO
+        return lookupTracker
+    }
+
     @SerialName("LOOKUP_TRACKER")
+    @Transient
+//    @kotlinx.serialization.Serializable(with = CompilerLookupTrackerPlaceholder::class)
     internal var lookupTracker: CompilerLookupTracker? = null
+
+    @SerialName("LOOKUP_TRACKER_PLACEHOLDER")
+    private var lookupTrackerPlaceholder: CompilerLookupTrackerPlaceholder? = null
 
     @SerialName("IMPORT_TRACKER")
     internal var importTracker: CompilerImportTracker? = null

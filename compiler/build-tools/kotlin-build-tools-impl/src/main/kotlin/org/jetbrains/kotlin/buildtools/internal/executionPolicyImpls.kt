@@ -10,8 +10,10 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JvmDefaultMode
+import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.serializability.ListOfPathsAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.findPropertyWithSerialName
@@ -163,6 +165,25 @@ public fun main() {
     val arguments2 = Json.decodeFromString<JvmCompilerArgumentsImpl>(argsJson)
     println(arguments2.toArgumentStrings())
 
+    val jvmoperation =
+        JvmCompilationOperationImpl(listOf(Path("/home/something")), Path("/dest"), compilerVersion = "2.5.255-SNAPSHOT").apply {
+            this[BaseCompilationOperationImpl.LOOKUP_TRACKER] = object : CompilerLookupTracker {
+                override fun recordLookup(
+                    filePath: String,
+                    scopeFqName: String,
+                    scopeKind: CompilerLookupTracker.ScopeKind,
+                    name: String,
+                ) {
+                    println("record lookup")
+                }
+
+                override fun clear() {
+                    println("clear")
+                }
+            }
+        }
+    val lookupTrackerForOperation100 = jvmoperation.prepareForSerialization()
+    println(Json.encodeToString(jvmoperation))
 }
 
 private fun getCurrentClasspath() =
