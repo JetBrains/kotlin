@@ -8,8 +8,12 @@ fun test() {
 }
 
 expect interface Foo
+expect interface Bar
 
 // MODULE: m2()()(m1)
 <!ACTUAL_TYPEALIAS_TO_NON_ERROR!>actual typealias Foo = NonError<!>
+
+typealias NE = NonError
+<!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias Bar = NE<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration */
