@@ -319,13 +319,14 @@ public inline fun CharSequence.forEachCodePoint(action: (CodePoint) -> Unit) {
  * This function iterates through the char array, extracting code points using [codePointAt] function
  * and passing them to the specified [action]. The iteration position is then advanced to the next code point.
  *
- * The range is defined by the [startIndex] (inclusive) and [endIndex] (exclusive) parameters.
+ * The range of array indices wherein the iteration is constrained is defined
+ * by the [startIndex] (inclusive) and [endIndex] (exclusive) parameters.
  * By default, the entire char array is iterated.
  *
  * Any unpaired surrogate chars are passed to the [action] as individual code points.
  *
- * @param startIndex The beginning index, inclusive. Defaults to 0.
- * @param endIndex The ending index, exclusive. Defaults to the size of the char array.
+ * @param startIndex The beginning of the array range, inclusive. Defaults to 0.
+ * @param endIndex The ending of the array range, exclusive. Defaults to the size of the char array.
  * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..charArray.size` or `endIndex < startIndex`.
  *
  * @see codePointSequence
@@ -496,11 +497,12 @@ public fun CharSequence.codePointSequence(): CodePointSequence =
  *
  * The sequence allows iteration over the code points from the beginning to the end of the specified range.
  *
- * The range is defined by the [startIndex] (inclusive) and [endIndex] (exclusive) parameters.
+ * The range of array indices wherein the iteration is constrained is defined
+ * by the [startIndex] (inclusive) and [endIndex] (exclusive) parameters.
  * By default, the entire char array is iterated.
  *
- * @param startIndex The beginning index, inclusive. Defaults to 0.
- * @param endIndex The ending index, exclusive. Defaults to the size of the char array.
+ * @param startIndex The beginning of the array range, inclusive. Defaults to 0.
+ * @param endIndex The ending of the array range, exclusive. Defaults to the size of the char array.
  * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..size` or `endIndex < startIndex`.
  *
  * @see forEachCodePoint
@@ -571,7 +573,7 @@ private abstract class AbstractCodePointIndexedIterator(initialIndex: Int, val s
  * Creates an iterator over the Unicode code points of the string starting at the specified char-based position [index].
  * The returned iterator allows traversal of code points in both forward and reverse directions.
  *
- * @param index The starting index in the string to begin iteration. Must be in the range `0..length`.
+ * @param index The index in the string to begin iteration. Must be in the range `0..length`.
  * @return A [CodePointIndexedIterator] for traversing the string's Unicode code points from the specified index.
  * @throws IndexOutOfBoundsException if [index] is not within the range `0..length`.
  */
@@ -590,8 +592,8 @@ public fun String.codePointIterator(index: Int = 0): CodePointIndexedIterator {
  * Creates an iterator over the Unicode code points of the char sequence starting at the specified char-based position [index].
  * The returned iterator allows traversal of code points in both forward and reverse directions.
  *
- * @param index The starting index in the string to begin iteration. Must be in the range `0..length`.
- * @return A [CodePointIndexedIterator] for traversing the string's Unicode code points from the specified index.
+ * @param index The index in the char sequence to begin iteration. Must be in the range `0..length`.
+ * @return A [CodePointIndexedIterator] for traversing the Unicode code points in the char sequence from the specified index.
  * @throws IndexOutOfBoundsException if [index] is not within the range `0..length`.
  */
 @SinceKotlin("2.5")
@@ -605,27 +607,56 @@ public fun CharSequence.codePointIterator(index: Int = 0): CodePointIndexedItera
     }
 }
 
-//@ExperimentalUnicodeApi
-//public fun CharArray.codePointIterator(startIndex: Int = 0, endIndex: Int = size): CodePointIndexedIterator =
-//    codePointIterator(startIndex, startIndex, endIndex)
+/**
+ * Creates an iterator over the Unicode code points of this char array at the specified char-based position [index].
+ * The returned iterator allows traversal of code points in both forward and reverse directions.
+
+ * @param index The index in the array to begin iteration. Must be in the range `0..size`.
+ * @return A [CodePointIndexedIterator] for traversing the Unicode code points in the char array from the specified index.
+ * @throws IndexOutOfBoundsException if [index] is not within the range `0..size`.
+ */
+@SinceKotlin("2.5")
+@ExperimentalUnicodeApi
+public fun CharArray.codePointIterator(index: Int = 0): CodePointIndexedIterator =
+    codePointIterator(index = index, startIndex = 0, endIndex = size)
+
+/**
+ * Creates an iterator over the Unicode code points of the specified range of this char array.
+ * The returned iterator allows traversal of code points in both forward and reverse directions.
+ *
+ * The range of array indices wherein the iteration is constrained is defined
+ * by the [startIndex] (inclusive) and [endIndex] (exclusive) parameters.
+ * The iteration starts at the beginning of the array range, namely at [startIndex].
+ * By default, the entire char array is iterated.
+ *
+ * @param startIndex The beginning of the array range, inclusive. Defaults to 0.
+ * @param endIndex The ending of the array range, exclusive. Defaults to the size of the char array.
+ * @return A [CodePointIndexedIterator] for traversing the Unicode code points in the specified range of the char array.
+ * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..size` or `endIndex < startIndex`.
+ */
+@SinceKotlin("2.5")
+@ExperimentalUnicodeApi
+public fun CharArray.codePointIterator(startIndex: Int = 0, endIndex: Int = size): CodePointIndexedIterator =
+    codePointIterator(index = startIndex, startIndex = startIndex, endIndex = endIndex)
 
 /**
  * Creates an iterator over the Unicode code points of the specified range of this char array at the specified char-based position [index].
  * The returned iterator allows traversal of code points in both forward and reverse directions.
  *
- * The range is defined by the [startIndex] (inclusive) and [endIndex] (exclusive) parameters.
+ * The range of array indices wherein the iteration is constrained is defined
+ * by the [startIndex] (inclusive) and [endIndex] (exclusive) parameters.
  * By default, the entire char array is iterated.
  *
- * @param index The starting index in the string to begin iteration. Must be in the range `startIndex..endIndex`.
- * @param startIndex The beginning index, inclusive. Defaults to 0.
- * @param endIndex The ending index, exclusive. Defaults to the size of the char array.
- * @return A [CodePointIndexedIterator] for traversing the string's Unicode code points from the specified index.
+ * @param index The index in the array to begin iteration. Must be in the range `startIndex..endIndex`.
+ * @param startIndex The beginning of the array range, inclusive. Defaults to 0.
+ * @param endIndex The ending of the array range, exclusive. Defaults to the size of the char array.
+ * @return A [CodePointIndexedIterator] for traversing the Unicode code points in the range of the char array from the specified index.
  * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..size` or `endIndex < startIndex`.
  * @throws IndexOutOfBoundsException if [index] is not within the range `startIndex..endIndex`.
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
-public fun CharArray.codePointIterator(index: Int = 0, startIndex: Int = 0, endIndex: Int = size): CodePointIndexedIterator {
+public fun CharArray.codePointIterator(index: Int, startIndex: Int = 0, endIndex: Int = size): CodePointIndexedIterator {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
     if (index !in startIndex..endIndex) throw IndexOutOfBoundsException("index: $index, startIndex: $startIndex, endIndex: $endIndex")
 
