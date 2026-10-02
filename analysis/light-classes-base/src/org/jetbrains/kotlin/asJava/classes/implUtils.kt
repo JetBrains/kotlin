@@ -9,7 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.psi.KtNonPublicApi
+import org.jetbrains.kotlin.psi.KtIdeApi
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.KtSuperTypeList
@@ -30,7 +30,7 @@ fun LightElement.cannotModify(): Nothing {
     throw IncorrectOperationException("Modification not implemented.")
 }
 
-@OptIn(KtNonPublicApi::class)
+@OptIn(KtIdeApi::class)
 fun PsiReferenceList.addSuperTypeEntry(
     superTypeList: KtSuperTypeList,
     entry: KtSuperTypeListEntry,

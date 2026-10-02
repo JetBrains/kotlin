@@ -720,7 +720,7 @@ fun PsiElement.getTextWithLocation(): String = "'${this.text}' at ${PsiDiagnosti
     ),
     level = DeprecationLevel.ERROR,
 )
-@OptIn(KtNonPublicApi::class)
+@OptIn(KtIdeApi::class)
 fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList): KtFileAnnotationList {
     return KtPsiMutationService.getInstance().replaceFileAnnotationList(file, annotationList)
 }

@@ -50,7 +50,6 @@ class KtObjectDeclaration : KtClassOrObject {
         return null
     }
 
-    @OptIn(KtNonPublicApi::class)
     override fun setName(@NonNls name: String): PsiElement {
         KtPsiMutationService.getInstanceOrNull()?.let { return it.setObjectDeclarationName(this, name) }
         if (nameIdentifier != null) return super.setName(name)

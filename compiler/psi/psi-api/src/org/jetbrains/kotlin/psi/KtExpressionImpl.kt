@@ -35,7 +35,7 @@ abstract class KtExpressionImpl : KtElementImpl, KtExpression {
      * Without the service, it performs only the plain platform replacement, so, e.g., replacing `a` in `a * b` with `x + y` results in
      * `x + y * b`.
      */
-    @OptIn(KtNonPublicApi::class)
+    @OptIn(KtIdeApi::class)
     override fun replace(newElement: PsiElement): PsiElement {
         val mutationService = KtPsiMutationService.getInstanceOrNull() ?: return super.replace(newElement)
         return mutationService.replaceExpression(this, newElement, true) { super.replace(it) }
@@ -50,7 +50,7 @@ abstract class KtExpressionImpl : KtElementImpl, KtExpression {
             ),
             level = DeprecationLevel.ERROR,
         )
-        @OptIn(KtNonPublicApi::class)
+        @OptIn(KtIdeApi::class)
         fun replaceExpression(
             expression: KtExpression,
             newElement: PsiElement,
