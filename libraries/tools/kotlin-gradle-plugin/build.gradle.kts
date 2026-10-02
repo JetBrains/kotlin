@@ -463,12 +463,6 @@ gradlePlugin {
                 }
             }
         }
-        create("kotlinJsPlugin") {
-            id = "org.jetbrains.kotlin.js"
-            description = "Kotlin JS plugin"
-            displayName = description
-            implementationClass = "org.jetbrains.kotlin.gradle.plugin.KotlinJsPluginWrapper"
-        }
         create("kotlinMultiplatformPlugin") {
             id = "org.jetbrains.kotlin.multiplatform"
             description = "Kotlin Multiplatform plugin"

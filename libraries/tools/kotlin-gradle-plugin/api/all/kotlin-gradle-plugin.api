@@ -372,11 +372,6 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPl
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinJsPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
-	public fun <init> ()V
-	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinMultiplatformPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
 	public fun <init> ()V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
@@ -583,13 +578,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompile
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer$CreateCompilerArgumentsContext$Companion {
 	public final fun getDefault ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer$CreateCompilerArgumentsContext;
 	public final fun getLenient ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilerArgumentsProducer$CreateCompilerArgumentsContext;
-}
-
-public class org/jetbrains/kotlin/gradle/plugin/KotlinJsPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinJsPluginWrapper {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
-	public fun getPluginVariant ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinJvmPluginKt {
@@ -2484,12 +2472,6 @@ public class org/jetbrains/kotlin/gradle/targets/js/KotlinJsPlatformTestRun : or
 	public final fun setExecutionSource (Lorg/jetbrains/kotlin/gradle/targets/js/JsCompilationExecutionSource;)V
 	public synthetic fun setExecutionSourceFrom (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationToRunnableFiles;)V
 	public fun setExecutionSourceFrom (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
-}
-
-public class org/jetbrains/kotlin/gradle/targets/js/KotlinJsPlugin : org/gradle/api/Plugin {
-	public fun <init> ()V
-	public synthetic fun apply (Ljava/lang/Object;)V
-	public fun apply (Lorg/gradle/api/Project;)V
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinJsReportAggregatingTestRun : org/jetbrains/kotlin/gradle/testing/KotlinReportAggregatingTestRun, org/jetbrains/kotlin/gradle/plugin/CompilationExecutionSourceSupport, org/jetbrains/kotlin/gradle/plugin/KotlinTargetTestRun {

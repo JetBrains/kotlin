@@ -25,7 +25,6 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
             id "org.jetbrains.kotlin.jvm" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.kapt" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.android" version "${'$'}kotlin_version"
-            id "org.jetbrains.kotlin.js" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.native.cocoapods" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.multiplatform" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.allopen" version "${'$'}kotlin_version"
@@ -196,7 +195,6 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             id("org.jetbrains.kotlin.jvm") version kotlin_version
             id("org.jetbrains.kotlin.kapt") version kotlin_version
             id("org.jetbrains.kotlin.android") version kotlin_version
-            id("org.jetbrains.kotlin.js") version kotlin_version
             id("org.jetbrains.kotlin.native.cocoapods") version kotlin_version
             id("org.jetbrains.kotlin.multiplatform") version kotlin_version
             id("org.jetbrains.kotlin.plugin.allopen") version kotlin_version
