@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.standalone.projectStructure
 
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.LibraryScopeConstructionMode
 
 /**
  * The strategy used to build a library module's content scope from its binary roots in Standalone mode.
@@ -63,18 +62,3 @@ public sealed class StandaloneLibraryScopeConstructionMode {
     @Suppress("unused")
     private data object Unknown : StandaloneLibraryScopeConstructionMode()
 }
-
-/**
- * Maps this public [StandaloneLibraryScopeConstructionMode] to the internal [LibraryScopeConstructionMode] understood by the Standalone
- * implementation.
- */
-@OptIn(StandaloneWorkaroundApi::class)
-internal fun StandaloneLibraryScopeConstructionMode.toInternalLibraryScopeConstructionMode(): LibraryScopeConstructionMode =
-    when (this) {
-        StandaloneLibraryScopeConstructionMode.ParentTraversal -> LibraryScopeConstructionMode.ParentTraversal
-        StandaloneLibraryScopeConstructionMode.Trie -> LibraryScopeConstructionMode.Trie
-        StandaloneLibraryScopeConstructionMode.Enumeration -> LibraryScopeConstructionMode.Enumeration
-
-        // The sealed hierarchy has a private subtype to keep `when` expressions non-exhaustive for API evolution; it is never passed here.
-        else -> error("Unexpected library scope construction mode: $this")
-    }
