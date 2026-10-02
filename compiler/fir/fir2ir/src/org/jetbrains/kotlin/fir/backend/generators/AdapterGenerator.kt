@@ -325,7 +325,6 @@ class AdapterGenerator(
                         Name.identifier("c$index"),
                         substitutor.substituteOrSelf(contextParameter.returnTypeRef.coneType).toIrType(),
                         IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-                        IrParameterKind.Regular,
                     )
                 }
 
@@ -338,7 +337,6 @@ class AdapterGenerator(
                             Name.identifier("receiver"),
                             it.type,
                             IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-                            IrParameterKind.Regular,
                         )
                     }
                 }
@@ -349,7 +347,6 @@ class AdapterGenerator(
                         Name.identifier("p$index"),
                         parameterType,
                         IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-                        IrParameterKind.Regular,
                     )
                 }
 
@@ -359,7 +356,6 @@ class AdapterGenerator(
                         Name.identifier("value"),
                         adaptedType.arguments.last().typeOrNull ?: builtins.anyNType,
                         IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-                        IrParameterKind.Regular,
                     )
                 }
             }
@@ -373,7 +369,6 @@ class AdapterGenerator(
         name: Name,
         type: IrType,
         origin: IrDeclarationOrigin,
-        kind: IrParameterKind,
     ): IrValueParameter =
         IrFactoryImpl.createValueParameter(
             startOffset = adapterFunction.startOffset,
@@ -387,7 +382,7 @@ class AdapterGenerator(
             isCrossinline = false,
             isNoinline = false,
             isHidden = false,
-            kind = kind,
+            kind = IrParameterKind.Regular,
         ).also { irAdapterValueParameter ->
             irAdapterValueParameter.parent = adapterFunction
         }
@@ -579,28 +574,14 @@ class AdapterGenerator(
         val samType = samFirType.toIrType(ConversionTypeOrigin.DEFAULT)
 
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
-        fun IrExpression.generateSamConversion() =
-            IrTypeOperatorCallImpl(
-                this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
-                castArgumentToFunctionalInterfaceForSamType(
-                    argument = this,
-                    argumentConeType = argument.expression.resolvedType,
-                    samType = samFirType
-                )
+        return IrTypeOperatorCallImpl(
+            this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
+            castArgumentToFunctionalInterfaceForSamType(
+                argument = this,
+                argumentConeType = argument.expression.resolvedType,
+                samType = samFirType
             )
-
-        return if (this is IrBlock && (origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION)) {
-            // The IR for adapted callable references should be
-            // BLOCK ADAPTED_FUNCTION_REFERENCE(FUN ADAPTER_FOR_CALLABLE_REFERENCE, TYPE_OP SAM_CONVERSION(FUNCTION_REFERENCE))
-            // Therefore, we need to insert the cast as the last statement of the block, not around the block itself.
-            val lastIndex = statements.lastIndex
-            val samConversion = (statements[lastIndex] as IrExpression).generateSamConversion()
-            statements[lastIndex] = samConversion
-            this.type = samConversion.type
-            this
-        } else {
-            generateSamConversion()
-        }
+        )
     }
 
     // See org.jetbrains.kotlin.psi2ir.generators.ArgumentsGenerationUtilsKt.castArgumentToFunctionalInterfaceForSamType (K1 counterpart)
@@ -874,7 +855,6 @@ class AdapterGenerator(
                     Name.identifier($$"$callee"),
                     adapteeParameterType,
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
-                    IrParameterKind.Regular,
                 )
 
                 parameterTypes.mapIndexedTo(this) { index, parameterType ->
@@ -883,7 +863,6 @@ class AdapterGenerator(
                         Name.identifier("p$index"),
                         parameterType,
                         IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
-                        IrParameterKind.Regular,
                     )
                 }
             }
@@ -981,7 +960,6 @@ class AdapterGenerator(
                 functionParameter.name,
                 irFunctionType,
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
-                IrParameterKind.Regular,
             )
             irAdapterFunction.parameters = listOf(irFunctionParameter)
             irAdapterFunction.body = IrFactoryImpl.createBlockBody(
