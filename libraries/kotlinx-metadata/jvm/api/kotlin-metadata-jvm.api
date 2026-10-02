@@ -159,6 +159,9 @@ public abstract interface annotation class kotlin/metadata/ExperimentalCompanion
 public abstract interface annotation class kotlin/metadata/ExperimentalContextReceivers : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/metadata/ExperimentalFullValueClasses : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/metadata/ExperimentalMustUseStatus : java/lang/annotation/Annotation {
 }
 
@@ -402,6 +405,8 @@ public final class kotlin/metadata/KmClass : kotlin/metadata/KmDeclarationContai
 	public final fun getSupertypes ()Ljava/util/List;
 	public fun getTypeAliases ()Ljava/util/List;
 	public final fun getTypeParameters ()Ljava/util/List;
+	public final fun getValueClassUnderlyingPropertyNames ()Ljava/util/List;
+	public final fun getValueClassUnderlyingTypes ()Ljava/util/List;
 	public final fun getVersionRequirements ()Ljava/util/List;
 	public final fun setCompanionObject (Ljava/lang/String;)V
 	public final fun setInlineClassUnderlyingPropertyName (Ljava/lang/String;)V

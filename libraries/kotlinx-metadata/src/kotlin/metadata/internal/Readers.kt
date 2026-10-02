@@ -47,6 +47,7 @@ public class ReadContext(
         }
 }
 
+@OptIn(ExperimentalFullValueClasses::class)
 public fun ProtoBuf.Class.toKmClass(
     strings: NameResolver,
     ignoreUnknownVersionRequirements: Boolean = false,
@@ -84,6 +85,16 @@ public fun ProtoBuf.Class.toKmClass(
         v.inlineClassUnderlyingPropertyName = c[inlineClassUnderlyingPropertyName]
     }
     v.inlineClassUnderlyingType = loadInlineClassUnderlyingType(c)?.toKmType(c)
+    if (fullValueClassUnderlyingPropertyNameCount > 0) {
+        fullValueClassUnderlyingPropertyNameList.mapTo(v.valueClassUnderlyingPropertyNames) { c[it] }
+        val types = fullValueClassUnderlyingTypeIdList.map { c.types[it] }.ifEmpty { fullValueClassUnderlyingTypeList }
+        if (types.size != fullValueClassUnderlyingPropertyNameCount) {
+            throw InconsistentKotlinMetadataException(
+                "Full value class has $fullValueClassUnderlyingPropertyNameCount underlying properties, but ${types.size} types"
+            )
+        }
+        types.mapTo(v.valueClassUnderlyingTypes) { it.toKmType(c) }
+    }
 
     @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
     contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }

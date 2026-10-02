@@ -356,6 +356,7 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
     public val t: ProtoBuf.Class.Builder = ProtoBuf.Class.newBuilder()!!
     public val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
+    @OptIn(ExperimentalFullValueClasses::class)
     public fun writeClass(kmClass: KmClass) {
         val flags = kmClass.flags or
                 Flags.HAS_ANNOTATIONS.toFlags(kmClass.annotations.isNotEmpty())
@@ -391,6 +392,8 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
 
         kmClass.inlineClassUnderlyingPropertyName?.let { t.inlineClassUnderlyingPropertyName = c[it] }
         kmClass.inlineClassUnderlyingType?.let { t.inlineClassUnderlyingType = c.writeType(it).build() }
+        t.addAllFullValueClassUnderlyingPropertyName(kmClass.valueClassUnderlyingPropertyNames.map { c[it] })
+        t.addAllFullValueClassUnderlyingType(kmClass.valueClassUnderlyingTypes.map { c.writeType(it).build() })
 
         @[Suppress("DEPRECATION") OptIn(ExperimentalContextReceivers::class)]
         t.addAllContextReceiverType(kmClass.contextReceiverTypes.map { c.writeType(it).build() })
