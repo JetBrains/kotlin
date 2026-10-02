@@ -42,11 +42,13 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibrarySourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneIndexCache
 import org.jetbrains.kotlin.analysis.api.standalone.base.declarations.KotlinStandaloneJvmDependenciesIndex
 import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAccessibilityChecker
 import org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneJavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.registerJavaPsiFacade
+import org.jetbrains.kotlin.analysis.api.standalone.projectStructure.StandaloneLibraryScopeConstructionMode
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -70,6 +72,7 @@ import org.picocontainer.PicoContainer
 import java.nio.file.Path
 import java.nio.file.Paths
 
+@OptIn(StandaloneWorkaroundApi::class)
 @KaImplementationDetail
 object StandaloneProjectFactory {
     fun createProjectEnvironment(
@@ -380,7 +383,7 @@ object StandaloneProjectFactory {
         createLibraryModuleSearchScope(
             binaryRoots,
             binaryVirtualFiles,
-            LibraryScopeConstructionMode.ParentTraversal,
+            StandaloneLibraryScopeConstructionMode.ParentTraversal,
             environment,
             project,
         )
@@ -393,7 +396,7 @@ object StandaloneProjectFactory {
     fun createLibraryModuleSearchScope(
         binaryRoots: Collection<Path>,
         binaryVirtualFiles: Collection<VirtualFile>,
-        mode: LibraryScopeConstructionMode,
+        mode: StandaloneLibraryScopeConstructionMode,
         environment: CoreApplicationEnvironment,
         project: Project,
     ): GlobalSearchScope =
