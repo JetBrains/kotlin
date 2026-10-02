@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jklib.config.jklibCompileIr
+import org.jetbrains.kotlin.cli.jklib.config.jklibManifestProperties
 import org.jetbrains.kotlin.cli.jklib.config.jklibOutputDestination
 import org.jetbrains.kotlin.cli.jklib.config.klibPaths
 import org.jetbrains.kotlin.cli.jklib.prepareJKlibSessions
@@ -185,6 +186,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
 
         arguments.destination?.let { configuration.jklibOutputDestination = it }
         configuration.jklibCompileIr = arguments.compileIr
+        arguments.klibManifestProperties?.let { configuration.jklibManifestProperties = it.asList() }
         arguments.friendModules?.let { configuration.friendPaths = it.split(File.pathSeparator).filterNot(String::isEmpty) }
 
         // TODO(KT-87172): call configuration.setupCommonKlibArguments() instead of manual setup.
@@ -377,6 +379,14 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 moduleName(configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
                 versions(versions)
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+                configuration.jklibManifestProperties?.let { properties ->
+                    customProperties {
+                        for (property in properties) {
+                            val [key, value] = property.split('=', limit = 2)
+                            setProperty(key, value)
+                        }
+                    }
+                }
                 metadataFlags(configuration.languageVersionSettings)
             }
             includeMetadata(serializerOutput.serializedMetadata)
@@ -437,6 +447,14 @@ object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArti
                 moduleName(rawModuleName)
                 versions(versions)
                 platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+                configuration.jklibManifestProperties?.let { properties ->
+                    customProperties {
+                        for (property in properties) {
+                            val [key, value] = property.split('=', limit = 2)
+                            setProperty(key, value)
+                        }
+                    }
+                }
                 metadataFlags(configuration.languageVersionSettings)
             }
             includeMetadata(serializerOutput.serializedMetadata)
