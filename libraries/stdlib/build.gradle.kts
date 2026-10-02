@@ -54,6 +54,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.addAll(dogfoodedExperimentalFeatures)
     freeCompilerArgs.add("-Xreturn-value-checker=full")
+    freeCompilerArgs.add("-Xcompanion-blocks")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
@@ -92,6 +93,7 @@ kotlin {
         // Here it mainly serves the purpose to set up test compilations/source sets
         // and especially commonTest in IDE since there is no separate metadata compilation for it.
         freeCompilerArgs.add("-Xreturn-value-checker=full")
+        freeCompilerArgs.add("-Xcompanion-blocks")
         freeCompilerArgs.addAll(dogfoodedExperimentalFeatures)
         freeCompilerArgs.add("-Xallow-kotlin-package")
     }
@@ -131,6 +133,7 @@ kotlin {
                                 diagnosticNamesArg,
                                 *dogfoodedExperimentalFeatures.toTypedArray(),
                                 "-Xreturn-value-checker=full",
+                                "-Xcompanion-blocks",
                                 redundantCliArgWarningSuppression,
                             )
                         )
