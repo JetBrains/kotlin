@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.archivesName
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal val Project.karPackTask: TaskProvider<PackKotlinArchiveTask>
     get() = project.locateOrRegisterTask<PackKotlinArchiveTask>(KarLayout.PACK_TASK_NAME)
@@ -97,12 +96,12 @@ private fun KotlinTarget.requestKarPlatformArtifactsForCompilation() {
 
         configurations.compileDependencyConfiguration.apply {
             attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
-            selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict(targetName.toLowerCaseAsciiOnly())
+            selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict()
         }
 
         configurations.runtimeDependencyConfiguration?.apply {
             attributes.attribute(KarLayout.Attributes.state, KarLayout.Attributes.State.PLATFORM_ARTIFACTS_EXTRACTED)
-            selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict(targetName.toLowerCaseAsciiOnly())
+            selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict()
         }
     }
 }
@@ -121,14 +120,14 @@ private fun KotlinTarget.requestKarPlatformArtifactsForCompilation() {
  *   - As additional safety measure to not detect something irrelevant this variant name should have `-published` suffix,
  *     as we know that our variants always have it.
  * - Module name of old component is same as capability name
- * - Module name of new component is same as capability name without [platformSuffix] (as it's root publication component)
+ * - Capability name starts with `${moduleName}-` for new component
  * - There should be exactly 2 of them (legacy and kar)
  *   - If we have several legacy vs several kar versions all except newest is already filtered out.
  *
  * If all our heuristic checks matched, we're removing older of 2 versions, assuming that indeed was platform and root version
  * of the same library.
  */
-private fun Configuration.selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict(platformSuffix: String) {
+private fun Configuration.selectNewKotlinArchiveComponentOnLegacyPublicationCapabilityConflict() {
     resolutionStrategy.capabilitiesResolution.all { details ->
         if (details.candidates.size != 2) return@all
 
@@ -140,7 +139,7 @@ private fun Configuration.selectNewKotlinArchiveComponentOnLegacyPublicationCapa
 
         val replacementCandidate = details.candidates.singleOrNull { candidate ->
             val candidateComponent = candidate.id as? ModuleComponentIdentifier ?: return@singleOrNull false
-            candidateComponent.group == requestedCapability.group && "${candidateComponent.module}-$platformSuffix" == requestedCapability.name
+            candidateComponent.group == requestedCapability.group && requestedCapability.name.startsWith("${candidateComponent.module}-")
         } ?: return@all
 
         if (legacyPublicationCandidate.variantName != replacementCandidate.variantName) return@all
