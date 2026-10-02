@@ -1,7 +1,6 @@
 plugins {
-    `embedded-kotlin`
-    `java-gradle-plugin`
-    `maven-publish`
+    `kotlin-dsl`
+    kotlin("jvm")
 }
 
 group = "org.jetbrains.kotlin"
