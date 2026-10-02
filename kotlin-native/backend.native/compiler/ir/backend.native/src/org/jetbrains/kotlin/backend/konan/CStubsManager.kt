@@ -25,7 +25,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
     fun compile(clang: ClangArgs, diagnosticReporter: IrDiagnosticReporter, verbose: Boolean): List<Path> {
         if (languageToStubs.isEmpty()) return emptyList()
 
-        val bitcodes = languageToStubs.entries.map { [language, stubs] ->
+        val bitcodes = languageToStubs.flatMap { [language, stubs] -> stubs.map { language to it } }.map { [language, stub] ->
             val compilerOptions = mutableListOf<String>()
             val sourceFileExtension = when {
                 language == "C++" -> ".cpp"
@@ -36,7 +36,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
                 else -> ".c"
             }
             val cSource = createTempFile("cstubs", sourceFileExtension).apply { deleteOnExit() }
-            cSource.writeLines(stubs.flatMap { it.lines })
+            cSource.writeLines(stub.lines)
 
             val bitcode = createTempFile("cstubs", ".bc").apply { deleteOnExit() }
 
@@ -49,7 +49,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
             )
             if (dumpBridges) {
                 println("CSTUBS for ${language}")
-                stubs.flatMap { it.lines }.forEach {
+                stub.lines.forEach {
                     println(it)
                 }
                 println("CSTUBS in ${cSource.absolutePathString()}")
@@ -59,7 +59,7 @@ internal class CStubsManager(private val target: KonanTarget, private val genera
 
             val result = Command(clangCommand).getResult(withErrors = true)
             if (result.exitCode != 0) {
-                reportCompilationErrors(cSourcePath, stubs, result, diagnosticReporter, verbose)
+                reportCompilationErrors(cSourcePath, listOf(stub), result, diagnosticReporter, verbose)
             }
             bitcode
         }
