@@ -19,13 +19,13 @@ object Retry {
   }
 
   fun <W : Any?> withExponentialBackoff(action: Function0<W>): Builder<W> {
-    return Builder<W>(action = { // BLOCK
-      local suspend fun Function0<W>.suspendConversion0(): W {
+    return Builder<W>(action = SuspendFunction0<W>(
+      /* bound = */ [action],
+      /* invoke = */      local suspend fun($callee: Function0<W>): W {
         return $callee.invoke()
       }
-
-      ::suspendConversion0/*($callee = action) */
-    })
+    )
+)
   }
 
 }

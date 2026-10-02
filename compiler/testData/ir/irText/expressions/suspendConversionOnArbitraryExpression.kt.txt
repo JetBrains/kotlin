@@ -6,63 +6,63 @@ fun produceFun(): Function0<Unit> {
 }
 
 fun testExtAsExt(fn: @ExtensionFunctionType Function1<Int, Unit>) {
-  useSuspendExt(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion0(p0: Int) {
+  useSuspendExt(sfn = @ExtensionFunctionType SuspendFunction1<Int, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: @ExtensionFunctionType Function1<Int, Unit>, p0: Int) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testExtAsExtT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
-  useSuspendExtT<Int>(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion0(p0: Int) {
+  useSuspendExtT<Int>(sfn = @ExtensionFunctionType SuspendFunction1<Int, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: @ExtensionFunctionType Function1<Int, Unit>, p0: Int) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testExtAsSimple(fn: @ExtensionFunctionType Function1<Int, Unit>) {
-  useSuspendArg(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion0(p0: Int) {
+  useSuspendArg(sfn = SuspendFunction1<Int, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: @ExtensionFunctionType Function1<Int, Unit>, p0: Int) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testExtAsSimpleT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
-  useSuspendArgT<Int>(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType Function1<Int, Unit>.suspendConversion0(p0: Int) {
+  useSuspendArgT<Int>(sfn = SuspendFunction1<Int, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: @ExtensionFunctionType Function1<Int, Unit>, p0: Int) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType Function1<S, Unit>) {
-  useSuspendExtT<S>(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType Function1<S, Unit>.suspendConversion0(p0: S) {
+  useSuspendExtT<S>(sfn = @ExtensionFunctionType SuspendFunction1<S, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: @ExtensionFunctionType Function1<S, Unit>, p0: S) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType Function1<S, Unit>) {
-  useSuspendArgT<S>(sfn = { // BLOCK
-    local suspend fun @ExtensionFunctionType Function1<S, Unit>.suspendConversion0(p0: S) {
+  useSuspendArgT<S>(sfn = SuspendFunction1<S, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: @ExtensionFunctionType Function1<S, Unit>, p0: S) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun <T> testIntersectionVsSuspendConversion(x: T) where T : Function0<Unit>, T : SuspendFunction0<Unit> {
@@ -70,73 +70,73 @@ fun <T> testIntersectionVsSuspendConversion(x: T) where T : Function0<Unit>, T :
 }
 
 fun testSimple(fn: Function0<Unit>) {
-  useSuspend(sfn = { // BLOCK
-    local suspend fun Function0<Unit>.suspendConversion0() {
+  useSuspend(sfn = SuspendFunction0<Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: Function0<Unit>) {
       $callee.invoke()
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testSimpleAsExt(fn: Function1<Int, Unit>) {
-  useSuspendExt(sfn = { // BLOCK
-    local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+  useSuspendExt(sfn = @ExtensionFunctionType SuspendFunction1<Int, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testSimpleAsExtT(fn: Function1<Int, Unit>) {
-  useSuspendExtT<Int>(sfn = { // BLOCK
-    local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+  useSuspendExtT<Int>(sfn = @ExtensionFunctionType SuspendFunction1<Int, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testSimpleAsSimpleT(fn: Function1<Int, Unit>) {
-  useSuspendArgT<Int>(sfn = { // BLOCK
-    local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
+  useSuspendArgT<Int>(sfn = SuspendFunction1<Int, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: Function1<Int, Unit>, p0: Int) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testSimpleNonVal() {
-  useSuspend(sfn = { // BLOCK
-    local suspend fun Function0<Unit>.suspendConversion0() {
+  useSuspend(sfn = SuspendFunction0<Unit>(
+    /* bound = */ [produceFun()],
+    /* invoke = */    local suspend fun($callee: Function0<Unit>) {
       $callee.invoke()
     }
-
-    ::suspendConversion0/*($callee = produceFun()) */
-  })
+  )
+)
 }
 
 fun <S : Any?> testSimpleSAsExtT(fn: Function1<S, Unit>) {
-  useSuspendExtT<S>(sfn = { // BLOCK
-    local suspend fun Function1<S, Unit>.suspendConversion0(p0: S) {
+  useSuspendExtT<S>(sfn = @ExtensionFunctionType SuspendFunction1<S, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: Function1<S, Unit>, p0: S) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun <S : Any?> testSimpleSAsSimpleT(fn: Function1<S, Unit>) {
-  useSuspendArgT<S>(sfn = { // BLOCK
-    local suspend fun Function1<S, Unit>.suspendConversion0(p0: S) {
+  useSuspendArgT<S>(sfn = SuspendFunction1<S, Unit>(
+    /* bound = */ [fn],
+    /* invoke = */    local suspend fun($callee: Function1<S, Unit>, p0: S) {
       $callee.invoke(p1 = p0)
     }
-
-    ::suspendConversion0/*($callee = fn) */
-  })
+  )
+)
 }
 
 fun testSmartCastOnVarVsSuspendConversion(a: Function0<Unit>) {
@@ -148,13 +148,13 @@ fun testSmartCastOnVarVsSuspendConversion(a: Function0<Unit>) {
 fun testSmartCastOnVarWithSuspendConversion(a: Any) {
   var b: Any = a
   b as Function0<Unit> /*~> Unit */
-  useSuspend(sfn = { // BLOCK
-    local suspend fun Function0<Unit>.suspendConversion0() {
+  useSuspend(sfn = SuspendFunction0<Unit>(
+    /* bound = */ [b /*as Function0<Unit> */],
+    /* invoke = */    local suspend fun($callee: Function0<Unit>) {
       $callee.invoke()
     }
-
-    ::suspendConversion0/*($callee = b /*as Function0<Unit> */) */
-  })
+  )
+)
 }
 
 fun testSmartCastVsSuspendConversion(a: Function0<Unit>) {
@@ -164,13 +164,13 @@ fun testSmartCastVsSuspendConversion(a: Function0<Unit>) {
 
 fun testSmartCastWithSuspendConversion(a: Any) {
   a as Function0<Unit> /*~> Unit */
-  useSuspend(sfn = { // BLOCK
-    local suspend fun Function0<Unit>.suspendConversion0() {
+  useSuspend(sfn = SuspendFunction0<Unit>(
+    /* bound = */ [a /*as Function0<Unit> */],
+    /* invoke = */    local suspend fun($callee: Function0<Unit>) {
       $callee.invoke()
     }
-
-    ::suspendConversion0/*($callee = a /*as Function0<Unit> */) */
-  })
+  )
+)
 }
 
 fun useSuspend(sfn: SuspendFunction0<Unit>) {
