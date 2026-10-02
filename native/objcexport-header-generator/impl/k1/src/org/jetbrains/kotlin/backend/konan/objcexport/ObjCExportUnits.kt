@@ -67,6 +67,10 @@ class ObjCExportUnits internal constructor(
     internal val files: List<ObjCExportFileUnit>,
     internal val classForwardDeclarations: Set<ObjCClassForwardDeclaration>,
     internal val protocolForwardDeclarations: Set<String>,
+    internal val classClaims: List<ObjCExportClassClaim> = emptyList(),
+    internal val names: List<ObjCExportNameRecord> = emptyList(),
+    internal val hasCollisions: Boolean = false,
+    internal val typeParameterClashes: List<String> = emptyList(),
 ) {
     internal val events: Sequence<ObjCExportUnitEvent>
         get() = classes.asSequence().flatMap { it.events } +
@@ -91,12 +95,19 @@ class ObjCExportUnits internal constructor(
         }
 
         line(FORMAT)
+        line(hasCollisions.bit)
+        line(typeParameterClashes.size)
+        typeParameterClashes.forEach(::line)
         line(classForwardDeclarations.size)
         classForwardDeclarations.forEach { declaration ->
             line((listOf(declaration.className) + declaration.typeDeclarations.map { it.encode() }).joinToString("\t"))
         }
         line(protocolForwardDeclarations.size)
         protocolForwardDeclarations.forEach(::line)
+        line(classClaims.size)
+        classClaims.forEach { line(listOf(it.classId, "${it.isFinal.bit}${it.isInterface.bit}", it.supertypes.sorted().joinToString(LIST)).joinToString("\t")) }
+        line(names.size)
+        names.forEach { line(it.encode()) }
         line(classes.size)
         classes.forEach {
             line(it.classId)
@@ -131,9 +142,41 @@ class ObjCExportUnits internal constructor(
         const val FORMAT_VERSION = 1
 
         private const val FORMAT = "objc-export-units $FORMAT_VERSION"
+        private const val LIST = "\u001E"
 
         private val Boolean.bit: Int
             get() = if (this) 1 else 0
+
+        private fun ObjCExportNameRecord.encode(): String {
+            val encodedClaim = claim?.let {
+                listOf(
+                    it.owner, "${it.isTopLevel.bit}${it.isConstructor.bit}${it.hasNoDispatchReceiver.bit}${it.isSetter.bit}",
+                    it.kotlinName, it.extensionReceiverType, it.parameterTypes, it.bridge,
+                ).joinToString(LIST)
+            }.orEmpty()
+            return listOf(kind.ordinal.toString(), key, name, encodedClaim).joinToString("\t") {
+                it.replace('\t', ' ').replace('\n', ' ')
+            }
+        }
+
+        private fun decodeRecord(value: String): ObjCExportNameRecord {
+            val [kind, key, name, claim] = value.split('\t')
+            val claimFields = claim.split(LIST)
+            return ObjCExportNameRecord(
+                ObjCExportNameKind.entries[kind.toInt()], key, name,
+                if (claim.isEmpty()) null else ObjCExportMemberClaim(
+                    owner = claimFields[0],
+                    isTopLevel = claimFields[1][0] == '1',
+                    isConstructor = claimFields[1][1] == '1',
+                    hasNoDispatchReceiver = claimFields[1][2] == '1',
+                    isSetter = claimFields[1][3] == '1',
+                    kotlinName = claimFields[2],
+                    extensionReceiverType = claimFields[3],
+                    parameterTypes = claimFields[4],
+                    bridge = claimFields[5],
+                ),
+            )
+        }
 
         private fun ObjCGenericTypeDeclaration.encode(): String = when (this) {
             is ObjCGenericTypeRawDeclaration -> "R"
@@ -165,11 +208,18 @@ class ObjCExportUnits internal constructor(
             fun content(): ObjCExportUnitContent = ObjCExportUnitContent.Lines(list(::line))
 
             require(line() == FORMAT) { "Unsupported Objective-C export units format" }
+            val hasCollisions = line() == "1"
+            val typeParameterClashes = list(::line)
             val classForwardDeclarations = list {
                 val parts = line().split('\t')
                 ObjCClassForwardDeclaration(parts[0], parts.drop(1).map(::decodeTypeDeclaration))
             }.toSet()
             val protocolForwardDeclarations = list(::line).toSet()
+            val classClaims = list {
+                val [classId, flags, supertypes] = line().split('\t')
+                ObjCExportClassClaim(classId, supertypes.split(LIST).filterTo(mutableSetOf()) { it.isNotEmpty() }, isFinal = flags[0] == '1', isInterface = flags[1] == '1')
+            }
+            val names = list { decodeRecord(line()) }
             val classes = list {
                 val classId = line()
                 val [index, isInMainPass, isGenerated] = numbers()
@@ -196,7 +246,10 @@ class ObjCExportUnits internal constructor(
                 val index = count()
                 ObjCExportFileUnit(fileName, packageName, index, events(), content())
             }
-            return ObjCExportUnits(classes, categoryMembers, files, classForwardDeclarations, protocolForwardDeclarations)
+            return ObjCExportUnits(
+                classes, categoryMembers, files, classForwardDeclarations, protocolForwardDeclarations,
+                classClaims, names, hasCollisions, typeParameterClashes,
+            )
         }
     }
 }

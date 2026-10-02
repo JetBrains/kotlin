@@ -51,14 +51,18 @@ class Fe10HeaderGeneratorExtension : ParameterResolver, AfterEachCallback {
 
 class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenerator {
     override fun generateHeaders(root: File, configuration: HeaderGenerator.Configuration): ObjCHeader {
-        val [headerGenerator, unitsGenerator] = createObjCExportHeaderGenerators(disposable, root, configuration)
+        val newGenerator = createObjCExportHeaderGeneratorFactory(disposable, root, configuration)
+        val [headerGenerator, namer] = newGenerator(null)
 
         if (configuration.withObjCBaseDeclarationStubs) {
             headerGenerator.translateBaseDeclarations()
-            unitsGenerator.translateBaseDeclarations()
         }
 
         headerGenerator.translateModuleDeclarations()
+        val unitsGenerator = newGenerator(namer.takeIf { it.hasCollisions || it.typeParameterClashes().isNotEmpty() }).first
+        if (configuration.withObjCBaseDeclarationStubs) {
+            unitsGenerator.translateBaseDeclarations()
+        }
         unitsGenerator.assembleHeader(unitsGenerator.translateUnits().mapIndexed { index, units ->
             val text = StringWriter().also { units.write(it, exportKDoc = true) }.toString()
             ObjCExportModuleUnits(index, ObjCExportUnits.read(BufferedReader(StringReader(text))))
@@ -75,9 +79,9 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
         )
     }
 
-    private fun createObjCExportHeaderGenerators(
+    private fun createObjCExportHeaderGeneratorFactory(
         disposable: Disposable, root: File, configuration: HeaderGenerator.Configuration,
-    ): List<ObjCExportHeaderGenerator> {
+    ): (ObjCExportNamerImpl?) -> Pair<ObjCExportHeaderGenerator, ObjCExportNamerImpl> {
         val environment: KotlinCoreEnvironment = createKotlinCoreEnvironment(disposable)
 
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
@@ -108,18 +112,17 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
                     origin.library.path in exportedKlibs
             }
 
-        val namer = ObjCExportNamerImpl(
-            moduleDescriptors = exportedModuleDescriptors,
-            builtIns = DefaultBuiltIns.Instance,
-            mapper = mapper,
-            problemCollector = ObjCExportProblemCollector.SILENT,
-            topLevelNamePrefix = configuration.frameworkName,
-            local = false,
-            objcGenerics = true,
-            explicitMethodFamily = configuration.explicitMethodFamily,
-        )
-
-        return List(2) {
+        return { sharedNamer ->
+            val namer = sharedNamer ?: ObjCExportNamerImpl(
+                moduleDescriptors = exportedModuleDescriptors,
+                builtIns = DefaultBuiltIns.Instance,
+                mapper = mapper,
+                problemCollector = ObjCExportProblemCollector.SILENT,
+                topLevelNamePrefix = configuration.frameworkName,
+                local = false,
+                objcGenerics = true,
+                explicitMethodFamily = configuration.explicitMethodFamily,
+            )
             ObjCExportHeaderGeneratorImpl(
                 moduleDescriptors = exportedModuleDescriptors.toList(),
                 mapper = mapper,
@@ -129,7 +132,7 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
                 objcExportBlockExplicitParameterNames = configuration.objcExportBlockExplicitParameterNames,
                 shouldExportKDoc = true,
                 additionalImports = emptyList()
-            )
+            ) to namer
         }
     }
 }

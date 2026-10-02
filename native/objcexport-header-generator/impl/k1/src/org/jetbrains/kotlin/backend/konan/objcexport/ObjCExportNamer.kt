@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
@@ -300,6 +301,10 @@ private class ObjCExportNamingHelper(
     private val specialFamilyPrefixes = listOf("alloc", "copy", "mutableCopy", "new", "init")
 }
 
+internal enum class ObjCExportNameKind {
+    CLASS, PROTOCOL, SWIFT_CLASS, SELECTOR, PROPERTY, CLOSED_ENUM_ENTRY, TYPE_PARAMETER,
+}
+
 @InternalKotlinNativeApi
 class ObjCExportNamerImpl(
     private val configuration: ObjCExportNamer.Configuration,
@@ -307,6 +312,7 @@ class ObjCExportNamerImpl(
     private val mapper: ObjCExportMapper,
     private val problemCollector: ObjCExportProblemCollector,
     private val local: Boolean,
+    recordNames: Boolean = false,
 ) : ObjCExportNamer {
     constructor(
         moduleDescriptors: Set<ModuleDescriptor>,
@@ -320,6 +326,7 @@ class ObjCExportNamerImpl(
         ignoreInterfaceMethodCollisions: Boolean = false,
         nameCollisionMode: ObjCExportNameCollisionMode = ObjCExportNameCollisionMode.NONE,
         explicitMethodFamily: Boolean = false,
+        recordNames: Boolean = false,
     ) : this(
         object : ObjCExportNamer.Configuration {
             override val topLevelNamePrefix: String
@@ -346,7 +353,8 @@ class ObjCExportNamerImpl(
         builtIns,
         mapper,
         problemCollector,
-        local
+        local,
+        recordNames,
     )
 
     private val objcGenerics get() = configuration.objcGenerics
@@ -368,7 +376,7 @@ class ObjCExportNamerImpl(
 
     override val kotlinNumberName = "Number".toSpecialStandardClassOrProtocolName()
 
-    private val methodSelectors = object : Mapping<FunctionDescriptor, String>() {
+    private val methodSelectors = object : Mapping<FunctionDescriptor, String>(ObjCExportNameKind.SELECTOR) {
 
         // Try to avoid clashing with critical NSObject instance methods:
 
@@ -382,41 +390,66 @@ class ObjCExportNamerImpl(
 
         override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean =
             !mapper.canHaveSameSelector(first, second, configuration.ignoreInterfaceMethodCollisions)
+
+        override fun conflictsWithRecord(element: FunctionDescriptor, record: ObjCExportNameRecord): Boolean =
+            membersConflict(claimOf(element), record, isProperty = false)
+
+        override fun recordsConflict(first: ObjCExportNameRecord, second: ObjCExportNameRecord): Boolean =
+            membersConflict(first.claim, second, isProperty = false)
+
+        override fun placeFor(element: FunctionDescriptor): ObjCExportNamePlace? = placeOf(element)
     }
 
-    private val methodSwiftNames = object : Mapping<FunctionDescriptor, String>() {
+    private val methodSwiftNames = object : Mapping<FunctionDescriptor, String>(kind = null) {
         override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
             if (configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
             return !mapper.canHaveSameSelector(first, second, configuration.ignoreInterfaceMethodCollisions)
         }
         // Note: this condition is correct but can be too strict.
+
+        override fun placeFor(element: FunctionDescriptor): ObjCExportNamePlace? = placeOf(element)
+
+        override val mayConflict: Boolean
+            get() = !configuration.disableSwiftMemberNameMangling
     }
 
-    private inner class PropertyNameMapping(val forSwift: Boolean) : Mapping<PropertyDescriptor, String>() {
+    private inner class PropertyNameMapping(val forSwift: Boolean) :
+        Mapping<PropertyDescriptor, String>(ObjCExportNameKind.PROPERTY.takeIf { !forSwift }) {
         override fun reserved(name: String) = name in Reserved.propertyNames
 
         override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean {
             if (forSwift && configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
             return !mapper.canHaveSameName(first, second, configuration.ignoreInterfaceMethodCollisions)
         }
+
+        override fun conflictsWithRecord(element: PropertyDescriptor, record: ObjCExportNameRecord): Boolean =
+            membersConflict(claimOf(element), record, isProperty = true)
+
+        override fun recordsConflict(first: ObjCExportNameRecord, second: ObjCExportNameRecord): Boolean =
+            membersConflict(first.claim, second, isProperty = true)
+
+        override fun placeFor(element: PropertyDescriptor): ObjCExportNamePlace? = placeOf(element)
+
+        override val mayConflict: Boolean
+            get() = !(forSwift && configuration.disableSwiftMemberNameMangling)
     }
 
     private val objCPropertyNames = PropertyNameMapping(forSwift = false)
     private val swiftPropertyNames = PropertyNameMapping(forSwift = true)
 
-    private open inner class GlobalNameMapping<in T : Any, N> : Mapping<T, N>() {
+    private open inner class GlobalNameMapping<in T : Any, N>(kind: ObjCExportNameKind) : Mapping<T, N>(kind) {
         final override fun conflict(first: T, second: T): Boolean = true
     }
 
-    private val objCClassNames = GlobalNameMapping<Any, String>()
-    private val objCProtocolNames = GlobalNameMapping<ClassDescriptor, String>()
+    private val objCClassNames = GlobalNameMapping<Any, String>(ObjCExportNameKind.CLASS)
+    private val objCProtocolNames = GlobalNameMapping<ClassDescriptor, String>(ObjCExportNameKind.PROTOCOL)
 
     // Classes and protocols share the same namespace in Swift.
-    private val swiftClassAndProtocolNames = GlobalNameMapping<Any, String>()
+    private val swiftClassAndProtocolNames = GlobalNameMapping<Any, String>(ObjCExportNameKind.SWIFT_CLASS)
 
     private val genericTypeParameterNameMapping = GenericTypeParameterNameMapping()
 
-    private abstract inner class ClassSelectorNameMapping<T : Any> : Mapping<T, String>() {
+    private abstract inner class ClassSelectorNameMapping<T : Any> : Mapping<T, String>(kind = null) {
 
         // Try to avoid clashing with NSObject class methods:
 
@@ -433,17 +466,113 @@ class ObjCExportNamerImpl(
 
     private val objectInstanceSelectors = object : ClassSelectorNameMapping<ClassDescriptor>() {
         override fun conflict(first: ClassDescriptor, second: ClassDescriptor) = false
+        override val mayConflict: Boolean
+            get() = false
     }
 
     private inner class EnumNameMapping : ClassSelectorNameMapping<DeclarationDescriptor>() {
         override fun conflict(first: DeclarationDescriptor, second: DeclarationDescriptor) =
             first.containingDeclaration == second.containingDeclaration
+
+        override fun placeFor(element: DeclarationDescriptor): ObjCExportNamePlace? =
+            (element.containingDeclaration as? ClassDescriptor)?.classId?.let { ObjCExportNamePlace(it.toString(), isExact = true) }
     }
 
     private val enumClassSelectors = EnumNameMapping()
     private val enumClassSwiftNames = EnumNameMapping()
-    private val closedEnumEntryNames = GlobalNameMapping<ClassDescriptor, String>()
+    private val closedEnumEntryNames = GlobalNameMapping<ClassDescriptor, String>(ObjCExportNameKind.CLOSED_ENUM_ENTRY)
     private val closedEnumSwiftNames = EnumNameMapping()
+
+    @InternalKotlinNativeApi
+    var hasCollisions = false
+        private set
+
+    private var usesCachedNames = false
+    private val cachedTypeParameterClashes = mutableListOf<String>()
+    private var recordedNames = if (recordNames) LinkedHashMap<Pair<ObjCExportNameKind, Any>, ObjCExportNameRecord>() else null
+    private val recordedClassClaims = LinkedHashMap<String, ObjCExportClassClaim>()
+    private val ownerClasses = HashMap<String, ObjCExportClassClaim>()
+    private val places = HashMap<CallableMemberDescriptor, ObjCExportNamePlace?>()
+    private val claims = HashMap<CallableMemberDescriptor, ObjCExportMemberClaim>()
+
+    private fun placeOf(element: CallableMemberDescriptor): ObjCExportNamePlace? {
+        if (element in places) return places[element]
+        mapper.claimOwner(element)?.let { owner ->
+            val classId = owner.classId?.toString() ?: return@let
+            if (classId !in ownerClasses) ownerClasses[classId] = classClaim(owner)
+        }
+        return mapper.namePlace(element).also { places[element] = it }
+    }
+
+    private fun <E : Any> nameIndex() = ObjCExportNameIndex<E>(ownerClasses::get, configuration.ignoreInterfaceMethodCollisions)
+
+    private fun claimOf(element: CallableMemberDescriptor): ObjCExportMemberClaim = claims.getOrPut(element) {
+        placeOf(element)
+        if (element is PropertyDescriptor) mapper.propertyClaim(element) else mapper.memberClaim(element as FunctionDescriptor)
+    }
+
+    private fun membersConflict(first: ObjCExportMemberClaim?, second: ObjCExportNameRecord, isProperty: Boolean): Boolean =
+        membersConflict(
+            first ?: return true, second.claim ?: return true, isProperty,
+            ownerClasses::get, configuration.ignoreInterfaceMethodCollisions,
+        )
+
+    private val mappings
+        get() = listOf(
+            objCClassNames, objCProtocolNames, swiftClassAndProtocolNames, methodSelectors, objCPropertyNames, closedEnumEntryNames,
+        )
+
+    private fun recordName(kind: ObjCExportNameKind, element: Any, name: String) {
+        val records = recordedNames ?: return
+        val id = kind to element
+        if (id in records) return
+        val key = objCExportNameKey(element) ?: error("Cannot record the Objective-C name of $element in an Objective-C cache")
+        val claim = when (kind) {
+            ObjCExportNameKind.SELECTOR, ObjCExportNameKind.PROPERTY -> claimOf(element as CallableMemberDescriptor).also { claim ->
+                ownerClasses[claim.owner]?.let { if (claim.owner !in recordedClassClaims) recordedClassClaims[claim.owner] = it }
+            }
+            else -> null
+        }
+        records[id] = ObjCExportNameRecord(kind, key, name, claim)
+    }
+
+    @InternalKotlinNativeApi
+    fun withRecordedNames(units: ObjCExportUnits): ObjCExportUnits {
+        val records = checkNotNull(recordedNames) { "The namer does not record names" }
+        recordedNames = null
+        return ObjCExportUnits(
+            units.classes, units.categoryMembers, units.files, units.classForwardDeclarations, units.protocolForwardDeclarations,
+            recordedClassClaims.values.toList(), records.values.toList(), hasCollisions, typeParameterClashes(),
+        )
+    }
+
+    @InternalKotlinNativeApi
+    fun useCachedNames(units: Collection<ObjCExportUnits>) {
+        if (units.any { it.hasCollisions }) hasCollisions = true
+        cachedTypeParameterClashes += units.flatMap { it.typeParameterClashes }
+        useCachedNames(units.flatMap { it.classClaims }, units.flatMap { it.names })
+    }
+
+    internal fun useCachedNames(classClaims: Collection<ObjCExportClassClaim>, records: Collection<ObjCExportNameRecord>) {
+        usesCachedNames = true
+        classClaims.forEach { ownerClasses.putIfAbsent(it.classId, it) }
+        mappings.forEach { it.indexAssignedElements() }
+        genericTypeParameterNameMapping.indexAssignedElements()
+        records.forEach { record ->
+            when (record.kind) {
+                ObjCExportNameKind.CLASS -> objCClassNames.register(record)
+                ObjCExportNameKind.PROTOCOL -> objCProtocolNames.register(record)
+                ObjCExportNameKind.SWIFT_CLASS -> swiftClassAndProtocolNames.register(record)
+                ObjCExportNameKind.SELECTOR -> methodSelectors.register(record)
+                ObjCExportNameKind.PROPERTY -> objCPropertyNames.register(record)
+                ObjCExportNameKind.CLOSED_ENUM_ENTRY -> closedEnumEntryNames.register(record)
+                ObjCExportNameKind.TYPE_PARAMETER -> genericTypeParameterNameMapping.register(record)
+            }
+        }
+    }
+
+    @InternalKotlinNativeApi
+    fun typeParameterClashes(): List<String> = (genericTypeParameterNameMapping.clashes() + cachedTypeParameterClashes).distinct()
 
     override fun getFileClassName(file: SourceFile): ObjCExportNamer.ClassOrProtocolName {
         val candidate by lazy {
@@ -854,12 +983,16 @@ class ObjCExportNamerImpl(
     private inner class GenericTypeParameterNameMapping {
         private val elementToName = mutableMapOf<TypeParameterDescriptor, String>()
         private val typeParameterNameClassOverrides = mutableMapOf<ClassDescriptor, MutableSet<String>>()
+        private val keyToName = HashMap<String, String>()
+        private val records = mutableListOf<ObjCExportNameRecord>()
+        private val clashes = LinkedHashSet<String>()
 
         fun getOrPut(element: TypeParameterDescriptor, nameCandidates: () -> Sequence<String>): String {
             getIfAssigned(element)?.let { return it }
 
             nameCandidates().forEach {
                 if (tryAssign(element, it)) {
+                    recordName(ObjCExportNameKind.TYPE_PARAMETER, element, it)
                     return it
                 }
             }
@@ -883,14 +1016,18 @@ class ObjCExportNamerImpl(
             if (!local) {
                 elementToName[element] = name
                 classNameSet(element).add(name)
+                if (usesCachedNames) index(element, name)
             }
         }
 
         private fun validName(element: TypeParameterDescriptor, name: String): Boolean {
             assert(element.containingDeclaration is ClassDescriptor)
 
-            return !objCClassNames.nameExists(name) && !objCProtocolNames.nameExists(name) &&
-                (local || name !in classNameSet(element))
+            if (objCClassNames.nameExists(name) || objCProtocolNames.nameExists(name)) {
+                clashes += "$name of ${containerId(element)}"
+                return false
+            }
+            return local || name !in classNameSet(element)
         }
 
         private fun classNameSet(element: TypeParameterDescriptor): MutableSet<String> {
@@ -900,7 +1037,36 @@ class ObjCExportNamerImpl(
             }
         }
 
-        private fun getIfAssigned(element: TypeParameterDescriptor): String? = elementToName[element]
+        private fun getIfAssigned(element: TypeParameterDescriptor): String? {
+            elementToName[element]?.let { return it }
+            if (!usesCachedNames) return null
+            return keyToName[objCExportNameKey(element) ?: return null]?.also { elementToName[element] = it }
+        }
+
+        private fun containerId(element: TypeParameterDescriptor): String =
+            (element.containingDeclaration as ClassDescriptor).classId.toString()
+
+        private fun index(element: TypeParameterDescriptor, name: String) {
+            objCExportNameKey(element)?.let { keyToName[it] = name }
+        }
+
+        fun indexAssignedElements() {
+            elementToName.forEach { [element, name] -> index(element, name) }
+        }
+
+        fun register(record: ObjCExportNameRecord) {
+            keyToName[record.key]?.let {
+                if (it != record.name) clashes += "${record.name} of ${record.typeParameterOwner}"
+                return
+            }
+            keyToName[record.key] = record.name
+            records += record
+        }
+
+        fun clashes(): List<String> =
+            (clashes + records.filter { objCClassNames.nameExists(it.name) || objCProtocolNames.nameExists(it.name) }
+                .map { "${it.name} of ${it.typeParameterOwner}" })
+                .toList()
     }
 
     private sealed class AssignResult {
@@ -909,11 +1075,18 @@ class ObjCExportNamerImpl(
         data class Conflict(val conflictingElement: Any) : AssignResult()
     }
 
-    private abstract inner class Mapping<in T : Any, N>() {
+    private abstract inner class Mapping<in T : Any, N>(private val kind: ObjCExportNameKind?) {
         private val elementToName = mutableMapOf<T, N>()
         private val nameToElements = mutableMapOf<N, MutableList<T>>()
+        private val keyToName = HashMap<String, N>()
+        private val nameToRecords = HashMap<N, ObjCExportNameIndex<ObjCExportNameRecord>>()
 
         abstract fun conflict(first: T, second: T): Boolean
+        open fun conflictsWithRecord(element: T, record: ObjCExportNameRecord): Boolean = true
+        open fun recordsConflict(first: ObjCExportNameRecord, second: ObjCExportNameRecord): Boolean = true
+        open fun placeFor(element: T): ObjCExportNamePlace? = null
+        open val mayConflict: Boolean
+            get() = true
         open fun reserved(name: N) = false
         inline fun getOrPut(element: T, nameCandidates: () -> Sequence<N>): N {
             getIfAssigned(element)?.let { return it }
@@ -923,11 +1096,13 @@ class ObjCExportNamerImpl(
             nameCandidates().forEach {
                 val res = tryAssign(element, it)
                 if (res is AssignResult.Success) {
+                    record(element, it)
                     return it
                 }
 
                 if (!reportedCollision) {
                     reportedCollision = true
+                    hasCollisions = true
                     val conflict = when (res) {
                         is AssignResult.Conflict if res.conflictingElement is DeclarationDescriptor ->
                             DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(res.conflictingElement)
@@ -957,9 +1132,17 @@ class ObjCExportNamerImpl(
             error("name candidates run out")
         }
 
-        fun nameExists(name: N) = nameToElements.containsKey(name)
+        fun nameExists(name: N) = nameToElements.containsKey(name) || nameToRecords.containsKey(name)
 
-        private fun getIfAssigned(element: T): N? = elementToName[element]
+        fun record(element: T, name: N) {
+            kind?.let { recordName(it, element, name.toString()) }
+        }
+
+        private fun getIfAssigned(element: T): N? {
+            elementToName[element]?.let { return it }
+            if (!usesCachedNames) return null
+            return keyToName[objCExportNameKey(element) ?: return null]?.also { elementToName[element] = it }
+        }
 
         private fun tryAssign(element: T, name: N): AssignResult {
             if (element in elementToName) error(element)
@@ -970,10 +1153,18 @@ class ObjCExportNamerImpl(
                 return AssignResult.Conflict(it)
             }
 
+            if (mayConflict) {
+                nameToRecords[name]?.candidates(placeFor(element))?.firstOrNull { conflictsWithRecord(element, it) }?.let {
+                    return AssignResult.Conflict(it.key)
+                }
+            }
+
             if (!local) {
                 nameToElements.getOrPut(name) { mutableListOf() } += element
 
                 elementToName[element] = name
+
+                if (usesCachedNames) objCExportNameKey(element)?.let { keyToName[it] = name }
             }
 
             return AssignResult.Success
@@ -984,6 +1175,28 @@ class ObjCExportNamerImpl(
 
             nameToElements[name] = mutableListOf(element)
             elementToName[element] = name
+        }
+
+        fun indexAssignedElements() {
+            elementToName.forEach { [element, name] -> objCExportNameKey(element)?.let { keyToName[it] = name } }
+        }
+
+        fun register(record: ObjCExportNameRecord) {
+            keyToName[record.key]?.let {
+                if (it.toString() != record.name) hasCollisions = true
+                return
+            }
+            @Suppress("UNCHECKED_CAST")
+            val name = record.name as N
+            if (isTaken(name, record)) hasCollisions = true
+            keyToName[record.key] = name
+            nameToRecords.getOrPut(name) { nameIndex() }.add(record, record.place)
+        }
+
+        private fun isTaken(name: N, record: ObjCExportNameRecord): Boolean {
+            if (!mayConflict) return false
+            if (nameToElements[name].orEmpty().any { conflictsWithRecord(it, record) }) return true
+            return nameToRecords[name]?.candidates(record.place)?.any { recordsConflict(it, record) } == true
         }
     }
 
@@ -1037,7 +1250,7 @@ private fun ObjCExportMapper.canBeInheritedBySameClass(
     return canHaveCommonSubtype(firstClass, secondClass, ignoreInterfaceMethodCollisions)
 }
 
-private fun ObjCExportMapper.canHaveSameSelector(
+internal fun ObjCExportMapper.canHaveSameSelector(
     first: FunctionDescriptor,
     second: FunctionDescriptor,
     ignoreInterfaceMethodCollisions: Boolean,
@@ -1073,7 +1286,7 @@ private fun ObjCExportMapper.canHaveSameSelector(
     return bridgeMethod(first) == bridgeMethod(second)
 }
 
-private fun ObjCExportMapper.canHaveSameName(
+internal fun ObjCExportMapper.canHaveSameName(
     first: PropertyDescriptor,
     second: PropertyDescriptor,
     ignoreInterfaceMethodCollisions: Boolean,

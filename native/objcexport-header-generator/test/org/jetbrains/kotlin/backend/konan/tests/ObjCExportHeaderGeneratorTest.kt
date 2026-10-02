@@ -610,6 +610,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    @TodoAnalysisApi
+    fun `test - type parameter clashing with an early class`() {
+        doTest(headersTestDataDir.resolve("typeParameterClashingWithEarlyClass"))
+    }
+
+    @Test
     fun `test - class type property translation`() {
         doTest(headersTestDataDir.resolve("classTypePropertyTranslation"))
     }
