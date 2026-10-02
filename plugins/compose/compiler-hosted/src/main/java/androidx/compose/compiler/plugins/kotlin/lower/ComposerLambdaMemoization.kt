@@ -540,7 +540,10 @@ class ComposerLambdaMemoization(
 
     override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
         val result = super.visitRichFunctionReference(expression)
-        val referencedFn = expression.reflectionTargetSymbol?.owner ?: return result
+        val referencedFn = when (expression.origin) {
+            IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION -> expression.invokeFunction
+            else -> expression.reflectionTargetSymbol?.owner ?: return result
+        }
         if (
             inlineLambdaInfo.isInlineFunctionExpression(expression) ||
             inlineLambdaInfo.isInlineLambda(referencedFn)
