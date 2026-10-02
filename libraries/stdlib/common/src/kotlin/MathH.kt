@@ -13,9 +13,24 @@ package kotlin.math
 
 // constants, can't use them from nativeMath as they are not constants there
 
-/** Ratio of the circumference of a circle to its diameter, approximately 3.14159. */
+/**
+ * Ratio of the circumference of a circle to its _diameter_, approximately 3.14159.
+ *
+ * @see TAU
+ */
 @SinceKotlin("1.2")
 public const val PI: Double = 3.141592653589793
+
+/**
+ * Ratio of the circumference of a circle to its _radius_, equals 2 times [PI] or approximately 6.28319.
+ *
+ * Tau (τ) radians is a full circle, making it easy to express fractions of a circle as τ/n.
+ *
+ * @see PI
+ */
+@SinceKotlin("2.5")
+public const val TAU: Double = 2 * PI
+
 /** Base of the natural logarithms, approximately 2.71828. */
 @SinceKotlin("1.2")
 public const val E: Double = 2.718281828459045

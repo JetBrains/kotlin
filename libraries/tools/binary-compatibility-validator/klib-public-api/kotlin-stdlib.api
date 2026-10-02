@@ -4851,6 +4851,8 @@ final const val kotlin.math/E // kotlin.math/E|{}E[0]
     final fun <get-E>(): kotlin/Double // kotlin.math/E.<get-E>|<get-E>(){}[0]
 final const val kotlin.math/PI // kotlin.math/PI|{}PI[0]
     final fun <get-PI>(): kotlin/Double // kotlin.math/PI.<get-PI>|<get-PI>(){}[0]
+final const val kotlin.math/TAU // kotlin.math/TAU|{}TAU[0]
+    final fun <get-TAU>(): kotlin/Double // kotlin.math/TAU.<get-TAU>|<get-TAU>(){}[0]
 
 final val kotlin.collections/indices // kotlin.collections/indices|@kotlin.Array<out|0:0>{0§<kotlin.Any?>}indices[0]
     final fun <#A1: kotlin/Any?> (kotlin/Array<out #A1>).<get-indices>(): kotlin.ranges/IntRange // kotlin.collections/indices.<get-indices>|<get-indices>@kotlin.Array<out|0:0>(){0§<kotlin.Any?>}[0]
