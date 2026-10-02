@@ -1,0 +1,4 @@
+[UnsupportedJsBrowserTestRunnerType | ERROR] Unsupported browser test runner type
+Browser test runner 'custom' of type 'org.jetbrains.kotlin.gradle.unitTests.KotlinJsBrowserTestDslTest$CustomBrowserTestRunner_Decorated' cannot be added to the 'browserRunners' collection. Only runners declared via chromium(), firefox(), or webkit() are supported. Custom browser test runners are not supported yet. Follow https://youtrack.jetbrains.com/issue/KT-86706 for updates on custom browser test runner support.
+Declare browser test runners using chromium(), firefox(), or webkit() in the 'test {}' block.
+See https://kotl.in/new-js-browser-test-dsl for more details.
