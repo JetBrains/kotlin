@@ -174,7 +174,7 @@ private class LLFirAnnotationArgumentsTargetResolver(resolveTarget: LLFirResolve
                 }
             }
 
-            is FirScript, is FirReplSnippet -> {
+            is FirScript -> {
                 target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
             }
 

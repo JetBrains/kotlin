@@ -211,7 +211,6 @@ internal class LLFirImplicitBodyTargetResolver(
             is FirDanglingModifierList,
             is FirEnumEntry,
             is FirScript,
-            is FirReplSnippet,
                 -> {
                 // No implicit bodies here
             }

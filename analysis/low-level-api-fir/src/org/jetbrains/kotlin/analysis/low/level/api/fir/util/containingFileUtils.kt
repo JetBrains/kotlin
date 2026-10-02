@@ -21,7 +21,6 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
     return when (this) {
         is FirFile -> this
         is FirScript -> provider.getFirScriptContainerFile(symbol)
-        is FirReplSnippet -> provider.getFirReplSnippetContainerFile(symbol)
         is FirTypeParameter -> containingDeclarationSymbol.fir.getContainingFile()
         is FirPropertyAccessor -> propertySymbol.fir.getContainingFile()
         is FirValueParameter -> containingDeclarationSymbol.fir.getContainingFile()

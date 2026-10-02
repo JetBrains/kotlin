@@ -46,12 +46,6 @@ internal class LLFirWholeElementResolveTarget(designation: FirDesignation) : LLF
                 }
             }
 
-            element is FirReplSnippet -> visitor.withReplSnippet(element) {
-                element.forEachDeclaration {
-                    visitTargetElement(it, visitor)
-                }
-            }
-
             else -> errorWithFirSpecificEntries("Unexpected declaration: ${element::class.simpleName}", fir = element)
         }
     }

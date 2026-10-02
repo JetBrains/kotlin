@@ -112,9 +112,6 @@ internal object LLFirPhaseUpdater {
             is FirScript -> {
                 element.receivers.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
-            is FirReplSnippet -> {
-                element.receivers.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
-            }
             is FirFunction -> {
                 element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.receiverParameter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }

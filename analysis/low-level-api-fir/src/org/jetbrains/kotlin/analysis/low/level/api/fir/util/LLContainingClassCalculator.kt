@@ -64,7 +64,6 @@ internal object LLContainingClassCalculator {
             ImplicitConstructor,
             is EnumGeneratedDeclaration,
             is MembersImplementedByDelegation,
-            ReplEvalFunction,
                 -> computeContainingClass(symbol, source.psi)
 
             is ClassDelegationField -> {
@@ -131,7 +130,7 @@ internal object LLContainingClassCalculator {
     }
 
     private fun computeContainingClass(symbol: FirBasedSymbol<*>, psi: PsiElement?): FirClassSymbol<*>? {
-        if (psi !is KtClassOrObject && (psi !is KtScript || !psi.isReplSnippet)) {
+        if (psi !is KtClassOrObject) {
             return null
         }
 
@@ -139,7 +138,6 @@ internal object LLContainingClassCalculator {
         val resolutionFacade = module.getResolutionFacade(module.project)
         return when (val symbol = psi.resolveToFirSymbol(resolutionFacade)) {
             is FirClassSymbol<*> -> symbol
-            is FirReplSnippetSymbol -> symbol.snippetClassSymbol
             else -> null
         }
     }
