@@ -52,10 +52,11 @@ private const val MIN_SUPPLEMENTARY_CODE_POINT_VALUE: Int = 0x10000
  * ```
  *
  * @property code The integer value of the Unicode code point, in the range `0x0..0x10FFFF`.
- * @throws IllegalArgumentException if the provided code value is outside the valid range.
  * @constructor Returns a [CodePoint] with the specified [code] value.
  *
  * The value must be in range  `0..0x10FFFF`, otherwise the constructor fails with an [IllegalArgumentException].
+ * @throws IllegalArgumentException if the provided code value is outside the valid range.
+ * @sample samples.text.CodePoints.validatingConstructor
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -73,6 +74,8 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      *
      * Returns `1` for basic (BMP) code points in the range `0x0000` to `0xFFFF`, which can be represented by a single [Char].
      * Returns `2` for supplementary code points in the range `0x10000` to `0x10FFFF`, which can be represented by a surrogate pair of two [Char] values.
+     *
+     * @sample samples.text.CodePoints.basicProperties
      */
     public val size: Int
         get() = if (code < MIN_SUPPLEMENTARY_CODE_POINT_VALUE) 1 else 2
@@ -81,6 +84,8 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * Returns `true` if this is a basic (BMP) code point that can be represented by a single [Char].
      *
      * Basic code points have code values in the range `0x0000` to `0xFFFF` (inclusive).
+     *
+     * @sample samples.text.CodePoints.basicProperties
      */
     public val isBasic: Boolean
         get() = code < MIN_SUPPLEMENTARY_CODE_POINT_VALUE
@@ -89,6 +94,8 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * Returns `true` if this is a supplementary code point that can be represented by a surrogate pair of two [Char] values.
      *
      * Supplementary code points have code values in the range `0x10000` to `0x10FFFF` (inclusive).
+     *
+     * @sample samples.text.CodePoints.basicProperties
      */
     public val isSupplementary: Boolean
         get() = code >= MIN_SUPPLEMENTARY_CODE_POINT_VALUE
@@ -114,6 +121,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * @see isBasic
      * @see toCharArray
      * @see toSurrogatePair
+     * @sample samples.text.CodePoints.conversionToSingleChar
      */
     public fun toSingleChar(): Char =
         if (isBasic)
@@ -131,6 +139,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * @see toSingleChar
      * @see toSurrogatePair
      * @see size
+     * @sample samples.text.CodePoints.conversionToCharArray
      */
     public fun toCharArray(): CharArray =
         if (isBasic) charArrayOf(code.toChar()) else charArrayOf(highSurrogate(), lowSurrogate())
@@ -145,6 +154,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * @throws IllegalArgumentException if this is a basic (BMP) code point.
      * @see isSupplementary
      * @see toCharArray
+     * @sample samples.text.CodePoints.conversionToSurrogatePair
      */
     public fun toSurrogatePair(): Pair<Char, Char> =
         toSurrogatePair(::Pair)
@@ -160,6 +170,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * @throws IllegalArgumentException if this is a basic (BMP) code point.
      * @see isSupplementary
      * @see toSurrogatePair
+     * @sample samples.text.CodePoints.conversionToSurrogatePair
      */
     public inline fun <T> toSurrogatePair(action: (high: Char, low: Char) -> T): T {
         contract {
@@ -254,14 +265,24 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
     @kotlin.internal.InlineOnly
     public inline operator fun dec(): CodePoint = this - 1
 
-    /** Creates a range from this value to the specified [other] value. */
+    /**
+     * Creates a range from this value to the specified [other] value.
+     *
+     * The range is inclusive of the start value and inclusive of the end value.
+     *
+     * @sample samples.text.CodePoints.codePointRanges
+     */
     @kotlin.internal.InlineOnly
     public inline operator fun rangeTo(other: CodePoint): CodePointRange = CodePointRange(this, other)
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
      *
+     * The range is inclusive of the start value and exclusive of the end value.
+     *
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
+     *
+     * @sample samples.text.CodePoints.codePointRanges
      */
     public operator fun rangeUntil(other: CodePoint): CodePointRange {
         if (other <= CodePoint.MIN_VALUE) return CodePointRange.EMPTY
@@ -276,6 +297,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      *
      * @return A [String] containing one or two [Char] values depending on whether this is a basic or supplementary code point.
      * @see toCharArray
+     * @sample samples.text.CodePoints.basicProperties
      */
     public override fun toString(): String = toCharArray().concatToString()
 
@@ -288,6 +310,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
          *
          * @return A [CodePoint] with the same numeric value as [char].
          * @see Char.toCodePoint
+         * @sample samples.text.CodePoints.conversionFromChar
          */
         public fun fromChar(char: Char): CodePoint =
             char.code.toCodePoint()
@@ -304,6 +327,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
          * @throws IllegalArgumentException if [high] is not a high surrogate or [low] is not a low surrogate.
          * @see isSurrogatePair
          * @see toSurrogatePair
+         * @sample samples.text.CodePoints.conversionFromSurrogatePair
          */
         public fun fromSurrogatePair(high: Char, low: Char): CodePoint {
             require(high.isHighSurrogate()) { "high value must be in high surrogates range, but was ${high.code.toString(16)}" }
@@ -348,6 +372,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
  *
  * @return A [CodePoint] with the code equal to this integer value modulo `0x10FFFF + 1`.
  * @see Char.toCodePoint
+ * @sample samples.text.CodePoints.conversionFromInt
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -362,6 +387,7 @@ public fun Int.toCodePoint(): CodePoint =
  * @return A [CodePoint] with the same numeric value as this character.
  * @see CodePoint.fromChar
  * @see CodePoint.toSingleChar
+ * @sample samples.text.CodePoints.conversionFromChar
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -379,6 +405,7 @@ public fun Char.toCodePoint(): CodePoint =
  * @see Appendable.append
  * @see CodePoint.toString
  * @see CodePoint.toCharArray
+ * @sample samples.text.CodePoints.appendCodePoint
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -404,6 +431,7 @@ public fun <T : Appendable> T.appendCodePoint(value: CodePoint): T {
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  * @see StringBuilder.insert
  * @see appendCodePoint
+ * @sample samples.text.CodePoints.insertCodePoint
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -428,6 +456,7 @@ public fun StringBuilder.insertCodePointAt(index: Int, value: CodePoint): String
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than or equal to the length of this string builder.
  * @see StringBuilder.set
  * @see codePointAt
+ * @sample samples.text.CodePoints.replaceCodePoint
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
@@ -457,6 +486,7 @@ public fun StringBuilder.setCodePointAt(index: Int, value: CodePoint): StringBui
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than or equal to the length of this string builder.
  * @see StringBuilder.deleteAt
  * @see codePointAt
+ * @sample samples.text.CodePoints.deleteCodePoint
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
