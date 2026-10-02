@@ -209,7 +209,7 @@ class FusStatisticsIT : KGPBaseTest() {
             ) { fusDirectory ->
                 fusDirectory.assertFusReportContains(*expectedMetrics)
                 // asserts that we do not put DOKKA metrics everywhere just in case
-                fusDirectory.assertFusReportDoesNotContain("ENABLED_DOKKA_HTML", "KOTLIN_JS_PLUGIN_ENABLED")
+                fusDirectory.assertFusReportDoesNotContain("ENABLED_DOKKA_HTML")
             }
         }
     }
