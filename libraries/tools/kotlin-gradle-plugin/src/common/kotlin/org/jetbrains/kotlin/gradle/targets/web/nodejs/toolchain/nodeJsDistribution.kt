@@ -11,8 +11,10 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNodeBinDir
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNpmScriptFile
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.parseOsType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import java.io.File
 import java.nio.file.Path
@@ -49,10 +51,14 @@ internal fun nodeJsArchiveExtension(platform: BuildPlatform): String =
 // copy from NodeJsPluginApplier#addPlatform
 internal fun ProviderFactory.detectBuildPlatform(): Provider<BuildPlatform> {
     val uname = unameExecResult
-    return systemProperty("os.name").zip(systemProperty("os.arch")) { osName, osArch ->
-        val platform = parsePlatform(osName, osArch, uname)
+    return currentHostPlatform().zip(systemProperty("os.arch")) { osType, osArch ->
+        val platform = parsePlatform(osType, osArch, uname)
         BuildPlatform(platform.name, platform.arch)
     }
+}
+
+internal fun ProviderFactory.currentHostPlatform(): Provider<OsType> = systemProperty("os.name").map {
+    parseOsType(it)
 }
 
 internal fun ArchiveOperations.extractNodeJs(
