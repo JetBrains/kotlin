@@ -1,0 +1,2 @@
+// EXISTS: default/manifest
+// CONTAINS: default/manifest, unique_name=test_module
