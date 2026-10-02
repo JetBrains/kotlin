@@ -18,7 +18,7 @@ internal fun Project.whenMppEnabled(action: () -> Unit) = whenPluginsEnabled(
 )
 
 internal fun Project.whenJsOrMppEnabled(action: () -> Unit) = whenPluginsEnabled(
-    setOf("org.jetbrains.kotlin.js", "org.jetbrains.kotlin.multiplatform", "kotlin-multiplatform"),
+    setOf("org.jetbrains.kotlin.multiplatform", "kotlin-multiplatform"),
     action,
 )
 

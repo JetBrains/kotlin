@@ -2421,18 +2421,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object DeprecatedKotlinJsPlugin : ToolingDiagnosticFactory(
-        FATAL,
-        DiagnosticGroup.Kgp.Deprecation,
-    ) {
-        operator fun invoke(trace: Throwable? = null) = build(throwable = trace) {
-            title { "'kotlin-js' Gradle plugin is deprecated" }
-                .description { "'kotlin-js' Gradle plugin is deprecated and will be removed in the future" }
-                .solution { "Please use 'kotlin(\"multiplatform\")' plugin with a 'js()' target instead" }
-                .documentationLink(URI("https://kotl.in/t6m3vu"))
-        }
-    }
-
     internal object XCFrameworkWithSwiftPMDependencies : ToolingDiagnosticFactory(
         WARNING,
         DiagnosticGroup.Kgp.Experimental,
