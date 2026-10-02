@@ -23,14 +23,11 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
-import java.nio.channels.FileChannel
-import java.nio.channels.FileLock
-import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Path
-import java.nio.file.StandardOpenOption
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.io.canonicalPathString
+import org.jetbrains.kotlin.io.withExclusiveFileLock
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
@@ -40,6 +37,7 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.pathString
 import kotlin.io.path.writeText
+import kotlin.time.Duration.Companion.milliseconds
 
 // TODO: deleteRecursively might throw an exception!
 class CacheBuilder(
@@ -419,25 +417,13 @@ class CacheBuilder(
 
     /**
      * If [lockFile] is `null`, performs [buildAction] without any synchronization.
-     * Otherwise, acquires an OS-level file lock on [lockFile], calls [skipBuildAction] under the lock
-     * to check whether the build should be skipped (e.g. the cache was already built by another process),
+     * Otherwise, acquires an OS-level file lock on [lockFile] (see [withExclusiveFileLock]), calls [skipBuildAction]
+     * under the lock to check whether the build should be skipped (e.g. the cache was already built by another process),
      * and if not, runs [buildAction] under the lock.
-     * The lock file is created if it didn't exist before.
      *
      * Note: it is not absolutely necessary to always achieve mutual exclusion: the [buildAction] is
      * thread-safe and idempotent. The goal of the synchronization is to avoid memory pressure
      * caused by simultaneous build of the cache for a large library like stdlib.
-     *
-     * The lock file is intentionally **never deleted**. If you delete the lock file after
-     * releasing the lock, this race appears:
-     *  1. Process A holds a lock on `cache.lock`.
-     *  2. Process B has already opened that file and is blocked waiting on the lock.
-     *  3. Process A releases the lock and deletes `cache.lock`.
-     *  4. Process C creates a new `cache.lock` and locks that new file.
-     *  5. Process B acquires the lock on the old, now-unlinked inode it opened earlier.
-     *
-     * Now B and C both think they own "the" cache lock, but they are locking different
-     * filesystem inodes. That breaks mutual exclusion.
      */
     private fun buildUnderFileLock(
             lockFile: Path?,
@@ -448,30 +434,8 @@ class CacheBuilder(
             return buildAction()
         }
 
-        FileChannel.open(
-                lockFile.absolute(),
-                StandardOpenOption.CREATE,
-                StandardOpenOption.READ,
-                StandardOpenOption.WRITE
-        ).use { channel ->
-            channel.acquireLockWithRetry().use {
-                if (skipBuildAction()) return
-                buildAction()
-            }
-        }
-    }
-
-    private fun FileChannel.acquireLockWithRetry(): FileLock {
-        while (true) {
-            try {
-                return this.lock()
-            } catch (_: OverlappingFileLockException) {
-                // Another thread in the same JVM holds the lock. Just wait:
-                // — if that thread dies with a crash, the whole process dies.
-                // - if that thread fails with an exception, the lock is released.
-                // - if that thread hangs, we might be tight on resources, so waiting is wise.
-                Thread.sleep(200L)
-            }
+        withExclusiveFileLock(lockFile, retryTimeout = 200.milliseconds) {
+            if (!skipBuildAction()) buildAction()
         }
     }
 
