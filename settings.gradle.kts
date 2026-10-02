@@ -651,6 +651,7 @@ include(
     ":prepare:analysis-api:kotlin-analysis-api-noarg-compiler-plugin-support",
     ":prepare:analysis-api:kotlin-analysis-api-parcelize-compiler-plugin-support",
     ":prepare:analysis-api:kotlin-analysis-api-sam-with-receiver-compiler-plugin-support",
+    ":prepare:analysis-api:kotlin-analysis-api-internal-test-framework",
 )
 
 include(
