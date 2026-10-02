@@ -650,10 +650,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val kotlinPsiClass = mainModule.findKotlinClassAsPsi()
         require(kotlinPsiClass != null)
 
-        val kotlinPsiClassFromFacade = JavaPsiFacade
-            .getInstance(project)
-            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
-
+        val kotlinPsiClassFromFacade = findLightClass("org.test.KotlinClass")
         require(kotlinPsiClassFromFacade == kotlinPsiClass)
 
         checkKotlinPsiClass(kotlinPsiClass)
@@ -664,10 +661,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val kotlinPsiClass = mainModule.findKotlinClassAsPsi()
         require(kotlinPsiClass != null)
 
-        val kotlinPsiClassFromFacade = JavaPsiFacade
-            .getInstance(project)
-            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
-
+        val kotlinPsiClassFromFacade = findLightClass("org.test.KotlinClass")
         require(kotlinPsiClassFromFacade == kotlinPsiClass)
 
         checkKotlinPsiClass(kotlinPsiClass)
@@ -678,10 +672,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         // By default, light classes are not available for non-JVM platforms
         require(mainModule.findKotlinClassAsPsi() == null)
 
-        val unavailableKotlinClassFromFacade = JavaPsiFacade
-            .getInstance(project)
-            .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
-
+        val unavailableKotlinClassFromFacade = findLightClass("org.test.KotlinClass")
         require(unavailableKotlinClassFromFacade == null)
 
         runWriteAction {
@@ -699,9 +690,7 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             val kotlinPsiClass = mainModule.findKotlinClassAsPsi()
             require(kotlinPsiClass != null)
 
-            val kotlinPsiClassFromFacade = JavaPsiFacade
-                .getInstance(project)
-                .findClass("org.test.KotlinClass", GlobalSearchScope.projectScope(project))
+            val kotlinPsiClassFromFacade = findLightClass("org.test.KotlinClass")
 
             // Inside withMultiplatformLightClassSupport, 'JavaPsiFacade' doesn't return Kotlin LC
             require(kotlinPsiClassFromFacade == null)
@@ -713,6 +702,9 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
     private fun KaModule.findKotlinClassAsPsi(): PsiClass? = analyze(this) {
         findClass(ClassId.fromString("org/test/KotlinClass"))!!.asPsiClass()
     }
+
+    private fun StandaloneAnalysisAPISession.findLightClass(fqName: String): PsiClass? =
+        JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.projectScope(project))
 
     private fun testLightClasses(platform: TargetPlatform, block: StandaloneAnalysisAPISession.(KaModule) -> Unit) {
         val root = "lightClasses"
