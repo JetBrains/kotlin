@@ -615,7 +615,7 @@ internal class KClassImpl<T : Any>(
     override val isValue: Boolean
         get() = when {
             // A builtin like `kotlin.Number` is a value class if the Java class it is mapped to, like `java.lang.Number`, is one.
-            // A primitive type like `kotlin.Int` is mapped to a primitive class like `int`, which isn't.
+            // A primitive type like `kotlin.Int` follows its primitive class `int`, which is not a value class, unlike its box `Integer`.
             isMappedBuiltin -> ValhallaValueClassLoader.loadIsValue(javaPrimitiveType ?: javaObjectType)
             else -> kmClass?.isValue ?: ValhallaValueClassLoader.loadIsValue(jClass)
         }
