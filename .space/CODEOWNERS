@@ -74,7 +74,7 @@
 * "Kotlin"
 
 /.idea/ "Kotlin Build Infrastructure"
-/.idea/kotlinTestDataPluginTestDataPaths.xml dmitriy.novozhilov@jetbrains.com kirill.rakhman@jetbrains.com sergej.jaskiewicz@jetbrains.com
+/.idea/kotlinTestDataPluginTestDataPaths.xml "Kotlin Frontend" sergej.jaskiewicz@jetbrains.com
 
 /.space/ "Kotlin Build Infrastructure"
 /.github/ "Kotlin Build Infrastructure"
