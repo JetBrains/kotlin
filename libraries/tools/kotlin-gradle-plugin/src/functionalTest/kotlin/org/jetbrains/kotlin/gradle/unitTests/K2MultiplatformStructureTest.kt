@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.*
@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.newInstance
-import kotlin.test.Test
 import java.io.File
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -241,8 +241,8 @@ class K2MultiplatformStructureTest {
 private fun K2MultiplatformCompilationTask.buildCompilerArguments(): CommonCompilerArguments {
     /* KotlinNative implements CompilerArgumentAware, but does not adhere to its contract */
     @Suppress("UNCHECKED_CAST")
-    this as CompilerArgumentAware<CommonCompilerArguments>
-    return this.createCompilerArguments(lenient)
+    this as KotlinCompilerArgumentsProducer
+    return this.createCompilerArguments(lenient) as CommonCompilerArguments
 }
 
 internal fun CommonCompilerArguments.configureK2Multiplatform(multiplatformStructure: K2MultiplatformStructure) {

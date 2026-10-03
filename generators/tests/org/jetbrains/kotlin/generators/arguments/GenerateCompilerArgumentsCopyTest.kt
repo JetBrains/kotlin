@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.generators.arguments
 
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.arguments.collectProperties
+import org.jetbrains.kotlin.cli.common.arguments.ArgumentParseErrors
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyK2JVMCompilerArguments
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test

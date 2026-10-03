@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.build
 
-import org.jetbrains.kotlin.cli.common.arguments.collectProperties
+import org.jetbrains.kotlin.arguments.collectProperties
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
