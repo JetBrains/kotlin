@@ -18,27 +18,13 @@ class StubIrMetadataEmitter(
         private val bridgeBuilderResult: BridgeBuilderResult
 ) {
     fun emit(): KlibModuleMetadata {
-        val fragments = emitModuleFragments()
-        return KlibModuleMetadata(moduleName, fragments, context.metadataVersion)
+        val fragment = ModuleMetadataEmitter(
+                context.configuration.pkgName,
+                builderResult.stubs,
+                bridgeBuilderResult
+        ).emit()
+        return KlibModuleMetadata(moduleName, listOf(fragment), context.metadataVersion)
     }
-
-    private fun emitModuleFragments(): List<KmModuleFragment> =
-            ModuleMetadataEmitter(
-                    context.configuration.pkgName,
-                    builderResult.stubs,
-                    bridgeBuilderResult
-            ).emit().let { kmModuleFragment ->
-                // We need to create module fragment for each part of package name.
-                val pkgName = context.configuration.pkgName
-                val fakePackages = pkgName.mapIndexedNotNull { idx, char ->
-                    if (char == '.') idx else null
-                }.map { dotPosition ->
-                    KmModuleFragment().also {
-                        it.fqName = pkgName.substring(0, dotPosition)
-                    }
-                }
-                fakePackages + kmModuleFragment
-            }
 }
 
 /**
