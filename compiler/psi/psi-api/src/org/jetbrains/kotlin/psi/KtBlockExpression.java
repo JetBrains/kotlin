@@ -92,9 +92,15 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
         }
     }
 
+    /**
+     * Deletes this block.
+     * <p>
+     * When {@link KtPsiMutationService} is registered, as in the IntelliJ Kotlin plugin, the deletion may also adjust the surrounding code,
+     * e.g., delete a semicolon that follows the block. Without the service, it performs only the plain platform deletion.
+     */
     @Override
     public void delete() throws IncorrectOperationException {
-        KtPsiMutationService.getInstance().deleteBlockExpression(this);
+        KtPsiMutationServiceKt.deleteWithMutationService(this, mutationService -> mutationService.deleteBlockExpression(this));
     }
 
     @Override

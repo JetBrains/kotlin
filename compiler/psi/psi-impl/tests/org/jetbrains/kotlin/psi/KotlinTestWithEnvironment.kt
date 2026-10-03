@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.psi
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
@@ -21,6 +22,20 @@ abstract class KotlinTestWithEnvironment {
     @AfterEach
     fun tearDown() {
         disposeRootDisposable(testRootDisposable)
+    }
+
+    /**
+     * Registers the extension point named [name] in the application unless it is already registered.
+     *
+     * The application is shared with other tests, which also see the extension point. The registration checks whether the extension point
+     * exists before adding it, so it runs under [KotlinCoreEnvironment.underApplicationLock], which code mutating the shared application
+     * uses to avoid races with other tests.
+     */
+    @Suppress("UnstableApiUsage")
+    protected fun registerApplicationExtensionPoint(name: String, extensionClass: Class<*>) {
+        KotlinCoreEnvironment.underApplicationLock {
+            CoreApplicationEnvironment.registerApplicationDynamicExtensionPoint(name, extensionClass)
+        }
     }
 
     private fun createEnvironment(): KotlinCoreEnvironment {
