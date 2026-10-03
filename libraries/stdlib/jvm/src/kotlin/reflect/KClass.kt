@@ -78,6 +78,59 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val visibility: KVisibility?
 
     /**
+     * `true` if this is a regular class, meaning it is not an `object`, an interface, an annotation,
+     * an enum class/entry, or an anonymous class.
+     *
+     * Modality (`open` / `abstract` / `final` / `sealed`) is ignored.
+     */
+    @SinceKotlin("2.5")
+    public val isRegularClass: Boolean
+
+    /**
+     * `true` if this is an interface.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/interfaces.html)
+     * for more information.
+     *
+     * Note that, unlike Java reflection, this does not include annotations, see [isAnnotation].
+     *
+     * @see isSealed
+     */
+    @SinceKotlin("2.5")
+    public val isInterface: Boolean
+
+    /**
+     * `true` if this is an enum class.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/enum-classes.html)
+     * for more information.
+     */
+    @SinceKotlin("2.5")
+    public val isEnumClass: Boolean
+
+    /**
+     * `true` if this is an enum entry's anonymous class.
+     */
+    @SinceKotlin("2.5")
+    public val isEnumEntry: Boolean
+
+    /**
+     * `true` if this is an annotation.
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/annotations.html)
+     * for more information.
+     */
+    @SinceKotlin("2.5")
+    public val isAnnotation: Boolean
+
+    /**
+     * `true` if this is an [object](https://kotlinlang.org/docs/object-declarations.html#object-declarations-overview),
+     * a [companion object](https://kotlinlang.org/docs/object-declarations.html#companion-objects),
+     * or a [data object](https://kotlinlang.org/docs/object-declarations.html#data-objects).
+     *
+     * Note that this excludes [anonymous objects](https://kotlinlang.org/docs/object-declarations.html#object-expressions).
+     */
+    @SinceKotlin("2.5")
+    public val isObject: Boolean
+
+    /**
      * `true` if this class is `final`.
      */
     @SinceKotlin("1.1")
