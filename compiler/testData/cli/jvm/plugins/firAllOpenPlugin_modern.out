@@ -1,2 +1,2 @@
-warning: argument -Xcompiler-plugin is experimental
+warning: [COMPILER_PLUGIN_ARG_IS_EXPERIMENTAL] Argument -Xcompiler-plugin is experimental
 OK

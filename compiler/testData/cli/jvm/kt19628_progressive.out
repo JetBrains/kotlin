@@ -1,16 +1,16 @@
-compiler/testData/cli/jvm/kt19628_progressive.kt:1:18: error: unresolved reference 'bind'.
+compiler/testData/cli/jvm/kt19628_progressive.kt:1:18: error: [UNRESOLVED_IMPORT] Unresolved reference 'bind'.
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
                  ^^^^
-compiler/testData/cli/jvm/kt19628_progressive.kt:5:10: error: unresolved reference 'XmlJavaTypeAdapter'.
+compiler/testData/cli/jvm/kt19628_progressive.kt:5:10: error: [UNRESOLVED_REFERENCE] Unresolved reference 'XmlJavaTypeAdapter'.
     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
          ^^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/kt19628_progressive.kt:5:29: error: unresolved reference 'CollapsedStringAdapter'.
+compiler/testData/cli/jvm/kt19628_progressive.kt:5:29: error: [UNRESOLVED_REFERENCE] Unresolved reference 'CollapsedStringAdapter'.
     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
                             ^^^^^^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/kt19628_progressive.kt:8:10: error: unresolved reference 'XmlJavaTypeAdapter'.
+compiler/testData/cli/jvm/kt19628_progressive.kt:8:10: error: [UNRESOLVED_REFERENCE] Unresolved reference 'XmlJavaTypeAdapter'.
     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
          ^^^^^^^^^^^^^^^^^^
-compiler/testData/cli/jvm/kt19628_progressive.kt:8:29: error: unresolved reference 'CollapsedStringAdapter'.
+compiler/testData/cli/jvm/kt19628_progressive.kt:8:29: error: [UNRESOLVED_REFERENCE] Unresolved reference 'CollapsedStringAdapter'.
     @get:XmlJavaTypeAdapter(CollapsedStringAdapter::class)
                             ^^^^^^^^^^^^^^^^^^^^^^
 COMPILATION_ERROR

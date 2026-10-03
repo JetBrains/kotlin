@@ -37,7 +37,7 @@ fun CompilerConfiguration.setupCommonKlibArguments(
 
     // Diagnostics & checks.
     produceKlibSignaturesClashChecks = arguments.enableSignatureClashChecks
-    renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
+    renderDiagnosticInternalName = arguments.renderDiagnosticNames
     skipLibrarySpecialCompatibilityChecks = arguments.skipLibrarySpecialCompatibilityChecks
 
     duplicatedUniqueNameStrategy = DuplicatedUniqueNameStrategy.parseOrDefault(

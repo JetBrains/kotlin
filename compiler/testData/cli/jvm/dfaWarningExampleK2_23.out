@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/dfaWarningExampleK2.kt:3:14: warning: cast is redundant.
+compiler/testData/cli/jvm/dfaWarningExampleK2.kt:3:14: warning: [USELESS_CAST] Cast is redundant.
         (arg as String).length
              ^^^^^^^^^
 OK

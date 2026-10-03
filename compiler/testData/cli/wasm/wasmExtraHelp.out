@@ -213,8 +213,7 @@ where advanced options include:
   -Xplugin=<path>            Load plugins from the given classpath.
   -Xprint-configuration      Print compiler configuration.
   -Xprofile-phases           Profile backend phases.
-  -Xrender-internal-diagnostic-names
-                             Render the internal names of warnings and errors.
+  -Xrender-diagnostic-names  Render the string identifiers of warnings and errors, like [RETURN_TYPE_MISMATCH].
   -Xreport-all-warnings      Report all warnings even if errors are found.
   -Xreport-output-files      Report the source-to-output file mapping.
   -Xreport-perf              Report detailed performance statistics.

@@ -1,2 +1,2 @@
-error: unrecognized -Xsupport-compatqual-checker-framework-annotations option: true. Possible values are 'enable'/'disable'
+error: [COMPILER_ARGUMENTS_ERROR] Unrecognized -Xsupport-compatqual-checker-framework-annotations option: true. Possible values are 'enable'/'disable'
 COMPILATION_ERROR

@@ -1,2 +1,2 @@
-error: unknown value for parameter -Xexplicit-api: 'invalid'. Value should be one of {disable, strict, warning}
+error: [COMPILER_ARGUMENTS_ERROR] Unknown value for parameter -Xexplicit-api: 'invalid'. Value should be one of {disable, strict, warning}
 COMPILATION_ERROR

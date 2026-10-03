@@ -5847,11 +5847,11 @@
                         "deprecatedMessage": null
                     },
                     {
-                        "name": "Xrender-internal-diagnostic-names",
+                        "name": "Xrender-diagnostic-names",
                         "shortName": null,
-                        "deprecatedName": null,
+                        "deprecatedName": "Xrender-internal-diagnostic-names",
                         "description": {
-                            "current": "Render the internal names of warnings and errors.",
+                            "current": "Render the string identifiers of warnings and errors, like [RETURN_TYPE_MISMATCH].",
                             "valueInVersions": []
                         },
                         "delimiter": null,
@@ -5864,7 +5864,7 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": false,
+                                "current": true,
                                 "valueInVersions": []
                             }
                         },
@@ -5885,7 +5885,7 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": false,
+                                "current": true,
                                 "valueInVersions": []
                             }
                         },

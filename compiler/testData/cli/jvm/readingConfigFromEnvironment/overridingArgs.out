@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingArgs.kt:2:21: warning: unused return value of 'length'.
+compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingArgs.kt:2:21: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'length'.
     Annotated.bar().length
                     ^^^^^^
 OK

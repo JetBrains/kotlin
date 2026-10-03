@@ -1,2 +1,2 @@
-warning: the argument '-Xcontext-parameters' is redundant for the current language version 2.5.
+warning: [REDUNDANT_CLI_ARG] The argument '-Xcontext-parameters' is redundant for the current language version 2.5.
 OK

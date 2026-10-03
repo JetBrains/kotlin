@@ -1,5 +1,5 @@
-warning: language version 2.1 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.3.
-compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:10: warning: 'public' generic exposes its 'internal' parameter bound type 'Foo'. This will be prohibited in the future.
+warning: [DEPRECATED_LANGUAGE_VERSION] Language version 2.1 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.3.
+compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:10: warning: [EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING] 'public' generic exposes its 'internal' parameter bound type 'Foo'. This will be prohibited in the future.
 fun <T : Foo> foo(x: T?) = x
          ^^^
 OK

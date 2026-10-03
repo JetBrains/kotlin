@@ -50,7 +50,7 @@ fun CompilerConfiguration.setupCommonArguments(
     put(CommonConfigurationKeys.REPORT_OUTPUT_FILES, arguments.reportOutputFiles)
     put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, incrementalCompilationIsEnabled(arguments))
     put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, arguments.allowAnyScriptsInSourceRoots)
-    put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
+    put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderDiagnosticNames)
 
     val irVerificationMode = arguments.verifyIr?.let { verifyIrString ->
         IrVerificationMode.resolveMode(verifyIrString).also {

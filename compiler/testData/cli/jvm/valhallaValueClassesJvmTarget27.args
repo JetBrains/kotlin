@@ -5,4 +5,3 @@ $TEMP_DIR$
 27
 -Xjvm-enable-preview
 -Xvalhalla-value-classes
--Xrender-internal-diagnostic-names

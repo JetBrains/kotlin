@@ -1,3 +1,3 @@
-error: no source files
-error: source file or directory not found: not/existing/path
+error: [COMPILER_ARGUMENTS_ERROR] No source files
+error: [ROOTS_RESOLUTION_ERROR] Source file or directory not found: not/existing/path
 COMPILATION_ERROR

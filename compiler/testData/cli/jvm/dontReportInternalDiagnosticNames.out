@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/dontReportInternalDiagnosticNames.kt:2:19: error: initializer type mismatch: expected 'String', actual 'Int'.
+    val x: String = 1
+                  ^
+compiler/testData/cli/jvm/dontReportInternalDiagnosticNames.kt:3:1: error: missing return statement.
+}
+^
+COMPILATION_ERROR

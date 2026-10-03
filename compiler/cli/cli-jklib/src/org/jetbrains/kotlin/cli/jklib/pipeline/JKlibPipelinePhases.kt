@@ -181,7 +181,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
         configuration.moduleName = moduleName
 
         configuration.allowKotlinPackage = arguments.allowKotlinPackage
-        configuration.renderDiagnosticInternalName = arguments.renderInternalDiagnosticNames
+        configuration.renderDiagnosticInternalName = arguments.renderDiagnosticNames
 
         arguments.destination?.let { configuration.jklibOutputDestination = it }
         configuration.jklibCompileIr = arguments.compileIr

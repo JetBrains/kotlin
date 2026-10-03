@@ -2,4 +2,3 @@ $TESTDATA_DIR$/valhallaValueClassesIllegalConfiguration.kt
 -d
 $TEMP_DIR$
 -Xvalhalla-value-classes
--Xrender-internal-diagnostic-names

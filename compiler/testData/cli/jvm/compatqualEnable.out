@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/compatqualUsage.kt:2:11: error: null cannot be a value of a non-null type 'String'.
+compiler/testData/cli/jvm/compatqualUsage.kt:2:11: error: [NULL_FOR_NONNULL_TYPE] Null cannot be a value of a non-null type 'String'.
     b.foo(null)
           ^^^^
 COMPILATION_ERROR

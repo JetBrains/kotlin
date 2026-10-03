@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/diagnosticTests/inlineCycle.kt:2:5: error: the 'b' invocation is part of an inline cycle.
+compiler/testData/cli/jvm/diagnosticTests/inlineCycle.kt:2:5: error: [INLINE_CALL_CYCLE] The 'b' invocation is part of an inline cycle.
     b(q)
     ^^^^
-compiler/testData/cli/jvm/diagnosticTests/inlineCycle.kt:18:5: error: the 'a' invocation is part of an inline cycle.
+compiler/testData/cli/jvm/diagnosticTests/inlineCycle.kt:18:5: error: [INLINE_CALL_CYCLE] The 'a' invocation is part of an inline cycle.
     a(p)
     ^^^^
 COMPILATION_ERROR

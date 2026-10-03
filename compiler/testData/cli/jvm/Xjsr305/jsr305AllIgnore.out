@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:26: warning: unused return value of 'length'.
+compiler/testData/cli/jvm/Xjsr305/jsr305Migration.kt:4:26: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'length'.
     annotated.nullable().length
                          ^^^^^^
 OK

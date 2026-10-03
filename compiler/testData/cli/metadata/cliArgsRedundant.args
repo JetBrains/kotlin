@@ -8,6 +8,5 @@ $STDLIB_COMMON_PATH$
 -Xnested-type-aliases
 -Xwhen-guards
 -Xannotation-default-target=first-only-warn
--Xrender-internal-diagnostic-names
 -progressive=false
 -Xexplicit-api=disable

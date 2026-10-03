@@ -1,10 +1,10 @@
-compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:4:11: warning: Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
+compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:4:11: warning: [TYPE_MISMATCH_BASED_ON_JAVA_ANNOTATIONS] Java type mismatch: inferred type is 'Nothing?', but 'String' was expected.
     a.foo(null)
           ^^^^
-compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:5: warning: only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'String?'.
+compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:5: warning: [RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS] Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type 'String?'.
     a.bar().length
     ^^^^^^^
-compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:13: warning: unused return value of 'length'.
+compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:13: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'length'.
     a.bar().length
             ^^^^^^
 OK

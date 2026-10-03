@@ -1,2 +1,2 @@
-error: '-Xjdk-release=6' option is not supported by used JDK: $JDK_1_8
+error: [JAVA_MODULE_RESOLUTION_ERROR] '-Xjdk-release=6' option is not supported by used JDK: $JDK_1_8
 COMPILATION_ERROR

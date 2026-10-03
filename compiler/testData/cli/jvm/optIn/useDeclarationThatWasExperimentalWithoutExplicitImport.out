@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.kt:3:8: warning: unused return value of 'lowercase'.
+compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.kt:3:8: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'lowercase'.
     "".lowercase()
        ^^^^^^^^^
-compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.kt:4:7: warning: unused return value of 'digitToChar'.
+compiler/testData/cli/jvm/optIn/useDeclarationThatWasExperimentalWithoutExplicitImport.kt:4:7: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'digitToChar'.
     1.digitToChar()
       ^^^^^^^^^^^
 OK

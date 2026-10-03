@@ -1,4 +1,4 @@
-compiler/testData/cli/js/compilationErrorExposureOfReferencesToInvisibleEntities.kt:6:40: error: callable reference to 'private-in-class' declaration 'foo' inside 'internal' inline declaration.
+compiler/testData/cli/js/compilationErrorExposureOfReferencesToInvisibleEntities.kt:6:40: error: [CALLABLE_REFERENCE_TO_LESS_VISIBLE_DECLARATION_IN_INLINE_ERROR] Callable reference to 'private-in-class' declaration 'foo' inside 'internal' inline declaration.
 internal inline fun internalFun2() = ::foo
                                        ^^^
 COMPILATION_ERROR
