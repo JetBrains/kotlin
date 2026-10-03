@@ -1036,6 +1036,15 @@ class Strings {
     }
 
     @Sample
+    fun nullableStringPlus() {
+        // null is not a string, but plus concatenates its string representation with the "Hello" string
+        assertPrints(null + "Hello", "nullHello")
+        assertPrints(null + null, "nullnull")
+        // list is converted to a String first and then concatenated with the "Numbers: " string
+        assertPrints("Numbers: " + listOf(1, 2, 3), "Numbers: [1, 2, 3]")
+    }
+
+    @Sample
     fun replaceRange() {
         val text = "Hello, world!"
 
