@@ -6,14 +6,22 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.IrDiagnosticRenderers
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.RenderIrElementVisitor
+import org.jetbrains.kotlin.ir.util.fqNameWithoutFileClassesWhenAvailable
+import org.jetbrains.kotlin.ir.util.isExpect
+import org.jetbrains.kotlin.ir.util.moduleFragment
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
@@ -21,15 +29,15 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 object IrActualizationErrors : KtDiagnosticsContainer() {
-    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, IrSymbol, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val AMBIGUOUS_ACTUALS by error2<PsiElement, IrSymbol, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
-    val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, IrSymbol, IrSymbol, ExpectActualMatchingCompatibility.Mismatch>(
+    val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, IrSymbolWithModule, ModuleInfoForDiagnostic>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val AMBIGUOUS_ACTUALS by error2<PsiElement, IrSymbolWithModule, Set<ModuleInfoForDiagnostic>>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
+    val EXPECT_ACTUAL_IR_MISMATCH by error3<PsiElement, IrSymbolWithModule, IrSymbolWithModule, ExpectActualMatchingCompatibility.Mismatch>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, IrSymbol, IrSymbol, ExpectActualIncompatibility<*>>(
+    val EXPECT_ACTUAL_IR_INCOMPATIBILITY by error3<PsiElement, IrSymbolWithModule, IrSymbolWithModule, ExpectActualIncompatibility<*>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
-    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrAnnotation>>(
+    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbolWithModule, IrSymbolWithModule, ExpectActualAnnotationsIncompatibilityType<IrAnnotation>>(
         SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER
     )
     val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
@@ -48,36 +56,36 @@ internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFa
     override val MAP by KtDiagnosticFactoryToRendererMap("KT") { map ->
         map.put(
             IrActualizationErrors.AMBIGUOUS_ACTUALS,
-            "The ''expect'' declaration ''{0}'' has several compatible ''actual'' declarations in module ''{1}''.",
-            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
-            IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
+            "The {0} has several compatible ''actual'' declarations in module(s): {1}.",
+            IrActualizationDiagnosticRenderers.ACTUALIZATION_SYMBOL_WITH_MODULE,
+            Renderer { it.joinToString { IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM.render(it) } },
         )
         map.put(
             IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
-            "The ''expect'' declaration ''{0}'' has no ''actual'' declaration in module ''{1}''.",
-            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+            "The {0} has no ''actual'' declaration in module ''{1}''.",
+            IrActualizationDiagnosticRenderers.ACTUALIZATION_SYMBOL_WITH_MODULE,
             IrActualizationDiagnosticRenderers.MODULE_WITH_PLATFORM,
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_IR_MISMATCH,
-            "The ''expect'' declaration ''{0}'' doesn''t match the ''actual'' declaration ''{1}'' because {2}.",
-            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
-            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+            "The {0} doesn''t match the {1} because {2}.",
+            IrActualizationDiagnosticRenderers.ACTUALIZATION_SYMBOL_WITH_MODULE,
+            IrActualizationDiagnosticRenderers.ACTUALIZATION_SYMBOL_WITH_MODULE,
             IrActualizationDiagnosticRenderers.MISMATCH
         )
         map.put(
             IrActualizationErrors.EXPECT_ACTUAL_IR_INCOMPATIBILITY,
-            "The ''expect'' and the ''actual'' declarations are incompatible.\n  expect: {0}\n  actual: {1}\n  reason: {2}",
-            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
-            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+            "The following declarations are incompatible.\n  {0}\n  {1}\n  reason: {2}",
+            IrActualizationDiagnosticRenderers.ACTUALIZATION_SYMBOL_WITH_MODULE,
+            IrActualizationDiagnosticRenderers.ACTUALIZATION_SYMBOL_WITH_MODULE,
             IrActualizationDiagnosticRenderers.INCOMPATIBILITY
         )
         map.put(
             IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
             "{2}.\n" +
-                    "All annotations from the ''expect'' declaration ''{0}'' must be present and have the same arguments on the ''actual'' declaration ''{1}'', otherwise they might behave incorrectly.",
-            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
-            IrDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME,
+                    "All annotations from the {0} must be present and have the same arguments on the {1}, otherwise they might behave incorrectly.",
+            IrActualizationDiagnosticRenderers.ACTUALIZATION_SYMBOL_WITH_MODULE,
+            IrActualizationDiagnosticRenderers.ACTUALIZATION_SYMBOL_WITH_MODULE,
             IrActualizationDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY,
         )
         map.put(
@@ -136,8 +144,39 @@ internal object IrActualizationDiagnosticRenderers {
     val MODULE_WITH_PLATFORM = Renderer<ModuleInfoForDiagnostic> { module ->
         val platform = module.platform
         val platformNameIfAny = if (platform == null || platform.isCommon()) "" else " for " + platform.single().platformName
-        module.name + platformNameIfAny
+        module.name.asString() + platformNameIfAny
+    }
+
+    val ACTUALIZATION_SYMBOL_WITH_MODULE = Renderer<IrSymbolWithModule> { (symbol, module) ->
+        val declaration = symbol.owner as? IrDeclarationWithName ?: return@Renderer "unknown name"
+        buildString {
+            when {
+                declaration.isExpect -> append("'expect'")
+                // giant hack to determine if a module is a binary dependency
+                module.name.isSpecial && module.name.asString().contains("dependencies of") -> append("binary")
+                else -> append("'actual'")
+            }
+            append(" declaration '")
+            append(declaration.fqNameWithoutFileClassesWhenAvailable)
+            append("' from '")
+            append(MODULE_WITH_PLATFORM.render(module))
+            append("'")
+        }
     }
 }
 
-data class ModuleInfoForDiagnostic(val name: String, val platform: TargetPlatform?)
+data class ModuleInfoForDiagnostic(val name: Name, val platform: TargetPlatform?)
+data class IrSymbolWithModule(val symbol: IrSymbol, val module: ModuleInfoForDiagnostic)
+
+internal fun IrSymbol.withModule() = IrSymbolWithModule(this, moduleInfoForDiagnostic())
+
+internal fun IrSymbol.moduleInfoForDiagnostic(): ModuleInfoForDiagnostic {
+    return (owner as IrDeclaration).moduleFragment.toModuleInfoForDiagnostic()
+}
+
+internal fun IrModuleFragment.toModuleInfoForDiagnostic(): ModuleInfoForDiagnostic {
+    return ModuleInfoForDiagnostic(
+        name = descriptor.getCapability(ModuleInfo.Capability)?.name ?: name,
+        platform = descriptor.platform,
+    )
+}
