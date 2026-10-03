@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.defaultKotlinUsageContextMaybeReplacedWithKar
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.isStoredInKotlinArchive
+import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.swiftExportMetadataElementsOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultImpl
@@ -79,10 +80,11 @@ private suspend fun KotlinMultiplatformExtension.metadataVariantsSoftwareCompone
     sourcesJarTask: TaskProvider<Jar>
 ) : SoftwareComponent {
     val mainCompilation = metadataTarget.awaitMetadataCompilationsCreated().getByName(MAIN_COMPILATION_NAME)
+    val isStoredInKotlinArchive = publishing.publicationFormat.map { it == KotlinPublicationFormat.KOTLIN_ARCHIVE }
     val usages = buildSet {
         add(
             project.defaultKotlinUsageContextMaybeReplacedWithKar(
-                isStoredInKotlinArchive = publishing.publicationFormat.map { it == KotlinPublicationFormat.KOTLIN_ARCHIVE },
+                isStoredInKotlinArchive = isStoredInKotlinArchive,
                 compilation = mainCompilation,
                 mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
@@ -105,6 +107,19 @@ private suspend fun KotlinMultiplatformExtension.metadataVariantsSoftwareCompone
                     dependencyConfigurationName = sourcesElements,
                     includeIntoProjectStructureMetadata = false,
                     publishOnlyIf = { metadataTarget.isSourcesPublishable }
+                )
+            )
+        }
+
+        val swiftExportMetadataElements = project.swiftExportMetadataElementsOrNull()
+        if (swiftExportMetadataElements != null) {
+            add(
+                project.defaultKotlinUsageContextMaybeReplacedWithKar(
+                    isStoredInKotlinArchive = isStoredInKotlinArchive,
+                    compilation = mainCompilation,
+                    mavenScope = null,
+                    dependencyConfigurationName = swiftExportMetadataElements.name,
+                    includeIntoProjectStructureMetadata = false,
                 )
             )
         }
