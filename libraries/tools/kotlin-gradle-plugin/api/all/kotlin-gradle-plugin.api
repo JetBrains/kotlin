@@ -3014,11 +3014,12 @@ public class org/jetbrains/kotlin/gradle/targets/js/ir/Executable : org/jetbrain
 	public final fun getExecuteTaskBaseName ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/ir/ExecutableWasm : org/jetbrains/kotlin/gradle/targets/js/ir/Executable, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
+public class org/jetbrains/kotlin/gradle/targets/js/ir/ExecutableWasm : org/jetbrains/kotlin/gradle/targets/js/ir/Executable, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;)V
 	public fun getMainOptimizedFile ()Lorg/gradle/api/provider/Provider;
 	public fun getMainWasmFile ()Lorg/gradle/api/provider/Provider;
 	public fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
+	protected fun syncInputConfigure (Lorg/jetbrains/kotlin/gradle/targets/js/ir/DefaultIncrementalSyncTask;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/JsBinary {
@@ -5523,6 +5524,18 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSetupTask$Companion {
 }
 
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentizeTask : org/gradle/api/DefaultTask {
+	public final fun componentize ()V
+	public abstract fun getAdapter ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getComponentEmbedArguments ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getComponentNewArguments ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInputFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getWitProjects ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun setAdapter (Lorg/gradle/api/provider/Provider;)V
+}
+
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
 	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
 	public final fun component1 ()Z
@@ -5754,6 +5767,54 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/Wasmtime
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtime/WasmtimeSetupTask$Companion {
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
+	public fun <init> (ZLjava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/io/File;Z)V
+	public fun getAllowInsecureProtocol ()Z
+	public fun getDir ()Ljava/io/File;
+	public fun getDownload ()Z
+	public fun getDownloadBaseUrl ()Ljava/lang/String;
+	public fun getExecutable ()Ljava/lang/String;
+	public fun getIvyDependency ()Ljava/lang/String;
+	public final fun isWindows ()Z
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsEnvSpec : org/jetbrains/kotlin/gradle/targets/js/EnvSpec {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsEnvSpec$Companion;
+	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
+	public final fun getWasmToolsSetupTaskProvider (Lorg/gradle/api/Project;)Lorg/gradle/api/tasks/TaskProvider;
+	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsEnvSpec$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public final fun getEXTENSION_NAME ()Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsPlugin : org/gradle/api/Plugin {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsPlugin$Companion;
+	public static final field TASKS_GROUP_NAME Ljava/lang/String;
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsPlugin$Companion : org/jetbrains/kotlin/gradle/targets/web/HasPlatformDisambiguator {
+	public fun extensionName (Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public fun getPlatformDisambiguator ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsSetupTask : org/jetbrains/kotlin/gradle/targets/js/AbstractSetupTask {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsSetupTask$Companion;
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsEnvSpec;)V
+	public fun extract (Ljava/io/File;)V
+	protected fun getArtifactModule ()Ljava/lang/String;
+	protected fun getArtifactName ()Ljava/lang/String;
+	protected fun getArtifactPattern ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/targets/wasm/wasmtools/WasmToolsSetupTask$Companion {
 }
 
 public abstract class org/jetbrains/kotlin/gradle/targets/wasm/yarn/WasmYarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
