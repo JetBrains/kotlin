@@ -104,6 +104,7 @@ val copyMinimalSources = tasks.register("copyMinimalSources", Sync::class) {
             "kotlin/annotations/Annotations.kt",
             "kotlin/concurrent/atomics/ExperimentalAtomicApi.kt",
             "kotlin/annotations/ExperimentalStdlibApi.kt",
+            "kotlin/annotations/ExperimentalCollectionLiteralsApi.kt",
         )
         into("src/common")
     }
