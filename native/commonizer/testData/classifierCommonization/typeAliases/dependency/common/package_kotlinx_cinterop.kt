@@ -7,7 +7,6 @@ class CPointer<T>
 
 @Suppress("FINAL_UPPER_BOUND")
 class UByteVarOf<T : UByte>
-class UByte
 
 // fake typealiases
 typealias CArrayPointer<T> = CPointer<T>

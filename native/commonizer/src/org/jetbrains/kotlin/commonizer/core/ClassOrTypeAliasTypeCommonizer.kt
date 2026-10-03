@@ -41,6 +41,11 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val substitutedTypes = substituteTypesIfNecessary(values)
 
         if (substitutedTypes == null) {
+            classifiers.supportExpectClassSupplier?.buildSupportExpectTypeFor(expansions)?.let {
+                val arguments = TypeArgumentListCommonizer(typeCommonizer).commonize(expansions.map { it.arguments }) ?: return@let
+                return CirClassType.createInterned(it, outerType = null, arguments, isMarkedNullable)
+            }
+
             val integerCommonizationResultIfApplicable = isPlatformIntegerCommonizationEnabled.ifTrue {
                 platformIntegerCommonizer(expansions)?.makeNullableIfNecessary(isMarkedNullable)
             } ?: isOptimisticNumberTypeCommonizationEnabled.ifTrue {
@@ -77,24 +82,14 @@ internal class ClassOrTypeAliasTypeCommonizer(
         /*
         Classifier is coming from common dependencies and therefore the type can be used in common
          */
-        when (val dependencyClassifier = classifiers.commonDependencies.classifier(classifierId)) {
-            is CirProvided.Class -> return CirClassType.createInterned(
-                classId = classifierId,
+        classifiers.commonDependencies.classifier(classifierId)?.let { dependencyClassifier ->
+            return dependencyClassifier.dependencyClassifierToCir(
+                classifierId = classifierId,
                 outerType = outerType,
                 arguments = arguments,
-                isMarkedNullable = isMarkedNullable
-            )
-
-            is CirProvided.TypeAlias -> return CirTypeAliasType.createInterned(
-                typeAliasId = classifierId,
-                arguments = arguments,
                 isMarkedNullable = isMarkedNullable,
-                underlyingType = dependencyClassifier.underlyingType.toCirClassOrTypeAliasTypeOrNull(classifiers.commonDependencies)
-                    ?.makeNullableIfNecessary(isMarkedNullable)
-                    ?.withParentArguments(arguments) ?: return null
+                classifiers = classifiers.commonDependencies,
             )
-
-            else -> Unit
         }
 
         /*
