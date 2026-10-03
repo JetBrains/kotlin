@@ -87,7 +87,7 @@ public interface MessageRenderer {
         }
     };
 
-    MessageRenderer GRADLE_STYLE = new GradleStyleMessageRenderer();
+    MessageRenderer GRADLE_STYLE = new PlainTextMessageRenderer.PlainTextRelativePathMessageRenderer();
 
     MessageRenderer XCODE_STYLE = new XcodeStyleMessageRenderer();
 
