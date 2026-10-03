@@ -92,10 +92,12 @@ public final class kotlin/reflect/jvm/ReflectJvmMapping {
 	public static final fun getJavaField (Lkotlin/reflect/KProperty;)Ljava/lang/reflect/Field;
 	public static final fun getJavaGetter (Lkotlin/reflect/KProperty;)Ljava/lang/reflect/Method;
 	public static final fun getJavaMethod (Lkotlin/reflect/KFunction;)Ljava/lang/reflect/Method;
+	public static final fun getJavaParameter (Lkotlin/reflect/KParameter;)Ljava/lang/reflect/Parameter;
 	public static final fun getJavaSetter (Lkotlin/reflect/KMutableProperty;)Ljava/lang/reflect/Method;
 	public static final fun getJavaType (Lkotlin/reflect/KType;)Ljava/lang/reflect/Type;
 	public static final fun getKotlinFunction (Ljava/lang/reflect/Constructor;)Lkotlin/reflect/KFunction;
 	public static final fun getKotlinFunction (Ljava/lang/reflect/Method;)Lkotlin/reflect/KFunction;
+	public static final fun getKotlinParameter (Ljava/lang/reflect/Parameter;)Lkotlin/reflect/KParameter;
 	public static final fun getKotlinProperty (Ljava/lang/reflect/Field;)Lkotlin/reflect/KProperty;
 }
 
