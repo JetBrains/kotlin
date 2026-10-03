@@ -86,7 +86,7 @@ sealed class NpmResolverPluginApplierTest(
 
         project.kotlin {
             wasmWasi {
-                nodejs()
+                wasmtime()
                 binaries.executable()
             }
             wasmJs {

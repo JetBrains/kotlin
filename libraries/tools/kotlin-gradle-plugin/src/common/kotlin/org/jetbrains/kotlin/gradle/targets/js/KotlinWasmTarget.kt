@@ -122,5 +122,10 @@ internal constructor(
     override fun wasmtime(body: KotlinWasmtimeDsl.() -> Unit) {
         body(wasmtime)
     }
+
+    override fun nodejs(body: KotlinJsNodeDsl.() -> Unit) {
+        super<KotlinJsIrTarget>.nodejs(body)
+    }
+
     //endregion
 }
