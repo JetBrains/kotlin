@@ -293,7 +293,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     }
 
     private fun doBuildObjCFrameworkWithNameCollisions(rootDir: File, additionalOptions: List<String>): TestCompilationResult<out TestCompilationArtifact.ObjCFramework> {
-        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
 
         val settings = testRunSettings
         val lib1 = compileLibrary(settings, rootDir.resolve("lib1.kt")).assertSuccess().resultingArtifact
@@ -322,7 +322,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         name: String,
         modules: Set<TestModule.Exclusive>,
     ) {
-        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         // https://youtrack.jetbrains.com/issue/KT-71097/Kotlin-Native-add-a-flag-to-catch-duplicating-symbols-in-caches
         Assumptions.assumeFalse(testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries)
 
