@@ -146,8 +146,90 @@ abstract class BaseCompilationTransactionTest {
     }
 }
 
-class NonRecoverableCompilationTransactionTest : BaseCompilationTransactionTest() {
-    override fun createTransaction() = NonRecoverableCompilationTransaction()
+class ReadOnlyCompilationTransactionTest : BaseCompilationTransactionTest() {
+    override fun createTransaction() = ReadOnlyCompilationTransaction()
+
+    @Test
+    fun testRegisteringChangedFileFails() {
+        assertThrows<IllegalStateException> {
+            useTransaction {
+                registerAddedOrChangedFile(workingDir.resolve("1.txt"))
+            }
+        }
+    }
+
+    @Test
+    fun testDeletingFileFails() {
+        assertThrows<IllegalStateException> {
+            useTransaction {
+                deleteFile(workingDir.resolve("1.txt"))
+            }
+        }
+    }
+
+    @Test
+    fun testDeletingEmptyClassDirectoriesFails() {
+        assertThrows<IllegalStateException> {
+            useTransaction {
+                deleteEmptyClassDirectories()
+            }
+        }
+    }
+}
+
+abstract class BaseOutputsAwareCompilationTransactionTest : BaseCompilationTransactionTest() {
+    @Test
+    fun testDeletingLastFileRemovesEmptyParentDirectoriesUpToOutputRoot() {
+        val file = workingDir.resolve("test/bar/A.class")
+        Files.createDirectories(file.parent)
+        Files.write(file, "something".toByteArray())
+        useTransaction {
+            deleteFile(file)
+            assertTrue(Files.isDirectory(file.parent))
+            deleteEmptyClassDirectories()
+            markAsSuccessful()
+        }
+        assertFalse(Files.exists(workingDir.resolve("test")))
+        assertTrue(Files.isDirectory(workingDir))
+    }
+
+    @Test
+    fun testDeletingFileKeepsNonEmptyParentDirectories() {
+        val file = workingDir.resolve("test/bar/A.class")
+        val sibling = workingDir.resolve("test/B.class")
+        Files.createDirectories(file.parent)
+        Files.write(file, "something".toByteArray())
+        Files.write(sibling, "something".toByteArray())
+        useTransaction {
+            deleteFile(file)
+            deleteEmptyClassDirectories()
+            markAsSuccessful()
+        }
+        assertFalse(Files.exists(workingDir.resolve("test/bar")))
+        assertTrue(Files.exists(sibling))
+    }
+
+    @Test
+    fun testDeletingMultipleFilesRemovesEmptyDirectories() {
+        val files = listOf("test/bar/A.class", "test/bar/B.class", "test/baz/deep/C.class", "test/D.class").map { workingDir.resolve(it) }
+        for (file in files) {
+            Files.createDirectories(file.parent)
+            Files.write(file, "something".toByteArray())
+        }
+        useTransaction {
+            for (file in files) {
+                deleteFile(file)
+            }
+            deleteEmptyClassDirectories()
+            markAsSuccessful()
+        }
+        assertFalse(Files.exists(workingDir.resolve("test")))
+        assertTrue(Files.isDirectory(workingDir))
+    }
+}
+
+class NonRecoverableCompilationTransactionTest : BaseOutputsAwareCompilationTransactionTest() {
+    override fun createTransaction() = NonRecoverableCompilationTransaction(classesDir = workingDir)
 
     @Test
     fun testModifyingExistingFileOnSuccess() {
@@ -234,8 +316,21 @@ class NonRecoverableCompilationTransactionTest : BaseCompilationTransactionTest(
     }
 }
 
-class RecoverableCompilationTransactionTest : BaseCompilationTransactionTest() {
-    override fun createTransaction() = RecoverableCompilationTransaction(DoNothingBuildReporter, stashDir)
+class RecoverableCompilationTransactionTest : BaseOutputsAwareCompilationTransactionTest() {
+    override fun createTransaction() = RecoverableCompilationTransaction(DoNothingBuildReporter, stashDir, workingDir)
+
+    @Test
+    fun testDeletedFileWithRemovedParentDirectoriesIsRestoredOnFailure() {
+        val file = workingDir.resolve("test/bar/A.class")
+        Files.createDirectories(file.parent)
+        Files.write(file, "something".toByteArray())
+        useTransaction {
+            deleteFile(file)
+            deleteEmptyClassDirectories()
+            assertFalse(Files.exists(workingDir.resolve("test")))
+        }
+        assertEquals("something", String(Files.readAllBytes(file)))
+    }
 
     @Test
     fun testModifyingExistingFileOnSuccess() {
