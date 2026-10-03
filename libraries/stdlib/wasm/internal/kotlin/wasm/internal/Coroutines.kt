@@ -30,6 +30,7 @@ internal suspend inline fun getCoroutineContext(): CoroutineContext =
 internal suspend fun getCoroutineContextImpl(): CoroutineContext =
     getContinuation<Any?>().context
 
+// TODO: remove after bootstrap
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
