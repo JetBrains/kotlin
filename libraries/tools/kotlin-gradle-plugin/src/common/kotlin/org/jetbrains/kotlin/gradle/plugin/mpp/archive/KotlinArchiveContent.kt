@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.archive
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.artifacts.metadataFragmentIdentifier
 import org.jetbrains.kotlin.gradle.artifacts.metadataPublishedArtifacts
-import org.jetbrains.kotlin.gradle.internal.tasks.ProducesKlib
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -23,22 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizedOutputDirectory
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.named
-
-// TODO: KT-88605 It should read compilation.output, but it can contain packed klib, which can't distinguish there
-private fun Project.klibFileCollection(taskProvider: TaskProvider<*>): FileCollection {
-    return project.filesProvider(taskProvider) {
-        taskProvider.flatMap { task ->
-            if (task !is ProducesKlib) {
-                logger.warn("${task.name}, that requested to be stored in Kotlin Archive is expected to produce Klib, falling back to empty")
-                project.provider { project.files() }
-            } else {
-                task.klibDirectory
-            }
-        }
-    }
-}
 
 internal fun TaskProvider<AssembleKotlinArchiveTask>.fillKotlinArchiveTargetContent(target: KotlinTarget) {
     if (target !is KotlinTargetWithKotlinArchiveSupport) return
@@ -46,8 +29,10 @@ internal fun TaskProvider<AssembleKotlinArchiveTask>.fillKotlinArchiveTargetCont
     val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
     val pathInKotlinArchive = target.platformNameInKotlinArchive
+    val platformKlib = target.platformKlibFiles
+    val isPlatformKlibPacked = target.doesPlatformKlibRequireUnpacking
     configure { task ->
-        task.addPlatformKlib(pathInKotlinArchive, task.project.klibFileCollection(mainCompilation.compileTaskProvider))
+        task.addPlatformKlib(pathInKotlinArchive, platformKlib, isPlatformKlibPacked)
         task.targetsNotPublishableOnCurrentHost.addAll(
             task.project.provider { if (target.publishable) emptyList() else listOf(target.targetName) }
         )
@@ -64,7 +49,7 @@ internal fun TaskProvider<AssembleKotlinArchiveTask>.fillKotlinArchiveTargetCont
             val cinteropTaskProvider = target.project.tasks.named<CInteropProcess>(cinterop.interopProcessingTaskName)
             configure { task ->
                 val pathProvider = cinteropTaskProvider.map { "${pathInKotlinArchive}/${it.outputFileName}" }
-                val filesProvider = task.project.klibFileCollection(cinteropTaskProvider)
+                val filesProvider = task.project.files(cinteropTaskProvider.flatMap { it.klibDirectory }).builtBy(cinteropTaskProvider)
                 task.addCInterop(pathProvider, filesProvider)
             }
         }

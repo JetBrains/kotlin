@@ -43,6 +43,7 @@ internal val kotlinArchiveResourcesSourceSets =
 internal fun KGPBaseTest.kotlinArchiveProducer(
     gradleVersion: GradleVersion,
     withAppleTargets: Boolean = true,
+    withNodeJs: Boolean = false,
 ): TestProject {
 
     return project("empty", gradleVersion) {
@@ -57,7 +58,7 @@ internal fun KGPBaseTest.kotlinArchiveProducer(
         }
         buildScriptInjection {
             project.applyMultiplatform {
-                kotlinArchiveTargets(withAppleTargets)
+                kotlinArchiveTargets(withAppleTargets, withNodeJs)
 
                 publishing {
                     publicationFormat.set(KotlinPublicationFormat.KOTLIN_ARCHIVE)
@@ -67,10 +68,18 @@ internal fun KGPBaseTest.kotlinArchiveProducer(
     }
 }
 
-internal fun KotlinMultiplatformExtension.kotlinArchiveTargets(withAppleTargets: Boolean = true) {
+internal fun KotlinMultiplatformExtension.kotlinArchiveTargets(withAppleTargets: Boolean = true, withNodeJs: Boolean = false) {
     jvm()
-    js()
-    wasmJs()
+    js() {
+        if (withNodeJs) {
+            nodejs()
+        }
+    }
+    wasmJs() {
+        if (withNodeJs) {
+            nodejs()
+        }
+    }
     linuxX64()
     linuxArm64()
     if (withAppleTargets) {
@@ -120,6 +129,40 @@ internal fun TestProject.configureCinterop(
         }
     }
 }
+
+internal val webResources = listOf(
+    "stored.js",
+    "stored.mjs",
+    "stored.wasm",
+    "stored.js.map",
+    "stored.html",
+    "stored.txt", // not in allowed list
+)
+
+internal const val STORED_NPM_DEPENDENCY_NAME = "test-npm-dep"
+internal const val STORED_NPM_DEPENDENCY_VERSION = "1.1.1"
+
+internal fun TestProject.configureWebResourcesStoredInsideKlib() {
+    webSourceSetsWithFilesStoredInsideKlib.forEach { sourceSetName ->
+        webResources.forEach { fileName ->
+            val storedFile = projectPath.resolve("src/$sourceSetName/resources/$fileName")
+            storedFile.parent.createDirectories()
+            storedFile.writeText("$sourceSetName $fileName\n")
+        }
+    }
+    buildScriptInjection {
+        project.applyMultiplatform {
+            sourceSets.jsMain.dependencies {
+                api(npm(STORED_NPM_DEPENDENCY_NAME, STORED_NPM_DEPENDENCY_VERSION))
+            }
+            sourceSets.wasmJsMain.dependencies {
+                api(npm(STORED_NPM_DEPENDENCY_NAME, STORED_NPM_DEPENDENCY_VERSION))
+            }
+        }
+    }
+}
+
+private val webSourceSetsWithFilesStoredInsideKlib = listOf("jsMain", "wasmJsMain")
 
 private fun KotlinMultiplatformExtension.publishResourcesOfAllSupportedTargets(project: Project) {
     val resourcesPublication = project.extraProperties.get(
