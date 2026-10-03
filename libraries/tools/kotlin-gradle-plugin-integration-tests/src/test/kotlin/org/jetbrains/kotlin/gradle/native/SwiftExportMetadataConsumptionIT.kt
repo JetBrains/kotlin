@@ -425,7 +425,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
 
                 if (rootPackageOverride != null) {
                     val subprojectSwiftPath =
-                        projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/$expectedDirectDependencyModuleName/$expectedDirectDependencyModuleName.swift")
+                        projectPath.resolve("build/SwiftExport/iosArm64/files/$expectedDirectDependencyModuleName/$expectedDirectDependencyModuleName.swift")
                     assertFileContains(
                         subprojectSwiftPath,
                         "public typealias LibFoo = ExportedKotlinPackages.$rootPackageOverride.LibFoo"
@@ -434,7 +434,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                 // Root package overrides for transitive dependencies are ignored!
                 if (expectedTransitiveDependencyModuleName != null && transitiveRootPackageOverride != null) {
                     val subprojectSwiftPath =
-                        projectPath.resolve("build/SwiftExport/iosArm64/Debug/files/$expectedTransitiveDependencyModuleName/$expectedTransitiveDependencyModuleName.swift")
+                        projectPath.resolve("build/SwiftExport/iosArm64/files/$expectedTransitiveDependencyModuleName/$expectedTransitiveDependencyModuleName.swift")
                     assertFileDoesNotContain(
                         subprojectSwiftPath,
                         "public typealias LibBar = ExportedKotlinPackages.$transitiveRootPackageOverride.LibBar",
@@ -460,7 +460,7 @@ class SwiftExportMetadataConsumptionIT : KGPBaseTest() {
                     ":embedSwiftExportForXcode",
                     environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
                 ) {
-                    assertTasksExecuted(":iosArm64DebugSwiftExport")
+                    assertTasksExecuted(":iosArm64SwiftExport")
 
                     val buildProductsDir = this@project.gradleRunner.environment?.get("BUILT_PRODUCTS_DIR")?.let { File(it) }
                     assertNotNull(buildProductsDir)

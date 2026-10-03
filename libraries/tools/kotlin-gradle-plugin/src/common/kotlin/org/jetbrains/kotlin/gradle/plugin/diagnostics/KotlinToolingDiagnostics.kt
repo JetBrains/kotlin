@@ -2017,6 +2017,23 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
+    object SwiftExportPackageModulesMismatch : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
+        /**
+         * @param differences one line per module that differs
+         */
+        operator fun invoke(referenceTarget: String, otherTarget: String, differences: List<String>) = build {
+            title("Swift Modules Differ Between Targets")
+                .description {
+                    "Swift Export produced different Swift modules for '$referenceTarget' and '$otherTarget', " +
+                            "so their output cannot be combined into one Swift package:\n" +
+                            differences.joinToString("\n") { "  $it" }
+                }
+                .solution {
+                    "Make every Apple target of the project export the same Swift modules with the same dependencies."
+                }
+        }
+    }
+
     internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'swiftExport { }' DSL")

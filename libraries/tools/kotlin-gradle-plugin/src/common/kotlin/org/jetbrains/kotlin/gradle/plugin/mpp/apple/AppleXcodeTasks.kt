@@ -248,9 +248,11 @@ internal fun Project.registerEmbedSwiftExportTask(
     val swiftExportConfiguration = if (exportExtension.isSwiftExportConfigured) {
         SwiftExportConfigurationCompat.from(
             configuration = exportExtension.swiftExportConfiguration,
+            integration = checkNotNull(exportExtension.swiftExportConfiguration.activatedXcodeIntegration) {
+                "The Xcode integration is not activated in project '$path'"
+            },
             kotlinNativeCompilation = kotlinNativeCompilation,
             providers = providers,
-            objects = objects,
         )
     } else {
         SwiftExportConfigurationCompat.from(

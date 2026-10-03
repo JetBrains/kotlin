@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.swiftPackagePlatforms
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.CinteropPackageImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SPMManifestGenerator
+import org.jetbrains.kotlin.konan.target.Family
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -109,6 +111,68 @@ class SwiftExportManifestGeneratorTest {
 
         assertEquals(cinteropDependencyManifestGold(), manifest)
     }
+
+    @Test
+    fun `test swift export SPM manifest with a kotlin binary target and platforms`() {
+        val manifest = SPMManifestGenerator.generateManifest(
+            "Shared",
+            "SharedLibrary",
+            "KotlinRuntime",
+            sharedModulesFixture("Shared"),
+            kotlinBinaryTarget = "SharedKotlin",
+            platforms = linkedMapOf("iOS" to "18.0", "macOS" to "15.0"),
+        )
+
+        assertEquals(platformsManifestGold(), manifest)
+    }
+
+    @Test
+    fun `test swift package platforms are sorted and have no duplicates`() {
+        assertEquals(
+            listOf("iOS" to "18.0", "macOS" to "15.0"),
+            swiftPackagePlatforms(listOf(Family.OSX, Family.IOS, Family.IOS)).toList()
+        )
+    }
+
+    private fun platformsManifestGold() = """
+        // swift-tools-version: 5.9
+
+        import PackageDescription
+        let package = Package(
+            name: "Shared",
+            platforms: [
+                .iOS("18.0"),
+                .macOS("15.0")
+            ],
+            products: [
+                .library(
+                    name: "SharedLibrary",
+                    targets: ["Shared", "Dependency"]
+                )
+            ],
+            targets: [
+                .binaryTarget(
+                    name: "SharedKotlin",
+                    path: "SharedKotlin.xcframework"
+                ),
+                .target(
+                    name: "Shared",
+                    dependencies: ["Dependency", "SharedBridge", "KotlinRuntime"]
+                ),
+                .target(
+                    name: "SharedBridge"
+                ),
+                .target(
+                    name: "Dependency",
+                    dependencies: ["KotlinRuntime"]
+                ),
+                .target(
+                    name: "KotlinRuntime",
+                    dependencies: ["SharedKotlin"]
+                )
+            ]
+        )
+    """.trimIndent() + "\n"
 
     private fun sharedModulesFixture(swiftApiModule: String): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
