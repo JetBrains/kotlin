@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.useArrayLiteralResolution
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -114,7 +115,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
 
         when (expression) {
             is FirCollectionLiteral -> return checkArguments(expression.arguments)?.let { Diagnostic(it, expression.source) }
-            is FirFunctionCall if (expression.isArrayOfOrArrayDotOfCall()) ->
+            is FirFunctionCall if (!useArrayLiteralResolution() && expression.isArrayOfOrArrayDotOfCall()) ->
                 return checkArguments(expression.unwrapArgumentsOfArrayOfCall())?.let { Diagnostic(it, expression.source) }
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
