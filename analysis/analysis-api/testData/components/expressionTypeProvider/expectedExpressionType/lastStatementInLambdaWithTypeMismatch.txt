@@ -1,12 +1,28 @@
-expression: av
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: [
-    KaTypeParameterType:
-      annotations: []
-      type: K
-    KaTypeParameterType:
-      annotations: []
-      type: V
-  ]
-  type: kotlin/Pair<K, V>
+expression:
+  av
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: K
+      KaTypeParameterType:
+        annotations: []
+        type: V
+    ]
+    type: kotlin/Pair<K, V>
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: K
+      KaTypeParameterType:
+        annotations: []
+        type: V
+    ]
+    type: kotlin/Pair<K, V>

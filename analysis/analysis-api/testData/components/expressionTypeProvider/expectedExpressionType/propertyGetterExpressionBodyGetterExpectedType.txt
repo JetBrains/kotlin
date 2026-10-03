@@ -1,5 +1,14 @@
-expression: somePrefix
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Boolean
+expression:
+  somePrefix
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean

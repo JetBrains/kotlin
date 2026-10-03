@@ -1,5 +1,14 @@
-expression: { /* Argument */ }
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: java/lang/Runnable
+expression:
+  { /* Argument */ }
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: java/lang/Runnable
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: java/lang/Runnable

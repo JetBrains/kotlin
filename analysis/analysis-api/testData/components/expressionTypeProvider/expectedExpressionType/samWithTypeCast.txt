@@ -1,5 +1,14 @@
-expression: { /* Type Cast */ }
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: java/lang/Runnable
+expression:
+  { /* Type Cast */ }
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: java/lang/Runnable
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: java/lang/Runnable

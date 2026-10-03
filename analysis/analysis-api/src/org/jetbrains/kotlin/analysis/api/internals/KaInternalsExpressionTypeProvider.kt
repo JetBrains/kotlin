@@ -23,6 +23,8 @@ public interface KaInternalsExpressionTypeProvider {
 
     public fun expectedType(element: PsiElement): KaType?
 
+    public fun inferredExpectedType(element: PsiElement): KaType?
+
     public fun isDefinitelyNull(expression: KtExpression): Boolean
 
     public fun isDefinitelyNotNull(expression: KtExpression): Boolean
