@@ -125,7 +125,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @Override
-    @KtNonPublicApi
+    @KtIdeApi
     public void rawDelete() throws IncorrectOperationException {
         super.delete();
     }

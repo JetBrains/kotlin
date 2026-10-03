@@ -386,7 +386,7 @@ interface KtPsiMutationService {
 /**
  * Deletes [element] with [deletion] when [KtPsiMutationService] is registered, or performs the plain platform deletion otherwise.
  */
-@OptIn(KtIdeApi::class, KtNonPublicApi::class)
+@OptIn(KtIdeApi::class)
 internal fun deleteWithMutationService(element: KtElement, deletion: Consumer<KtPsiMutationService>) {
     val mutationService = KtPsiMutationService.getInstanceOrNull()
     if (mutationService != null) {

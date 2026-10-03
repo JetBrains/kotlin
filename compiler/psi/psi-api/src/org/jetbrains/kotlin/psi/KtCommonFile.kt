@@ -375,7 +375,7 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
 
     override fun getPsiOrParent(): KtElement = this
 
-    @KtNonPublicApi
+    @KtIdeApi
     override fun rawDelete() {
         super.delete()
     }

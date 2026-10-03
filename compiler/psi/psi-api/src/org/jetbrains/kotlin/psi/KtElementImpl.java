@@ -86,7 +86,7 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     }
 
     @Override
-    @KtNonPublicApi
+    @KtIdeApi
     public void rawDelete() throws IncorrectOperationException {
         super.delete();
     }

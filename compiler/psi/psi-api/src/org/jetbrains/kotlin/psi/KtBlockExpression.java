@@ -104,7 +104,7 @@ public class KtBlockExpression extends LazyParseablePsiElement implements KtElem
     }
 
     @Override
-    @KtNonPublicApi
+    @KtIdeApi
     public void rawDelete() throws IncorrectOperationException {
         super.delete();
     }
