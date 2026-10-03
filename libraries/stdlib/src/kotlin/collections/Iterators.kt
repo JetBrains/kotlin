@@ -25,7 +25,7 @@ public inline operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
 public fun <T> Iterator<T>.withIndex(): Iterator<IndexedValue<T>> = IndexingIterator(this)
 
 /**
- * Performs the given [operation] on each element of this [Iterator].
+ * Performs the given [operation] on each element of this [Iterator] in iteration order.
  * @sample samples.collections.Iterators.forEachIterator
  */
 public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit): Unit {
