@@ -42,8 +42,12 @@ interface KtElement : NavigatablePsiElement, KtPureElement {
 
     /**
      * Deletes this PSI element using the raw platform implementation, bypassing Kotlin PSI-specific [delete] overrides.
+     *
+     * Regular clients should use [delete] instead. When [KtPsiMutationService] is not registered, it performs the same plain deletion, and
+     * when the service is registered, as in the IntelliJ Kotlin plugin, it may also adjust the surrounding code, e.g., delete a semicolon
+     * that follows the element.
      */
-    @KtNonPublicApi
+    @KtIdeApi
     fun rawDelete()
 
     @Deprecated(
