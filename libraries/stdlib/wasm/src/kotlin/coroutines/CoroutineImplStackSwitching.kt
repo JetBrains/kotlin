@@ -9,12 +9,10 @@ package kotlin.coroutines
 
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
-import kotlin.wasm.internal.WasmPrimitiveConstructor
 import kotlin.wasm.internal.WasmCoroutineMode
 import kotlin.wasm.internal.nullContrefIntrinsic
 import kotlin.wasm.internal.reftypes.typedcontref
-import kotlin.wasm.internal.resumeThrowImpl
-import kotlin.wasm.internal.resumeWithImpl
+import kotlin.wasm.internal.resumeWithIntrinsic
 
 
 @SinceKotlin("1.3")
@@ -23,8 +21,8 @@ internal open class CoroutineImplStackSwitching<T, R>(
     private val resultContinuation: Continuation<R>,
 ) : Continuation<T> {
 
-    internal var result: Any? = null
-    internal var exception: Throwable? = null
+    internal var result: Result<Any?> =
+        Result.success(null)
 
     public override val context: CoroutineContext = resultContinuation.context
     private var intercepted_: Continuation<T>? = null
@@ -32,9 +30,8 @@ internal open class CoroutineImplStackSwitching<T, R>(
         ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
             .also { intercepted_ = it }
 
-    // Box for the inner WebAssembly continuation object.
-    internal val wasmContBox: WasmContinuationBox =
-        WasmContinuationBox(nullContrefIntrinsic())
+    // WebAssembly continuation of this coroutine.
+    internal var wasmContinuation: typedcontref<(Any?) -> Unit>? = nullContrefIntrinsic()
 
     // True while this coroutine's wasm stack is executing
     internal var isRunning = true
@@ -42,10 +39,14 @@ internal open class CoroutineImplStackSwitching<T, R>(
     // Set by `resumeWith` when the coroutine resumes itself from inside its own `block`.
     internal var resumedWhileRunning = false
 
-    @Suppress("UNCHECKED_CAST")
+    /**
+     * Set when a `suspendCoroutineUninterceptedOrReturn` block resumed this continuation itself and
+     * the wasm stack kept running instead of parking.
+     */
+    internal var absorbedSelfResume = false
+
     override fun resumeWith(result: Result<T>) {
-        this.result = result.getOrNull()
-        exception = result.exceptionOrNull()
+        this.result = result
 
         // The coroutine is resuming itself from inside its own `block`: the wasm stack is still
         // running, so there is nothing to resume -- just park the result for the block to pick up.
@@ -55,27 +56,24 @@ internal open class CoroutineImplStackSwitching<T, R>(
             return
         }
 
-        try {
+        val completionResult = try {
             val outcome = doResume()
-            this.result = outcome
-            exception = null
             if (outcome === COROUTINE_SUSPENDED) return // isRunning was already cleared before parking
+            Result.success(outcome)
         } catch (exception: Throwable) { // Catch all exceptions
-            this.result = null
-            this.exception = exception
+            Result.failure(exception)
         }
         isRunning = false // the stack ran to completion
 
-        releaseIntercepted() // this instance is terminating
+        completeWith(completionResult)
+    }
 
-        val completion = resultContinuation
+    @Suppress("UNCHECKED_CAST")
+    internal fun completeWith(result: Result<Any?>) {
+        releaseIntercepted()
 
         // top-level completion reached -- invoke and return
-        if (exception != null) {
-            completion.resumeWithException(exception!!)
-        } else {
-            completion.resume(this.result as R)
-        }
+        resultContinuation.resumeWith(result as Result<R>)
     }
 
     private fun releaseIntercepted() {
@@ -87,19 +85,12 @@ internal open class CoroutineImplStackSwitching<T, R>(
     }
 
     open fun doResume(): Any? {
-        val wasmCont = wasmContBox.wasmContinuation!!
-        wasmContBox.wasmContinuation = nullContrefIntrinsic()
+        val wasmCont = wasmContinuation!!
+        wasmContinuation = nullContrefIntrinsic()
         isRunning = true
 
-        val e = exception
-        val resumeResult: Any? =
-            if (e != null)
-                resumeThrowImpl(e, wasmCont)
-            else
-                resumeWithImpl(wasmCont)
+        wasmContinuation = resumeWithIntrinsic(wasmCont)
 
-        return resumeResult
+        return COROUTINE_SUSPENDED
     }
 }
-
-internal class WasmContinuationBox @WasmPrimitiveConstructor constructor(var wasmContinuation: typedcontref<(Any?) -> Unit>?)
