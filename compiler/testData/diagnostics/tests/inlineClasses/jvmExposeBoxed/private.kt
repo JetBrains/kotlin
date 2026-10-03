@@ -41,8 +41,8 @@ class B <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@JvmExposeBoxed<!> private con
     <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@JvmExposeBoxed<!>
     private fun bar(ic: IC) {}
 
-    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@get:JvmExposeBoxed("getIC")<!>
-    <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@set:JvmExposeBoxed<!>
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR, JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@get:JvmExposeBoxed("getIC")<!>
+    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR, JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@set:JvmExposeBoxed<!>
     private var ic: IC = IC("")
 
     <!JVM_EXPOSE_BOXED_CANNOT_EXPOSE_PRIVATE!>@get:JvmExposeBoxed("getIC1")<!>
