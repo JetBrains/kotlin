@@ -419,7 +419,8 @@ object Elements : TemplateGroupBase() {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this ${f.collection}." }
         sample(
             when (family) {
-                CharSequences, Lists -> "samples.collections.Collections.Elements.getOrElse"
+                CharSequences -> "samples.text.Strings.getOrElse"
+                Lists -> "samples.collections.Collections.Elements.getOrElse"
                 ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned -> "samples.collections.Arrays.Usage.getOrElse"
                 else -> "samples.collections.Collections.Elements.getOrElse"
             }
@@ -488,6 +489,9 @@ object Elements : TemplateGroupBase() {
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
         sample("samples.collections.Collections.Elements.getOrNull")
+        specialFor(CharSequences) {
+            sample("samples.text.Strings.getOrNull")
+        }
         returns("T?")
         val indices = if (family == Lists) "0..<size" else "indices"
         body {
