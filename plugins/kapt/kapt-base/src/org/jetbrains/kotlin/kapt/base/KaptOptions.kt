@@ -75,7 +75,8 @@ class KaptOptions(
         val flags: MutableSet<KaptFlag> = KaptFlag.entries.filter { it.defaultValue }.toMutableSet()
 
         var mode: AptMode = AptMode.STUBS_AND_APT
-        var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
+        var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.STANDARD
+        var usedDefaultDetectMemoryLeaks = false
         var stubGenerationScheme: StubGenerationScheme = StubGenerationScheme.JTREE
         var stubWriterThreads: Int = 1
         var processorsStatsReportFile: File? = null
@@ -136,7 +137,7 @@ interface KaptSelector {
 }
 
 enum class DetectMemoryLeaksMode(override val stringValue: String) : KaptSelector {
-    DEFAULT("default"), PARANOID("paranoid"), NONE("none")
+    STANDARD("standard"), PARANOID("paranoid"), NONE("none")
 }
 
 enum class StubGenerationScheme(override val stringValue: String) : KaptSelector {

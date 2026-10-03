@@ -1,0 +1,58 @@
+# copy
+../simple/ap
+ap
+
+# mkdir
+output/ap
+output/enabled/empty
+output/enabled/stubs
+output/enabled/classes
+output/enabled/sources
+output/disabled/empty
+output/disabled/stubs
+output/disabled/classes
+output/disabled/sources
+output/check
+
+# kotlinc
+-d output/ap
+ap/Processor.kt
+
+# copy
+../simple/ap/META-INF/services/javax.annotation.processing.Processor
+output/ap/META-INF/services/javax.annotation.processing.Processor
+
+# kapt
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/enabled/stubs
+-Kapt-classes=output/enabled/classes
+-Kapt-sources=output/enabled/sources
+-Kapt-classpath=output/enabled/empty
+-Kapt-include-compile-classpath=true
+-d output/enabled/classes
+-cp output/ap
+Test.kt
+
+# kapt
+-Kapt-mode=stubsAndApt
+-Kapt-stubs=output/disabled/stubs
+-Kapt-classes=output/disabled/classes
+-Kapt-sources=output/disabled/sources
+-Kapt-classpath=output/disabled/empty
+-Kapt-include-compile-classpath=false
+-d output/disabled/classes
+-cp output/ap
+Test.kt
+
+# kotlinc
+-d output/check
+Check.kt
+
+# java
+-cp output/check
+CheckKt
+
+# after
+enabled: generated
+disabled: absent
+
