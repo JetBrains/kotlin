@@ -27,6 +27,16 @@ class FileTest {
     }
 
     @Test
+    fun maybeDecompressPartialGzipMagic() {
+        // A prefix of GZIP_MAGIC must be unread as raw bytes, not opened as gzip.
+        val oneByte = byteArrayOf(0x1f.toByte())
+        assertContentEquals(oneByte, ByteArrayInputStream(oneByte).maybeDecompress().readBytes())
+
+        val prefix = byteArrayOf(0x1f.toByte(), 0x00)
+        assertContentEquals(prefix, ByteArrayInputStream(prefix).maybeDecompress().readBytes())
+    }
+
+    @Test
     fun maybeDecompressEmpty() {
         val roundTrip = ByteArrayInputStream(byteArrayOf()).maybeDecompress().readBytes()
         assertEquals(0, roundTrip.size)
