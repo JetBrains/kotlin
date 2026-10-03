@@ -12,69 +12,71 @@ package samples.generated.issorted
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IsSortedSequencesSamples {
 
     @Sample
     fun isSorted() {
-        assertPrints(sequenceOf<String>().isSorted(), "true")
-        assertPrints(sequenceOf("apple").isSorted(), "true")
+        assertTrue(sequenceOf<String>().isSorted())
+        assertTrue(sequenceOf("apple").isSorted())
 
         val sorted = sequenceOf("apple", "banana", "cherry")
-        assertPrints(sorted.isSorted(), "true")
+        assertTrue(sorted.isSorted())
 
         val unsorted = sequenceOf("banana", "apple", "cherry")
-        assertPrints(unsorted.isSorted(), "false")
+        assertFalse(unsorted.isSorted())
     }
 
     @Sample
     fun isSortedDescending() {
-        assertPrints(sequenceOf<String>().isSortedDescending(), "true")
-        assertPrints(sequenceOf("cherry").isSortedDescending(), "true")
+        assertTrue(sequenceOf<String>().isSortedDescending())
+        assertTrue(sequenceOf("cherry").isSortedDescending())
 
         val sorted = sequenceOf("cherry", "banana", "apple")
-        assertPrints(sorted.isSortedDescending(), "true")
+        assertTrue(sorted.isSortedDescending())
 
         val unsorted = sequenceOf("banana", "cherry", "apple")
-        assertPrints(unsorted.isSortedDescending(), "false")
+        assertFalse(unsorted.isSortedDescending())
     }
 
     @Sample
     fun isSortedWith() {
-        assertPrints(sequenceOf<String>().isSortedWith(naturalOrder()), "true")
-        assertPrints(sequenceOf("apple").isSortedWith(naturalOrder()), "true")
+        assertTrue(sequenceOf<String>().isSortedWith(naturalOrder()))
+        assertTrue(sequenceOf("apple").isSortedWith(naturalOrder()))
 
-        assertPrints(sequenceOf("apple", "banana", "cherry").isSortedWith(naturalOrder()), "true")
-        assertPrints(sequenceOf("apple", "banana", "cherry").isSortedWith(reverseOrder()), "false")
+        assertTrue(sequenceOf("apple", "banana", "cherry").isSortedWith(naturalOrder()))
+        assertFalse(sequenceOf("apple", "banana", "cherry").isSortedWith(reverseOrder()))
 
-        assertPrints(sequenceOf("cherry", "banana", "apple").isSortedWith(reverseOrder()), "true")
+        assertTrue(sequenceOf("cherry", "banana", "apple").isSortedWith(reverseOrder()))
 
-        assertPrints(sequenceOf("Apple", "banana", "Cherry").isSortedWith(String.CASE_INSENSITIVE_ORDER), "true")
+        assertTrue(sequenceOf("Apple", "banana", "Cherry").isSortedWith(String.CASE_INSENSITIVE_ORDER))
 
-        assertPrints(sequenceOf(null, "apple", "banana").isSortedWith(nullsFirst(naturalOrder())), "true")
-        assertPrints(sequenceOf(null, "apple", "banana").isSortedWith(nullsLast(naturalOrder())), "false")
+        assertTrue(sequenceOf(null, "apple", "banana").isSortedWith(nullsFirst(naturalOrder())))
+        assertFalse(sequenceOf(null, "apple", "banana").isSortedWith(nullsLast(naturalOrder())))
     }
 
     @Sample
     fun isSortedBy() {
-        assertPrints(sequenceOf<String>().isSortedBy { it.length }, "true")
-        assertPrints(sequenceOf("c").isSortedBy { it.length }, "true")
+        assertTrue(sequenceOf<String>().isSortedBy { it.length })
+        assertTrue(sequenceOf("c").isSortedBy { it.length })
 
-        assertPrints(sequenceOf("c", "bb", "aaa").isSortedBy { it.length }, "true")
-        assertPrints(sequenceOf("c", "bb", "aaa").isSortedBy { it }, "false")
-        assertPrints(sequenceOf("a", "b").isSortedBy { if (it == "a") null else it }, "true")
-        assertPrints(sequenceOf(null, "a", "b").isSortedBy { it }, "true")
-        assertPrints(sequenceOf(null, "c", "bb").isSortedBy { it?.length }, "true")
+        assertTrue(sequenceOf("c", "bb", "aaa").isSortedBy { it.length })
+        assertFalse(sequenceOf("c", "bb", "aaa").isSortedBy { it })
+        assertTrue(sequenceOf("a", "b").isSortedBy { if (it == "a") null else it })
+        assertTrue(sequenceOf(null, "a", "b").isSortedBy { it })
+        assertTrue(sequenceOf(null, "c", "bb").isSortedBy { it?.length })
     }
 
     @Sample
     fun isSortedByDescending() {
-        assertPrints(sequenceOf<String>().isSortedByDescending { it.length }, "true")
-        assertPrints(sequenceOf("aaa").isSortedByDescending { it.length }, "true")
+        assertTrue(sequenceOf<String>().isSortedByDescending { it.length })
+        assertTrue(sequenceOf("aaa").isSortedByDescending { it.length })
 
-        assertPrints(sequenceOf("aaa", "bb", "c").isSortedByDescending { it.length }, "true")
-        assertPrints(sequenceOf("aaa", "bb", "c").isSortedByDescending { it }, "false")
-        assertPrints(sequenceOf("b", "a").isSortedByDescending { if (it == "a") null else it }, "true")
-        assertPrints(sequenceOf("aaa", "bb", null).isSortedByDescending { it?.length }, "true")
+        assertTrue(sequenceOf("aaa", "bb", "c").isSortedByDescending { it.length })
+        assertFalse(sequenceOf("aaa", "bb", "c").isSortedByDescending { it })
+        assertTrue(sequenceOf("b", "a").isSortedByDescending { if (it == "a") null else it })
+        assertTrue(sequenceOf("aaa", "bb", null).isSortedByDescending { it?.length })
     }
 }

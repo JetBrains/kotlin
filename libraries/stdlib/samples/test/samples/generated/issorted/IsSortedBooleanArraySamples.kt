@@ -12,67 +12,69 @@ package samples.generated.issorted
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IsSortedBooleanArraySamples {
 
     @Sample
     fun isSorted() {
-        assertPrints(booleanArrayOf().isSorted(), "true")
-        assertPrints(booleanArrayOf(false).isSorted(), "true")
+        assertTrue(booleanArrayOf().isSorted())
+        assertTrue(booleanArrayOf(false).isSorted())
 
         val sorted = booleanArrayOf(false, false, true)
-        assertPrints(sorted.isSorted(), "true")
+        assertTrue(sorted.isSorted())
 
         val unsorted = booleanArrayOf(false, true, false)
-        assertPrints(unsorted.isSorted(), "false")
+        assertFalse(unsorted.isSorted())
     }
 
     @Sample
     fun isSortedDescending() {
-        assertPrints(booleanArrayOf().isSortedDescending(), "true")
-        assertPrints(booleanArrayOf(true).isSortedDescending(), "true")
+        assertTrue(booleanArrayOf().isSortedDescending())
+        assertTrue(booleanArrayOf(true).isSortedDescending())
 
         val sorted = booleanArrayOf(true, false, false)
-        assertPrints(sorted.isSortedDescending(), "true")
+        assertTrue(sorted.isSortedDescending())
 
         val unsorted = booleanArrayOf(false, true, false)
-        assertPrints(unsorted.isSortedDescending(), "false")
+        assertFalse(unsorted.isSortedDescending())
     }
 
     @Sample
     fun isSortedWith() {
-        assertPrints(booleanArrayOf().isSortedWith(naturalOrder()), "true")
-        assertPrints(booleanArrayOf(false).isSortedWith(naturalOrder()), "true")
+        assertTrue(booleanArrayOf().isSortedWith(naturalOrder()))
+        assertTrue(booleanArrayOf(false).isSortedWith(naturalOrder()))
 
         val sorted = booleanArrayOf(false, false, true)
-        assertPrints(sorted.isSortedWith(naturalOrder()), "true")
-        assertPrints(sorted.isSortedWith(reverseOrder()), "false")
+        assertTrue(sorted.isSortedWith(naturalOrder()))
+        assertFalse(sorted.isSortedWith(reverseOrder()))
 
         val reversed = booleanArrayOf(true, false, false)
-        assertPrints(reversed.isSortedWith(reverseOrder()), "true")
+        assertTrue(reversed.isSortedWith(reverseOrder()))
     }
 
     @Sample
     fun isSortedBy() {
-        assertPrints(booleanArrayOf().isSortedBy { it.compareTo(false) }, "true")
-        assertPrints(booleanArrayOf(false).isSortedBy { it.compareTo(false) }, "true")
+        assertTrue(booleanArrayOf().isSortedBy { it.compareTo(false) })
+        assertTrue(booleanArrayOf(false).isSortedBy { it.compareTo(false) })
 
         val values = booleanArrayOf(false, false, true)
-        assertPrints(values.isSortedBy { it.compareTo(false) }, "true")
-        assertPrints(values.isSortedBy { it }, "true")
-        assertPrints(values.isSortedBy { !it }, "false")
-        assertPrints(booleanArrayOf(false, true).isSortedBy { if (it == false) null else it }, "true")
+        assertTrue(values.isSortedBy { it.compareTo(false) })
+        assertTrue(values.isSortedBy { it })
+        assertFalse(values.isSortedBy { !it })
+        assertTrue(booleanArrayOf(false, true).isSortedBy { if (it == false) null else it })
     }
 
     @Sample
     fun isSortedByDescending() {
-        assertPrints(booleanArrayOf().isSortedByDescending { it.compareTo(false) }, "true")
-        assertPrints(booleanArrayOf(true).isSortedByDescending { it.compareTo(false) }, "true")
+        assertTrue(booleanArrayOf().isSortedByDescending { it.compareTo(false) })
+        assertTrue(booleanArrayOf(true).isSortedByDescending { it.compareTo(false) })
 
         val values = booleanArrayOf(true, false, false)
-        assertPrints(values.isSortedByDescending { it.compareTo(false) }, "true")
-        assertPrints(values.isSortedByDescending { it }, "true")
-        assertPrints(values.isSortedByDescending { !it }, "false")
-        assertPrints(booleanArrayOf(true, false).isSortedByDescending { if (it == false) null else it }, "true")
+        assertTrue(values.isSortedByDescending { it.compareTo(false) })
+        assertTrue(values.isSortedByDescending { it })
+        assertFalse(values.isSortedByDescending { !it })
+        assertTrue(booleanArrayOf(true, false).isSortedByDescending { if (it == false) null else it })
     }
 }
