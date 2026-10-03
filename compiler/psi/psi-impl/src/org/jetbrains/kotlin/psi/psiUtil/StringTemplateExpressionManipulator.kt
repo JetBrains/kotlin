@@ -13,6 +13,20 @@ import com.intellij.openapi.util.text.StringUtil
 import kotlin.jvm.java
 import kotlin.text.substring
 
+/**
+ * An outdated [ElementManipulator][com.intellij.psi.ElementManipulator] for [KtStringTemplateExpression].
+ *
+ * Unlike [KtStringTemplateExpressionManipulator], it escapes interpolated expressions in single-quoted strings along with the literal text,
+ * which breaks string literals inside them, e.g., `${"a"}`.
+ */
+@Deprecated(
+    message = "Use KtStringTemplateExpressionManipulator instead",
+    replaceWith = ReplaceWith(
+        "KtStringTemplateExpressionManipulator",
+        "org.jetbrains.kotlin.psi.psiUtil.KtStringTemplateExpressionManipulator",
+    ),
+    level = DeprecationLevel.WARNING,
+)
 class StringTemplateExpressionManipulator : AbstractElementManipulator<KtStringTemplateExpression>() {
     override fun handleContentChange(
         element: KtStringTemplateExpression,
