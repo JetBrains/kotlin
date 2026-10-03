@@ -508,7 +508,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 else -> error("Unknown cocoapods platform: $family")
             }
 
-            task.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
+            task.description = "Creates a synthetic Xcode project to retrieve CocoaPods dependencies"
             task.podName.set(project.provider { cocoapodsExtension.name })
             task.specRepos.set(project.provider { cocoapodsExtension.specRepos })
             task.family.set(family)

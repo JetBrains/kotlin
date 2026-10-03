@@ -17,13 +17,13 @@ public open class JvmFieldsClass {
 
     public companion object JvmFieldsCompanion {
         @JvmField
-        public var publicСField = "x"
+        public var publicCField = "x"
 
         @JvmField
-        internal var internalСField = "y"
+        internal var internalCField = "y"
 
         @JvmField
-        protected var protectedСField = "y"
+        protected var protectedCField = "y"
 
         public const val publicConst = 1
         internal const val internalConst = 2

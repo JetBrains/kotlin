@@ -94,7 +94,7 @@ object FirTree : AbstractFirTreeBuilder() {
             This includes all function-like declarations (see [FirFunction] and all variable-like declarations (see [FirVariable]).
 
             Notable properties:
-            - [symbol] — the symbol which serves as a pointer to this càllable declaration.
+            - [symbol] — the symbol which serves as a pointer to this callable declaration.
             - [typeParameters] — type parameter references declared for this callable declaration, if any.
             In certain situations, references to type parameters of its outer classes may also be present in the list. 
             - [dispatchReceiverType] — dispatch receiver type for non-static member callables, or null for top-level or static callables.

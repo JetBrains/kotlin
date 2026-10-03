@@ -28,6 +28,7 @@ dependencies {
     }
     testImplementation(gradleTestKit())
     testImplementation(libs.intellij.asm)
+    testImplementation(libs.icu4j)
 }
 
 jvmToolchains {
