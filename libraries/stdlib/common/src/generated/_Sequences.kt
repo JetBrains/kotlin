@@ -450,8 +450,7 @@ public fun <T> Sequence<T>.filter(predicate: (T) -> Boolean): Sequence<T> {
  * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public fun <T> Sequence<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): Sequence<T> {
-    // TODO: Rewrite with generalized MapFilterIndexingSequence
-    return TransformingSequence(FilteringSequence(IndexingSequence(this), true, { predicate(it.index, it.value) }), { it.value })
+    return FilteringIndexedSequence(this, true, predicate)
 }
 
 /**
