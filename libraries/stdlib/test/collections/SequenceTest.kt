@@ -63,6 +63,21 @@ public class SequenceTest {
 
     @Test fun filterIndexed() {
         assertEquals(listOf(1, 2, 5, 13, 34), fibonacci().filterIndexed { index, _ -> index % 2 == 1 }.take(5).toList())
+
+        // Empty sequence
+        val emptyResult = emptySequence<String>().filterIndexed { _, _ -> fail("Predicate should not be called") }.toList()
+        assertEquals(emptyList(), emptyResult)
+
+        // Multiple iterations correctly reset index
+        val indexedSeq = sequenceOf("x", "y", "z").filterIndexed { index, value -> index == 1 }
+        assertEquals(listOf("y"), indexedSeq.toList())
+        assertEquals(listOf("y"), indexedSeq.toList())
+
+        // Sequence with null elements
+        val withNulls = sequenceOf("a", null, "b", null, "c").filterIndexed { index, value ->
+            index % 2 == 1 && value == null
+        }.toList()
+        assertEquals(listOf(null, null), withNulls)
     }
 
     @Test fun filterNullable() {

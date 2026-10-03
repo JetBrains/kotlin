@@ -678,8 +678,7 @@ object Filtering : TemplateGroupBase() {
             returns("Sequence<T>")
             body(Sequences) {
                 """
-                // TODO: Rewrite with generalized MapFilterIndexingSequence
-                return TransformingSequence(FilteringSequence(IndexingSequence(this), true, { predicate(it.index, it.value) }), { it.value })
+                return FilteringIndexedSequence(this, predicate)
                 """
             }
         }

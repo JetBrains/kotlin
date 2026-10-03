@@ -274,6 +274,53 @@ constructor(private val sequence: Sequence<T>, private val transformer: (Int, T)
 }
 
 /**
+ * A sequence that returns the values from the underlying [sequence] that match the specified [predicate],
+ * where the predicate function takes the index of the value in the underlying sequence along with the value itself.
+ */
+internal class FilteringIndexedSequence<T>(
+    private val sequence: Sequence<T>,
+    private val predicate: (index: Int, T) -> Boolean
+) : Sequence<T> {
+
+    override fun iterator(): Iterator<T> = object : Iterator<T> {
+        private val iterator = sequence.iterator()
+        private var index = 0
+        private var nextState: Int = SequenceIteratorState.UNDEFINED
+        private var nextItem: T? = null
+
+        private fun calcNext() {
+            while (iterator.hasNext()) {
+                val item = iterator.next()
+                if (predicate(checkIndexOverflow(index++), item)) {
+                    nextItem = item
+                    nextState = SequenceIteratorState.READY
+                    return
+                }
+            }
+            nextState = SequenceIteratorState.DONE
+        }
+
+        override fun next(): T {
+            if (nextState == SequenceIteratorState.UNDEFINED)
+                calcNext()
+            if (nextState == SequenceIteratorState.DONE)
+                throw NoSuchElementException()
+            val result = nextItem
+            nextItem = null
+            nextState = SequenceIteratorState.UNDEFINED
+            @Suppress("UNCHECKED_CAST")
+            return result as T
+        }
+
+        override fun hasNext(): Boolean {
+            if (nextState == SequenceIteratorState.UNDEFINED)
+                calcNext()
+            return nextState == SequenceIteratorState.READY
+        }
+    }
+}
+
+/**
  * A sequence which combines values from the underlying [sequence] with their indices and returns them as
  * [IndexedValue] objects.
  */
@@ -316,45 +363,45 @@ constructor(
     }
 }
 
+private object SequenceIteratorState {
+    const val UNDEFINED = 0
+    const val READY = 1
+    const val DONE = 2
+}
+
 internal class FlatteningSequence<T, R, E>
 constructor(
     private val sequence: Sequence<T>,
     private val transformer: (T) -> R,
     private val iterator: (R) -> Iterator<E>
 ) : Sequence<E> {
-    private object State {
-        const val UNDEFINED = 0
-        const val READY = 1
-        const val DONE = 2
-    }
-
     override fun iterator(): Iterator<E> = object : Iterator<E> {
         val iterator = sequence.iterator()
         var itemIterator: Iterator<E>? = null
 
         // Use state to avoid excessive ensureItemIterator calls.
         // The state is represented by the integer to avoid an overhead associated with the enum.
-        var state = State.UNDEFINED
+        var state = SequenceIteratorState.UNDEFINED
 
         override fun next(): E {
-            if (state == State.DONE) throw NoSuchElementException()
-            if (state == State.UNDEFINED && !ensureItemIterator()) {
+            if (state == SequenceIteratorState.DONE) throw NoSuchElementException()
+            if (state == SequenceIteratorState.UNDEFINED && !ensureItemIterator()) {
                 throw NoSuchElementException()
             }
-            state = State.UNDEFINED
+            state = SequenceIteratorState.UNDEFINED
             return itemIterator!!.next()
         }
 
         override fun hasNext(): Boolean {
-            if (state == State.READY) return true
-            if (state == State.DONE) return false
+            if (state == SequenceIteratorState.READY) return true
+            if (state == SequenceIteratorState.DONE) return false
             return ensureItemIterator()
         }
 
         private fun ensureItemIterator(): Boolean {
             val itemIterator = itemIterator
             if (itemIterator != null && itemIterator.hasNext()) {
-                state = State.READY
+                state = SequenceIteratorState.READY
                 return true
             }
 
@@ -363,12 +410,12 @@ constructor(
                 val nextItemIterator = iterator(transformer(element))
                 if (nextItemIterator.hasNext()) {
                     this.itemIterator = nextItemIterator
-                    state = State.READY
+                    state = SequenceIteratorState.READY
                     return true
                 }
             }
 
-            state = State.DONE
+            state = SequenceIteratorState.DONE
             this.itemIterator = null
             return false
         }
