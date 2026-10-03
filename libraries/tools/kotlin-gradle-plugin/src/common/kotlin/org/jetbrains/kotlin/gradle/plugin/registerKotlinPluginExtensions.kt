@@ -82,6 +82,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         }
 
         if (isMultiplatform) {
+            register(project, CountKotlinMultiplatformPluginApplicationsSetupAction)
             register(project, ApplyJavaBasePluginSetupAction)
             register(project, DeprecateJavaPluginsApplicationSetupAction)
             register(project, DeprecatedMppGradlePropertiesMigrationSetupAction)
