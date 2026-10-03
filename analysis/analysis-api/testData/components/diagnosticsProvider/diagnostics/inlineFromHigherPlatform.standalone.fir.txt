@@ -1,0 +1,4 @@
+Diagnostics from file:
+  for PSI element of type KtNameReferenceExpression at (22,5-19)
+    INLINE_FROM_HIGHER_PLATFORM      text ranges: [(245,259)]
+      PSI: KtNameReferenceExpression at (22,5-19)
