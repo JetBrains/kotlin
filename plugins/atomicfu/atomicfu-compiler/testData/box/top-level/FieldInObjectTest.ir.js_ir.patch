@@ -29,7 +29,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_a$volatile visibility:internal modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='internal final fun <set-_a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider'
+-          RETURN type=kotlin.Nothing from='internal final fun <set-_a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.DelegatedProvider'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_a$volatile type:kotlin.Int visibility:private declared in <root>.DelegatedProvider' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.DelegatedProvider declared in <root>.DelegatedProvider.<set-_a$volatile>' type=<root>.DelegatedProvider origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.DelegatedProvider.<set-_a$volatile>' type=kotlin.Int origin=null
@@ -232,7 +232,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:port$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-port$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.Provider'
+-          RETURN type=kotlin.Nothing from='private final fun <set-port$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.Provider'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:port$volatile type:kotlin.Int visibility:private declared in <root>.Provider' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.Provider declared in <root>.Provider.<set-port$volatile>' type=<root>.Provider origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.Provider.<set-port$volatile>' type=kotlin.Int origin=null
@@ -264,7 +264,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Long
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_l$volatile visibility:private modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-_l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.Provider'
+-          RETURN type=kotlin.Nothing from='private final fun <set-_l$volatile> (value: kotlin.Long): kotlin.Unit declared in <root>.Provider'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_l$volatile type:kotlin.Long visibility:private declared in <root>.Provider' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.Provider declared in <root>.Provider.<set-_l$volatile>' type=<root>.Provider origin=null
 -              value: GET_VAR 'value: kotlin.Long declared in <root>.Provider.<set-_l$volatile>' type=kotlin.Long origin=null
@@ -297,7 +297,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_ref$volatile visibility:public modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='public final fun <set-_ref$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.Provider'
+-          RETURN type=kotlin.Nothing from='public final fun <set-_ref$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.Provider'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_ref$volatile type:kotlin.Any? visibility:private declared in <root>.Provider' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.Provider declared in <root>.Provider.<set-_ref$volatile>' type=<root>.Provider origin=null
 -              value: GET_VAR 'value: kotlin.Any? declared in <root>.Provider.<set-_ref$volatile>' type=kotlin.Any? origin=null
@@ -329,7 +329,7 @@
 -        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Boolean
 -        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:_x$volatile visibility:public modality:FINAL [var]
 -        BLOCK_BODY
--          RETURN type=kotlin.Unit from='public final fun <set-_x$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.Provider'
+-          RETURN type=kotlin.Nothing from='public final fun <set-_x$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.Provider'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_x$volatile type:kotlin.Boolean visibility:private declared in <root>.Provider' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.Provider declared in <root>.Provider.<set-_x$volatile>' type=<root>.Provider origin=null
 -              value: GET_VAR 'value: kotlin.Boolean declared in <root>.Provider.<set-_x$volatile>' type=kotlin.Boolean origin=null

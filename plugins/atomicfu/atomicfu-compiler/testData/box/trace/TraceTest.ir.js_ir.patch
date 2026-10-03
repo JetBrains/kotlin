@@ -41,7 +41,7 @@
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
 +        correspondingProperty: PROPERTY name:a1 visibility:private modality:FINAL [val]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-a1$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a1$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.<set-a1$volatile>' type=<root>.TraceTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.TraceTest.<set-a1$volatile>' type=kotlin.Int origin=null
@@ -86,7 +86,7 @@
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
 +        correspondingProperty: PROPERTY name:a2 visibility:private modality:FINAL [val]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-a2$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a2$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.<set-a2$volatile>' type=<root>.TraceTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.TraceTest.<set-a2$volatile>' type=kotlin.Int origin=null
@@ -143,7 +143,7 @@
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
 +        correspondingProperty: PROPERTY name:a visibility:private modality:FINAL [val]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.<set-a$volatile>' type=<root>.TraceTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.TraceTest.<set-a$volatile>' type=kotlin.Int origin=null
@@ -197,7 +197,7 @@
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
 +        correspondingProperty: PROPERTY name:a3 visibility:private modality:FINAL [val]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-a3$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a3$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.<set-a3$volatile>' type=<root>.TraceTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.TraceTest.<set-a3$volatile>' type=kotlin.Int origin=null
@@ -244,7 +244,7 @@
 +        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TraceTest
 +        correspondingProperty: PROPERTY name:s visibility:private modality:FINAL [val]
          BLOCK_BODY
--          RETURN type=kotlin.Unit from='private final fun <set-s$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
+-          RETURN type=kotlin.Nothing from='private final fun <set-s$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.TraceTest'
 -            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:s$volatile type:kotlin.Int visibility:private declared in <root>.TraceTest' type=kotlin.Unit origin=null
 -              receiver: GET_VAR '<this>: <root>.TraceTest declared in <root>.TraceTest.<set-s$volatile>' type=<root>.TraceTest origin=null
 -              value: GET_VAR 'value: kotlin.Int declared in <root>.TraceTest.<set-s$volatile>' type=kotlin.Int origin=null
