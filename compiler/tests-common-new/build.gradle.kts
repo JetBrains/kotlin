@@ -67,6 +67,7 @@ tasks.processTestFixturesResources.configure {
         include("/diagnostics/helpers/**")
         include("/codegen/helpers/**")
         include("/ir/interpreter/helpers/**")
+        include("/klib/klib-compatibility/helpers/**")
     }
     into("stdlib") {
         from(project(":kotlin-stdlib").isolated.projectDirectory.dir("src/kotlin")) {
