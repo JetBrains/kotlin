@@ -430,7 +430,7 @@ internal class KClassImpl<T : Any>(
         internal val inlineClassUnderlyingType: KType? by lazy(PUBLICATION) {
             val kmClass = kmClass
             when {
-                kmClass == null || !kmClass.isValue ->
+                kmClass?.inlineClassUnderlyingPropertyName == null ->
                     null
                 kmClass.inlineClassUnderlyingType != null ->
                     kmClass.inlineClassUnderlyingType?.toKType(jClass.safeClassLoader, typeParameterTable)
@@ -613,7 +613,12 @@ internal class KClassImpl<T : Any>(
         get() = kmClass?.isFunInterface == true
 
     override val isValue: Boolean
-        get() = kmClass?.isValue ?: ValhallaValueClassLoader.loadIsValue(jClass)
+        get() = when {
+            // A builtin like `kotlin.Number` is a value class if the Java class it is mapped to, like `java.lang.Number`, is one.
+            // A primitive type like `kotlin.Int` follows its primitive class `int`, which is not a value class, unlike its box `Integer`.
+            isMappedBuiltin -> ValhallaValueClassLoader.loadIsValue(javaPrimitiveType ?: javaObjectType)
+            else -> kmClass?.isValue ?: ValhallaValueClassLoader.loadIsValue(jClass)
+        }
 
     internal val isJvmInlineValue: Boolean
         get() = isValue && inlineClassUnderlyingPropertyName != null
