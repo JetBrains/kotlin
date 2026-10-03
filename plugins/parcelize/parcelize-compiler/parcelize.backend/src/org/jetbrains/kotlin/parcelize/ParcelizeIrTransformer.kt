@@ -492,6 +492,14 @@ class ParcelizeIrTransformer(
         val superCallArguments = constructorArguments.dropLast(parcelableProperties.size)
         body = androidSymbols.createBuilder(symbol).run {
             irBlockBody {
+                val fieldAssignments = parcelableProperties.mapIndexed { index, property ->
+                    irSetField(
+                        irGet(irClass.thisReceiver!!), property.field, irGet(constructor.parameters[index + superCallArguments.size])
+                    )
+                }
+                // Fields of value classes are assigned before super(), as they are strict with Valhalla value classes.
+                val assignFieldsBeforeSuper = irClass.isFullValueClass
+                if (assignFieldsBeforeSuper) fieldAssignments.forEach { +it }
                 val superClass = irClass.superClass!!
                 require(superClass.isParcelize(parcelizeAnnotations))
                 val superClassConstructor = superClass.inheritanceConstructor()
@@ -512,11 +520,7 @@ class ParcelizeIrTransformer(
                         }
                     }
                 }
-                parcelableProperties.forEachIndexed { index, property ->
-                    +irSetField(
-                        irGet(irClass.thisReceiver!!), property.field, irGet(constructor.parameters[index + superCallArguments.size])
-                    )
-                }
+                if (!assignFieldsBeforeSuper) fieldAssignments.forEach { +it }
                 +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, context.irBuiltIns.unitType)
             }
         }
