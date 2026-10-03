@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import com.google.gson.GsonBuilder
 import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -13,8 +12,8 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.json as toJson
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import java.io.StringWriter
 import javax.inject.Inject
 
 /**
@@ -140,9 +139,7 @@ constructor(
         )
     }
 
-    protected fun json(obj: Any) = StringWriter().also {
-        GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
-    }.toString()
+    protected fun json(obj: Any): String = toJson(obj)
 
     @Internal
     override fun getName(): String = name
@@ -169,7 +166,7 @@ constructor(
          */
         val loader: String,
         /**
-         * Loader options map if any. Will be converted to JSON object via Gson.
+         * Loader options map if any. Will be converted to a JSON object.
          */
         val options: Map<String, Any?> = mapOf(),
         /**

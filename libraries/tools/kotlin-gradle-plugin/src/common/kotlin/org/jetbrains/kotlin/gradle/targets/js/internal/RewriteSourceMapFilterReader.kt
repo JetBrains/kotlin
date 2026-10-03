@@ -1,9 +1,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
-import com.google.gson.stream.JsonWriter
-import com.google.gson.stream.MalformedJsonException
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.slf4j.LoggerFactory
 import java.io.*
 import kotlin.math.min
@@ -30,14 +30,25 @@ open class RewriteSourceMapFilterReader(
             "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`"
 
         private val log = LoggerFactory.getLogger("kotlin")
+
+        /** Unknown keys and a `null` source must fail, so that the file is passed through untouched. */
+        private val strictJson = Json(KgpJson.default) { ignoreUnknownKeys = false }
     }
+
+    /** The source map up to the end of "sources", which must stay last: the raw tail closes that array. */
+    @Serializable
+    private class SourceMapProlog(
+        val version: Int,
+        val file: String? = null,
+        val sourceRoot: String? = null,
+        val sources: List<String>,
+    )
 
     private var wasReadFirst = false
     private val prologLimit = 0xfffff
 
     // buffer with transformed prolog, that wil be emitted first
     private lateinit var bufferWriter: StringWriter
-    private lateinit var bufferJsonWriter: JsonWriter
     private val buffer: StringBuffer get() = bufferWriter.buffer
     private var bufferReadPos = 0
     private val bufferAvailable get() = buffer.length - bufferReadPos
@@ -86,57 +97,32 @@ open class RewriteSourceMapFilterReader(
 
         // create StringWriter to write transformed prolog and contents that was read after PROLOG_END
         bufferWriter = StringWriter(jsonString.length)
-        bufferJsonWriter = JsonWriter(bufferWriter)
 
-        // parse json in prolog and write it back to bufferJsonWriter with transformed source paths
-        val json = JsonReader(StringReader(jsonString.toString()))
-        var sourceRootSpecified = false
+        // The prolog ends inside "sources": close it with `]}` to parse, then drop those two again after encoding
+        val prologText = jsonString.substring(0, jsonPrologPos) + "]}"
         try {
-            json.beginObject()
-            bufferJsonWriter.beginObject()
-
-            reading@ while (true) {
-                val token = json.peek()
-                check(token == JsonToken.NAME) { "JSON key expected, but $token found" }
-                val key = json.nextName()
-                when (key) {
-                    "sourceRoot" -> {
-                        val srcSourceRootPath = transformString(json.nextString())
-                        bufferJsonWriter.name(key).value(srcSourceRootPath)
-                        sourceRootSpecified = true
-                    }
-                    "sources" -> {
-                        json.beginArray()
-                        bufferJsonWriter.name("sources").beginArray()
-                        while (json.peek() != JsonToken.END_ARRAY) {
-                            val path = json.nextString()
-                            val transformed = if (sourceRootSpecified) path else transformString(path)
-                            bufferJsonWriter.value(transformed)
-                        }
-                        json.endArray()
-                    }
-                    "version" -> bufferJsonWriter.name(key).value(json.nextInt())
-                    "file" -> bufferJsonWriter.name(key).value(json.nextString())
-                    "sourcesContent", "names" -> break@reading
-                    else -> throw IllegalStateException("Unknown key \"$key\"")
-                }
-            }
-
-            // leave bufferJsonWriter unclosed
+            val prolog = strictJson.decodeFromString(SourceMapProlog.serializer(), prologText)
+            // paths are relative to "sourceRoot" when it is present, so only rewrite them otherwise
+            val transformed = SourceMapProlog(
+                version = prolog.version,
+                file = prolog.file,
+                sourceRoot = prolog.sourceRoot?.let(::transformString),
+                sources = if (prolog.sourceRoot != null) prolog.sources else prolog.sources.map(::transformString),
+            )
+            bufferWriter.append(strictJson.encodeToString(SourceMapProlog.serializer(), transformed).dropLast("]}".length))
 
             // push back contents that was read after PROLOG_END
             bufferWriter.append(jsonString.substring(jsonPrologPos))
-        } catch (e: IllegalStateException) {
-            writeBackUnsupported(jsonString, json, e.message!!)
-        } catch (e: MalformedJsonException) {
-            writeBackUnsupported(jsonString, json, "Malformed JSON")
+        } catch (e: SerializationException) {
+            writeBackUnsupported(jsonString, e)
         }
     }
 
-    private fun writeBackUnsupported(jsonString: StringBuilder, reader: JsonReader, message: String) =
+    private fun writeBackUnsupported(jsonString: StringBuilder, cause: Exception) =
         writeBackUnsupported(
             jsonString,
-            "$UNSUPPORTED_FORMAT_MESSAGE. $message at ${reader.toString().replace("JsonReader at ", "")} in `$jsonString"
+            // kotlinx-serialization appends hints about its own configuration on later lines
+            "$UNSUPPORTED_FORMAT_MESSAGE. ${cause.message?.lineSequence()?.first()} in `$jsonString"
         )
 
     private fun writeBackUnsupported(jsonString: StringBuilder, reason: String) =
