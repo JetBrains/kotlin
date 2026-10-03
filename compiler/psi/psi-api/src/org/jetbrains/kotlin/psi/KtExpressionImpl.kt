@@ -27,9 +27,19 @@ abstract class KtExpressionImpl : KtElementImpl, KtExpression {
         return containerNode.findChildByClass<KtExpression>(KtExpression::class.java)
     }
 
+    /**
+     * Replaces this expression with [newElement].
+     *
+     * When [KtPsiMutationService] is registered, as in the IntelliJ Kotlin plugin, the replacement may also adjust the new expression to
+     * its place, e.g., wrap it in parentheses to keep the operator precedence, or turn a `$name` string template entry into `${...}`.
+     * Without the service, it performs only the plain platform replacement, so, e.g., replacing `a` in `a * b` with `x + y` results in
+     * `x + y * b`.
+     */
     @OptIn(KtNonPublicApi::class)
-    override fun replace(newElement: PsiElement): PsiElement =
-        KtPsiMutationService.getInstance().replaceExpression(this, newElement, true) { super.replace(it) }
+    override fun replace(newElement: PsiElement): PsiElement {
+        val mutationService = KtPsiMutationService.getInstanceOrNull() ?: return super.replace(newElement)
+        return mutationService.replaceExpression(this, newElement, true) { super.replace(it) }
+    }
 
     companion object {
         @Deprecated(
