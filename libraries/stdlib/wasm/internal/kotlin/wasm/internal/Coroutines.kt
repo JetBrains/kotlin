@@ -11,6 +11,7 @@ import kotlin.coroutines.*
 import kotlin.internal.InlineOnly
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
+@PublishedApi
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
 internal fun <T> getContinuation(): Continuation<T> =
@@ -23,12 +24,7 @@ internal suspend fun <T> returnIfSuspended(argument: Any?): T =
 
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun getCoroutineContext(): CoroutineContext =
-    getCoroutineContextImpl()
-
-@PublishedApi
-internal suspend fun getCoroutineContextImpl(): CoroutineContext =
-    getContinuation<Any?>().context
+internal suspend inline fun getCoroutineContext(): CoroutineContext = getContinuation<Any?>().context
 
 // TODO: remove after bootstrap
 @Suppress("UNUSED_PARAMETER")
@@ -81,5 +77,6 @@ internal fun <T> interceptedIntrinsic(cont: Continuation<T>): Continuation<T> =
 @InlineOnly
 @PublishedApi
 @UsedFromCompilerGeneratedCode
-internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(noinline block: (Continuation<T>) -> Any?): T =
-    suspendCoroutineUninterceptedOrReturnIntrinsic(block)
+internal suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T {
+    return suspendOrReturn<T>(block(getContinuation<T>()))
+}
