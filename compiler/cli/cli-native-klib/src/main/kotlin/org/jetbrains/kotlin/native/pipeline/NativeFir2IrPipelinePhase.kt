@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.isNativeStdlib
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.backend.konan.checkers.NativeKlibCheckers
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -99,12 +98,7 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
             removeAll(NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet())
         }.toList()
         val usedLibraries = loadedKlibs.all.filter { library ->
-            val header = parseModuleHeader(library.metadata.moduleHeaderData)
-
-            val nonEmptyPackageNames = buildSet {
-                addAll(header.packageFragmentNameList)
-                removeAll(header.emptyPackageList)
-            }
+            val nonEmptyPackageNames = library.metadata.getPackageNames()
 
             usedPackages.any { it.asString() in nonEmptyPackageNames }
         }.toSet()

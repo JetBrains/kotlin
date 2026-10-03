@@ -146,6 +146,7 @@ class KT59030WorkaroundTest : AbstractNativeSimpleTest() {
                 object : KlibModuleMetadata.MetadataLibraryProvider {
                     override val metadataVersion get() = metadataVersion
                     override val moduleHeaderData get() = originalMetadata.moduleHeaderData
+                    override val packageNames: Set<String> = originalMetadata.getPackageNames()
                     override fun packageMetadataParts(fqName: String) = originalMetadata.getPackageFragmentNames(fqName)
                     override fun packageMetadata(fqName: String, partName: String) = originalMetadata.getPackageFragment(fqName, partName)
                 }

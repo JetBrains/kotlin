@@ -603,16 +603,16 @@ extension KotlinRuntimeSupport._KotlinExistential: main.SealedFoeble, main.__Sea
 extension KotlinRuntimeSupport._KotlinExistential: main.SealedBazzable, main.__SealedBazzable where Wrapped : main._SealedBazzable {
 }
 @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols.__ContainerProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.SiblingProtocol, ExportedKotlinPackages.packagewithprotocols.__SiblingProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
-}
-@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble where Wrapped : ExportedKotlinPackages.repeating_conformances._Foeble {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances.__Barable where Wrapped : ExportedKotlinPackages.repeating_conformances._Barable {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols.__ContainerProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.SiblingProtocol, ExportedKotlinPackages.packagewithprotocols.__SiblingProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: main._ContainerProtocol_NestedProtocol, main.___ContainerProtocol_NestedProtocol where Wrapped : main.__ContainerProtocol_NestedProtocol {
@@ -645,16 +645,16 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SealedFoeble {
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._SealedBazzable {
 }
 @_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
-}
-@_documentation(visibility: internal)
-extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
-}
-@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.repeating_conformances._Foeble {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.repeating_conformances._Barable {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__ContainerProtocol_NestedProtocol {

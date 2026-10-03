@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -99,11 +98,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
 
         // Compute used libraries using metadata proto header.
         val usedLibraries: Set<MockKotlinLibrary> = allLibraries.filter { library ->
-            val header = parseModuleHeader(library.metadata.moduleHeaderData)
-            val nonEmptyPackageNames = buildSet {
-                addAll(header.packageFragmentNameList)
-                removeAll(header.emptyPackageList)
-            }
+            val nonEmptyPackageNames = library.metadata.getPackageNames()
             usedPackages.any { it.asString() in nonEmptyPackageNames }
         }.toSet()
 
@@ -115,12 +110,13 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
             .setModuleName(name)
             .addAllPackageFragmentName(packages)
             .build()
-        return MockKotlinLibrary(name, header.toByteArray())
+        return MockKotlinLibrary(name, header.toByteArray(), packages)
     }
 
     private class MockKotlinLibrary(
         val libName: String,
-        val headerBytes: ByteArray
+        val headerBytes: ByteArray,
+        val packages: List<String>
     ) : KotlinLibrary {
         override fun <KC : KlibComponent> getComponent(kind: KlibComponent.Kind<KC, *>): KC? {
             if (kind == KlibMetadataComponent.Kind) {
@@ -129,6 +125,7 @@ class UsedLibrariesComputationTest : AbstractNativeSimpleTest() {
                     override val moduleHeaderData: ByteArray get() = headerBytes
                     override fun getPackageFragmentNames(packageFqName: String): Set<String> = emptySet()
                     override fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray = ByteArray(0)
+                    override fun getPackageNames(): Set<String> = packages.toSet()
                 } as KC
             }
             return null
