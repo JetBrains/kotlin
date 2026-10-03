@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:OptIn(org.jetbrains.kotlin.psi.KtNonPublicApi::class)
+@file:OptIn(KtIdeApi::class)
 
 package org.jetbrains.kotlin.psi.typeRefHelpers
 

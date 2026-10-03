@@ -111,7 +111,6 @@ open class KtClass : KtClassOrObject {
     ),
     level = DeprecationLevel.ERROR,
 )
-@OptIn(KtNonPublicApi::class)
 fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor =
     KtPsiMutationService.getInstance().getOrCreatePrimaryConstructor(this)
 
@@ -123,6 +122,5 @@ fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor =
     ),
     level = DeprecationLevel.ERROR,
 )
-@OptIn(KtNonPublicApi::class)
 fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterList =
     KtPsiMutationService.getInstance().getOrCreatePrimaryConstructorParameterList(this)

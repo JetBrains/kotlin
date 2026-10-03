@@ -905,7 +905,7 @@ fun isDoubleColonReceiver(expression: KtExpression) =
     ),
     level = DeprecationLevel.ERROR,
 )
-@OptIn(KtNonPublicApi::class)
+@OptIn(KtIdeApi::class)
 fun KtFunctionLiteral.getOrCreateParameterList(): KtParameterList =
     KtPsiMutationService.getInstance().getOrCreateFunctionLiteralParameterList(this)
 
@@ -958,7 +958,7 @@ fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
     ),
     level = DeprecationLevel.ERROR,
 )
-@OptIn(KtNonPublicApi::class)
+@OptIn(KtIdeApi::class)
 fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList =
     KtPsiMutationService.getInstance().getOrCreateCallValueArgumentList(this)
 
@@ -970,7 +970,7 @@ fun KtCallExpression.getOrCreateValueArgumentList(): KtValueArgumentList =
     ),
     level = DeprecationLevel.ERROR,
 )
-@OptIn(KtNonPublicApi::class)
+@OptIn(KtIdeApi::class)
 fun KtCallExpression.addTypeArgument(typeArgument: KtTypeProjection) {
     KtPsiMutationService.getInstance().appendTypeArgument(this, typeArgument)
 }
@@ -1008,7 +1008,7 @@ fun KtExpression.getLabeledParent(labelName: String): KtLabeledExpression? {
     replaceWith = ReplaceWith("this.astReplace(newElement)", "org.jetbrains.kotlin.idea.base.psi.astReplace"),
     level = DeprecationLevel.ERROR,
 )
-@OptIn(KtNonPublicApi::class)
+@OptIn(KtIdeApi::class)
 fun PsiElement.astReplace(newElement: PsiElement) {
     KtPsiMutationService.getInstance().astReplace(this, newElement)
 }
