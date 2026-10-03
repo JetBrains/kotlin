@@ -89,7 +89,7 @@ object GroupedTestsResultProtocol {
     class ParsedBatchResult internal constructor(val executions: List<ParsedExecution>) {
         val sawStructuredBlock: Boolean = executions.any { it.sawStructuredBlock }
 
-        val crashedIds: Set<String> = executions.flatMapTo(LinkedHashSet()) { it.crashedIds }
+        val crashedIds: Set<String> = executions.flatMapTo(mutableSetOf()) { it.crashedIds }
 
         val malformedLines: List<String> = executions.flatMap { it.malformedLines }
 
@@ -97,7 +97,7 @@ object GroupedTestsResultProtocol {
          * Every outcome of each test, in execution order. A start with no result counts as a [Outcome.Status.CRASHED]
          * outcome of the execution it happened in.
          */
-        val outcomes: Map<String, List<Outcome>> = LinkedHashMap<String, MutableList<Outcome>>().apply {
+        val outcomes: Map<String, List<Outcome>> = mutableMapOf<String, MutableList<Outcome>>().apply {
             for (execution in executions) {
                 val crashOutcomes = execution.crashedIds.map { id ->
                     Outcome(id, Outcome.Status.CRASHED, message = null, details = null, execution.executionName)
@@ -120,8 +120,8 @@ object GroupedTestsResultProtocol {
             val testReport = toTestReport()
             val missingIds = TestReportChecks.findMissingResults(expectedIds, testReport)
             val excessiveIds = TestReportChecks.findExcessiveResults(expectedIds, testReport)
-            val failures = LinkedHashMap<String, Analysis.Failure>()
-            val missingExecutionNamesById = LinkedHashMap<String, MutableList<String>>()
+            val failures = mutableMapOf<String, Analysis.Failure>()
+            val missingExecutionNamesById = mutableMapOf<String, MutableList<String>>()
 
             for (execution in executionsRequiringFullCoverage) {
                 val executionName = execution.executionName
@@ -161,8 +161,8 @@ object GroupedTestsResultProtocol {
         }
 
         fun toTestReport(): TestReport<String> {
-            val passedTests = LinkedHashSet<String>()
-            val failedTests = LinkedHashSet<String>()
+            val passedTests = mutableSetOf<String>()
+            val failedTests = mutableSetOf<String>()
             for ([id, outcomesForId] in outcomes) {
                 if (outcomesForId.any { it.status == Outcome.Status.FAILED || it.status == Outcome.Status.CRASHED }) {
                     failedTests += id
