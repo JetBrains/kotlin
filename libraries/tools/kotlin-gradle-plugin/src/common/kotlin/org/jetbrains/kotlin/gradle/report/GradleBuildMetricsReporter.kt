@@ -9,5 +9,5 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 
-class GradleBuildMetricsReporter : BuildMetricsReporterImpl<BuildTimeMetric, BuildPerformanceMetric>() {
+class GradleBuildMetricsReporter : BuildMetricsReporterImpl<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>() {
 }

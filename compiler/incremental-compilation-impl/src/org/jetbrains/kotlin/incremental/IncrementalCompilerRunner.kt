@@ -52,7 +52,7 @@ abstract class IncrementalCompilerRunner<
         >(
     protected val workingDir: File,
     cacheDirName: String,
-    protected val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    protected val reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     protected val buildHistoryFile: File?,
 
     /**
@@ -465,7 +465,7 @@ abstract class IncrementalCompilerRunner<
 
     protected open fun setupJarDependencies(
         args: Args,
-        reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     ): Map<String, AbiSnapshot> = emptyMap()
 
     sealed class CompilationMode {

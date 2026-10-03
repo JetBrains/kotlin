@@ -162,7 +162,7 @@ class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompila
  * In the case of an unsuccessful compilation [stashDir] is also removed, but the backed-up files restored to their origin location.
  */
 class RecoverableCompilationTransaction(
-    private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     private val stashDir: Path,
 ) : CompilationTransaction, BaseCompilationTransaction() {
     private val fileRelocationRegistry = hashMapOf<Path, Path?>()

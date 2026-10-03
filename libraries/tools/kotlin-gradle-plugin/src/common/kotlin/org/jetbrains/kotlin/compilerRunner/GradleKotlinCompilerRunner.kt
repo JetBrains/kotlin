@@ -66,7 +66,7 @@ internal fun createGradleCompilerRunner(
     taskProvider: GradleCompileTaskProvider,
     toolsJar: File?,
     compilerExecutionSettings: CompilerExecutionSettings,
-    buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     workerExecutor: WorkerExecutor,
     runViaBuildToolsApi: Boolean,
     cachedClassLoadersService: Property<ClassLoadersCachingBuildService>,
@@ -116,7 +116,7 @@ internal open class GradleCompilerRunner(
     protected val taskProvider: GradleCompileTaskProvider,
     protected val jdkToolsJar: File?,
     protected val compilerExecutionSettings: CompilerExecutionSettings,
-    protected val buildMetrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    protected val buildMetrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     protected val fusMetricsConsumer: Provider<StatisticsValuesConsumer>,
 ) {
 

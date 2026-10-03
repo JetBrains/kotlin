@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.build.report.metrics
 
-sealed class BuildTimeMetric(name: String, readableString: String, parent: BuildTimeMetric? = null) :
+sealed class BuildTimeMetric<P: BuildPerformanceMetric>(name: String, readableString: String, parent: BuildTimeMetric<out P>? = null, val startTimeMetric: P?) :
     BuildPerformanceMetric(name, readableString, ValueType.NANOSECONDS, parent)
 
 
 sealed class JpsBuildTimeMetric(parent: JpsBuildTimeMetric? = null, readableString: String, name: String) :
-    BuildTimeMetric(name, readableString, parent)
+    BuildTimeMetric<JpsBuildPerformanceMetric>(name, readableString, parent, null)
 
 object JPS_ITERATION : JpsBuildTimeMetric(readableString = "Jps iteration", name = "JPS_ITERATION") {
     private fun readResolve(): Any = JPS_ITERATION
@@ -43,7 +43,7 @@ object JPS_CODE_GENERATION :
 
 
 sealed class GradleBuildTimeMetric(parent: GradleBuildTimeMetric? = null, readableString: String, name: String) :
-    BuildTimeMetric(name, readableString, parent)
+    BuildTimeMetric<GradleBuildPerformanceMetric>(name, readableString, parent, GradleBuildTimeMetricStart(name, readableString))
 
 object GRADLE_TASK : GradleBuildTimeMetric(readableString = "Total Gradle task time", name = "GRADLE_TASK") {
     private fun readResolve(): Any = GRADLE_TASK

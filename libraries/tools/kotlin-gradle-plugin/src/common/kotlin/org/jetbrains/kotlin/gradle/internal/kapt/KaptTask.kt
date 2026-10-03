@@ -104,7 +104,7 @@ abstract class KaptTask @Inject constructor(
     var useBuildCache: Boolean = false
 
     @get:Internal
-    override val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
+    override val metrics: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
     @get:Input

@@ -907,11 +907,16 @@ class BuildReportsIT : KGPBaseTest() {
                 buildExecutionData.findTaskRecordsForSubprojects(listOfSubprojects, "compileKotlin")
                     .forEach { buildOperationRecord ->
                         assertEquals(KotlinVersion.DEFAULT, buildOperationRecord.kotlinLanguageVersion)
+
+                        val buildPerformanceMetrics = buildOperationRecord.buildMetrics.buildPerformanceMetrics.asMap().keys
+                        val buildTimeMetrics = buildOperationRecord.buildMetrics.buildTimes.buildTimesMapMs().keys
+
                         baseExpectedBuildTimeMetrics.forEach {
-                            assertContains(buildOperationRecord.buildMetrics.buildTimes.buildTimesMapMs().keys, it)
+                            assertContains(buildTimeMetrics, it)
+                            assertContains(buildPerformanceMetrics, it.startTimeMetric as BuildPerformanceMetric)
                         }
                         baseExpectedPerformanceBuildMetrics.forEach {
-                            assertContains(buildOperationRecord.buildMetrics.buildPerformanceMetrics.asMap().keys, it)
+                            assertContains(buildPerformanceMetrics, it)
                         }
                     }
                 buildExecutionData.findTaskRecordsForSubprojects(listOfSubprojects, "configuration")
@@ -1178,9 +1183,10 @@ class BuildReportsIT : KGPBaseTest() {
 
     companion object {
         private const val CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE = "Can't add any more custom values into build scan"
-        private fun nativeCompilerPerformanceMetrics(): List<BuildTimeMetric> = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
-            .flatMap { allBuildTimeMetricsByParentMap[it] ?: listOf(it) }
-            .filter { it !is CustomBuildTimeMetric && it != KLIB_METADATA_WRITING } // KLIB_METADATA_WRITING is only for JVM and metadata compilers
+        private fun nativeCompilerPerformanceMetrics(): List<BuildTimeMetric<out BuildPerformanceMetric>> =
+            allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
+                .flatMap { allBuildTimeMetricsByParentMap[it] ?: listOf(it) }
+                .filter { it !is CustomBuildTimeMetric && it != KLIB_METADATA_WRITING } // KLIB_METADATA_WRITING is only for JVM and metadata compilers
 
         private fun Collection<BuildPerformanceMetric>.assertContainsValues(vararg expectedValues: String) {
             val missedKeys = expectedValues.filter { metricName -> find { it.name == metricName } == null }

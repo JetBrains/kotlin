@@ -14,4 +14,4 @@ class GradleFileReportService(
     buildReportDir: File,
     projectName: String,
     printMetrics: Boolean,
-) : ReadableFileReportService<BuildTimeMetric, BuildPerformanceMetric>(buildReportDir, projectName, printMetrics)
+) : ReadableFileReportService<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>(buildReportDir, projectName, printMetrics)

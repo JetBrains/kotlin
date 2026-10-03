@@ -41,7 +41,7 @@ internal class PlatformLibrariesGenerator(
     val konanTarget: KonanTarget,
     private val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
     private val konanPropertiesService: Provider<KonanPropertiesBuildService>,
-    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
+    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>,
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
     private val platformLibrariesService: Provider<GeneratedPlatformLibrariesService>,
     useXcodeMessageStyle: Provider<Boolean>,

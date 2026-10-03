@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.util.HashSet
 
 internal class TaskExecutionResult(
-    val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>,
+    val buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     val taskInfo: TaskExecutionInfo = TaskExecutionInfo(),
     val icLogLines: List<String> = emptyList()
 )

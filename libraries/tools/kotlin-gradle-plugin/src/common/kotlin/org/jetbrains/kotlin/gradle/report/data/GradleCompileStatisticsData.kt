@@ -28,7 +28,7 @@ class GradleCompileStatisticsData(
     private val finishTime: Long,
     private val compilerArguments: List<String>,
     private val nonIncrementalAttributes: Set<BuildAttribute>,
-    private val buildTimesMetrics: Map<BuildTimeMetric, Long>,
+    private val buildTimesMetrics: Map<BuildTimeMetric<out BuildPerformanceMetric>, Long>,
     private val performanceMetrics: Map<BuildPerformanceMetric, Long>,
     private val gcTimeMetrics: Map<String, Long>?,
     private val gcCountMetrics: Map<String, Long>?,
@@ -37,7 +37,7 @@ class GradleCompileStatisticsData(
     private val compiledSources: List<String> = emptyList(),
     private val skipMessage: String?,
     private val icLogLines: List<String>,
-) : CompileStatisticsData<BuildTimeMetric, BuildPerformanceMetric> {
+) : CompileStatisticsData<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric> {
     override fun getProjectName(): String? = projectName
 
     override fun getLabel(): String? = label
@@ -65,7 +65,7 @@ class GradleCompileStatisticsData(
 
     override fun getNonIncrementalAttributes(): Set<BuildAttribute> = nonIncrementalAttributes
 
-    override fun getBuildTimesMetrics(): Map<BuildTimeMetric, Long> = buildTimesMetrics
+    override fun getBuildTimesMetrics(): Map<BuildTimeMetric<out BuildPerformanceMetric>, Long> = buildTimesMetrics
 
     override fun getPerformanceMetrics(): Map<BuildPerformanceMetric, Long> = performanceMetrics
 

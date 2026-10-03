@@ -25,7 +25,7 @@ internal fun getClasspathChanges(
     changedFiles: DeterminableFiles.Known,
     lastBuildInfo: BuildInfo,
     modulesApiHistory: ModulesApiHistory,
-    reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    reporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     abiSnapshots: Map<String, AbiSnapshot>,
     withSnapshot: Boolean,
     caches: IncrementalCacheCommon,

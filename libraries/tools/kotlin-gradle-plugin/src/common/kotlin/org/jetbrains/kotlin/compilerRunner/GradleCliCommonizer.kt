@@ -62,7 +62,7 @@ internal fun Project.maybeCreateCommonizerClasspathConfiguration(): Configuratio
 }
 
 internal fun ObjectFactory.KotlinNativeCommonizerToolRunner(
-    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
+    metricsReporter: Provider<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     toolClasspath: FileCollection,
     toolJvmArgs: ListProperty<String>,

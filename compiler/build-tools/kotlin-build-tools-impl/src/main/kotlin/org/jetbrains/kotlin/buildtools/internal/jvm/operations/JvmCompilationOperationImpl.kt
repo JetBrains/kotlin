@@ -387,7 +387,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
     private fun JvmCompilationOperationImpl.getNonFirRunner(
         workingDirectory: Path,
-        buildReporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        buildReporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
         aggregatedIcConfigurationOptions: HasSnapshotBasedIcOptionsAccessor,
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,
@@ -409,7 +409,7 @@ internal class JvmCompilationOperationImpl private constructor(
 
     private fun JvmCompilationOperationImpl.getFirRunner(
         workingDirectory: Path,
-        buildReporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
+        buildReporter: BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
         aggregatedIcConfigurationOptions: HasSnapshotBasedIcOptionsAccessor,
         classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled,
         kotlinFilenameExtensions: Set<String>,

@@ -28,7 +28,7 @@ internal class GradleBuildToolsApiCompilerRunner(
     taskProvider: GradleCompileTaskProvider,
     jdkToolsJar: File?,
     compilerExecutionSettings: CompilerExecutionSettings,
-    buildMetrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    buildMetrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     private val workerExecutor: WorkerExecutor,
     private val cachedClassLoadersService: Provider<ClassLoadersCachingBuildService>,
     private val buildFinishedListenerService: Provider<BuildFinishedListenerService>,
