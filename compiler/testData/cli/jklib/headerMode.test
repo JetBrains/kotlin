@@ -1,0 +1,3 @@
+// EXISTS: header.klib
+// EXISTS: header.klib!default/manifest
+// CONTAINS: header.klib!default/manifest, unique_name=header_module
