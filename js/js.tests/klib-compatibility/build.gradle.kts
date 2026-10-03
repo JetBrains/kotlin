@@ -71,6 +71,7 @@ fun Project.customCompilerTest(
     version: CustomCompilerVersion,
     taskName: String,
     tag: String,
+    enableGroupingTestEngine: Boolean = false,
     body: Test.() -> Unit = {},
 ): TaskProvider<out Task> {
     val customCompiler: Configuration = getOrCreateConfiguration("customCompiler_$version") {
@@ -86,7 +87,7 @@ fun Project.customCompilerTest(
         }
     }
 
-    return projectTests.jsTestTask(taskName, tag) {
+    return projectTests.jsTestTask(taskName, tag, enableGroupingTestEngine = enableGroupingTestEngine) {
         addClasspathProperty(customCompiler, "kotlin.internal.js.test.compat.customCompilerClasspath")
         addClasspathProperty(runtimeDependencies, "kotlin.internal.js.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", version.rawVersion)
@@ -103,7 +104,10 @@ fun Project.customFirstStageTest(
     return customCompilerTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
-        tag = "custom-first-stage"
+        tag = "custom-first-stage",
+        // The custom-first-stage tests are migrated to the two-stage grouping test infrastructure
+        // (`AbstractCustomJsCompilerFirstStageTest`), so the grouping test engine must be enabled.
+        enableGroupingTestEngine = true,
     )
 }
 
@@ -112,7 +116,10 @@ fun Project.customSecondStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomSecondStage_$version",
-        tag = "custom-second-stage"
+        tag = "custom-second-stage",
+        // The custom-second-stage tests are migrated to the two-stage grouping test infrastructure
+        // (`AbstractCustomJsCompilerSecondStageTest`), so the grouping test engine must be enabled.
+        enableGroupingTestEngine = true,
     )
 }
 
@@ -122,6 +129,8 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
         version = version,
         taskName = "testMinimalInAggregate",
         tag = "aggregate",
+        // Aggregates the sanity and minimal generated tests of both stages, which are run by the grouping test engine.
+        enableGroupingTestEngine = true,
     )
 }
 
