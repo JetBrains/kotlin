@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
@@ -238,93 +237,6 @@ private class KotlinJvmPublishingDsl(private val project: Project) : KotlinPubli
 
     override val publicationFormat: Property<KotlinPublicationFormat> = project.objects.property(KotlinPublicationFormat::class.java)
         .convention(project.kotlinPropertiesProvider.publicationFormat)
-}
-
-@Suppress("unused")
-@Deprecated("KotlinJsProjectExtension is deprecated and will be removed in the future: https://kotl.in/t6m3vu", level = DeprecationLevel.ERROR)
-abstract class KotlinJsProjectExtension(project: Project) :
-    KotlinSingleTargetExtension<KotlinJsTargetDsl>(project),
-    KotlinJsCompilerTypeHolder {
-    @Deprecated("Use js() instead. Scheduled for removal in Kotlin 2.3.", ReplaceWith("js()"), level = DeprecationLevel.ERROR)
-    override val target: KotlinJsTargetDsl
-        get() = targetFuture.lenient.getOrNull() ?: js()
-
-    override val targetFuture = CompletableFuture<KotlinJsTargetDsl>()
-
-    fun registerTargetObserver(
-        @Suppress("UNUSED_PARAMETER")
-        observer: (KotlinJsTargetDsl?) -> Unit
-    ) {}
-
-    @Suppress("DEPRECATION_ERROR")
-    private fun jsInternal(
-        @Suppress("UNUSED_PARAMETER")
-        body: KotlinJsTargetDsl.() -> Unit,
-    ): KotlinJsTargetDsl = error("...")
-
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        "Kotlin/JS IR is the only supported compiler type. Use js(body) instead. Scheduled for removal in Kotlin 2.6.",
-        replaceWith = ReplaceWith("js(body)"),
-        level = DeprecationLevel.WARNING,
-    )
-    fun js(
-        @Suppress("UNUSED_PARAMETER") // KT-64275
-        compiler: KotlinJsCompilerType = defaultJsCompilerType,
-        body: KotlinJsTargetDsl.() -> Unit = { },
-    ): KotlinJsTargetDsl = jsInternal(body)
-
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        "Kotlin/JS IR is the only supported compiler type. Use js(body) instead. Scheduled for removal in Kotlin 2.6.",
-        replaceWith = ReplaceWith("js(body)"),
-        level = DeprecationLevel.WARNING,
-    )
-    fun js(
-        compiler: String,
-        body: KotlinJsTargetDsl.() -> Unit = { },
-    ): KotlinJsTargetDsl = js(
-        KotlinJsCompilerType.byArgument(compiler),
-        body
-    )
-
-    fun js(
-        body: KotlinJsTargetDsl.() -> Unit = { },
-    ) = jsInternal(body = body)
-
-    fun js() = js { }
-
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        "Kotlin/JS IR is the only supported compiler type. Use js(configure) instead. Scheduled for removal in Kotlin 2.6.",
-        replaceWith = ReplaceWith("js(configure)"),
-        level = DeprecationLevel.WARNING,
-    )
-    fun js(compiler: KotlinJsCompilerType, configure: Action<KotlinJsTargetDsl>) =
-        js(compiler = compiler) {
-            configure.execute(this)
-        }
-
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        "Kotlin/JS IR is the only supported compiler type. Use js(configure) instead. Scheduled for removal in Kotlin 2.6.",
-        replaceWith = ReplaceWith("js(configure)"),
-        level = DeprecationLevel.WARNING,
-    )
-    fun js(compiler: String, configure: Action<KotlinJsTargetDsl>) =
-        js(compiler = compiler) {
-            configure.execute(this)
-        }
-
-    fun js(configure: Action<KotlinJsTargetDsl>) = jsInternal {
-        configure.execute(this)
-    }
-
-    @Deprecated(
-        "Needed for IDE import using the MPP import mechanism",
-        level = DeprecationLevel.HIDDEN
-    )
-    fun getTargets(): NamedDomainObjectContainer<KotlinTarget>? = null
 }
 
 abstract class KotlinAndroidProjectExtension @Inject constructor(

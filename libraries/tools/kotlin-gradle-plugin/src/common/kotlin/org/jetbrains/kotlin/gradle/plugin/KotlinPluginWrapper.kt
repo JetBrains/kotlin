@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
@@ -219,13 +218,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         )
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
 
-        project.whenJsOrMppEnabled {
-            KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-            KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-            KlibPackaging.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-        }
-
         project.whenMppEnabled {
+            KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(this)
+            KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(this)
+            KlibPackaging.setupAttributesMatchingStrategy(this)
             CInteropKlibLibraryElements.setupAttributesMatchingStrategy(this)
             CommonizerTargetAttribute.setupAttributesMatchingStrategy(this)
             CInteropCommonizerArtifactTypeAttribute.setupTransform(project)
@@ -299,15 +295,6 @@ abstract class AbstractKotlinAndroidPluginWrapper : KotlinBasePluginWrapper() {
 
     override val projectExtensionClass: KClass<out KotlinAndroidProjectExtension>
         get() = KotlinAndroidProjectExtension::class
-}
-
-abstract class AbstractKotlinJsPluginWrapper : KotlinBasePluginWrapper() {
-    override fun getPlugin(project: Project): Plugin<Project> =
-        KotlinJsPlugin()
-
-    @Suppress("DEPRECATION_ERROR")
-    override val projectExtensionClass: KClass<out KotlinJsProjectExtension>
-        get() = KotlinJsProjectExtension::class
 }
 
 abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrapper() {
