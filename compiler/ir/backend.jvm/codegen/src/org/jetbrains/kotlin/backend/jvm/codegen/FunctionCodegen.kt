@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
+import org.jetbrains.kotlin.backend.jvm.hasFixedName
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.isJavaLangDeprecatedOnlyAddedByCompiler
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
@@ -404,7 +405,9 @@ private fun generateParameterNames(irFunction: IrFunction, mv: MethodVisitor, co
         val name = when (parameter.kind) {
             IrParameterKind.DispatchReceiver -> continue
             IrParameterKind.Regular, IrParameterKind.Context -> parameter.name.asString()
-            IrParameterKind.ExtensionReceiver -> irFunction.extensionReceiverName(config)
+            // A parameter with a fixed name already encodes the value class it originates from, see `hasFixedName`.
+            IrParameterKind.ExtensionReceiver ->
+                if (parameter.hasFixedName) parameter.name.asString() else irFunction.extensionReceiverName(config)
         }
         val origin = parameter.origin
         // A construct emitted by a Java compiler must be marked as synthetic if it does not correspond to a construct declared
