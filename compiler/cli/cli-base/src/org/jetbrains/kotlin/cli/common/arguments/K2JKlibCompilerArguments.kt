@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
+import org.jetbrains.kotlin.config.KlibIrInlinerMode
 
 // TODO(KT-84879): Autogenerate this class similar to other backend arguments.
 // TODO(KT-84897): Remove flags that are not needed for J2CL
@@ -269,6 +270,22 @@ The default value is 'indy'.""",
         description = "Maximum number of klibs that can be cached during compilation. Default is 500.",
     )
     var klibZipFileAccessorCacheLimit: String = "500"
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    // TODO(KT-87172): Remove if we decide to extend CommonKlibBasedCompilerArguments
+    @Argument(
+        value = "-Xklib-ir-inliner",
+        valueDescription = "{intra-module|full|disabled|default}",
+        description = """Set the mode of the experimental IR inliner on the first compilation stage.
+- `intra-module` mode enforces inlining of the functions only from the compiled module
+- `full` mode enforces inlining of all functions (from the compiled module and from all dependencies)
+- `disabled` mode completely disables the IR inliner
+- `default` mode lets the IR inliner run in `intra-module`, `full` or `disabled` mode based on the current language version""",
+    )
+    var irInlinerBeforeKlibSerialization: String = KlibIrInlinerMode.DEFAULT.state
         set(value) {
             checkFrozen()
             field = value

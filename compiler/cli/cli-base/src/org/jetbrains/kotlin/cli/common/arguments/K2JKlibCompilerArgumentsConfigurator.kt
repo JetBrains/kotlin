@@ -44,6 +44,40 @@ class K2JKlibCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator
         return result
     }
 
+    // TODO(KT-87172): Remove if we decide to extend CommonKlibBasedCompilerArguments.
+    //  Copy of CommonKlibBasedCompilerArgumentsConfigurator.configureExtraLanguageFeatures.
+    override fun configureExtraLanguageFeatures(
+        arguments: CommonCompilerArguments,
+        map: HashMap<LanguageFeature, LanguageFeature.State>,
+        reporter: Reporter,
+    ) {
+        require(arguments is K2JKlibCompilerArguments)
+
+        when (KlibIrInlinerMode.fromString(arguments.irInlinerBeforeKlibSerialization)) {
+            KlibIrInlinerMode.DEFAULT -> {
+                // Do nothing. Rely on the default language feature states.
+            }
+            KlibIrInlinerMode.INTRA_MODULE -> {
+                map[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
+                map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.DISABLED
+            }
+            KlibIrInlinerMode.FULL -> {
+                map[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
+                map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.ENABLED
+            }
+            KlibIrInlinerMode.DISABLED -> {
+                map[LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.DISABLED
+                map[LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization] = LanguageFeature.State.DISABLED
+            }
+            null -> {
+                reporter.reportError(
+                    "Unknown value for parameter -Xklib-ir-inliner: '${arguments.irInlinerBeforeKlibSerialization}'. " +
+                            "Value should be one of ${KlibIrInlinerMode.availableValues()}"
+                )
+            }
+        }
+    }
+
     private fun K2JKlibCompilerArguments.configureJvmDefaultMode(
         reporter: Reporter?,
     ): JvmDefaultMode? =

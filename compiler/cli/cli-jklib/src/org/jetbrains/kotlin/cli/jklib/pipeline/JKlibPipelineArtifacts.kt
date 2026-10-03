@@ -61,9 +61,10 @@ data class JKlibSerializationArtifact(
     }
 }
 
-data class JKlibIrCompilationArtifact(
-    val pluginContext: IrPluginContext,
+/** The IR of a module compiled by [org.jetbrains.kotlin.cli.jklib.K2JKlibCompiler.compileToIr]. */
+data class IrCompilationResult(
     val moduleFragment: IrModuleFragment,
+    val pluginContext: IrPluginContext,
     override val configuration: CompilerConfiguration,
     override val exitCode: ExitCode = ExitCode.OK,
 ) : PipelineArtifactWithExitCode() {
