@@ -1,0 +1,52 @@
+Module: lib
+<T:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface lib/A : java/lang/Object {
+    ()TT;
+    public abstract java.lang.Object foo()
+        throws java/io/IOException
+      @Llib/RuntimeAnnotation;([])
+}
+
+<T::Ljava/lang/CharSequence;>Ljava/lang/Object;Llib/A<TT;>;
+public class lib/B : java/lang/Object, lib/A {
+    public void <init>()
+
+    ()TT;
+    public java.lang.CharSequence foo()
+        throws java/io/FileNotFoundException
+      @Llib/RuntimeAnnotation;([])
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+
+    public java.lang.Object foo()
+        throws java/io/IOException
+      @Llib/RuntimeAnnotation;([])
+}
+
+public abstract interface lib/RuntimeAnnotation : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+Module: main
+Ljava/lang/Object;Llib/A<Ljava/lang/String;>;
+public final class main/J1 : java/lang/Object, lib/A {
+    public void <init>()
+
+    public java.lang.String foo()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+
+    public java.lang.Object foo()
+        throws java/io/IOException
+}
+
+Llib/B<Ljava/lang/String;>;
+public final class main/J2 : lib/B {
+    public void <init>()
+
+    public java.lang.String foo()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+
+    public java.lang.CharSequence foo()
+        throws java/io/FileNotFoundException
+
+    public java.lang.Object foo()
+        throws java/io/IOException
+}

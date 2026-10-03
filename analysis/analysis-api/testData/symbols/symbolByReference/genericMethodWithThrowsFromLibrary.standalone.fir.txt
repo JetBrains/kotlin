@@ -1,0 +1,53 @@
+KaNamedFunctionSymbol:
+  anchorPsi: null
+  annotations: [
+    kotlin/jvm/Throws(exceptionClasses = [java.io.IOException::class])
+      psi: null
+  ]
+  callableId: lib/A.get
+  contextParameters: []
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isCompanion: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  isTailRec: false
+  location: CLASS
+  modality: ABSTRACT
+  name: get
+  origin: LIBRARY
+  psi: null
+  realPsi: null
+  receiverParameter: null
+  returnType: KaTypeParameterType:
+    annotations: []
+    type: T
+  typeParameters: []
+  valueParameters: []
+  visibility: PUBLIC
+  getDispatchReceiver(): KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaTypeParameterType:
+        annotations: []
+        type: T
+    ]
+    type: lib/A<T>
+  getContainingFileSymbol: null
+  getContainingJvmClassName: lib.A
+  canBeOperator: false
+  getContainingModule: KaLibraryModule "Library lib"
+  deprecation: null
+  returnValueStatus: Unspecified
+  javaMethodName: get
+  importableFqName: null
