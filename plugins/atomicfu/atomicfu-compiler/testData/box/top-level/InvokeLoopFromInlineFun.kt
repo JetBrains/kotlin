@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: NATIVE
 import kotlinx.atomicfu.*
 import kotlin.test.*
 

@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/LambdaTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-a$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.LambdaTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Int visibility:private declared in <root>.LambdaTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.<set-a$volatile>' type=<root>.LambdaTest origin=null
               value: GET_VAR 'value: kotlin.Int declared in <root>.LambdaTest.<set-a$volatile>' type=kotlin.Int origin=null
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/LambdaTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:rs$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-rs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LambdaTest'
+          RETURN type=kotlin.Nothing from='private final fun <set-rs$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LambdaTest'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:rs$volatile type:kotlin.Any? visibility:private declared in <root>.LambdaTest' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.LambdaTest declared in <root>.LambdaTest.<set-rs$volatile>' type=<root>.LambdaTest origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.LambdaTest.<set-rs$volatile>' type=kotlin.Any? origin=null

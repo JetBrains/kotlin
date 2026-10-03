@@ -1,4 +1,4 @@
-// DUMP_IR_DIFFERENCE: JS_IR
+// DUMP_IR_DIFFERENCE: JS_IR, NATIVE
 import kotlinx.atomicfu.*
 import kotlin.test.*
 import kotlin.random.*

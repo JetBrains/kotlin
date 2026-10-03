@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/LockFreeStackTest.kt
         VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Any?
         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:top$volatile visibility:private modality:FINAL [var]
         BLOCK_BODY
-          RETURN type=kotlin.Unit from='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack'
+          RETURN type=kotlin.Nothing from='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack'
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.<set-top$volatile>' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=null
               value: GET_VAR 'value: kotlin.Any? declared in <root>.LockFreeStack.<set-top$volatile>' type=kotlin.Any? origin=null

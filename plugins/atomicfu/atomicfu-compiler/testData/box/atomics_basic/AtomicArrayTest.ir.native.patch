@@ -1,0 +1,209 @@
+--- a/AtomicArrayTest.ir.txt
++++ b/AtomicArrayTest.ir.native.txt
+@@ -53,7 +53,7 @@
+             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ARef'
+               CONST Boolean type=kotlin.Boolean value=false
+         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.ARef [val]
+-          TYPE_OP type=<root>.ARef origin=CAST typeOperand=<root>.ARef
++          TYPE_OP type=<root>.ARef origin=IMPLICIT_CAST typeOperand=<root>.ARef
+             GET_VAR 'other: kotlin.Any? declared in <root>.ARef.equals' type=kotlin.Any? origin=null
+         WHEN type=kotlin.Unit origin=null
+           BRANCH
+@@ -127,34 +127,34 @@
+             GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:booleanArr type:kotlin.concurrent.AtomicIntArray visibility:private [final] declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicIntArray origin=null
+               receiver: GET_VAR '<this>: <root>.AtomicArrayClass declared in <root>.AtomicArrayClass.<get-booleanArr>' type=<root>.AtomicArrayClass origin=null
+     PROPERTY ATOMICFU_GENERATED_PROPERTY name:refArr visibility:public modality:FINAL [val]
+-      FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final]
++      FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<kotlin.Any?> visibility:private [final]
+         EXPRESSION_BODY
+-          CONSTRUCTOR_CALL 'internal constructor <init> (array: kotlin.Array<T of kotlin.concurrent.AtomicArray>) declared in kotlin.concurrent.AtomicArray' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          CONSTRUCTOR_CALL 'internal constructor <init> (array: kotlin.Array<T of kotlin.concurrent.AtomicArray>) declared in kotlin.concurrent.AtomicArray' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+             TYPE_ARG (of class) T: kotlin.Any?
+-            ARG array: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOfNulls?> origin=null
++            ARG array: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
+               TYPE_ARG T: kotlin.Any?
+               ARG size: CONST Int type=kotlin.Int value=10
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-refArr> visibility:public modality:FINAL returnType:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray>
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-refArr> visibility:public modality:FINAL returnType:kotlin.concurrent.AtomicArray<kotlin.Any?>
+         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicArrayClass
+         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:refArr visibility:public modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final] declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          RETURN type=kotlin.Nothing from='public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:refArr type:kotlin.concurrent.AtomicArray<kotlin.Any?> visibility:private [final] declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               receiver: GET_VAR '<this>: <root>.AtomicArrayClass declared in <root>.AtomicArrayClass.<get-refArr>' type=<root>.AtomicArrayClass origin=null
+     PROPERTY ATOMICFU_GENERATED_PROPERTY name:anyArr visibility:public modality:FINAL [val]
+-      FIELD ATOMICFU_GENERATED_FIELD name:anyArr type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final]
++      FIELD ATOMICFU_GENERATED_FIELD name:anyArr type:kotlin.concurrent.AtomicArray<kotlin.Any?> visibility:private [final]
+         EXPRESSION_BODY
+-          CONSTRUCTOR_CALL 'internal constructor <init> (array: kotlin.Array<T of kotlin.concurrent.AtomicArray>) declared in kotlin.concurrent.AtomicArray' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          CONSTRUCTOR_CALL 'internal constructor <init> (array: kotlin.Array<T of kotlin.concurrent.AtomicArray>) declared in kotlin.concurrent.AtomicArray' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+             TYPE_ARG (of class) T: kotlin.Any?
+-            ARG array: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<T of kotlin.arrayOfNulls?> origin=null
++            ARG array: CALL 'public final fun arrayOfNulls <T> (size: kotlin.Int): kotlin.Array<T of kotlin.arrayOfNulls?> declared in kotlin' type=kotlin.Array<kotlin.Any?> origin=null
+               TYPE_ARG T: kotlin.Any?
+               ARG size: CONST Int type=kotlin.Int value=10
+-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-anyArr> visibility:public modality:FINAL returnType:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray>
++      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-anyArr> visibility:public modality:FINAL returnType:kotlin.concurrent.AtomicArray<kotlin.Any?>
+         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AtomicArrayClass
+         correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:anyArr visibility:public modality:FINAL [val]
+         BLOCK_BODY
+-          RETURN type=kotlin.Nothing from='public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass'
+-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:anyArr type:kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> visibility:private [final] declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          RETURN type=kotlin.Nothing from='public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass'
++            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:anyArr type:kotlin.concurrent.AtomicArray<kotlin.Any?> visibility:private [final] declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               receiver: GET_VAR '<this>: <root>.AtomicArrayClass declared in <root>.AtomicArrayClass.<get-anyArr>' type=<root>.AtomicArrayClass origin=null
+     PROPERTY ATOMICFU_GENERATED_PROPERTY name:a$volatile visibility:internal modality:FINAL [var]
+       FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Any? visibility:private
+@@ -225,7 +225,7 @@
+         VAR name:s2 type:kotlin.String [val]
+           CONST String type=kotlin.String value="bbb"
+         CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
+-          ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+             ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testAnyArray' type=<root>.AtomicArrayClass origin=null
+           ARG index: CONST Int type=kotlin.Int value=0
+           ARG newValue: GET_VAR 'val s1: kotlin.String declared in <root>.AtomicArrayTest.testAnyArray' type=kotlin.String origin=null
+@@ -233,13 +233,13 @@
+           TYPE_ARG T: kotlin.Any?
+           ARG expected: CONST String type=kotlin.String value="aaa"
+           ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-              ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++              ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                 ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testAnyArray' type=<root>.AtomicArrayClass origin=null
+               ARG index: CONST Int type=kotlin.Int value=0
+         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           ARG actual: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
+-            ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testAnyArray' type=<root>.AtomicArrayClass origin=null
+             ARG index: CONST Int type=kotlin.Int value=0
+             ARG expectedValue: GET_VAR 'val s1: kotlin.String declared in <root>.AtomicArrayTest.testAnyArray' type=kotlin.String origin=null
+@@ -248,18 +248,18 @@
+           TYPE_ARG T: kotlin.Any?
+           ARG expected: CONST String type=kotlin.String value="bbb"
+           ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-              ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++              ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                 ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testAnyArray' type=<root>.AtomicArrayClass origin=null
+               ARG index: CONST Int type=kotlin.Int value=0
+         VAR name:r0 type:kotlin.Any? [val]
+           TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-              ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++              ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                 ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testAnyArray' type=<root>.AtomicArrayClass origin=null
+               ARG index: CONST Int type=kotlin.Int value=0
+         CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
+-          ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+             ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testAnyArray' type=<root>.AtomicArrayClass origin=null
+           ARG index: CONST Int type=kotlin.Int value=3
+           ARG newValue: GET_VAR 'val r0: kotlin.Any? declared in <root>.AtomicArrayTest.testAnyArray' type=kotlin.Any? origin=null
+@@ -267,8 +267,8 @@
+           TYPE_ARG T: kotlin.Any?
+           ARG expected: CONST String type=kotlin.String value="bbb"
+           ARG actual: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-              ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++              ARG <this>: CALL 'public final fun <get-anyArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                 ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testAnyArray' type=<root>.AtomicArrayClass origin=null
+               ARG index: CONST Int type=kotlin.Int value=3
+     FUN name:testBooleanArray visibility:public modality:FINAL returnType:kotlin.Unit
+@@ -663,7 +663,7 @@
+           CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ARef' type=<root>.ARef origin=null
+             ARG n: CONST Int type=kotlin.Int value=3
+         CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
+-          ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+             ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
+           ARG index: CONST Int type=kotlin.Int value=0
+           ARG newValue: GET_VAR 'val a2: <root>.ARef declared in <root>.AtomicArrayTest.testRefArray' type=<root>.ARef origin=null
+@@ -674,13 +674,13 @@
+             ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ARef origin=EXCLEXCL
+               TYPE_ARG T0: <root>.ARef
+               ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-                  ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++                  ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                     ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
+                   ARG index: CONST Int type=kotlin.Int value=0
+         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           ARG actual: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
+-            ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
+             ARG index: CONST Int type=kotlin.Int value=0
+             ARG expectedValue: GET_VAR 'val a2: <root>.ARef declared in <root>.AtomicArrayTest.testRefArray' type=<root>.ARef origin=null
+@@ -692,18 +692,18 @@
+             ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ARef origin=EXCLEXCL
+               TYPE_ARG T0: <root>.ARef
+               ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-                  ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++                  ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                     ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
+                   ARG index: CONST Int type=kotlin.Int value=0
+         VAR name:r0 type:<root>.ARef? [val]
+           TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-              ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++              ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                 ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
+               ARG index: CONST Int type=kotlin.Int value=0
+         CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
+-          ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++          ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+             ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
+           ARG index: CONST Int type=kotlin.Int value=3
+           ARG newValue: GET_VAR 'val r0: <root>.ARef? declared in <root>.AtomicArrayTest.testRefArray' type=<root>.ARef? origin=null
+@@ -714,19 +714,33 @@
+             ARG <this>: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=<root>.ARef origin=EXCLEXCL
+               TYPE_ARG T0: <root>.ARef
+               ARG arg0: TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-                CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=T of kotlin.concurrent.AtomicArray origin=null
+-                  ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++                CALL 'public final fun get (index: kotlin.Int): T of kotlin.concurrent.AtomicArray declared in kotlin.concurrent.AtomicArray' type=kotlin.Any? origin=null
++                  ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+                     ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
+                   ARG index: CONST Int type=kotlin.Int value=3
+         VAR name:a type:<root>.ARef [val]
+           TYPE_OP type=kotlin.Any? origin=CAST typeOperand=kotlin.Any?
+-            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=T of kotlin.concurrent.atomicGetField origin=null
++            CALL 'internal final fun atomicGetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.atomicGetField>): T of kotlin.concurrent.atomicGetField declared in kotlin.concurrent' type=kotlin.Any? origin=null
+               TYPE_ARG T: kotlin.Any?
+-              ARG <this>: PROPERTY_REFERENCE 'internal final a$volatile: kotlin.Any? declared in <root>.AtomicArrayClass' field='FIELD ATOMICFU_GENERATED_FIELD name:a$volatile type:kotlin.Any? visibility:private declared in <root>.AtomicArrayClass' getter='internal final fun <get-a$volatile> (): kotlin.Any? declared in <root>.AtomicArrayClass' setter='internal final fun <set-a$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicArrayClass' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
+-                ARG 1: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
++              ARG <this>: RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null reflectionTarget='internal final a$volatile: kotlin.Any? declared in <root>.AtomicArrayClass'
++                bound <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
++                getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-a$volatile> visibility:local modality:FINAL returnType:kotlin.Any?
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicArrayClass
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <get-a$volatile> (<this>: <root>.AtomicArrayClass): kotlin.Any? declared in <root>.AtomicArrayTest.testRefArray'
++                      CALL 'internal final fun <get-a$volatile> (): kotlin.Any? declared in <root>.AtomicArrayClass' type=kotlin.Any? origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray.<get-a$volatile>' type=<root>.AtomicArrayClass origin=null
++                setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-a$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                  VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.AtomicArrayClass
++                  VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Any?
++                  BLOCK_BODY
++                    RETURN type=kotlin.Nothing from='local final fun <set-a$volatile> (<this>: <root>.AtomicArrayClass, p0: kotlin.Any?): kotlin.Unit declared in <root>.AtomicArrayTest.testRefArray'
++                      CALL 'internal final fun <set-a$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.AtomicArrayClass' type=kotlin.Unit origin=null
++                        ARG <this>: GET_VAR '<this>: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray.<set-a$volatile>' type=<root>.AtomicArrayClass origin=null
++                        ARG value: GET_VAR 'p0: kotlin.Any? declared in <root>.AtomicArrayTest.testRefArray.<set-a$volatile>' type=kotlin.Any? origin=null
+         CALL 'public final fun assertTrue (actual: kotlin.Boolean, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
+           ARG actual: CALL 'public final fun compareAndSet (index: kotlin.Int, expectedValue: T of kotlin.concurrent.AtomicArray, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Boolean declared in kotlin.concurrent.AtomicArray' type=kotlin.Boolean origin=null
+-            ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
++            ARG <this>: CALL 'public final fun <get-refArr> (): kotlin.concurrent.AtomicArray<kotlin.Any?> declared in <root>.AtomicArrayClass' type=kotlin.concurrent.AtomicArray<kotlin.Any?> origin=null
+               ARG <this>: GET_VAR 'val A: <root>.AtomicArrayClass declared in <root>.AtomicArrayTest.testRefArray' type=<root>.AtomicArrayClass origin=null
+             ARG index: CONST Int type=kotlin.Int value=3
+             ARG expectedValue: GET_VAR 'val a3: <root>.ARef declared in <root>.AtomicArrayTest.testRefArray' type=<root>.ARef origin=null

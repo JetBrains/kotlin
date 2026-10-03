@@ -1,0 +1,36 @@
+--- a/LockTest.ir.txt
++++ b/LockTest.ir.native.txt
+@@ -52,8 +52,22 @@
+                 FUN ATOMICFU_GENERATED_FUNCTION name:<inProgressLock$volatile-getter> visibility:local modality:FINAL returnType:kotlin.reflect.KMutableProperty0<kotlin.Boolean> [inline]
+                   BLOCK_BODY
+                     RETURN type=kotlin.Nothing from='local final fun <inProgressLock$volatile-getter> (): kotlin.reflect.KMutableProperty0<kotlin.Boolean> declared in <root>.LockTest.testLock'
+-                      PROPERTY_REFERENCE 'private final inProgressLock$volatile: kotlin.Boolean declared in <root>.LockTest' field='FIELD ATOMICFU_GENERATED_FIELD name:inProgressLock$volatile type:kotlin.Boolean visibility:private declared in <root>.LockTest' getter='private final fun <get-inProgressLock$volatile> (): kotlin.Boolean declared in <root>.LockTest' setter='private final fun <set-inProgressLock$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.LockTest' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+-                        ARG 1: GET_VAR '<this>: <root>.LockTest declared in <root>.LockTest.testLock' type=<root>.LockTest origin=IMPLICIT_ARGUMENT
++                      RICH_PROPERTY_REFERENCE type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null reflectionTarget='private final inProgressLock$volatile: kotlin.Boolean declared in <root>.LockTest'
++                        bound <this>: GET_VAR '<this>: <root>.LockTest declared in <root>.LockTest.testLock' type=<root>.LockTest origin=IMPLICIT_ARGUMENT
++                        getter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<get-inProgressLock$volatile> visibility:local modality:FINAL returnType:kotlin.Boolean
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockTest
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <get-inProgressLock$volatile> (<this>: <root>.LockTest): kotlin.Boolean declared in <root>.LockTest.testLock.<inProgressLock$volatile-getter>'
++                              CALL 'private final fun <get-inProgressLock$volatile> (): kotlin.Boolean declared in <root>.LockTest' type=kotlin.Boolean origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockTest declared in <root>.LockTest.testLock.<inProgressLock$volatile-getter>.<get-inProgressLock$volatile>' type=<root>.LockTest origin=null
++                        setter: FUN LOCAL_FUNCTION_FOR_LAMBDA name:<set-inProgressLock$volatile> visibility:local modality:FINAL returnType:kotlin.Unit
++                          VALUE_PARAMETER kind:Regular name:<this> index:0 type:<root>.LockTest
++                          VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Boolean
++                          BLOCK_BODY
++                            RETURN type=kotlin.Nothing from='local final fun <set-inProgressLock$volatile> (<this>: <root>.LockTest, p0: kotlin.Boolean): kotlin.Unit declared in <root>.LockTest.testLock.<inProgressLock$volatile-getter>'
++                              CALL 'private final fun <set-inProgressLock$volatile> (value: kotlin.Boolean): kotlin.Unit declared in <root>.LockTest' type=kotlin.Unit origin=null
++                                ARG <this>: GET_VAR '<this>: <root>.LockTest declared in <root>.LockTest.testLock.<inProgressLock$volatile-getter>.<set-inProgressLock$volatile>' type=<root>.LockTest origin=null
++                                ARG value: GET_VAR 'p0: kotlin.Boolean declared in <root>.LockTest.testLock.<inProgressLock$volatile-getter>.<set-inProgressLock$volatile>' type=kotlin.Boolean origin=null
+             then: BLOCK type=kotlin.Unit origin=null
+               SET_VAR 'var result: kotlin.String declared in <root>.LockTest.testLock' type=kotlin.Unit origin=EQ
+                 CONST String type=kotlin.String value="OK"
+@@ -89,7 +103,7 @@
+       RETURN type=kotlin.Nothing from='private final fun tryAcquire$atomicfu$NATIVE_PROPERTY_REF$Boolean (handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>>): kotlin.Boolean declared in <root>'
+         CALL 'internal final fun compareAndSetField <T> (<this>: kotlin.reflect.KMutableProperty0<T of kotlin.concurrent.compareAndSetField>, expectedValue: T of kotlin.concurrent.compareAndSetField, newValue: T of kotlin.concurrent.compareAndSetField): kotlin.Boolean declared in kotlin.concurrent' type=kotlin.Boolean origin=null
+           TYPE_ARG T: kotlin.Boolean
+-          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=R of kotlin.Function0 origin=null
++          ARG <this>: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.reflect.KMutableProperty0<kotlin.Boolean> origin=null
+             ARG <this>: GET_VAR 'handler$atomicfu: kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> declared in <root>.tryAcquire$atomicfu$NATIVE_PROPERTY_REF$Boolean' type=kotlin.Function0<kotlin.reflect.KMutableProperty0<kotlin.Boolean>> origin=null
+           ARG expectedValue: CONST Boolean type=kotlin.Boolean value=false
+           ARG newValue: CONST Boolean type=kotlin.Boolean value=true
