@@ -10,7 +10,7 @@ import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 1000
 
-var counter = 0
+private var counter = 0
 
 @State(Scope.Benchmark)
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
