@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
+import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -46,7 +48,7 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
         val testRunSettings = testServices.testRunSettings
         val shouldBeIsolated = testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
                 || isolationDirectives.any { it in registeredDirectives }
-                || moduleStructure.sourceContains(packageKotlinInternalRegex)
+                || moduleStructure.modules.any { module -> testDataContainsKotlinInternalFQNames(module) }
                 || moduleStructure.modules.any { module -> module.files.any { it.name.endsWith(".def") } }
                 || testRunSettings.isIgnoredTarget(registeredDirectives) // considers IGNORE_BACKEND* and IGNORE_NATIVE directives
                 || testRunSettings.isDisabledNative(registeredDirectives) // considers DISABLE_NATIVE directive
@@ -81,6 +83,17 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
 
 
     private val packageKotlinInternalRegex = Regex("package\\s${StandardNames.KOTLIN_INTERNAL_FQ_NAME}")
+
+    private fun testDataContainsKotlinInternalFQNames(module: TestModule): Boolean = module.files.any { file ->
+        !isSyntheticReflectionPackageNameHelper(file) &&
+                file.originalContent.contains(packageKotlinInternalRegex)
+    }
+
+    private fun isSyntheticReflectionPackageNameHelper(file: TestFile): Boolean =
+        file.isAdditional &&
+                file.name == "ReflectionPackageName.kt" &&
+                file.originalContent.contains("package ${StandardNames.KOTLIN_INTERNAL_FQ_NAME}") &&
+                file.originalContent.contains("annotation class ReflectionPackageName")
 
     private data class FreeCompilerArgsToken(val freeArgs: Set<String>) : BatchToken()
 }
