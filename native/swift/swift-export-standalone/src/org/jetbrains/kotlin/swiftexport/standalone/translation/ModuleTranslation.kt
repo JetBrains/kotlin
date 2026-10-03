@@ -183,7 +183,7 @@ private fun createTranslationResult(
 
     val knownModuleNames = setOf(KotlinRuntimeModule.name, bridgeModuleName) +
             kaModules.platformLibraries.map { it.libraryName } +
-            kaModules.cinteropReexportLibrary?.reexportedObjCModuleNames().orEmpty()
+            kaModules.cinteropReexportLibrary.flatMap { it.reexportedObjCModuleNames() }
     val referencedSwiftModules = sirModule.imports
         .filter { it.moduleName !in knownModuleNames }
         .map { SwiftExportModule.Reference(it.moduleName) }

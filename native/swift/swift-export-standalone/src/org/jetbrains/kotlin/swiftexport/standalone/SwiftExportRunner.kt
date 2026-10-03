@@ -166,7 +166,7 @@ private fun translateModules(
         inputs = allModules,
         targetPlatform = config.targetPlatform,
         platformLibraries = config.platformLibsInputModule,
-        cinteropReexportLibrary = cinteropReexportLibs.singleOrNull(),
+        cinteropReexportLibrary = cinteropReexportLibs,
     )
     kaModules.use { kaModules ->
         val explicitModulesTranslationResults = allModules
