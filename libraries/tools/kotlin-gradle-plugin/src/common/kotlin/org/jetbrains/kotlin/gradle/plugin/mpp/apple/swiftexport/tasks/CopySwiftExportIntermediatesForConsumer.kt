@@ -12,6 +12,7 @@ import org.gradle.api.provider.*
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
+import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import javax.inject.Inject
 
@@ -19,8 +20,7 @@ import javax.inject.Inject
 internal abstract class CopySwiftExportIntermediatesForConsumer @Inject constructor(
     objectFactory: ObjectFactory,
     projectLayout: ProjectLayout,
-    providerFactory: ProviderFactory,
-    private val fileSystem: FileSystemOperations,
+    private val providerFactory: ProviderFactory,
 ) : DefaultTask() {
 
     @get:InputFiles
@@ -30,8 +30,10 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     @get:Input
     abstract val libraryName: Property<String>
 
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    /**
+     * Xcode's products directory. Not an input: Xcode writes there too, and the task's outputs are [copiedFiles].
+     */
+    @get:Internal
     val builtProductsDirectory: DirectoryProperty = objectFactory.directoryProperty().convention(
         projectLayout.dir(providerFactory.environmentVariable("BUILT_PRODUCTS_DIR").map {
             File(it)
@@ -54,37 +56,37 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val swiftModulesFile: RegularFileProperty
 
+    /**
+     * The files the task writes into [builtProductsDirectory]. Computed from the inputs: Gradle reads a task's
+     * outputs only after its producers ran, so the inputs exist by then.
+     */
+    @get:OutputFiles
+    val copiedFiles: Provider<List<File>>
+        get() = providerFactory.provider { copies().map { it.second } }
+
     fun addInterface(swiftInterface: Provider<File>) {
         interfaces.from(swiftInterface)
     }
 
     @TaskAction
     fun copy() {
-        copyLibrary()
-        copyInterfaces()
-        copyOtherIncludes()
+        copies().forEach { (source, destination) -> source.copyTo(destination, overwrite = true) }
     }
 
-    private fun copyLibrary() {
-        fileSystem.copy { spec ->
-            spec.from(library)
-            spec.into(builtProductsDirectory)
-            spec.rename {
-                libraryName.get()
-            }
-        }
-    }
+    /** Source to destination, for every file the task copies. */
+    private fun copies(): List<Pair<File, File>> {
+        val destination = builtProductsDirectory.getFile()
+        val ownModules = ownSwiftModuleNames()
 
-    private fun copyInterfaces() {
-        val ownModulePatterns = ownSwiftModuleNames()?.map { "$it.swiftmodule/**" }
-        interfaces.files.forEach { swiftInterface ->
-            fileSystem.copy { spec ->
-                spec.from(swiftInterface)
-                spec.into(builtProductsDirectory)
-                spec.includeEmptyDirs = false
-                ownModulePatterns?.forEach { spec.include(it) }
-            }
+        fun FileCollection.filesWithRelativePaths() = files.asSequence().flatMap { root ->
+            root.walkTopDown().filter { it.isFile }.map { it to it.relativeTo(root) }
         }
+
+        val interfaces = interfaces.filesWithRelativePaths().filter { (_, relative) ->
+            ownModules == null || ownModules.any { relative.startsWith("$it.swiftmodule") }
+        }
+        val copied = (interfaces + includes.filesWithRelativePaths()).map { (file, relative) -> file to destination.resolve(relative) }
+        return listOf(library.getFile() to destination.resolve(libraryName.get())) + copied
     }
 
     private fun ownSwiftModuleNames(): List<String>? {
@@ -92,14 +94,5 @@ internal abstract class CopySwiftExportIntermediatesForConsumer @Inject construc
         val modulesFile = swiftModulesFile.orNull?.asFile
             ?: error("swiftModulesFile must be set when filterInterfacesToOwnModules is enabled")
         return SerializationTools.readFromJson(modulesFile.readText()).modules.map { it.name }
-    }
-
-    private fun copyOtherIncludes() {
-        includes.forEach { include ->
-            fileSystem.copy { spec ->
-                spec.from(include)
-                spec.into(builtProductsDirectory)
-            }
-        }
     }
 }

@@ -363,7 +363,7 @@ class ExportExtensionXcodeIntegrationTests {
         }
 
         assertIs<EmbedSwiftExportForXcodeTask>(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
-        assertNotNull(project.tasks.findByName("iosSimulatorArm64DebugSwiftExport"))
+        assertNotNull(project.tasks.findByName("iosSimulatorArm64SwiftExport"))
     }
 
     @Test
@@ -375,7 +375,7 @@ class ExportExtensionXcodeIntegrationTests {
         }
 
         assertNull(project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME))
-        assertNull(project.tasks.findByName("iosSimulatorArm64DebugSwiftExport"))
+        assertNull(project.tasks.findByName("iosSimulatorArm64SwiftExport"))
     }
 
     @Test
