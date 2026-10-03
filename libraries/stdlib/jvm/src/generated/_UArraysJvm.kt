@@ -514,6 +514,150 @@ public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort? {
 }
 
 /**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.productOf(selector: (UInt) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.productOf(selector: (ULong) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.productOf(selector: (UByte) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfBigDecimal")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.productOf(selector: (UShort) -> java.math.BigDecimal): java.math.BigDecimal {
+    var product: java.math.BigDecimal = 1.toBigDecimal()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfBigInteger")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UIntArray.productOf(selector: (UInt) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfBigInteger")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun ULongArray.productOf(selector: (ULong) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfBigInteger")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UByteArray.productOf(selector: (UByte) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
+ * Returns the product of all values produced by [selector] function applied to each element in the array.
+ */
+@SinceKotlin("1.3")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@Suppress("INAPPLICABLE_JVM_NAME")
+@kotlin.jvm.JvmName("productOfBigInteger")
+@ExperimentalUnsignedTypes
+@kotlin.internal.InlineOnly
+public inline fun UShortArray.productOf(selector: (UShort) -> java.math.BigInteger): java.math.BigInteger {
+    var product: java.math.BigInteger = 1.toBigInteger()
+    for (element in this) {
+        product *= selector(element)
+    }
+    return product
+}
+
+/**
  * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
 @SinceKotlin("1.4")

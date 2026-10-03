@@ -94,6 +94,15 @@ fun PrimitiveType.zero() = when (this) {
     else -> "0"
 }
 
+fun PrimitiveType.one() = when (this) {
+    PrimitiveType.Double -> "1.0"
+    PrimitiveType.Float -> "1.0f"
+    PrimitiveType.Long -> "1L"
+    PrimitiveType.ULong -> "1uL"
+    in PrimitiveType.unsignedPrimitives -> "1u"
+    else -> "1"
+}
+
 enum class Inline {
     No,
     Yes,

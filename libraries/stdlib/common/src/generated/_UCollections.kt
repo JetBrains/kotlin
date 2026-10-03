@@ -72,6 +72,54 @@ public fun Collection<UShort>.toUShortArray(): UShortArray {
 }
 
 /**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfUInt")
+public fun Iterable<UInt>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfULong")
+public fun Iterable<ULong>.product(): ULong {
+    var product: ULong = 1uL
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfUByte")
+public fun Iterable<UByte>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
+ * Returns the product of all elements in the collection.
+ */
+@kotlin.jvm.JvmName("productOfUShort")
+public fun Iterable<UShort>.product(): UInt {
+    var product: UInt = 1u
+    for (element in this) {
+        product *= element
+    }
+    return product
+}
+
+/**
  * Returns the sum of all elements in the collection.
  */
 @kotlin.jvm.JvmName("sumOfUInt")
