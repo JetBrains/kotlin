@@ -7,10 +7,11 @@ package kotlin.collections
 
 internal fun checkWindowSizeStep(size: Int, step: Int) {
     require(size > 0 && step > 0) {
-        if (size != step)
-            "Both size $size and step $step must be greater than zero."
-        else
-            "size $size must be greater than zero."
+        when {
+            size <= 0 && step <= 0 -> "Both size and step must be greater than zero (size = $size, step = $step)"
+            size <= 0 -> "size $size must be greater than zero."
+            else -> "step $step must be greater than zero."
+        }
     }
 }
 
