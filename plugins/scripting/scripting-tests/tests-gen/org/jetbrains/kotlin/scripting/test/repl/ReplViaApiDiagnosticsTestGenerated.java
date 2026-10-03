@@ -34,6 +34,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("continues_after_erroneous_snippets.repl.kts")
+  public void testContinues_after_erroneous_snippets_repl() {
+    run("continues_after_erroneous_snippets.repl.kts");
+  }
+
+  @Test
   @TestMetadata("delegated_extension_property.repl.kts")
   public void testDelegated_extension_property_repl() {
     run("delegated_extension_property.repl.kts");
@@ -55,6 +61,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   @TestMetadata("function_returns_anonymous_object.repl.kts")
   public void testFunction_returns_anonymous_object_repl() {
     run("function_returns_anonymous_object.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("implicit_return_type_resolved_from_use.repl.kts")
+  public void testImplicit_return_type_resolved_from_use_repl() {
+    run("implicit_return_type_resolved_from_use.repl.kts");
   }
 
   @Test
@@ -85,6 +97,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   @TestMetadata("property_constant_initializer.repl.kts")
   public void testProperty_constant_initializer_repl() {
     run("property_constant_initializer.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("property_initialization_within_snippet.repl.kts")
+  public void testProperty_initialization_within_snippet_repl() {
+    run("property_initialization_within_snippet.repl.kts");
   }
 
   @Test
@@ -136,6 +154,12 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   }
 
   @Test
+  @TestMetadata("smartcast_on_property_from_previous_snippet.repl.kts")
+  public void testSmartcast_on_property_from_previous_snippet_repl() {
+    run("smartcast_on_property_from_previous_snippet.repl.kts");
+  }
+
+  @Test
   @TestMetadata("unsafe_cast_assignment_within_class.repl.kts")
   public void testUnsafe_cast_assignment_within_class_repl() {
     run("unsafe_cast_assignment_within_class.repl.kts");
@@ -163,5 +187,11 @@ public class ReplViaApiDiagnosticsTestGenerated extends AbstractReplViaApiDiagno
   @TestMetadata("unsafe_cast_in_loop.repl.kts")
   public void testUnsafe_cast_in_loop_repl() {
     run("unsafe_cast_in_loop.repl.kts");
+  }
+
+  @Test
+  @TestMetadata("val_reassignment_across_snippets.repl.kts")
+  public void testVal_reassignment_across_snippets_repl() {
+    run("val_reassignment_across_snippets.repl.kts");
   }
 }

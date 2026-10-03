@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION_ERROR")
+
 package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.cli.common.repl.*
@@ -23,6 +25,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock
 
 // NOTE: the lock is local
 // TODO: verify that locla lock doesn't lead to any synch problems
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState) : IReplStageHistory<Unit>, AbstractList<ReplHistoryRecord<Unit>>() {
     override val size: Int
         get() = state.replStateFacade.getHistorySize()
@@ -50,6 +53,7 @@ class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState)
     override val lock: ReentrantReadWriteLock get() = state.lock
 }
 
+@Deprecated(K1_REPL_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
 class RemoteReplCompilerState(
     internal val replStateFacade: ReplStateFacade,
     override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()

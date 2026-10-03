@@ -1,6 +1,0 @@
->>> var x: Int = { -> if (true) throw RuntimeException() else 5}()
-java.lang.RuntimeException
-	at Line_0.<init>(Line_0.kts:1)
->>> x
-java.lang.NullPointerException
-	at Line_1.<init>(Line_1.kts:1)

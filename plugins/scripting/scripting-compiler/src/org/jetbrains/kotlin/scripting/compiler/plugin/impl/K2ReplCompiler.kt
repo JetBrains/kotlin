@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -69,13 +70,15 @@ class K2ReplCompiler(
         snippets: Iterable<SourceCode>,
         configuration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
+        configuration[ScriptCompilationConfiguration.repl.currentSnippetNo]?.let { state.nextSnippetNo = it }
         snippets.forEach { mainSnippet ->
             val [updatedConfiguration, syntheticSnippets] = configuration.prependSyntheticSnippets(mainSnippet).valueOr { return it }
             val snippetsWithSynthetics = syntheticSnippets + mainSnippet
             snippetsWithSynthetics.forEach { snippet ->
                 // Messages from earlier snippets should not leak into the next snippet
                 state.messageCollector.clear()
-                val res =
+                val historyCheckpoint = state.makeHistoryCheckpoint()
+                val res = try {
                     compileImpl(
                         state, snippet,
                         if (snippet == mainSnippet) updatedConfiguration.with { reset(repl._isSyntheticSnippet) }
@@ -86,11 +89,17 @@ class K2ReplCompiler(
                         },
                         convertToFir,
                     )
+                } catch (e: Throwable) {
+                    state.rollbackHistory(historyCheckpoint)
+                    throw e
+                }
+                state.nextSnippetNo++
                 when (res) {
                     is ResultWithDiagnostics.Success -> {
                         state.lastCompiledSnippet = state.lastCompiledSnippet.add(res.value)
                     }
                     is ResultWithDiagnostics.Failure -> {
+                        state.rollbackHistory(historyCheckpoint)
                         return res
                     }
                 }
@@ -217,6 +226,28 @@ class K2ReplCompilationState(
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
 
     /**
+     * Failed snippets consume their numbers too, matching the hosts that count snippets themselves (e.g. JSR-223).
+     */
+    var nextSnippetNo: Int = hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippetCount() ?: 0
+
+    internal class HistoryCheckpoint(val snippets: Set<FirReplSnippetSymbol>, val moduleDataCount: Int)
+
+    internal fun makeHistoryCheckpoint(): HistoryCheckpoint = HistoryCheckpoint(
+        hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippets()?.toSet().orEmpty(),
+        moduleDataProvider.moduleDataHistory.size
+    )
+
+    /**
+     * The declarations of a failed snippet and its imported scripts must not be visible to the later snippets.
+     */
+    internal fun rollbackHistory(checkpoint: HistoryCheckpoint) {
+        hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.let { historyProvider ->
+            historyProvider.removeSnippets(historyProvider.getSnippets().filter { it !in checkpoint.snippets })
+        }
+        moduleDataProvider.removeSnippetModuleDataAddedAfter(checkpoint.moduleDataCount)
+    }
+
+    /**
      * Stripped down FirSession needed to resolve annotations with their arguments before starting the actual snippet compilation.
      */
     internal var dummySessionForAnnotationResolution: FirSession? = null
@@ -273,6 +304,15 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
             friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
             JvmPlatforms.defaultJvmPlatform,
         ).also { if (!isDummy) moduleDataHistory.add(it) }
+
+    /**
+     * Library module data stay, since the environment classpath is already updated with their paths.
+     */
+    fun removeSnippetModuleDataAddedAfter(moduleDataCount: Int) {
+        if (moduleDataHistory.size <= moduleDataCount) return
+        val added = moduleDataHistory.subList(moduleDataCount, moduleDataHistory.size)
+        added.removeAll { it is FirSourceModuleData }
+    }
 }
 
 @OptIn(LegacyK2CliPipeline::class, DirectDeclarationsAccess::class)
@@ -282,12 +322,7 @@ private fun compileImpl(
     scriptCompilationConfiguration: ScriptCompilationConfiguration,
     convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
 ): ResultWithDiagnostics<CompiledSnippet> {
-    val priority = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.repl.currentSnippetNo]
-        ?: state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippetCount()
-
-    val initialScriptCompilationConfiguration =
-        if (priority == null) scriptCompilationConfiguration
-        else scriptCompilationConfiguration.with { repl.currentSnippetNo(priority) }
+    val initialScriptCompilationConfiguration = scriptCompilationConfiguration.with { repl.currentSnippetNo(state.nextSnippetNo) }
     val project = state.projectEnvironment.project
     val messageCollector = state.messageCollector
     val compilerConfiguration = state.compilerContext.environment.configuration.copy().apply {
@@ -382,6 +417,13 @@ private fun compileImpl(
         }
         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
         return failure(messageCollector)
+    }
+
+    state.hostConfiguration[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.let { historyProvider ->
+        for (importedSource in newSources) {
+            val importedSnippet = sourcesToFir[importedSource]?.declarations?.firstIsInstanceOrNull<FirReplSnippet>() ?: continue
+            historyProvider.putImportedSnippet(importedSnippet.symbol)
+        }
     }
 
     val outputs = listOf(resolveAndCheckFir(session, rawFir, diagnosticsReporter)).also {

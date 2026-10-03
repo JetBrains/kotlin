@@ -22,11 +22,3 @@ val res2 = Obj2.y
 
 object IObj3 : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>BaseObjIface<!> { val x = 3 }
 object Obj3 : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>BaseObjClass<!>(13)
-
-// SNIPPET
-
-val resi3 = IObj3.x
-val res3 = Obj3.y
-
-// EXPECTED: resi3 == 3
-// EXPECTED: res3 == 13

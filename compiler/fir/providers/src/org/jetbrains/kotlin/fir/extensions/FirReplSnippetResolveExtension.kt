@@ -47,8 +47,22 @@ fun FirSession.containingReplSnippet(symbol: FirBasedSymbol<*>): FirReplSnippetS
 abstract class FirReplHistoryProvider : FirSessionComponent {
     abstract fun getSnippets(): Iterable<FirReplSnippetSymbol>
     abstract fun putSnippet(symbol: FirReplSnippetSymbol)
+
+    /**
+     * Imported snippets are visible to the snippets that follow them, but are not counted by [getSnippetCount].
+     */
+    open fun putImportedSnippet(symbol: FirReplSnippetSymbol): Unit = putSnippet(symbol)
+
+    open fun isImportedSnippet(symbol: FirReplSnippetSymbol): Boolean = false
+
     abstract fun isFirstSnippet(symbol: FirReplSnippetSymbol): Boolean
     abstract fun getSnippetCount(): Int
+
+    /**
+     * Removes the [symbols] of failed snippets from the history, so their declarations are not visible to the later snippets.
+     */
+    abstract fun removeSnippets(symbols: Collection<FirReplSnippetSymbol>)
+
     open fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? = null
 
     /**

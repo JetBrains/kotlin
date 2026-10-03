@@ -16,11 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -47,19 +45,10 @@ class FileScopeProviderImpl(
 ) : FileScopeProvider {
 
     private val cache = storageManager.createMemoizedFunction<KtFile, FileScopes> { file ->
-        val scopes = (file.originalFile as KtFile?)?.fileScopesCustomizer?.createFileScopes(fileScopeFactory)
-                ?: fileScopeFactory.createScopesForFile(file)
+        val scopes = fileScopeFactory.createScopesForFile(file)
         bindingTrace.recordScope(scopes.lexicalScope, file)
         scopes
     }
 
     override fun getFileScopes(file: KtFile) = cache(file)
 }
-
-@K1Deprecation
-interface FileScopesCustomizer {
-    fun createFileScopes(fileScopeFactory: FileScopeFactory): FileScopes
-}
-
-@K1Deprecation
-var KtFile.fileScopesCustomizer: FileScopesCustomizer? by UserDataProperty(Key.create("FILE_SCOPES_CUSTOMIZER"))

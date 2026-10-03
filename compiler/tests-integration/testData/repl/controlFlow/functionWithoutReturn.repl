@@ -1,4 +1,0 @@
->>> fun fn(): Int {}
-error: a 'return' expression required in a function with a block body ('{...}')
-fun fn(): Int {}
-               ^

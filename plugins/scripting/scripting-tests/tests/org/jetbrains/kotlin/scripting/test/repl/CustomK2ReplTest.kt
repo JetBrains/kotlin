@@ -391,6 +391,42 @@ class CustomK2ReplTest {
         assertEquals(listOf("E"), layer3.map { it.simpleName })
     }
 
+    /**
+     * As in the K1 REPL, a snippet that fails at any compilation stage (here in the checkers, after its resolution has already
+     * registered it in the frontend history) is dropped from the history: its declarations are not visible to the later snippets.
+     * Unlike the K1 compiler (but like the JSR-223 engines), it still consumes a snippet number.
+     */
+    @Test
+    fun testFailedSnippetsDoNotAffectLaterSnippets() {
+        if (!isK2) return
+        val compiled = mutableListOf<KJvmCompiledScript>()
+        val results = withMessageCollectorAndDisposable { messageCollector, disposable ->
+            val compiler = K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, baseCompilationConfiguration))
+            val evaluator = K2ReplEvaluator()
+            @Suppress("DEPRECATION_ERROR")
+            internalScriptingRunSuspend {
+                var i = 0
+                suspend fun assertFails(text: String, expectedMessage: String) {
+                    val res = compiler.compile(text.toScriptSource("s${i++}.repl.kts"))
+                    if (res !is ResultWithDiagnostics.Failure) fail("Compilation of '$text' should fail: $res")
+                    if (res.reports.none { it.message.contains(expectedMessage) }) fail("Unexpected failure of '$text': ${res.reports}")
+                    messageCollector.clear()
+                }
+                assertFails("val a: String", "Property must be initialized")
+                assertFails("a", "Unresolved reference 'a'")
+                assertFails("val s: String = s", "Variable 's' must be initialized")
+                assertFails("s", "Unresolved reference 's'")
+                listOf("val s = \"ok\"", "s").map { text ->
+                    compiler.compile(text.toScriptSource("s${i++}.repl.kts")).valueOr { return@internalScriptingRunSuspend it }
+                        .also { compiled.add(it.get() as KJvmCompiledScript) }
+                }.mapSuccess { evaluator.eval(it, baseEvaluationConfiguration) }
+            }
+        }
+
+        checkEvaluatedSnippetsResultVals(sequenceOf(null, "ok"), results)
+        assertEquals(listOf(null, "res5"), compiled.map { it.resultField?.first })
+    }
+
     @Test
     fun testConvertToFirSeamAndResultFieldNumbering() {
         val convertedSources = mutableListOf<String>()
@@ -412,6 +448,75 @@ class CustomK2ReplTest {
 
         assertEquals(listOf("s0.repl.kts", "s1.repl.kts", "s2.repl.kts", "s3.repl.kts"), convertedSources)
         assertEquals(listOf(null, "res1", null, "res3"), compiledSnippets.map { (it as KJvmCompiledScript).resultField?.first })
+    }
+
+    /**
+     * The imported scripts (`importScripts`) are compiled together with the importing snippet as the snippets preceding it
+     * they see each other in the import order, are evaluated before the importing snippet (each once),
+     * do not consume the snippet numbers, and stay accessible from the later snippets.
+     */
+    @Test
+    fun testImportedScriptsAsPrecedingSnippets() {
+        if (!isK2) return
+        val importsDir = kotlin.io.path.createTempDirectory("replImports").toFile()
+        try {
+            File(importsDir, "common.kts").writeText("var sharedVar = 4\nfun greet() = \"Hi from common\"\nprintln(\"common evaluated\")")
+            File(importsDir, "middle.kts").writeText("// IMPORT common.kts\nsharedVar = sharedVar + 1\nval fromMiddle = (::greet)() + \" via middle\"")
+            File(importsDir, "later.kts").writeText("val zFromLater = 1")
+            File(importsDir, "usesLater.kts").writeText("val y = zFromLater")
+
+            val compilationConfiguration = baseCompilationConfiguration.with {
+                refineConfiguration {
+                    beforeCompiling { (val script, val config = compilationConfiguration, val _ = collectedData) ->
+                        val imports = script.text.lines().filter { it.startsWith("// IMPORT ") }.map { line ->
+                            File(importsDir, line.removePrefix("// IMPORT ").trim()).toScriptSource()
+                        }
+                        if (imports.isEmpty()) config.asSuccess()
+                        else config.with { importScripts(imports) }.asSuccess()
+                    }
+                }
+            }
+
+            val compiled = mutableListOf<KJvmCompiledScript>()
+            val capturedOut = java.io.ByteArrayOutputStream()
+            val originalOut = System.out
+            System.setOut(java.io.PrintStream(capturedOut, true))
+            val results = try {
+                withMessageCollectorAndDisposable { messageCollector, disposable ->
+                    val compiler =
+                        K2ReplCompiler(K2ReplCompiler.createCompilationState(messageCollector, disposable, compilationConfiguration))
+                    val evaluator = K2ReplEvaluator()
+                    @Suppress("DEPRECATION_ERROR")
+                    internalScriptingRunSuspend {
+                        // The import order is strict: `usesLater.kts` does not see the declarations of `later.kts` imported after it
+                        val failed = compiler.compile(
+                            "// IMPORT usesLater.kts\n// IMPORT later.kts\nzFromLater".toScriptSource("s0.repl.kts")
+                        )
+                        if (failed !is ResultWithDiagnostics.Failure) fail("The import of a later imported script should fail: $failed")
+                        if (failed.reports.none { it.message.contains("zFromLater") }) fail("Unexpected failure: ${failed.reports}")
+                        messageCollector.clear()
+
+                        listOf(
+                            "// IMPORT middle.kts\n// IMPORT common.kts\nsharedVar + (::sharedVar).get() + 5",
+                            "fromMiddle + \" \" + sharedVar",
+                        ).mapIndexed { i, text ->
+                            compiler.compile(text.toScriptSource("s$i.repl.kts")).valueOr { return@internalScriptingRunSuspend it }
+                                .also { compiled.add(it.get() as KJvmCompiledScript) }
+                        }.mapSuccess { evaluator.eval(it, baseEvaluationConfiguration) }
+                    }
+                }
+            } finally {
+                System.setOut(originalOut)
+            }
+
+            checkEvaluatedSnippetsResultVals(sequenceOf(15, "Hi from common via middle 5"), results)
+            // the imported snippets do not consume the snippet numbers; the failed snippet `s0` consumed `res0`, but it is not visible
+            assertEquals(listOf("res1", "res2"), compiled.map { it.resultField?.first })
+            // `common.kts` is imported both directly and via `middle.kts`, but evaluated once
+            assertEquals(1, capturedOut.toString().lines().count { it == "common evaluated" })
+        } finally {
+            importsDir.deleteRecursively()
+        }
     }
 
     @Test
