@@ -25,4 +25,8 @@ object DataFrameDirectives : SimpleDirectivesContainer() {
     val WITHOUT_HANDLE_EXTENSION_PROPERTY_EXCEPTIONS by directive(
         description = "Simulate older KDF runtime versions without org.jetbrains.kotlinx.dataframe.exceptions.handleExtensionPropertyException"
     )
+
+    val POLYMORPHIC_DATA_SCHEMAS by directive(
+        description = "Add compatible @DataSchema interfaces of the module as supertypes of the generated schema markers"
+    )
 }

@@ -60,7 +60,8 @@ class DataFrameEnvironmentConfigurator(testServices: TestServices) : Environment
             FirDataFrameExtensionRegistrar(
                 isTest = true,
                 dumpSchemas,
-                contextReader = ImportedSchemasData.getReader(testData)
+                contextReader = ImportedSchemasData.getReader(testData),
+                polymorphicDataSchemas = allDirectives.contains(DataFrameDirectives.POLYMORPHIC_DATA_SCHEMAS),
             )
         )
         val handleExtensionPropertyExceptionId = when {
