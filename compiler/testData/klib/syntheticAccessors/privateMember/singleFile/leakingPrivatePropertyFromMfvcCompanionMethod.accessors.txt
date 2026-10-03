@@ -1,8 +1,8 @@
 /* MODULE name=<main> */
 
-/* FILE package=<root> fileName=leakingPrivatePropertyFromCompanionMethod.kt */
+/* FILE package=<root> fileName=leakingPrivatePropertyFromMfvcCompanionMethod.kt */
 
-internal class UndoManager<R : Any?>
+internal value class UndoManager<R : Any?>
     private val o: String
         /* TARGET declaration */ private fun <get-o>(): String
     private val k: String
