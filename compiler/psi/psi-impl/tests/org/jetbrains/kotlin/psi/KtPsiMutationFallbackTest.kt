@@ -95,5 +95,47 @@ class KtPsiMutationFallbackTest : KotlinTestWithEnvironment() {
         Assertions.assertEquals("val v = 3", file.text)
     }
 
+    @Test
+    fun testSetNameOfStubBasedDeclaration() {
+        val file = createFile("fun foo() {}")
+        file.findDescendantOfType<KtNamedFunction>()!!.setName("class")
+        Assertions.assertEquals("fun `class`() {}", file.text)
+    }
+
+    @Test
+    fun testSetNameOfNonStubDeclaration() {
+        val file = createFile("val (a, b) = p")
+        file.findDescendantOfType<KtDestructuringDeclarationEntry> { it.name == "a" }!!.setName("c")
+        Assertions.assertEquals("val (c, b) = p", file.text)
+    }
+
+    @Test
+    fun testSetNameOfUnnamedObjectDeclaration() {
+        val file = createFile("class A { companion object {} }")
+        file.findDescendantOfType<KtObjectDeclaration>()!!.setName("Named")
+        Assertions.assertEquals("class A { companion object Named {} }", file.text)
+    }
+
+    @Test
+    fun testSetNameOfImportAlias() {
+        val file = createFile("import a.B as C")
+        file.findDescendantOfType<KtImportAlias>()!!.setName("D")
+        Assertions.assertEquals("import a.B as D", file.text)
+    }
+
+    @Test
+    fun testSetNameOfLabeledExpression() {
+        val file = createFile("fun f() { foo@ for (i in x) {} }")
+        file.findDescendantOfType<KtLabeledExpression>()!!.setName("bar")
+        Assertions.assertEquals("fun f() { bar@ for (i in x) {} }", file.text)
+    }
+
+    @Test
+    fun testSetNameOfFile() {
+        val file = createFile("class A")
+        file.setName("renamed.kt")
+        Assertions.assertEquals("renamed.kt", file.name)
+    }
+
     private fun createFile(text: String): KtFile = KtPsiFactory(project).createFile(text)
 }
