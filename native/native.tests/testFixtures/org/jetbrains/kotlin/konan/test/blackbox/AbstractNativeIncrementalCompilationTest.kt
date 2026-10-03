@@ -7,11 +7,15 @@ package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CInteropCompilation
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependency
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.isDisabledNative
@@ -74,7 +78,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             val moduleInfo = moduleDirectory.resolve(MODULE_INFO_FILE)
             val parsedModule = ModuleInfoParser(
                 moduleInfo,
-                expectedStateDirectives = NativeCacheExpectation.byDirective.keys,
+                expectedStateDirectives = NativeCacheExpectation.byDirective.keys + OutputExpectation.byDirective.keys,
             ).parse(moduleName)
 
             val moduleSourceDir = buildDir.resolve(moduleName)
@@ -105,7 +109,13 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             compileLibraries(step)
 
             val dumpBuiltCachesToPath = icCacheDir.resolve("__ic_build_output_${step.id}.txt")
-            val executable = compileMainExecutable(step.id, dumpBuiltCachesToPath)
+            val [testCase, compilationResult] = compileMainExecutable(step.id, dumpBuiltCachesToPath)
+            verifyOutputExpectations(step.id, compilationResult)
+
+            // If the compilation is expected to fail, there is neither a cache to inspect nor an executable to run.
+            if (expectsCompilationFailure(step.id)) return
+
+            val executable = CompiledExecutable(testCase, compilationResult.assertSuccess())
 
             val buildOutputEntries = if (dumpBuiltCachesToPath.exists())
                 dumpBuiltCachesToPath.useLines { lines -> lines.filter(String::isNotBlank).toSet() }
@@ -165,14 +175,16 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
 
         // Compile test, NOT respecting possible `mode=TWO_STAGE_MULTI_MODULE`: don't add intermediate LibraryCompilation(kt->klib).
         // KT-66014: Extract this test from usual Native test run, and run it in scope of new test module
-        private fun compileMainExecutable(stepId: Int, dumpBuiltCachesToPath: File): CompiledExecutable {
+        private fun compileMainExecutable(
+            stepId: Int,
+            dumpBuiltCachesToPath: File,
+        ): Pair<TestCase, TestCompilationResult<out TestCompilationArtifact.Executable>> {
             val mainModule = testStructure.modules.getValue(MAIN_MODULE_NAME)
             val mainStep = mainModule.getStep(stepId) ?: fail("Main module has no module-info entry")
             listOf(externalLibsDir, autoCacheDir, icCacheDir).forEach { it.mkdirs() }
-            return compileToExecutableInOneStage(
+            val testCase = generateTestCaseWithSingleModule(
                 mainModule.sourceDir,
-                tryPassSystemCacheDirectory = false,
-                freeCompilerArgs = TestCompilerArgs(
+                TestCompilerArgs(
                     listOf(
                         "-Xauto-cache-from=${externalLibsDir.absolutePath}",
                         "-Xauto-cache-dir=${autoCacheDir.absolutePath}",
@@ -182,8 +194,13 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                         "-verbose",
                     ) + mainStep.cliArguments
                 ),
+            )
+            val compilationResult = compileToExecutableInOneStage(
+                testCase,
+                tryPassSystemCacheDirectory = false,
                 dependencies = mainStep.dependencies.toCompilationDependencies(),
             )
+            return testCase to compilationResult
         }
 
         private fun Collection<ModuleInfo.Dependency>.toCompilationDependencies(): List<TestCompilationDependency<*>> =
@@ -196,7 +213,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             for ([moduleName, module] in testStructure.modules) {
                 if (moduleName == MAIN_MODULE_NAME) continue
                 val expectedFiles = module.getStep(stepId)?.expectedFileStats ?: continue
-                expectedFiles.values.flatten().toSet().forEach { relativePath ->
+                expectedFiles.filterKeys { it in NativeCacheExpectation.byDirective }.values.flatten().toSet().forEach { relativePath ->
                     val key = CacheKey(moduleName, relativePath)
                     val sourceFile = module.sourceDir.resolve(relativePath)
                     val cacheDir = when {
@@ -221,7 +238,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             for ([moduleName, module] in testStructure.modules) {
                 val expected = module.getStep(stepId)?.expectedFileStats ?: continue
                 for ([directive, files] in expected) {
-                    val cacheExpectation = NativeCacheExpectation.byDirective.getValue(directive)
+                    val cacheExpectation = NativeCacheExpectation.byDirective[directive] ?: continue
                     files.forEach { path ->
                         verifyExpectation(stepId, moduleName, path, cacheExpectation, previous, current, buildOutputEntries)
                         if (cacheExpectation == NativeCacheExpectation.ADDED_CACHE ||
@@ -239,6 +256,57 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             JUnit5Assertions.assertTrue(missing.isEmpty()) {
                 val unexpected = buildOutputEntries - expectedInBuildOutput
                 "IC build output missing expected entries at step $stepId:\n  missing: $missing, unexpected: $unexpected"
+            }
+        }
+
+        private fun outputExpectations(stepId: Int): Map<String, Set<String>> {
+            val mainModule = testStructure.modules.getValue(MAIN_MODULE_NAME)
+            val expectedFileStats = mainModule.getStep(stepId)?.expectedFileStats ?: return emptyMap()
+            return expectedFileStats.filterKeys { it in OutputExpectation.byDirective }
+        }
+
+        private fun expectsCompilationFailure(stepId: Int): Boolean =
+            OutputExpectation.EXPECTED_FAILURE_OUTPUT.directive in outputExpectations(stepId)
+
+        private fun verifyOutputExpectations(
+            stepId: Int,
+            compilationResult: TestCompilationResult<out TestCompilationArtifact.Executable>,
+        ) {
+            val outputExpectations = outputExpectations(stepId)
+            if (outputExpectations.isEmpty()) return
+
+            if (expectsCompilationFailure(stepId)) {
+                assertTrue(compilationResult is TestCompilationResult.Failure) {
+                    "Expected the main executable compilation at step $stepId to fail, but it succeeded"
+                }
+            }
+
+            val compilerOutput = ((compilationResult as? TestCompilationResult.ImmediateResult<*>)
+                ?.loggedData as? LoggedData.CompilationToolCall)?.toolOutput
+                ?: fail("No compiler output captured for the main executable compilation at step $stepId")
+
+            val mainModule = testStructure.modules.getValue(MAIN_MODULE_NAME)
+            for ([directive, fileNames] in outputExpectations) {
+                val expectation = OutputExpectation.byDirective.getValue(directive)
+                for (fileName in fileNames) {
+                    val patternsFile = mainModule.testDataDir.resolve(fileName)
+                    assertTrue(patternsFile.exists()) { "Patterns file does not exist: $patternsFile" }
+                    patternsFile.readLines()
+                        .map(String::trim)
+                        .filter { it.isNotEmpty() && !it.startsWith("//") }
+                        .forEach { pattern ->
+                            when (expectation) {
+                                OutputExpectation.EXPECTED_OUTPUT,
+                                OutputExpectation.EXPECTED_FAILURE_OUTPUT,
+                                    -> assertTrue(compilerOutput.contains(pattern)) {
+                                    "Expected the compiler output at step $stepId to contain \"$pattern\", but it did not:\n$compilerOutput"
+                                }
+                                OutputExpectation.FORBIDDEN_OUTPUT -> assertFalse(compilerOutput.contains(pattern)) {
+                                    "Expected the compiler output at step $stepId to NOT contain \"$pattern\", but it did:\n$compilerOutput"
+                                }
+                            }
+                        }
+                }
             }
         }
 
@@ -409,6 +477,21 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
 
             companion object {
                 val byDirective: Map<String, NativeCacheExpectation> = entries.associateBy { it.directive }
+            }
+        }
+
+        // Expectations about the compiler output of the main executable compilation.
+        // The directive value is a file (in the main module's test data directory) whose non-blank,
+        // non-comment lines are substrings that must (or must not) occur in the compiler output.
+        // "expected compilation failure" additionally requires the compilation to fail; such a step
+        // neither checks the caches nor runs the produced executable.
+        private enum class OutputExpectation(val directive: String) {
+            EXPECTED_OUTPUT("expected output"),
+            FORBIDDEN_OUTPUT("forbidden output"),
+            EXPECTED_FAILURE_OUTPUT("expected compilation failure");
+
+            companion object {
+                val byDirective: Map<String, OutputExpectation> = entries.associateBy { it.directive }
             }
         }
     }

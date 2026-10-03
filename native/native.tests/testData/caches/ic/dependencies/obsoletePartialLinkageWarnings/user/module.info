@@ -1,0 +1,20 @@
+STEP 0:
+    dependencies: lib, other
+    modifications:
+        U : a.kt -> a.kt
+        U : b.kt -> b.kt
+    added cache: a.kt, b.kt
+
+// `user` is not recompiled, but both of its files are rebuilt in one go:
+// `a.kt` because `lib` has changed, `b.kt` because `other` has changed.
+STEP 1:
+    modified cache: a.kt, b.kt
+
+// `a.kt` is edited, so its cache is rebuilt and no longer has any linkage problem.
+// The cache of `b.kt` is reused as is.
+STEP 2:
+    dependencies: lib, other
+    modifications:
+        U : a.1.kt -> a.kt
+    modified cache: a.kt
+    unchanged cache: b.kt
