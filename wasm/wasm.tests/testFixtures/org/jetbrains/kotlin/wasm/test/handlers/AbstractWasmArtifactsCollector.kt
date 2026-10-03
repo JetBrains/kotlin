@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.handlers
 
 import org.jetbrains.kotlin.js.test.utils.compiledTestOutputDirectory
+import org.jetbrains.kotlin.js.test.utils.maybeShortenWindowsPathPart
 import org.jetbrains.kotlin.test.backend.handlers.WasmBinaryArtifactHandler
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -30,7 +31,7 @@ fun TestServices.getWasmTestOutputDirectory(): File {
         WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR,
         WasmEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX,
         WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR,
-    ).resolve(originalFile.nameWithoutExtension)
+    ).resolve(maybeShortenWindowsPathPart(originalFile.nameWithoutExtension))
 }
 
 fun TestServices.getWasmTestOutputDirectoryForMode(mode: String): File =

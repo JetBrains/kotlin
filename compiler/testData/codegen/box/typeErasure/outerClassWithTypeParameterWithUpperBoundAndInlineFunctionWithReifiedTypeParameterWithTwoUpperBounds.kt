@@ -1,5 +1,3 @@
-// WASM_IGNORE_FOR: os=windows mode=multi-module
-// ^^^ KT-88235
 // DUMP_IR_OF_PREPROCESSED_INLINE_FUNCTIONS
 // WITH_REFLECT
 // WITH_STDLIB
