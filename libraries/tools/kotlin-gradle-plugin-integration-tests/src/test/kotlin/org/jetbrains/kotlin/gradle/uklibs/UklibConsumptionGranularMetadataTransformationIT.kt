@@ -29,7 +29,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
     ) {
         val targetSubset: KotlinMultiplatformExtension.() -> Unit = {
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             linuxArm64()
             linuxX64()
@@ -55,8 +55,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 project.applyMultiplatform {
                     targetSubset()
                     macosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64()
 
                     sourceSets.all {
                         it.compileStubSourceWithSourceSetName()
@@ -127,11 +125,9 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             PublisherConfiguration(group = "transitive"),
         ) {
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             macosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-            macosX64()
             linuxArm64()
             linuxX64()
 
@@ -144,7 +140,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                         }
                         group("transitiveProducerMacos") {
                             withMacosArm64()
-                            withMacosX64()
                         }
                     }
                     group("transitiveProducerLinux") {
@@ -161,11 +156,9 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             transitivePublisher,
         ) {
             iosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             iosX64()
             macosArm64()
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-            macosX64()
             linuxArm64()
             linuxX64()
 
@@ -177,7 +170,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                             withIosX64()
                         }
                         withMacosArm64()
-                        withMacosX64()
                     }
                     group("directProducerLinux") {
                         withLinuxArm64()
@@ -200,7 +192,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     macosArm64()
                     linuxArm64()
@@ -213,7 +205,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                                     withIosX64()
                                 }
                                 withMacosArm64()
-                                withMacosX64()
                             }
                             group("consumerLinux") {
                                 withLinuxArm64()
@@ -273,10 +264,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                                         group("five") {
                                             withMacosArm64()
                                             group("six") {
-                                                withMacosX64()
-                                                group("seven") {
-                                                    withJvm()
-                                                }
+                                                withJvm()
                                             }
                                         }
                                     }
@@ -285,13 +273,11 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                         }
                     }
                     iosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+                    // fixme: KT-89587 Clean up tests after iosX64 target deprecation
                     iosX64()
                     linuxArm64()
                     linuxX64()
                     macosArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64()
                     jvm()
 
                     sourceSets.all {
@@ -309,8 +295,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                 project.setUklibResolutionStrategy()
                 project.applyMultiplatform {
                     jvm()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    macosX64()
+                    macosArm64()
 
                     sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
                     sourceSets.commonMain.get().dependencies {
@@ -321,7 +306,6 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
 
             assertEquals(
                 listOf(
-                    listOf("commonMain", "uklib-producer-empty-1.0-sixMain-"),
                     listOf("commonMain", "uklib-producer-empty-1.0-fiveMain-"),
                     listOf("commonMain", "uklib-producer-empty-1.0-fourMain-"),
                     listOf("commonMain", "uklib-producer-empty-1.0-threeMain-"),

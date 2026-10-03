@@ -344,8 +344,6 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
 
                     // Universal
                     watchosSimulatorArm64()
-                    @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-                    watchosX64()
 
                     with(cocoapods) {
                         version = "1.0"
