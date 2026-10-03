@@ -66,15 +66,19 @@ object GroupedTestsResultProtocol {
     class ParsedExecution internal constructor(
         val executionName: String?,
         val outcomes: List<Outcome>,
-        private val startedIds: LinkedHashSet<String>,
+        private val lastStartedId: String?,
         val sawStructuredBlock: Boolean,
         val blockLeftOpen: Boolean,
         val malformedLines: List<String>,
     ) {
+        /**
+         * The test that started last and never reported a result, if the block was left open: it most likely crashed
+         * the VM.
+         */
         val crashedIds: Set<String>
             get() {
                 if (!blockLeftOpen) return emptySet()
-                return setOfNotNull(startedIds.lastOrNull()?.takeIf { id -> outcomes.none { it.id == id } })
+                return setOfNotNull(lastStartedId?.takeIf { id -> outcomes.none { it.id == id } })
             }
 
         val hasCompleteStructuredBlock: Boolean
@@ -236,7 +240,7 @@ object GroupedTestsResultProtocol {
 
     fun parseExecution(output: String, executionName: String? = null): ParsedExecution {
         val outcomes = mutableListOf<Outcome>()
-        val startedIds = LinkedHashSet<String>()
+        var lastStartedId: String? = null
         val malformedLines = mutableListOf<String>()
         val linePrefix = "$LINE_PREFIX$SEP"
         var insideBlock = false
@@ -272,7 +276,7 @@ object GroupedTestsResultProtocol {
                     if (id.isEmpty() || parts[2].isNotEmpty() || parts[3].isNotEmpty()) {
                         malformedLines += rawLine
                     } else {
-                        startedIds += id
+                        lastStartedId = id
                     }
                 }
                 PASSED, FAILED -> {
@@ -295,7 +299,7 @@ object GroupedTestsResultProtocol {
         }
         return ParsedExecution(
             outcomes = outcomes,
-            startedIds = startedIds,
+            lastStartedId = lastStartedId,
             executionName = executionName,
             sawStructuredBlock = sawStructuredBlock,
             blockLeftOpen = insideBlock,
