@@ -30,8 +30,12 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
+import org.jetbrains.kotlin.fir.extensions.DeclarationGenerationContext
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.UnresolvedJavaType
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
@@ -60,6 +64,7 @@ import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassifierTypeImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.AbstractSignatureParts
 import org.jetbrains.kotlin.load.java.typeEnhancement.PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE
 import org.jetbrains.kotlin.load.java.typeEnhancement.PredefinedFunctionEnhancementInfo
@@ -72,6 +77,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.util.EnumMap
@@ -1154,8 +1160,23 @@ class FirSignatureEnhancement(
         }
     }
 
-    private fun FirTypeRef.toConeKotlinType(mode: FirJavaTypeConversionMode, source: KtSourceElement?): ConeKotlinType =
-        toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, source, mode)
+    private fun FirTypeRef.toConeKotlinType(mode: FirJavaTypeConversionMode, source: KtSourceElement?): ConeKotlinType {
+        val coneType = toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, source, mode)
+        return if (this is FirJavaTypeRef && coneType.attributes.contains(UnresolvedJavaType)) {
+            val classifierQualifiedName = (type as? JavaClassifierTypeImpl)?.classifierQualifiedName?.let { Name.identifier(it) }
+                ?: return coneType
+            val context = DeclarationGenerationContext.Nested(owner.symbol, null)
+            runIf(
+                session.extensionService.declarationGenerators.any {
+                    classifierQualifiedName in it.getNestedClassifiersNames(owner.symbol, context)
+                }
+            ) {
+                session.symbolProvider.getClassLikeSymbolByClassId(
+                    owner.classId.createNestedClassId(classifierQualifiedName)
+                )?.constructType(typeArguments = coneType.typeArguments)
+            } ?: coneType
+        } else coneType
+    }
 }
 
 /**

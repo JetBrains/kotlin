@@ -5,7 +5,7 @@ public class JavaBaseClass {
         return "1";
     }
 
-    private Int privateField = 1;
+    private Integer privateField = 1;
 
     public String getPrivateField() {
         return "1";
