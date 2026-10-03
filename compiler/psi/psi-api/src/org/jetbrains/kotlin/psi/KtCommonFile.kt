@@ -121,7 +121,6 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
             replaceWith = ReplaceWith("this.setPackageFqName(value)", "org.jetbrains.kotlin.idea.base.psi.setPackageFqName"),
             level = DeprecationLevel.ERROR,
         )
-        @OptIn(KtNonPublicApi::class)
         set(value) {
             KtPsiMutationService.getInstance().setPackageFqName(this, value)
         }
@@ -368,7 +367,6 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
      * file if the new name turns it into a script or back. Without the service, it performs only the plain platform renaming, which does
      * not reparse the file.
      */
-    @OptIn(KtNonPublicApi::class)
     @Throws(IncorrectOperationException::class)
     override fun setName(name: String): PsiElement {
         val mutationService = KtPsiMutationService.getInstanceOrNull() ?: return super.setName(name)

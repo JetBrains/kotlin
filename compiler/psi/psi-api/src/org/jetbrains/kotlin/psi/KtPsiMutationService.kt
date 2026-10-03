@@ -24,7 +24,7 @@ import java.util.function.Consumer
  * [PsiLanguageInjectionHost.updateText], fall back to plain operations without Kotlin-specific adjustments like removing dangling
  * separators or adding parentheses. However, Kotlin-specific mutation methods still require the service.
  */
-@KtNonPublicApi
+@KtIdeApi
 interface KtPsiMutationService {
     /**
      * Performs smart deletion of [element].
@@ -363,7 +363,7 @@ interface KtPsiMutationService {
      */
     fun updateKDocSectionText(section: KDocSection, text: String): PsiLanguageInjectionHost
 
-    @KtNonPublicApi
+    @KtIdeApi
     companion object {
         /**
          * Returns the registered Kotlin PSI mutation service.
@@ -386,7 +386,7 @@ interface KtPsiMutationService {
 /**
  * Deletes [element] with [deletion] when [KtPsiMutationService] is registered, or performs the plain platform deletion otherwise.
  */
-@OptIn(KtNonPublicApi::class)
+@OptIn(KtIdeApi::class, KtNonPublicApi::class)
 internal fun deleteWithMutationService(element: KtElement, deletion: Consumer<KtPsiMutationService>) {
     val mutationService = KtPsiMutationService.getInstanceOrNull()
     if (mutationService != null) {
