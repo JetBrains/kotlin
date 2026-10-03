@@ -195,6 +195,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension$Defaul
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
+	public abstract fun getReturnValueCheckerMode ()Lorg/gradle/api/provider/Property;
+	public abstract fun getReturnValueCheckerModeForTests ()Lorg/gradle/api/provider/Property;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler : java/lang/Enum {
@@ -600,6 +602,14 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion : java/lang/Enu
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion$Companion {
 	public final fun fromVersion (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 	public final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode : java/lang/Enum {
+	public static final field Check Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
+	public static final field Disabled Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
+	public static final field Full Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/abi/AbiFilterSetSpec {
@@ -1496,6 +1506,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKotlinComp
 	public abstract fun getMultiPlatformEnabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getPluginClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getPluginOptions ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getReturnValueCheckerMode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceSetName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseModuleDetection ()Lorg/gradle/api/provider/Property;
 }

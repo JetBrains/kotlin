@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.compilerRunner.btapi.UsesBuildSessionService
 import org.jetbrains.kotlin.compilerRunner.createGradleCompilerRunner
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.incremental.UsesIncrementalModuleInfoBuildService
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
