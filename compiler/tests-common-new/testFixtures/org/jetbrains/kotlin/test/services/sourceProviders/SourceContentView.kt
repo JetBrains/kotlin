@@ -14,6 +14,7 @@ enum class SourceContentView {
     TRANSFORMED,
 }
 
+// TODO KT-89903: Extract source content retrieval from SourceFileProvider into a separate test service
 fun getSourceContent(
     file: TestFile,
     sourceContentView: SourceContentView,
