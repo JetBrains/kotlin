@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.grouping
 
 import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.report.TestReport
 import org.jetbrains.kotlin.test.report.TestReportChecks
 
@@ -60,7 +61,6 @@ object GroupedTestsResultProtocol {
     data class ExecutionOutput(
         val executionName: String,
         val output: String,
-        val parsed: ParsedExecution? = null,
     )
 
     class ParsedExecution internal constructor(
@@ -81,16 +81,37 @@ object GroupedTestsResultProtocol {
             get() = sawStructuredBlock && !blockLeftOpen && malformedLines.isEmpty()
     }
 
-    data class ParsedBatchResult(
-        val outcomes: Map<String, List<Outcome>>,
-        val sawStructuredBlock: Boolean,
-        val crashedIds: Set<String>,
-        val malformedLines: List<String>,
-        val executions: List<ParsedExecution> = emptyList(),
-    ) {
+    /** The parsed output of every execution of a batch, and what those executions report together. */
+    class ParsedBatchResult internal constructor(val executions: List<ParsedExecution>) {
+        val sawStructuredBlock: Boolean = executions.any { it.sawStructuredBlock }
+
+        val crashedIds: Set<String> = executions.flatMapTo(LinkedHashSet()) { it.crashedIds }
+
+        val malformedLines: List<String> = executions.flatMap { it.malformedLines }
+
+        /**
+         * Every outcome of each test, in execution order. A start with no result counts as a [Outcome.Status.CRASHED]
+         * outcome of the execution it happened in.
+         */
+        val outcomes: Map<String, List<Outcome>> = LinkedHashMap<String, MutableList<Outcome>>().apply {
+            for (execution in executions) {
+                val crashOutcomes = execution.crashedIds.map { id ->
+                    Outcome(id, Outcome.Status.CRASHED, message = null, details = null, execution.executionName)
+                }
+                for (outcome in execution.outcomes + crashOutcomes) {
+                    getOrPut(outcome.id) { mutableListOf() } += outcome
+                }
+            }
+        }
+
+        /**
+         * Attributes the merged outcomes to [expectedIds]. Each of [executionsRequiringFullCoverage] must report a
+         * result for every expected test: a test it has no result for is listed in
+         * [Analysis.missingExecutionNamesById], whatever the other executions reported.
+         */
         fun analyze(
             expectedIds: Collection<String>,
-            executionOutputs: Iterable<ExecutionOutput> = emptyList(),
+            executionsRequiringFullCoverage: Collection<ParsedExecution>,
         ): Analysis {
             val testReport = toTestReport()
             val missingIds = TestReportChecks.findMissingResults(expectedIds, testReport)
@@ -98,16 +119,13 @@ object GroupedTestsResultProtocol {
             val failures = LinkedHashMap<String, Analysis.Failure>()
             val missingExecutionNamesById = LinkedHashMap<String, MutableList<String>>()
 
-            for (executionOutput in executionOutputs) {
-                val outcomeIdsInExecution = (executionOutput.parsed
-                    ?: parseExecution(executionOutput.output, executionOutput.executionName))
-                    .outcomes
-                    .mapTo(mutableSetOf()) { it.id }
+            for (execution in executionsRequiringFullCoverage) {
+                val executionName = execution.executionName
+                    ?: testInfraError("An execution whose coverage is checked must be named")
+                val outcomeIdsInExecution = execution.outcomes.mapTo(mutableSetOf()) { it.id }
                 for (expectedId in expectedIds) {
                     if (expectedId !in outcomeIdsInExecution) {
-                        missingExecutionNamesById
-                            .getOrPut(expectedId) { mutableListOf() }
-                            .add(executionOutput.executionName)
+                        missingExecutionNamesById.getOrPut(expectedId) { mutableListOf() }.add(executionName)
                     }
                 }
             }
@@ -205,41 +223,10 @@ object GroupedTestsResultProtocol {
     }
 
     fun parseMergedWithExecutionNames(outputs: Iterable<ExecutionOutput>): ParsedBatchResult =
-        parseMergedNamedOutputs(outputs.map { NamedOutput(it.executionName, it.output) })
+        parseMergedNamedOutputs(outputs.map { (executionName, output) -> NamedOutput(executionName, output) })
 
-    private fun parseMergedNamedOutputs(outputs: Iterable<NamedOutput>): ParsedBatchResult {
-        var sawStructuredBlock = false
-        val merged = LinkedHashMap<String, MutableList<Outcome>>()
-        val crashedIds = LinkedHashSet<String>()
-        val parsedExecutions = outputs.map { (executionName, output) ->
-            parseExecution(output, executionName)
-        }.toList()
-        val malformedLines = mutableListOf<String>()
-        for (parsed in parsedExecutions) {
-            sawStructuredBlock = sawStructuredBlock || parsed.sawStructuredBlock
-            crashedIds += parsed.crashedIds
-            malformedLines += parsed.malformedLines
-            for (outcome in parsed.outcomes) {
-                merged.getOrPut(outcome.id) { mutableListOf() } += outcome
-            }
-            for (crashedId in parsed.crashedIds) {
-                merged.getOrPut(crashedId) { mutableListOf() } += Outcome(
-                    id = crashedId,
-                    status = Outcome.Status.CRASHED,
-                    message = null,
-                    details = null,
-                    executionName = parsed.executionName,
-                )
-            }
-        }
-        return ParsedBatchResult(
-            outcomes = merged.mapValues { entry -> entry.value.toList() },
-            sawStructuredBlock = sawStructuredBlock,
-            crashedIds = crashedIds,
-            malformedLines = malformedLines,
-            executions = parsedExecutions,
-        )
-    }
+    private fun parseMergedNamedOutputs(outputs: Iterable<NamedOutput>): ParsedBatchResult =
+        ParsedBatchResult(outputs.map { (executionName, output) -> parseExecution(output, executionName) })
 
     fun hasCompleteStructuredBlock(output: String): Boolean {
         return parseExecution(output).hasCompleteStructuredBlock

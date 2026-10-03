@@ -122,7 +122,7 @@ class GroupedTestsResultProtocolTest {
                 GroupedTestsResultProtocol.ExecutionOutput("V8 (dce)", crashingOutput),
             )
         )
-        val analysis = result.analyze(listOf("id"))
+        val analysis = result.analyze(listOf("id"), executionsRequiringFullCoverage = emptyList())
 
         assertEquals(listOf("V8 (dev)", "V8 (dce)"), result.outcomes.getValue("id").map { it.executionName })
         assertTrue("[V8 (dev)] failure message" in analysis.failures.getValue("id").reportedFailure.orEmpty())
@@ -137,15 +137,16 @@ class GroupedTestsResultProtocolTest {
         val firstOutput = block(resultLine("first", STARTED), resultLine("first", PASSED))
         val secondOutput = block(resultLine("second", STARTED), resultLine("second", PASSED))
 
-        val analysis = GroupedTestsResultProtocol
-            .parseMerged(listOf(firstOutput, secondOutput))
-            .analyze(
-                expectedIds = listOf("first", "second"),
-                executionOutputs = listOf(
-                    GroupedTestsResultProtocol.ExecutionOutput("VM-1", firstOutput),
-                    GroupedTestsResultProtocol.ExecutionOutput("VM-2", secondOutput),
-                ),
+        val result = GroupedTestsResultProtocol.parseMergedWithExecutionNames(
+            listOf(
+                GroupedTestsResultProtocol.ExecutionOutput("VM-1", firstOutput),
+                GroupedTestsResultProtocol.ExecutionOutput("VM-2", secondOutput),
             )
+        )
+        val analysis = result.analyze(
+            expectedIds = listOf("first", "second"),
+            executionsRequiringFullCoverage = result.executions,
+        )
 
         assertEquals(emptyList<String>(), analysis.missingIds)
         assertEquals(listOf("VM-2"), analysis.missingExecutionNamesById.getValue("first"))
@@ -240,7 +241,7 @@ class GroupedTestsResultProtocolTest {
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(passingVm, crashingVm))
 
-        val analysis = result.analyze(listOf("crasher"))
+        val analysis = result.analyze(listOf("crasher"), executionsRequiringFullCoverage = emptyList())
         assertTrue("crasher" in analysis.crashedIds)
         assertEquals(
             listOf(Status.PASSED, Status.CRASHED),
@@ -248,7 +249,8 @@ class GroupedTestsResultProtocolTest {
         )
         assertTrue(TestReportChecks.findMissingResults(listOf("crasher"), result.toTestReport()).isEmpty())
 
-        val noCrash = GroupedTestsResultProtocol.parseMerged(listOf(passingVm, passingVm)).analyze(listOf("crasher"))
+        val noCrash = GroupedTestsResultProtocol.parseMerged(listOf(passingVm, passingVm))
+            .analyze(listOf("crasher"), executionsRequiringFullCoverage = emptyList())
         assertFalse("crasher" in noCrash.crashedIds)
     }
 
@@ -259,7 +261,7 @@ class GroupedTestsResultProtocolTest {
 
         val analysis = GroupedTestsResultProtocol
             .parseMerged(listOf(passingScenario, crashedScenario))
-            .analyze(expectedIds = listOf("id"))
+            .analyze(expectedIds = listOf("id"), executionsRequiringFullCoverage = emptyList())
 
         assertTrue(analysis.missingIds.isEmpty())
         assertEquals(FailureKind.CRASHED, analysis.failures.getValue("id").kind)
@@ -277,7 +279,7 @@ class GroupedTestsResultProtocolTest {
             listOf(Status.FAILED, Status.CRASHED),
             result.outcomes.getValue("id").map { it.status },
         )
-        assertTrue("id" in result.analyze(listOf("id")).crashedIds)
+        assertTrue("id" in result.analyze(listOf("id"), executionsRequiringFullCoverage = emptyList()).crashedIds)
     }
 
     @Test
@@ -310,7 +312,7 @@ class GroupedTestsResultProtocolTest {
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(completeVm, truncatedVm))
 
-        val analysis = result.analyze(listOf("earlier", "crasher"))
+        val analysis = result.analyze(listOf("earlier", "crasher"), executionsRequiringFullCoverage = emptyList())
         assertTrue("crasher" in analysis.crashedIds)
         assertFalse(
             "earlier" in analysis.crashedIds,
@@ -329,7 +331,7 @@ class GroupedTestsResultProtocolTest {
 
         val result = GroupedTestsResultProtocol.parseMerged(listOf(output))
 
-        val analysis = result.analyze(listOf("garbled", "later"))
+        val analysis = result.analyze(listOf("garbled", "later"), executionsRequiringFullCoverage = emptyList())
         assertFalse(
             "garbled" in analysis.crashedIds,
             "A test a later test ran after was blamed for the crash",
@@ -351,11 +353,12 @@ class GroupedTestsResultProtocolTest {
         )
         val unterminatedBlock = closedBlock.substringBefore(END)
 
-        assertFalse(
-            "last" in GroupedTestsResultProtocol.parseMerged(listOf(closedBlock)).analyze(listOf("last")).crashedIds,
-            "A batch the driver ran to its END was reported as crashed",
-        )
-        assertTrue("last" in GroupedTestsResultProtocol.parseMerged(listOf(unterminatedBlock)).analyze(listOf("last")).crashedIds)
+        fun crashedIdsOf(output: String): Set<String> = GroupedTestsResultProtocol.parseMerged(listOf(output))
+            .analyze(listOf("last"), executionsRequiringFullCoverage = emptyList())
+            .crashedIds
+
+        assertFalse("last" in crashedIdsOf(closedBlock), "A batch the driver ran to its END was reported as crashed")
+        assertTrue("last" in crashedIdsOf(unterminatedBlock))
     }
 
     @Test
@@ -366,7 +369,7 @@ class GroupedTestsResultProtocolTest {
 
         assertTrue(result.sawStructuredBlock)
         assertFalse(
-            "only" in result.analyze(listOf("only")).crashedIds,
+            "only" in result.analyze(listOf("only"), executionsRequiringFullCoverage = emptyList()).crashedIds,
             "A test that reported its result was blamed for the crash",
         )
     }
@@ -375,7 +378,8 @@ class GroupedTestsResultProtocolTest {
     fun `given a result for a test outside the batch when analyze then it is excessive and not a failure`() {
         val output = block(resultLine("expected", PASSED), resultLine("foreign", FAILED, "msg", "details"))
 
-        val analysis = GroupedTestsResultProtocol.parseMerged(listOf(output)).analyze(listOf("expected"))
+        val analysis = GroupedTestsResultProtocol.parseMerged(listOf(output))
+            .analyze(listOf("expected"), executionsRequiringFullCoverage = emptyList())
 
         assertEquals(listOf("foreign"), analysis.excessiveIds)
         assertEquals(emptySet<String>(), analysis.failures.keys)

@@ -200,7 +200,9 @@ abstract class AbstractWasmGroupingStageBoxRunner(
         val expectedIds = expectedIds()
         val analysis = run.parsed.analyze(
             expectedIds,
-            executionOutputs = if (isDriverLinked) run.parsedCollectedExecutionOutputs() else emptyList(),
+            // A driver-linked VM that completed its block must report every test; a driverless batch has no driver
+            // to report through, so no execution is held to full coverage there.
+            executionsRequiringFullCoverage = if (isDriverLinked) run.parsedCollectedOutputs else emptyList(),
         )
 
         testServices.groupingStageInputs.firstOrNull { !it.hasBoxMethod() }?.let { input ->
@@ -438,11 +440,6 @@ private class BatchRun(val collectedOutputs: List<WasmVMOutput>, val exceptions:
         collectedOutputs.filterIndexed { index, _ -> predicate(parsedCollectedOutputs[index]) }
             .map { it.executionName }
             .distinct()
-
-    fun parsedCollectedExecutionOutputs(): List<GroupedTestsResultProtocol.ExecutionOutput> =
-        collectedOutputs.mapIndexed { index, (output, executionName) ->
-            GroupedTestsResultProtocol.ExecutionOutput(executionName, output, parsedCollectedOutputs[index])
-        }
 }
 
 private fun Throwable.capturedVmOutput(): WasmVMOutput? {
