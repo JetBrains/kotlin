@@ -26,7 +26,7 @@ import java.nio.file.Path
  * val metadata: KlibMetadataComponent = klib.metadata // A shortcut for `klib.getComponent(KlibMetadataComponent.ID)!!`
  * ```
  */
-interface Klib {
+interface Klib: KlibComponentsContainer {
     /**
      * The [Path] that points to the library location on the file system.
      *
@@ -47,7 +47,9 @@ interface Klib {
      * Read/write attributes associated with the current instance of [Klib].
      */
     val attributes: KlibAttributes
+}
 
+interface KlibComponentsContainer {
     /**
      * Get a specific [KlibComponent] by its [kind]. Return `null` if the component is not found.
      */

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.hasEqualClassId
@@ -14,6 +15,12 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.name.isSubpackageOf
+
+private fun IrClassSymbol.hasEqualClassId(classId: ClassId): Boolean {
+    return with(signature as? IdSignature.CommonSignature ?: return false) {
+        classId.packageFqName.asString() == packageFqName && classId.relativeClassName.asString() == declarationFqName
+    }
+}
 
 fun IrClass.inheritsFromCStruct(): Boolean = superTypes.any { it.classOrFail.hasEqualClassId(NativeStandardInteropNames.CStructVarClassId) }
 fun IrClass.inheritsFromCEnum(): Boolean = superTypes.any { it.classOrFail.hasEqualClassId(NativeStandardInteropNames.CEnumClassId) }

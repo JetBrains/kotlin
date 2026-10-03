@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.library.components
 import org.jetbrains.kotlin.library.Klib
 import org.jetbrains.kotlin.library.KlibComponent
 import org.jetbrains.kotlin.library.KlibComponentLayout
+import org.jetbrains.kotlin.library.KlibComponentsContainer
 import org.jetbrains.kotlin.library.KlibConstants.KLIB_DEFAULT_COMPONENT_NAME
 import org.jetbrains.kotlin.library.KlibLayoutReader
 import org.jetbrains.kotlin.library.components.KlibMetadataConstants.KLIB_METADATA_FILE_EXTENSION
@@ -51,7 +52,7 @@ interface KlibMetadataComponent : KlibComponent {
  * It is expected that every correct Klib has metadata files. So, the [metadata] property always returns
  * a non-null component instance that can be used to read the Klib's metadata.
  */
-inline val Klib.metadata: KlibMetadataComponent
+inline val KlibComponentsContainer.metadata: KlibMetadataComponent
     get() = getComponent(KlibMetadataComponent.Kind)!!
 
 class KlibMetadataComponentLayout(root: Path) : KlibComponentLayout(root) {
