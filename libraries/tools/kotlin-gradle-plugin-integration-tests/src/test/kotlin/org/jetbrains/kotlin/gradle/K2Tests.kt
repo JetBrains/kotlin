@@ -19,19 +19,13 @@ import kotlin.test.assertEquals
 @Disabled("Used for local testing only")
 @MppGradlePluginTests
 @DisplayName("K2: Hierarchical multiplatform")
-class K2HierarchicalMppIT : HierarchicalMppIT() {
-    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copy(languageVersion = "2.0")
-}
+class K2HierarchicalMppIT : HierarchicalMppIT()
 
 @Disabled("Used for local testing only")
-class K2CommonizerIT : CommonizerIT() {
-    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copy(languageVersion = "2.0")
-}
+class K2CommonizerIT : CommonizerIT()
 
 @Ignore
-class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
-}
+class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT()
 
 @MppGradlePluginTests
 @DisplayName("K2: custom tests")
