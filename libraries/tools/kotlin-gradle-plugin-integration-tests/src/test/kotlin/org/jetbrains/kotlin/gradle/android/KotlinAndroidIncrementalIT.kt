@@ -41,7 +41,10 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assembleDebug", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(
+                "assembleDebug",
+                buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG).suppressAgpWarningIsProperty(gradleVersion),
+            ) {
                 val affectedKotlinFiles = listOf(
                     "app/src/main/kotlin/com/example/KotlinActivity1.kt",
                     "app/src/main/kotlin/com/example/getSomething.kt",
@@ -68,12 +71,12 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("assembleDebug")
+            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion))
 
             val libAndroidUtilKt = subProject("libAndroid").kotlinSourcesDir().resolve("com/example/libAndroidUtil.kt")
             libAndroidUtilKt.modify { it.replace("fun libAndroidUtil(): String", "fun libAndroidUtil(): CharSequence") }
 
-            val optionsWithDebug = buildOptions.copy(logLevel = LogLevel.DEBUG)
+            val optionsWithDebug = buildOptions.copy(logLevel = LogLevel.DEBUG).suppressAgpWarningIsProperty(gradleVersion)
 
             build("assembleDebug", buildOptions = optionsWithDebug) {
                 val affectedSources = listOf(
@@ -122,7 +125,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
         project(
             "AndroidIncrementalSingleModuleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             val expectedTasks = listOf(
@@ -169,7 +172,10 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
 
             val libAndroidUtilKt = subProject("libAndroid").kotlinSourcesDir().resolve("com/example/libAndroidUtil.kt")
             libAndroidUtilKt.modify { it.replace("fun libAndroidUtil(): String", "fun libAndroidUtil(): CharSequence") }
-            build("assembleDebug", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build(
+                "assembleDebug",
+                buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG).suppressAgpWarningIsProperty(gradleVersion),
+            ) {
                 val affectedSources = listOf(
                     libAndroidUtilKt,
                     subProject("app").kotlinSourcesDir().resolve("com/example/useLibAndroidUtil.kt")

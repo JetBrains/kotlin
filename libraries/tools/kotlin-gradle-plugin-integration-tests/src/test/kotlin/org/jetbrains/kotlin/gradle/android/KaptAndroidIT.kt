@@ -238,13 +238,13 @@ class KaptAndroidIT : KaptBaseIT() {
 
             val buildTasks = (kaptTasks + javacTasks).toTypedArray()
 
-            build(*buildTasks) {
+            build(*buildTasks, buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(kaptTasks + javacTasks)
             }
 
             inFile.appendText("5678")
 
-            build(*buildTasks) {
+            build(*buildTasks, buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(kaptTasks)
                 assertTasksUpToDate(javacTasks)
             }
@@ -253,7 +253,7 @@ class KaptAndroidIT : KaptBaseIT() {
             // internals or neither:
             argsFile.appendText("5678")
 
-            build(*buildTasks) {
+            build(*buildTasks, buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksUpToDate(javacTasks + kaptTasks)
             }
         }

@@ -27,7 +27,8 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         project(
             "android-dagger".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+                .suppressAgpWarningIsProperty(gradleVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug") {
