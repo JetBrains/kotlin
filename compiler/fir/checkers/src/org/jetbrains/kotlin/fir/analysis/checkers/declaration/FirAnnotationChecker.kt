@@ -56,12 +56,6 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
         }
 
         checkAnnotationContainer(declaration)
-
-        if (declaration is FirCallableDeclaration) {
-            declaration.receiverParameter?.let {
-                checkAnnotationContainer(it)
-            }
-        }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

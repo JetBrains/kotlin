@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTypes
@@ -46,8 +47,8 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
                 val inlineStatus = containingDeclaration.inlineStatus
                 checkLambdaParameter(declaration, inlineStatus == InlineStatus.Inline || inlineStatus == InlineStatus.CrossInline)
             }
-            declaration.isParameterOfDataOrValueClass() -> {
-                checkDataOrValueClassParameter(declaration)
+            declaration.isParameterOfDataOrValueClass() || context.languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation) -> {
+                checkRegularParameter(declaration)
             }
         }
     }
@@ -71,7 +72,7 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkDataOrValueClassParameter(parameter: FirValueParameter) {
+    private fun checkRegularParameter(parameter: FirValueParameter) {
         checkMissingDependencySuperTypes(parameter.returnTypeRef.coneType, parameter.source)
     }
 

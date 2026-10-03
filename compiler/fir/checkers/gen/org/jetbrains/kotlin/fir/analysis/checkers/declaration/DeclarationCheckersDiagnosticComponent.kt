@@ -139,6 +139,10 @@ class DeclarationCheckersDiagnosticComponent(
         checkers.allConstructorCheckers.check(errorPrimaryConstructor, data)
     }
 
+    override fun visitScriptReceiverParameter(scriptReceiverParameter: FirScriptReceiverParameter, data: CheckerContext) {
+        checkers.allReceiverParameterCheckers.check(scriptReceiverParameter, data)
+    }
+
     private inline fun <reified E : FirDeclaration> Array<FirDeclarationChecker<E>>.check(
         element: E,
         context: CheckerContext

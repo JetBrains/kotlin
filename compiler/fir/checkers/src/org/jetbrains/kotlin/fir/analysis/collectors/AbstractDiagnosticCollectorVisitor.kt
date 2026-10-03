@@ -168,7 +168,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: Nothing?) {
         withAnnotationContainer(receiverParameter) {
-            visitNestedElements(receiverParameter)
+            visitWithDeclaration(receiverParameter)
         }
     }
 
