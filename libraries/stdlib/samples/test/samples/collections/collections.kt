@@ -1794,4 +1794,22 @@ class Collections {
         }
 
     }
+
+    @Nested
+    inner class Deques {
+
+        @Sample
+        fun arrayDequeAddFirst() {
+            val deque = ArrayDeque(listOf(2, 3, 4))
+            deque.addFirst(1)
+            assertPrints(deque, "[1, 2, 3, 4]")
+        }
+
+        @Sample
+        fun arrayDequeAddLast() {
+            val deque = ArrayDeque(listOf(1, 2, 3))
+            deque.addLast(4)
+            assertPrints(deque, "[1, 2, 3, 4]")
+        }
+    }
 }
