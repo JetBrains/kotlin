@@ -11,9 +11,14 @@ import com.intellij.psi.PsiLanguageInjectionHost
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
+import java.util.function.Consumer
 
 /**
  * Service responsible for Kotlin PSI mutation operations whose implementation is provided by the Kotlin plugin environment.
+ *
+ * When the service is not registered (e.g., when the Kotlin PSI is used outside the IntelliJ Kotlin plugin), Kotlin PSI overrides of
+ * [PsiElement.delete] fall back to plain deletion without Kotlin-specific adjustments like removing dangling separators. Other mutation
+ * methods require the service.
  */
 @KtNonPublicApi
 interface KtPsiMutationService {
@@ -358,10 +363,31 @@ interface KtPsiMutationService {
     companion object {
         /**
          * Returns the registered Kotlin PSI mutation service.
+         *
+         * @throws IllegalStateException if the service is not registered.
          */
         @JvmStatic
         fun getInstance(): KtPsiMutationService =
+            getInstanceOrNull() ?: throw IllegalStateException("Cannot mutate Kotlin PSI because KtPsiMutationService is missing")
+
+        /**
+         * Returns the registered Kotlin PSI mutation service, or `null` if the environment does not provide one.
+         */
+        @JvmStatic
+        fun getInstanceOrNull(): KtPsiMutationService? =
             ApplicationManager.getApplication().getService(KtPsiMutationService::class.java)
-                ?: throw IllegalStateException("Cannot mutate Kotlin PSI because KtPsiMutationService is missing")
+    }
+}
+
+/**
+ * Deletes [element] with [deletion] when [KtPsiMutationService] is registered, or performs the plain platform deletion otherwise.
+ */
+@OptIn(KtNonPublicApi::class)
+internal fun deleteWithMutationService(element: KtElement, deletion: Consumer<KtPsiMutationService>) {
+    val mutationService = KtPsiMutationService.getInstanceOrNull()
+    if (mutationService != null) {
+        deletion.accept(mutationService)
+    } else {
+        element.rawDelete()
     }
 }
