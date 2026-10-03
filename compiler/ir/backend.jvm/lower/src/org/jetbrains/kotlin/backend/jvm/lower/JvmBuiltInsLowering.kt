@@ -44,7 +44,7 @@ internal class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLowerin
                 }
 
                 return when {
-                    callee.isArrayOf() ->
+                    callee.isArrayOfOrArrayDotOf() ->
                         expression.arguments[0]
                             ?: throw AssertionError("Argument #0 expected: ${expression.dump()}")
 
