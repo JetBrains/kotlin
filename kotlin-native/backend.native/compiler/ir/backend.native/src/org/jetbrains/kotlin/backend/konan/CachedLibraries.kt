@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
-import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
-import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.CacheSupport.Companion.cacheFileId
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
+import org.jetbrains.kotlin.backend.common.lazyEvaluatedFingerprintHash
+import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
@@ -41,9 +41,6 @@ private class LibraryHashComputer {
 
     fun digest() = FingerprintHash(hashes.fold(Hash128Bits(hashes.size.toULong())) { acc, x -> acc.combineWith(x.hash) })
 }
-
-private fun LibraryHashComputer.digestLibrary(library: KotlinLibrary) =
-        update(SerializedKlibFingerprint(library.path.toFile()).klibFingerprint)
 
 private fun getArtifactName(target: KonanTarget, baseName: String, kind: CompilerOutputKind) =
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
@@ -242,8 +239,6 @@ class CachedLibraries(
         }
     }
 
-    private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
-
     private val cacheNameToImplicitDirMapping: Map<String, Path> =
             implicitCacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists().map { it.name to it } }
                     .toMap()
@@ -265,7 +260,7 @@ class CachedLibraries(
             library.trySelectCacheAt { cacheNameToImplicitDirMapping[it] }
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.canonicalPathString()) } }
                             ?.let {
-                                val dir = computeLibraryCacheDirectory(it, library, klibDag, uniqueNameToHash)
+                                val dir = computeLibraryCacheDirectory(it, library, klibDag)
                                 library.trySelectCacheAt { cacheName -> dir.resolve(cacheName) }
                             }
         }
@@ -309,20 +304,12 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
-        private fun computeLibraryHash(library: KotlinLibrary, librariesHashes: MutableMap<String, FingerprintHash>) =
-                librariesHashes.getOrPut(library.uniqueName) {
-                    val hashComputer = LibraryHashComputer()
-                    hashComputer.digestLibrary(library)
-                    hashComputer.digest()
-                }
-
         fun computeDependenciesFingerprint(
                 dependencies: List<KotlinLibrary>,
-                librariesHashes: MutableMap<String, FingerprintHash>,
         ): FingerprintHash {
             val hashComputer = LibraryHashComputer()
             dependencies.sortedBy { it.uniqueName }.forEach {
-                hashComputer.update(computeLibraryHash(it, librariesHashes))
+                hashComputer.update(it.lazyEvaluatedFingerprintHash)
             }
             return hashComputer.digest()
         }
@@ -331,10 +318,9 @@ class CachedLibraries(
                 baseCacheDirectory: Path,
                 library: KotlinLibrary,
                 klibDag: KlibDAG,
-                librariesHashes: MutableMap<String, FingerprintHash>,
         ): Path {
             val dependencies = klibDag.getAllDependencies(library)
-            val fingerprintHash = computeDependenciesFingerprint(listOf(library) + dependencies, librariesHashes)
+            val fingerprintHash = computeDependenciesFingerprint(listOf(library) + dependencies)
             return baseCacheDirectory.resolve(library.uniqueName).resolve(fingerprintHash.toString())
         }
 

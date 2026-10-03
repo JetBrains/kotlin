@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.backend.common.ExternalKlibSignatureIndicesParameters
+import org.jetbrains.kotlin.backend.common.KlibSignatureIndexComponentLayout
+import org.jetbrains.kotlin.backend.common.KlibSignatureIndexConstants
 import org.jetbrains.kotlin.backend.common.LegacyKlibDependencies
 import org.jetbrains.kotlin.backend.konan.library.InternalKlibDAGApi
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
@@ -17,8 +20,10 @@ import org.jetbrains.kotlin.io.writeProperties
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
 import org.jetbrains.kotlin.konan.library.SerializedKlibDAG
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
+import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
@@ -42,27 +47,37 @@ import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import java.io.File
+import java.nio.file.Files.createDirectories
 import java.nio.file.Path
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.collections.set
+import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.deleteRecursively
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
 import kotlin.io.path.name
 import kotlin.io.path.pathString
+import kotlin.io.path.walk
 
 @Tag("klib")
 @Execution(ExecutionMode.SAME_THREAD)
 class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     @ParameterizedTest
     @EnumSource
-    fun `stdlib does not depend on anything`(mode: KlibDAGBuildingMode) {
+    fun `stdlib does not depend on anything`(mode: KlibDAGBuildingMode) = context(mode) {
         val libraries = loadLibraries()
         assertEquals(1, libraries.size)
 
         val stdlib = libraries[0]
         assertTrue(stdlib.isNativeStdlib)
 
-        @OptIn(InternalKlibDAGApi::class)
-        val dag = KlibDAGBuilder(libraries, useSignatureIndices = mode.useSignatureIndices) { true }.build()
+        val dag = KlibDAGBuilder(buildParams(libraries)).build()
+        assertExactNumberOfExternalIndices(0)
         assertEquals(1, dag.librariesReverseTopoSorted.size)
         assertEquals(stdlib, dag.librariesReverseTopoSorted.single())
 
@@ -77,7 +92,9 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     @ParameterizedTest
     @EnumSource
-    fun `dependencies of platform libs correlate to what is written in their manifest (unique_name, depends)`(mode: KlibDAGBuildingMode) {
+    fun `dependencies of platform libs correlate to what is written in their manifest (unique_name, depends)`(
+        mode: KlibDAGBuildingMode,
+    ) = context(mode) {
         val libraries = loadLibraries(platformLibs = true)
         assertTrue(libraries.size > 1)
 
@@ -98,8 +115,8 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         )
 
         // Now, compute the DAG of dependencies by signatures.
-        @OptIn(InternalKlibDAGApi::class)
-        val dag = KlibDAGBuilder(libraries, useSignatureIndices = mode.useSignatureIndices) { true }.build()
+        val dag = KlibDAGBuilder(buildParams(libraries)).build()
+        assertExactNumberOfExternalIndices(0)
 
         // Direct dependencies computed by signatures.
         val directDependenciesByDAGBuilder: Map<KotlinLibrary, Set<KotlinLibrary>> = dag.librariesReverseTopoSorted.associateWith {
@@ -150,7 +167,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         contractedDag: Boolean,
         mode: KlibDAGBuildingMode,
         isRoot: KotlinLibrary.() -> Boolean,
-    ) {
+    ) = context(mode) {
         // Define the user's project structure.
         // Note: stdlib & platform libraries are not reflected in this structure.
         val userProjectModules = newSourceModules {
@@ -180,6 +197,9 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         }
         assertEquals(userProjectModules.modules.size, userLibraryPathToModuleName.size)
 
+        // Drop own indices (if that's necessary for the test).
+        val librariesWithoutOwnIndices = patchLibrariesToDropOwnIndicesIfNecessary(userLibraryPathToModuleName.keys)
+
         // Spoil `depends` and `unique_name` in manifests to make this data unreliable:
         for (userLibraryPath in userLibraryPathToModuleName.keys) {
             val manifestPath = userLibraryPath.resolve("default/manifest")
@@ -194,8 +214,8 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         val allLibraries: List<KotlinLibrary> = loadLibraries(platformLibs = true, others = userLibraryPathToModuleName.keys)
 
         // Compute the DAG of dependencies by signatures.
-        @OptIn(InternalKlibDAGApi::class)
-        val dag = KlibDAGBuilder(allLibraries, useSignatureIndices = mode.useSignatureIndices) { !contractedDag || isRoot(it) }.build()
+        val dag = KlibDAGBuilder(buildParams(allLibraries) { !contractedDag || isRoot(it) }).build()
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices)
 
         if (contractedDag) {
             // Only the necessary (used) libraries should be present in the DAG.
@@ -298,7 +318,7 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     @ParameterizedTest
     @EnumSource
-    fun `cycling dependency is an error`(mode: KlibDAGBuildingMode) {
+    fun `cycling dependency is an error`(mode: KlibDAGBuildingMode) = context(mode) {
         val moduleNameToLibraryPath: MutableMap</* name of test module */ String, /* path of KLIB */ Path> = mutableMapOf()
 
         /*
@@ -331,10 +351,14 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
         }
         assertEquals(3, moduleNameToLibraryPath.size)
 
+        // Drop own indices (if that's necessary for the test).
+        val librariesWithoutOwnIndices = patchLibrariesToDropOwnIndicesIfNecessary(moduleNameToLibraryPath.values)
+
         val libraries = loadLibraries(stdlib = false, others = moduleNameToLibraryPath.values)
 
-        @OptIn(InternalKlibDAGApi::class)
-        val dag = KlibDAGBuilder(libraries, useSignatureIndices = mode.useSignatureIndices) { true }.build()
+        val dag = KlibDAGBuilder(buildParams(libraries)).build()
+        assertExactNumberOfExternalIndices(librariesWithoutOwnIndices)
+
         val anyLibraryNode: KlibDAGNode = dag[dag.librariesReverseTopoSorted.first()]
         anyLibraryNode.directDependencies // that should be successful
 
@@ -345,6 +369,53 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
             // OK
         }
     }
+
+    @Test
+    fun `external indices are generated correctly when DAGs are built concurrently`() =
+        context(KlibDAGBuildingMode.OwnIndicesForDistExternalIndicesForOthers) {
+            val userLibraryPaths: MutableList<Path> = mutableListOf()
+
+            newSourceModules {
+                addRegularModule("A")
+                addRegularModule("B") { dependsOn("A") }
+                addRegularModule("C") { dependsOn("A") }
+                addRegularModule("D") { dependsOn("B", "C") }
+            }.compileToKlibsViaCli { _, successKlib ->
+                userLibraryPaths.add(successKlib.resultingArtifact.klibFile.toPath())
+            }
+            assertEquals(4, userLibraryPaths.size)
+
+            val librariesWithoutOwnIndices = patchLibrariesToDropOwnIndicesIfNecessary(userLibraryPaths)
+            assertEquals(userLibraryPaths.size, librariesWithoutOwnIndices)
+
+            val libraries = loadLibraries(others = userLibraryPaths)
+
+            // Build the DAG for the same set of libraries simultaneously in several threads.
+            val numberOfThreads = 8
+            val startLatch = CountDownLatch(1)
+            val executor = Executors.newFixedThreadPool(numberOfThreads)
+            val serializedDags: List<SerializedKlibDAG> = try {
+                val futures = List(numberOfThreads) {
+                    executor.submit<SerializedKlibDAG> {
+                        startLatch.await()
+                        KlibDAGBuilder(buildParams(libraries)).build().serialize()
+                    }
+                }
+                startLatch.countDown()
+                futures.map { it.get(1, TimeUnit.MINUTES) }
+            } finally {
+                executor.shutdownNow()
+            }
+
+            // All DAGs must be the same.
+            assertEquals(1, serializedDags.toSet().size)
+
+            // Exactly one external index and one lock file per library without own index.
+            assertExactNumberOfExternalIndices(librariesWithoutOwnIndices)
+
+            val numberOfLockFiles = externalSignatureIndicesDir.walk().count { it.isRegularFile() && it.name.endsWith(".lock") }
+            assertEquals(librariesWithoutOwnIndices, numberOfLockFiles)
+        }
 
     @Test
     fun `SerializedKlibDAG creation sanity test (positive)`() {
@@ -386,11 +457,13 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
 
     @ParameterizedTest
     @EnumSource
-    fun `DAG deserialization fails if there are libraries in current compilation that are missing in SerializedKlibDAG`(mode: KlibDAGBuildingMode) {
+    fun `DAG deserialization fails if there are libraries in current compilation that are missing in SerializedKlibDAG`(
+        mode: KlibDAGBuildingMode,
+    ) = context(mode) {
         val libraries: List<KotlinLibrary> = loadLibraries(platformLibs = true)
 
-        @OptIn(InternalKlibDAGApi::class)
-        val dag: KlibDAG = KlibDAGBuilder(libraries, useSignatureIndices = mode.useSignatureIndices) { true }.build()
+        val dag: KlibDAG = KlibDAGBuilder(buildParams(libraries)).build()
+        assertExactNumberOfExternalIndices(0)
         assertEquals(libraries.size, dag.librariesReverseTopoSorted.size)
 
         val serializedOriginal: SerializedKlibDAG = dag.serialize()
@@ -532,12 +605,91 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     }
 }
 
-enum class KlibDAGBuildingMode(
-    private val alias: String,
-    val useSignatureIndices: Boolean,
-) {
-    NO_INDICES("no indices", useSignatureIndices = false),
-    WITH_INDICES("with indices", useSignatureIndices = true);
-
-    override fun toString() = alias
+context(mode: KlibDAGBuildingMode)
+internal fun AbstractNativeSimpleTest.buildParams(
+    libraries: List<KotlinLibrary>,
+    isRoot: (KotlinLibrary) -> Boolean = { true },
+) = KlibDAGBuilder.Parameters(
+    libraries = libraries,
+    externalIndicesParameters = runIf(mode.useExternalIndicesForNonDistLibraries) {
+        ExternalKlibSignatureIndicesParameters(
+            targetDiscriminator = HostManager.host.name,
+            externalSignatureIndicesDir = externalSignatureIndicesDir,
+            pathPrefixesForGenerationSignatureIndices = pathPrefixesForGenerationSignatureIndices,
+        )
+    },
+    isRoot = isRoot,
+).apply {
+    @OptIn(InternalKlibDAGApi::class)
+    useSignatureIndices = mode.useSignatureIndices
 }
+
+internal val AbstractNativeSimpleTest.externalSignatureIndicesDir: Path
+    get() = buildDir.toPath().resolve("external-indices").apply(::createDirectories).toRealPath()
+
+internal val AbstractNativeSimpleTest.pathPrefixesForGenerationSignatureIndices: List<Path>
+    get() = listOf(buildDir.toPath().toRealPath())
+
+context(mode: KlibDAGBuildingMode)
+internal fun patchLibrariesToDropOwnIndicesIfNecessary(libraryPaths: Collection<Path>): Int {
+    if (mode.useOwnIndicesForNonDistLibraries) return 0
+
+    for (path in libraryPaths) {
+        val indicesDir = KlibSignatureIndexComponentLayout.IndexInLibrary(path).indicesDir
+        assertTrue(indicesDir.isDirectory()) // Make sure the index is present.
+        @OptIn(ExperimentalPathApi::class)
+        indicesDir.deleteRecursively()
+        assertFalse(indicesDir.exists()) // Make sure the index is missing now.
+    }
+
+    return libraryPaths.size
+}
+
+context(mode: KlibDAGBuildingMode)
+internal fun AbstractNativeSimpleTest.assertExactNumberOfExternalIndices(librariesWithoutOwnIndices: Int) {
+    val actualNumberOfExternalIndices = externalSignatureIndicesDir.walk().count { path ->
+        path.isRegularFile() && path.name == KlibSignatureIndexConstants.KLIB_SIGNATURE_INDEX_FILE_NAME
+    }
+
+    assertEquals(
+        if (mode.useExternalIndicesForNonDistLibraries) librariesWithoutOwnIndices else 0,
+        actualNumberOfExternalIndices,
+    )
+}
+
+@Suppress("unused")
+enum class KlibDAGBuildingMode(
+    val useSignatureIndices: Boolean,
+    val nonDistLibrariesSignatureBuildingMode: NonDistLibrariesSignatureBuildingMode,
+) {
+    /** No signature indices are used at all. */
+    NoIndices(useSignatureIndices = false, NonDistLibrariesSignatureBuildingMode.NoIndices),
+
+    /** All libraries have their own signature indices. Those indices are used. */
+    OwnIndicesEverywhere(useSignatureIndices = true, NonDistLibrariesSignatureBuildingMode.OwnIndices),
+
+    /**
+     * The libraries from the Kotlin/Native distribution have their own signature indices.
+     * All other libraries do not have own indices, and no external indices are used for them.
+     */
+    OwnIndicesForDistNoIndicesForOthers(useSignatureIndices = true, NonDistLibrariesSignatureBuildingMode.NoIndices),
+
+    /**
+     * The libraries from the Kotlin/Native distribution have their own signature indices.
+     * All other libraries do not have own indices, so the indices are generated and stored externally for them.
+     */
+    OwnIndicesForDistExternalIndicesForOthers(useSignatureIndices = true, NonDistLibrariesSignatureBuildingMode.ExternalIndices);
+
+    init {
+        check(useSignatureIndices || nonDistLibrariesSignatureBuildingMode == NonDistLibrariesSignatureBuildingMode.NoIndices)
+    }
+
+    override fun toString() = name
+
+    val useOwnIndicesForNonDistLibraries get() = nonDistLibrariesSignatureBuildingMode == NonDistLibrariesSignatureBuildingMode.OwnIndices
+    val useNoIndicesForNonDistLibraries get() = nonDistLibrariesSignatureBuildingMode == NonDistLibrariesSignatureBuildingMode.NoIndices
+    val useExternalIndicesForNonDistLibraries get() = nonDistLibrariesSignatureBuildingMode == NonDistLibrariesSignatureBuildingMode.ExternalIndices
+
+    enum class NonDistLibrariesSignatureBuildingMode { OwnIndices, NoIndices, ExternalIndices }
+}
+

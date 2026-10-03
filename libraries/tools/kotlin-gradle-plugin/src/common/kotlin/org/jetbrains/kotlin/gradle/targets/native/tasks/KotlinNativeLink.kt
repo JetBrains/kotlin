@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBund
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_INDICES_DIR
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -268,12 +270,15 @@ constructor(
     @get:Internal
     internal val externalDependenciesBuildCompilerArgs: ListProperty<String> = objectFactory.listProperty<String>().empty()
 
+    private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
+
     private class CacheSettings(
         val icEnabled: Boolean,
         val threads: Int,
         val gradleUserHomeDir: File,
         val gradleBuildDir: File,
         val enabledWithOptimizations: Boolean,
+        val externalIndicesDir: File,
     )
 
     private val cacheSettings = CacheSettings(
@@ -282,6 +287,8 @@ constructor(
         project.gradle.gradleUserHomeDir,
         project.layout.buildDirectory.get().asFile,
         PropertiesProvider(project).nativeEnableReleaseBinaryCache,
+        PropertiesProvider(project).nativeSignatureIndicesDir
+            ?: actualNativeHomeDirectory.get().resolve("$KONAN_DISTRIBUTION_KLIB_DIR/$KONAN_DISTRIBUTION_INDICES_DIR"),
     )
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
@@ -455,7 +462,6 @@ constructor(
     @get:Internal
     internal abstract val kotlinCompilerArgumentsLogLevel: Property<KotlinCompilerArgumentsLogLevel>
 
-    private val actualNativeHomeDirectory = project.nativeProperties.actualNativeHomeDirectory
     private val runnerJvmArgs = project.nativeProperties.jvmArgs
     private val forceDisableRunningInProcess = project.nativeProperties.forceDisableRunningInProcess
     private val useXcodeMessageStyle = project.useXcodeMessageStyle
@@ -494,6 +500,8 @@ constructor(
                 ) {
                     add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
                     add("-Xbackend-threads=${cacheSettings.threads}")
+                    add("-Xgenerate-signature-indices-from=${cacheSettings.gradleUserHomeDir}")
+                    add("-Xgenerate-signature-indices-dir=${cacheSettings.externalIndicesDir}")
                     if (cacheSettings.icEnabled && !optimized) {
                         val icCacheDir = cacheSettings.gradleBuildDir
                             .resolve("kotlin-native-ic-cache")

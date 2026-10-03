@@ -412,6 +412,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nativeEnableReleaseBinaryCache: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_ENABLE_RELEASE_BINARY_CACHE) ?: false
 
+    /**
+     * Overrides the directory where external signature indices for libraries without own indices are stored.
+     * By default, it is located inside the Kotlin/Native distribution.
+     */
+    val nativeSignatureIndicesDir: File?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_SIGNATURE_INDICES_DIR).orNull?.let(::File)
+
     val errorJsGenerateExternals: Boolean?
         get() = booleanProperty("kotlin.js.generate.externals")
 
@@ -966,6 +973,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("$KOTLIN_INTERNAL_NAMESPACE.jvm.expandTypeAliasesInClasspathSnapshots")
         val KOTLIN_SWIFTPM_MACRO_COLLECTING_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.swiftPMCinteropMacroNamesCollectingMode")
         val KOTLIN_NATIVE_ENABLE_RELEASE_BINARY_CACHE = property("$KOTLIN_INTERNAL_NAMESPACE.native.enableReleaseBinaryCache")
+        val KOTLIN_NATIVE_SIGNATURE_INDICES_DIR = property("$KOTLIN_INTERNAL_NAMESPACE.native.signatureIndicesDir")
         val KOTLIN_TASK_EXECUTION_CACHE_METRICS_FILE = property("$KOTLIN_INTERNAL_NAMESPACE.reportTaskExecutionCacheMetricsToFile")
 
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
