@@ -12,7 +12,7 @@ The most basic scenario where PCLA is used is calls to builder-like functions:
 fun <E> buildList(builderAction: MutableList<E>.() -> Unit): List<E> = ...
 
 fun main() {
-    buildList { 
+    buildList {
         add("")
     } // E is inferred to `String`
 }
@@ -55,7 +55,7 @@ PCLA is the way of lambda analysis during call completion that happens when some
 ## Entry-point to PCLA
 
 The conditions to run a lambda resolution in PCLA mode is the following:
-- Completion mode for the current call tree is `FULL` 
+- Completion mode for the current call tree is `FULL`
 - There are no other ways to infer some new constraints for any type variable.
 - There is some lambda that among its input types has at least one with a not fixed TV being used as type argument
     - So, if one of the input types is `MutableList<Ev>` that lambda suits for PCLA
@@ -73,7 +73,7 @@ The basic idea is that we mostly run regular lambda body analysis, with special 
 - They use **shared CS**: adding their new variables there and constraints related to both *outer CS* and their own variables
 - They are not being fully completed (leaving them postponed)
 
-After lambda's body traversal, the whole **shared CS** is added to the CS of the *main candidate*, the resulting CS should be resolved 
+After lambda's body traversal, the whole **shared CS** is added to the CS of the *main candidate*, the resulting CS should be resolved
 as usual, and after that at completion results writing phase all type variables are replaced with their result types.
 
 ### More details
@@ -93,9 +93,9 @@ as usual, and after that at completion results writing phase all type variables 
         * Do not run full completion, just gather all the constraints and variable back to the **shared CS**
 
 * In the end, the **root CS** (aka CS for the Main candidate) contains TVs for all incomplete nested candidates.
-* And may just continue `FULL` completion process on the Main, i.e., fixing variables for which we now have new proper constraints, 
+* And may just continue `FULL` completion process on the Main, i.e., fixing variables for which we now have new proper constraints,
   and analyze other lambdas.
-* In the end, beside completion results writing for the main call, we also write results (inferred type arguments/expression type update) 
+* In the end, beside completion results writing for the main call, we also write results (inferred type arguments/expression type update)
   for all incomplete/postponed calls (see `FirCallCompletionResultsWriterTransformer.runPCLARelatedTasksForCandidate`).
 
 ### Example 1
@@ -107,28 +107,28 @@ fun main() {
     val x = listOf("")
     buildList /* Main candidate/call */ {
         foo() // Irrelevant call that doesn't refer PCLA variables, might be fully completed
-        
+
         // Uses shared CS
         // Adds String <: Ev constraint
         // Pushes all constraints back to the shared CS
         add("") // Postponed nested call
-        
+
         // Uses shared CS
         // Candidate declaration: fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destination: C, transform: (T) -> R): C
-        // Adds Tv, Rv, Cv type variables 
+        // Adds Tv, Rv, Cv type variables
         // And constraints
         // String <: Tv [from List<String> <: Iterable<Tv>]
         // MutableList<Ev> <: Cv
-        // Rv <: Ev [incorporation from MutableList<Ev> <: MutableCollection<in Rv> 
+        // Rv <: Ev [incorporation from MutableList<Ev> <: MutableCollection<in Rv>
         // Fixing Tv := String
         // Starting lamda analysis
-        // Having 
+        // Having
         // Rv <: String constraint
-        // 
+        //
         // Then add all the new constraints to the shared CS
         x.mapTo(this) { it } // Postponed nested call
     }
- 
+
     // And start looking for CS solution that would be sound
     // Ev := String
     // Rv := String
@@ -161,7 +161,7 @@ Here, during the call completion of the call to `twoSteps` function we would:
 3. Fix `Cv <:> String`, from the newly inferred lambda type info.
 4. Realize, that the `first` lambda still doesn't have enough type info and its
    input types are still unknown.
-5. tryToCompleteWithPCLA
+5. `tryToCompleteWithPCLA`
    - Check if the `first` lambda type shape is suitable for PCLA
    - Analyze the `first` lambda in PCLA mode
 
@@ -181,12 +181,12 @@ Currently, there are three implementations of inference session
 
 It returns *shared CS* if the candidate is considered applicable (non-trivial/postponed nested).
 
-That callback is supposed to be called for each created candidate of all nested calls, and the 
+That callback is supposed to be called for each created candidate of all nested calls, and the
 content of returned CS should be integrated into the candidate CS.
 
 See `org.jetbrains.kotlin.fir.resolve.calls.Candidate.getSystem`.
 
-The shared CS is not supposed to be modified during candidate resolution 
+The shared CS is not supposed to be modified during candidate resolution
 (because there might be more than one of them for each call, while only a single one should be chosen).
 
 ### customCompletionModeInsteadOfFull
@@ -205,7 +205,7 @@ Mostly, it collects all *postponed* candidates and integrates their CS content i
 
 Also, here we substitute the type of that given call expression with substitutor replacing already fixed type variables
 with their result types.
-Otherwise, using fixed TVs as expression types further might lead to `TypeCheckerStateForConstraintInjector.fixedTypeVariable` 
+Otherwise, using fixed TVs as expression types further might lead to `TypeCheckerStateForConstraintInjector.fixedTypeVariable`
 throwing an exception.
 
 ```kotlin
@@ -240,29 +240,29 @@ This part is rather controversial and hacky, hope we could get rid of it at some
 When resolving a lambda at some nested call inside PCLA lambda, like
 
 ```kotlin
-buildList { 
+buildList {
     myOtherCallWithLambda {
-        add("") 
+        add("")
         Unit
     }
 }
 ```
 
-After completion for `add("")` call, we haven't yet called `processPartiallyResolvedCall` for `myOtherCallWithLambda { ... }`, 
+After completion for `add("")` call, we haven't yet called `processPartiallyResolvedCall` for `myOtherCallWithLambda { ... }`,
 because it's not yet completed, and we are already going to call `processPartiallyResolvedCall` for `add("")`, that would contribute some
 constraints to `buildList` type variable `Ev` in shared CS.
 
-And after that we finally call `processPartiallyResolvedCall` for `myOtherCallWithLambda { ... }`, but it doesn't contain constraints 
+And after that we finally call `processPartiallyResolvedCall` for `myOtherCallWithLambda { ... }`, but it doesn't contain constraints
 on `Ev` from `add(""")`, thus overwriting existing information.
 
-That might be workarounded with some kind of merging constraints for the same TV instead of just replacement 
+That might be workarounded with some kind of merging constraints for the same TV instead of just replacement
 (see `NewConstraintSystemImpl.addOtherSystem`), but that seems to be hacky too.
 
 So, the current approach is the following: during nested lambda resolution we assume that currently *shared CS* is equal to the CS of the
-`myOtherCallWithLambda` candidate. Thus, the constraints from `add` call are being merged into the `myOtherCallWithLambda`'s CS and then 
+`myOtherCallWithLambda` candidate. Thus, the constraints from `add` call are being merged into the `myOtherCallWithLambda`'s CS and then
 finally into regular shared CS.
 
-**Hacky place**: the proper solution might be just replacing instance of shared CS with current candidate's CS, but that needs 
+**Hacky place**: the proper solution might be just replacing instance of shared CS with current candidate's CS, but that needs
 some further investigation.
 
 Also, there's some special handling of overload resolution by lambda return type, but they are quite expected when we don't have a final
@@ -270,22 +270,55 @@ candidate yet (see `analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadRes
 
 ### runCallableReferenceResolution
 
-TODO: Mostly, the idea as the same as for lambdas, but for callable references
+The core idea mirrors `runLambdaCompletion`, but for callable references rather than lambda bodies.
+
+When a callable reference appears as an argument inside a PCLA lambda, for example:
+
+```kotlin
+buildList {
+    listOf("a").forEach(::add)
+}
+```
+
+The callable reference `::add` needs to be resolved such that any constraints it produces — for instance,
+`String <: Ev` inferred from matching the descriptor's parameter type against the expected function type
+`(String) -> Boolean` — are correctly contributed to the **shared CS**.
+
+The challenge is identical to the lambda case: the call containing the callable reference (`forEach` above)
+may not yet have had `processPartiallyResolvedCall` invoked when we attempt to integrate the callable
+reference's constraints. Pushing those constraints directly into the shared CS at that point risks
+overwriting already-gathered information rather than merging with it.
+
+The solution is analogous to the lambda case: during callable reference resolution, the **shared CS** is
+treated as equal to the CS of the current enclosing candidate. This ensures that:
+- Constraints arising from matching the callable reference's descriptor (parameter and return types) against
+  the expected function type — which may itself reference unfixed outer type variables — are accumulated in
+  the enclosing candidate's CS.
+- When `processPartiallyResolvedCall` is eventually called for that enclosing call, those constraints
+  propagate into the shared CS without loss.
+
+**Overload resolution**: just as in the lambda case, when the expected function type for the callable
+reference contains unfixed outer type variables, selecting the correct overload among candidates may need to
+be deferred until sufficient constraints are available, analogously to
+`analyzeLambdaAndReduceNumberOfCandidatesRegardingOverloadResolutionByLambdaReturnType`.
+
+**References in code:**
+- `FirPCLAInferenceSession.runCallableReferenceResolution`
 
 ### addSubtypeConstraintIfCompatible
 
-In some situations, some constraints might be originated not just from calls, but from other kinds of expression, 
+In some situations, some constraints might be originated not just from calls, but from other kinds of expression,
 like from variable assignments:
 
 ```kotlin
-var <F> MutableList<F>.firstElement 
+var <F> MutableList<F>.firstElement
     get() = get(0)
     set(f: F) {
         set(0, f)
     }
 
 fun main() {
-    buildList { 
+    buildList {
         firstElement = ""
     }
 }
@@ -306,13 +339,13 @@ Before deep-diving into this section, it's worth reading [On demand variable fix
 Sometimes, besides computing member scope, there might be other cases when we need to fix a type variable on-demand.
 
 ```kotlin
-interface A<F> 
+interface A<F>
 interface B<G> : A<G>
 
 fun <X> predicate(x: X, c: MutableList<in X>, p: (X) -> Boolean) {}
 
 fun main(a: A<*>) {
-    buildList { 
+    buildList {
         predicate(a, this) {
             it is B
         }
@@ -344,9 +377,9 @@ fun foo(x: List<String>) {
             add("") // analyzed in PCLA_POSTPONED_CALL
             it.length // analyzed in PCLA_POSTPONED_CALL
         }
-        
+
         println("") // analyzed in FULL mode (because it's a trivial call, irrelevant to outer CS)
-        
+
         add(x.get(0) /* analyzed in PARTIAL */) // analyzed in PCLA_POSTPONED_CALL
     }
 }
@@ -389,25 +422,25 @@ fun foo(x: Collection<B>) {
         // Let's imagine we fix K to B, then it would lead to the constraint S := B
         yieldAll(x)
 
-        // And to constraint error here: C <: B 
+        // And to constraint error here: C <: B
         yield(C)
     }
 }
 ```
 
 While in fact, `Sv` might be easily inferred to `A` as a common supertype. To make it happen we just postpone fixation of the `Sv` as one
-having deep
+having deep dependency on outer type variables (see `TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY`).
 
 ### Forcing lambda analysis
 
 Unlike `FULL` mode, it doesn't require fixing all the variables, in that sense it works more like `PARTIAL`.
 
-But unlike `PARTIAL`, if forces analysis of all the lambdas even if some input types are not properly inferred yet.
+But unlike `PARTIAL`, it forces analysis of all the lambdas even if some input types are not properly inferred yet.
 It's crucial because otherwise, contract-affecting information gained would stop working across different statements.
 
 For lambdas, there might be three kinds of situations:
 - There's some lambda which input types do not contain any not fixed type variables => might be analyzed in a regular way
-- For some lambda, some of the input types satisfy PCLA requirement (see [Entry-point to PCLA](#Entry-point-to-PCLA)) 
+- For some lambda, some of the input types satisfy PCLA requirement (see [Entry-point to PCLA](#Entry-point-to-PCLA))
     => might be analyzed in recursive PCLA mode (see [Nested PCLA](#nested-pcla))
 - For all lambdas, all the input types are either proper or a top-level type variable (most complicated).
 
@@ -419,17 +452,17 @@ of the receiver, thus need to fix its result type.
 
 ## Analysis mode for return statements of a PCLA lambda
 
-In most of the use cases we know for PCLA, the return type of the lambda is Unit, so all the return statements are being analyzed in a 
+In most of the use cases we know for PCLA, the return type of the lambda is Unit, so all the return statements are being analyzed in a
 FULL (to be precise [PCLA_POSTPONED_CALL](#pcla_postponed_call-completion-mode)).
 
-But there are some of them 
-(e.g., [KT-68940](https://youtrack.jetbrains.com/issue/KT-68940/K2-IllegalArgumentException-All-variables-should-be-fixed-to-something)) 
+But there are some of them
+(e.g., [KT-68940](https://youtrack.jetbrains.com/issue/KT-68940/K2-IllegalArgumentException-All-variables-should-be-fixed-to-something))
 where the return type might contain not-fixed type variables.
 
-For **non**-PCLA lambdas using expected types with non-fixed type variables would lead to illegal state: 
+For **non**-PCLA lambdas using expected types with non-fixed type variables would lead to illegal state:
 calls inside return statements are not aware of type variables of the containing call.
 
-But for PCLA, we resolve everything within a common CS; thus it's ok. 
+But for PCLA, we resolve everything within a common CS; thus it's ok.
 Moreover, in some situations which look quite reasonable, it's even preferable to force e.g. lambda analysis in the return statements
 to gather more constraints for the builder type variables.
 
@@ -464,7 +497,7 @@ But that looks counter-intuitive, and moreover, the example above was green in B
 Thus, for PCLA, we decided to analyze return statements with FULL completion mode even if the lambda return type contains not-yet-inferred
 type variables.
 
-Though, this solutuion is not totally universal: it might make some more "red" than it is if we postponed the nested lambdas in return 
+Though, this solution is not totally universal: it might make some more "red" than it is if we postponed the nested lambdas in return
 statements.
 
 For example:
@@ -513,7 +546,7 @@ And the answer is that before starting the selector (`add("")`), we simply try t
 - Temporary override what *proper type* means
   - Not fixed type variables might be used as a type argument for a proper type (e.g., `MutableList<Ev>` is proper).
   - But they cannot be used as top-level proper type (e.g, we can't fix `Tv` to `Ev`).
-  - See `ConstraintSystemCompletionContext.withTypeVariablesThatAreCountedAsProperTypes` 
+  - See `ConstraintSystemCompletionContext.withTypeVariablesThatAreCountedAsProperTypes`
     and `TypeSystemInferenceExtensionContext.isProperTypeForFixation` extension.
 - If there is some proper type for that TV, run regular result type computation `ResultType`.
 - Add constraint `Tv := ResultType` and use `ResultType` as a member scope
@@ -521,18 +554,18 @@ And the answer is that before starting the selector (`add("")`), we simply try t
 type should not contain other type variables that might be not satisfied during on-demand fixation. But `fixVariable` would anyway be called
 during final completion when all other type variables types would be properly substituted in the given equality constraint.
 
-As follows, from the rules above, there are some scenarios where the variable can't be fixed. In those cases, we implicitly forbid 
+As follows, from the rules above, there are some scenarios where the variable can't be fixed. In those cases, we implicitly forbid
 using them as receivers:
 - By assuming that we've got their member scope empty
 - Reporting a diagnostic at `org.jetbrains.kotlin.fir.resolve.calls.TypeVariablesInExplicitReceivers` resolution stage
   (currently `BUILDER_INFERENCE_STUB_RECEIVER` being used).
 
 ```kotlin
-fun <T> myLet(t: T, b: (T) -> Unit) {} 
+fun <T> myLet(t: T, b: (T) -> Unit) {}
 
 buildList {
     get(0).toString() // BUILDER_INFERENCE_STUB_RECEIVER is reported with PCLA
-    
+
     myLet(get(0)) { it ->
         get(0).toString() // BUILDER_INFERENCE_STUB_RECEIVER is reported with PCLA
     }
@@ -543,7 +576,7 @@ See the implementation details at `FirPCLAInferenceSession.fixCurrentResultIfTyp
 
 ## CST computation
 
-When computing the result type for TV referencing other variables from outer CS there might be a situation when we need to compute 
+When computing the result type for TV referencing other variables from outer CS there might be a situation when we need to compute
 `CommonSuperType(Xv, ...)`:
 
 ```kotlin
@@ -558,7 +591,7 @@ fun foo(x: MutableList<String>) {
         // The question is what is CST(String, Ev)
         selectL(x, this) { x ->
             x.add(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
-            x.add("") 
+            x.add("")
         }
     } // inferred to List<String>
 }
@@ -575,20 +608,20 @@ In general, such a problem existed and be resolved before PCLA:
 - Intuitively, such an approach seems correct because it just chooses some result and incorporates it with other TVs, at least not hiding any contradictions
   - In the example above, we would get `Sv := MutableList<String>` and during incorporation we would assert the subtyping `Collection<S> <: Collection<String>`, thus having constraint `S <: String` making the whole CS sound
 
-But unlike a non-PCLA case, our TV might have a single constraint containing a reference to some other (outer) TV, so we need to make 
+But unlike a non-PCLA case, our TV might have a single constraint containing a reference to some other (outer) TV, so we need to make
 some tweaks:
 - Because we've overridden what "proper" means here, but `prepareLowerConstraints` uses it in a sense of the usage some TV inside the type,
 for PCLA context, we unconditionally perform stub substitution (a bit of dirty place)
-- And after that we might need to substitute "local" stubs back to TVs 
+- And after that we might need to substitute "local" stubs back to TVs
   (impossible in non-PCLA, because in that case, at least one constraint is "proper" in regular sense, i.e., doesn't contain any TVs)
 
 ## Nested PCLA
 
 ```kotlin
-buildList { 
+buildList {
     add("")
-    
-    addAll(buildSet l2@{ 
+
+    addAll(buildSet l2@{
         add(1)
     })
 }
@@ -618,7 +651,7 @@ buildList {
     val x by lazy {
         get(0)
     }
-    
+
     add("")
     add(x)
 }
@@ -631,5 +664,5 @@ Inference for delegated properties inside PCLA works in the following way:
 - Then, we integrate delegation related CS into PCLA shared session and all the delegation related calls as regular postponed ones
   of the PCLA session.
 
-For more details, read [delegated_property_inference.md](delegated_property_inference.md), 
+For more details, read [delegated_property_inference.md](delegated_property_inference.md),
 `FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot` and `FirPCLAInferenceSession.integrateChildSession`.
