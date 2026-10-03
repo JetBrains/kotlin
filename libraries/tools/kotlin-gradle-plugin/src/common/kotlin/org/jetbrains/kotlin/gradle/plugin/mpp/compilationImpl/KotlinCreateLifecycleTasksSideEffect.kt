@@ -41,7 +41,7 @@ private fun DefaultTask.configureCompileAllTask(
         compilation.compileTaskProvider.map { it.outputs.files }
     })
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     if (compilation is KotlinJvmCompilation && compilation.target.withJavaEnabled) {
         inputs.files({ compilation.compileJavaTaskProvider?.map { it.outputs.files } })
     }

@@ -17,7 +17,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.testfixtures.ProjectBuilder
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.gradle.util.enableDefaultJsDomApiDependency
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableSecondaryJvmClassesVariant
 import org.jetbrains.kotlin.gradle.util.osVariantSeparatorsPathString
-import org.junit.jupiter.api.Assumptions
 import kotlin.test.*
 
 class MultiplatformSecondaryOutgoingVariantsTest {
@@ -90,67 +88,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
         project.evaluate()
 
         project.assertJvmClassesVariants(expectedArtifactsSize = 2)
-    }
-
-    @Test
-    fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaEnabled() {
-        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
-
-        val project = buildProjectWithMPPAndJvmClassesVariant {
-            with(multiplatformExtension) {
-                jvm {
-                    @Suppress("DEPRECATION")
-                    withJava()
-                }
-                applyDefaultHierarchyTemplate()
-            }
-        }
-
-        project.evaluate()
-
-        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
-    }
-
-    @Test
-    fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaEnabledAndJavaLibraryPluginApplied() {
-        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
-
-        val project = buildProjectWithMPPAndJvmClassesVariant {
-            plugins.apply("java-library")
-
-            with(multiplatformExtension) {
-                jvm {
-                    @Suppress("DEPRECATION")
-                    withJava()
-                }
-                applyDefaultHierarchyTemplate()
-            }
-        }
-
-        project.evaluate()
-
-        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
-    }
-
-    @Test
-    fun shouldAddSecondaryJvmClassesVariantForJvmApiConfigurationsWithJavaTestFixturesApplied() {
-        Assumptions.assumeTrue(GradleVersion.current() < GradleVersion.version("9.0"), ".withJava() is not supported with Gradle 9")
-
-        val project = buildProjectWithMPPAndJvmClassesVariant {
-            plugins.apply("java-test-fixtures")
-
-            with(multiplatformExtension) {
-                jvm {
-                    @Suppress("DEPRECATION")
-                    withJava()
-                }
-                applyDefaultHierarchyTemplate()
-            }
-        }
-
-        project.evaluate()
-
-        project.assertJvmClassesVariants(expectedArtifactsSize = 3, isLegacyJavaCompilationEnabled = true)
     }
 
     @Test
@@ -483,7 +420,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
     private fun Project.assertJvmClassesVariants(
         expectedArtifactsSize: Int = 2,
         apiConfigurations: List<Configuration> = jvmApiConfigurations,
-        isLegacyJavaCompilationEnabled: Boolean = false,
     ) {
         assertTrue(apiConfigurations.isNotEmpty())
 
@@ -503,14 +439,6 @@ class MultiplatformSecondaryOutgoingVariantsTest {
             }
             assertNotNull(javaClasses)
             assertTrue(javaClasses.buildDependencies.getDependencies(null).size >= 1)
-
-            if (isLegacyJavaCompilationEnabled) {
-                val javaClassesLegacy = classesVariant.artifacts.find {
-                    it.file.path.endsWith("build/classes/java/main".osVariantSeparatorsPathString)
-                }
-                assertNotNull(javaClassesLegacy)
-                assertTrue(javaClassesLegacy.buildDependencies.getDependencies(null).size >= 1)
-            }
         }
     }
 

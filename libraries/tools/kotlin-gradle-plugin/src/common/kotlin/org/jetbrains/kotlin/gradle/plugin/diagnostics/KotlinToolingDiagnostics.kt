@@ -1796,10 +1796,9 @@ internal object KotlinToolingDiagnostics {
             "$pluginString Gradle plugin is not compatible with 'org.jetbrains.kotlin.multiplatform' plugin."
     }
 
-    internal object KMPWithJavaDiagnostic : ToolingDiagnosticFactory(predefinedSeverity = WARNING, DiagnosticGroup.Kgp.Deprecation) {
+    internal object KMPWithJavaDiagnostic : ToolingDiagnosticFactory(predefinedSeverity = ERROR, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke(): ToolingDiagnostic {
-            val severity = if (GradleVersion.current() >= GradleVersion.version("9.0")) ERROR else WARNING
-            return build(severity = severity) {
+            return build {
                 title("'org.jetbrains.kotlin.multiplatform' plugin 'withJava()' configuration deprecation.")
                     .description {
                         "Kotlin multiplatform plugin always configures Java sources compilation and 'withJava()' configuration is deprecated."

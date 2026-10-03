@@ -44,7 +44,7 @@ class TestFixturesTest {
             }) {
             kotlin {
                 jvm {
-                    @Suppress("DEPRECATION")
+                    @Suppress("DEPRECATION_ERROR")
                     withJava()
                 }
             }

@@ -448,7 +448,7 @@ class JvmBinariesDslTest {
         val project = testMppProject {
             kotlin {
                 jvm {
-                    @Suppress("DEPRECATION")
+                    @Suppress("DEPRECATION_ERROR")
                     withJava()
                     binaries {
                         executable {
