@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
@@ -48,7 +49,7 @@ abstract class AbstractExternalProjectTest : AbstractSwiftExportTest() {
 
     @Test
     fun `kotlinx-coroutines-core`() {
-        minOSVersion = "15.0"
+        minOSVersion[Family.OSX] = "15.0"
         val atomicFuCinterop = KlibExportSettings(
             testLibraryAtomicFuCinteropInteropKlibFile,
             targets.testTarget,
