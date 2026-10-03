@@ -202,11 +202,11 @@ internal class KaptWithoutKotlincConfig : KaptConfig<KaptWithoutKotlincTask> {
                     val kaptDependency = "org.jetbrains.kotlin:kotlin-annotation-processing-gradle:${project.getKotlinPluginVersion()}"
                     listOf(
                         project.dependencies.create(kaptDependency),
-                        project.dependencies.kotlinDependency(
-                            "kotlin-stdlib",
-                            project.topLevelExtension.coreLibrariesVersion
-                        )
                     )
+                }.also {
+                    it.add(project.topLevelExtension.coreKotlinLibrariesVersion.map { version ->
+                        project.dependencies.kotlinDependency("kotlin-stdlib", version)
+                    })
                 })
             }
 
