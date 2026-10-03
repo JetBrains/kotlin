@@ -258,6 +258,10 @@ open annotation class kotlin/ExperimentalUnsignedTypes : kotlin/Annotation { // 
     constructor <init>() // kotlin/ExperimentalUnsignedTypes.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin/ExperimentalValueClassesApi : kotlin/Annotation { // kotlin/ExperimentalValueClassesApi|null[0]
+    constructor <init>() // kotlin/ExperimentalValueClassesApi.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin/ExperimentalVersionOverloading : kotlin/Annotation { // kotlin/ExperimentalVersionOverloading|null[0]
     constructor <init>() // kotlin/ExperimentalVersionOverloading.<init>|<init>(){}[0]
 }

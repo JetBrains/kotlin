@@ -75,6 +75,9 @@ public abstract interface annotation class kotlin/ExperimentalSubclassOptIn : ja
 public abstract interface annotation class kotlin/ExperimentalUnsignedTypes : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/ExperimentalValueClassesApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/ExperimentalVersionOverloading : java/lang/annotation/Annotation {
 }
 
