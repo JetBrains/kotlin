@@ -6,6 +6,7 @@
 package samples.misc
 
 import samples.*
+import java.math.BigInteger
 
 class BigIntegers {
 
@@ -41,5 +42,19 @@ class BigIntegers {
         assertPrints(ULong.MAX_VALUE.toBigInteger(), "18446744073709551615")
         // BigInteger can hold values beyond ULong range
         assertPrints(ULong.MAX_VALUE.toBigInteger() * 10.toBigInteger(), "184467440737095516150")
+    }
+
+    @Sample
+    fun minus() {
+        assertPrints(BigInteger("100").minus(BigInteger("42")), "58")
+        assertPrints(BigInteger("100") - BigInteger("42"), "58")
+        assertPrints(100.toBigInteger().minus(42.toBigInteger()), "58")
+    }
+
+    @Sample
+    fun plus() {
+        assertPrints(BigInteger("100").plus(BigInteger("42")), "142")
+        assertPrints(BigInteger("100") + BigInteger("42"), "142")
+        assertPrints(100.toBigInteger().plus(42.toBigInteger()), "142")
     }
 }
