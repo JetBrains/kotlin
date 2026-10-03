@@ -51,6 +51,9 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val swiftModulesFile: RegularFileProperty
 
+    @get:Input
+    val swiftPMImportHasDependencies: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
+
     @get:Optional
     @get:Input
     abstract val swiftPMImportProductName: Property<String>
@@ -165,7 +168,9 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private fun createPackageManifest(modules: List<GradleSwiftExportModule>) {
         val manifest = packagePath.getFile().resolve("Package.swift")
-        val cinteropImport = if (swiftPMImportProductName.isPresent && swiftPMImportPackageRoot.isPresent) {
+        val cinteropImport = if (
+            swiftPMImportHasDependencies.get() && swiftPMImportProductName.isPresent && swiftPMImportPackageRoot.isPresent
+        ) {
             val root = swiftPMImportFingerprint.orNull?.asFile
                 ?.let { swiftPMImportCoordinationService.get().sharedPackageRootFor(it) }
                 ?: swiftPMImportPackageRoot.getFile()
