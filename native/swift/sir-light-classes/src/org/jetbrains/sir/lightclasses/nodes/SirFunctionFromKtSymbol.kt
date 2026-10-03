@@ -148,7 +148,7 @@ internal open class SirFunctionFromKtSymbol(
 
     context(_: KaSession, _: SirSession)
     private fun buildForwardKotlinCall(): BridgeFunctionBuilder.() -> String = {
-        val typeArgs = ktSymbol.typeParameters.map { it.resolveUpperBound() ?: builtinTypes.nullableAny }
+        val typeArgs = ktSymbol.typeParameters.map { it.resolveUpperBound() }
         val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
         val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
             it.render(renderer, position = Variance.INVARIANT)
