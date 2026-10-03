@@ -1,0 +1,3 @@
+Restored type is the same as the original one
+
+@library.Complex(s = "s", i = 3, l = 42, b = true, c = `c`, d = 1.5, e = library.E.B, k = kotlin.collections.List::class, strings = ["a", "b"], enums = [library.E.A, library.E.B], classes = [kotlin.Int::class, kotlin.String::class], nested = library/Nested(i = 7, )) kotlin.collections.List<kotlin.String>

@@ -1,0 +1,3 @@
+Restored type is the same as the original one
+
+@Anno1 @AnnoWithArgs1(x = "") MyList<@Anno2 @AnnoWithArgs2(x = "") MyString>
