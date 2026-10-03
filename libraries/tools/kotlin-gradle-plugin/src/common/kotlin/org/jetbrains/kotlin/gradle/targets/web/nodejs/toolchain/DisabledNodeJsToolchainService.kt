@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
-import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
 
@@ -16,8 +16,8 @@ abstract class DisabledNodeJsToolchainService : NodeJsToolchainService<NodeJsToo
     }
 
     companion object {
-        internal fun registerIfAbsent(project: Project): Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>> {
-            return project.gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DisabledNodeJsToolchainService::class.java)
+        internal fun registerIfAbsent(gradle: Gradle): Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>> {
+            return gradle.sharedServices.registerIfAbsent(nodeJsServiceName, DisabledNodeJsToolchainService::class.java)
         }
     }
 }

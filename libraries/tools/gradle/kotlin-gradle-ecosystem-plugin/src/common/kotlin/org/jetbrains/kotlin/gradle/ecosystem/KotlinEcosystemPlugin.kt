@@ -15,6 +15,12 @@ class KotlinEcosystemPlugin : Plugin<Settings> {
     private val logger = Logging.getLogger("KotlinEcosystemPlugin")
 
     override fun apply(settings: Settings) {
-
+        // Exposes `kotlin { toolchainManagement { nodeJs { ... } } }` in settings.gradle.kts
+        settings.extensions.create(
+            KotlinEcosystemExtension::class.java,
+            "kotlin",
+            KotlinEcosystemExtensionImpl::class.java,
+            settings,
+        )
     }
 }

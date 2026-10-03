@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
@@ -25,7 +25,6 @@ import javax.inject.Inject
  */
 abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
     private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
     private val execOperations: ExecOperations,
 ) : NodeJsToolchainService<PreInstalledNodeJsToolchainService.Parameters> {
 
@@ -52,9 +51,9 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
             if (requestedVersion != null && requestedVersion.normalized != installedVersion.normalized) {
                 logger.warn(
                     "Node.js $installedVersion found by '$command' does not match the requested " +
-                    "version $requestedVersion. The requested version cannot be provisioned, because " +
-                    "the Node.js toolchain is configured to use a pre-installed Node.js. " +
-                    "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.nodejs.toolchain=DOWNLOAD."
+                            "version $requestedVersion. The requested version cannot be provisioned, because " +
+                            "the Node.js toolchain is configured to use a pre-installed Node.js. " +
+                            "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.nodejs.toolchain=DOWNLOAD."
                 )
             }
             nodeJsRequest.platform.orNull?.let { platform ->
@@ -104,12 +103,24 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
         private const val DELIMITER: Char = ' '
         private const val DETECT_SCRIPT = "[process.versions.node, process.platform, process.arch].join('$DELIMITER')"
 
-        internal fun registerIfAbsent(project: Project): Provider<PreInstalledNodeJsToolchainService> {
-            return project.gradle.sharedServices.registerIfAbsent(
+        internal fun registerIfAbsent(
+            gradle: Gradle,
+            configureBuildServiceParameters: (Parameters) -> Unit,
+        ): Provider<PreInstalledNodeJsToolchainService> {
+            return gradle.sharedServices.registerIfAbsent(
                 nodeJsServiceName,
-                PreInstalledNodeJsToolchainService::class.java
+                PreInstalledNodeJsToolchainService::class.java,
             ) { spec ->
-                spec.parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath.getOrElse("node"))
+                spec.parameters.nodeJsExecutable.convention("node")
+                configureBuildServiceParameters(spec.parameters)
+            }
+        }
+
+        internal fun registerIfAbsent(project: Project): Provider<PreInstalledNodeJsToolchainService> {
+            return registerIfAbsent(
+                project.gradle,
+            ) { parameters ->
+                parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath)
             }
         }
     }
