@@ -74,4 +74,13 @@ class MetricPolicyTest {
         whenAdded("AAA", "UNEXPECTED-VALUE${separator}common${separator}js${separator}jvm")
         whenAdded("BBB", "UNEXPECTED-VALUE${separator}common${separator}js${separator}jvm")
     }
+
+    @Test
+    fun allowedListAnonymizationKeepsRegexMatchedItems() {
+        val anonymizer = StringAnonymizationPolicy.AllowedListAnonymizer(listOf("""\+A""", "-A"))
+        assertEquals("+A;-A", anonymizer.anonymize("+A;-A"))
+        assertEquals("+A;-A;UNEXPECTED-VALUE", anonymizer.anonymize("+A;-A;Bogus"))
+        assertEquals("UNEXPECTED-VALUE;UNEXPECTED-VALUE", anonymizer.anonymize("+AB;-"))
+        assertEquals("UNEXPECTED-VALUE", anonymizer.anonymize("""\+A"""))
+    }
 }

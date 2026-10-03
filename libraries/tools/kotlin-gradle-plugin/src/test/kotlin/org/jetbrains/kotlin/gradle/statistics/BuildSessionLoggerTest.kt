@@ -174,7 +174,7 @@ class BuildSessionLoggerTest {
                     logger.report(metric, "1.2.3-SNAPSHOT")
                 }
                 is StringAnonymizationPolicy.AllowedListAnonymizer -> {
-                    anonymization.allowedValues.sorted().forEach {
+                    anonymization.unescapedAllowedValues().forEach {
                         logger.report(metric, it)
                     }
                 }
@@ -199,7 +199,7 @@ class BuildSessionLoggerTest {
                     logger.report(metric, "1.2.3-SNAPSHOT")
                 }
                 is StringAnonymizationPolicy.AllowedListAnonymizer -> {
-                    anonymization.allowedValues.sorted().forEach {
+                    anonymization.unescapedAllowedValues().forEach {
                         logger.report(metric, it)
                     }
                 }
@@ -232,7 +232,7 @@ class BuildSessionLoggerTest {
                 )
                 is StringAnonymizationPolicy.AllowedListAnonymizer -> validateMetricValueBasedOnOverrideRule(
                     metric,
-                    anonymization.allowedValues.sorted(),
+                    anonymization.unescapedAllowedValues(),
                     metricValue
                 )
                 is StringAnonymizationPolicy.RegexControlled -> assertMetricValueEquals(metric.name, metric.name, metricValue)
@@ -245,7 +245,7 @@ class BuildSessionLoggerTest {
 
             when (val anonymization = metric.anonymization) {
                 is StringAnonymizationPolicy.AllowedListAnonymizer -> {
-                    val expectedValue = anonymization.allowedValues.sorted()
+                    val expectedValue = anonymization.unescapedAllowedValues()
 
                     assertEquals(
                         expectedValue,
@@ -284,6 +284,9 @@ class BuildSessionLoggerTest {
             "Metric $metricName contains unexpected value: expected $expectedValue, but found $actualValue"
         )
     }
+
+    private fun StringAnonymizationPolicy.AllowedListAnonymizer.unescapedAllowedValues(): List<String> =
+        allowedValues.map { it.replace("""\""", "") }.sorted()
 
     @Test
     fun testWeight() {
