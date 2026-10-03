@@ -33,10 +33,11 @@ import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.calls.OperatorCallOfNonOperatorFunction
-import org.jetbrains.kotlin.fir.resolve.calls.InapplicableNullableReceiver
+import org.jetbrains.kotlin.fir.resolve.calls.InapplicableUnsafeReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -96,7 +97,7 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         ambiguityFactory: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>,
         missingFactory: KtDiagnosticFactory0,
         noneApplicableFactory: KtDiagnosticFactory1<Collection<FirBasedSymbol<*>>>? = null,
-        nullableReceiverFactory: KtDiagnosticFactory0? = null,
+        nullableReceiverFactory: KtDiagnosticFactory1<ConeKotlinType>? = null,
     ): Boolean {
         val calleeReference = call.calleeReference
         when {
@@ -131,10 +132,10 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
                         if (nullableReceiverFactory != null || noneApplicableFactory != null) {
                             diagnostic.candidate.diagnostics.filter { it.applicability == diagnostic.applicability }.forEach {
                                 when (it) {
-                                    is InapplicableNullableReceiver -> {
+                                    is InapplicableUnsafeReceiver -> {
                                         if (nullableReceiverFactory != null) {
                                             reporter.reportOn(
-                                                reportSource, nullableReceiverFactory
+                                                reportSource, nullableReceiverFactory, it.actualType,
                                             )
                                         } else {
                                             reporter.reportOn(

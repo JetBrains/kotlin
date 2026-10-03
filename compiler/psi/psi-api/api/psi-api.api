@@ -434,6 +434,7 @@ public abstract interface class org/jetbrains/kotlin/lexer/KtTokens {
 	public static final field ALL_ASSIGNMENTS Lcom/intellij/psi/tree/TokenSet;
 	public static final field ALL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
 	public static final field ALL_KEYWORD_Id I
+	public static final field ALL_SAFE_ACCESSES Lcom/intellij/psi/tree/TokenSet;
 	public static final field AND Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field ANDAND Lorg/jetbrains/kotlin/lexer/KtSingleValueToken;
 	public static final field ANDAND_Id I

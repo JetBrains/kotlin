@@ -19,7 +19,7 @@ fun <T : <!UNSUPPORTED_FEATURE!>RichError<!>, V : <!UNSUPPORTED_FEATURE!>NonErro
     re: <!UNSUPPORTED_FEATURE!>RichError<!>,
     v: <!UNSUPPORTED_FEATURE!>NonError<!>,
 ) {
-    <!UNNECESSARY_SAFE_CALL!>x<!UNSUPPORTED_FEATURE!>|.<!>length<!>
+    x<!UNNECESSARY_SAFE_CALL, UNSUPPORTED_FEATURE!>|.<!>length
     <!UNSUPPORTED_FEATURE!><!UNSUPPORTED_FEATURE!>RichError<!>::class.java<!>
     <!UNSUPPORTED_FEATURE!><!UNSUPPORTED_FEATURE!>NonError<!>::class.java<!>
 }

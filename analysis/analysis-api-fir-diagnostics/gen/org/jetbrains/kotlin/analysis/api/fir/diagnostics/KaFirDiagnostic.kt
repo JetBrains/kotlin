@@ -6744,6 +6744,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface IteratorOnNullable : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass: KClass<IteratorOnNullable>
             get() = IteratorOnNullable::class
+
+        public val actualType: KaType
     }
 
     @KaUnstableDiagnosticApi
