@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import kotlin.powerassert.ExperimentalPowerAssert
+import kotlin.powerassert.PowerAssert
+import kotlin.powerassert.toDefaultMessage
 
 class ExceptionAttachmentBuilder {
     private val printer = SmartPrinter(StringBuilder())
@@ -98,34 +101,50 @@ inline fun rethrowExceptionWithDetails(
 }
 
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, ExperimentalPowerAssert::class)
+@PowerAssert
 inline fun checkWithAttachment(
     condition: Boolean,
-    message: () -> String,
-    attachmentName: String = "info.txt",
-    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
+    @PowerAssert.Ignore message: () -> String,
+    @PowerAssert.Ignore attachmentName: String = "info.txt",
+    @PowerAssert.Ignore buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     contract { returns() implies (condition) }
 
     if (!condition) {
         val exception = KotlinIllegalStateExceptionWithAttachments(message())
-        exception.buildAttachment(attachmentName) { buildAttachment() }
+        exception.buildAttachment(attachmentName) {
+            buildAttachment()
+
+            val explanation = PowerAssert.explanation
+            if (explanation != null) {
+                withEntry("explanation", explanation.toDefaultMessage())
+            }
+        }
         throw exception
     }
 }
 
-@OptIn(ExperimentalContracts::class)
+@OptIn(ExperimentalContracts::class, ExperimentalPowerAssert::class)
+@PowerAssert
 inline fun requireWithAttachment(
     condition: Boolean,
-    message: () -> String,
-    attachmentName: String = "info.txt",
-    buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
+    @PowerAssert.Ignore message: () -> String,
+    @PowerAssert.Ignore attachmentName: String = "info.txt",
+    @PowerAssert.Ignore buildAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
 ) {
     contract { returns() implies (condition) }
 
     if (!condition) {
         val exception = KotlinIllegalArgumentExceptionWithAttachments(message())
-        exception.buildAttachment(attachmentName) { buildAttachment() }
+        exception.buildAttachment(attachmentName) {
+            buildAttachment()
+
+            val explanation = PowerAssert.explanation
+            if (explanation != null) {
+                withEntry("explanation", explanation.toDefaultMessage())
+            }
+        }
         throw exception
     }
 }

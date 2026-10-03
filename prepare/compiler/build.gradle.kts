@@ -151,6 +151,7 @@ dependencies {
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
+    proguardLibraries(project(":kotlin-power-assert-runtime"))
 
     compilerVersion(project(":compiler:compiler.version"))
     proguardLibraries(project(":compiler:compiler.version"))
