@@ -137,7 +137,7 @@ internal class SymbolLightClassForScript private constructor(
             language = language,
             role = PsiReferenceList.Role.EXTENDS_LIST,
         ).apply {
-            addReference("kotlin.script.templates.standard.ScriptTemplateWithArgs")
+            addReference("kotlin.script.experimental.templates.ScriptWithArgs")
         }
     }
 

@@ -47,6 +47,7 @@ dependencies {
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     proguardLibraryJars(project(":kotlin-compiler"))
+    proguardLibraryJars(project(":kotlin-script-runtime")) // legacy compat API referenced from embedded kotlin-scripting-jvm
 
     testImplementation(project(":kotlin-scripting-dependencies"))
     testImplementation(platform(libs.junit.bom))

@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(RAW_FIR)] lambdaInsideAnnotationArgumentScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -233,7 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 CONSTANT_EVALUATION:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -379,7 +379,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -439,7 +439,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaInsideAnnotationArgumentScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] lambdaInsideAnnotationArgumentScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-lambdaInsideAnnotationArgumentScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-lambdaInsideAnnotationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {

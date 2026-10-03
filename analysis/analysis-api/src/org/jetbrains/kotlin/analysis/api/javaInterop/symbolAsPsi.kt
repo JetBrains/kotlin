@@ -187,7 +187,7 @@ public fun KaFileSymbol.asFacadePsiClass(): PsiClass? {
  *
  * Is seen as the following [PsiClass] from Java:
  * ```java
- * public final class MyScript extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
+ * public final class MyScript extends kotlin.script.experimental.templates.ScriptWithArgs {
  *     public static void main(java.lang.String[]);
  *
  *     public MyScript(java.lang.String[]);

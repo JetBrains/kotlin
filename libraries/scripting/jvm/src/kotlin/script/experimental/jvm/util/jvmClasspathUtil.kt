@@ -19,7 +19,7 @@ import kotlin.script.experimental.jvm.impl.toContainingJarOrNull
 import kotlin.script.experimental.jvm.impl.toFileOrNull
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClass
 import kotlin.script.experimental.jvm.impl.tryGetResourcePathForClassByName
-import kotlin.script.templates.standard.ScriptTemplateWithArgs
+import kotlin.script.experimental.templates.ScriptWithArgs
 
 // TODO: consider moving all these utilites to the build-common or some other shared compiler API module
 
@@ -51,6 +51,7 @@ internal const val KOTLIN_REFLECT_JAR_PROPERTY = "kotlin.java.reflect.jar"
 // TODO: consider removing
 internal const val KOTLIN_RUNTIME_JAR_PROPERTY = "kotlin.java.runtime.jar"
 internal const val KOTLIN_SCRIPT_RUNTIME_JAR_PROPERTY = "kotlin.script.runtime.jar"
+internal const val KOTLIN_SCRIPTING_COMMON_JAR_PROPERTY = "kotlin.scripting.common.jar"
 
 private val validClasspathFilesExtensions = setOf("jar", "zip", "java")
 private val validJarCollectionFilesExtensions = setOf("jar", "war", "zip")
@@ -446,7 +447,18 @@ object KotlinJars {
         getLib(
             KOTLIN_SCRIPT_RUNTIME_JAR_PROPERTY,
             KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-            ScriptTemplateWithArgs::class
+            "kotlin.script.templates.standard.ScriptTemplateWithArgs"
+        ) ?: tryGetResourcePathForClassByName(
+            "kotlin.script.templates.standard.ScriptTemplateWithArgs",
+            KotlinJars::class.java.classLoader
+        )?.takeIf(File::exists)
+    }
+
+    val scriptingCommonOrNull: File? by lazy {
+        getLib(
+            KOTLIN_SCRIPTING_COMMON_JAR_PROPERTY,
+            KOTLIN_SCRIPTING_COMMON_JAR,
+            ScriptWithArgs::class
         )
     }
 

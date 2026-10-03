@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.scripting.test.captureOutErrRet
 import org.jetbrains.kotlin.scripting.test.withTempFile
-import org.jetbrains.kotlin.scripting.definitions.getEnvironment
+import kotlin.script.experimental.host.getRefinementEnvironment
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -37,7 +37,7 @@ private class KotlinExplainEvaluationConfiguration : ScriptEvaluationConfigurati
     {
         refineConfigurationBeforeEvaluate { (val _ = compiledScript, val config = evaluationConfiguration, val _ = contextData) ->
             config.with {
-                val explainFilePath = get(hostConfiguration)!!.get(ScriptingHostConfiguration.getEnvironment)!!.invoke()!!.get("explainFile") as String
+                val explainFilePath = get(hostConfiguration)!!.get(ScriptingHostConfiguration.getRefinementEnvironment)!!.invoke().get("explainFile") as String
                 val map = mutableMapOf<String, Any?>()
                 constructorArgs(map)
                 scriptExecutionWrapper<Any?> {

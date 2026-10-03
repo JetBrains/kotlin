@@ -8,7 +8,7 @@ String(y)
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationApplicationArgumentScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationApplicationArgumentScript.kts>, ScriptTopLevelDeclaration=true] annotation class Annotation : R|kotlin/Annotation| {

@@ -139,7 +139,6 @@ projectTests {
     testGenerator("org.jetbrains.kotlin.lombok.TestGeneratorKt", generateTestsInBuildDirectory = true)
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()
     withTestJar()

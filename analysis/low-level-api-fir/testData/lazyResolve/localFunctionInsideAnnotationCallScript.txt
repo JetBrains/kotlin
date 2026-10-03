@@ -1,7 +1,7 @@
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideAnnotationCallScript.kts>
-        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideAnnotationCallScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-localFunctionInsideAnnotationCallScript.kts>
-        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.<script-localFunctionInsideAnnotationCallScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {

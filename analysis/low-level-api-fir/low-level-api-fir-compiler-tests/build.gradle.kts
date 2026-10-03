@@ -88,7 +88,6 @@ projectTests {
     withMockJdkRuntime()
     withMockJDKModifiedRuntime()
     withMockJdkAnnotationsJar()
-    withScriptRuntime()
     withScriptingPlugin()
     withTestScriptDefinition()
     withPluginSandboxAnnotations()

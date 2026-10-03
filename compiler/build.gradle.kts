@@ -85,7 +85,6 @@ projectTests {
     testData(isolated, "testData/writeFlags")
     testData(isolated, "testData/writeSignature")
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withStdlibCommon()
     withMockJdkRuntime()

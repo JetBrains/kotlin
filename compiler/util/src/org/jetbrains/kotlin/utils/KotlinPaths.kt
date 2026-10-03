@@ -118,8 +118,8 @@ interface KotlinPaths {
     enum class ClassPaths(val contents: List<Jar> = emptyList()) {
         Empty,
         StdLib(Jar.StdLib),
-        Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.KotlinDaemon, Jar.CoroutinesCore),
-        CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib),
+        Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.KotlinDaemon, Jar.CoroutinesCore),
+        CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib, Jar.ScriptRuntime),
         ;
 
         constructor(vararg jars: Jar) : this(jars.asList())

@@ -226,7 +226,6 @@ projectTests {
     testData(project(":js:js.translator").isolated, "testData/_commonFiles")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withTestJar()
     withJsRuntime()
     withMockJdkAnnotationsJar()

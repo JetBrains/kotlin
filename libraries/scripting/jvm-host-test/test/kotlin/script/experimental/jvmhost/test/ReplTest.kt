@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION") // legacy script API used by the K1 REPL tests, to be dropped with them
+
 package kotlin.script.experimental.jvmhost.test
 
 import kotlinx.coroutines.runBlocking

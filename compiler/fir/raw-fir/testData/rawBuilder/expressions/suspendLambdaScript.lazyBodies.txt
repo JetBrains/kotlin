@@ -1,6 +1,6 @@
 FILE: suspendLambdaScript.kts
     SCRIPT: <script-suspendLambdaScript.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         lval args: R|kotlin/Array<kotlin/String>|
 
         public final val $$result: <implicit> = LAZY_EXPRESSION

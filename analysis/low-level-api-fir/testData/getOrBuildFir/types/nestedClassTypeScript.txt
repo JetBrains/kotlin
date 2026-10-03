@@ -8,7 +8,7 @@ R|Foo.Nested|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nestedClassTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassTypeScript.kts>, ScriptTopLevelDeclaration=true] class Foo : R|kotlin/Any| {

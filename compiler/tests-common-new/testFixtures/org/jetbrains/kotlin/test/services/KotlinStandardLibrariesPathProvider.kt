@@ -17,6 +17,7 @@ import java.lang.ref.SoftReference
 import java.net.URL
 import java.net.URLClassLoader
 import kotlin.reflect.KMutableProperty0
+import kotlin.script.experimental.jvm.util.KotlinJars
 
 interface KotlinStandardLibrariesPathProvider : TestService {
     companion object {
@@ -76,6 +77,11 @@ interface KotlinStandardLibrariesPathProvider : TestService {
      * kotlin-script-runtime.jar
      */
     fun scriptRuntimeJarForTests(): File
+
+    /**
+     * kotlin-scripting-common.jar (contains the default script templates), if available on the test classpath
+     */
+    fun scriptingCommonJarForTests(): File?
 
     /**
      * kotlin-annotations-jvm.jar
@@ -155,7 +161,7 @@ interface KotlinStandardLibrariesPathProvider : TestService {
                 *listOfNotNull(
                     runtimeJarForTests(),
                     reflectJarForTests().takeUnless { skipReflect },
-                    scriptRuntimeJarForTests(),
+                    scriptingCommonJarForTests(),
                     kotlinTestJarForTests(),
                 ).toTypedArray(),
             ).also { loader ->
@@ -182,6 +188,8 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
     override fun kotlinTestJarForTests(): File = ForTestCompileRuntime.kotlinTestJarForTests()
 
     override fun scriptRuntimeJarForTests(): File = ForTestCompileRuntime.scriptRuntimeJarForTests()
+
+    override fun scriptingCommonJarForTests(): File? = KotlinJars.scriptingCommonOrNull
 
     override fun jvmAnnotationsForTests(): File = ForTestCompileRuntime.jvmAnnotationsForTests()
 
@@ -230,6 +238,7 @@ object EnvironmentBasedStandardLibrariesPathProvider : KotlinStandardLibrariesPa
     override fun reflectJarForTests(): File = getFile(KOTLIN_REFLECT_PROP)
     override fun kotlinTestJarForTests(): File = getFile(KOTLIN_TEST_PROP)
     override fun scriptRuntimeJarForTests(): File = getFile(KOTLIN_SCRIPT_RUNTIME_PROP)
+    override fun scriptingCommonJarForTests(): File? = KotlinJars.scriptingCommonOrNull
     override fun jvmAnnotationsForTests(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
     override fun getAnnotationsJar(): File = getFile(KOTLIN_ANNOTATIONS_JVM_PROP)
     override fun fullJsStdlib(): File = getFile(KOTLIN_STDLIB_JS_PROP)
@@ -253,7 +262,6 @@ fun CompilerConfiguration.configureStandardLibs(
     configureStandardLibs(
         pathProvider,
         KotlinStandardLibrariesPathProvider::runtimeJarForTests,
-        KotlinStandardLibrariesPathProvider::scriptRuntimeJarForTests,
         KotlinStandardLibrariesPathProvider::reflectJarForTests,
         arguments
     )

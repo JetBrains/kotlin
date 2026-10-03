@@ -40,12 +40,12 @@ class ScriptWithCustomDefEnvironmentConfigurator(testServices: TestServices) : E
             if (directive is StringDirective) {
                 module.directives[directive].flatMap { it.split(dirSplitRegex).filter { it.isNotEmpty() } }.let {
                     if (it.isNotEmpty()) {
-                        configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, envName, it)
+                        configuration.put(ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT, envName, it)
                     }
                 }
             } else {
                 if (directive in module.directives) {
-                    configuration.put(ScriptingConfigurationKeys.LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, envName, "true")
+                    configuration.put(ScriptingConfigurationKeys.SCRIPT_REFINEMENT_ENVIRONMENT, envName, "true")
                 }
             }
         }

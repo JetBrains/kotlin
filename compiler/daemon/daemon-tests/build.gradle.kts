@@ -11,6 +11,7 @@ dependencies {
     testImplementation(kotlinStdlib())
     testImplementation(project(":kotlin-daemon"))
     testImplementation(project(":kotlin-daemon-client"))
+    testImplementation(project(":kotlin-script-runtime")) // legacy DependenciesResolver test template
     testImplementation(libs.junit.jupiter.api)
     testImplementation(testFixtures(project(":compiler:tests-integration")))
     testImplementation(intellijCore())

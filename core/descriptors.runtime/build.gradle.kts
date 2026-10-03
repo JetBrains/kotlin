@@ -40,7 +40,6 @@ projectTests {
     withJvmStdlibAndReflect()
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()
-    withScriptRuntime()
     withTestJar()
     withAnnotations()
 

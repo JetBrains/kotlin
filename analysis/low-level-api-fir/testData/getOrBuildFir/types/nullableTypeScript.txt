@@ -8,7 +8,7 @@ R|kotlin/Int?|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] nullableTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-nullableTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/Int?| { LAZY_BLOCK }

@@ -8,7 +8,7 @@ R|A|
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superTypeScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-superTypeScript.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-superTypeScript.kts>, ScriptTopLevelDeclaration=true] interface A : R|kotlin/Any| {

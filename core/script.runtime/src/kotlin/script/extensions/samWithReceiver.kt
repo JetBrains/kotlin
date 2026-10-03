@@ -16,6 +16,7 @@
 
 package kotlin.script.extensions
 
+@Deprecated("Legacy script template API, use ScriptCompilationConfiguration.annotationsForSamWithReceivers from kotlin.script.experimental.api instead")
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class SamWithReceiverAnnotations(vararg val annotations: String)

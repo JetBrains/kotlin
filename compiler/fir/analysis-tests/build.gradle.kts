@@ -92,7 +92,6 @@ projectTests {
     testData(project(":compiler:tests-spec").isolated, "testData/diagnostics")
 
     withJvmStdlibAndReflect()
-    withScriptRuntime()
     withMockJdkAnnotationsJar()
     withMockJDKModifiedRuntime()
     withTestJar()

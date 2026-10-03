@@ -76,6 +76,7 @@ class GenericReplCompilerState(environment: KotlinCoreEnvironment, override val 
 
     val analyzerEngine = ReplCodeAnalyzerBase(environment)
 
+    @Suppress("DEPRECATION")
     var lastDependencies: ScriptDependencies? = null
 
     private val manglerAndSymbolTable by lazy {

@@ -22,6 +22,7 @@ internal fun classpathFromSystemProperty(propertyName: String): List<Path> =
 internal val stdlibPath: Path
     get() = Paths.get(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
 
+@Suppress("DEPRECATION") // used only as a marker class to locate the kotlin-script-runtime jar
 internal val scriptRuntimePath: Path
     get() = Paths.get(
         ScriptTemplateWithBindings::class.java.protectionDomain.codeSource.location.toURI()

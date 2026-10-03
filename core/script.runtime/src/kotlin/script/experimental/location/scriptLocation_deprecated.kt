@@ -8,7 +8,7 @@ package kotlin.script.experimental.location
 /**
  * Describes where script files can be found
  */
-@Deprecated("Experimental API")
+@Deprecated("Experimental API, not used anymore", level = DeprecationLevel.ERROR)
 enum class ScriptExpectedLocation {
     SourcesOnly, // Under sources roots
     TestsOnly,   // Under test sources roots
@@ -17,9 +17,9 @@ enum class ScriptExpectedLocation {
     Everywhere;
 }
 
-@Deprecated("Experimental API")
+@Deprecated("Experimental API, not used anymore", level = DeprecationLevel.ERROR)
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class ScriptExpectedLocations(
-    @Suppress("DEPRECATION") val value: Array<ScriptExpectedLocation> = [ScriptExpectedLocation.SourcesOnly, ScriptExpectedLocation.TestsOnly]
+    @Suppress("DEPRECATION_ERROR") val value: Array<ScriptExpectedLocation> = [ScriptExpectedLocation.SourcesOnly, ScriptExpectedLocation.TestsOnly]
 )

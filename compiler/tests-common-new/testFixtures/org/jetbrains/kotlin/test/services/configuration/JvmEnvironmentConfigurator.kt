@@ -125,7 +125,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 files.add(provider.kotlinTestJarForTests())
             } else if (configurationKind.withMockRuntime) {
                 files.add(provider.minimalRuntimeJarForTests())
-                files.add(provider.scriptRuntimeJarForTests())
+                provider.scriptingCommonJarForTests()?.let(files::add)
             }
             if (configurationKind.withReflection) {
                 files.add(provider.reflectJarForTests())
@@ -242,12 +242,13 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
                 val provider = testServices.standardLibrariesPathProvider
                 val isJava9Module = module.isJava9Module
                 configuration.addModularRootIfNotNull(isJava9Module, "kotlin.stdlib", provider.runtimeJarForTests())
-                configuration.addModularRootIfNotNull(isJava9Module, "kotlin.script.runtime", provider.scriptRuntimeJarForTests())
+                configuration.addModularRootIfNotNull(isJava9Module, "kotlin.scripting.common", provider.scriptingCommonJarForTests())
             } else {
                 configuration.configureStandardLibs(
                     testServices.standardLibrariesPathProvider,
                     K2JVMCompilerArguments().also { it.noReflect = true }
                 )
+                testServices.standardLibrariesPathProvider.scriptingCommonJarForTests()?.let { configuration.addJvmClasspathRoot(it) }
             }
         }
         configuration.addJvmClasspathRoots(getLibraryFilesExceptRealRuntime(testServices, configurationKind, module.directives))

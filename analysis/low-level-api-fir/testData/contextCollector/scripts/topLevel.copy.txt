@@ -17,8 +17,8 @@ Tower Data Context:
         Scope: FirExplicitSimpleImportingScope
     Element 8
         Implicit receiver:
-            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
-                Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
+            FirReceiverParameterSymbol <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+                Type: kotlin.script.experimental.templates.ScriptWithArgs
     Element 9
         Scope: FirScriptDeclarationsScope
             Classifiers:
@@ -42,7 +42,7 @@ Expression Stability: ALIEN_PUBLIC_PROPERTY
 
 FILE: [ResolvedTo(IMPORTS)] topLevel.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] <script-topLevel.kts>
-        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun before_Fun(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevel.kts
         }
 
         [ResolvedTo(BODY_RESOLVE)] init {
-            this@R|?|.R|kotlin/script/templates/standard/ScriptTemplateWithArgs.args|
+            this@R|?|.R|kotlin/script/experimental/templates/ScriptWithArgs.args|
         }
 
         public? final? [ResolvedTo(RAW_FIR)] fun after_Fun(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION") // legacy script API used by the K1 REPL tests, to be dropped with them
+
 package org.jetbrains.kotlin.daemon
 
 import com.intellij.openapi.util.io.FileUtil
@@ -1015,6 +1017,7 @@ internal val Path.loggerCompatiblePath: String
     get() = invariantSeparatorsPathString
 
 
+@Suppress("DEPRECATION")
 open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
 
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {

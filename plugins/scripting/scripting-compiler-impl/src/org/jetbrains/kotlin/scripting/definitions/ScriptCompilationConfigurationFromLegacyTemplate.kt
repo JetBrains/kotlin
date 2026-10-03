@@ -24,6 +24,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.getRefinementEnvironment
 import kotlin.script.experimental.impl.fromLegacyTemplate
 import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.JvmDependency
@@ -36,6 +37,8 @@ import kotlin.script.templates.AcceptedAnnotations
 import kotlin.script.templates.ScriptTemplateAdditionalCompilerArguments
 import kotlin.script.templates.ScriptTemplateDefinition
 
+// Cannot be removed before dropping support for Gradle below v10: older Gradle versions ship `@ScriptTemplateDefinition` templates
+// (`KotlinBuildScript`, `KotlinSettingsScript`, `KotlinInitScript`) that are loaded through this class.
 @Deprecated("Use 'ScriptDefinition' instead", level = DeprecationLevel.WARNING)
 class ScriptCompilationConfigurationFromLegacyTemplate(
     val hostConfiguration: ScriptingHostConfiguration,
@@ -49,9 +52,10 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
             null
         }
 
+        @Suppress("DEPRECATION")
         val dependencyResolver: DependenciesResolver = resolverFromAnnotation(template)
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val scriptExpectedLocations =
             template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.location.ScriptExpectedLocations>()?.value?.map {
                 when (it) {
@@ -65,14 +69,14 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
                 ScriptAcceptedLocation.Sources, ScriptAcceptedLocation.Tests
             )
 
+        @Suppress("DEPRECATION", "DEPRECATION_ERROR")
         val additionalCompilerArguments = takeUnlessError {
             template.annotations.firstIsInstanceOrNull<ScriptTemplateAdditionalCompilerArguments>()?.let {
                 it.provider.primaryConstructor?.call(it.arguments.asIterable())
             }
-        }?.getAdditionalCompilerArguments(
-            hostConfiguration[ScriptingHostConfiguration.getEnvironment]?.invoke().orEmpty()
-        )
+        }?.getAdditionalCompilerArguments(hostConfiguration.refinementEnvironment())
 
+        @Suppress("DEPRECATION")
         template.annotations.firstIsInstanceOrNull<SamWithReceiverAnnotations>()?.annotations?.let {
             annotationsForSamWithReceivers.put(it.map(::KotlinType))
         }
@@ -88,7 +92,9 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
         ide {
             acceptedLocations.put(scriptExpectedLocations)
         }
+        @Suppress("DEPRECATION")
         asyncDependenciesResolver(dependencyResolver is AsyncDependenciesResolver || dependencyResolver is ApiChangeDependencyResolverWrapper)
+        @Suppress("DEPRECATION")
         if (dependencyResolver != DependenciesResolver.NoDependencies) {
             val acceptedAnnotations = dependencyResolver.acceptedAnnotations
             // TODO: for legacy compatibility, remove together with the legacy script templates support (KT-87149)
@@ -99,6 +105,7 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
                 }
             }
         }
+        @Suppress("DEPRECATION")
         template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>()?.scriptFilePattern?.let {
             @Suppress("DEPRECATION_ERROR")
             fileNamePattern(it)
@@ -123,6 +130,12 @@ private fun <T : Any> instantiateResolver(resolverClass: KClass<T>): T? {
     }
 }
 
+private fun ScriptingHostConfiguration.refinementEnvironment(): Map<String, Any?> =
+    this[ScriptingHostConfiguration.getRefinementEnvironment]?.invoke()
+        ?: this[@Suppress("DEPRECATION") ScriptingHostConfiguration.getEnvironment]?.invoke()
+        ?: emptyMap()
+
+@Suppress("DEPRECATION")
 private fun getResolveFunctions(): List<KFunction<*>> {
     // DependenciesResolver::resolve, ScriptDependenciesResolver::resolve, AsyncDependenciesResolver::resolveAsync
     return AsyncDependenciesResolver::class.memberFunctions.filter { it.name == "resolve" || it.name == "resolveAsync" }.also {
@@ -135,6 +148,7 @@ private fun getResolveFunctions(): List<KFunction<*>> {
 @Suppress("DEPRECATION")
 internal val log = Logger.getInstance(ScriptCompilationConfigurationFromLegacyTemplate::class.java)
 
+@Suppress("DEPRECATION")
 private class ScriptContentsFromRefinementContext(val context: ScriptConfigurationRefinementContext) : ScriptContents {
     override val file: File?
         get() = (context.script as? FileBasedScriptSource)?.file
@@ -144,13 +158,12 @@ private class ScriptContentsFromRefinementContext(val context: ScriptConfigurati
         get() = context.script.text
 }
 
+@Suppress("DEPRECATION")
 private fun refineWithResolver(
     dependencyResolver: DependenciesResolver,
     context: ScriptConfigurationRefinementContext,
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val environment = context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.let {
-        it[ScriptingHostConfiguration.getEnvironment]?.invoke()
-    }.orEmpty()
+    val environment = context.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.refinementEnvironment().orEmpty()
 
     val [resolvedDeps, diagnostics] = runCatching {
         val result = dependencyResolver.resolve(ScriptContentsFromRefinementContext(context), environment)
@@ -192,6 +205,7 @@ private fun refineWithResolver(
     }.asSuccess(diagnostics)
 }
 
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 fun resolverFromAnnotation(template: KClass<out Any>): DependenciesResolver {
     val defAnn = template.annotations.firstIsInstanceOrNull<ScriptTemplateDefinition>() ?: return DependenciesResolver.NoDependencies
 
@@ -202,6 +216,7 @@ fun resolverFromAnnotation(template: KClass<out Any>): DependenciesResolver {
     } ?: DependenciesResolver.NoDependencies
 }
 
+@Suppress("DEPRECATION")
 val DependenciesResolver.acceptedAnnotations: List<KClass<out Annotation>>
     get() {
         fun sameSignature(left: KFunction<*>, right: KFunction<*>): Boolean =
@@ -216,15 +231,17 @@ val DependenciesResolver.acceptedAnnotations: List<KClass<out Annotation>>
             .distinctBy { it.qualifiedName }
     }
 
-internal interface DependencyResolverWrapper<T : ScriptDependenciesResolver> {
+internal interface DependencyResolverWrapper<@Suppress("DEPRECATION_ERROR") T : ScriptDependenciesResolver> {
     val delegate: T
 }
 
+@Suppress("DEPRECATION_ERROR")
 private fun ScriptDependenciesResolver.unwrap(): ScriptDependenciesResolver {
     return if (this is DependencyResolverWrapper<*>) delegate.unwrap() else this
 }
 
 // wraps AsyncDependenciesResolver to provide implementation for synchronous DependenciesResolver::resolve
+@Suppress("DEPRECATION")
 private class AsyncDependencyResolverWrapper(
     override val delegate: AsyncDependenciesResolver,
 ) : AsyncDependenciesResolver, DependencyResolverWrapper<AsyncDependenciesResolver> {

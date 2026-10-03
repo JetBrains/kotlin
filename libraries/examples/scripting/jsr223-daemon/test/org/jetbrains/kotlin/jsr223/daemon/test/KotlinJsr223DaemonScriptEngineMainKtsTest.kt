@@ -37,6 +37,7 @@ class KotlinJsr223DaemonScriptEngineMainKtsTest {
         File(KotlinVersion::class.java.protectionDomain.codeSource.location.toURI())
     }
 
+    @Suppress("DEPRECATION") // used only as a marker class to locate the kotlin-script-runtime jar
     private val scriptRuntime: File by lazy {
         File(ScriptTemplateWithBindings::class.java.protectionDomain.codeSource.location.toURI())
     }

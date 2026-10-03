@@ -156,6 +156,7 @@ open class GenericReplCompiler(
         }
     }
 
+    @Suppress("DEPRECATION")
     private fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): ScriptDependencies {
         val defaultImports = this[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
 

@@ -34,6 +34,7 @@ dependencies {
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
     api(project(":kotlin-scripting-compiler-impl"))
+    compileOnly(project(":kotlin-script-runtime")) // only for the K1 REPL, to be dropped with it
     api(kotlinStdlib())
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

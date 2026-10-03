@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.scripting.resolve
 
 import org.jetbrains.kotlin.scripting.definitions.DependencyResolverWrapper
@@ -15,6 +13,7 @@ import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 internal class ApiChangeDependencyResolverWrapper(
     override val delegate: ScriptDependenciesResolver,
 ) : DependenciesResolver,

@@ -9,7 +9,6 @@ plugins {
 publish()
 
 dependencies {
-    api(project(":kotlin-script-runtime"))
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))

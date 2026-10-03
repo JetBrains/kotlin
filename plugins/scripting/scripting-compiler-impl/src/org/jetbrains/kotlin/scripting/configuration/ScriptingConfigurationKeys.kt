@@ -33,8 +33,13 @@ object ScriptingConfigurationKeys {
     val DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION: CompilerConfigurationKey<Boolean> =
         CompilerConfigurationKey.create("DISABLE_SCRIPT_DEFINITIONS_AUTOLOADING_OPTION")
 
-    val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>> =
-        CompilerConfigurationKey.create("LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION")
+    // Host environment passed to the script compilation configuration refinement via ScriptingHostConfiguration.getRefinementEnvironment
+    val SCRIPT_REFINEMENT_ENVIRONMENT: CompilerConfigurationKey<MutableMap<String, Any?>> =
+        CompilerConfigurationKey.create("SCRIPT_REFINEMENT_ENVIRONMENT")
+
+    @Deprecated("Use SCRIPT_REFINEMENT_ENVIRONMENT instead", ReplaceWith("SCRIPT_REFINEMENT_ENVIRONMENT"))
+    val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION: CompilerConfigurationKey<MutableMap<String, Any?>>
+        get() = SCRIPT_REFINEMENT_ENVIRONMENT
 
     // Enable additional IR generation which contains script expressions evaluation info.
     val ENABLE_SCRIPT_EXPLANATION_OPTION: CompilerConfigurationKey<Boolean> =

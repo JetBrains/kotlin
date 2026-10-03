@@ -11,9 +11,11 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.createScriptDefinitionFromTemplate
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
-import kotlin.script.templates.standard.ScriptTemplateWithArgs
+import kotlin.script.experimental.jvm.util.KotlinJars
+import kotlin.script.experimental.templates.ScriptWithArgs
 
 // Transitional class/implementation - migrating to the new API
 // TODO: name could be confused with KotlinScriptDefinition, discuss naming
@@ -141,11 +143,14 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     companion object {
         fun getDefault(hostConfiguration: ScriptingHostConfiguration) = object : FromConfigurations(
             hostConfiguration,
-            @Suppress("DEPRECATION")
-            ScriptCompilationConfigurationFromLegacyTemplate(
-                hostConfiguration,
-                ScriptTemplateWithArgs::class
-            ),
+            ScriptCompilationConfiguration {
+                hostConfiguration(hostConfiguration)
+                baseClass(KotlinType(ScriptWithArgs::class))
+                KotlinJars.scriptingCommonOrNull?.let { dependencies(JvmDependency(it)) }
+                ide {
+                    acceptedLocations(ScriptAcceptedLocation.Sources, ScriptAcceptedLocation.Tests)
+                }
+            },
             ScriptEvaluationConfigurationFromHostConfiguration(
                 hostConfiguration
             )

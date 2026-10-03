@@ -1,6 +1,6 @@
 FILE: script1.kts
     SCRIPT: <script-script1.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         lval args: R|kotlin/Array<kotlin/String>|
 
         public final val a: R|kotlin/Int| = Int(42)
@@ -8,7 +8,7 @@ FILE: script1.kts
 
 FILE: script2.kts
     SCRIPT: <script-script2.kts>
-        <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
         lval args: R|kotlin/Array<kotlin/String>|
 
         public final val a: R|kotlin/String| = String(42)

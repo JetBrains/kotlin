@@ -19,6 +19,8 @@ dependencies {
     compileOnly(project(":compiler:ir.serialization.js"))
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
+    // legacy @ScriptTemplateDefinition templates support (ScriptCompilationConfigurationFromLegacyTemplate), KT-87149
+    implementation(project(":kotlin-script-runtime"))
     api(kotlinStdlib())
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(intellijCore())

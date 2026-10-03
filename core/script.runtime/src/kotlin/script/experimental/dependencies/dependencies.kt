@@ -18,6 +18,7 @@ package kotlin.script.experimental.dependencies
 
 import java.io.File
 
+@Deprecated("Legacy script dependencies API, use ScriptCompilationConfiguration keys from kotlin.script.experimental.api instead")
 data class ScriptDependencies(
         val javaHome: File? = null,
         val classpath: List<File> = emptyList(),
@@ -26,6 +27,7 @@ data class ScriptDependencies(
         val scripts: List<File> = emptyList()
 ) {
     companion object {
+        @Suppress("DEPRECATION")
         val Empty = ScriptDependencies()
     }
 }
