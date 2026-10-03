@@ -1,71 +1,136 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
 // See github.com/kotlin/dukat for details
 
-@file:Suppress("NO_EXPLICIT_VISIBILITY_IN_API_MODE", "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE") // TODO: Fix in dukat: https://github.com/Kotlin/dukat/issues/124
+@file:Suppress(
+    "NO_EXPLICIT_VISIBILITY_IN_API_MODE",
+    "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE",
+    "DEPRECATION"
+) // TODO: Fix in dukat: https://github.com/Kotlin/dukat/issues/124
 
 package org.w3c.dom.svg
 
+import kotlinx.browser.PLEASE_USE_KOTLINX_BROWSER_INSTEAD
 import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.css.*
+import kotlin.internal.InlineOnly
 
-/**
- * Exposes the JavaScript [SVGElement](https://developer.mozilla.org/en/docs/Web/API/SVGElement) to Kotlin
- */
-public external abstract class SVGElement : Element, ElementCSSInlineStyle, GlobalEventHandlers, SVGElementInstance {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGElement : Element, ElementCSSInlineStyle, GlobalEventHandlers, SVGElementInstance {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val dataset: DOMStringMap
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val ownerSVGElement: SVGSVGElement?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val viewportElement: SVGElement?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var tabIndex: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun focus()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun blur()
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface SVGBoundingBoxOptions {
-    var fill: Boolean? /* = true */
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var fill: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var stroke: Boolean? /* = false */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var stroke: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var markers: Boolean? /* = false */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var markers: Boolean?
         get() = definedExternally
         set(value) = definedExternally
-    var clipped: Boolean? /* = false */
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+    var clipped: Boolean?
         get() = definedExternally
         set(value) = definedExternally
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? = false, markers: Boolean? = false, clipped: Boolean? = false): SVGBoundingBoxOptions {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline fun SVGBoundingBoxOptions(
+    fill: Boolean? = true,
+    stroke: Boolean? = false,
+    markers: Boolean? = false,
+    clipped: Boolean? = false
+): SVGBoundingBoxOptions {
     val o = js("({})")
     o["fill"] = fill
     o["stroke"] = stroke
@@ -74,1766 +139,3940 @@ public inline fun SVGBoundingBoxOptions(fill: Boolean? = true, stroke: Boolean? 
     return o
 }
 
-/**
- * Exposes the JavaScript [SVGGraphicsElement](https://developer.mozilla.org/en/docs/Web/API/SVGGraphicsElement) to Kotlin
- */
-public external abstract class SVGGraphicsElement : SVGElement, SVGTests {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGGraphicsElement : SVGElement, SVGTests {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val transform: SVGAnimatedTransformList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getBBox(options: SVGBoundingBoxOptions = definedExternally): DOMRect
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getCTM(): DOMMatrix?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getScreenCTM(): DOMMatrix?
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGGeometryElement](https://developer.mozilla.org/en/docs/Web/API/SVGGeometryElement) to Kotlin
- */
-public external abstract class SVGGeometryElement : SVGGraphicsElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGGeometryElement : SVGGraphicsElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val pathLength: SVGAnimatedNumber
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun isPointInFill(point: DOMPoint): Boolean
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun isPointInStroke(point: DOMPoint): Boolean
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getTotalLength(): Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getPointAtLength(distance: Float): DOMPoint
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGNumber](https://developer.mozilla.org/en/docs/Web/API/SVGNumber) to Kotlin
- */
-public external abstract class SVGNumber {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGNumber {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var value: Float
 }
 
-/**
- * Exposes the JavaScript [SVGLength](https://developer.mozilla.org/en/docs/Web/API/SVGLength) to Kotlin
- */
-public external abstract class SVGLength {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGLength {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val unitType: Short
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var value: Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var valueInSpecifiedUnits: Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var valueAsString: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun newValueSpecifiedUnits(unitType: Short, valueInSpecifiedUnits: Float)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun convertToSpecifiedUnits(unitType: Short)
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_NUMBER: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_PERCENTAGE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_EMS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_EXS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_PX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_CM: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_MM: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_IN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_PT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_LENGTHTYPE_PC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGAngle](https://developer.mozilla.org/en/docs/Web/API/SVGAngle) to Kotlin
- */
-public external abstract class SVGAngle {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAngle {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val unitType: Short
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var value: Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var valueInSpecifiedUnits: Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var valueAsString: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun newValueSpecifiedUnits(unitType: Short, valueInSpecifiedUnits: Float)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun convertToSpecifiedUnits(unitType: Short)
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ANGLETYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ANGLETYPE_UNSPECIFIED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ANGLETYPE_DEG: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ANGLETYPE_RAD: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ANGLETYPE_GRAD: Short
     }
 }
 
-public external abstract class SVGNameList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGNameList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val length: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val numberOfItems: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun clear()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun initialize(newItem: dynamic): dynamic
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun insertItemBefore(newItem: dynamic, index: Int): dynamic
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun replaceItem(newItem: dynamic, index: Int): dynamic
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun removeItem(index: Int): dynamic
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun appendItem(newItem: dynamic): dynamic
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getItem(index: Int): dynamic
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline operator fun SVGNameList.get(index: Int): dynamic = asDynamic()[index]
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun SVGNameList.set(index: Int, newItem: dynamic) { asDynamic()[index] = newItem }
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline operator fun SVGNameList.set(index: Int, newItem: dynamic) {
+    asDynamic()[index] = newItem
+}
 
-/**
- * Exposes the JavaScript [SVGNumberList](https://developer.mozilla.org/en/docs/Web/API/SVGNumberList) to Kotlin
- */
-public external abstract class SVGNumberList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGNumberList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val length: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val numberOfItems: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun clear()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun initialize(newItem: SVGNumber): SVGNumber
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun insertItemBefore(newItem: SVGNumber, index: Int): SVGNumber
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun replaceItem(newItem: SVGNumber, index: Int): SVGNumber
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun removeItem(index: Int): SVGNumber
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun appendItem(newItem: SVGNumber): SVGNumber
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getItem(index: Int): SVGNumber
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline operator fun SVGNumberList.get(index: Int): SVGNumber? = asDynamic()[index]
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun SVGNumberList.set(index: Int, newItem: SVGNumber) { asDynamic()[index] = newItem }
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline operator fun SVGNumberList.set(index: Int, newItem: SVGNumber) {
+    asDynamic()[index] = newItem
+}
 
-/**
- * Exposes the JavaScript [SVGLengthList](https://developer.mozilla.org/en/docs/Web/API/SVGLengthList) to Kotlin
- */
-public external abstract class SVGLengthList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGLengthList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val length: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val numberOfItems: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun clear()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun initialize(newItem: SVGLength): SVGLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun insertItemBefore(newItem: SVGLength, index: Int): SVGLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun replaceItem(newItem: SVGLength, index: Int): SVGLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun removeItem(index: Int): SVGLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun appendItem(newItem: SVGLength): SVGLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getItem(index: Int): SVGLength
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline operator fun SVGLengthList.get(index: Int): SVGLength? = asDynamic()[index]
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun SVGLengthList.set(index: Int, newItem: SVGLength) { asDynamic()[index] = newItem }
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline operator fun SVGLengthList.set(index: Int, newItem: SVGLength) {
+    asDynamic()[index] = newItem
+}
 
-/**
- * Exposes the JavaScript [SVGAnimatedBoolean](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedBoolean) to Kotlin
- */
-public external abstract class SVGAnimatedBoolean {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedBoolean {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var baseVal: Boolean
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: Boolean
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedEnumeration](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedEnumeration) to Kotlin
- */
-public external abstract class SVGAnimatedEnumeration {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedEnumeration {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var baseVal: Short
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: Short
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedInteger](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedInteger) to Kotlin
- */
-public external abstract class SVGAnimatedInteger {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedInteger {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var baseVal: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: Int
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedNumber](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedNumber) to Kotlin
- */
-public external abstract class SVGAnimatedNumber {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedNumber {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var baseVal: Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: Float
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedLength](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedLength) to Kotlin
- */
-public external abstract class SVGAnimatedLength {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedLength {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val baseVal: SVGLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: SVGLength
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedAngle](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedAngle) to Kotlin
- */
-public external abstract class SVGAnimatedAngle {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedAngle {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val baseVal: SVGAngle
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: SVGAngle
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedString](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedString) to Kotlin
- */
-public external abstract class SVGAnimatedString {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedString {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var baseVal: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: String
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedRect](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedRect) to Kotlin
- */
-public external abstract class SVGAnimatedRect {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedRect {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val baseVal: DOMRect
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: DOMRectReadOnly
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedNumberList](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedNumberList) to Kotlin
- */
-public external abstract class SVGAnimatedNumberList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedNumberList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val baseVal: SVGNumberList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: SVGNumberList
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedLengthList](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedLengthList) to Kotlin
- */
-public external abstract class SVGAnimatedLengthList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedLengthList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val baseVal: SVGLengthList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: SVGLengthList
 }
 
-/**
- * Exposes the JavaScript [SVGStringList](https://developer.mozilla.org/en/docs/Web/API/SVGStringList) to Kotlin
- */
-public external abstract class SVGStringList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGStringList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val length: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val numberOfItems: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun clear()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun initialize(newItem: String): String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun insertItemBefore(newItem: String, index: Int): String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun replaceItem(newItem: String, index: Int): String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun removeItem(index: Int): String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun appendItem(newItem: String): String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getItem(index: Int): String
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline operator fun SVGStringList.get(index: Int): String? = asDynamic()[index]
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun SVGStringList.set(index: Int, newItem: String) { asDynamic()[index] = newItem }
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline operator fun SVGStringList.set(index: Int, newItem: String) {
+    asDynamic()[index] = newItem
+}
 
-/**
- * Exposes the JavaScript [SVGUnitTypes](https://developer.mozilla.org/en/docs/Web/API/SVGUnitTypes) to Kotlin
- */
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface SVGUnitTypes {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTests](https://developer.mozilla.org/en/docs/Web/API/SVGTests) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface SVGTests {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val requiredExtensions: SVGStringList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val systemLanguage: SVGStringList
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface SVGFitToViewBox {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val viewBox: SVGAnimatedRect
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val preserveAspectRatio: SVGAnimatedPreserveAspectRatio
 }
 
-/**
- * Exposes the JavaScript [SVGZoomAndPan](https://developer.mozilla.org/en/docs/Web/API/SVGZoomAndPan) to Kotlin
- */
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface SVGZoomAndPan {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     var zoomAndPan: Short
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_DISABLE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_MAGNIFY: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGURIReference](https://developer.mozilla.org/en/docs/Web/API/SVGURIReference) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface SVGURIReference {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val href: SVGAnimatedString
 }
 
-/**
- * Exposes the JavaScript [SVGSVGElement](https://developer.mozilla.org/en/docs/Web/API/SVGSVGElement) to Kotlin
- */
-public external abstract class SVGSVGElement : SVGGraphicsElement, SVGFitToViewBox, SVGZoomAndPan, WindowEventHandlers {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGSVGElement : SVGGraphicsElement, SVGFitToViewBox, SVGZoomAndPan, WindowEventHandlers {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val width: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val height: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var currentScale: Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val currentTranslate: DOMPointReadOnly
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getIntersectionList(rect: DOMRectReadOnly, referenceElement: SVGElement?): NodeList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getEnclosureList(rect: DOMRectReadOnly, referenceElement: SVGElement?): NodeList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun checkIntersection(element: SVGElement, rect: DOMRectReadOnly): Boolean
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun checkEnclosure(element: SVGElement, rect: DOMRectReadOnly): Boolean
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun deselectAll()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGNumber(): SVGNumber
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGLength(): SVGLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGAngle(): SVGAngle
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGPoint(): DOMPoint
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGMatrix(): DOMMatrix
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGRect(): DOMRect
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGTransform(): SVGTransform
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGTransformFromMatrix(matrix: DOMMatrixReadOnly): SVGTransform
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getElementById(elementId: String): Element
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun suspendRedraw(maxWaitMilliseconds: Int): Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun unsuspendRedraw(suspendHandleID: Int)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun unsuspendRedrawAll()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun forceRedraw()
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_DISABLE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_MAGNIFY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGGElement](https://developer.mozilla.org/en/docs/Web/API/SVGGElement) to Kotlin
- */
-public external abstract class SVGGElement : SVGGraphicsElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGGElement : SVGGraphicsElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-public external abstract class SVGUnknownElement : SVGGraphicsElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGUnknownElement : SVGGraphicsElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGDefsElement](https://developer.mozilla.org/en/docs/Web/API/SVGDefsElement) to Kotlin
- */
-public external abstract class SVGDefsElement : SVGGraphicsElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGDefsElement : SVGGraphicsElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGDescElement](https://developer.mozilla.org/en/docs/Web/API/SVGDescElement) to Kotlin
- */
-public external abstract class SVGDescElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGDescElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGMetadataElement](https://developer.mozilla.org/en/docs/Web/API/SVGMetadataElement) to Kotlin
- */
-public external abstract class SVGMetadataElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGMetadataElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTitleElement](https://developer.mozilla.org/en/docs/Web/API/SVGTitleElement) to Kotlin
- */
-public external abstract class SVGTitleElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGTitleElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGSymbolElement](https://developer.mozilla.org/en/docs/Web/API/SVGSymbolElement) to Kotlin
- */
-public external abstract class SVGSymbolElement : SVGGraphicsElement, SVGFitToViewBox {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGSymbolElement : SVGGraphicsElement, SVGFitToViewBox {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGUseElement](https://developer.mozilla.org/en/docs/Web/API/SVGUseElement) to Kotlin
- */
-public external abstract class SVGUseElement : SVGGraphicsElement, SVGURIReference {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGUseElement : SVGGraphicsElement, SVGURIReference {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val width: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val height: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val instanceRoot: SVGElement?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animatedInstanceRoot: SVGElement?
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-public external open class SVGUseElementShadowRoot : ShadowRoot {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public open external class SVGUseElementShadowRoot : ShadowRoot {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface SVGElementInstance {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val correspondingElement: SVGElement?
         get() = definedExternally
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val correspondingUseElement: SVGUseElement?
         get() = definedExternally
 }
 
-public external open class ShadowAnimation(source: dynamic, newTarget: dynamic) {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public open external class ShadowAnimation(source: dynamic, newTarget: dynamic) {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val sourceAnimation: dynamic
 }
 
-/**
- * Exposes the JavaScript [SVGSwitchElement](https://developer.mozilla.org/en/docs/Web/API/SVGSwitchElement) to Kotlin
- */
-public external abstract class SVGSwitchElement : SVGGraphicsElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGSwitchElement : SVGGraphicsElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface GetSVGDocument {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getSVGDocument(): Document
 }
 
-/**
- * Exposes the JavaScript [SVGStyleElement](https://developer.mozilla.org/en/docs/Web/API/SVGStyleElement) to Kotlin
- */
-public external abstract class SVGStyleElement : SVGElement, LinkStyle {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGStyleElement : SVGElement, LinkStyle {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var type: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var media: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var title: String
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTransform](https://developer.mozilla.org/en/docs/Web/API/SVGTransform) to Kotlin
- */
-public external abstract class SVGTransform {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGTransform {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val type: Short
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val matrix: DOMMatrix
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val angle: Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun setMatrix(matrix: DOMMatrixReadOnly)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun setTranslate(tx: Float, ty: Float)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun setScale(sx: Float, sy: Float)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun setRotate(angle: Float, cx: Float, cy: Float)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun setSkewX(angle: Float)
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun setSkewY(angle: Float)
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_TRANSFORM_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_TRANSFORM_MATRIX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_TRANSFORM_TRANSLATE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_TRANSFORM_SCALE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_TRANSFORM_ROTATE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_TRANSFORM_SKEWX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_TRANSFORM_SKEWY: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTransformList](https://developer.mozilla.org/en/docs/Web/API/SVGTransformList) to Kotlin
- */
-public external abstract class SVGTransformList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGTransformList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val length: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val numberOfItems: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun clear()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun initialize(newItem: SVGTransform): SVGTransform
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun insertItemBefore(newItem: SVGTransform, index: Int): SVGTransform
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun replaceItem(newItem: SVGTransform, index: Int): SVGTransform
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun removeItem(index: Int): SVGTransform
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun appendItem(newItem: SVGTransform): SVGTransform
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun createSVGTransformFromMatrix(matrix: DOMMatrixReadOnly): SVGTransform
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun consolidate(): SVGTransform?
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getItem(index: Int): SVGTransform
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline operator fun SVGTransformList.get(index: Int): SVGTransform? = asDynamic()[index]
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun SVGTransformList.set(index: Int, newItem: SVGTransform) { asDynamic()[index] = newItem }
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline operator fun SVGTransformList.set(index: Int, newItem: SVGTransform) {
+    asDynamic()[index] = newItem
+}
 
-/**
- * Exposes the JavaScript [SVGAnimatedTransformList](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedTransformList) to Kotlin
- */
-public external abstract class SVGAnimatedTransformList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedTransformList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val baseVal: SVGTransformList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: SVGTransformList
 }
 
-/**
- * Exposes the JavaScript [SVGPreserveAspectRatio](https://developer.mozilla.org/en/docs/Web/API/SVGPreserveAspectRatio) to Kotlin
- */
-public external abstract class SVGPreserveAspectRatio {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGPreserveAspectRatio {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var align: Short
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var meetOrSlice: Short
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_NONE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMINYMIN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMIDYMIN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMAXYMIN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMINYMID: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMIDYMID: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMAXYMID: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMINYMAX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMIDYMAX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_PRESERVEASPECTRATIO_XMAXYMAX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MEETORSLICE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MEETORSLICE_MEET: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MEETORSLICE_SLICE: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedPreserveAspectRatio](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedPreserveAspectRatio) to Kotlin
- */
-public external abstract class SVGAnimatedPreserveAspectRatio {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAnimatedPreserveAspectRatio {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val baseVal: SVGPreserveAspectRatio
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val animVal: SVGPreserveAspectRatio
 }
 
-/**
- * Exposes the JavaScript [SVGPathElement](https://developer.mozilla.org/en/docs/Web/API/SVGPathElement) to Kotlin
- */
-public external abstract class SVGPathElement : SVGGeometryElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGPathElement : SVGGeometryElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGRectElement](https://developer.mozilla.org/en/docs/Web/API/SVGRectElement) to Kotlin
- */
-public external abstract class SVGRectElement : SVGGeometryElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGRectElement : SVGGeometryElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val width: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val height: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val rx: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val ry: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGCircleElement](https://developer.mozilla.org/en/docs/Web/API/SVGCircleElement) to Kotlin
- */
-public external abstract class SVGCircleElement : SVGGeometryElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGCircleElement : SVGGeometryElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val cx: SVGAnimatedLength
     open val cy: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val r: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGEllipseElement](https://developer.mozilla.org/en/docs/Web/API/SVGEllipseElement) to Kotlin
- */
-public external abstract class SVGEllipseElement : SVGGeometryElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGEllipseElement : SVGGeometryElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val cx: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val cy: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val rx: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val ry: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGLineElement](https://developer.mozilla.org/en/docs/Web/API/SVGLineElement) to Kotlin
- */
-public external abstract class SVGLineElement : SVGGeometryElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGLineElement : SVGGeometryElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x1: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y1: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x2: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y2: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGMeshElement](https://developer.mozilla.org/en/docs/Web/API/SVGMeshElement) to Kotlin
- */
-public external abstract class SVGMeshElement : SVGGeometryElement, SVGURIReference {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGMeshElement : SVGGeometryElement, SVGURIReference {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGAnimatedPoints](https://developer.mozilla.org/en/docs/Web/API/SVGAnimatedPoints) to Kotlin
- */
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public external interface SVGAnimatedPoints {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val points: SVGPointList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     val animatedPoints: SVGPointList
 }
 
-public external abstract class SVGPointList {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGPointList {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val length: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val numberOfItems: Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun clear()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun initialize(newItem: DOMPoint): DOMPoint
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun insertItemBefore(newItem: DOMPoint, index: Int): DOMPoint
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun replaceItem(newItem: DOMPoint, index: Int): DOMPoint
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun removeItem(index: Int): DOMPoint
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun appendItem(newItem: DOMPoint): DOMPoint
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getItem(index: Int): DOMPoint
 }
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public inline operator fun SVGPointList.get(index: Int): DOMPoint? = asDynamic()[index]
 
+@InlineOnly
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun SVGPointList.set(index: Int, newItem: DOMPoint) { asDynamic()[index] = newItem }
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public inline operator fun SVGPointList.set(index: Int, newItem: DOMPoint) {
+    asDynamic()[index] = newItem
+}
 
-/**
- * Exposes the JavaScript [SVGPolylineElement](https://developer.mozilla.org/en/docs/Web/API/SVGPolylineElement) to Kotlin
- */
-public external abstract class SVGPolylineElement : SVGGeometryElement, SVGAnimatedPoints {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGPolylineElement : SVGGeometryElement, SVGAnimatedPoints {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGPolygonElement](https://developer.mozilla.org/en/docs/Web/API/SVGPolygonElement) to Kotlin
- */
-public external abstract class SVGPolygonElement : SVGGeometryElement, SVGAnimatedPoints {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGPolygonElement : SVGGeometryElement, SVGAnimatedPoints {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTextContentElement](https://developer.mozilla.org/en/docs/Web/API/SVGTextContentElement) to Kotlin
- */
-public external abstract class SVGTextContentElement : SVGGraphicsElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGTextContentElement : SVGGraphicsElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val textLength: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val lengthAdjust: SVGAnimatedEnumeration
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getNumberOfChars(): Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getComputedTextLength(): Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getSubStringLength(charnum: Int, nchars: Int): Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getStartPositionOfChar(charnum: Int): DOMPoint
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getEndPositionOfChar(charnum: Int): DOMPoint
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getExtentOfChar(charnum: Int): DOMRect
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getRotationOfChar(charnum: Int): Float
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun getCharNumAtPosition(point: DOMPoint): Int
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun selectSubString(charnum: Int, nchars: Int)
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACINGANDGLYPHS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTextPositioningElement](https://developer.mozilla.org/en/docs/Web/API/SVGTextPositioningElement) to Kotlin
- */
-public external abstract class SVGTextPositioningElement : SVGTextContentElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGTextPositioningElement : SVGTextContentElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x: SVGAnimatedLengthList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y: SVGAnimatedLengthList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val dx: SVGAnimatedLengthList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val dy: SVGAnimatedLengthList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val rotate: SVGAnimatedNumberList
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACINGANDGLYPHS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTextElement](https://developer.mozilla.org/en/docs/Web/API/SVGTextElement) to Kotlin
- */
-public external abstract class SVGTextElement : SVGTextPositioningElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGTextElement : SVGTextPositioningElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACINGANDGLYPHS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTSpanElement](https://developer.mozilla.org/en/docs/Web/API/SVGTSpanElement) to Kotlin
- */
-public external abstract class SVGTSpanElement : SVGTextPositioningElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGTSpanElement : SVGTextPositioningElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACINGANDGLYPHS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGTextPathElement](https://developer.mozilla.org/en/docs/Web/API/SVGTextPathElement) to Kotlin
- */
-public external abstract class SVGTextPathElement : SVGTextContentElement, SVGURIReference {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGTextPathElement : SVGTextContentElement, SVGURIReference {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val startOffset: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val method: SVGAnimatedEnumeration
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val spacing: SVGAnimatedEnumeration
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXTPATH_METHODTYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXTPATH_METHODTYPE_ALIGN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXTPATH_METHODTYPE_STRETCH: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXTPATH_SPACINGTYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXTPATH_SPACINGTYPE_AUTO: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXTPATH_SPACINGTYPE_EXACT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val LENGTHADJUST_SPACINGANDGLYPHS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGImageElement](https://developer.mozilla.org/en/docs/Web/API/SVGImageElement) to Kotlin
- */
-public external abstract class SVGImageElement : SVGGraphicsElement, SVGURIReference, HTMLOrSVGImageElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGImageElement : SVGGraphicsElement, SVGURIReference, HTMLOrSVGImageElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val width: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val height: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val preserveAspectRatio: SVGAnimatedPreserveAspectRatio
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var crossOrigin: String?
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGForeignObjectElement](https://developer.mozilla.org/en/docs/Web/API/SVGForeignObjectElement) to Kotlin
- */
-public external abstract class SVGForeignObjectElement : SVGGraphicsElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGForeignObjectElement : SVGGraphicsElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val width: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val height: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-public external abstract class SVGMarkerElement : SVGElement, SVGFitToViewBox {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGMarkerElement : SVGElement, SVGFitToViewBox {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val refX: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val refY: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val markerUnits: SVGAnimatedEnumeration
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val markerWidth: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val markerHeight: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val orientType: SVGAnimatedEnumeration
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val orientAngle: SVGAnimatedAngle
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var orient: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun setOrientToAuto()
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     fun setOrientToAngle(angle: SVGAngle)
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MARKERUNITS_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MARKERUNITS_USERSPACEONUSE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MARKERUNITS_STROKEWIDTH: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MARKER_ORIENT_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MARKER_ORIENT_AUTO: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_MARKER_ORIENT_ANGLE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGSolidcolorElement](https://developer.mozilla.org/en/docs/Web/API/SVGSolidcolorElement) to Kotlin
- */
-public external abstract class SVGSolidcolorElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGSolidcolorElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGGradientElement](https://developer.mozilla.org/en/docs/Web/API/SVGGradientElement) to Kotlin
- */
-public external abstract class SVGGradientElement : SVGElement, SVGURIReference, SVGUnitTypes {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGGradientElement : SVGElement, SVGURIReference, SVGUnitTypes {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val gradientUnits: SVGAnimatedEnumeration
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val gradientTransform: SVGAnimatedTransformList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val spreadMethod: SVGAnimatedEnumeration
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_PAD: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_REFLECT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_REPEAT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGLinearGradientElement](https://developer.mozilla.org/en/docs/Web/API/SVGLinearGradientElement) to Kotlin
- */
-public external abstract class SVGLinearGradientElement : SVGGradientElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGLinearGradientElement : SVGGradientElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x1: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y1: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x2: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y2: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_PAD: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_REFLECT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_REPEAT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGRadialGradientElement](https://developer.mozilla.org/en/docs/Web/API/SVGRadialGradientElement) to Kotlin
- */
-public external abstract class SVGRadialGradientElement : SVGGradientElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGRadialGradientElement : SVGGradientElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val cx: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val cy: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val r: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val fx: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val fy: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val fr: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_PAD: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_REFLECT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_REPEAT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-public external abstract class SVGMeshGradientElement : SVGGradientElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGMeshGradientElement : SVGGradientElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_PAD: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_REFLECT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_SPREADMETHOD_REPEAT: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-public external abstract class SVGMeshrowElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGMeshrowElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-public external abstract class SVGMeshpatchElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGMeshpatchElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGStopElement](https://developer.mozilla.org/en/docs/Web/API/SVGStopElement) to Kotlin
- */
-public external abstract class SVGStopElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGStopElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val offset: SVGAnimatedNumber
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGPatternElement](https://developer.mozilla.org/en/docs/Web/API/SVGPatternElement) to Kotlin
- */
-public external abstract class SVGPatternElement : SVGElement, SVGFitToViewBox, SVGURIReference, SVGUnitTypes {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGPatternElement : SVGElement, SVGFitToViewBox, SVGURIReference, SVGUnitTypes {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val patternUnits: SVGAnimatedEnumeration
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val patternContentUnits: SVGAnimatedEnumeration
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val patternTransform: SVGAnimatedTransformList
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val width: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val height: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_USERSPACEONUSE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_UNIT_TYPE_OBJECTBOUNDINGBOX: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-public external abstract class SVGHatchElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGHatchElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-public external abstract class SVGHatchpathElement : SVGElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGHatchpathElement : SVGElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGCursorElement](https://developer.mozilla.org/en/docs/Web/API/SVGCursorElement) to Kotlin
- */
-public external abstract class SVGCursorElement : SVGElement, SVGURIReference {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGCursorElement : SVGElement, SVGURIReference {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val x: SVGAnimatedLength
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val y: SVGAnimatedLength
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGScriptElement](https://developer.mozilla.org/en/docs/Web/API/SVGScriptElement) to Kotlin
- */
-public external abstract class SVGScriptElement : SVGElement, SVGURIReference, HTMLOrSVGScriptElement {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGScriptElement : SVGElement, SVGURIReference, HTMLOrSVGScriptElement {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var type: String
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open var crossOrigin: String?
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGAElement](https://developer.mozilla.org/en/docs/Web/API/SVGAElement) to Kotlin
- */
-public external abstract class SVGAElement : SVGGraphicsElement, SVGURIReference {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGAElement : SVGGraphicsElement, SVGURIReference {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val target: SVGAnimatedString
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val download: SVGAnimatedString
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val rel: SVGAnimatedString
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val relList: SVGAnimatedString
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val hreflang: SVGAnimatedString
+
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     open val type: SVGAnimatedString
 
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }
 
-/**
- * Exposes the JavaScript [SVGViewElement](https://developer.mozilla.org/en/docs/Web/API/SVGViewElement) to Kotlin
- */
-public external abstract class SVGViewElement : SVGElement, SVGFitToViewBox, SVGZoomAndPan {
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
+public abstract external class SVGViewElement : SVGElement, SVGFitToViewBox, SVGZoomAndPan {
+    @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
     companion object {
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_UNKNOWN: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_DISABLE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val SVG_ZOOMANDPAN_MAGNIFY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ELEMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ATTRIBUTE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val TEXT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val CDATA_SECTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_REFERENCE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val ENTITY_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val PROCESSING_INSTRUCTION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val COMMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_TYPE_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_FRAGMENT_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val NOTATION_NODE: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_DISCONNECTED: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_PRECEDING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_FOLLOWING: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINS: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_CONTAINED_BY: Short
+
+        @Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
         val DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC: Short
     }
 }

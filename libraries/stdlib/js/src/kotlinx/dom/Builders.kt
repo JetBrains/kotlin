@@ -1,10 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
 package kotlinx.dom
 
+import kotlinx.browser.PLEASE_USE_KOTLINX_BROWSER_INSTEAD
 import org.w3c.dom.*
 import kotlin.contracts.*
 
@@ -14,6 +16,7 @@ import kotlin.contracts.*
  * The element is initialized with the specified [init] function.
  */
 @SinceKotlin("1.4")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public fun Document.createElement(name: String, init: Element.() -> Unit): Element {
     contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
     return createElement(name).apply(init)
@@ -25,6 +28,7 @@ public fun Document.createElement(name: String, init: Element.() -> Unit): Eleme
  * The element is initialized with the specified [init] function.
  */
 @SinceKotlin("1.4")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public fun Element.appendElement(name: String, init: Element.() -> Unit): Element {
     contract { callsInPlace(init, InvocationKind.EXACTLY_ONCE) }
     return ownerDocument!!.createElement(name, init).also { appendChild(it) }

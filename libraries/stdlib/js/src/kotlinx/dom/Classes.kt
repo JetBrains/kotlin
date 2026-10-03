@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("DEPRECATION")
 package kotlinx.dom
 
+import kotlinx.browser.PLEASE_USE_KOTLINX_BROWSER_INSTEAD
 import org.w3c.dom.*
 
 /** Returns true if the element has the given CSS class style in its 'class' attribute */
 @SinceKotlin("1.4")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public fun Element.hasClass(cssClass: String): Boolean = className.matches("""(^|.*\s+)$cssClass($|\s+.*)""".toRegex())
 
 /**
@@ -17,6 +20,7 @@ public fun Element.hasClass(cssClass: String): Boolean = className.matches("""(^
  * @return true if at least one class has been added
  */
 @SinceKotlin("1.4")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public fun Element.addClass(vararg cssClasses: String): Boolean {
     val missingClasses = cssClasses.filterNot { hasClass(it) }
     if (missingClasses.isNotEmpty()) {
@@ -40,6 +44,7 @@ public fun Element.addClass(vararg cssClasses: String): Boolean {
  * @return true if at least one class has been removed
  */
 @SinceKotlin("1.4")
+@Deprecated(message = PLEASE_USE_KOTLINX_BROWSER_INSTEAD, level = DeprecationLevel.WARNING)
 public fun Element.removeClass(vararg cssClasses: String): Boolean {
     if (cssClasses.any { hasClass(it) }) {
         val toBeRemoved = cssClasses.toSet()
