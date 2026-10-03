@@ -4,8 +4,10 @@ Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/DirectBase.class
   out/production/module/foo/DirectChild.class
+  out/production/module/foo/DirectInter.class
 End of files
 Compiling files:
+  src/DirectInter.kt
   src/direct.kt
 End of files
 Exit code: OK
@@ -17,8 +19,10 @@ Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
   out/production/module/foo/ReverseBase.class
   out/production/module/foo/ReverseChild.class
+  out/production/module/foo/ReverseInter.class
 End of files
 Compiling files:
+  src/ReverseInter.kt
   src/reverse.kt
 End of files
 Exit code: OK

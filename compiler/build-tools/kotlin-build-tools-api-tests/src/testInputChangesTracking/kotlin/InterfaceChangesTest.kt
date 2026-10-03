@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.buildtools.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
-import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JsScenarioDsl
@@ -98,11 +97,7 @@ class InterfaceChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("FooImpl.kt", "change-value-type")
 
             mod.compile {
-                // TODO(KT-89336): `Foo.kt` does not get into the dirty set, so the new `FooImpl.getValue(): Int` is
-                //  checked against the stale `Foo.getValue(): String` and the build fails, unlike a clean build.
-                //  Once fixed, it has to succeed with `assertCompiledSources("Foo.kt", "FooImpl.kt", "types.kt")`.
-                expectFailWithError(".*Return type of .* is not a subtype of the return type of the overridden member.*".toRegex())
-                assertCompiledSources("FooImpl.kt", "types.kt")
+                assertCompiledSources("Foo.kt", "FooImpl.kt", "types.kt")
             }
         }
     }
