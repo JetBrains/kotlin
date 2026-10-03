@@ -12,28 +12,30 @@ package samples.generated.allequal
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualArraySamples {
 
     @Sample
     fun allEqual() {
-        assertPrints(arrayOf<String>().allEqual(), "true")
-        assertPrints(arrayOf("apple").allEqual(), "true")
+        assertTrue(arrayOf<String>().allEqual())
+        assertTrue(arrayOf("apple").allEqual())
 
         val sameValues = arrayOf("apple", "apple", "apple")
-        assertPrints(sameValues.allEqual(), "true")
+        assertTrue(sameValues.allEqual())
 
         val mixedValues = arrayOf("apple", "apple", "orange")
-        assertPrints(mixedValues.allEqual(), "false")
+        assertFalse(mixedValues.allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints(arrayOf<String>().allEqualBy { it.length }, "true")
-        assertPrints(arrayOf("apple").allEqualBy { it.length }, "true")
+        assertTrue(arrayOf<String>().allEqualBy { it.length })
+        assertTrue(arrayOf("apple").allEqualBy { it.length })
 
         val values = arrayOf("apple", "mango", "peach")
-        assertPrints(values.allEqualBy { it.length }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertTrue(values.allEqualBy { it.length })
+        assertFalse(values.allEqualBy { it })
     }
 }

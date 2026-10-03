@@ -225,11 +225,24 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.appendGraphemeNote() {
+        if (f == CharSequences) {
+            doc {
+                doc + """
+                The char sequence is treated as a sequence of [Char]s. It implies that the result may not correspond to
+                the printed graphemes: a grapheme may consist of several [Char]s, for example, a UTF-16 surrogate pair
+                that encodes a Unicode code point not representable by a single [Char], or a letter followed by a combining mark.
+                """
+            }
+        }
+    }
+
     val f_allEqual = fn("allEqual()") {
         includeDefault()
-        include(ArraysOfUnsigned)
+        include(ArraysOfUnsigned, CharSequences)
     } builder {
         since("2.4")
+        specialFor(CharSequences) { since("2.5") }
         annotation("@ExperimentalStdlibApi")
         returns("Boolean")
         doc {
@@ -248,6 +261,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         appendFloatingPointEqualityNote()
+        appendGraphemeNote()
         sample(allEqualSampleRef("allEqual"))
         body {
             """
@@ -260,9 +274,9 @@ object Aggregates : TemplateGroupBase() {
             return true
             """
         }
-        body(ArraysOfObjects) {
+        body(ArraysOfObjects, CharSequences) {
             """
-            if (size < 2) return true
+            if (${f.code.size} < 2) return true
             val first = this[0]
             for (i in 1..lastIndex) {
                 if (first != this[i]) return false
@@ -288,9 +302,10 @@ object Aggregates : TemplateGroupBase() {
 
     val f_allEqualBy = fn("allEqualBy(selector: (T) -> K)") {
         includeDefault()
-        include(ArraysOfUnsigned)
+        include(ArraysOfUnsigned, CharSequences)
     } builder {
         since("2.4")
+        specialFor(CharSequences) { since("2.5") }
         annotation("@ExperimentalStdlibApi")
         inline()
         returns("Boolean")
@@ -308,6 +323,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         appendSelectorFloatingPointEqualityNote()
+        appendGraphemeNote()
         sample(allEqualSampleRef("allEqualBy"))
         body {
             """
@@ -331,9 +347,9 @@ object Aggregates : TemplateGroupBase() {
             return true
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
             """
-            if (size < 2) return true
+            if (${f.code.size} < 2) return true
             var firstKey: K? = null
             for (i in indices) {
                 val key = selector(this[i])
@@ -357,8 +373,10 @@ object Aggregates : TemplateGroupBase() {
     val f_allDistinct = fn("allDistinct()") {
         includeDefault()
         include(ArraysOfUnsigned)
+        include(CharSequences, setOf(PrimitiveType.Char))
     } builder {
         since("2.4")
+        specialFor(CharSequences) { since("2.5") }
         annotation("@ExperimentalStdlibApi")
         returns("Boolean")
         doc {
@@ -377,6 +395,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         appendFloatingPointEqualityNote()
+        appendGraphemeNote()
         sample(allDistinctSampleRef("allDistinct"))
         body {
             """
@@ -392,7 +411,7 @@ object Aggregates : TemplateGroupBase() {
             return true
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
             when (primitive) {
                 PrimitiveType.Boolean ->
                     """
@@ -415,9 +434,9 @@ object Aggregates : TemplateGroupBase() {
                 }
                 PrimitiveType.Short, PrimitiveType.UShort, PrimitiveType.Char ->
                     """
-                    if (size < 2) return true
+                    if (${f.code.size} < 2) return true
                     // more than ${1 shl Short.SIZE_BITS} values force a duplicate
-                    if (size > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
+                    if (${f.code.size} > (1 shl ${primitive!!.name}.SIZE_BITS)) return false
                     val seen = HashSet<T>()
                     for (element in this) {
                         if (!seen.add(element)) return false
@@ -439,9 +458,10 @@ object Aggregates : TemplateGroupBase() {
 
     val f_allDistinctBy = fn("allDistinctBy(selector: (T) -> K)") {
         includeDefault()
-        include(ArraysOfUnsigned)
+        include(ArraysOfUnsigned, CharSequences)
     } builder {
         since("2.4")
+        specialFor(CharSequences) { since("2.5") }
         annotation("@ExperimentalStdlibApi")
         inline()
         returns("Boolean")
@@ -458,6 +478,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         appendSelectorFloatingPointEqualityNote()
+        appendGraphemeNote()
         sample(allDistinctSampleRef("allDistinctBy"))
         body {
             """
@@ -474,9 +495,9 @@ object Aggregates : TemplateGroupBase() {
             return true
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
             """
-            if (size < 2) return true
+            if (${f.code.size} < 2) return true
             val seen = HashSet<K>()
             for (element in this) {
                 if (!seen.add(selector(element))) return false

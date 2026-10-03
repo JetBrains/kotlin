@@ -12,28 +12,30 @@ package samples.generated.alldistinct
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllDistinctCharArraySamples {
 
     @Sample
     fun allDistinct() {
-        assertPrints(charArrayOf().allDistinct(), "true")
-        assertPrints(charArrayOf('a').allDistinct(), "true")
+        assertTrue(charArrayOf().allDistinct())
+        assertTrue(charArrayOf('a').allDistinct())
 
         val distinctValues = charArrayOf('a', 'b', 'c')
-        assertPrints(distinctValues.allDistinct(), "true")
+        assertTrue(distinctValues.allDistinct())
 
         val duplicateValues = charArrayOf('a', 'b', 'a')
-        assertPrints(duplicateValues.allDistinct(), "false")
+        assertFalse(duplicateValues.allDistinct())
     }
 
     @Sample
     fun allDistinctBy() {
-        assertPrints(charArrayOf().allDistinctBy { it.uppercaseChar() }, "true")
-        assertPrints(charArrayOf('a').allDistinctBy { it.uppercaseChar() }, "true")
+        assertTrue(charArrayOf().allDistinctBy { it.uppercaseChar() })
+        assertTrue(charArrayOf('a').allDistinctBy { it.uppercaseChar() })
 
         val values = charArrayOf('a', 'A', 'b')
-        assertPrints(values.allDistinctBy { it.uppercaseChar() }, "false")
-        assertPrints(values.allDistinctBy { it }, "true")
+        assertFalse(values.allDistinctBy { it.uppercaseChar() })
+        assertTrue(values.allDistinctBy { it })
     }
 }

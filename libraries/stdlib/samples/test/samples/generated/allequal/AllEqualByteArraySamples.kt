@@ -13,29 +13,31 @@ package samples.generated.allequal
 
 import samples.*
 import kotlin.math.abs
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualByteArraySamples {
 
     @Sample
     fun allEqual() {
-        assertPrints(byteArrayOf().allEqual(), "true")
-        assertPrints(byteArrayOf(1).allEqual(), "true")
+        assertTrue(byteArrayOf().allEqual())
+        assertTrue(byteArrayOf(1).allEqual())
 
         val sameValues = byteArrayOf(1, 1, 1)
-        assertPrints(sameValues.allEqual(), "true")
+        assertTrue(sameValues.allEqual())
 
         val mixedValues = byteArrayOf(1, 1, 2)
-        assertPrints(mixedValues.allEqual(), "false")
+        assertFalse(mixedValues.allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints(byteArrayOf().allEqualBy { it * it }, "true")
-        assertPrints(byteArrayOf(1).allEqualBy { it * it }, "true")
+        assertTrue(byteArrayOf().allEqualBy { it * it })
+        assertTrue(byteArrayOf(1).allEqualBy { it * it })
 
         val values = byteArrayOf(1, -1, 1)
-        assertPrints(values.allEqualBy { it * it }, "true")
-        assertPrints(values.allEqualBy { abs(it.toInt()) }, "true")
-        assertPrints(values.allEqualBy { it * it * it }, "false")
+        assertTrue(values.allEqualBy { it * it })
+        assertTrue(values.allEqualBy { abs(it.toInt()) })
+        assertFalse(values.allEqualBy { it * it * it })
     }
 }
