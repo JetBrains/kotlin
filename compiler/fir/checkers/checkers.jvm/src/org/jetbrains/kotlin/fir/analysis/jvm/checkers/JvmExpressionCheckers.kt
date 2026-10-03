@@ -39,6 +39,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirFieldReferenceShadowedByInvisibleKotlinProperty,
             FirJavaSamInterfaceConstructorReferenceChecker,
             FirJavaClassPropertyReferenceChecker,
+            FirJvmIdentitySensitiveCallableReferenceChecker,
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
@@ -46,13 +47,17 @@ object JvmExpressionCheckers : ExpressionCheckers() {
             FirJavaGenericVarianceViolationTypeChecker,
             FirSuperCallWithDefaultsChecker,
             FirJvmSuspensionPointInsideMutexLockChecker,
-            FirJvmIdentitySensitiveCallWithValueTypeObjectChecker,
             FirJvmInconsistentOperatorFromJavaCallChecker,
             FirJvmPolymorphicSignatureCallChecker,
             FirJvmAtomicReferenceToPrimitiveCallChecker,
             FirJvmAtomicReferenceArrayToPrimitiveCallChecker,
             FirJavaSamConstructorNullabilityChecker,
             FirJavaAnnotationsConstructorCallChecker,
+        )
+
+    override val callCheckers: Set<FirCallChecker>
+        get() = setOf(
+            FirJvmIdentitySensitiveCallWithValueTypeObjectChecker,
         )
 
     override val annotationCheckers: Set<FirAnnotationChecker>

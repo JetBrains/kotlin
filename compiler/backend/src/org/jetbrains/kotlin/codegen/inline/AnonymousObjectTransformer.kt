@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.CoroutineTransformer
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.isKotlinValhallaValueClass
+import org.jetbrains.kotlin.config.isValhallaSupportEnabled
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FileBasedKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -39,6 +42,7 @@ class AnonymousObjectTransformer(
     private val fieldNames = hashMapOf<String, MutableList<String>>()
 
     private var constructor: MethodNode? = null
+    private val loadableDescriptors = LinkedHashSet<String>()
     private lateinit var sourceMap: SMAP
     private lateinit var sourceMapper: SourceMapper
 
@@ -49,14 +53,16 @@ class AnonymousObjectTransformer(
         val fieldsToTransform = ArrayList<FieldNode>()
         val metadataReader = ReadKotlinClassHeaderAnnotationVisitor()
         lateinit var superClassName: String
+        var originalVersion = 0
         var debugFileName: String? = null
         var debugInfo: String? = null
         var debugMetadataAnnotation: AnnotationNode? = null
 
         createClassReader().accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
+                originalVersion = version
                 classBuilder.defineClass(
-                    maxOf(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
+                    regeneratedClassVersion(version, state.config.classFileVersion), access, name, signature, superName, interfaces,
                 )
                 if (superName.isCoroutineSuperClass()) {
                     inliningContext.isContinuation = true
@@ -116,6 +122,15 @@ class AnonymousObjectTransformer(
                 debugInfo = debug
             }
 
+            override fun visitAttribute(attribute: Attribute) {
+                // Written together with the fields for the captured values, see `generateConstructorAndFields`.
+                if (attribute is LoadableDescriptorsAttribute) {
+                    loadableDescriptors.addAll(attribute.descriptors)
+                } else {
+                    super.visitAttribute(attribute)
+                }
+            }
+
             override fun visitEnd() {}
         }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_FRAMES)
         val header = metadataReader.createHeader(inliningContext.state.config.languageVersionSettings.languageVersion.toMetadataVersion())
@@ -139,6 +154,12 @@ class AnonymousObjectTransformer(
         val deferringMethods = ArrayList<DeferredMethodVisitor>()
 
         generateConstructorAndFields(classBuilder, constructorParamBuilder, parentRemapper)
+        val signatureTypes = fieldsToTransform.map { Type.getType(it.desc) } +
+                methodsToTransform.flatMap { Type.getArgumentTypes(it.desc).asList() + Type.getReturnType(it.desc) }
+        signatureTypes.filter { it.isRecompiledKotlinValueClass() }.mapTo(loadableDescriptors) { it.descriptor }
+        if (loadableDescriptors.isNotEmpty()) {
+            classBuilder.visitor.visitAttribute(LoadableDescriptorsAttribute(loadableDescriptors.toList()))
+        }
 
         val coroutineTransformer = CoroutineTransformer(
             inliningContext,
@@ -206,7 +227,10 @@ class AnonymousObjectTransformer(
         }
 
         innerClassNodes.forEach { node ->
-            classBuilder.visitInnerClass(node.name, node.outerName, node.innerName, node.access)
+            classBuilder.visitInnerClass(
+                node.name, node.outerName, node.innerName,
+                regeneratedInnerClassAccess(node.access, originalVersion, state.config.classFileVersion),
+            )
         }
 
         if (header != null) {
@@ -378,6 +402,15 @@ class AnonymousObjectTransformer(
         return result
     }
 
+    // Like the classes of this compilation, a regenerated object lists the Kotlin value classes of a library compiled without Valhalla
+    // value classes, which is expected to be recompiled with them like this compilation.
+    private fun Type.isRecompiledKotlinValueClass(): Boolean {
+        if (sort != Type.OBJECT || !state.config.languageVersionSettings.isValhallaSupportEnabled()) return false
+        val irClass = state.jvmBackendClassResolver.resolveToClasses(this).singleOrNull() ?: return false
+        val languageVersionSettings = state.config.languageVersionSettings
+        return irClass.modality == Modality.FINAL && irClass.valueClassRepresentation.isKotlinValhallaValueClass(languageVersionSettings)
+    }
+
     private fun generateConstructorAndFields(
         classBuilder: ClassBuilder,
         constructorInlineBuilder: ParametersBuilder,
@@ -408,6 +441,9 @@ class AnonymousObjectTransformer(
                 val desc = info.type.descriptor
                 val access = AsmUtil.NO_FLAG_PACKAGE_PRIVATE or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
                 classBuilder.newField(null, access, info.newFieldName, desc, null, null)
+                if (info.desc.isLoadable || info.type.isRecompiledKotlinValueClass()) {
+                    loadableDescriptors.add(desc)
+                }
                 constructorVisitor.visitVarInsn(Opcodes.ALOAD, 0)
                 constructorVisitor.visitVarInsn(info.type.getOpcode(Opcodes.ILOAD), offset)
                 constructorVisitor.visitFieldInsn(Opcodes.PUTFIELD, transformationInfo.newClassName, info.newFieldName, desc)

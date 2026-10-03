@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.cli.transformMetadataInClassFile
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.codegen.inline.readLoadableDescriptors
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -625,6 +626,67 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
         val [_, exitCode] = compileKotlin("shouldNotCompile.kt", tmpdir, listOf(tmpdir))
         assertEquals(1, exitCode.code) // double-check that we failed :) output.txt also says so
+    }
+
+    // A class file that does not use preview features is an identity class, even without `ACC_SUPER` (`ACC_IDENTITY` of JEP 401),
+    // so it is not listed in `LoadableDescriptors`.
+    @Test
+    fun testNonPreviewClassFileWithoutAccSuper() {
+        val library = File(tmpdir, "library")
+        File(library, "lib/NoSuper.class").apply { parentFile.mkdirs() }.writeBytes(generateClassWithoutAccSuper("lib/NoSuper"))
+        val output = File(tmpdir, "output")
+        compileKotlin(
+            "source.kt", output, listOf(library),
+            additionalOptions = listOf(
+                K2JVMCompilerArguments::jvmTarget.cliArgument, JvmTarget.JVM_28.description,
+                K2JVMCompilerArguments::enableJvmPreview.cliArgument,
+                K2JVMCompilerArguments::valhallaValueClasses.cliArgument,
+            ),
+        )
+        assertEquals(emptyList<String>(), readLoadableDescriptors(File(output, "test/Holder.class").readBytes()))
+    }
+
+    // A Kotlin abstract value class compiled without Valhalla value classes is an identity class in its class file.
+    @Test
+    fun testValueClassExtendingIdentityLibraryClass() {
+        val options = listOf(
+            K2JVMCompilerArguments::jvmTarget.cliArgument, JvmTarget.JVM_28.description,
+            K2JVMCompilerArguments::enableJvmPreview.cliArgument,
+            "-XXLanguage:+FullValueClasses",
+        )
+        val valhallaOptions = options + K2JVMCompilerArguments::valhallaValueClasses.cliArgument
+        val identityLibrary = compileLibrary("identityLibrary", additionalOptions = options, checkKotlinOutput = {})
+        val valueLibrary = compileLibrary("valueLibrary", additionalOptions = valhallaOptions, checkKotlinOutput = {})
+        val jvm17Library = compileLibrary(
+            "jvm17Library",
+            additionalOptions = listOf(K2JVMCompilerArguments::jvmTarget.cliArgument, JvmTarget.JVM_17.description, "-XXLanguage:+FullValueClasses"),
+            checkKotlinOutput = {},
+        )
+        val jdk27Library = compileLibrary(
+            "jdk27Library", destination = File(tmpdir, "jdk27Library"), additionalOptions = valhallaOptions, checkKotlinOutput = {},
+        )
+        File(jdk27Library, "lib/Jdk27Base.class").apply {
+            writeBytes(readBytes().also { it[6] = 0; it[7] = JvmTarget.JVM_27.majorVersion.toByte() })
+        }
+        compileKotlin(
+            "source.kt", tmpdir, listOf(identityLibrary, valueLibrary, jvm17Library, jdk27Library),
+            additionalOptions = valhallaOptions + CommonCompilerArguments::skipPrereleaseCheck.cliArgument,
+        )
+    }
+
+    private fun generateClassWithoutAccSuper(internalName: String): ByteArray {
+        val writer = ClassWriter(0)
+        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, internalName, null, "java/lang/Object", null)
+        writer.visitMethod(Opcodes.ACC_PUBLIC, "<init>", "()V", null, null).apply {
+            visitCode()
+            visitVarInsn(Opcodes.ALOAD, 0)
+            visitMethodInsn(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false)
+            visitInsn(Opcodes.RETURN)
+            visitMaxs(1, 1)
+            visitEnd()
+        }
+        writer.visitEnd()
+        return writer.toByteArray()
     }
 
     @Test

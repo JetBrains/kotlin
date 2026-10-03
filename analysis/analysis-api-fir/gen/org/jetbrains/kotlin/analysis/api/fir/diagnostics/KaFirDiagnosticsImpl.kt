@@ -5568,6 +5568,7 @@ internal class InefficientEqualsOverridingInValueClassImpl(
 ) : KaAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KaFirDiagnostic.InefficientEqualsOverridingInValueClass
 
 internal class InlineClassDeprecatedImpl(
+    override val replacement: String,
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InlineClassDeprecated
@@ -5994,6 +5995,11 @@ internal class JvmInlineWithoutValueClassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineWithoutValueClass
 
+internal class JvmInlineOnValueObjectImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.JvmInlineOnValueObject
+
 internal class InapplicableJvmExposeBoxedWithNameImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
@@ -6109,6 +6115,17 @@ internal class ConflictVersionAndJvmOverloadsAnnotationImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConflictVersionAndJvmOverloadsAnnotation
+
+internal class ValueClassExtendsValueClassCompiledAsIdentityClassImpl(
+    override val superType: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ValueClassExtendsValueClassCompiledAsIdentityClass
+
+internal class SerializableValueClassWithoutWriteReplaceImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KaFirDiagnostic.SerializableValueClassWithoutWriteReplace
 
 internal class JavaTypeMismatchImpl(
     override val expectedType: KaType,
@@ -6545,6 +6562,12 @@ internal class IdentitySensitiveOperationsWithValueTypeImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationsWithValueType
+
+internal class IdentitySensitiveOperationsWithValueObjectImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationsWithValueObject
 
 internal class SynchronizedBlockOnJavaValueBasedClassImpl(
     override val type: KaType,

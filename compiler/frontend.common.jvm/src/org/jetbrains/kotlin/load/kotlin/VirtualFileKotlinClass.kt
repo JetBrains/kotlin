@@ -29,9 +29,10 @@ class VirtualFileKotlinClass private constructor(
     val file: VirtualFile,
     className: ClassId,
     classVersion: Int,
+    classAccess: Int,
     classHeader: KotlinClassHeader,
     innerClasses: InnerClassesInfo
-) : FileBasedKotlinClass(className, classVersion, classHeader, innerClasses) {
+) : FileBasedKotlinClass(className, classVersion, classAccess, classHeader, innerClasses) {
 
     override val location: String
         get() = file.path
@@ -76,8 +77,8 @@ class VirtualFileKotlinClass private constructor(
                 try {
                     val byteContent = fileContent ?: file.contentsToByteArray(false)
                     if (byteContent.isNotEmpty()) {
-                        val kotlinJvmBinaryClass = create(byteContent, metadataVersion) { name, classVersion, header, innerClasses ->
-                            VirtualFileKotlinClass(file, name, classVersion, header, innerClasses)
+                        val kotlinJvmBinaryClass = create(byteContent, metadataVersion) { name, classVersion, classAccess, header, innerClasses ->
+                            VirtualFileKotlinClass(file, name, classVersion, classAccess, header, innerClasses)
                         }
 
                         return@tryMeasureSideTime kotlinJvmBinaryClass?.let { KotlinClass(it, byteContent) }

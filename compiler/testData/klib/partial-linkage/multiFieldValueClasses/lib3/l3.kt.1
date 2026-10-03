@@ -15,3 +15,5 @@ value class ClassToMfvc(val first: Int, val second: Int)
 class MfvcToClass(val first: Int, val second: Int)
 
 value class MfvcVersionOverload(val first: Int, @IntroducedAt("1") val second: Int = 0)
+
+abstract value class StaysValue

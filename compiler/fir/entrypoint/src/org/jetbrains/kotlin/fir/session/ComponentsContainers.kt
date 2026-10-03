@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilit
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJavaNullabilityWarningUpperBoundsProvider
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmAnnotationsPlatformSpecificSupportComponent
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerComponent
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPlatformValueClassDeterminer
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
@@ -181,6 +182,7 @@ fun FirSession.registerJavaComponents(
     register(FirEnumEntriesSupport::class, FirJvmEnumEntriesSupport(this))
     register(FirAnnotationsPlatformSpecificSupportComponent::class, FirJvmAnnotationsPlatformSpecificSupportComponent)
     register(FirPrimaryConstructorSuperTypeCheckerPlatformComponent::class, FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent)
+    register(FirPlatformValueClassDeterminer::class, FirJvmPlatformValueClassDeterminer(this))
 
     register(FirJavaVisibilityChecker)
     register(JvmCallConflictResolverFactory)

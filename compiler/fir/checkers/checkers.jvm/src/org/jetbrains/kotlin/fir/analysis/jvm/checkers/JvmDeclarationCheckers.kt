@@ -41,6 +41,8 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirJvmRecordChecker,
             FirJvmInlineApplicabilityChecker,
             FirInterfaceJvmFieldApplicabilityChecker,
+            FirJvmValueClassIdentitySupertypeChecker,
+            FirJvmSerializableValueClassChecker,
         )
 
     override val classLikeCheckers: Set<FirClassLikeChecker>

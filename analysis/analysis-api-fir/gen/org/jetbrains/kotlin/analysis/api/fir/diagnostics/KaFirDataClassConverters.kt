@@ -3972,6 +3972,7 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
     }
     add(FirErrors.INLINE_CLASS_DEPRECATED) { firDiagnostic ->
         InlineClassDeprecatedImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4883,6 +4884,12 @@ private fun KaDiagnosticConverterBuilder.addConversions105() {
             token,
         )
     }
+    add(FirJvmErrors.JVM_INLINE_ON_VALUE_OBJECT) { firDiagnostic ->
+        JvmInlineOnValueObjectImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.UNEXHAUSTIVE_WHEN_BASED_ON_JAVA_ANNOTATIONS) { firDiagnostic ->
         UnexhaustiveWhenBasedOnJavaAnnotationsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -5481,6 +5488,13 @@ private fun KaDiagnosticConverterBuilder.addConversions118() {
     }
     add(FirErrors.CANNOT_CHECK_FOR_ERASED) { firDiagnostic ->
         CannotCheckForErasedImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_OBJECT) { firDiagnostic ->
+        IdentitySensitiveOperationsWithValueObjectImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -6505,6 +6519,13 @@ private fun KaDiagnosticConverterBuilder.addConversions138() {
             token,
         )
     }
+    add(FirJvmErrors.VALUE_CLASS_EXTENDS_VALUE_CLASS_COMPILED_AS_IDENTITY_CLASS) { firDiagnostic ->
+        ValueClassExtendsValueClassCompiledAsIdentityClassImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE) { firDiagnostic ->
         IllegalJavaLangRecordSupertypeImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -7032,6 +7053,12 @@ private fun KaDiagnosticConverterBuilder.addConversions151() {
             firDiagnostic.a.map { firTypeParameterSymbol ->
                 firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firTypeParameterSymbol)
             },
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirJvmErrors.SERIALIZABLE_VALUE_CLASS_WITHOUT_WRITE_REPLACE) { firDiagnostic ->
+        SerializableValueClassWithoutWriteReplaceImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

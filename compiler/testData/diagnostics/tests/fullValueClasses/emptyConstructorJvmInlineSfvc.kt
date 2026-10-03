@@ -4,7 +4,7 @@
 
 
 @JvmInline
-<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS("@JvmInline value")!>value<!> class FinalA1
+<!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS("'@JvmInline' value")!>value<!> class FinalA1
 
 @JvmInline
 value class FinalB1<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>()<!>
@@ -25,7 +25,7 @@ value class FinalD2(val x: Int, val y: Int)
 
 
 @JvmInline
-<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS("@JvmInline value")!>value<!> class OpenA1
+<!VALUE_CLASS_NOT_FINAL!>open<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS("'@JvmInline' value")!>value<!> class OpenA1
 
 @JvmInline
 <!VALUE_CLASS_NOT_FINAL!>open<!> value class OpenB1<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>()<!>
@@ -46,7 +46,7 @@ value class FinalD2(val x: Int, val y: Int)
 
 
 @JvmInline
-<!VALUE_CLASS_NOT_FINAL!>abstract<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS("@JvmInline value")!>value<!> class AbstractA1
+<!VALUE_CLASS_NOT_FINAL!>abstract<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS("'@JvmInline' value")!>value<!> class AbstractA1
 
 @JvmInline
 <!VALUE_CLASS_NOT_FINAL!>abstract<!> value class AbstractB1<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>()<!>
@@ -67,7 +67,7 @@ abstract value class AbstractD2(<!ABSTRACT_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARA
 
 
 @JvmInline
-<!VALUE_CLASS_NOT_FINAL!>sealed<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS("@JvmInline value")!>value<!> class SealedA1
+<!VALUE_CLASS_NOT_FINAL!>sealed<!> <!ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS("'@JvmInline' value")!>value<!> class SealedA1
 
 @JvmInline
 <!VALUE_CLASS_NOT_FINAL!>sealed<!> value class SealedB1<!INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE!>()<!>

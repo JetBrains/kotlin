@@ -129,7 +129,12 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
 
 fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
     // Value classes have `inline` or `value` modifier in FIR
-    return toRegularClassSymbol(session)?.isInlineOrValue == true
+    return toRegularClassSymbol(session)?.let { it.isInlineOrValue || it.isJavaValueClass(session) } == true
+}
+
+fun FirRegularClassSymbol.isMappedToJavaValueClass(session: FirSession): Boolean {
+    val platformClassId = session.platformClassMapper.getCorrespondingPlatformClass(classId) ?: return false
+    return (platformClassId.toSymbol(session) as? FirRegularClassSymbol)?.isJavaValueClass(session) == true
 }
 
 fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =
@@ -152,17 +157,24 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     // Generally, there is no need to disallow it for single-field value classes as well, so there is KT-86498 for that.
     // Below we forbid recursion for all other cases
     // Reminder: single-field value class is considered inline if it has @JvmInline annotation or if the FullValueClasses feature is disabled
-    val isSubjectForCheck = when (asRegularClass.valueClassRepresentation) {
+    val isSubjectForCheck = when (val representation = asRegularClass.valueClassRepresentation) {
         null -> false
         is InlineClassRepresentation -> true
+        // Abstract and sealed value classes have no fields.
+        is FullValueClassRepresentation if representation.underlyingPropertyNamesToTypes == null -> false
         is FullValueClassRepresentation if isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
         is FullValueClassRepresentation -> true
     }
     if (!isSubjectForCheck) return null
 
     if (!visited.add(this)) return expectedRecursionType
+    // A nullable single-field value class may be represented by its underlying type made nullable, e.g. `B?` of `value class B(val a: A)`
+    // as `A?`, which is not recursive if `A` is a multi-field value class.
+    val isNullableSingleFieldClass = asRegularClass.valueClassRepresentation is FullValueClassRepresentation && isNullableType()
     val hasRecursionInParameters = primaryConstructor.valueParameterSymbols.any {
-        it.resolvedReturnType.getValueClassTypeRecursionType(visited, session) != null
+        val type = it.resolvedReturnType
+        val representedType = if (isNullableSingleFieldClass) type.withNullability(nullable = true, session.typeContext) else type
+        representedType.getValueClassTypeRecursionType(visited, session) != null
     }
     return (if (hasRecursionInParameters) expectedRecursionType else null).also { visited.remove(this) }
 }
@@ -1068,8 +1080,24 @@ inline fun FirElement.requireFeatureSupport(
 
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
-    get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
-        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
+    get() = !fullyExpandedType().anyBound { it.isPrimitiveOrNullablePrimitive || it.isValueClass(context.session) } ||
+            context.session.platformValueClassDeterminer.instancesAreValueObjects(this)
+
+// Whether [predicate] holds for this class type or, like javac checks, for a bound of a type parameter, captured, intersection or flexible type.
+fun ConeKotlinType.anyBound(
+    visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
+    predicate: (ConeClassLikeType) -> Boolean,
+): Boolean =
+    when (this) {
+        is ConeFlexibleType -> lowerBound.anyBound(visited, predicate)
+        is ConeDefinitelyNotNullType -> original.anyBound(visited, predicate)
+        is ConeIntersectionType -> intersectedTypes.any { it.anyBound(visited, predicate) }
+        is ConeTypeParameterType ->
+            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.anyBound(visited, predicate) }
+        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.anyBound(visited, predicate) }
+        is ConeClassLikeType -> predicate(this)
+        is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
+            -> false
     }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)

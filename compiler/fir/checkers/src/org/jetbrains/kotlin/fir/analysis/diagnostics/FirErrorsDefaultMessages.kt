@@ -2508,8 +2508,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(MUTABLE_PROPERTY_WITH_CAPTURED_TYPE, "Captured type in mutable property reference. Usages of 'set' may lead to cast exceptions.")
 
         // Value classes
-        map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be local or inner.")
-        map.put(VALUE_CLASS_NOT_FINAL, "{0} class can be only final.", STRING)
+        map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be inner.")
+        map.put(VALUE_CLASS_NOT_FINAL, "{0} class can only be final.", STRING)
         map.put(VALUE_CLASS_OPEN, "Value class cannot be open.")
         map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for {0} classes.", STRING)
         map.put(
@@ -2521,7 +2521,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_EMPTY_CONSTRUCTOR, "{0} class must have at least one primary constructor parameter.", STRING)
         map.put(
             VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-            "{0} class primary constructor must only have final read-only (''val'') property parameters.",
+            "{0} class primary constructor must only have final read-only (''val'') non-''vararg'' property parameters.",
             STRING,
         )
         map.put(
@@ -2534,7 +2534,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS, "Value class cannot have properties with backing fields.")
         map.put(DELEGATED_PROPERTY_INSIDE_VALUE_CLASS, "Value class cannot have delegated properties.")
-        map.put(VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "{1} class cannot have value parameter of type ''{0}''.", TO_STRING, STRING)
+        map.put(VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE, "{1} class cannot have value parameter of type ''{0}''.", RENDER_TYPE, STRING)
         map.put(VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Value class cannot implement an interface by delegation.")
         map.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "{0} class cannot extend classes.", STRING)
         map.put(VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES, "Value class cannot extend identity classes.")
@@ -2878,7 +2878,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INLINE_CLASS_DEPRECATED,
-            "'inline' modifier is deprecated. Use 'value' instead."
+            "''inline'' modifier is deprecated. Use {0} instead.",
+            STRING,
         )
         map.put(
             LESS_VISIBLE_TYPE_ACCESS_IN_INLINE,

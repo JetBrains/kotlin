@@ -4,7 +4,12 @@ annotation class NoArg
 class Outer {
     @NoArg
     inner class <!NOARG_ON_INNER_CLASS_ERROR!>Inner<!>(val b: Any)
+
+    @NoArg
+    inner class <!NOARG_ON_INNER_CLASS_ERROR!>InnerSub<!>(b: Any) : Base(b)
 }
+
+open class Base(val b: Any)
 
 fun local() {
     @NoArg

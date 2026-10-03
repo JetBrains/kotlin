@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewDefaults
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
@@ -27,6 +28,7 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
         return when (declaration) {
             is FirRegularClass -> {
                 declaration.classKind == ClassKind.CLASS &&
+                        !declaration.isInlineOrValue &&
                         session.allOpenPredicateMatcher.isAnnotated(declaration.symbol) &&
                         !declaration.hasAnnotationSafe(JvmStandardClassIds.JVM_RECORD_ANNOTATION_CLASS_ID, session)
             }
@@ -34,6 +36,9 @@ class FirAllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExt
                 val parentClassSymbol = declaration.symbol.getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
                 if (parentClassSymbol.isLocal) return false
                 if (declaration.isStatic) return false
+                if (parentClassSymbol.rawStatus.let { (it.isInline || it.isValue) && it.modality != Modality.ABSTRACT && it.modality != Modality.SEALED }) {
+                    return false
+                }
                 parentClassSymbol.classKind == ClassKind.CLASS && session.allOpenPredicateMatcher.isAnnotated(parentClassSymbol)
             }
             else -> false
