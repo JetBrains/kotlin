@@ -153,6 +153,7 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
         val moduleMetadata = KlibModuleMetadata.readStrict(
             object : MetadataLibraryProvider {
                 override val moduleHeaderData get() = metadataComponent.moduleHeaderData
+                override val packageFqNames get() = metadataComponent.packageFqNames
                 override val metadataVersion get() = KlibMetadataVersion.LATEST_STABLE_SUPPORTED
                 override fun packageMetadataParts(fqName: String) = metadataComponent.getPackageFragmentNames(fqName)
                 override fun packageMetadata(fqName: String, partName: String) = metadataComponent.getPackageFragment(fqName, partName)

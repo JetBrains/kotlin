@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.library.impl.KlibMetadataComponentImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import java.nio.file.Path
+import kotlin.io.path.name
 
 /**
  * This component provides read access to Klib metadata.
@@ -26,6 +27,9 @@ import java.nio.file.Path
 interface KlibMetadataComponent : KlibComponent {
     /** The metadata header in the raw form (bytes, yet to be deserialized to [KlibMetadataProtoBuf.Header]). */
     val moduleHeaderData: ByteArray
+
+    /** Fully qualified names of all packages that have package fragments. */
+    val packageFqNames: Set<String>
 
     /** Names of package fragments for the fully qualified package name [packageFqName]. */
     fun getPackageFragmentNames(packageFqName: String): Set<String>
@@ -67,6 +71,14 @@ class KlibMetadataComponentLayout(root: Path) : KlibComponentLayout(root) {
     fun getPackageFragmentsDir(packageFqName: String): Path =
         metadataDir.resolve(if (packageFqName == "") KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME else "$KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX$packageFqName")
 
+    /** The fully qualified package name whose fragments are located in [packageFragmentsDir], or `null` if it is not such a directory. */
+    fun getPackageFqName(packageFragmentsDir: Path): String? = when {
+        packageFragmentsDir.name == KLIB_ROOT_PACKAGE_FRAGMENT_FOLDER_NAME -> ""
+        packageFragmentsDir.name.startsWith(KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX) ->
+            packageFragmentsDir.name.removePrefix(KLIB_NONROOT_PACKAGE_FRAGMENT_FOLDER_PREFIX)
+        else -> null
+    }
+
     /** The concrete package fragment file with the name [partName] for the fully qualified package name [packageFqName]. */
     fun getPackageFragmentFile(packageFqName: String, partName: String): Path =
         getPackageFragmentsDir(packageFqName).resolve("$partName.$KLIB_METADATA_FILE_EXTENSION")
@@ -80,4 +92,3 @@ object KlibMetadataConstants {
     const val KLIB_METADATA_FILE_EXTENSION = "knm"
     const val KLIB_METADATA_FILE_EXTENSION_WITH_DOT = ".$KLIB_METADATA_FILE_EXTENSION"
 }
-

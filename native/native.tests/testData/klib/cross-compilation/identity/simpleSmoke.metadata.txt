@@ -1,5 +1,4 @@
 library {
-  // module name: <simpleSmoke>
 
   library fragment {
     // package name: simple
