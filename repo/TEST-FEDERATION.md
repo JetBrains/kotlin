@@ -26,7 +26,7 @@ All tests run in master builds, even if they were not required for merging the c
 ## Domains and changed domains
 
 A domain is a named group of files, defined in [domains.yaml](./domains.yaml). For example, `Js` includes the files under `js`.
-A domain is **changed** when at least one file belonging to it is changed.
+A domain is **changed** when at least one file belonging to it is changed or it is listed in a `^test:` commit command.
 A Domain is a **CI ownership and impact unit**, not an architecture concept.
 
 A test task belongs to the domains of its project directory. When a domain is changed, all its tests must run and pass
@@ -45,8 +45,8 @@ The following tests must run and pass before a commit can be merged to master:
 
 Other test filters still apply. In particular, `@NightlyTest` tests are not required for merging to master.
 
-Running all tests in a domain does **not** make that domain changed. Only changed files make a domain changed.
-Neither `mustRunAllTestsOnChangesIn` nor `^test:` triggers `@MustRunOnChangesInXYZ` tests in other domains unless `XYZ` itself is changed.
+Running all tests in a domain does **not** make that domain changed. Changed files and the `^test:` commit command mark domains as changed.
+`mustRunAllTestsOnChangesIn` does **not** make a domain changed, so it does not trigger `@MustRunOnChangesInXYZ` tests in other domains.
 
 ## Defining domains
 
@@ -161,8 +161,9 @@ To require all tests in all domains:
 ^test: *
 ```
 
-The command does not make the listed domains changed. It does not trigger `mustRunAllTestsOnChangesIn` declarations or
-`@MustRunOnChangesInXYZ` tests in other domains.
+The command marks the listed domains as changed, so it triggers `@MustRunOnChangesInXYZ` tests when domain `XYZ` is listed.
+Unlike file-based changes, command-listed domains are added after `mustRunAllTestsOnChangesIn` expansion, so they do not require
+all tests in domains that declare a dependency on them.
 
 ## Nightly tests
 

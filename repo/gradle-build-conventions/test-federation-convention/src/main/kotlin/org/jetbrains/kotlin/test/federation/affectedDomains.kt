@@ -26,52 +26,38 @@ internal val Project.affectedDomainsService: Provider<AffectedDomainsBuildServic
         parameters.diffService.set(featureBranchDiffService)
     }
 
-internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomainsBuildService.Params>, AutoCloseable {
+internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomainsBuildService.Params> {
     interface Params : BuildServiceParameters {
         val repositoryRoot: Property<File>
         val diffService: Property<FeatureBranchDiffBuildService>
     }
 
-    private var changedDomainsValue: Set<Domain>? = null
-    private var affectedDomainsValue: Set<Domain>? = null
-
     @get:Synchronized
-    val changedDomains: Set<Domain>
-        get() {
-            changedDomainsValue?.let { return it }
-            val root = parameters.repositoryRoot.get().toPath()
-            val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(root, Path(rawPath)) }
-            val changedDomains = inferChangedDomains(changes)
-            changedDomainsValue = changedDomains
-            return changedDomains
-        }
-
-
-    @get:Synchronized
-    val affectedDomains: Set<Domain>
-        get() {
-            affectedDomainsValue?.let { return it }
-            val commitMessages = parameters.diffService.get().messages
-            val affected = inferAffectedDomains(changedDomains, commitMessages)
-            affectedDomainsValue = affected
-            return affected
-        }
-
-    @Synchronized
-    override fun close() {
-        affectedDomainsValue = null
-        changedDomainsValue = null
+    val changedDomains: Set<Domain> by lazy {
+        inferredChangedDomains + domainsFromCommitMessages
     }
-}
 
-internal fun inferChangedDomains(changes: List<RepositoryPath>): Set<Domain> {
-    return changes.flatMap { it.domains }.toSortedSet()
-}
+    @get:Synchronized
+    val affectedDomains: Set<Domain> by lazy {
+        inferredAffectedDomains + domainsFromCommitMessages
+    }
 
-internal fun inferAffectedDomains(changedDomains: Set<Domain>, commitMessages: List<String>): Set<Domain> {
-    return changedDomains.withAffectedDependencies()
-        .plus(resolveAffectedDomainsFromCommitMessages(commitMessages))
-        .toSortedSet()
+    private val inferredChangedDomains: Set<Domain> by lazy {
+        val root = parameters.repositoryRoot.get().toPath()
+        val changes = parameters.diffService.get().diff.map { rawPath -> RepositoryPath(root, Path(rawPath)) }
+        changes.flatMap { it.domains }.toSortedSet()
+    }
+
+    private val inferredAffectedDomains: Set<Domain> by lazy {
+        inferredChangedDomains
+            .withAffectedDependencies()
+            .toSortedSet()
+    }
+
+    private val domainsFromCommitMessages: Set<Domain> by lazy {
+        val commitMessages = parameters.diffService.get().messages
+        resolveDomainsFromCommitMessages(commitMessages)
+    }
 }
 
 /**
@@ -100,7 +86,7 @@ internal fun Iterable<Domain>.withAffectedDependencies(): Set<Domain> {
     }.toSortedSet()
 }
 
-internal fun resolveAffectedDomainsFromCommitMessages(commitMessages: List<String>): Set<Domain> {
+internal fun resolveDomainsFromCommitMessages(commitMessages: List<String>): Set<Domain> {
     val commandRegex = Regex("""\^(?:test|affects):\v*(?<domains>.*)$""")
     val splitRegex = Regex("""([\h,;])""")
 
