@@ -1,0 +1,3 @@
+package otherLibrary
+
+fun bar() {}

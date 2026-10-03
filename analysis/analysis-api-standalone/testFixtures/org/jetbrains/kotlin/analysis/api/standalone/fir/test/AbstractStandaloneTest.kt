@@ -10,9 +10,12 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 abstract class AbstractStandaloneTest : TestWithDisposable() {
-    abstract val suiteName: String
+    /**
+     * The path of the test suite's test data directory, relative to `testData`.
+     */
+    abstract val suiteName: Path
 
     protected fun testDataPath(path: String): Path {
-        return Paths.get("testData/$suiteName").resolve(path)
+        return Paths.get("testData").resolve(suiteName).resolve(path)
     }
 }
