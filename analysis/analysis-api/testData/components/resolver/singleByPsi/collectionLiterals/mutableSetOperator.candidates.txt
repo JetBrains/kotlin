@@ -1,0 +1,61 @@
+KtCollectionLiteralExpression(45,50): '["a"]'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["a"]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.MutableSet<kotlin.String>
+        symbol = kotlin/collections/MutableSet.of(): kotlin.collections.MutableSet<E>
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/collections/MutableSet.of
+      typeArgumentsMapping = {
+        E -> (kotlin.String)
+      }
+      valueArgumentMapping = {}
+    diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'companion fun <E> of(): MutableSet<E>'.>
+    isInBestCandidates = false
+
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ["a"]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.collections.MutableSet<kotlin.String>
+        symbol = kotlin/collections/MutableSet.of(vararg elements: E): kotlin.collections.MutableSet<E>
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.String
+            symbol = vararg elements: E
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/collections/MutableSet.of
+      typeArgumentsMapping = {
+        E -> (kotlin.String)
+      }
+      valueArgumentMapping = {
+        "a" -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.String
+          symbol = vararg elements: E
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true

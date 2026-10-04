@@ -1,0 +1,22 @@
+Module: companionsOn
+FILE: withCompanions.kt
+    public final fun testOn(): R|kotlin/Unit| {
+        lval a: R|kotlin/collections/MutableList<kotlin/String>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s|<R|kotlin/String|>()
+        lval b: R|kotlin/collections/MutableList<kotlin/Any?>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval c: R|kotlin/collections/MutableList<kotlin/Int>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/collections/MutableList<kotlin/String>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s|<R|kotlin/String|>()
+        lval y: R|kotlin/collections/MutableList<kotlin/Any?>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval z: R|kotlin/collections/MutableList<kotlin/Int>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(hello))
+    }
+Module: companionsOff
+FILE: withoutCompanions.kt
+    public final fun testOff(): R|kotlin/Unit| {
+        lval a: R|kotlin/collections/MutableList<kotlin/String>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.of>#|<R|kotlin/String|>()
+        lval b: R|kotlin/collections/MutableList<kotlin/Any?>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.of>#|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval c: R|kotlin/collections/MutableList<kotlin/Int>| = Q|kotlin/collections/MutableList|.R|kotlin/collections/MutableList.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.of>#|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/collections/MutableList<kotlin/String>| = Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+        lval y: R|kotlin/collections/MutableList<kotlin/Any?>| = Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval z: R|kotlin/collections/MutableList<kotlin/Int>| = Q|kotlin/collections|.R|kotlin/collections/mutableListOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(hello))
+    }

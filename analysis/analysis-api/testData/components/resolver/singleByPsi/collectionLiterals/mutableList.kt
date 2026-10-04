@@ -2,5 +2,5 @@ fun test() {
     val x: MutableList<String> = <expr>[]</expr>
 }
 
-// LANGUAGE: +CollectionLiterals
+// LANGUAGE: +CollectionLiterals -CompanionBlocks
 // WITH_STDLIB

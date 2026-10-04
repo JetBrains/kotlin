@@ -1,10 +1,15 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-82638
+// FIR_DUMP
 
-fun test() {
-    val a: MutableSet<String> = MutableSet.<!UNRESOLVED_REFERENCE!>of<!>()
-    val b: MutableSet<Any?> = MutableSet.<!UNRESOLVED_REFERENCE!>of<!>(null)
-    val c: MutableSet<Int> = MutableSet.<!UNRESOLVED_REFERENCE!>of<!>(1, 2, 3)
+// MODULE: companionsOn
+// LANGUAGE: +CompanionBlocks
+// FILE: withCompanions.kt
+
+fun testOn() {
+    val a: MutableSet<String> = MutableSet.of()
+    val b: MutableSet<Any?> = MutableSet.of(null)
+    val c: MutableSet<Int> = MutableSet.of(1, 2, 3)
 
     val x: MutableSet<String> = []
     val y: MutableSet<Any?> = [null]
@@ -13,5 +18,21 @@ fun test() {
     x.add("hello")
 }
 
-/* GENERATED_FIR_TAGS: classReference, functionDeclaration, integerLiteral, localProperty, nullableType,
-propertyDeclaration, stringLiteral */
+// MODULE: companionsOff
+// LANGUAGE: -CompanionBlocks
+// FILE: withoutCompanions.kt
+
+fun testOff() {
+    val a: MutableSet<String> = MutableSet.<!UNSUPPORTED_FEATURE!>of<!>()
+    val b: MutableSet<Any?> = MutableSet.<!UNSUPPORTED_FEATURE!>of<!>(null)
+    val c: MutableSet<Int> = MutableSet.<!UNSUPPORTED_FEATURE!>of<!>(1, 2, 3)
+
+    val x: MutableSet<String> = []
+    val y: MutableSet<Any?> = [null]
+    val z: MutableSet<Int> = [1, 2, 3]
+
+    x.add("hello")
+}
+
+/* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration,
+stringLiteral */

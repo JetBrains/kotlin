@@ -1,0 +1,22 @@
+Module: companionsOn
+FILE: withCompanions.kt
+    public final fun testOn(): R|kotlin/Unit| {
+        lval a: R|kotlin/collections/MutableSet<kotlin/String>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s|<R|kotlin/String|>()
+        lval b: R|kotlin/collections/MutableSet<kotlin/Any?>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval c: R|kotlin/collections/MutableSet<kotlin/Int>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/collections/MutableSet<kotlin/String>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s|<R|kotlin/String|>()
+        lval y: R|kotlin/collections/MutableSet<kotlin/Any?>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval z: R|kotlin/collections/MutableSet<kotlin/Int>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(String(hello))
+    }
+Module: companionsOff
+FILE: withoutCompanions.kt
+    public final fun testOff(): R|kotlin/Unit| {
+        lval a: R|kotlin/collections/MutableSet<kotlin/String>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/MutableSet.of>#|<R|kotlin/String|>()
+        lval b: R|kotlin/collections/MutableSet<kotlin/Any?>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/MutableSet.of>#|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval c: R|kotlin/collections/MutableSet<kotlin/Int>| = Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of*s<Inapplicable(INAPPLICABLE): kotlin/collections/MutableSet.of>#|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval x: R|kotlin/collections/MutableSet<kotlin/String>| = Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/String|>()
+        lval y: R|kotlin/collections/MutableSet<kotlin/Any?>| = Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/Any?|>(vararg(Null(null)))
+        lval z: R|kotlin/collections/MutableSet<kotlin/Int>| = Q|kotlin/collections|.R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(String(hello))
+    }

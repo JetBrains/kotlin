@@ -16,6 +16,45 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     )
      >: it(A & B)
 ********************************
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: ILT: 42
+     = kotlin/Int (inferred during fixation)
+    FIXED TO: kotlin/Int
+TypeVariable(T) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: it(A & B)
+     >: kotlin/collections/List<TypeVariable(E)>
+     >: kotlin/collections/List<kotlin/Int> (inferred during fixation)
+********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -33,8 +72,9 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: it(A & B)
-     = it(A & B) (inferred during fixation)
-    FIXED TO: it(A & B)
+     >: kotlin/collections/List<kotlin/Int>
+     = kotlin/Any (inferred during fixation)
+    FIXED TO: kotlin/Any
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false ALLOWED
@@ -60,7 +100,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
@@ -71,8 +111,61 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: it(A & B)
-     = it(A & B) (inferred during fixation)
-    FIXED TO: it(A & B)
+     >: kotlin/collections/List<TypeVariable(E)>
+     = kotlin/Any (inferred during fixation)
+    FIXED TO: kotlin/Any
+TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	false HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+********************************
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	false HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter E
+********************************
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	false HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter E
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true ALLOWED
@@ -113,6 +206,45 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     )
      >: it(A & B)
 ********************************
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: kotlin/String
+     = kotlin/String (inferred during fixation)
+    FIXED TO: kotlin/String
+TypeVariable(T) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: it(A & B)
+     >: kotlin/collections/List<TypeVariable(E)>
+     >: kotlin/collections/List<kotlin/String> (inferred during fixation)
+********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	 true HAS_PROPER_CONSTRAINTS
@@ -130,8 +262,9 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: it(A & B)
-     = it(A & B) (inferred during fixation)
-    FIXED TO: it(A & B)
+     >: kotlin/collections/List<kotlin/String>
+     = kotlin/Any (inferred during fixation)
+    FIXED TO: kotlin/Any
 ********************************
 CHOSEN for fixation: TypeVariable(K) --- Readiness(
     	 true ALLOWED
@@ -208,13 +341,30 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     )
      >: it(B & TypeVariable(X) & Any)
 ********************************
-CHOSEN for fixation: TypeVariable(T) --- Readiness(
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: ILT: 42
+TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
     	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
@@ -225,6 +375,7 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: it(B & TypeVariable(X) & Any)
+     >: kotlin/collections/List<TypeVariable(E)>
 ********************************
 CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	 true ALLOWED
@@ -252,7 +403,7 @@ TypeVariable(T) --- Readiness(
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
@@ -263,8 +414,66 @@ TypeVariable(T) --- Readiness(
     	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: it(B & TypeVariable(X) & Any)
+     >: kotlin/collections/List<TypeVariable(E)>
      >: A
      >: it(B & A) (inferred during fixation)
+TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: ILT: 42
+********************************
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: ILT: 42
+     = kotlin/Int (inferred during fixation)
+    FIXED TO: kotlin/Int
+TypeVariable(T) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: kotlin/collections/List<TypeVariable(E)>
+     >: A
+     >: it(B & A)
+     >: kotlin/collections/List<kotlin/Int> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
@@ -284,8 +493,9 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     )
      >: A
      >: it(B & A)
-     = A (inferred during fixation)
-    FIXED TO: A
+     >: kotlin/collections/List<kotlin/Int>
+     = kotlin/Any (inferred during fixation)
+    FIXED TO: kotlin/Any
 ********************************
 CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	 true ALLOWED
@@ -303,7 +513,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter X
+    FIXED TO: kotlin/collections/List<kotlin/Int>?
 ********************************
 CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	 true ALLOWED
@@ -321,7 +531,7 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter X
+    FIXED TO: kotlin/collections/List<kotlin/Int>?
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false ALLOWED
@@ -341,13 +551,30 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     )
      >: it(B & TypeVariable(X) & Any)
 ********************************
-CHOSEN for fixation: TypeVariable(T) --- Readiness(
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: ILT: 42
+TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
     	false HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
@@ -358,8 +585,28 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: it(B & TypeVariable(X) & Any)
+     >: kotlin/collections/List<TypeVariable(E)>
 ********************************
-CHOSEN for fixation: TypeVariable(X) --- Readiness(
+CHOSEN for fixation: TypeVariable(E) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	false HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: ILT: 42
+     = kotlin/Int (inferred during fixation)
+    FIXED TO: kotlin/Int
+TypeVariable(X) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -376,14 +623,13 @@ CHOSEN for fixation: TypeVariable(X) --- Readiness(
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      <: TypeVariable(T)?
-    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter X
 TypeVariable(T) --- Readiness(
     	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
     	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	false HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
     	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
     	false REIFIED
@@ -394,45 +640,31 @@ TypeVariable(T) --- Readiness(
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
      >: it(B & TypeVariable(X) & Any)
-********************************
-CHOSEN for fixation: TypeVariable(X) --- Readiness(
-    	 true ALLOWED
-    	false HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false REIFIED
-    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    	false HAS_PROPER_EQUALITY_CONSTRAINT
-    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-    )
-     <: TypeVariable(T)?
-    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter X
-TypeVariable(T) --- Readiness(
-    	 true ALLOWED
-    	false HAS_PROPER_CONSTRAINTS
-    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
-    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
-    	false HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
-    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
-    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
-    	false HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
-    	false REIFIED
-    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
-    	false HAS_PROPER_NON_ILT_CONSTRAINT
-    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
-    	false HAS_PROPER_EQUALITY_CONSTRAINT
-    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
-    )
-     >: it(B & TypeVariable(X) & Any)
+     >: kotlin/collections/List<TypeVariable(E)>
+     >: kotlin/collections/List<kotlin/Int> (inferred during fixation)
 ********************************
 CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     >: it(B & TypeVariable(X) & Any)
+     >: kotlin/collections/List<kotlin/Int>
+     = kotlin/collections/List<kotlin/Int> (inferred during fixation)
+    FIXED TO: kotlin/collections/List<kotlin/Int>
+TypeVariable(X) --- Readiness(
+    	 true ALLOWED
     	false HAS_PROPER_CONSTRAINTS
     	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
     	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
@@ -447,5 +679,26 @@ CHOSEN for fixation: TypeVariable(T) --- Readiness(
     	false HAS_PROPER_EQUALITY_CONSTRAINT
     	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
     )
-    FIXED TO: ERROR CLASS: Cannot infer argument for type parameter T
+     <: TypeVariable(T)?
+     <: kotlin/collections/List<kotlin/Int>? (inferred during fixation)
+********************************
+CHOSEN for fixation: TypeVariable(X) --- Readiness(
+    	 true ALLOWED
+    	 true HAS_PROPER_CONSTRAINTS
+    	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
+    	false HAS_CAPTURED_UPPER_BOUND_WITH_SELF_TYPES
+    	 true HAS_PROPER_NON_SELF_TYPE_BASED_CONSTRAINT
+    	 true HAS_NO_DEPENDENCIES_TO_OTHER_VARIABLES
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS
+    	 true HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND
+    	false REIFIED
+    	false HAS_PROPER_FLEXIBLE_LOWER_CONSTRAINT
+    	 true HAS_PROPER_NON_ILT_CONSTRAINT
+    	 true HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT
+    	false HAS_PROPER_EQUALITY_CONSTRAINT
+    	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
+    )
+     <: kotlin/collections/List<kotlin/Int>?
+     = kotlin/collections/List<kotlin/Int>? (inferred during fixation)
+    FIXED TO: kotlin/collections/List<kotlin/Int>?
 ********************************
