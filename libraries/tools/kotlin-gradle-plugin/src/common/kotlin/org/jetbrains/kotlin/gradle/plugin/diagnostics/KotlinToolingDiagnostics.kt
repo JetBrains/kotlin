@@ -2495,7 +2495,7 @@ internal object KotlinToolingDiagnostics {
         predefinedSeverity = ERROR,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
-        operator fun invoke() = build {
+        operator fun invoke() = build(throwable = Throwable()) {
             title { "Duplicate JS browser test framework configuration" }
                 .description {
                     "JS browser test framework has been configured using both the new test {} DSL and the old testTask {} " +

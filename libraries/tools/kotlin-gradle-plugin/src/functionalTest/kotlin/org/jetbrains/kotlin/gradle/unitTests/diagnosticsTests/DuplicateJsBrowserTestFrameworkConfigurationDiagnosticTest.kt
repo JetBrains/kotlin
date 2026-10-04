@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.Test
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class DuplicateJsBrowserTestFrameworkConfigurationDiagnosticTest {
 
@@ -90,7 +93,10 @@ class DuplicateJsBrowserTestFrameworkConfigurationDiagnosticTest {
         project.evaluate()
         project.tasks.getByName("jsBrowserTest")
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DuplicateJsBrowserTestFrameworkConfiguration)
+        val diagnostic = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project.path)
+            .assertContainsDiagnostic(KotlinToolingDiagnostics.DuplicateJsBrowserTestFrameworkConfiguration)
+        val throwable = assertNotNull(diagnostic.throwable)
+        assertTrue(throwable.stackTrace.any { it.fileName == "ConfigureKotlinPlaywrightTestRunner.kt" })
     }
 
     @Test
@@ -113,6 +119,9 @@ class DuplicateJsBrowserTestFrameworkConfigurationDiagnosticTest {
         project.evaluate()
         project.tasks.getByName("jsBrowserTest")
 
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.DuplicateJsBrowserTestFrameworkConfiguration)
+        val diagnostic = project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project.path)
+            .assertContainsDiagnostic(KotlinToolingDiagnostics.DuplicateJsBrowserTestFrameworkConfiguration)
+        val throwable = assertNotNull(diagnostic.throwable)
+        assertTrue(throwable.stackTrace.any { it.fileName == "ConfigureKotlinPlaywrightTestRunner.kt" })
     }
 }
