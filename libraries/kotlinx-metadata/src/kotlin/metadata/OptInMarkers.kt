@@ -95,3 +95,16 @@ public annotation class ExperimentalCompanionBlocks
 )
 @MustBeDocumented
 public annotation class ExperimentalCompanionExtensions
+
+/**
+ * Marks an API related to the experimental feature "full value classes" [KEEP-454](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
+ *
+ * A full value class is a `value class` that is not an inline class. [KmClass.valueClassUnderlyingPropertyNames] and
+ * [KmClass.valueClassUnderlyingTypes] describe its underlying properties.
+ */
+@RequiresOptIn(
+    "This API is related to the experimental feature \"full value classes\" (see KEEP-454) and may be changed or removed in any future release.",
+    RequiresOptIn.Level.ERROR,
+)
+@MustBeDocumented
+public annotation class ExperimentalFullValueClasses

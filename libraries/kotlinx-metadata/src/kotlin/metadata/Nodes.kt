@@ -119,6 +119,20 @@ public class KmClass : KmDeclarationContainer {
     public var inlineClassUnderlyingType: KmType? = null
 
     /**
+     * Names of the underlying properties, if this class is a full value class, in the order of its primary constructor's parameters.
+     *
+     * Empty for a value object and for an abstract or a sealed value class, which have no underlying properties.
+     */
+    @ExperimentalFullValueClasses
+    public val valueClassUnderlyingPropertyNames: MutableList<String> = ArrayList(0)
+
+    /**
+     * Types of the underlying properties, if this class is a full value class, in the same order as [valueClassUnderlyingPropertyNames].
+     */
+    @ExperimentalFullValueClasses
+    public val valueClassUnderlyingTypes: MutableList<KmType> = ArrayList(0)
+
+    /**
      * Annotations on the class.
      *
      * On JVM, annotations on declarations are stored in the metadata starting from Kotlin 2.4.0 (or starting from Kotlin 2.2.0 if the flag

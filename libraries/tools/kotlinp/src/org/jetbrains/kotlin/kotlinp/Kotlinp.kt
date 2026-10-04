@@ -86,6 +86,7 @@ abstract class Kotlinp(protected val settings: Settings) {
         }
     }
 
+    @OptIn(ExperimentalFullValueClasses::class)
     fun renderClass(clazz: KmClass, printer: Printer): Unit = with(printer) {
         appendOrigin(clazz)
         appendVersionRequirements(clazz.versionRequirements)
@@ -138,6 +139,10 @@ abstract class Kotlinp(protected val settings: Settings) {
             clazz.inlineClassUnderlyingType?.let {
                 appendLine()
                 commented { append("underlying type: ").appendType(it).appendLine() }
+            }
+            for ([name, type] in clazz.valueClassUnderlyingPropertyNames zip clazz.valueClassUnderlyingTypes) {
+                appendLine()
+                commented { append("underlying property: $name: ").appendType(type).appendLine() }
             }
             appendCustomAttributes(clazz)
             if (clazz.hasEnumEntries) {

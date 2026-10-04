@@ -45,6 +45,10 @@ public final value class FinalValue : kotlin/Any {
   public final val y: kotlin/Int
     public final get
 
+  // underlying property: x: kotlin/Int
+
+  // underlying property: y: kotlin/Int
+
   // module name: test-module
 }
 // SealedRegular.class

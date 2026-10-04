@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.serialization.deserialization.loadFullValueClassUnderlyingProperties
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun createClassStub(
@@ -195,10 +196,8 @@ private class ClassClsStubBuilder(
      * @see org.jetbrains.kotlin.serialization.deserialization.loadValueClassRepresentation
      */
     private fun createValueClassRepresentation(): KotlinValueClassRepresentation? = when {
-        // An inline class is the only kind of value class which names its underlying property in the class itself
         classProto.hasInlineClassUnderlyingPropertyName() -> createInlineClassRepresentation()
 
-        // A full value class is marked with the class flag only, so its underlying properties have to be looked up
         Flags.IS_VALUE_CLASS.get(classProto.flags) && !hasJvmInlineAnnotation() -> createFullValueClassRepresentation()
 
         // Either not a value class at all, or a multi-field '@JvmInline' value class from an experimental compiler version.
@@ -231,11 +230,9 @@ private class ClassClsStubBuilder(
         // An abstract or a sealed value class is not allowed to declare underlying properties, which the compiler denotes with 'null'
         if (isAbstractOrSealed()) return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = null)
 
-        // A full value class stores nothing about its underlying properties, so they are taken from the primary constructor's parameters
-        val primaryConstructorProto = primaryConstructorProto ?: return null
-        val properties = primaryConstructorProto.valueParameterList.map { parameterProto ->
-            val type = createValueClassUnderlyingTypeBean(parameterProto.type(c.typeTable)) ?: return null
-            c.nameResolver.getName(parameterProto.name) to type
+        val [names, typeProtos] = classProto.loadFullValueClassUnderlyingProperties(c.nameResolver, c.typeTable)
+        val properties = (names zip typeProtos).map { [name, typeProto] ->
+            name to (createValueClassUnderlyingTypeBean(typeProto) ?: return null)
         }
 
         return KotlinFullValueClassRepresentation(underlyingPropertyNamesToTypes = properties)

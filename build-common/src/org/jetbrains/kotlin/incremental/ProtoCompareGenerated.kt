@@ -178,6 +178,12 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) return false
         }
 
+        if (!checkEqualsClassFullValueClassUnderlyingPropertyName(old, new)) return false
+
+        if (!checkEqualsClassFullValueClassUnderlyingType(old, new)) return false
+
+        if (!checkEqualsClassFullValueClassUnderlyingTypeId(old, new)) return false
+
         if (!checkEqualsClassAnnotation(old, new)) return false
 
         if (!checkEqualsClassVersionRequirement(old, new)) return false
@@ -257,6 +263,9 @@ open class ProtoCompareGenerated(
         INLINE_CLASS_UNDERLYING_PROPERTY_NAME,
         INLINE_CLASS_UNDERLYING_TYPE,
         INLINE_CLASS_UNDERLYING_TYPE_ID,
+        FULL_VALUE_CLASS_UNDERLYING_PROPERTY_NAME_LIST,
+        FULL_VALUE_CLASS_UNDERLYING_TYPE_LIST,
+        FULL_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST,
         ANNOTATION_LIST,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
@@ -323,6 +332,12 @@ open class ProtoCompareGenerated(
         if (old.hasInlineClassUnderlyingTypeId()) {
             if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
         }
+
+        if (!checkEqualsClassFullValueClassUnderlyingPropertyName(old, new)) result.add(ProtoBufClassKind.FULL_VALUE_CLASS_UNDERLYING_PROPERTY_NAME_LIST)
+
+        if (!checkEqualsClassFullValueClassUnderlyingType(old, new)) result.add(ProtoBufClassKind.FULL_VALUE_CLASS_UNDERLYING_TYPE_LIST)
+
+        if (!checkEqualsClassFullValueClassUnderlyingTypeId(old, new)) result.add(ProtoBufClassKind.FULL_VALUE_CLASS_UNDERLYING_TYPE_ID_LIST)
 
         if (!checkEqualsClassAnnotation(old, new)) result.add(ProtoBufClassKind.ANNOTATION_LIST)
 
@@ -1440,6 +1455,36 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsClassFullValueClassUnderlyingPropertyName(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.fullValueClassUnderlyingPropertyNameCount != new.fullValueClassUnderlyingPropertyNameCount) return false
+
+        for(i in 0..old.fullValueClassUnderlyingPropertyNameCount - 1) {
+            if (!checkStringEquals(old.getFullValueClassUnderlyingPropertyName(i), new.getFullValueClassUnderlyingPropertyName(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsClassFullValueClassUnderlyingType(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.fullValueClassUnderlyingTypeCount != new.fullValueClassUnderlyingTypeCount) return false
+
+        for(i in 0..old.fullValueClassUnderlyingTypeCount - 1) {
+            if (!checkEquals(old.getFullValueClassUnderlyingType(i), new.getFullValueClassUnderlyingType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsClassFullValueClassUnderlyingTypeId(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.fullValueClassUnderlyingTypeIdCount != new.fullValueClassUnderlyingTypeIdCount) return false
+
+        for(i in 0..old.fullValueClassUnderlyingTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getFullValueClassUnderlyingTypeId(i)), newTypeTable.getType(new.getFullValueClassUnderlyingTypeId(i)))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsClassAnnotation(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.annotationCount != new.annotationCount) return false
 
@@ -2043,6 +2088,18 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     if (hasInlineClassUnderlyingTypeId()) {
         hashCode = 31 * hashCode + typeById(inlineClassUnderlyingTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..fullValueClassUnderlyingPropertyNameCount - 1) {
+        hashCode = 31 * hashCode + stringIndexes(getFullValueClassUnderlyingPropertyName(i))
+    }
+
+    for(i in 0..fullValueClassUnderlyingTypeCount - 1) {
+        hashCode = 31 * hashCode + getFullValueClassUnderlyingType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..fullValueClassUnderlyingTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getFullValueClassUnderlyingTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..annotationCount - 1) {
