@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -418,7 +419,36 @@ internal class ClassMemberGenerator(
                 field.initializer = null
             }
         }
-        body.statements.addAll(0, fieldInits)
+        // A branch between an assignment of a strict field and the super constructor call doesn't verify, since ASM doesn't track unset
+        // strict fields in stack map frames, so the super constructor arguments are evaluated and coerced to the parameter types, which
+        // may box them, before the fields are assigned. Arguments passed out of order are already evaluated into temporaries in a block
+        // with the call, which becomes part of the body for this.
+        val reorderingIndex = body.statements.indexOfFirst {
+            it is IrBlock && it.origin == IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL && it.statements.lastOrNull() is IrDelegatingConstructorCall
+        }
+        if (reorderingIndex >= 0) {
+            val reordering = body.statements.removeAt(reorderingIndex) as IrBlock
+            body.statements.addAll(reorderingIndex, reordering.statements)
+        }
+        val superCallIndex = body.statements.indexOfFirst { it is IrDelegatingConstructorCall }
+        val superArgumentTemporaries = buildList {
+            val superCall = body.statements.getOrNull(superCallIndex) as? IrDelegatingConstructorCall ?: return@buildList
+            val parameters = superCall.symbol.owner.parameters
+            val scope = Scope(irConstructor.symbol)
+            for (index in superCall.arguments.indices) {
+                val argument = superCall.arguments[index] ?: continue
+                val parameterType = parameters[index].type.eraseTypeParameters()
+                if ((argument is IrGetValue || argument is IrConst) && argument.type == parameterType) continue
+                // An explicit cast keeps the coercion in the temporary, which would otherwise be inlined back into the call.
+                val coercedArgument = if (argument.type == parameterType) argument else IrTypeOperatorCallImpl(
+                    argument.startOffset, argument.endOffset, parameterType, IrTypeOperator.IMPLICIT_CAST, parameterType, argument,
+                )
+                val temporary = scope.createTemporaryVariable(coercedArgument, nameHint = "superArgument", irType = parameterType)
+                add(temporary)
+                superCall.arguments[index] = IrGetValueImpl(argument.startOffset, argument.endOffset, temporary.symbol)
+            }
+        }
+        body.statements.addAll(maxOf(superCallIndex, 0), superArgumentTemporaries + fieldInits)
     }
 
     private fun IrFieldAccessExpression.setReceiver(declaration: IrDeclaration): IrFieldAccessExpression {
