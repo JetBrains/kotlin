@@ -158,6 +158,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_BE_IMPORTE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHANGE_ACCESS_PRIVILEGE_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_CHECK_FOR_ERASED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEW_CHECK_FOR_ERASED_BECAME_ERASED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEW_CHECK_FOR_ERASED_BECAME_NOT_ERASED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSTABLE_SMART_CAST_DUE_TO_OLD_BARE_INFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_IT_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CANNOT_INFER_RECEIVER_PARAMETER_TYPE
@@ -2432,6 +2435,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             DECLARATION_NAME,
         )
         map.put(
+            UNSTABLE_SMART_CAST_DUE_TO_OLD_BARE_INFERENCE,
+            "Smart cast to ''{0}'' relies on the deprecated bare type argument inference and will become impossible in a future release.",
+            RENDER_TYPE,
+        )
+        map.put(
             PLATFORM_CLASS_MAPPED_TO_KOTLIN,
             "This class is not recommended for use in Kotlin. Use ''{0}'' instead.",
             CLASS_ID,
@@ -3572,6 +3580,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // Casts and is-checks
         map.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type ''{0}''.", RENDER_TYPE)
+        map.put(
+            NEW_CHECK_FOR_ERASED_BECAME_ERASED,
+            "The type ''{0}'' will be considered erased in a future release, and this check will become an error.",
+            RENDER_TYPE,
+        )
+        map.put(
+            NEW_CHECK_FOR_ERASED_BECAME_NOT_ERASED,
+            "The type ''{0}'' will no longer be considered erased in a future release, and this check will become allowed.",
+            RENDER_TYPE,
+        )
         map.put(UNSAFE_CAST_RELYING_ON_NULL, "This cast only succeeds when the expression is null. Consider rewriting it explicitly.")
         map.put(SAFE_CAST_RELYING_ON_NULL, "This cast always returns null, even when it succeeds.")
         val castNeverSucceedsMessage = "This cast can never succeed."

@@ -179,6 +179,17 @@ object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiag
 class UnstableSmartCast(val argument: FirSmartCastExpression, val targetType: ConeKotlinType, val isCastToNotNull: Boolean, val isImplicitInvokeReceiver: Boolean) :
     ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 
+/**
+ * The candidate is applicable only thanks to a smart cast to the type inferred by the deprecated (old)
+ * bare type argument inference algorithm, see [org.jetbrains.kotlin.types.SmartcastStability.OLD_BARE_INFERENCE].
+ * Unlike [UnstableSmartCast], this diagnostic does not fail the candidate; it is reported as a warning
+ * during the migration period.
+ */
+class UnstableSmartCastDueToOldBareInference(
+    val argument: FirSmartCastExpression,
+    val targetType: ConeKotlinType,
+) : ResolutionDiagnostic(RESOLVED)
+
 class ArgumentTypeMismatch(
     val expectedType: ConeKotlinType,
     val actualType: ConeKotlinType,

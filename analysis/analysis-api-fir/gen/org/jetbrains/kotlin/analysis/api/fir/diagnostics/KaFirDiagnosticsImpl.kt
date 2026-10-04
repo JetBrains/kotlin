@@ -3105,6 +3105,12 @@ internal class DeprecatedSmartcastOnDelegatedPropertyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DeprecatedSmartcastOnDelegatedProperty
 
+internal class UnstableSmartCastDueToOldBareInferenceImpl(
+    override val desiredType: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UnstableSmartCastDueToOldBareInference
+
 internal class PlatformClassMappedToKotlinImpl(
     override val kotlinClass: ClassId,
     firDiagnostic: KtDiagnosticWithSource,
@@ -4928,6 +4934,18 @@ internal class CannotCheckForErasedImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CannotCheckForErased
+
+internal class NewCheckForErasedBecameErasedImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NewCheckForErasedBecameErased
+
+internal class NewCheckForErasedBecameNotErasedImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NewCheckForErasedBecameNotErased
 
 internal class UnsafeCastRelyingOnNullImpl(
     firDiagnostic: KtDiagnosticWithSource,

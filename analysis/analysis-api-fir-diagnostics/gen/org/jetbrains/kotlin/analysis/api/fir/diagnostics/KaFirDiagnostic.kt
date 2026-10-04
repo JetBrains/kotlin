@@ -4384,6 +4384,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface UnstableSmartCastDueToOldBareInference : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<UnstableSmartCastDueToOldBareInference>
+            get() = UnstableSmartCastDueToOldBareInference::class
+
+        public val desiredType: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface PlatformClassMappedToKotlin : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<PlatformClassMappedToKotlin>
             get() = PlatformClassMappedToKotlin::class
@@ -6960,6 +6969,24 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface CannotCheckForErased : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<CannotCheckForErased>
             get() = CannotCheckForErased::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NewCheckForErasedBecameErased : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NewCheckForErasedBecameErased>
+            get() = NewCheckForErasedBecameErased::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NewCheckForErasedBecameNotErased : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NewCheckForErasedBecameNotErased>
+            get() = NewCheckForErasedBecameNotErased::class
 
         public val type: KaType
     }

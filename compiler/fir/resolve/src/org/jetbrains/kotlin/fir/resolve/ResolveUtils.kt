@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.anySuperTypeConstructor
@@ -539,7 +540,16 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(
         }
     }
 
-    val allUpperTypes = if (originalType !is ConeStubType) smartcastStatement.upperTypes + originalType else smartcastStatement.upperTypes
+    // When the variable itself is not stable, the deprecated upper types behave like regular upper types:
+    // the old bare inference would have produced the same unstable smart cast.
+    val isStableVariable = smartcastStatement.upperTypesStability == SmartcastStability.STABLE_VALUE
+    val deprecatedTypes = smartcastStatement.deprecatedUpperTypes.takeIf { isStableVariable }.orEmpty()
+    val upperTypes = when {
+        deprecatedTypes.isEmpty() -> smartcastStatement.upperTypes + smartcastStatement.deprecatedUpperTypes
+        else -> smartcastStatement.upperTypes
+    }
+
+    val allUpperTypes = if (originalType !is ConeStubType) upperTypes + originalType else upperTypes
 
     val intersectedUpperType = when {
         allUpperTypes.any { it !is ConeDynamicType } -> ConeTypeIntersector.intersectTypes(session.typeContext, allUpperTypes)
@@ -548,8 +558,21 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(
         it == originalType && it !is ConeDynamicType
     }
 
+    // The type implied by the deprecated (old) bare inference algorithm. It is used as the target of a deprecated
+    // (unstable) smart cast if it is strictly more precise than the stable smart cast type.
+    val deprecatedSmartCastType = when {
+        deprecatedTypes.isEmpty() -> null
+        else -> {
+            val stableIntersection = intersectedUpperType ?: originalType
+            ConeTypeIntersector.intersectTypes(session.typeContext, (allUpperTypes + deprecatedTypes).toList()).takeUnless {
+                AbstractTypeChecker.isSubtypeOf(session.typeContext, stableIntersection, it, stubTypesEqualToAnything = false)
+            }
+        }
+    }
+
     if (
         smartcastStatement.lowerTypes.isEmpty() &&
+        deprecatedSmartCastType == null &&
         (intersectedUpperType == null || intersectedUpperType == originalType && intersectedUpperType !is ConeDynamicType)
     ) {
         return expression
@@ -568,10 +591,13 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(
 
     return buildSmartCastExpression {
         originalExpression = expression
-        smartcastStability = smartcastStatement.upperTypesStability
+        smartcastStability = when {
+            deprecatedSmartCastType != null -> SmartcastStability.OLD_BARE_INFERENCE
+            else -> smartcastStatement.upperTypesStability
+        }
         smartcastType = buildResolvedTypeRef {
             source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            coneType = intersectedUpperType ?: originalType
+            coneType = deprecatedSmartCastType ?: intersectedUpperType ?: originalType
         }
         // Example (1): if (x is String) { ... }, where x: dynamic
         //   the dynamic type will "consume" all other, erasing information.
@@ -590,7 +616,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(
                 coneType = ConeTypeIntersector.intersectTypes(session.typeContext, nonNothingTypes)
             }
         }
-        this.upperTypesFromSmartCast = smartcastStatement.upperTypes
+        this.upperTypesFromSmartCast = smartcastStatement.upperTypes + smartcastStatement.deprecatedUpperTypes
         coneTypeOrNull = when {
             smartcastStatement.upperTypesStability == SmartcastStability.STABLE_VALUE && intersectedUpperType != null -> intersectedUpperType
             else -> originalTypeWithAliases

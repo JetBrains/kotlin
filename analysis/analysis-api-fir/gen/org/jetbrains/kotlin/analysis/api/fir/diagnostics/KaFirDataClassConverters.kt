@@ -6384,6 +6384,13 @@ private fun KaDiagnosticConverterBuilder.addConversions133() {
             token,
         )
     }
+    add(FirErrors.UNSTABLE_SMART_CAST_DUE_TO_OLD_BARE_INFERENCE) { firDiagnostic ->
+        UnstableSmartCastDueToOldBareInferenceImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.CANNOT_WEAKEN_ACCESS_PRIVILEGE_WARNING) { firDiagnostic ->
         CannotWeakenAccessPrivilegeWarningImpl(
             firDiagnostic.a,
@@ -6813,6 +6820,13 @@ private fun KaDiagnosticConverterBuilder.addConversions143() {
     }
     add(FirErrors.ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION) { firDiagnostic ->
         ActualTypeAliasWithComplexSubstitutionImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.NEW_CHECK_FOR_ERASED_BECAME_NOT_ERASED) { firDiagnostic ->
+        NewCheckForErasedBecameNotErasedImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -9213,6 +9227,13 @@ private fun KaDiagnosticConverterBuilder.addConversions198() {
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.NEW_CHECK_FOR_ERASED_BECAME_ERASED) { firDiagnostic ->
+        NewCheckForErasedBecameErasedImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

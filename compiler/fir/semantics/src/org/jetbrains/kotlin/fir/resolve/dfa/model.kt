@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.DfaType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeErrorType
@@ -20,12 +21,14 @@ data class PersistentTypeStatement(
     override val variable: DataFlowVariable,
     override val upperTypes: PersistentSet<ConeKotlinType>,
     override val lowerTypes: PersistentSet<DfaType>,
+    override val deprecatedUpperTypes: PersistentSet<ConeKotlinType> = persistentSetOf(),
 ) : TypeStatement()
 
 class MutableTypeStatement(
     override val variable: DataFlowVariable,
     override val upperTypes: MutableSet<ConeKotlinType> = linkedSetOf(),
     override val lowerTypes: MutableSet<DfaType> = linkedSetOf(),
+    override val deprecatedUpperTypes: MutableSet<ConeKotlinType> = linkedSetOf(),
 ) : TypeStatement()
 
 // --------------------------------------- Aliases ---------------------------------------
@@ -58,6 +61,16 @@ infix fun RealVariable.valueNotEq(boolean: Boolean): MutableTypeStatement =
 
 infix fun DataFlowVariable.typeEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type.refinedTypeForDataFlowOrSelf))
+
+/**
+ * A statement about a type that is implied only by the deprecated (old) bare type argument inference algorithm.
+ * See [TypeStatement.deprecatedUpperTypes].
+ */
+infix fun DataFlowVariable.typeEqDeprecated(type: ConeKotlinType): MutableTypeStatement =
+    MutableTypeStatement(
+        this,
+        deprecatedUpperTypes = if (type is ConeErrorType) linkedSetOf() else linkedSetOf(type.refinedTypeForDataFlowOrSelf)
+    )
 
 infix fun DataFlowVariable.typeNotEq(type: ConeKotlinType): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = if (type is ConeErrorType) linkedSetOf() else linkedSetOf(DfaType.Cone(type)))

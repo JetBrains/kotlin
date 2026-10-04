@@ -80,10 +80,15 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val oldStatement = flow.approvedTypeStatements[variable]
         val oldUpperTypes = oldStatement?.upperTypes
         val oldLowerTypes = oldStatement?.lowerTypes
+        val oldDeprecatedUpperTypes = oldStatement?.deprecatedUpperTypes
         val newUpperTypes = oldUpperTypes?.addingAll(statement.upperTypes) ?: statement.upperTypes.toPersistentSet()
         val newLowerTypes = oldLowerTypes?.addingAll(statement.lowerTypes) ?: statement.lowerTypes.toPersistentSet()
-        if (newUpperTypes === oldUpperTypes && newLowerTypes === oldLowerTypes) return null
-        return PersistentTypeStatement(variable, newUpperTypes, newLowerTypes)
+        val newDeprecatedUpperTypes = oldDeprecatedUpperTypes?.addingAll(statement.deprecatedUpperTypes)
+            ?: statement.deprecatedUpperTypes.toPersistentSet()
+        if (newUpperTypes === oldUpperTypes && newLowerTypes === oldLowerTypes && newDeprecatedUpperTypes === oldDeprecatedUpperTypes) {
+            return null
+        }
+        return PersistentTypeStatement(variable, newUpperTypes, newLowerTypes, newDeprecatedUpperTypes)
             .also { flow.approvedTypeStatements[variable] = it }
     }
 
@@ -108,6 +113,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val approved = approvedTypeStatements[effect.variable] ?: return false
         return approved.upperTypes.containsAll(effect.upperTypes)
                 && approved.lowerTypes.containsAll(effect.lowerTypes)
+                && approved.deprecatedUpperTypes.containsAll(effect.deprecatedUpperTypes)
     }
 
     fun translateVariableFromConditionInStatements(
@@ -415,6 +421,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         // the information together as is.
         upperTypes += other.upperTypes
         lowerTypes += other.lowerTypes
+        deprecatedUpperTypes += other.deprecatedUpperTypes
     }
 
     fun and(a: TypeStatement?, b: TypeStatement): TypeStatement {
@@ -443,28 +450,47 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         assert(statements.all { it.variable == variable }) { "folding statements for different variables" }
         if (statements.any { it.isEmpty }) return null
         val unifiedUpperType = statements.getUnifiedUpperType()
-        val newUpperTypes = when {
-            unifiedUpperType == null -> persistentSetOf()
-            unifiedUpperType.isNullableAny -> persistentSetOf()
-            unifiedUpperType.isAcceptableForSmartcast() -> persistentSetOf(unifiedUpperType)
-            unifiedUpperType.canBeNull(context.session) -> persistentSetOf()
-            else -> persistentSetOf(context.anyType())
-        }
+        val newUpperTypes = unifiedUpperTypeToUpperTypes(unifiedUpperType)
         // See `data-flow-based-exhaustiveness.md` for more details on what "excluded values" are,
         // why they exist separately from `DfaType::Cone` and why `or`-ing `TypeStatement`s calculates
         // some "intersected lower type" (on that specifically - `Lower Bounds` and `Complex Lower Bounds`,
         // the `or` cases in both chapters).
         val newLowerTypes = setOfNotNull(statements.getIntersectedLowerType()?.let(DfaType::Cone)) + statements.getCommonExcludedValues()
-        return if (newUpperTypes.isNotEmpty() || newLowerTypes.isNotEmpty()) {
-            PersistentTypeStatement(variable, newUpperTypes, newLowerTypes.toPersistentSet())
+        val newDeprecatedUpperTypes = when {
+            statements.none { it.deprecatedUpperTypes.isNotEmpty() } -> persistentSetOf()
+            else -> {
+                // Unify the "full" knowledge (as if the deprecated types were normal upper types)
+                // and keep the result only if it brings more information than the stable one.
+                val unifiedFullUpperType = statements.getUnifiedUpperType(includeDeprecated = true)
+                val fullUpperTypes = unifiedUpperTypeToUpperTypes(unifiedFullUpperType)
+                when {
+                    fullUpperTypes == newUpperTypes -> persistentSetOf()
+                    else -> fullUpperTypes.removingAll(newUpperTypes)
+                }
+            }
+        }
+        return if (newUpperTypes.isNotEmpty() || newLowerTypes.isNotEmpty() || newDeprecatedUpperTypes.isNotEmpty()) {
+            PersistentTypeStatement(variable, newUpperTypes, newLowerTypes.toPersistentSet(), newDeprecatedUpperTypes)
         } else {
             null
         }
     }
 
-    private fun Collection<TypeStatement>.getUnifiedUpperType(): ConeKotlinType? {
+    private fun unifiedUpperTypeToUpperTypes(unifiedUpperType: ConeKotlinType?): PersistentSet<ConeKotlinType> = when {
+        unifiedUpperType == null -> persistentSetOf()
+        unifiedUpperType.isNullableAny -> persistentSetOf()
+        unifiedUpperType.isAcceptableForSmartcast() -> persistentSetOf(unifiedUpperType)
+        unifiedUpperType.canBeNull(context.session) -> persistentSetOf()
+        else -> persistentSetOf(context.anyType())
+    }
+
+    private fun Collection<TypeStatement>.getUnifiedUpperType(includeDeprecated: Boolean = false): ConeKotlinType? {
         val intersectedUpperTypes = map { statement ->
-            statement.upperTypesOrNull?.toList()?.let { ConeTypeIntersector.intersectTypes(context, it) } ?: context.nullableAnyType()
+            val upperTypes = when {
+                includeDeprecated -> (statement.upperTypesOrNull.orEmpty() + statement.deprecatedUpperTypes).takeIf { it.isNotEmpty() }
+                else -> statement.upperTypesOrNull
+            }
+            upperTypes?.toList()?.let { ConeTypeIntersector.intersectTypes(context, it) } ?: context.nullableAnyType()
         }
         return context.commonSuperTypeOrNull(intersectedUpperTypes)
     }
@@ -499,12 +525,12 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = when (this) {
     is PersistentTypeStatement -> this
     // If this statement was obtained via `toMutable`, `toPersistentSet` will call `build`.
-    else -> PersistentTypeStatement(variable, upperTypes.toPersistentSet(), lowerTypes.toPersistentSet())
+    else -> PersistentTypeStatement(variable, upperTypes.toPersistentSet(), lowerTypes.toPersistentSet(), deprecatedUpperTypes.toPersistentSet())
 }
 
 private fun TypeStatement.toMutable(): MutableTypeStatement = when (this) {
-    is PersistentTypeStatement -> MutableTypeStatement(variable, upperTypes.builder(), lowerTypes.builder())
-    else -> MutableTypeStatement(variable, LinkedHashSet(upperTypes), LinkedHashSet(lowerTypes))
+    is PersistentTypeStatement -> MutableTypeStatement(variable, upperTypes.builder(), lowerTypes.builder(), deprecatedUpperTypes.builder())
+    else -> MutableTypeStatement(variable, LinkedHashSet(upperTypes), LinkedHashSet(lowerTypes), LinkedHashSet(deprecatedUpperTypes))
 }
 
 @JvmName("replaceVariableInStatements")
@@ -558,6 +584,6 @@ private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Sta
     return when (this) {
         is OperationStatement -> copy(variable = to)
         is PersistentTypeStatement -> copy(variable = to)
-        is MutableTypeStatement -> MutableTypeStatement(to, upperTypes, lowerTypes)
+        is MutableTypeStatement -> MutableTypeStatement(to, upperTypes, lowerTypes, deprecatedUpperTypes)
     }
 }

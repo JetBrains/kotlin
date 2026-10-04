@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.isDynamic
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
@@ -101,9 +102,18 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
     }
 
     fun handleSmartCastExpression(smartCastExpression: FirSmartCastExpression, expression: IrExpression): IrExpression {
+        // Deprecated smart casts to the type inferred by the old bare type argument inference algorithm
+        // are compiled as if the old type were stable to preserve the behavior during the migration period.
+        val isDeprecatedOldBareInferenceSmartCast = smartCastExpression.smartcastStability == SmartcastStability.OLD_BARE_INFERENCE
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
-        return if (smartCastExpression.isStable && smartCastExpression.smartcastTypeWithoutNullableNothing == null) {
-            val smartcastedType = smartCastExpression.resolvedType
+        return if (
+            (smartCastExpression.isStable || isDeprecatedOldBareInferenceSmartCast) &&
+            smartCastExpression.smartcastTypeWithoutNullableNothing == null
+        ) {
+            val smartcastedType = when {
+                isDeprecatedOldBareInferenceSmartCast -> smartCastExpression.smartcastType.coneType
+                else -> smartCastExpression.resolvedType
+            }
             val approximatedType = smartcastedType.approximateForIrOrNull()
             if (approximatedType != null) {
                 val originalType = smartCastExpression.originalExpression.resolvedType

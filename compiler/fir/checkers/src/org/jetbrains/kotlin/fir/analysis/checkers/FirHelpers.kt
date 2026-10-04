@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.resolve.AnnotationTargetListForDeprecation
 import org.jetbrains.kotlin.resolve.AnnotationTargetLists
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
@@ -461,6 +462,16 @@ fun checkTypeMismatch(
 
     // there is nothing to report if types are matching
     if (isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) return
+
+    if (rValue is FirSmartCastExpression &&
+        rValue.smartcastStability == SmartcastStability.OLD_BARE_INFERENCE &&
+        isSubtypeForTypeMismatch(typeContext, subtype = rValue.smartcastType.coneType, supertype = lValueType)
+    ) {
+        // The value fits the expected type only thanks to the type inferred by the deprecated (old)
+        // bare type argument inference algorithm. During the migration period, only a warning is reported.
+        reporter.reportOn(rValue.source, FirErrors.UNSTABLE_SMART_CAST_DUE_TO_OLD_BARE_INFERENCE, rValue.smartcastType.coneType)
+        return
+    }
 
     val resolvedSymbol = assignment?.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol
     val receiverType = (assignment?.extensionReceiver ?: assignment?.dispatchReceiver)?.resolvedType

@@ -1265,6 +1265,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("property")
         }
 
+        val UNSTABLE_SMART_CAST_DUE_TO_OLD_BARE_INFERENCE by warning<KtExpression> {
+            parameter<ConeKotlinType>("desiredType")
+        }
+
         val PLATFORM_CLASS_MAPPED_TO_KOTLIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<ClassId>("kotlinClass")
         }
@@ -2037,6 +2041,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val CASTS_AND_IS_CHECKS by object : DiagnosticGroup("Casts and is-checks") {
         val CANNOT_CHECK_FOR_ERASED by error<PsiElement> {
+            parameter<ConeKotlinType>("type")
+        }
+        val NEW_CHECK_FOR_ERASED_BECAME_ERASED by warning<PsiElement> {
+            parameter<ConeKotlinType>("type")
+        }
+        val NEW_CHECK_FOR_ERASED_BECAME_NOT_ERASED by warning<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
         val UNSAFE_CAST_RELYING_ON_NULL by warning<KtBinaryExpressionWithTypeRHS>(PositioningStrategy.OPERATOR)

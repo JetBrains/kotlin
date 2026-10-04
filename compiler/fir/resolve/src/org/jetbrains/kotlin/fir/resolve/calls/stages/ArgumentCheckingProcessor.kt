@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.fastCorrespondingSupertypes
 import org.jetbrains.kotlin.types.model.isUnit
 import org.jetbrains.kotlin.types.model.typeConstructor
@@ -328,6 +329,13 @@ internal object ArgumentCheckingProcessor {
                 if (smartcastExpression != null && !smartcastExpression.isStable) {
                     val unstableType = smartcastExpression.smartcastType.coneType
                     if (csBuilder.addSubtypeConstraintIfCompatible(unstableType, expectedType, position)) {
+                        if (smartcastExpression.smartcastStability == SmartcastStability.OLD_BARE_INFERENCE) {
+                            // The argument fits the expected type only thanks to the type inferred by the deprecated (old)
+                            // bare type argument inference algorithm. During the migration period the candidate
+                            // is resolved successfully with a warning.
+                            reportDiagnostic(UnstableSmartCastDueToOldBareInference(smartcastExpression, expectedType))
+                            return
+                        }
                         reportDiagnostic(
                             UnstableSmartCast(
                                 smartcastExpression,
