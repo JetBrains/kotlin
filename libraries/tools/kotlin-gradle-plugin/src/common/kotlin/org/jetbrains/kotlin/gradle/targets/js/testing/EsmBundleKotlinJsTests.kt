@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.PathSensitive
@@ -28,9 +30,14 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.nodeJsRoot
 import org.jetbrains.kotlin.gradle.targets.js.ir.npmToolingDir
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinWebImportMap
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.wasm.internal.isWasm
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
+import java.io.File
 import javax.inject.Inject
 import kotlin.io.path.Path
 import kotlin.io.path.readText
@@ -89,6 +96,17 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
     @get:Internal
     internal abstract val npmToolingEnvDir: DirectoryProperty
 
+    @get:Internal
+    internal abstract val npmProjectDir: DirectoryProperty
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal abstract val importMapFile: RegularFileProperty
+
+    @get:InputFile
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    internal abstract val importMapLoaderFile: RegularFileProperty
+
     @TaskAction
     fun action() {
         val npmToolingEnv = npmToolingEnvDir.getFile()
@@ -111,7 +129,18 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
         fs.copy { copySpec ->
             copySpec.from(modules.require("mocha/mocha.js"))
             copySpec.from(modules.require("mocha/mocha.css"))
+            copySpec.from(importMapLoaderFile)
             copySpec.into(outputDirectory)
+        }
+
+        val imports = KotlinWebImportMap.readFrom(importMapFile.getFile()).imports
+        val projectModules = NpmProjectModules(npmProjectDir.getFile())
+        fs.sync { syncSpec ->
+            imports.keys.forEach { moduleName ->
+                val moduleDirectory = File(projectModules.require("$moduleName/package.json")).parentFile
+                syncSpec.from(moduleDirectory) { it.into(moduleName) }
+            }
+            syncSpec.into(outputDirectory.dir("node_modules"))
         }
 
         val entryPointPlaceholder = if (isWasm) {
@@ -125,7 +154,10 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
         val testHtmlFileContent = testHtmlFileTemplate
             .readText().replace(
                 oldValue = "<script src=\"tests.bundle-kotlinTestRunner.js\"></script>",
-                newValue = "<script type=\"module\" src=\"testFramework/kotlin-test-mocha-browser-runner.js\"></script>"
+                newValue = """
+                    <script src="importmap-loader.js"></script>
+                    <script type="module" src="testFramework/kotlin-test-mocha-browser-runner.js"></script>
+                """.trimIndent()
             ).replace(
                 oldValue = entryPointPlaceholder,
                 newValue = "kotlinWasmJsTestsEntry: '$entryPointEscaped',"
@@ -151,6 +183,21 @@ internal abstract class EsmBundleKotlinJsTests @Inject constructor(
 }
 
 internal fun KotlinJsIrCompilation.locateOrRegisterEsmBundleKotlinJsTestsTask(): TaskProvider<EsmBundleKotlinJsTests> {
+    val npmProject = npmProject
+    val nodeJsRoot = nodeJsRoot()
+    val nodeJs = nodeJsEnvSpec
+    val importMapTask = project.locateOrRegisterTask<KotlinImportMapGenerateTask>(npmProject.generateImportMapDistTaskName) { task ->
+        task.nodeModulesDirectory.set(npmProject.nodeModulesDir)
+        task.inputDirectory.set(npmProject.dir)
+        task.rootDirectory.set(project.rootDir)
+        task.installArtifacts.from(nodeJsRoot.npmInstallTaskProvider.map { it.additionalFiles })
+        task.importMapFile.set(project.layout.buildDirectory.file("kotlin/${task.name}/importmap.json"))
+        task.importMapLoaderFile.set(project.layout.buildDirectory.file("kotlin/${task.name}/importmap-loader.js"))
+        task.flattenPaths.set(true)
+        task.pathPrefix.set("./node_modules")
+        task.getIsWindows.set(nodeJs.env.map { it.isWindows })
+    }
+
     val esmBundleKotlinJsTests = project.locateOrRegisterTask<EsmBundleKotlinJsTests>(
         name = disambiguateName("bundleAsEsm"), // for wasmTest name will be wasmTestBundleAsEsm
         args = listOf(this),
@@ -164,6 +211,9 @@ internal fun KotlinJsIrCompilation.locateOrRegisterEsmBundleKotlinJsTestsTask():
         ).single()
 
         task.npmToolingEnvDir.value(npmToolingDir).finalizeValue()
+        task.npmProjectDir.set(npmProject.dir)
+        task.importMapFile.set(importMapTask.flatMap { it.importMapFile })
+        task.importMapLoaderFile.set(importMapTask.flatMap { it.importMapLoaderFile })
         task.kotlinLinkerOutputFiles.fileProvider(binary.linkSyncTask.flatMap { it.destinationDirectory })
         task.testEntryFileName.convention(binary.mainFileSyncPath.map { it.asFile.name })
         task.outputDirectory.set(project.layout.buildDirectory.dir("kotlin/${task.name}"))
