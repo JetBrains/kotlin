@@ -308,8 +308,10 @@ abstract class FirDataFlowAnalyzer(
         typeStatement: TypeStatement?,
     ): SmartCastStatement? {
         val upperTypes = typeStatement?.upperTypes
+        val deprecatedUpperTypes = typeStatement?.deprecatedUpperTypes
         val upperTypesStability = when {
-            upperTypes != null -> variable.getStability(flow, targetTypes = upperTypes)
+            upperTypes != null -> variable.getStability(flow, targetTypes = upperTypes + deprecatedUpperTypes.orEmpty())
+            deprecatedUpperTypes?.isNotEmpty() == true -> variable.getStability(flow, targetTypes = deprecatedUpperTypes)
             else -> SmartcastStability.STABLE_VALUE
         }
         // If there are any assignments to local variables, we can no longer guarantee
@@ -323,11 +325,13 @@ abstract class FirDataFlowAnalyzer(
         return if (
             upperTypes?.isNotEmpty() == true ||
             lowerTypes?.isNotEmpty() == true ||
-            lowerTypesFromVariable?.isNotEmpty() == true
+            lowerTypesFromVariable?.isNotEmpty() == true ||
+            deprecatedUpperTypes?.isNotEmpty() == true
         ) {
             SmartCastStatement(
                 upperTypes.orEmpty(), upperTypesStability,
                 lowerTypes.orEmpty() + lowerTypesFromVariable.orEmpty(), stabilityWithNoTargetTypes,
+                deprecatedUpperTypes.orEmpty(),
             )
         } else {
             null
@@ -349,6 +353,8 @@ abstract class FirDataFlowAnalyzer(
         val upperTypesStability: SmartcastStability,
         val lowerTypes: Set<DfaType>,
         val lowerTypesStability: SmartcastStability,
+        /** See [TypeStatement.deprecatedUpperTypes]. */
+        val deprecatedUpperTypes: Set<ConeKotlinType> = emptySet(),
     )
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo> =
@@ -559,15 +565,28 @@ abstract class FirDataFlowAnalyzer(
 
     // ----------------------------------- Operator call -----------------------------------
 
-    fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
+    /**
+     * @param divergedNewBareInferenceType In case of a bare cast where the old and the new bare type argument
+     *   inference algorithms produce diverging results, contains the type inferred by the new algorithm
+     *   (while the conversion type ref contains the old one). The new type is used as the stable smart cast type,
+     *   whereas the old type only produces a deprecated smart cast,
+     *   see [org.jetbrains.kotlin.types.SmartcastStability.OLD_BARE_INFERENCE].
+     */
+    fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, divergedNewBareInferenceType: ConeKotlinType? = null) {
         graphBuilder.exitTypeOperatorCall(typeOperatorCall).mergeIncomingFlow { _, flow ->
             if (typeOperatorCall.operation !in FirOperation.TYPES) return@mergeIncomingFlow
-            addTypeOperatorStatements(flow, typeOperatorCall)
+            addTypeOperatorStatements(flow, typeOperatorCall, divergedNewBareInferenceType)
         }
     }
 
-    private fun addTypeOperatorStatements(flow: MutableFlow, typeOperatorCall: FirTypeOperatorCall) {
-        val type = typeOperatorCall.conversionTypeRef.coneType
+    private fun addTypeOperatorStatements(
+        flow: MutableFlow,
+        typeOperatorCall: FirTypeOperatorCall,
+        divergedNewBareInferenceType: ConeKotlinType? = null,
+    ) {
+        val conversionType = typeOperatorCall.conversionTypeRef.coneType
+        val type = divergedNewBareInferenceType ?: conversionType
+        val deprecatedType = conversionType.takeIf { divergedNewBareInferenceType != null }
         val operandVariable = flow.rememberVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
         val siblings = typeOperatorCall.conversionTypeRef.coneType
             .toRegularClassSymbol()?.getSealedSiblings()?.takeIf { it.isNotEmpty() }
@@ -583,7 +602,10 @@ abstract class FirDataFlowAnalyzer(
                         val expressionVariable = SyntheticVariable(typeOperatorCall)
                         if (operandVariable.isReal()) {
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
-                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq type))
+                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq conversionType))
+                            if (deprecatedType != null) {
+                                flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEqDeprecated deprecatedType))
+                            }
 
                             if (siblings != null) {
                                 flow.addImplication((expressionVariable eq isType) implies (operandVariable valueNotEq siblings))
@@ -603,6 +625,9 @@ abstract class FirDataFlowAnalyzer(
             FirOperation.AS -> {
                 if (operandVariable.isReal()) {
                     flow.addTypeStatement(operandVariable typeEq type)
+                    if (deprecatedType != null) {
+                        flow.addTypeStatement(operandVariable typeEqDeprecated deprecatedType)
+                    }
 
                     if (siblings != null) {
                         flow.addTypeStatement(operandVariable valueNotEq siblings)
@@ -622,6 +647,9 @@ abstract class FirDataFlowAnalyzer(
                 flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
                 if (operandVariable.isReal()) {
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEq type))
+                    if (deprecatedType != null) {
+                        flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEqDeprecated deprecatedType))
+                    }
 
                     if (siblings != null) {
                         flow.addImplication((expressionVariable notEq null) implies (operandVariable valueNotEq siblings))
