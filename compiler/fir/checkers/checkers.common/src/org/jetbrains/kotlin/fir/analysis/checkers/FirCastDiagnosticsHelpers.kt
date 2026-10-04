@@ -177,6 +177,112 @@ fun findStaticallyKnownSubtype(
     return substitutor.substituteOrSelf(subtypeWithVariablesType)
 }
 
+/**
+ * The new algorithm for the erased cast check.
+ *
+ * Unlike [isCastErased], which reconstructs the statically known subtype via unification,
+ * this algorithm considers a type argument of the cast target statically known only if the corresponding
+ * type parameter is inherited from the original type,
+ * see [org.jetbrains.kotlin.fir.types.staticallyKnownTypeArgumentsByTypeParameterInheritance].
+ *
+ * Because the type arguments of the cast target are explicitly provided and already checked to satisfy
+ * the bounds of the type constructor, there is no requirement for the bounds of an inherited type parameter
+ * to be equal to the bounds of the original one ([requireEqualBounds] is `false`).
+ */
+context(context: CheckerContext)
+fun isCastErasedByTypeParameterInheritance(supertype: ConeKotlinType, subtype: ConeKotlinType): Boolean {
+    val typeContext = context.session.typeContext
+
+    val isNonReifiedTypeParameter = subtype.isNonReifiedTypeParameter()
+    val isUpcast = isUpcast(supertype, subtype)
+
+    // here we want to restrict cases such as `x is T` for x = T?, when T might have nullable upper bound
+    if (isNonReifiedTypeParameter && !isUpcast) {
+        // hack to save previous behavior in case when `x is T`, where T is not nullable, see IsErasedNullableTasT.kt
+        val nullableToDefinitelyNotNull =
+            !subtype.canBeNull() && supertype.withNullability(nullable = false, typeContext) == subtype
+        if (!nullableToDefinitelyNotNull) {
+            return true
+        }
+    }
+
+    // cast between T and T? is always OK
+    if ((supertype !is ConeErrorType && supertype.isMarkedNullable) || (subtype !is ConeErrorType && subtype.isMarkedNullable)) {
+        return isCastErasedByTypeParameterInheritance(
+            supertype.withNullability(nullable = false, typeContext),
+            subtype.withNullability(nullable = false, typeContext)
+        )
+    }
+
+    // if it is a upcast, it's never erased
+    if (isUpcast) return false
+
+    // downcasting to a non-reified type parameter is always erased
+    if (isNonReifiedTypeParameter) return true
+    // downcasting to a reified type parameter is never erased
+    else if (subtype is ConeTypeParameterType) return false
+
+    val regularClassSymbol = subtype.toRegularClassSymbol() ?: return true
+
+    val outerClasses = regularClassSymbol.getClassAndItsOuterClassesWhenLocal(context.session)
+
+    if (regularClassSymbol.isLocal && regularClassSymbol.typeParameterSymbols.any { it.containingDeclarationSymbol !in outerClasses }) {
+        return true
+    }
+
+    val staticallyKnownSubtype = findStaticallyKnownSubtypeByTypeParameterInheritance(supertype, regularClassSymbol)
+
+    // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
+    // If not, it's wrong to use it
+    return !AbstractTypeChecker.isSubtypeOf(
+        context.session.typeContext.newTypeCheckerState(
+            errorTypesEqualToAnything = true,
+            stubTypesEqualToAnything = false,
+            dnnTypesEqualToFlexible = false
+        ),
+        staticallyKnownSubtype,
+        subtype
+    )
+}
+
+/**
+ * An analogue of [findStaticallyKnownSubtype] that only considers a type argument statically known
+ * when the corresponding type parameter of [subTypeClassSymbol] is inherited from the class of [supertype],
+ * see [org.jetbrains.kotlin.fir.types.staticallyKnownTypeArgumentsByTypeParameterInheritance].
+ *
+ * Unknown type arguments are replaced with stub types, so that they only match `*` (or equal stubs)
+ * in the cast target.
+ */
+context(context: CheckerContext)
+private fun findStaticallyKnownSubtypeByTypeParameterInheritance(
+    supertype: ConeKotlinType,
+    subTypeClassSymbol: FirRegularClassSymbol,
+): ConeKotlinType {
+    assert(!supertype.isMarkedNullable) { "This method only makes sense for non-nullable types" }
+
+    if (supertype is ConeClassLikeType && supertype.toSymbol() == subTypeClassSymbol) {
+        return supertype
+    }
+
+    val knownArguments = context.session.staticallyKnownTypeArgumentsByTypeParameterInheritance(
+        subTypeClassSymbol,
+        supertype,
+        requireEqualBounds = false,
+    )
+
+    // If some arguments are not statically known, it means that these arguments are lost,
+    // let's put ConeStubType instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
+    val arguments = Array(subTypeClassSymbol.typeParameterSymbols.size) { index ->
+        when (val argument = knownArguments?.get(index)) {
+            null, is ConeStarProjection ->
+                ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", null), isMarkedNullable = true)
+            else -> argument
+        }
+    }
+
+    return subTypeClassSymbol.constructType(arguments)
+}
+
 fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
     return this is ConeTypeParameterType && !this.lookupTag.typeParameterSymbol.isReified
 }

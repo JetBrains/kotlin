@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
 
 fun TypeStatement.smartCastedType(context: ConeTypeContext): ConeKotlinType =
-    if (upperTypes.isNotEmpty()) {
-        context.intersectTypes(upperTypes.toMutableList().also { it += variable.originalType })
+    if (upperTypes.isNotEmpty() || deprecatedUpperTypes.isNotEmpty()) {
+        // Deprecated upper types are included to preserve the old behavior for implicit receivers during the migration period.
+        context.intersectTypes((upperTypes + deprecatedUpperTypes).toMutableList().also { it += variable.originalType })
     } else {
         variable.originalType
     }

@@ -39,4 +39,8 @@ enum class SmartcastStability(private val str: String, val description: String =
     // A delegated property.
     // Smart casts are not safe
     DELEGATED_PROPERTY("delegate", "delegated property"),
+
+    // A value whose type was additionally narrowed by the deprecated (old) bare type argument inference algorithm.
+    // Such smart casts are deprecated and will become errors in the future.
+    OLD_BARE_INFERENCE("old bare inference", "value whose type argument inference relies on the deprecated bare cast inference"),
 }

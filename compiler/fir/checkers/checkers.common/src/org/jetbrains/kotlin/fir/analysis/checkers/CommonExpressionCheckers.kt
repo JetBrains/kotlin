@@ -53,6 +53,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirLargeArityFunctionCallableReferenceChecker,
         FirAbstractClassInstantiationChecker,
         FirTypeVariableSurvivesUntilDfaQualifiedAccessExpressionChecker,
+        FirUnstableSmartCastDueToOldBareInferenceChecker,
         FirIncompatibleClassExpressionChecker,
         FirMissingDependencyClassChecker,
         FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker,

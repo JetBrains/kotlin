@@ -296,13 +296,16 @@ private fun Flow.combineTypeStatements(
         .apply { ownStatement?.upperTypes?.let { addAll(it) } }
     val combinedLower = emptyPersistentHashSetBuilder<DfaType>()
         .apply { ownStatement?.lowerTypes?.let { addAll(it) } }
+    val combinedDeprecatedUpper = emptyPersistentHashSetBuilder<ConeKotlinType>()
+        .apply { ownStatement?.deprecatedUpperTypes?.let { addAll(it) } }
 
-    for ((upperTypes, lowerTypes) in oneWayAliasMapStatements) {
+    for ((upperTypes, lowerTypes, deprecatedUpperTypes) in oneWayAliasMapStatements) {
         combinedUpper.addAll(upperTypes)
         combinedLower.addAll(lowerTypes)
+        combinedDeprecatedUpper.addAll(deprecatedUpperTypes)
     }
 
-    return PersistentTypeStatement(variable, combinedUpper.build(), combinedLower.build())
+    return PersistentTypeStatement(variable, combinedUpper.build(), combinedLower.build(), combinedDeprecatedUpper.build())
 }
 
 private fun <K, V> emptyPersistentHashMapBuilder(): PersistentMap.Builder<K, V> =

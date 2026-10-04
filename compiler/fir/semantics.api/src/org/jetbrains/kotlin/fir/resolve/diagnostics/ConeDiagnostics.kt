@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnosticWithSource
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -483,6 +484,18 @@ object ConeCallToDeprecatedOverrideOfHidden : ConeDiagnostic {
 class ConeTypeMismatch(val lowerType: ConeKotlinType, val upperType: ConeKotlinType) : ConeDiagnostic {
     override val reason: String
         get() = "Type mismatch: expected $upperType, actual $lowerType"
+}
+
+/**
+ * The call is resolved successfully only thanks to a smart cast to the type inferred by the deprecated (old)
+ * bare type argument inference algorithm, see [org.jetbrains.kotlin.types.SmartcastStability.OLD_BARE_INFERENCE].
+ */
+class ConeUnstableSmartCastDueToOldBareInference(
+    val argument: FirExpression,
+    val targetType: ConeKotlinType,
+) : ConeDiagnostic {
+    override val reason: String
+        get() = "Smart cast to $targetType relies on the deprecated bare type argument inference"
 }
 
 /**
