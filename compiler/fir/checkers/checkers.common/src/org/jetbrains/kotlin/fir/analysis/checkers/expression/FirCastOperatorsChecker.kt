@@ -38,6 +38,12 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
         val rUserType = expression.conversionTypeRef.coneType.finalApproximationOrSelf()
 
+        checkApplicability(expression, l, r, rUserType)
+        reportCastErasedMigrationWarnings(expression, l, r, rUserType)
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkApplicability(expression: FirTypeOperatorCall, l: ArgumentInfo, r: ConeKotlinType, rUserType: ConeKotlinType) {
         when (val it = context.session.firPlatformSpecificCastChecker.runApplicabilityCheck(expression, l.originalType, r, this)) {
             Applicability.APPLICABLE -> {}
             // CAST_ERASED may not be the case if we factor in the smartcast data.
@@ -58,6 +64,45 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             this
         ).ifInapplicable {
             return reporter.reportInapplicabilityDiagnostic(expression, it, l, r, rUserType, forceWarning = true)
+        }
+    }
+
+    /**
+     * Reports migration warnings for the places where the new erased cast check algorithm
+     * ([isCastErasedByTypeParameterInheritance]) disagrees with the old one ([isCastErased]).
+     */
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportCastErasedMigrationWarnings(
+        expression: FirTypeOperatorCall,
+        l: ArgumentInfo,
+        r: ConeKotlinType,
+        rUserType: ConeKotlinType,
+    ) {
+        if (context.isContractBody && LanguageFeature.AllowCheckForErasedTypesInContracts.isEnabled()) return
+        if (r is ConeDynamicType || r is ConeErrorType) return
+
+        // Mirrors the main applicability pipeline: for smart-cast arguments, the erased check
+        // is performed against the smart cast type instead of the original one.
+        val lhsType = when {
+            l.argument is FirSmartCastExpression -> l.smartCastType
+            else -> l.originalType
+        }
+
+        val oldErased = isCastErased(lhsType, r)
+        val newErased = isCastErasedByTypeParameterInheritance(lhsType, r)
+
+        when {
+            oldErased == newErased -> {}
+            newErased -> reporter.reportOn(
+                expression.conversionTypeRef.source,
+                FirErrors.NEW_CHECK_FOR_ERASED_BECAME_ERASED,
+                rUserType,
+            )
+            else -> reporter.reportOn(
+                expression.conversionTypeRef.source,
+                FirErrors.NEW_CHECK_FOR_ERASED_BECAME_NOT_ERASED,
+                rUserType,
+            )
         }
     }
 

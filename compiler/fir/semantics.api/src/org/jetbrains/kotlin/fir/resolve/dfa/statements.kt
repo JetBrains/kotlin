@@ -30,8 +30,15 @@ sealed class TypeStatement : Statement() {
     abstract val upperTypes: Set<ConeKotlinType>
     abstract val lowerTypes: Set<DfaType>
 
+    /**
+     * Upper types that are implied only by the deprecated (old) bare type argument inference algorithm,
+     * but not by the new one. They are used to create unstable smart casts during the migration period.
+     * See [org.jetbrains.kotlin.types.SmartcastStability.OLD_BARE_INFERENCE].
+     */
+    abstract val deprecatedUpperTypes: Set<ConeKotlinType>
+
     val isEmpty: Boolean
-        get() = upperTypes.isEmpty() && lowerTypes.isEmpty()
+        get() = upperTypes.isEmpty() && lowerTypes.isEmpty() && deprecatedUpperTypes.isEmpty()
 
     val isNotEmpty: Boolean
         get() = !isEmpty
@@ -40,13 +47,17 @@ sealed class TypeStatement : Statement() {
         return "$variable: ${renderType()}"
     }
 
-    fun renderType(): String = listOfNotNull(upperTypesStringOrNull, lowerTypesStringOrNull).joinToString(" & ")
+    fun renderType(): String =
+        listOfNotNull(upperTypesStringOrNull, lowerTypesStringOrNull, deprecatedUpperTypesStringOrNull).joinToString(" & ")
 
     val upperTypesOrNull: Set<ConeKotlinType>? get() = upperTypes.takeIf { it.isNotEmpty() }
     val lowerTypesOrNull: Set<DfaType>? get() = lowerTypes.takeIf { it.isNotEmpty() }
+    val deprecatedUpperTypesOrNull: Set<ConeKotlinType>? get() = deprecatedUpperTypes.takeIf { it.isNotEmpty() }
 
     private val upperTypesStringOrNull: String? get() = upperTypesOrNull?.joinToString(separator = " & ")
     private val lowerTypesStringOrNull: String? get() = lowerTypesOrNull?.joinToString(separator = " | ")?.let { "¬($it)" }
+    private val deprecatedUpperTypesStringOrNull: String?
+        get() = deprecatedUpperTypesOrNull?.joinToString(separator = " & ")?.let { "deprecated($it)" }
 }
 
 class Implication(

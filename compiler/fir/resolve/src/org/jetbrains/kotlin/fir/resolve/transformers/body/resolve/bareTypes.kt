@@ -62,6 +62,40 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
     return expandedCastType.withArguments(newArguments.toTypedArray())
 }
 
+/**
+ * The new algorithm for bare type inference.
+ *
+ * Unlike [computeRepresentativeTypeForBareType], which uses unification, this algorithm only infers
+ * a type argument of the bare type constructor if the corresponding type parameter is *inherited*
+ * from the original type, see [staticallyKnownTypeArgumentsByTypeParameterInheritance].
+ * All non-inherited type parameters are projected with `*`.
+ *
+ * Unlike the old algorithm, this function is total for proper class cast targets: if the original type
+ * is not related to the cast class at all, the result is simply a fully star-projected type.
+ *
+ * Returns `null` only when the cast type is based on a type alias that cannot be used as a bare type
+ * or the cast class cannot be resolved.
+ */
+fun BodyResolveComponents.computeRepresentativeTypeForBareTypeByInheritance(
+    type: ConeClassLikeType,
+    originalType: ConeKotlinType,
+): ConeClassLikeType? {
+    val castTypeAlias = type.abbreviatedTypeOrSelf.classLikeLookupTagIfAny?.toTypeAliasSymbol()?.fir
+    if (castTypeAlias != null && !canBeUsedAsBareType(castTypeAlias)) return null
+
+    val expandedCastType = type.fullyExpandedType()
+    val castClass = expandedCastType.lookupTag.toRegularClassSymbol() ?: return null
+    if (castClass.fir.typeParameters.isEmpty()) return expandedCastType
+
+    val newArguments = session.staticallyKnownTypeArgumentsByTypeParameterInheritance(
+        castClass,
+        originalType,
+        requireEqualBounds = true,
+    ) ?: return null
+
+    return expandedCastType.withArguments(newArguments)
+}
+
 private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
     firTypeAlias.lazyResolveToPhase(FirResolvePhase.TYPES)
 

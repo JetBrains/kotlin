@@ -1614,6 +1614,9 @@ internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Cand
         if (diagnostic is CallToDeprecatedOverrideOfHidden) {
             newNonFatalDiagnostics += ConeCallToDeprecatedOverrideOfHidden
         }
+        if (diagnostic is UnstableSmartCastDueToOldBareInference) {
+            newNonFatalDiagnostics += ConeUnstableSmartCastDueToOldBareInference(diagnostic.argument, diagnostic.targetType)
+        }
     }
 
     appendNonFatalDiagnostics(newNonFatalDiagnostics)
