@@ -21,6 +21,8 @@ import kotlin.random.*
  * Returns `true` if [element] is found in the sequence.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.contains(element: T): Boolean {
     return indexOf(element) >= 0
