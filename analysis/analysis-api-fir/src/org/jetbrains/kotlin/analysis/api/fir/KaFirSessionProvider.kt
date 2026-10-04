@@ -10,7 +10,6 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.openapi.util.registry.Registry
@@ -99,6 +98,8 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     override fun getAnalysisSession(useSiteElement: PsiElement): KaSession {
+        checkUseSiteElement(useSiteElement)
+
         val module = KotlinProjectStructureProvider.getModule(project, useSiteElement, useSiteModule = null)
         return acquireSessionWithListeners(module, useSiteElement)
     }
@@ -125,9 +126,10 @@ internal class KaFirSessionProvider(project: Project) : KaBaseSessionProvider(pr
     }
 
     private fun acquireAnalysisSession(useSiteModule: KaModule): KaSession {
+        // The checks must happen before the session is acquired, so that we don't create and cache a session for a rejected analysis.
+        // They must also happen before `cacheCleaner.enterAnalysis()`, since an exception here doesn't call `cacheCleaner.exitAnalysis()`.
+        checkAnalysisAllowed()
         checkUseSiteModule(useSiteModule)
-
-        ProgressManager.checkCanceled()
 
         // The cache cleaner must be called before we get a session.
         // Otherwise, the acquired session might become invalid after the session cleanup.
