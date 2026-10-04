@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.fir.resolve.inference.ExpectedTypeAsStaticReceiverStrategy
 import org.jetbrains.kotlin.fir.resolve.inference.StateForAtomWithExpectedTypeAsStaticReceiver
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
@@ -218,6 +219,12 @@ object CheckDispatchReceiver : ResolutionStage() {
             }
             val targetType =
                 dispatchReceiverType ?: smartcastedReceiver.smartcastType.coneType
+            if (smartcastedReceiver.smartcastStability == SmartcastStability.OLD_BARE_INFERENCE) {
+                // The candidate is available only via the type inferred by the deprecated (old) bare type argument
+                // inference algorithm. During the migration period it is resolved successfully with a warning.
+                sink.reportDiagnostic(UnstableSmartCastDueToOldBareInference(smartcastedReceiver, targetType))
+                return
+            }
             sink.yieldDiagnostic(
                 UnstableSmartCast(
                     smartcastedReceiver,

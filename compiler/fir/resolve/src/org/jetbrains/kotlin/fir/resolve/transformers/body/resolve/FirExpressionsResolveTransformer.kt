@@ -1366,30 +1366,58 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         ) as FirFunctionCall
     }
 
-    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): FirTypeRef {
-        val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return this
-        if (type.typeArguments.isNotEmpty()) return this // TODO: Incorrect for local classes, KT-59686
+    /**
+     * The result of bare type argument inference.
+     *
+     * @property typeRef the conversion type ref with inferred type arguments. During the migration period, it is based
+     *   on the type inferred by the deprecated (old) bare inference algorithm when the latter succeeds.
+     * @property divergedNewType the type inferred by the new bare inference algorithm in case it diverges from
+     *   the old one (i.e., they are not subtypes of each other). It is used as the proper type for the smart cast,
+     *   while the old type produces a deprecated (unstable) smart cast, see [SmartcastStability.OLD_BARE_INFERENCE].
+     */
+    private data class BareTypeInferenceResult(val typeRef: FirTypeRef, val divergedNewType: ConeKotlinType?)
+
+    private fun FirTypeRef.withTypeArgumentsForBareType(argument: FirExpression, operation: FirOperation): BareTypeInferenceResult {
+        val type = coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType() ?: return BareTypeInferenceResult(this, null)
+        if (type.typeArguments.isNotEmpty()) return BareTypeInferenceResult(this, null) // TODO: Incorrect for local classes, KT-59686
         // TODO: Check equality of size of arguments and parameters?
 
-        val firClass = type.lookupTag.toSymbol()?.fir ?: return this
-        if (firClass.typeParameters.isEmpty()) return this
+        val firClass = type.lookupTag.toSymbol()?.fir ?: return BareTypeInferenceResult(this, null)
+        if (firClass.typeParameters.isEmpty()) return BareTypeInferenceResult(this, null)
 
         val originalType = argument.unwrapExpression().resolvedType.let {
             components.context.inferenceSession.getAndSemiFixCurrentResultIfTypeVariable(it) ?: it
         }
 
         val outerClasses by lazy(LazyThreadSafetyMode.NONE) { firClass.symbol.getClassAndItsOuterClassesWhenLocal(session) }
-        val newType = components.computeRepresentativeTypeForBareType(type, originalType)
-            ?: if (
-                firClass.isLocal && firClass.typeParameters.none { it.symbol.containingDeclarationSymbol in outerClasses } &&
-                (operation == NOT_IS || operation == IS || operation == AS || operation == SAFE_AS)
-            ) {
+        val oldType = components.computeRepresentativeTypeForBareType(type, originalType)
+        val newType = components.computeRepresentativeTypeForBareTypeByInheritance(type, originalType)
+        val resultingType = when {
+            oldType != null -> oldType
+            firClass.isLocal && firClass.typeParameters.none { it.symbol.containingDeclarationSymbol in outerClasses } &&
+                    (operation == NOT_IS || operation == IS || operation == AS || operation == SAFE_AS) -> {
                 firClass.defaultType()
-            } else return buildErrorTypeRef {
-                source = this@withTypeArgumentsForBareType.source
-                diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
             }
-        return if (newType.typeArguments.isEmpty()) this else withReplacedConeType(newType)
+            // The old algorithm failed while the new one succeeded: use the new result without any migration diagnostics.
+            newType != null -> newType
+            else -> return BareTypeInferenceResult(
+                buildErrorTypeRef {
+                    source = this@withTypeArgumentsForBareType.source
+                    diagnostic = ConeNoTypeArgumentsOnRhsError(firClass.typeParameters.size, firClass.symbol)
+                },
+                null,
+            )
+        }
+        val divergedNewType = newType.takeIf {
+            oldType != null && newType != null && !AbstractTypeChecker.isSubtypeOf(
+                session.typeContext,
+                newType,
+                oldType,
+                stubTypesEqualToAnything = false,
+            )
+        }
+        val resultingTypeRef = if (resultingType.typeArguments.isEmpty()) this else withReplacedConeType(resultingType)
+        return BareTypeInferenceResult(resultingTypeRef, divergedNewType)
     }
 
     override fun transformTypeOperatorCall(
@@ -1413,7 +1441,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             resolved.prepareCSRHintForTypeOperatorIfNeeded()
         }
 
-        val conversionTypeRef = resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
+        val bareTypeInferenceResult =
+            resolved.conversionTypeRef.withTypeArgumentsForBareType(resolved.argument, typeOperatorCall.operation)
+        val conversionTypeRef = bareTypeInferenceResult.typeRef
+        val divergedNewType = bareTypeInferenceResult.divergedNewType
         resolved.transformChildren(object : FirDefaultTransformer<Any?>() {
             override fun <E : FirElement> transformElement(element: E, data: Any?): E {
                 return element
@@ -1442,7 +1473,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             else -> error("Unknown type operator: ${resolved.operation}")
         }
-        dataFlowAnalyzer.exitTypeOperatorCall(resolved)
+        dataFlowAnalyzer.exitTypeOperatorCall(resolved, divergedNewType)
         return resolved
     }
 

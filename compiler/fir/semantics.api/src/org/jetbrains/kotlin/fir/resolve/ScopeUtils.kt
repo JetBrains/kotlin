@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveBoundsToPhaseWithCallableMemb
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.SmartcastStability
 
 context(c: SessionAndScopeSessionHolder)
 fun FirSmartCastExpression.smartcastScope(
@@ -40,7 +41,15 @@ fun FirSmartCastExpression.smartcastScope(
         return smartcastScope
     }
 
-    val originalScope = originalExpression.resolvedType.scope(
+    // For deprecated smart casts based on the old bare type argument inference, the stable part of the smart cast
+    // (the resolved type of this expression) is wider than the original expression type, so it should be used
+    // as the "original" scope: only the members that require the old bare inference result must be marked as unstable.
+    val stableType = when (smartcastStability) {
+        SmartcastStability.OLD_BARE_INFERENCE -> resolvedType
+        else -> originalExpression.resolvedType
+    }
+
+    val originalScope = stableType.scope(
         callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
         requiredMembersPhase = requiredMembersPhase,
     ) ?: return smartcastScope

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeForTypeMismatch
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULL_FOR_NONNULL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSTABLE_SMART_CAST_DUE_TO_OLD_BARE_INFERENCE
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.types.SmartcastStability
 
 object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -95,6 +97,17 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker(MppChec
                 if (resultExpression is FirSmartCastExpression && !resultExpression.isStable &&
                     isSubtypeForTypeMismatch(typeContext, subtype = resultExpression.smartcastType.coneType, supertype = functionReturnType)
                 ) {
+                    if (resultExpression.smartcastStability == SmartcastStability.OLD_BARE_INFERENCE) {
+                        // The returned expression fits the return type only thanks to the type inferred
+                        // by the deprecated (old) bare type argument inference algorithm.
+                        // During the migration period, only a warning is reported.
+                        reporter.reportOn(
+                            resultExpression.source,
+                            UNSTABLE_SMART_CAST_DUE_TO_OLD_BARE_INFERENCE,
+                            resultExpression.smartcastType.coneType,
+                        )
+                        return
+                    }
                     reporter.reportOn(
                         resultExpression.source,
                         SMARTCAST_IMPOSSIBLE,
