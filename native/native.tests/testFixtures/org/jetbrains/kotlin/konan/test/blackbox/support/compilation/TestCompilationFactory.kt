@@ -27,6 +27,7 @@ class TestCompilationFactory {
     private val cachedObjCFrameworkCompilations = ThreadSafeCache<ObjCFrameworkCacheKey, ObjCFrameworkCompilation>()
     private val cachedBinaryLibraryCompilations = ThreadSafeCache<BinaryLibraryCacheKey, BinaryLibraryCompilation>()
     private val cachedIncludedBinaryLibraryCompilations = ThreadSafeCache<IncludedBinaryLibraryCacheKey, BinaryLibraryCompilation>()
+    private val cachedIncludedObjCFrameworkCompilations = ThreadSafeCache<IncludedObjCFrameworkCacheKey, ObjCFrameworkCompilation>()
     private val cachedTestBundleCompilations = ThreadSafeCache<TestBundleCacheKey, TestBundleCompilation>()
 
     private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs, val useHeaders: Boolean)
@@ -34,6 +35,7 @@ class TestCompilationFactory {
     private data class ObjCFrameworkCacheKey(val sourceModules: Set<TestModule>)
     private data class BinaryLibraryCacheKey(val sourceModules: Set<TestModule>, val kind: BinaryLibraryKind)
     private data class IncludedBinaryLibraryCacheKey(val orderedModules: List<TestModule.Exclusive>, val kind: BinaryLibraryKind)
+    private data class IncludedObjCFrameworkCacheKey(val orderedModules: List<TestModule.Exclusive>, val frameworkName: String)
     private data class TestBundleCacheKey(val sourceModules: Set<TestModule>)
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
@@ -193,6 +195,41 @@ class TestCompilationFactory {
                     buildDir ?: settings.get<Binaries>().testBinariesDir,
                     testCase.nominalPackageName.compressedPackageName
                 )
+            )
+        }
+    }
+
+    /**
+     * Compiles each module to its own KLIB and `-Xinclude`s them all into one Objective-C framework, preserving the
+     * order of [orderedIncludedModules] on the command line.
+     *
+     * The ObjC export counterpart of [includedModulesToBinaryLibrary]. Unlike [testCaseToObjCFrameworkCompilation],
+     * nothing is compiled from sources directly into the framework: the framework's whole API surface comes from the
+     * included libraries, which is what lets a test control the module iteration order that ObjC export sees.
+     */
+    fun includedModulesToObjCFramework(
+        orderedIncludedModules: List<TestModule.Exclusive>,
+        freeCompilerArgs: TestCompilerArgs,
+        settings: Settings,
+        frameworkName: String,
+    ): ObjCFrameworkCompilation {
+        val cacheKey = IncludedObjCFrameworkCacheKey(orderedIncludedModules, frameworkName)
+        cachedIncludedObjCFrameworkCompilations[cacheKey]?.let { return it }
+
+        val includedDependencies = orderedIncludedModules.map { module ->
+            modulesToKlib(setOf(module), freeCompilerArgs, ProduceStaticCache.No, settings)
+                .klib.asKlibDependency(IncludedLibrary)
+        }
+        return cachedIncludedObjCFrameworkCompilations.computeIfAbsent(cacheKey) {
+            ObjCFrameworkCompilation(
+                settings = settings,
+                freeCompilerArgs = freeCompilerArgs,
+                sourceModules = emptySet(),
+                dependencies = includedDependencies,
+                expectedArtifact = ObjCFramework(
+                    settings.get<Binaries>().testBinariesDir.resolve("$frameworkName-framework"),
+                    frameworkName,
+                ),
             )
         }
     }

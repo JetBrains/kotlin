@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
@@ -63,8 +62,50 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
         )
     }
 
+    /**
+     * All libraries of this DAG in the canonical RTO:
+     * - dependencies before dependents
+     * - everything the edges leave unconstrained decided by [dag]'s keys, i.e. by the order of
+     *   [LoadedNativeKlibs.all]: at each step the first library in that order whose dependencies have all
+     *   been emitted is the one emitted next.
+     *
+     * Example: with keys `[X, Y, Z]` and the single edge `X -> Z` the result is `[Y, Z, X]`.
+     *
+     * Why [LoadedNativeKlibs.all] is chosen as a tie-breaker:
+     * We used to derive the order of siblings based on the `depends` property of the dependent's manifest, which
+     * was a stable list of dependencies.
+     * Since we're removing the `depends` property we are left with a few options:
+     * - Sort by IR-driven edges. We discover the dependency graph by the actual IR edges, which is not stable.
+     * - Sort libraries by something like `path` or `uniqueName`. This isn't stable for the one-stage mode, in which
+     * an intermediate klib is being produced with a random name and path somewhere in a temporary directory.
+     * - Sort by the `LoadedNativeKlibs.all` order. This gives us a stable order for a given compilation configuration.
+     * So, `LoadedNativeKlibs.all` was chosen as the second-best alternative to `depends`.
+     */
     val librariesReverseTopoSorted: List<KotlinLibrary> by lazy {
-        DFS.topologicalOrder(dag.keys) { library -> dag.getValue(library).directDependencies }.reversed()
+        // Kahn's algorithm is used rather than a DFS because a DFS takes its *neighbour* order as part of
+        // the output order, and `KlibDAGNode.directDependencies` is an unordered `HashSet`. Even if it was
+        // a `LinkedHashSet` its order would be tied to the order we discover IR links between modules, which
+        // itself isn't stable. So a DFS would place sibling libraries in the result in an unstable order.
+        // Probably reproducible for a fixed command line, but perturbed by adding, removing or moving a library
+        // that nothing depends on.
+        // Kahn's algorithm never uses that order. `KlibDAGNode.directDependencies` is consulted only to ask
+        // whether a library's dependencies have all been emitted already.
+        //
+        // NB! this relies on `dag` preserving insertion order.
+        val remaining = LinkedHashSet(dag.keys) // Load order.
+        val emitted = LinkedHashSet<KotlinLibrary>(dag.size) // Insertion order
+
+        while (remaining.isNotEmpty()) {
+            // The first library in load order all of whose dependencies have already been emitted.
+            val next = remaining.firstOrNull { library ->
+                emitted.containsAll(dag.getValue(library).directDependencies)
+            } ?: remaining.first() // The fallback should be unreachable in an acyclic graph.
+
+            remaining -= next
+            emitted += next
+        }
+
+        emitted.toList()
     }
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =

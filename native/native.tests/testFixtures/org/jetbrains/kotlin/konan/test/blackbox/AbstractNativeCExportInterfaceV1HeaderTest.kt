@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.BinaryLibraryKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.HeaderTestModuleMarkers
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Tag
-import java.nio.file.Path
-import kotlin.io.path.exists
-import kotlin.io.path.nameWithoutExtension
+import java.io.File
 
 @Tag("cexport")
 abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimpleTest() {
@@ -27,25 +26,27 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
     private val testCompilationFactory = TestCompilationFactory()
 
     protected fun runTest(@TestDataFile testFile: String) {
-        val path = ForTestCompileRuntime.transformTestDataPath(testFile).toPath()
-        val goldenDataHeaderFile = resolveTargetSpecificGoldenDataFile(path)
+        val path = File(ForTestCompileRuntime.transformTestDataPath(testFile).path)
+        val goldenDataHeaderFile = HeaderTestModuleMarkers.resolveTargetSpecificGoldenDataFile(
+            path, targets.testTarget.toString(), extension = "h"
+        )
 
         val testName: String = path.nameWithoutExtension
-        val lines = path.toFile().readLines()
+        val lines = path.readLines()
 
         // A test data file with `// MODULE:` markers exercises the several-inter-dependent-included-libraries
         // scenario; without them it is a single-module test, compiled exactly as before.
-        val compilation = if (lines.none { it.startsWith("// MODULE:") }) {
-            singleModuleBinaryLibrary(path, testName)
-        } else {
+        val compilation = if (HeaderTestModuleMarkers.hasModuleMarkers(lines)) {
             multiModuleBinaryLibrary(testName, lines)
+        } else {
+            singleModuleBinaryLibrary(path, testName)
         }
 
         val binaryLibrary = compilation.result.assertSuccess().resultingArtifact
         val headerFile = binaryLibrary.headerFile
             ?: error("No header file found for $testName")
 
-        TestDataAssertions.assertEqualsToFile(goldenDataHeaderFile.toFile(), headerFile.readText())
+        TestDataAssertions.assertEqualsToFile(goldenDataHeaderFile, headerFile.readText())
     }
 
     private fun freeCompilerArgs() = TestCompilerArgs(listOf(
@@ -59,9 +60,9 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
     ))
 
     /** A single-module header test: the whole test data file becomes one library. */
-    private fun singleModuleBinaryLibrary(path: Path, moduleName: String): BinaryLibraryCompilation {
+    private fun singleModuleBinaryLibrary(path: File, moduleName: String): BinaryLibraryCompilation {
         val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
-        module.files += TestFile.createCommitted(path.toFile(), module)
+        module.files += TestFile.createCommitted(path, module)
 
         val testCase = TestCase(
             id = TestCaseId.Named(moduleName),
@@ -89,92 +90,21 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
      */
     private fun multiModuleBinaryLibrary(testName: String, lines: List<String>): BinaryLibraryCompilation {
         val sourcesDir = testRunSettings.get<Binaries>().testBinariesDir.resolve("$testName-sources")
-        val parsedModules = parseModules(lines)
+        val orderedModules = HeaderTestModuleMarkers.createOrderedTestModules(
+            HeaderTestModuleMarkers.parseHeaderTestModules(lines), sourcesDir
+        )
 
-        val modulesByName = parsedModules.associate { parsed ->
-            parsed.name to TestModule.Exclusive(parsed.name, parsed.dependencies, emptySet(), emptySet())
-        }
-        val orderedModules = parsedModules.map { modulesByName.getValue(it.name) }
-
-        parsedModules.forEach { parsed ->
-            val module = modulesByName.getValue(parsed.name)
-            parsed.files.forEach { sourceFile ->
-                module.files += TestFile.createUncommitted(sourcesDir.resolve(parsed.name).resolve(sourceFile.name), module, sourceFile.text)
-            }
-        }
-
-        val testCase = TestCase(
-            id = TestCaseId.Named(testName),
-            kind = TestKind.STANDALONE_NO_TR,
-            modules = orderedModules.toSet(),
-            freeCompilerArgs = freeCompilerArgs(),
-            nominalPackageName = PackageName(testName),
-            checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
-            extras = TestCase.NoTestRunnerExtras()
-        ).apply {
-            initialize(null, null)
-        }
+        val testCase = HeaderTestModuleMarkers.createInitializedHeaderTestCase(
+            testName,
+            orderedModules.toSet(),
+            freeCompilerArgs(),
+            TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
+        )
         return testCompilationFactory.includedModulesToBinaryLibrary(
             orderedModules,
             testCase.freeCompilerArgs,
             testRunSettings,
             kind = testRunSettings.get<BinaryLibraryKind>(),
         )
-    }
-
-    private class ParsedModule(val name: String, val dependencies: Set<String>) {
-        val files = mutableListOf<SourceFile>()
-    }
-
-    private class SourceFile(val name: String, val text: String)
-
-    /**
-     * Parses `// MODULE: name(dep1, dep2)` blocks, each optionally split into `// FILE: <name>` source files (a module
-     * with no `// FILE:` marker becomes a single `<module>.kt` file). Only regular dependencies are supported. Module
-     * declaration order is preserved — it is the order in which the modules are `-Xinclude`d. Any text before the first
-     * `// MODULE:` marker is treated as a preamble and dropped.
-     */
-    private fun parseModules(lines: List<String>): List<ParsedModule> {
-        val moduleHeader = Regex("""// MODULE:\s*(\w+)\s*(?:\(([^)]*)\))?\s*""")
-        val fileMarker = "// FILE: "
-
-        val modules = mutableListOf<ParsedModule>()
-        var currentFileName: String? = null
-        val currentText = StringBuilder()
-
-        fun flushFile() {
-            val module = modules.lastOrNull() ?: run { currentText.clear(); return }
-            val name = currentFileName ?: if (currentText.isBlank()) return else "${module.name}.kt"
-            module.files += SourceFile(name, currentText.toString())
-            currentText.clear()
-            currentFileName = null
-        }
-
-        for (line in lines) {
-            val moduleMatch = moduleHeader.matchEntire(line.trim())
-            when {
-                moduleMatch != null -> {
-                    flushFile()
-                    val name = moduleMatch.groupValues[1]
-                    val deps = moduleMatch.groupValues[2].split(',').map(String::trim).filter(String::isNotEmpty).toSet()
-                    modules += ParsedModule(name, deps)
-                }
-                line.startsWith(fileMarker) -> {
-                    flushFile()
-                    currentFileName = line.removePrefix(fileMarker).trim()
-                }
-                else -> currentText.appendLine(line)
-            }
-        }
-        flushFile()
-        return modules
-    }
-
-    private fun resolveTargetSpecificGoldenDataFile(pathToTestFile: Path): Path {
-        val testName = pathToTestFile.nameWithoutExtension
-        val parentDirectory = pathToTestFile.parent
-        val targetSpecificFile = parentDirectory.resolve("$testName.${targets.testTarget}.h")
-        val commonFile = parentDirectory.resolve("$testName.h")
-        return if (targetSpecificFile.exists()) targetSpecificFile else commonFile
     }
 }
