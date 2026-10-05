@@ -71,7 +71,24 @@ internal object ClasspathSnapshotShrinker {
         val lookupSymbols =
             LookupSymbolSet(lookupSymbolKeys.asSequence().map { LookupSymbol(name = it.name, scope = it.scope) }.asIterable())
 
+        // A class `pkg.Outer.Inner` can only be matched below by a lookup whose scope is `pkg`, `pkg.Outer`, or `pkg.Outer.Inner`, so its
+        // package must be equal to a lookup scope or be a dot-separated prefix of one. Checking that first is a single hash lookup on an
+        // already computed string, whereas the precise check allocates several FqNames per class -- for every class on the classpath.
+        val candidatePackages = HashSet<String>()
+        for (key in lookupSymbolKeys) {
+            var scope = key.scope
+            while (candidatePackages.add(scope)) {
+                val lastDot = scope.lastIndexOf('.')
+                if (lastDot < 0) {
+                    candidatePackages.add("")
+                    break
+                }
+                scope = scope.substring(0, lastDot)
+            }
+        }
+
         val referencedClasses = allClasses.filter { clazz ->
+            if (clazz.classId.packageFqName.asString() !in candidatePackages) return@filter false
             when (clazz) {
                 is RegularKotlinClassSnapshot, is JavaClassSnapshot -> {
                     ClassSymbol(clazz.classId).toLookupSymbol() in lookupSymbols
@@ -101,8 +118,10 @@ internal object ClasspathSnapshotShrinker {
         allClasses: List<AccessibleClassSnapshot>,
         referencedClasses: List<AccessibleClassSnapshot>
     ): List<AccessibleClassSnapshot> {
+        // Indexing all classes is linear in the size of the classpath, don't do it when there is nothing to start from
+        if (referencedClasses.isEmpty()) return emptyList()
         val referencedClassIds = referencedClasses.map { it.classId }
-        val impactingClassesResolver = AllImpacts.getReverseResolver(allClasses)
+        val impactingClassesResolver = AllImpacts.getReverseResolver(ClassSnapshotIndex(allClasses))
         val transitivelyReferencedClassIds: Set<ClassId> = /* Must be a Set for the presence check below */
             findReachableNodes(referencedClassIds, impactingClassesResolver::getImpactingClasses)
 

@@ -20,8 +20,63 @@ internal sealed interface Impact {
 
     /**
      * Provides an [ImpactingClassesResolver] to compute the set of classes impacting a given set of classes (the reverse of [getResolver]).
+     *
+     * The resolver computes impacting classes on demand: it is used when shrinking classpath snapshots, where only the few classes that
+     * are reachable from the referenced classes are visited, so precomputing the impact graph of the entire classpath would dominate the
+     * shrinking time.
      */
-    fun getReverseResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactingClassesResolver
+    fun getReverseResolver(allClasses: ClassSnapshotIndex): ImpactingClassesResolver
+}
+
+/**
+ * Index of [AccessibleClassSnapshot]s by [ClassId] and by [JvmClassName].
+ *
+ * Classes are only grouped by package name upfront (an already computed string); the per-package lookup tables are built when a package is
+ * first queried. When shrinking classpath snapshots only a few packages are queried, so this stays cheap even for a classpath with many
+ * thousands of classes.
+ */
+internal class ClassSnapshotIndex(allClasses: Iterable<AccessibleClassSnapshot>) {
+
+    private class PackageIndex(classes: List<AccessibleClassSnapshot>) {
+        /** Note: a [ClassId] should be unique on a deduplicated classpath, but keep all classes if it isn't. */
+        val classesByClassId = HashMap<ClassId, MutableList<AccessibleClassSnapshot>>()
+
+        /** Relative class name with `$` separators (see [JvmClassName.internalNameByClassId]) -> [ClassId]. */
+        val classIdsByRelativeInternalName = HashMap<String, ClassId>()
+
+        init {
+            for (clazz in classes) {
+                classesByClassId.getOrPut(clazz.classId) { ArrayList(1) }.add(clazz)
+                classIdsByRelativeInternalName[clazz.classId.relativeClassName.asString().replace('.', '$')] = clazz.classId
+            }
+        }
+    }
+
+    private val classesByPackageName = HashMap<String, MutableList<AccessibleClassSnapshot>>()
+    private val packageIndices = HashMap<String, PackageIndex>()
+
+    init {
+        for (clazz in allClasses) {
+            classesByPackageName.getOrPut(clazz.classId.packageFqName.asString()) { ArrayList() }.add(clazz)
+        }
+    }
+
+    private fun getPackageIndex(packageName: String): PackageIndex? {
+        val classes = classesByPackageName[packageName] ?: return null
+        return packageIndices.getOrPut(packageName) { PackageIndex(classes) }
+    }
+
+    operator fun get(classId: ClassId): List<AccessibleClassSnapshot> =
+        getPackageIndex(classId.packageFqName.asString())?.classesByClassId?.get(classId).orEmpty()
+
+    /** Returns the [ClassId] of the class with the given [JvmClassName] if it is in this index, or null otherwise. */
+    fun getClassId(className: JvmClassName): ClassId? {
+        // A package name can't contain '/', so the last '/' separates the package from the relative class name
+        val internalName = className.internalName
+        val lastSlash = internalName.lastIndexOf('/')
+        val packageName = if (lastSlash < 0) "" else internalName.substring(0, lastSlash).replace('/', '.')
+        return getPackageIndex(packageName)?.classIdsByRelativeInternalName?.get(internalName.substring(lastSlash + 1))
+    }
 }
 
 /**
@@ -73,7 +128,7 @@ internal object AllImpacts : Impact {
         }
     }
 
-    override fun getReverseResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactingClassesResolver {
+    override fun getReverseResolver(allClasses: ClassSnapshotIndex): ImpactingClassesResolver {
         val reverseResolvers = allImpacts.map { it.getReverseResolver(allClasses) }
         return object : ImpactingClassesResolver {
             override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
@@ -106,11 +161,18 @@ private object SupertypesInheritorsImpact : Impact {
         }
     }
 
-    override fun getReverseResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactingClassesResolver {
-        val classIdToSupertypesMap: Map<ClassId, Set<ClassId>> = getClassIdToSupertypesMap(allClasses)
+    override fun getReverseResolver(allClasses: ClassSnapshotIndex): ImpactingClassesResolver {
         return object : ImpactingClassesResolver {
             override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
-                return classIdToSupertypesMap[classId] ?: emptySet()
+                // Same as `getClassIdToSupertypesMap(allClasses)[classId]`, but computed for the requested class only
+                return allClasses[classId].flatMapTo(mutableSetOf()) { clazz ->
+                    when (clazz) {
+                        is RegularKotlinClassSnapshot -> clazz.supertypes.mapNotNull { allClasses.getClassId(it) }
+                        // See getClassIdToSupertypesMap for why supertypes of these classes are not needed
+                        is PackageFacadeKotlinClassSnapshot, is MultifileClassKotlinClassSnapshot -> emptyList()
+                        is JavaClassSnapshot -> clazz.supertypes.mapNotNull { allClasses.getClassId(it) }
+                    }
+                }
             }
         }
     }
@@ -204,17 +266,14 @@ private object ConstantsInCompanionObjectsImpact : Impact {
         }
     }
 
-    override fun getReverseResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactingClassesResolver {
-        val companionObjects: Set<ClassId> = allClasses.mapNotNullTo(mutableSetOf()) { clazz ->
-            (clazz as? RegularKotlinClassSnapshot)?.constantsInCompanionObject?.let { constants ->
-                // We only care about companion objects that define some constants
-                if (constants.isNotEmpty()) clazz.classId else null
-            }
-        }
-
+    override fun getReverseResolver(allClasses: ClassSnapshotIndex): ImpactingClassesResolver {
         return object : ImpactingClassesResolver {
             override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
-                return if (classId in companionObjects) {
+                val isCompanionObjectWithConstants = allClasses[classId].any { clazz ->
+                    // We only care about companion objects that define some constants
+                    (clazz as? RegularKotlinClassSnapshot)?.constantsInCompanionObject?.isNotEmpty() == true
+                }
+                return if (isCompanionObjectWithConstants) {
                     // classId.outerClassId should be present in `allClasses` as this is a companion object
                     setOf(classId.outerClassId!!)
                 } else emptySet()
@@ -270,22 +329,14 @@ private object TypeAliasExpansionImpact : Impact {
      * it must also retain B, otherwise a later change in B could not be detected. This is deliberately not the exact inverse of the
      * forward map above.
      */
-    override fun getReverseResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactingClassesResolver {
-        val facadeToExpandedClasses: Map<ClassId, Set<ClassId>> = getFacadeToExpandedClassesMap(allClasses)
-
+    override fun getReverseResolver(allClasses: ClassSnapshotIndex): ImpactingClassesResolver {
         return object : ImpactingClassesResolver {
             override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
-                return facadeToExpandedClasses[classId] ?: emptySet()
+                return allClasses[classId].filterIsInstance<PackageFacadeKotlinClassSnapshot>()
+                    .flatMapTo(mutableSetOf()) { facade -> facade.typeAliases.orEmpty().map { it.expandedClassId } }
             }
         }
     }
-
-    private fun getFacadeToExpandedClassesMap(allClasses: Iterable<AccessibleClassSnapshot>): Map<ClassId, Set<ClassId>> =
-        buildMap<ClassId, MutableSet<ClassId>> {
-            allClasses.filterIsInstance<PackageFacadeKotlinClassSnapshot>().forEach { snapshot ->
-                getOrPut(snapshot.classId) { mutableSetOf() }.addAll(snapshot.typeAliases.orEmpty().map { it.expandedClassId })
-            }
-        }
 }
 
 internal object BreadthFirstSearch {
