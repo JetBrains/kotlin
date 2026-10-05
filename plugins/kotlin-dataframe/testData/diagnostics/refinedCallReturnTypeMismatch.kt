@@ -11,12 +11,12 @@ interface Type {
 }
 
 fun test(): DataFrame<Type> {
-    return <!RETURN_TYPE_MISMATCH!>dataFrameOf("a" to columnOf(1)).cast<Type>().add("b") { 2 }<!>
+    return <!RETURN_TYPE_MISMATCH!>dataFrameOf("a" to columnOf(1)).cast<Type>().add("b") { a }<!>
 }
 
-fun testExpressionBody(): DataFrame<Type> = <!RETURN_TYPE_MISMATCH!>dataFrameOf("a" to columnOf(1)).cast<Type>().add("b") { 2 }<!>
+fun testExpressionBody(): DataFrame<Type> = <!RETURN_TYPE_MISMATCH!>dataFrameOf("a" to columnOf(1)).cast<Type>().add("b") { a }<!>
 
 fun testWithVariable(): DataFrame<Type> {
-    val df = dataFrameOf("a" to columnOf(1)).cast<Type>().add("b") { 2 }
+    val df = dataFrameOf("a" to columnOf(1)).cast<Type>().add("b") { a }
     return <!RETURN_TYPE_MISMATCH!>df<!>
 }
