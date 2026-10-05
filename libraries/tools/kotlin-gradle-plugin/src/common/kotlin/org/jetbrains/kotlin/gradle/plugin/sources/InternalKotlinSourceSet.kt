@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
+import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -24,6 +25,9 @@ internal interface InternalKotlinSourceSet : KotlinSourceSet {
     val withDependsOnClosure: ObservableSet<KotlinSourceSet>
     val compilations: MutableObservableSet<KotlinCompilation<*>>
 }
+
+internal val InternalKotlinSourceSet.npmDependenciesCollector: KotlinNpmDependenciesCollector
+    get() = defaultImpl.npmDependenciesCollector
 
 internal suspend fun InternalKotlinSourceSet.awaitPlatformCompilations(): Set<KotlinCompilation<*>> {
     KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
