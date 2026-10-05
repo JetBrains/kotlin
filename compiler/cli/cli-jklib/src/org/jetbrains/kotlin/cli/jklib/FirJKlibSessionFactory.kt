@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @OptIn(SessionConfiguration::class)
@@ -56,8 +57,13 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
                 scopeProvider,
                 context.packagePartProvider
             ),
-            FirJvmBuiltinsSymbolProvider(session, FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)) {
-                kotlinClassFinder.findBuiltInsData(it)
+            // Like in FirJvmSessionFactory, the stdlib declares the built-ins itself. Providing the fallback built-ins here
+            // would make the common sources resolve calls to some `expect` functions (e.g. `byteArrayOf`) to the fallback
+            // built-in instead of the `expect` declaration, and the actualizer would not replace them.
+            runUnless(session.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+                FirJvmBuiltinsSymbolProvider(session, FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)) {
+                    kotlinClassFinder.findBuiltInsData(it)
+                }
             }
         )
     }

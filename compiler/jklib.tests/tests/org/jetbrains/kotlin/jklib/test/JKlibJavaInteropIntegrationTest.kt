@@ -119,9 +119,9 @@ class JKlibJavaInteropIntegrationTest {
         val messageCollector = MessageCollectorImpl()
         val disposable = Disposer.newDisposable()
         try {
-            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            val artifact = compiler.compileToIr(args, messageCollector, disposable)
             if (artifact == null) {
-                error("compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+                error("compileToIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
             }
         } finally {
             disposeRootInWriteAction(disposable)
@@ -225,9 +225,9 @@ class JKlibJavaInteropIntegrationTest {
         val messageCollector = MessageCollectorImpl()
         val disposable = Disposer.newDisposable()
         try {
-            val artifact = compiler.compileKlibAndDeserializeIr(args, messageCollector, disposable)
+            val artifact = compiler.compileToIr(args, messageCollector, disposable)
             if (artifact == null) {
-                error("compileKlibAndDeserializeIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
+                error("compileToIr returned null. Messages:\n" + messageCollector.messages.joinToString("\n"))
             }
         } finally {
             disposeRootInWriteAction(disposable)

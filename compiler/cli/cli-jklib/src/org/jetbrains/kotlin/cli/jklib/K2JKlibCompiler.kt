@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JKlibCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jklib.pipeline.IrCompilationResult
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibCliPipeline
-import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibIrCompilationArtifact
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
@@ -36,13 +36,17 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         basicMessageCollector: MessageCollector,
     ): ExitCode = JKlibCliPipeline(defaultPerformanceManager).execute(arguments, services, basicMessageCollector)
 
-    /** Entry point used by J2CL to get the IR tree. */
+    /**
+     * Entry point to get the IR tree.
+     *
+     * Returns `null` if the compilation failed, in which case the errors have been reported to [messageCollector].
+     */
     @Suppress("UNUSED")
-    fun compileKlibAndDeserializeIr(
+    fun compileToIr(
         arguments: K2JKlibCompilerArguments,
         messageCollector: MessageCollector,
         rootDisposable: Disposable,
-    ): JKlibIrCompilationArtifact? {
+    ): IrCompilationResult? {
         arguments.compileIr = true
         val result =
             JKlibCliPipeline(defaultPerformanceManager)
@@ -53,7 +57,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                     rootDisposable,
                 )
 
-        return if (result is JKlibIrCompilationArtifact) {
+        return if (result is IrCompilationResult) {
             result
         } else {
             check(result.exitCode != ExitCode.OK)
@@ -73,3 +77,4 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         }
     }
 }
+

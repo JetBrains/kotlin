@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.jklib.test.irText
 
-import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.jklib.pipeline.JKlibKlibSerializationPhase
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelineContext
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.invokeToplevel
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
 import org.jetbrains.kotlin.test.model.BackendFacade
 import org.jetbrains.kotlin.test.model.BackendKinds.IrBackend
@@ -28,13 +26,10 @@ import org.jetbrains.kotlin.test.model.ArtifactKind
 class SerializationCliJKlibFacade(testServices: TestServices) :
     BackendFacade<IrBackendInput, JKlibKLibWithArtifact>(testServices, IrBackend, ArtifactKinds.KLib as ArtifactKind<JKlibKLibWithArtifact>) {
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): JKlibKLibWithArtifact? {
-        if (inputArtifact !is Fir2IrCliBasedOutputArtifact<*>) {
-            error("input artifact is not a Fir2IrCliBasedOutputArtifact")
+        require(inputArtifact is JKlibIrCompilationResultBackendInput) {
+            "input artifact is not a JKlibIrCompilationResultBackendInput"
         }
-        val cliArtifact = inputArtifact.cliArtifact
-        require(cliArtifact is JKlibFir2IrPipelineArtifact)
-
-        val serializationArtifact = JKlibKlibSerializationPhase.executePhase(cliArtifact)
+        val serializationArtifact = JKlibKlibSerializationPhase.executePhase(inputArtifact.fir2IrArtifact)
 
         val configuration = serializationArtifact.configuration
         if (CheckCompilationErrors.CheckDiagnosticCollector.checkHasErrors(configuration)) {
