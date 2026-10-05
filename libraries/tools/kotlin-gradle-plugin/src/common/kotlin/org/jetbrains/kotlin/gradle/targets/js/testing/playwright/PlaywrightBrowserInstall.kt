@@ -49,11 +49,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 
     @get:Input
     @get:Optional
-    internal val nodeExecutable: Provider<String> = nodeJsToolchainService.flatMap {
-        if (it is DisabledNodeJsToolchainServiceImpl) {
-            objects.property(compilation.nodeJsEnvSpec).flatMap { it.executable }
-        } else objects.property()
-    }
+    internal val nodeExecutable: Provider<String> = nodeJsToolchainService.legacyNodeJsExecutable(objects, compilation)
 
     @OptIn(ExperimentalNodeJsToolchainDsl::class)
     @get:Input
@@ -121,13 +117,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
 
         val lock = KotlinInterprocessDirectoryLock(outputDir.getFile())
 
-        val nodeJsExecutable = nodeJsToolchainService.get().let { service ->
-            if (service is DisabledNodeJsToolchainServiceImpl) {
-                nodeExecutable.get()
-            } else {
-                service.request(nodeJsRequest.get()).get().executable.orNull ?: error("Node js executable should be provisioned")
-            }
-        }
+        val nodeJsExecutable = nodeJsToolchainService.get().resolveNodeJsExecutable(nodeExecutable, nodeJsRequest)
 
         lock.withLock {
             execOperations.exec { spec ->

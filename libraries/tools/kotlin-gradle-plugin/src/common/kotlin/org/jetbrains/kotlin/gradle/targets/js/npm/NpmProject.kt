@@ -118,6 +118,7 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         NpmProjectModules(dir.getFile())
     }
 
+    @Deprecated("Use nodeJsToolchainService instead")
     internal val nodeExecutable by lazy {
         nodeJs.executable.get()
     }
