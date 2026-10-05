@@ -266,6 +266,59 @@ class SwiftExportIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-89354: what xcodebuild writes into its products directory keeps the Swift Export pipeline up-to-date")
+    @GradleTest
+    fun testXcodebuildKeepsSwiftExportUpToDate(
+        gradleVersion: GradleVersion,
+    ) {
+        project("emptyxcode", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            val xcodeproj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val pbxproj = xcodeproj.resolve("project.pbxproj")
+            pbxproj.writeText(pbxproj.readText().replace(":embedAndSignAppleFrameworkForXcode", ":embedSwiftExportForXcode"))
+
+            val derivedDataPath = projectPath.resolve("iosApp/iosApp.derivedData")
+            fun xcodebuild() = buildXcodeProject(
+                xcodeproj = xcodeproj,
+                buildSettingOverrides = mapOf("ARCHS" to "arm64"),
+                derivedDataPath = derivedDataPath,
+            ).gradleTaskOutcomes()
+
+            val swiftExportPipeline = listOf(
+                ":iosSimulatorArm64SwiftExport",
+                ":compileSwiftExportMainKotlinIosSimulatorArm64",
+                ":linkSwiftExportBinaryDebugStaticIosSimulatorArm64",
+                ":iosSimulatorArm64DebugGenerateSPMPackage",
+                ":iosSimulatorArm64DebugBuildSPMPackage",
+                ":mergeIosSimulatorDebugSwiftExportLibraries",
+                ":copyDebugSPMIntermediates",
+            )
+
+            val firstRun = xcodebuild()
+            assertTrue(swiftExportPipeline.all { it in firstRun }, "The Swift Export pipeline didn't run: $firstRun")
+            assertEquals(swiftExportPipeline.associateWith { null }, swiftExportPipeline.associateWith { firstRun[it] })
+
+            // The first build also linked the app into the products directory that Gradle copies into
+            val secondRun = xcodebuild()
+            assertEquals(
+                swiftExportPipeline.associateWith { "UP-TO-DATE" },
+                swiftExportPipeline.associateWith { secondRun[it] },
+            )
+        }
+    }
+
     @DisplayName("check Swift Export fat binary build")
     @GradleTest
     fun testSwiftExportFatBinaryBuild(
