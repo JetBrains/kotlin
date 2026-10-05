@@ -21,14 +21,14 @@ expect fun kclassArg()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("Ann; Ann; Annotation `@Target(allowedTargets = [AnnotationTarget.FUNCTION, AnnotationTarget.CLASS] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)` is missing on actual declaration")!>actual<!> annotation class Ann
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("Ann; 'actual' declaration 'Ann' from '<m1-jvm> for JVM'; Annotation `@Target(allowedTargets = [AnnotationTarget.FUNCTION, AnnotationTarget.CLASS] type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget)` is missing on actual declaration")!>actual<!> annotation class Ann
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("stringConcat; stringConcat; Annotation `@Ann2(s = \"12\")` is missing on actual declaration")!>actual<!> fun stringConcat() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("stringConcat; 'actual' declaration 'stringConcat' from '<m1-jvm> for JVM'; Annotation `@Ann2(s = \"12\")` is missing on actual declaration")!>actual<!> fun stringConcat() {}
 
 // Not reported in K1, because supported starting from K2
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("onType; onType; Annotation `@Ann2(s = \"\")` is missing on actual declaration")!>actual<!> fun onType(): Any? = null
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("onType; 'actual' declaration 'onType' from '<m1-jvm> for JVM'; Annotation `@Ann2(s = \"\")` is missing on actual declaration")!>actual<!> fun onType(): Any? = null
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("kclassArg; kclassArg; Annotation `@Ann3(kclass = String::class)` is missing on actual declaration")!>actual<!> fun kclassArg() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("kclassArg; 'actual' declaration 'kclassArg' from '<m1-jvm> for JVM'; Annotation `@Ann3(kclass = String::class)` is missing on actual declaration")!>actual<!> fun kclassArg() {}
 
 /* GENERATED_FIR_TAGS: actual, annotationDeclaration, classReference, expect, functionDeclaration, nullableType,
 primaryConstructor, propertyDeclaration, starProjection, stringLiteral */
