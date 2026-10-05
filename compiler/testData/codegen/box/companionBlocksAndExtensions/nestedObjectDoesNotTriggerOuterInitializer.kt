@@ -1,6 +1,4 @@
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// JS_IR, JS_IR_ES6 KT-83337
 
 var initLog = ""
 
