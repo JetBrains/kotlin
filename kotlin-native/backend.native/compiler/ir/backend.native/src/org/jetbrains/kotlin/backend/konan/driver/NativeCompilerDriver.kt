@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
@@ -46,6 +47,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.HEADER_CACHE -> produceBinary(engine, config, environment)
+                        CompilerOutputKind.OBJC_CACHE -> config.configuration.reportCompilationErrorAndThrow("-produce objc_cache is not supported yet")
                         CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
                     }
                 }

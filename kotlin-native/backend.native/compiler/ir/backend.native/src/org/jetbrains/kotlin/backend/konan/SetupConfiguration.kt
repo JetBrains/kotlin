@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.config.nativeBinaryOptions.*
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.pipeline.NativeKlibConfigurationUpdater
 import kotlin.io.path.Path
@@ -56,6 +58,40 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     }
 
     val outputKind = konanProducedArtifactKind!!
+    if (outputKind == CompilerOutputKind.OBJC_CACHE) {
+        val target = if (arguments.target != null) {
+            KonanTarget.predefinedTargets[arguments.target]
+        } else {
+            HostManager.host
+        }
+        if (target == null || !target.family.isAppleFamily) {
+            report(KONAN_ARGUMENT_ERROR, "producing objc_cache is only supported for Apple targets, but target is ${target?.name ?: arguments.target ?: "unknown"}")
+        }
+        if (getBoolean(BinaryOptions.swiftExport)) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not support Swift Export (-Xbinary=swiftExport=true)")
+        }
+        if (arguments.moduleName.isNullOrEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache requires -module-name to be specified")
+        }
+        if (arguments.libraryToAddToCache.isNullOrEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache requires -Xadd-cache to be specified")
+        }
+        if (arguments.freeArgs.isNotEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not accept source files")
+        }
+        if (arguments.makePerFileCache) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not support per-file caching")
+        }
+        if (arguments.optimization) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not support optimization (-opt)")
+        }
+        if (arguments.cacheDirectories.isEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache requires -Xcache-directory to be specified")
+        }
+        if (!arguments.includes.isNullOrEmpty()) {
+            report(KONAN_ARGUMENT_ERROR, "-produce objc_cache does not accept -Xinclude")
+        }
+    }
 
     put(LIST_TARGETS, arguments.listTargets)
     put(OPTIMIZATION, arguments.optimization)
