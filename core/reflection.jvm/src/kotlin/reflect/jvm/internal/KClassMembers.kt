@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
@@ -63,6 +65,12 @@ private fun KClassImpl<*>.collectDeclaredMemberNamesTransitively(result: Mutable
 
 internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> = buildList {
     val kClass = this@computeDeclaredMembersByName
+    // TODO: This is a temporary workaround for KT-89979.
+    //  Otherwise, `Array::class.members` fails with `java.lang.ClassNotFoundException: kotlin.Array`.
+    //  This explicit check hides that particular case. Direct usages of `Array::of`, `List::of` etc.
+    //  are still broken.
+    val isOperatorOfInArray = classId == StandardClassIds.Array && name == OperatorNameConventions.OF.asString()
+    if (isOperatorOfInArray) return@buildList
     if (useK1Implementation || isComplicatedBuiltinSubclass || (useK1ImplementationForMembers && kmClass != null)) {
         addAll(getDescriptorBasedFunctions(memberScope, DECLARED, name))
         addAll(getDescriptorBasedProperties(memberScope, DECLARED, name))
