@@ -51,6 +51,7 @@ class CachedLibraries(
         private val klibDag: KlibDAG,
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<Path>,
+        private val cacheDirectories: List<Path>,
         autoCacheDirectory: Path,
         autoCacheableFrom: List<Path>,
         private val libraryToCache: KotlinLibrary?,
@@ -259,11 +260,72 @@ class CachedLibraries(
             implicitCacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists().map { it.name to it } }
                     .toMap()
 
+    class ObjCCache(val binaryPath: String, val metadata: ObjCCacheMetadata)
+
     fun exportedDependencies(library: KotlinLibrary, exportedLibraries: Set<KotlinLibrary>): List<String> =
             klibDag.getAllDependencies(library)
                     .filter { it in exportedLibraries }
                     .map { it.uniqueName }
                     .sorted()
+
+    fun getObjCCaches(exportedLibraries: Set<KotlinLibrary>, moduleName: String): Map<KotlinLibrary, ObjCCache> {
+        val directoriesByName = cacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists() }.groupBy { it.name }
+        return exportedLibraries.mapNotNull { library ->
+            val found = findObjCCache(library, moduleName, directoriesByName) ?: return@mapNotNull null
+            if (getLibraryCache(library)?.kind != Kind.STATIC) {
+                configuration.report(
+                        CliDiagnostics.KONAN_ARGUMENT_WARNING,
+                        "Objective-C cache at ${found.parent.parent} requires a static cache of ${library.uniqueName}, " +
+                                "which this compilation does not use. Ignoring cache."
+                )
+                return@mapNotNull null
+            }
+            val cache = loadObjCCache(found) ?: return@mapNotNull null
+            val expected = exportedDependencies(library, exportedLibraries)
+            if (cache.metadata.exportedLibraries != expected) {
+                configuration.report(
+                        CliDiagnostics.KONAN_ARGUMENT_WARNING,
+                        "Objective-C cache at ${Path(cache.binaryPath).parent.parent} was built exporting [${cache.metadata.exportedLibraries.joinToString()}] " +
+                                "of the dependencies of ${library.uniqueName}, but this compilation exports [${expected.joinToString()}]. Ignoring cache."
+                )
+                return@mapNotNull null
+            }
+            library to cache
+        }.toMap()
+    }
+
+    private fun loadObjCCache(archive: Path): ObjCCache? {
+        val directory = archive.parent
+        return runCatching {
+            ObjCCache(
+                    archive.absolutePathString(),
+                    directory.resolve(OBJC_CACHE_METADATA_FILE_NAME).bufferedReader().use { ObjCCacheMetadata.deserialize(it) },
+            )
+        }.getOrElse {
+            configuration.report(
+                    CliDiagnostics.KONAN_ARGUMENT_WARNING,
+                    "Objective-C cache at ${directory.parent.absolutePathString()} is incomplete or unreadable (${it.message}). Ignoring cache."
+            )
+            null
+        }
+    }
+
+    private fun findObjCCache(library: KotlinLibrary, moduleName: String, directoriesByName: Map<String, List<Path>>): Path? {
+        if (moduleName.isEmpty()) return null
+
+        val candidateName = getObjCCachedLibraryName(library, moduleName)
+
+        for (dir in directoriesByName[candidateName].orEmpty()) {
+            val archive = dir.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+                    .resolve(getArtifactName(target, candidateName, CompilerOutputKind.OBJC_CACHE))
+            if (archive.exists()) return archive.absolute()
+            configuration.report(
+                    CliDiagnostics.KONAN_ARGUMENT_WARNING,
+                    "Objective-C cache at ${dir.absolutePathString()} is incomplete or unreadable (no archive). Ignoring cache."
+            )
+        }
+        return null
+    }
 
     private fun KotlinLibrary.trySelectCacheAt(dirBuilder: (String) -> Path?) =
             sequenceOf(getPerFileCachedLibraryName(this), getCachedLibraryName(this))
@@ -385,5 +447,25 @@ class ObjCCacheMetadata(
     companion object {
         private fun List<ObjCCacheAdapterEntry>.serializeEntries() =
             sortedBy { it.symbolName }.joinToString(";") { "${it.objcName},${it.symbolName}" }
+
+        fun deserialize(reader: java.io.Reader): ObjCCacheMetadata {
+            val properties = java.util.Properties()
+            properties.load(reader)
+            fun parseList(key: String): List<String> =
+                (properties.getProperty(key) ?: error("Missing '$key' in Objective-C cache metadata"))
+                    .split(";").filter { it.isNotEmpty() }
+            fun parseEntries(key: String, isInterface: Boolean): List<ObjCCacheAdapterEntry> =
+                parseList(key).map {
+                    val parts = it.split(",")
+                    require(parts.size == 2) { "Malformed Objective-C cache adapter entry '$it'" }
+                    ObjCCacheAdapterEntry(parts[0], isInterface, parts[1])
+                }
+            return ObjCCacheMetadata(
+                classAdapters = parseEntries("classAdapters", isInterface = false),
+                protocolAdapters = parseEntries("protocolAdapters", isInterface = true),
+                categoryAdapters = parseEntries("categoryAdapters", isInterface = false),
+                exportedLibraries = parseList("exportedLibraries"),
+            )
+        }
     }
 }

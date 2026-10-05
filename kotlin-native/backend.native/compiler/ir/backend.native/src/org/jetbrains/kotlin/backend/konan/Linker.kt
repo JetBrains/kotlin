@@ -27,7 +27,8 @@ import kotlin.io.path.pathString
 
 private data class ExecutableTarget(
         val path: String,
-        val flags: List<String>
+        val flags: List<String>,
+        val objcCacheStaticLibraries: List<String> = emptyList(),
 )
 
 private fun List<String>.asLinkerArgs(useCompilerDriverAsLinker: Boolean): List<String> {
@@ -122,10 +123,15 @@ internal class Linker(
                 Family.OSX -> "Versions/A/$dylibName"
                 else -> error("Unsupported target family for Framework: $target")
             }
+            val objcCacheArchives = config.objCCaches.values.map { it.binaryPath }.distinct()
+
+            val isStatic = linkerOutput == LinkerOutputKind.STATIC_LIBRARY
 
             ExecutableTarget(
                     path = framework.resolve(dylibRelativePath).absolutePathString(),
-                    flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+                    flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath") +
+                            if (isStatic) emptyList() else objcCacheArchives.flatMap { listOf("-force_load", it) },
+                    objcCacheStaticLibraries = if (isStatic) objcCacheArchives else emptyList(),
             )
         }
         else -> {
@@ -155,7 +161,7 @@ internal class Linker(
             caches: ResolvedCacheBinaries,
     ): List<Command> {
 
-        val [executablePath, produceKindFlags] = resolveExecutableTarget(outputFile).also {
+        val [executablePath, produceKindFlags, objcCacheStaticLibraries] = resolveExecutableTarget(outputFile).also {
             prepareFileSystem(it.path)
         }
 
@@ -168,7 +174,7 @@ internal class Linker(
                     tempFiles = tempFiles,
                     objectFiles = objectFiles,
                     executable = executablePath,
-                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
+                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static + objcCacheStaticLibraries,
                     dynamicLibraries = caches.dynamic,
                     linkerArgs = linkerArgs,
                     optimize = optimize,

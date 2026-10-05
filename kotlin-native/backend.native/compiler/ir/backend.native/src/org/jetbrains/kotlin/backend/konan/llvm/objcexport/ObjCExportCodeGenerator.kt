@@ -282,6 +282,12 @@ internal class ObjCExportCodeGenerator(
         val mapper: ObjCExportMapper
 ) : ObjCExportCodeGeneratorBase(codegen) {
 
+    private val objCCaches by lazy {
+        generationState.config.objCCaches
+    }
+
+    private fun isFromObjCCache(klib: KotlinLibrary?): Boolean = klib != null && klib in objCCaches
+
     internal val objCCacheClassAdapters = mutableListOf<ObjCCacheAdapterEntry>()
     internal val objCCacheProtocolAdapters = mutableListOf<ObjCCacheAdapterEntry>()
     internal val objCCacheCategoryAdapters = mutableListOf<ObjCCacheAdapterEntry>()
@@ -413,7 +419,7 @@ internal class ObjCExportCodeGenerator(
                 if (isObjCCache) {
                     klib != null && klib.uniqueName == libraryToCache?.uniqueName
                 } else {
-                    true
+                    !isFromObjCCache(klib)
                 }
             }
         }
@@ -429,8 +435,13 @@ internal class ObjCExportCodeGenerator(
 
                 is ObjCClassForKotlinClass -> {
                     val superClass = it.superClassNotAny ?: objCClassForAny
+                    val irClass = it.irClassSymbol.owner
+                    val klib = irClass.moduleFragment.kotlinLibrary
+                    val isAlreadyEmittedInCache = isFromObjCCache(klib)
 
-                    dataGenerator.emitEmptyClass(it.binaryName, superClass.binaryName)
+                    if (!isAlreadyEmittedInCache) {
+                        dataGenerator.emitEmptyClass(it.binaryName, superClass.binaryName)
+                    }
                     // Note: it is generated only to be visible for linker.
                     // Methods will be added at runtime.
 
@@ -455,7 +466,7 @@ internal class ObjCExportCodeGenerator(
             if (isObjCCache) {
                 klib != null && klib.uniqueName == libraryToCache?.uniqueName
             } else {
-                true
+                !isFromObjCCache(klib)
             }
         }
 
@@ -469,7 +480,7 @@ internal class ObjCExportCodeGenerator(
             if (isObjCCache) {
                 klib != null && klib.uniqueName == libraryToCache?.uniqueName
             } else {
-                true
+                !isFromObjCCache(klib)
             }
         }
         val categoryAdapters = categoriesToGenerate.map { createCategoryAdapter(it) }
@@ -559,7 +570,7 @@ internal class ObjCExportCodeGenerator(
             }
             descriptorToAdapter[adapter.objCName] = typeAdapter
 
-            if (!isObjCCache && irClass != null) {
+            if (!isObjCCache && irClass != null && !isFromObjCCache(irClass.moduleFragment.kotlinLibrary)) {
                 if (!generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
                     try {
                         codegen.bindObjCExportTypeAdapterTo(irClass, typeAdapter)
@@ -574,6 +585,31 @@ internal class ObjCExportCodeGenerator(
         }
 
         if (isObjCCache) return
+
+        fun externalAdapterGlobal(symbolName: String): ConstPointer {
+            val global = LLVMGetNamedGlobal(llvm.module, symbolName)
+                ?: LLVMAddGlobal(llvm.module, llvm.runtime.objCTypeAdapter, symbolName)!!.also {
+                    LLVMSetLinkage(it, LLVMLinkage.LLVMExternalLinkage)
+                }
+            return constPointer(global)
+        }
+
+        objCCaches.values.forEach { cache ->
+            val metadata = cache.metadata
+            metadata.classAdapters.forEach { entry ->
+                if (!placedClassAdapters.containsKey(entry.objcName)) {
+                    placedClassAdapters[entry.objcName] = externalAdapterGlobal(entry.symbolName)
+                }
+            }
+            metadata.protocolAdapters.forEach { entry ->
+                if (!placedInterfaceAdapters.containsKey(entry.objcName)) {
+                    placedInterfaceAdapters[entry.objcName] = externalAdapterGlobal(entry.symbolName)
+                }
+            }
+            metadata.categoryAdapters.forEach { entry ->
+                placedCategoryAdapters += entry.objcName to externalAdapterGlobal(entry.symbolName)
+            }
+        }
 
         // The following two also contain stuff from swift-export
         generationState.bindClassToObjCNameClassAdapters.forEach { [name, ptr] ->
@@ -602,7 +638,7 @@ internal class ObjCExportCodeGenerator(
         emitSortedAdapters(placedInterfaceAdapters.toList(), "Kotlin_ObjCExport_sortedProtocolAdapters")
         emitSortedAdapters(placedCategoryAdapters, "Kotlin_ObjCExport_sortedCategoryAdapters")
 
-        if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+        if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries() || objCCaches.isNotEmpty()) {
             codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
                     "Kotlin_ObjCExport_initTypeAdapters",
                     llvm.constInt1(true)

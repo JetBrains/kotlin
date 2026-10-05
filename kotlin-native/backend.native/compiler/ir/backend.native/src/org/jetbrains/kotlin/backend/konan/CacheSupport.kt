@@ -147,6 +147,7 @@ class CacheSupport(
                 klibDag = klibDag,
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
                 implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
+                cacheDirectories = if (ignoreCachedLibraries) emptyList() else cacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
                 autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
                 libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(Path(it)) },
