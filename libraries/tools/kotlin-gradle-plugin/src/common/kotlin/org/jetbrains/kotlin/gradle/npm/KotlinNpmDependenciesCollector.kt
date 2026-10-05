@@ -39,14 +39,14 @@ internal class KotlinNpmDependenciesCollector @Inject constructor(
     }
 
     fun add(
-        name: Provider<String>,
+        name: String,
         version: Provider<String>,
         scope: KotlinNpmDependency.Scope,
     ) {
         declarations.add(
-            name.zip(version) { packageName, npmVersion ->
+            version.map { npmVersion ->
                 DefaultKotlinNpmDependency(
-                    name = packageName,
+                    name = name,
                     version = npmVersion,
                     scope = scope,
                 )
@@ -56,29 +56,18 @@ internal class KotlinNpmDependenciesCollector @Inject constructor(
 
     fun add(
         name: String,
-        directory: Directory,
+        directory: File,
         scope: KotlinNpmDependency.Scope,
     ) {
         add(
             name = name,
-            file = directory.asFile,
+            version = directory.npmFileNotation(),
             scope = scope,
         )
     }
 
+    @JvmName("addDirectory")
     fun add(
-        name: String,
-        file: File,
-        scope: KotlinNpmDependency.Scope,
-    ) {
-        add(
-            name = name,
-            version = file.npmFileNotation(),
-            scope = scope,
-        )
-    }
-
-    fun addDirectory(
         name: String,
         directory: Provider<Directory>,
         scope: KotlinNpmDependency.Scope,

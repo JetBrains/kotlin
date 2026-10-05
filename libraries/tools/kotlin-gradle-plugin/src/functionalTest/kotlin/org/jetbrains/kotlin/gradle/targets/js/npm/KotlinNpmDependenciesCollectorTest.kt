@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.npm.KotlinNpmDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.npmDev
+import org.jetbrains.kotlin.gradle.plugin.npmOptional
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -28,6 +31,7 @@ import kotlin.test.assertFailsWith
 /**
  * Test [org.jetbrains.kotlin.gradle.npm.KotlinNpmDependenciesCollector].
  */
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 class KotlinNpmDependenciesCollectorTest {
 
     @Test
@@ -138,7 +142,7 @@ class KotlinNpmDependenciesCollectorTest {
 
                 sourceSets.commonMain {
                     dependencies {
-                        npmDev(project.provider { "webpack" }, version)
+                        npmDev("webpack", version)
                     }
                 }
             }
@@ -162,7 +166,7 @@ class KotlinNpmDependenciesCollectorTest {
 
                 sourceSets.commonMain {
                     dependencies {
-                        npmDev(project.provider { "webpack" }, project.objects.property<String>())
+                        npmDev("webpack", project.objects.property<String>())
                     }
                 }
             }
@@ -235,7 +239,7 @@ class KotlinNpmDependenciesCollectorTest {
                     dependencies {
                         npmDev("is-even", "2.0.0")
                         implementation(npm("is-even", "1.0.0"))
-                        npmDev(project.provider { "is-even" }, project.provider { "3.0.0" })
+                        npmDev("is-even", project.provider { "3.0.0" })
                     }
                 }
             }
@@ -423,7 +427,7 @@ class KotlinNpmDependenciesCollectorTest {
 
                 sourceSets.commonMain {
                     dependencies {
-                        npmDev(project.provider { "webpack" }, version)
+                        npmDev("webpack", version)
                     }
                 }
             }

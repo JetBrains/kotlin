@@ -143,7 +143,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     }
 
     override fun npmDev(
-        name: Provider<String>,
+        name: String,
         version: Provider<String>,
     ) {
         npmDependenciesCollector.add(
@@ -159,16 +159,16 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     ) {
         npmDependenciesCollector.add(
             name = name,
-            file = directory,
+            directory = directory,
             scope = KotlinNpmDependency.Scope.DEV,
         )
     }
 
-    override fun npmDev(
+    override fun npmDevDirectory(
         name: String,
         directory: Provider<Directory>,
     ) {
-        npmDependenciesCollector.addDirectory(
+        npmDependenciesCollector.add(
             name = name,
             directory = directory,
             scope = KotlinNpmDependency.Scope.DEV,
@@ -187,7 +187,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     }
 
     override fun npmOptional(
-        name: Provider<String>,
+        name: String,
         version: Provider<String>,
     ) {
         npmDependenciesCollector.add(
@@ -203,16 +203,16 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     ) {
         npmDependenciesCollector.add(
             name = name,
-            file = directory,
+            directory = directory,
             scope = KotlinNpmDependency.Scope.OPTIONAL,
         )
     }
 
-    override fun npmOptional(
+    override fun npmOptionalDirectory(
         name: String,
         directory: Provider<Directory>,
     ) {
-        npmDependenciesCollector.addDirectory(
+        npmDependenciesCollector.add(
             name = name,
             directory = directory,
             scope = KotlinNpmDependency.Scope.OPTIONAL,
@@ -231,7 +231,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     }
 
     override fun npmPeer(
-        name: Provider<String>,
+        name: String,
         version: Provider<String>,
     ) {
         npmDependenciesCollector.add(
@@ -348,7 +348,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         ).also {
             npmDependenciesCollector.add(
                 name = name,
-                file = directory,
+                directory = directory,
                 scope = scope,
             )
         }
