@@ -53,13 +53,14 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.utils.addToStdlib.requireIsInstance
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.test.assertEquals
 
 @OptIn(KaExperimentalApi::class)
 class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
-    override val suiteName: String
-        get() = "sessionBuilder"
+    override val suiteName: Path
+        get() = Paths.get("sessionBuilder")
 
     @Test
     fun testJdkSessionBuilder() {

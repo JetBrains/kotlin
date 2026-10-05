@@ -26,10 +26,11 @@ import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Assertions
 import java.nio.file.Path
+import java.nio.file.Paths
 
 abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : AbstractStandaloneTest() {
-    override val suiteName: String
-        get() = "sessionBuilder"
+    override val suiteName: Path
+        get() = Paths.get("sessionBuilder")
 
     protected fun doTestKotlinStdLibResolve(
         targetPlatform: TargetPlatform, platformStdlibPath: Path,
