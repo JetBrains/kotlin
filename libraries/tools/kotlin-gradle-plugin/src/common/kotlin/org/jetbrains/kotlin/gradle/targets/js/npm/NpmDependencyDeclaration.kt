@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.tasks.Input
@@ -24,8 +26,7 @@ data class NpmDependencyDeclaration(
 fun NpmDependencyDeclaration.uniqueRepresentation() =
     "$scope $name:$version"
 
-@Suppress("DEPRECATION")
-internal fun NpmDependency.toDeclaration(): NpmDependencyDeclaration =
+internal fun NpmDependencyDeprecated.toNpmDependencyDeclaration(): NpmDependencyDeclaration =
     NpmDependencyDeclaration(
         scope = this.scope,
         name = this.name,
