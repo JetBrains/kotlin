@@ -16,10 +16,5 @@ enum class Foo {
 
 fun box(): String {
     Foo.L
-    val expected = when (BACKEND_UNDER_TEST) {
-        // KT-83337 Difference in behavior on nested class initialization
-        "JS_IR", "JS_IR_ES6" -> "Foo;Foo.CO;"
-        else                 -> "Foo.CO;"
-    }
-    return if (l != expected) "FAIL: ${l}" else "OK"
+    return if (l != "Foo.CO;") "FAIL: ${l}" else "OK"
 }
