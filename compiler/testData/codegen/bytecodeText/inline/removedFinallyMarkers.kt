@@ -30,4 +30,5 @@ fun box() : String {
 
 // 2 InlineMarker.finallyStart
 // 2 InlineMarker.finallyEnd
-// 4 InlineMarker
+// 1 InlineMarker.alwaysTrue
+// 5 InlineMarker

@@ -23,4 +23,8 @@ public class InlineMarker {
 
     public static void finallyEnd(int finallyDepth) {
     }
+
+    public static boolean alwaysTrue() {
+        return true;
+    }
 }

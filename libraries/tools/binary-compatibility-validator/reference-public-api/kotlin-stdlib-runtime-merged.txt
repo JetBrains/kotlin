@@ -4190,6 +4190,7 @@ public class kotlin/jvm/internal/FunctionReferenceImpl : kotlin/jvm/internal/Fun
 public class kotlin/jvm/internal/InlineMarker {
 	public fun <init> ()V
 	public static fun afterInlineCall ()V
+	public static fun alwaysTrue ()Z
 	public static fun beforeInlineCall ()V
 	public static fun finallyEnd (I)V
 	public static fun finallyStart (I)V
