@@ -44,6 +44,9 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val kClassFqn = StandardNames.FqNames.kClass.toSafe()
     private val stringFqn = StandardNames.FqNames.string.toSafe()
 
+    private val collectionsFqnWithOf = [StandardNames.FqNames.list, StandardNames.FqNames.set]
+    private val mutableCollectionFqnsWithOf = [StandardNames.FqNames.mutableList, StandardNames.FqNames.mutableSet]
+
     private val intrinsics = (
             listOf(
                 Key(kotlinJvmFqn, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
@@ -152,6 +155,15 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         add(Key(kotlinFqn, anyFqn, "toString", []))
         add(Key(kotlinFqn, null, "arrayOf", [arrayFqn]))
         add(Key(arrayFqn, null, OperatorNameConventions.OF.asString(), [arrayFqn]))
+        for (collection in collectionsFqnWithOf) {
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), []))
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), [FqName("E")]))
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), [arrayFqn]))
+        }
+        for (collection in mutableCollectionFqnsWithOf) {
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), []))
+            add(Key(collection, null, OperatorNameConventions.OF.asString(), [arrayFqn]))
+        }
         add(Key(stringFqn, null, "plus", [anyFqn]))
     }.map { it to IntrinsicShouldHaveBeenLowered }
 
