@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.file.Path
+import java.util.Properties
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
@@ -51,6 +52,7 @@ class CachedLibraries(
         private val klibDag: KlibDAG,
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<Path>,
+        private val cacheDirectories: List<Path>,
         autoCacheDirectory: Path,
         autoCacheableFrom: List<Path>,
         private val libraryToCache: KotlinLibrary?,
@@ -259,11 +261,68 @@ class CachedLibraries(
             implicitCacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists().map { it.name to it } }
                     .toMap()
 
+    class ObjCCache(val binaryPath: String, val metadata: ObjCCacheMetadata)
+
     fun exportedDependencies(library: KotlinLibrary, exportedLibraries: Set<KotlinLibrary>): List<String> =
             klibDag.getAllDependencies(library)
                     .filter { it in exportedLibraries }
                     .map { it.uniqueName }
                     .sorted()
+
+    fun getObjCCaches(exportedLibraries: Set<KotlinLibrary>, moduleName: String): Map<KotlinLibrary, ObjCCache> {
+        if (exportedLibraries.isEmpty() || moduleName.isEmpty()) return emptyMap()
+        val directoriesByName = cacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists() }.groupBy { it.name }
+        return exportedLibraries.mapNotNull { library ->
+            val archive = findObjCCache(library, moduleName, directoriesByName) ?: return@mapNotNull null
+            val directory = archive.parent.parent
+            if (getLibraryCache(library)?.kind != Kind.STATIC) {
+                val reason = "requires a static cache of ${library.uniqueName}, which this compilation does not use"
+                return@mapNotNull ignoreObjCCache(directory, reason)
+            }
+            val metadata = loadObjCCacheMetadata(archive, library) ?: return@mapNotNull null
+            val expected = exportedDependencies(library, exportedLibraries)
+            if (metadata.exportedLibraries != expected) {
+                val built = metadata.exportedLibraries.joinToString()
+                return@mapNotNull ignoreObjCCache(
+                        directory,
+                        "was built exporting [$built] of the dependencies of ${library.uniqueName}, " +
+                                "but this compilation exports [${expected.joinToString()}]",
+                )
+            }
+            library to ObjCCache(archive.absolutePathString(), metadata)
+        }.toMap()
+    }
+
+    private fun ignoreObjCCache(directory: Path, reason: String): Nothing? {
+        configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "Objective-C cache at $directory $reason. Ignoring cache.")
+        return null
+    }
+
+    private fun loadObjCCacheMetadata(archive: Path, library: KotlinLibrary): ObjCCacheMetadata? {
+        val directory = archive.parent.parent
+        return runCatching {
+            val properties = Properties()
+            archive.resolveSibling(OBJC_CACHE_METADATA_FILE_NAME).bufferedReader().use { properties.load(it) }
+            val format = properties.getProperty("format")
+            val expectedFormat = ObjCCacheMetadata.FORMAT_VERSION.toString()
+            if (format != expectedFormat) {
+                val reason = "was built in format ${format ?: "unknown"}, but this compiler reads format $expectedFormat"
+                return ignoreObjCCache(directory, reason)
+            }
+            ObjCCacheMetadata.deserialize(properties, library)
+        }.getOrElse { ignoreObjCCache(directory, "is incomplete or unreadable (${it.message})") }
+    }
+
+    private fun findObjCCache(library: KotlinLibrary, moduleName: String, directoriesByName: Map<String, List<Path>>): Path? {
+        val candidateName = getObjCCachedLibraryName(library, moduleName)
+        for (dir in directoriesByName[candidateName].orEmpty()) {
+            val archive = dir.resolve(PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME)
+                    .resolve(getArtifactName(target, candidateName, CompilerOutputKind.OBJC_CACHE))
+            if (archive.exists()) return archive.absolute()
+            ignoreObjCCache(dir.absolute(), "is incomplete or unreadable (no archive)")
+        }
+        return null
+    }
 
     private fun KotlinLibrary.trySelectCacheAt(dirBuilder: (String) -> Path?) =
             sequenceOf(getPerFileCachedLibraryName(this), getCachedLibraryName(this))
@@ -397,5 +456,18 @@ class ObjCCacheMetadata(
         const val FORMAT_VERSION = 1
 
         private fun List<ObjCCacheAdapterEntry>.serializeEntries() = map { it.objcName }.sorted().joinToString(";")
+
+        fun deserialize(properties: Properties, library: KotlinLibrary): ObjCCacheMetadata {
+            fun property(key: String): String = properties.getProperty(key) ?: error("Missing '$key' in Objective-C cache metadata")
+            fun parseList(key: String): List<String> = property(key).split(";").filter { it.isNotEmpty() }
+            fun parseTypeAdapters(key: String, isInterface: Boolean): List<ObjCCacheAdapterEntry> =
+                parseList(key).map { ObjCCacheAdapterEntry.typeAdapter(it, isInterface) }
+            return ObjCCacheMetadata(
+                classAdapters = parseTypeAdapters("classAdapters", isInterface = false),
+                protocolAdapters = parseTypeAdapters("protocolAdapters", isInterface = true),
+                categoryAdapters = parseList("categoryAdapters").map { ObjCCacheAdapterEntry.categoryAdapter(it, library) },
+                exportedLibraries = parseList("exportedLibraries"),
+            )
+        }
     }
 }

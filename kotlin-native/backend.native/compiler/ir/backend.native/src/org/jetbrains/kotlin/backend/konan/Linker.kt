@@ -158,17 +158,21 @@ internal class Linker(
         val [executablePath, produceKindFlags] = resolveExecutableTarget(outputFile).also {
             prepareFileSystem(it.path)
         }
+        val objcCacheArchives = config.objCCaches.values.map { it.binaryPath }.distinct()
+        val isStaticLibrary = linkerOutput == LinkerOutputKind.STATIC_LIBRARY
+        val objcCacheFlags = if (isStaticLibrary) emptyList() else objcCacheArchives.flatMap { listOf("-force_load", it) }
 
         val driverLinkerFlags = config.configuration.getNotNull(NativeConfigurationKeys.LINKER_ARGS)
                 .asLinkerArgs(linker.useCompilerDriverAsLinker)
-        val linkerArgs = driverLinkerFlags + libraryProvidedLinkerFlags + produceKindFlags + extraLinkerFlags
+        val linkerArgs = driverLinkerFlags + libraryProvidedLinkerFlags + produceKindFlags + objcCacheFlags + extraLinkerFlags
 
         return with(linker) {
             LinkerArguments(
                     tempFiles = tempFiles,
                     objectFiles = objectFiles,
                     executable = executablePath,
-                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
+                    staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static +
+                            if (isStaticLibrary) objcCacheArchives else emptyList(),
                     dynamicLibraries = caches.dynamic,
                     linkerArgs = linkerArgs,
                     optimize = optimize,

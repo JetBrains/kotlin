@@ -628,6 +628,23 @@ class NativeSecondStageCompilationConfig(
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
 
+    internal val exportedLibrariesForObjCCache: Set<KotlinLibrary> by lazy {
+        val includedPaths = loadedKlibs.included.map { it.canonicalPath }.toSet()
+        loadedKlibs.exported
+            .filter {
+                !it.isNativeStdlib && !it.isCInteropLibrary() && !it.isCommonizedCInteropLibrary() && it.canonicalPath !in includedPaths
+            }
+            .toSet()
+    }
+
+    internal val objCCaches: Map<KotlinLibrary, CachedLibraries.ObjCCache> by lazy {
+        if (produce != CompilerOutputKind.FRAMEWORK || swiftExport || dumpObjcSelectorToSignatureMapping != null) {
+            emptyMap()
+        } else {
+            cachedLibraries.getObjCCaches(exportedLibrariesForObjCCache, fullExportedNamePrefix)
+        }
+    }
+
     internal val librariesToCache: Map<KotlinLibrary, PartialCacheInfo>
         get() = cacheSupport.librariesToCache
 
@@ -718,14 +735,6 @@ class NativeSecondStageCompilationConfig(
     val isInteropStubs: Boolean
         get() = manifestProperties?.getProperty("interop") == "true"
 }
-
-val NativeSecondStageCompilationConfig.exportedLibrariesForObjCCache: Set<KotlinLibrary>
-    get() {
-        val includedPaths = loadedKlibs.included.map { it.canonicalPath }.toSet()
-        return loadedKlibs.exported
-            .filter { !it.isNativeStdlib && !it.isCInteropLibrary() && !it.isCommonizedCInteropLibrary() && it.canonicalPath !in includedPaths }
-            .toSet()
-    }
 
 private fun String.isRelease(): Boolean {
     // major.minor.patch-meta-build where patch, meta and build are optional.
