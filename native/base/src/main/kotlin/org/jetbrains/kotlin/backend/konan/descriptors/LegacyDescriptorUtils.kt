@@ -123,10 +123,13 @@ private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
     return result
 }
 
-fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> =
-    getPackagesFqNames(this).flatMap {
-        getPackage(it).fragments.filter { it.module == this }.toSet()
+fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescriptor> {
+    val packageFragmentProvider = (this as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
+    return getPackagesFqNames(this).flatMap { fqName ->
+        val fragments = packageFragmentProvider?.packageFragments(fqName) ?: getPackage(fqName).fragments
+        fragments.filter { it.module == this }.toSet()
     }
+}
 
 val ClassDescriptor.enumEntries: List<ClassDescriptor>
     get() {
