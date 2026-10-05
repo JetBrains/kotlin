@@ -69,7 +69,8 @@ internal class ExpectActualCollector(
             diagnosticsReporter,
             expectActualTracker,
             classActualizationInfo,
-            missingActualProvider
+            missingActualProvider,
+            leafFragment = mainFragment,
         )
         dependentFragments.forEach { linkCollector.collectAndCheckMapping(it, linkCollectorContext) }
         // It doesn't make sense to link expects from the last module because actuals always should be located in another module
@@ -420,6 +421,7 @@ internal class ExpectActualLinkCollector {
         val classActualizationInfo: ClassActualizationInfo,
         private val missingActualProvider: IrMissingActualDeclarationProvider?,
         val expectActualMap: IrExpectActualMap,
+        private val leafFragment: IrModuleFragment,
         private val currentExpectFile: IrFile?,
     ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
 
@@ -430,6 +432,7 @@ internal class ExpectActualLinkCollector {
             expectActualTracker: ExpectActualTracker?,
             classActualizationInfo: ClassActualizationInfo,
             missingActualProvider: IrMissingActualDeclarationProvider?,
+            leafFragment: IrModuleFragment,
         ) : this(
             typeSystemContext = typeSystemContext,
             languageVersionSettings = languageVersionSettings,
@@ -438,6 +441,7 @@ internal class ExpectActualLinkCollector {
             classActualizationInfo = classActualizationInfo,
             missingActualProvider = missingActualProvider,
             expectActualMap = IrExpectActualMap(),
+            leafFragment = leafFragment,
             currentExpectFile = null,
         )
 
@@ -452,7 +456,8 @@ internal class ExpectActualLinkCollector {
                 classActualizationInfo,
                 missingActualProvider,
                 expectActualMap,
-                newCurrentFile
+                leafFragment,
+                newCurrentFile,
             )
 
         override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
@@ -494,7 +499,7 @@ internal class ExpectActualLinkCollector {
             }
 
             if (isActualMissing) {
-                diagnosticsReporter.reportMissingActual(expectSymbol)
+                diagnosticsReporter.reportMissingActual(expectSymbol, leafFragment)
             }
             for ([incompatibility, actualMemberSymbols] in actualSymbolsByIncompatibility) {
                 for (actualSymbol in actualMemberSymbols) {
