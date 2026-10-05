@@ -215,6 +215,7 @@ class CacheBuilder(
         val removedFiles = mutableListOf<LibraryFile>()
         val addedFiles = mutableListOf<LibraryFile>()
         val reversedPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
+        val reversedWeakPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
         val reversedWholeLibraryDependencies = mutableMapOf<KotlinLibrary, MutableList<LibraryFile>>()
         for (library in icedLibraries) {
             if (library in needFullRebuild) continue
@@ -259,8 +260,8 @@ class CacheBuilder(
                                 reversedWholeLibraryDependencies.getOrPut(dependentLibrary) { mutableListOf() }.add(libraryFile)
                             is DependenciesTracker.DependencyKind.CertainFiles ->
                                 kind.files.forEach { (name, weak) ->
-                                    if (!weak)
-                                        reversedPerFileDependencies.getOrPut(LibraryFile(dependentLibrary, name)) { mutableListOf() }.add(libraryFile)
+                                    (if (weak) reversedWeakPerFileDependencies else reversedPerFileDependencies)
+                                            .getOrPut(LibraryFile(dependentLibrary, name)) { mutableListOf() }.add(libraryFile)
                                 }
                         }
                     }
@@ -295,6 +296,11 @@ class CacheBuilder(
 
         removedFiles.forEach {
             if (it !in dirtyFiles) dfs(it)
+            // A weak dependency is link-time only, but the walk over cached dependencies still resolves it,
+            // so a file that weakly depends on a removed file must be rebuilt to drop the stale edge.
+            reversedWeakPerFileDependencies[it]?.forEach { weakDependent ->
+                if (weakDependent !in dirtyFiles) dfs(weakDependent)
+            }
         }
         changedFiles.forEach {
             if (it !in dirtyFiles) dfs(it)
