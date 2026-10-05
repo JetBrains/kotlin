@@ -46,8 +46,8 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
                 val inlineStatus = containingDeclaration.inlineStatus
                 checkLambdaParameter(declaration, inlineStatus == InlineStatus.Inline || inlineStatus == InlineStatus.CrossInline)
             }
-            declaration.isParameterOfDataOrValueClass() -> {
-                checkDataOrValueClassParameter(declaration)
+            declaration.isParameterOfDataOrValueClass() || isNonMetadataKmpSeparateCompilation() -> {
+                checkRegularParameter(declaration)
             }
         }
     }
@@ -71,7 +71,7 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkDataOrValueClassParameter(parameter: FirValueParameter) {
+    private fun checkRegularParameter(parameter: FirValueParameter) {
         checkMissingDependencySuperTypes(parameter.returnTypeRef.coneType, parameter.source)
     }
 

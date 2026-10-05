@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidLambdaParameterWithMissingDependencyType
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidUsingExpressionTypesWithInaccessibleContent
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidUsingParameterWithDefaultValueTypesWithInaccessibleContent
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.isMetadataCompilation
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -195,5 +197,10 @@ internal interface FirMissingDependencyClassProxy {
                 }
             }
         }
+    }
+
+    context(context: CheckerContext)
+    fun isNonMetadataKmpSeparateCompilation(): Boolean {
+        return !context.session.isMetadataCompilation && context.languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation)
     }
 }

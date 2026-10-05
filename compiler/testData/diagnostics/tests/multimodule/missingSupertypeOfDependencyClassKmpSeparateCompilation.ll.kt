@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+//   AA runners set isMetadataCompilation=true, it's probably a test infra problem
+// LL_FIR_DIVERGENCE
 // RUN_PIPELINE_TILL: FRONTEND
 // DISABLE_NEXT_PHASE_SUGGESTION
 // LANGUAGE: +MultiPlatformProjects
@@ -16,6 +19,6 @@ class Lib : Visible, Base
 
 // MODULE: app-common(lib-common)
 // FILE: app-common.kt
-fun <!MISSING_DEPENDENCY_SUPERCLASS{PLATFORM}!>Lib<!>.use(<!MISSING_DEPENDENCY_SUPERCLASS{PLATFORM}!>lib: Lib<!>): <!MISSING_DEPENDENCY_SUPERCLASS{PLATFORM}!>Lib<!> = lib
+fun Lib.use(lib: Lib): Lib = lib
 
 /* GENERATED_FIR_TAGS: interfaceDeclaration */
