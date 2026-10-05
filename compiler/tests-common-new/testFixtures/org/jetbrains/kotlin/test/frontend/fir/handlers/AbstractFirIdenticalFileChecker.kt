@@ -22,7 +22,6 @@ abstract class AbstractFirIdenticalFileChecker(testServices: TestServices) : Abs
 
                     listOf(
                         originalFile.originalTestDataFile,
-                        originalFile.firTestDataFile,
                         originalFile.llFirTestDataFile,
                         originalFile.reversedTestDataFile,
                         originalFile.partialBodyTestDataFile,

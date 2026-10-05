@@ -57,7 +57,6 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
         testServices.moduleStructure.originalTestDataFiles.first().let { originalFile ->
             listOf(
                 originalFile.originalTestDataFile,
-                originalFile.firTestDataFile,
                 originalFile.llFirTestDataFile,
                 originalFile.reversedTestDataFile,
                 originalFile.latestLVTestDataFile
