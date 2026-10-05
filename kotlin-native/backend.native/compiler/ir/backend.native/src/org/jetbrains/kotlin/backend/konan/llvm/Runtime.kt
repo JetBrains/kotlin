@@ -22,7 +22,6 @@ internal class Runtime(
 ) {
     val llvmModule: LLVMModuleRef = parseBitcodeFile(phaseContext, phaseContext.diagnosticReporter, llvmContext, bitcodeFile)
     val calculatedLLVMTypes: MutableMap<IrType, LLVMTypeRef> = HashMap()
-    val addedLLVMExternalFunctions: MutableMap<IrFunction, LlvmFunction> = HashMap()
 
     private fun getStructTypeOrNull(name: String, isClass: Boolean = false) =
             LLVMGetTypeByName(llvmModule, "${if (isClass) "class" else "struct"}.$name")

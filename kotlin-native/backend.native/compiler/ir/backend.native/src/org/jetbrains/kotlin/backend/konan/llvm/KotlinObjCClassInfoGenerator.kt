@@ -15,11 +15,16 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.getConstArgument
 
+internal sealed interface KotlinObjCClassLlvmDeclarations {
+    val classInfo: ConstPointer
+}
+
 internal class KotlinObjCClassInfoGenerator(override val generationState: NativeGenerationState) : ContextUtils {
     fun generate(irClass: IrClass) {
         assert(irClass.isFinalClass)
 
-        val objCLLvmDeclarations = generationState.llvmDeclarations.forClass(irClass).objCDeclarations!!
+        val objCLLvmDeclarations = generationState.llvmDeclarations.forClass(irClass).objCDeclarations as? DefinedKotlinObjCClassLlvmDeclarations
+                ?: error(irClass.render())
 
         val instanceMethods = generateInstanceMethodDescs(irClass)
 
@@ -134,7 +139,7 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
                 Struct(
                         runtime.kotlinObjCClassData,
                         llvm.nullPointer,
-                        objCLLvmDeclarations.classInfoGlobal.pointer,
+                        objCLLvmDeclarations.classInfo,
                         llvm.nullPointer,
                         ConstInt32(llvm, 0)
                 )
@@ -164,10 +169,46 @@ internal class KotlinObjCClassInfoGenerator(override val generationState: Native
 
 internal fun CodeGenerator.kotlinObjCClassInfo(irClass: IrClass): LLVMValueRef {
     require(irClass.isKotlinObjCClass())
-    return if (isExternal(irClass)) {
-        generationState.dependenciesTracker.add(irClass)
-        importGlobal(irClass.kotlinObjCClassInfoSymbolName, runtime.kotlinObjCClassInfo)
-    } else {
-        llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
-    }
+    return llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfo.llvm
 }
+
+private class DefinedKotlinObjCClassLlvmDeclarations(
+        val classInfoGlobal: StaticData.Global,
+        val bodyOffsetGlobal: StaticData.Global
+) : KotlinObjCClassLlvmDeclarations {
+    override val classInfo: ConstPointer
+        get() = constPointer(classInfoGlobal.llvmGlobal)
+}
+
+private class ExternalKotlinObjCClassLlvmDeclarations(
+        override val classInfo: ConstPointer
+) : KotlinObjCClassLlvmDeclarations
+
+internal fun ContextUtils.generateKotlinObjCClassLlvmDeclarations(irClass: IrClass, internalNamer: ((IrClass) -> String)? = null): KotlinObjCClassLlvmDeclarations? =
+        if (!irClass.isKotlinObjCClass()) {
+            null
+        } else if (isExternal(irClass)) {
+            generationState.dependenciesTracker.add(irClass)
+            val classInfo = constPointer(importGlobal(irClass.kotlinObjCClassInfoSymbolName, runtime.kotlinObjCClassInfo))
+            return ExternalKotlinObjCClassLlvmDeclarations(classInfo)
+        } else {
+            requireNotNull(internalNamer)
+            val internalName = internalNamer(irClass)
+            val isExported = irClass.isExported
+            val classInfoSymbolName = if (isExported) {
+                irClass.kotlinObjCClassInfoSymbolName
+            } else {
+                "kobjcclassinfo:$internalName"
+            }
+            val classInfoGlobal = staticData.createGlobal(
+                    runtime.kotlinObjCClassInfo,
+                    classInfoSymbolName,
+                    isExported = isExported
+            ).apply {
+                setConstant(true)
+            }
+
+            val bodyOffsetGlobal = staticData.createGlobal(llvm.int32Type, "kobjcbodyoffs:$internalName")
+
+            return DefinedKotlinObjCClassLlvmDeclarations(classInfoGlobal, bodyOffsetGlobal)
+        }
