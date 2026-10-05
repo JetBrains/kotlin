@@ -18,7 +18,7 @@ package kotlin
  *
  * In future Kotlin releases, the compiler is going to apply every declaration check of a `value class` to the annotated class.
  * Violations of these checks, as well as identity-sensitive **usages** inside the annotated class itself,
- * are going to be reported as warnings before Kotlin 2.6 and as errors since Kotlin 2.6.
+ * are going to be reported as errors.
  * Identity-sensitive usages outside of the annotated class are only going to be reported as warnings,
  * which gives downstream users time to migrate before the class actually becomes a `value class`.
  *

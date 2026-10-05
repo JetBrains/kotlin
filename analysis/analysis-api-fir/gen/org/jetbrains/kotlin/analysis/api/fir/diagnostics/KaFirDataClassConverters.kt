@@ -510,6 +510,13 @@ private fun KaDiagnosticConverterBuilder.addConversions5() {
             token,
         )
     }
+    add(FirErrors.IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
+        IdentitySensitiveOperationInsideWillBecomeValueClassImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.ABSTRACT_MEMBER_INCORRECTLY_DELEGATED.warningFactory) { firDiagnostic ->
         AbstractMemberIncorrectlyDelegatedWarningImpl(
             firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
@@ -655,12 +662,6 @@ private fun KaDiagnosticConverterBuilder.addConversions8() {
             token,
         )
     }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION.errorFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotImplementInterfaceByDelegationErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION.warningFactory) { firDiagnostic ->
         AssigningSingleElementToVarargInNamedFormAnnotationWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -702,12 +703,6 @@ private fun KaDiagnosticConverterBuilder.addConversions8() {
 private fun KaDiagnosticConverterBuilder.addConversions9() {
     add(FirErrors.OPT_IN_MARKER_ON_OVERRIDE_WARNING) { firDiagnostic ->
         OptInMarkerOnOverrideWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE.errorFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotBeCloneableErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -964,12 +959,6 @@ private fun KaDiagnosticConverterBuilder.addConversions16() {
             token,
         )
     }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE.warningFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotBeRecursiveWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY) { firDiagnostic ->
         HasNextFunctionAmbiguityImpl(
             firDiagnostic.a.map { firBasedSymbol ->
@@ -1122,8 +1111,8 @@ private fun KaDiagnosticConverterBuilder.addConversions20() {
             token,
         )
     }
-    add(FirErrors.DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS.warningFactory) { firDiagnostic ->
-        DelegatedPropertyInsideWillBecomeValueClassWarningImpl(
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE) { firDiagnostic ->
+        WillBecomeValueClassCannotBeRecursiveImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -1191,12 +1180,6 @@ private fun KaDiagnosticConverterBuilder.addConversions21() {
             token,
         )
     }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES.errorFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotExtendIdentityClassesErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.NOT_YET_SUPPORTED_IN_INLINE_WARNING) { firDiagnostic ->
         NotYetSupportedInInlineWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -1229,12 +1212,6 @@ private fun KaDiagnosticConverterBuilder.addConversions22() {
         RedundantModifierForTargetImpl(
             firDiagnostic.a,
             firDiagnostic.b,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS.warningFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotBeRecursiveViaTypeParametersWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -1313,12 +1290,6 @@ private fun KaDiagnosticConverterBuilder.addConversions22() {
 private fun KaDiagnosticConverterBuilder.addConversions23() {
     add(FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS.warningFactory) { firDiagnostic ->
         ValueClassCannotBeRecursiveViaTypeParametersWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR.warningFactory) { firDiagnostic ->
-        WillBecomeValueClassEmptyConstructorWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -1402,6 +1373,12 @@ private fun KaDiagnosticConverterBuilder.addConversions24() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions25() {
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE) { firDiagnostic ->
+        WillBecomeValueClassCannotBeCloneableImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER) { firDiagnostic ->
         AmbiguousCallWithImplicitContextReceiverImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -1840,6 +1817,12 @@ private fun KaDiagnosticConverterBuilder.addConversions35() {
             token,
         )
     }
+    add(FirJvmErrors.SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
+        SynchronizedOnWillBecomeValueClassImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions36() {
@@ -2005,12 +1988,6 @@ private fun KaDiagnosticConverterBuilder.addConversions39() {
             token,
         )
     }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES.warningFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotExtendIdentityClassesWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT) { firDiagnostic ->
         ContextParameterWithDefaultImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -2057,13 +2034,6 @@ private fun KaDiagnosticConverterBuilder.addConversions40() {
     }
     add(FirJsErrors.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS) { firDiagnostic ->
         NativeIndexerCanNotHaveDefaultArgumentsImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS.warningFactory) { firDiagnostic ->
-        IdentityBasedMemberInWillBecomeValueClassWarningImpl(
             firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
@@ -2461,12 +2431,6 @@ private fun KaDiagnosticConverterBuilder.addConversions50() {
             token,
         )
     }
-    add(FirErrors.EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY.errorFactory) { firDiagnostic ->
-        ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions51() {
@@ -2509,12 +2473,6 @@ private fun KaDiagnosticConverterBuilder.addConversions52() {
         DeprecationImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE.errorFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotBeRecursiveErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -2753,12 +2711,6 @@ private fun KaDiagnosticConverterBuilder.addConversions58() {
     }
     add(FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE) { firDiagnostic ->
         ValueClassCannotBeCloneableImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.errorFactory) { firDiagnostic ->
-        WillBecomeValueClassConstructorNotFinalReadOnlyParameterErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -3388,12 +3340,6 @@ private fun KaDiagnosticConverterBuilder.addConversions71() {
             token,
         )
     }
-    add(FirJvmErrors.SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS.warningFactory) { firDiagnostic ->
-        SynchronizedOnWillBecomeValueClassWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirJvmErrors.REDUNDANT_REPEATABLE_ANNOTATION) { firDiagnostic ->
         RedundantRepeatableAnnotationImpl(
             firDiagnostic.a,
@@ -3468,8 +3414,8 @@ private fun KaDiagnosticConverterBuilder.addConversions72() {
             token,
         )
     }
-    add(FirErrors.DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS.errorFactory) { firDiagnostic ->
-        DelegatedPropertyInsideWillBecomeValueClassErrorImpl(
+    add(FirErrors.DELEGATED_PROPERTY_INSIDE_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
+        DelegatedPropertyInsideWillBecomeValueClassImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -3660,12 +3606,6 @@ private fun KaDiagnosticConverterBuilder.addConversions76() {
             token,
         )
     }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION.warningFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotImplementInterfaceByDelegationWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_IN_NO_COMPATIBILITY_MODE) { firDiagnostic ->
         JvmDefaultWithCompatibilityNotInNoCompatibilityModeImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -3681,6 +3621,12 @@ private fun KaDiagnosticConverterBuilder.addConversions76() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions77() {
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR) { firDiagnostic ->
+        WillBecomeValueClassEmptyConstructorImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.DYNAMIC_UPPER_BOUND) { firDiagnostic ->
         DynamicUpperBoundImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -3720,12 +3666,6 @@ private fun KaDiagnosticConverterBuilder.addConversions78() {
     }
     add(FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR) { firDiagnostic ->
         AnnotationInWhereClauseErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS.errorFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotBeRecursiveViaTypeParametersErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4037,19 +3977,6 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
             token,
         )
     }
-    add(FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE.errorFactory) { firDiagnostic ->
-        WillBecomeValueNotApplicableErrorImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL.errorFactory) { firDiagnostic ->
-        WillBecomeValueClassNotTopLevelErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.INITIALIZER_TYPE_MISMATCH) { firDiagnostic ->
         InitializerTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -4156,12 +4083,6 @@ private fun KaDiagnosticConverterBuilder.addConversions88() {
     add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE) { firDiagnostic ->
         InapplicableTargetPropertyImmutableImpl(
             firDiagnostic.a,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.warningFactory) { firDiagnostic ->
-        AbstractWillBecomeValueClassConstructorPropertyParameterWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4284,12 +4205,6 @@ private fun KaDiagnosticConverterBuilder.addConversions90() {
         DeprecatedModifierContainingDeclarationImpl(
             firDiagnostic.a,
             firDiagnostic.b,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL.warningFactory) { firDiagnostic ->
-        WillBecomeValueClassNotTopLevelWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4735,12 +4650,6 @@ private fun KaDiagnosticConverterBuilder.addConversions100() {
             token,
         )
     }
-    add(FirErrors.ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.errorFactory) { firDiagnostic ->
-        AbstractWillBecomeValueClassConstructorPropertyParameterErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS) { firDiagnostic ->
         SupertypeInitializedInExpectedClassImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -4830,12 +4739,6 @@ private fun KaDiagnosticConverterBuilder.addConversions102() {
     }
     add(FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED) { firDiagnostic ->
         NestedJsModuleProhibitedImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS.errorFactory) { firDiagnostic ->
-        PropertyWithBackingFieldInsideWillBecomeValueClassErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -5003,12 +4906,6 @@ private fun KaDiagnosticConverterBuilder.addConversions104() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions105() {
-    add(FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS.warningFactory) { firDiagnostic ->
-        AbsenceOfPrimaryConstructorForWillBecomeValueClassWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS) { firDiagnostic ->
         WrongNumberOfTypeArgumentsImpl(
             firDiagnostic.a,
@@ -5566,13 +5463,6 @@ private fun KaDiagnosticConverterBuilder.addConversions117() {
             token,
         )
     }
-    add(FirErrors.IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS.errorFactory) { firDiagnostic ->
-        IdentitySensitiveOperationInsideWillBecomeValueClassErrorImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.TOO_MANY_ARGUMENTS) { firDiagnostic ->
         TooManyArgumentsImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
@@ -5609,6 +5499,12 @@ private fun KaDiagnosticConverterBuilder.addConversions117() {
 private fun KaDiagnosticConverterBuilder.addConversions118() {
     add(FirErrors.CLASS_INHERITS_JAVA_SEALED_CLASS) { firDiagnostic ->
         ClassInheritsJavaSealedClassImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER) { firDiagnostic ->
+        SealedWillBecomeValueClassConstructorPropertyParameterImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -5845,12 +5741,6 @@ private fun KaDiagnosticConverterBuilder.addConversions122() {
             token,
         )
     }
-    add(FirErrors.SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.errorFactory) { firDiagnostic ->
-        SealedWillBecomeValueClassConstructorPropertyParameterErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.CYCLIC_GENERIC_UPPER_BOUND) { firDiagnostic ->
         CyclicGenericUpperBoundImpl(
             firDiagnostic.a.map { firTypeParameterSymbol ->
@@ -5892,12 +5782,6 @@ private fun KaDiagnosticConverterBuilder.addConversions122() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions123() {
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_CLONEABLE.warningFactory) { firDiagnostic ->
-        WillBecomeValueClassCannotBeCloneableWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD) { firDiagnostic ->
         VarPropertyWithExplicitBackingFieldImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -5915,12 +5799,6 @@ private fun KaDiagnosticConverterBuilder.addConversions123() {
     }
     add(FirErrors.INVALID_VERSIONING_ON_RECEIVER_OR_CONTEXT_PARAMETER_POSITION) { firDiagnostic ->
         InvalidVersioningOnReceiverOrContextParameterPositionImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirJvmErrors.SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS.errorFactory) { firDiagnostic ->
-        SynchronizedOnWillBecomeValueClassErrorImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6021,6 +5899,12 @@ private fun KaDiagnosticConverterBuilder.addConversions125() {
     }
     add(FirErrors.DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED) { firDiagnostic ->
         DeprecatedSinceKotlinWithoutDeprecatedImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_EXTEND_IDENTITY_CLASSES) { firDiagnostic ->
+        WillBecomeValueClassCannotExtendIdentityClassesImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6265,6 +6149,13 @@ private fun KaDiagnosticConverterBuilder.addConversions130() {
     add(FirErrors.INFIX_MODIFIER_REQUIRED) { firDiagnostic ->
         InfixModifierRequiredImpl(
             firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE) { firDiagnostic ->
+        WillBecomeValueNotApplicableImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -6798,12 +6689,6 @@ private fun KaDiagnosticConverterBuilder.addConversions141() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions142() {
-    add(FirErrors.EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY.warningFactory) { firDiagnostic ->
-        ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.NEXT_NONE_APPLICABLE) { firDiagnostic ->
         NextNoneApplicableImpl(
             firDiagnostic.a.map { firBasedSymbol ->
@@ -7146,12 +7031,6 @@ private fun KaDiagnosticConverterBuilder.addConversions149() {
             token,
         )
     }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_EMPTY_CONSTRUCTOR.errorFactory) { firDiagnostic ->
-        WillBecomeValueClassEmptyConstructorErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED) { firDiagnostic ->
         BoundOnTypeAliasParameterNotAllowedImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -7289,6 +7168,12 @@ private fun KaDiagnosticConverterBuilder.addConversions154() {
     }
     add(FirErrors.ANNOTATION_ON_ANNOTATION_ARGUMENT) { firDiagnostic ->
         AnnotationOnAnnotationArgumentImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_BE_RECURSIVE_VIA_TYPE_PARAMETERS) { firDiagnostic ->
+        WillBecomeValueClassCannotBeRecursiveViaTypeParametersImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7445,6 +7330,12 @@ private fun KaDiagnosticConverterBuilder.addConversions158() {
             token,
         )
     }
+    add(FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
+        PropertyWithBackingFieldInsideWillBecomeValueClassImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJsErrors.JS_NO_RUNTIME_INTERFACE_AS_REIFIED_TYPE_ARGUMENT) { firDiagnostic ->
         JsNoRuntimeInterfaceAsReifiedTypeArgumentImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -7576,12 +7467,6 @@ private fun KaDiagnosticConverterBuilder.addConversions161() {
 private fun KaDiagnosticConverterBuilder.addConversions162() {
     add(FirErrors.PROJECTION_IN_TYPE_OF_ANNOTATION_MEMBER.errorFactory) { firDiagnostic ->
         ProjectionInTypeOfAnnotationMemberErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.SEALED_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER.warningFactory) { firDiagnostic ->
-        SealedWillBecomeValueClassConstructorPropertyParameterWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -7953,6 +7838,12 @@ private fun KaDiagnosticConverterBuilder.addConversions170() {
             token,
         )
     }
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER) { firDiagnostic ->
+        WillBecomeValueClassConstructorNotFinalReadOnlyParameterImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER) { firDiagnostic ->
         NameInConstraintIsNotATypeParameterImpl(
             firDiagnostic.a,
@@ -8038,6 +7929,13 @@ private fun KaDiagnosticConverterBuilder.addConversions172() {
     }
     add(FirErrors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION) { firDiagnostic ->
         NonSourceAnnotationOnInlinedLambdaExpressionImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
+        IdentityBasedMemberInWillBecomeValueClassImpl(
+            firDiagnostic.a,
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8151,19 +8049,6 @@ private fun KaDiagnosticConverterBuilder.addConversions174() {
     }
     add(FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED.warningFactory) { firDiagnostic ->
         DataClassCopyVisibilityWillBeChangedWarningImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE.warningFactory) { firDiagnostic ->
-        WillBecomeValueNotApplicableWarningImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.warningFactory) { firDiagnostic ->
-        WillBecomeValueClassConstructorNotFinalReadOnlyParameterWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8437,13 +8322,6 @@ private fun KaDiagnosticConverterBuilder.addConversions180() {
             token,
         )
     }
-    add(FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS.errorFactory) { firDiagnostic ->
-        IdentityBasedMemberInWillBecomeValueClassErrorImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.REDUNDANT_PROJECTION) { firDiagnostic ->
         RedundantProjectionImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -8493,6 +8371,12 @@ private fun KaDiagnosticConverterBuilder.addConversions182() {
     }
     add(FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL) { firDiagnostic ->
         AnnotationArgumentMustBeKclassLiteralImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_NOT_TOP_LEVEL) { firDiagnostic ->
+        WillBecomeValueClassNotTopLevelImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8552,6 +8436,12 @@ private fun KaDiagnosticConverterBuilder.addConversions183() {
 private fun KaDiagnosticConverterBuilder.addConversions184() {
     add(FirErrors.UNRESOLVED_EQUALITY_BOUND_ARGUMENT) { firDiagnostic ->
         UnresolvedEqualityBoundArgumentImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirErrors.WILL_BECOME_VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION) { firDiagnostic ->
+        WillBecomeValueClassCannotImplementInterfaceByDelegationImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -8708,6 +8598,12 @@ private fun KaDiagnosticConverterBuilder.addConversions188() {
             token,
         )
     }
+    add(FirErrors.ABSTRACT_WILL_BECOME_VALUE_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER) { firDiagnostic ->
+        AbstractWillBecomeValueClassConstructorPropertyParameterImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED) { firDiagnostic ->
         TypeArgumentsForOuterClassWhenNestedReferencedImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -8779,6 +8675,12 @@ private fun KaDiagnosticConverterBuilder.addConversions189() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions190() {
+    add(FirErrors.EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY) { firDiagnostic ->
+        ExpectWillBecomeValueClassWithNoPrimaryConstructorHasSecondaryImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.MIXING_NAMED_AND_POSITIONAL_ARGUMENTS) { firDiagnostic ->
         MixingNamedAndPositionalArgumentsImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -8983,13 +8885,6 @@ private fun KaDiagnosticConverterBuilder.addConversions193() {
             token,
         )
     }
-    add(FirErrors.IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS.warningFactory) { firDiagnostic ->
-        IdentitySensitiveOperationInsideWillBecomeValueClassWarningImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.EXPECTED_PARAMETER_TYPE_MISMATCH) { firDiagnostic ->
         ExpectedParameterTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -9120,12 +9015,6 @@ private fun KaDiagnosticConverterBuilder.addConversions195() {
             token,
         )
     }
-    add(FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS.errorFactory) { firDiagnostic ->
-        AbsenceOfPrimaryConstructorForWillBecomeValueClassErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE) { firDiagnostic ->
         MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideImpl(
             firDiagnostic.a,
@@ -9210,6 +9099,12 @@ private fun KaDiagnosticConverterBuilder.addConversions197() {
             token,
         )
     }
+    add(FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_WILL_BECOME_VALUE_CLASS) { firDiagnostic ->
+        AbsenceOfPrimaryConstructorForWillBecomeValueClassImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY) { firDiagnostic ->
         AtomicRefCallArgumentWithoutConsistentIdentityImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -9235,12 +9130,6 @@ private fun KaDiagnosticConverterBuilder.addConversions197() {
 private fun KaDiagnosticConverterBuilder.addConversions198() {
     add(FirErrors.ANNOTATION_IN_CONTRACT_ERROR) { firDiagnostic ->
         AnnotationInContractErrorImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirErrors.PROPERTY_WITH_BACKING_FIELD_INSIDE_WILL_BECOME_VALUE_CLASS.warningFactory) { firDiagnostic ->
-        PropertyWithBackingFieldInsideWillBecomeValueClassWarningImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

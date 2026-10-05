@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -72,10 +71,9 @@ fun FirRegularClassSymbol.willBecomeKotlinOrJdkValueClass(session: FirSession): 
 /**
  * Reports an identity-sensitive operation performed on [type] if that type is annotated with '@WillBecomeValue'.
  *
- * The author of the annotated class has already committed to value semantics, so inside it the operation is a
- * deprecation which becomes an error with [LanguageFeature.StabilizeWillBecomeValueRestrictions], while outside it is
- * only a migration warning. Called from both the common and the platform-specific identity checkers so that every
- * identity-sensitive operation they already know about is covered for '@WillBecomeValue' classes as well.
+ * The author of the annotated class has already committed to value semantics, so inside it the operation is an error,
+ * while outside it is only a migration warning. Called from both the common and the platform-specific identity checkers
+ * so that every identity-sensitive operation they already know about is covered for '@WillBecomeValue' classes as well.
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun reportIdentitySensitiveOperationOnWillBecomeValueClass(source: KtSourceElement?, type: ConeKotlinType) {

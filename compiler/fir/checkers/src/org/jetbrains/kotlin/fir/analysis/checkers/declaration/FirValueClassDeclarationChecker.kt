@@ -451,16 +451,12 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
     }
 
-    /**
-     * A class annotated with '@WillBecomeValue' is not a value class yet, so the value class restrictions are only
-     * deprecation warnings for it until [LanguageFeature.StabilizeWillBecomeValueRestrictions] turns them into errors.
-     */
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun reportOn(
         source: KtSourceElement?,
         isWillBecomeValueClass: Boolean,
         valueClassFactory: KtDiagnosticFactory0,
-        willBecomeValueClassFactory: KtDiagnosticFactoryForDeprecation0,
+        willBecomeValueClassFactory: KtDiagnosticFactory0,
     ) {
         if (isWillBecomeValueClass) {
             reporter.reportOn(source, willBecomeValueClassFactory)
@@ -475,7 +471,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         isWillBecomeValueClass: Boolean,
         valueClassFactory: KtDiagnosticFactory1<A>,
         valueClassArgument: A,
-        willBecomeValueClassFactory: KtDiagnosticFactoryForDeprecation0,
+        willBecomeValueClassFactory: KtDiagnosticFactory0,
     ) {
         if (isWillBecomeValueClass) {
             reporter.reportOn(source, willBecomeValueClassFactory)
@@ -489,7 +485,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         source: KtSourceElement?,
         isWillBecomeValueClass: Boolean,
         valueClassFactory: KtDiagnosticFactoryForDeprecation0,
-        willBecomeValueClassFactory: KtDiagnosticFactoryForDeprecation0,
+        willBecomeValueClassFactory: KtDiagnosticFactory0,
     ) {
         if (isWillBecomeValueClass) {
             reporter.reportOn(source, willBecomeValueClassFactory)

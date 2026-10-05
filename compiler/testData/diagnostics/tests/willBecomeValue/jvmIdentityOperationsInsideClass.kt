@@ -1,7 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// LANGUAGE_FEATURE_TOGGLED: StabilizeWillBecomeValueRestrictions
 
 @WillBecomeValue
 class Key(val x: Int) {
@@ -10,14 +9,14 @@ class Key(val x: Int) {
     override fun toString(): String = "Key($x)"
 
     fun lock() {
-        synchronized(<!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS_ERROR!>this<!>) { }
+        synchronized(<!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>this<!>) { }
     }
 
-    <!SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS_ERROR!>@Synchronized<!>
+    <!SYNCHRONIZED_ON_WILL_BECOME_VALUE_CLASS!>@Synchronized<!>
     fun lock1() {
     }
 
-    fun identity(): Int = System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS_ERROR!>this<!>)
+    fun identity(): Int = System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>this<!>)
 }
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, isExpression,

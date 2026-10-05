@@ -1,12 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +MultiPlatformProjects, +AllowExpectValueClassesWithNoPrimaryConstructor
-// LANGUAGE_FEATURE_TOGGLED: StabilizeWillBecomeValueRestrictions
 // WITH_STDLIB
 // MODULE: common
 
 @WillBecomeValue
 expect class CommonFinal {
-    <!EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY_ERROR!>constructor(value: Int)<!>
+    <!EXPECT_WILL_BECOME_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY!>constructor(value: Int)<!>
 
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
