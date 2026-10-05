@@ -3,7 +3,6 @@
 // APPLE_ONLY_VALIDATION
 
 // MODULE: fooKitInterop
-
 // FILE: fooKitInterop.def
 language = Objective-C
 modules = FooKit BarKit
@@ -38,7 +37,26 @@ module BarKit {
     export *
 }
 
-// MODULE: CinteropReexport(fooKitInterop)
+// MODULE: zarKitInterop
+// FILE: fooKitInterop.def
+language = Objective-C
+modules = ZarKit
+package = zar
+
+// FILE: Zarable.h
+#import <Foundation/Foundation.h>
+
+@protocol Zarable
+- (int)someValue;
+@end
+
+// FILE: module.modulemap
+module ZarKit {
+    header "Zarable.h"
+    export *
+}
+
+// MODULE: CinteropReexport(fooKitInterop,zarKitInterop)
 // FILE: main.kt
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
@@ -47,6 +65,7 @@ package main
 import foo.Foo
 import foo.Bar
 import foo.ZarProtocol
+import zar.ZarableProtocol
 
 fun consumesFoo(x: Foo): Int = 0
 
@@ -57,3 +76,5 @@ fun producesFoo(): Foo? = null
 // The cinterop names the Objective-C protocol `Zar` as the Kotlin interface `ZarProtocol`; the
 // generated Swift must reference it under its original Objective-C name `Zar`.
 fun consumesBar(x: ZarProtocol): Int = 0
+
+fun consumesBar(x: ZarableProtocol): ZarableProtocol = TODO()
