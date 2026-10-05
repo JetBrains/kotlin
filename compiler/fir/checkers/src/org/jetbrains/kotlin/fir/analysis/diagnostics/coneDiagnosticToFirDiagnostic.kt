@@ -273,7 +273,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
                 session
             )
 
-            is InapplicableNullableReceiver -> inapplicableNullableReceiver(
+            is InapplicableUnsafeReceiver -> inapplicableNullableReceiver(
                 candidate,
                 rootCause,
                 source,
@@ -515,7 +515,7 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
         )
         applicability == CandidateApplicability.UNSAFE_CALL -> {
             val diagnosticAndCandidate = candidates.firstNotNullOfOrNull {
-                (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<InapplicableNullableReceiver>()?.to(it)
+                (it as? AbstractCallCandidate<*>)?.diagnostics?.firstIsInstanceOrNull<InapplicableUnsafeReceiver>()?.to(it)
             }
             if (diagnosticAndCandidate != null) {
                 listOfNotNull(
@@ -728,7 +728,7 @@ private fun ConeDiagnostic.mapOtherDiagnostic(
 
 private fun inapplicableNullableReceiver(
     candidate: AbstractCallCandidate<*>,
-    rootCause: InapplicableNullableReceiver,
+    rootCause: InapplicableUnsafeReceiver,
     source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
     session: FirSession,
