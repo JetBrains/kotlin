@@ -1,0 +1,10 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : use.kt -> use.kt
+    added cache: use.kt
+
+// use.kt depends on actions.kt only weakly, via the virtual call trampoline
+STEP 1:
+    dependencies: lib1
+    modified cache: use.kt
