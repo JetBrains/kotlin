@@ -357,6 +357,7 @@ public final class org/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope : j
 	public static final field NORMAL Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
 	public static final field OPTIONAL Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
 	public static final field PEER Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/npm/KotlinNpmDependency$Scope;
 }
@@ -4217,12 +4218,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCom
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolver$Companion {
 	public final fun getPublicPackageJsonAttribute ()Lorg/gradle/api/attributes/Attribute;
-}
-
-public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolver$ConfigurationVisitor {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolver;)V
-	public final fun toPackageJsonProducer ()Lorg/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinCompilationNpmResolution;
-	public final fun visit (Lorg/gradle/api/artifacts/Configuration;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/npm/resolver/KotlinProjectNpmResolver : java/io/Serializable {
