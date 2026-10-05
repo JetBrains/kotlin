@@ -19,6 +19,14 @@ public fun main_consumesBar__TypesOfArguments__anyU20Zar__(x: kotlin.native.inte
     return _result
 }
 
+@ExportedBridge("main_consumesBar__TypesOfArguments__anyU20Zarable__")
+@OptIn(kotlinx.cinterop.BetaInteropApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
+public fun main_consumesBar__TypesOfArguments__anyU20Zarable__(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __x = interpretObjCPointer<zar.ZarableProtocol>(x)
+    val _result = run { main.consumesBar(__x) }
+    return _result.objcPtr()
+}
+
 @ExportedBridge("main_consumesFoo__TypesOfArguments__Foo__")
 @OptIn(kotlinx.cinterop.BetaInteropApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 public fun main_consumesFoo__TypesOfArguments__Foo__(x: kotlin.native.internal.NativePtr): Int {
