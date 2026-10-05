@@ -16,7 +16,9 @@ import org.gradle.api.tasks.Sync
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
@@ -29,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.swiftPackagePlat
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.AssembleSwiftPackageBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMImportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportConfigurationDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDeclaredModuleOptions
@@ -2326,6 +2329,30 @@ class ExportExtensionSwiftPackageIntegrationTests {
             listOf("iosArm64", "iosSimulatorArm64", "macosArm64").map { swiftExportDirectory.resolve("$it/modules.json") },
             targetOutputs.map { it.swiftModulesFile.locationOnly.get().asFile },
         )
+    }
+
+    @Test
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    fun `test the swift pm import cinterop is reexported by the package run`() {
+        val project = swiftPMImportPackageProject()
+
+        // So the API can expose the imported types, as it can in the Xcode flow.
+        val runTask = assertIs<SwiftExportTask>(project.tasks.findByName("iosArm64SwiftPackageExport"))
+        assertEquals("${project.name}-cinterop-swiftPMImport", runTask.cinteropModuleName.get())
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    private fun swiftPMImportPackageProject() = exportDslProject(multiplatform = { iosArm64(); iosSimulatorArm64() }) {
+        multiplatformExtension.extensions.getByType(SwiftPMImportExtension::class.java).apply {
+            localSwiftPackage(layout.projectDirectory.dir("../localSwiftPackage"), products = listOf("LocalSwiftPackage"))
+            swiftPackage("https://github.com/example/Lib.git", version = "1.2.0", products = listOf("Lib"))
+        }
+        exportExtension.swift {
+            moduleName.set("Shared")
+            swiftPackageIntegration {
+                outputDirectory.set(layout.projectDirectory.dir("iosApp/SharedPackage"))
+            }
+        }
     }
 
     @Test
