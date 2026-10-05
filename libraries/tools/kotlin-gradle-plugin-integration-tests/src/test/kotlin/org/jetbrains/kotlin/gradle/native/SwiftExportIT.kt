@@ -625,7 +625,7 @@ class SwiftExportIT : KGPBaseTest() {
                 assertDirectoryExists(depOnePath)
                 assertDirectoryDoesNotExist(depTwoPath)
 
-                val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/modules/Shared.json")
+                val modulesFile = projectPath.resolve("build/SwiftExport/iosArm64/modules.json")
                 assertFileExists(modulesFile)
 
                 val modules = parseJsonToMap(modulesFile).getNestedList("modules")

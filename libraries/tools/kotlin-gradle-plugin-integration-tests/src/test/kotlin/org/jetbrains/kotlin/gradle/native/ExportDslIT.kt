@@ -344,7 +344,7 @@ class ExportDslIT : KGPBaseTest() {
                 // Flattening the package exposes `com.example.sub.One` at the top level of the module.
                 assertContains(renamedSwift.readText(), "public typealias One = ExportedKotlinPackages.com.example.sub.One")
 
-                val modules = parseJsonToMap(projectPath.resolve("build/SwiftExport/iosArm64/modules/Shared.json"))
+                val modules = parseJsonToMap(projectPath.resolve("build/SwiftExport/iosArm64/modules.json"))
                     .getNestedList("modules")
                     .orEmpty()
                     .map { it["name"]?.jsonPrimitive?.content }

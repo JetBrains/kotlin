@@ -271,7 +271,7 @@ class SwiftExportDslIT : KGPBaseTest() {
                 assertTasksUpToDate(":iosArm64SwiftExport")
             }
 
-            // A file that no run produced, which the next run has to remove along with everything else in its directory.
+            // No run produced this file, so the next run must delete it along with the rest of the directory.
             projectPath.resolve("build/SwiftExport/iosArm64/Stale/Stale.kt").createParentDirectories().writeText("")
 
             // 3) Change ONLY the exported module name override. The override drives the task's output and is tracked
