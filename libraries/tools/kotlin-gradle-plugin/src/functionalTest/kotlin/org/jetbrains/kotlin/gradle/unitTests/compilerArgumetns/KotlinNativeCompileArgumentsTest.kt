@@ -6,15 +6,10 @@
 package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
 import org.gradle.api.file.FileCollection
-import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kotlinBuildDeps
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.Primitive
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -26,50 +21,6 @@ import java.io.File
 import kotlin.test.*
 
 class KotlinNativeCompileArgumentsTest {
-    @Test
-    fun `test - simple project - old buildCompilerArgs and new CompilerArgumentsProducer - return same arguments`() {
-        val project = buildProjectWithMPP()
-        val kotlin = project.multiplatformExtension
-
-        kotlin.linuxArm64()
-        val linuxX64Target = kotlin.linuxX64()
-
-        project.evaluate()
-
-        /* Check linuxX64 main compilation as 'native platform compilation' */
-        run {
-            val linuxX64MainCompilation = linuxX64Target.compilations.main
-            val linuxX64MainCompileTask = linuxX64MainCompilation.compileTaskProvider.get()
-            `assert setupCompilerArgs and createCompilerArguments are equal`(linuxX64MainCompileTask)
-        }
-
-        /* Check commonMain compilation as 'shared native compilation' */
-        run {
-            val commonMainCompilation = kotlin.metadata().compilations.getByName("commonMain")
-            val commonMainCompileTask = commonMainCompilation.compileTaskProvider.get() as KotlinNativeCompile
-            `assert setupCompilerArgs and createCompilerArguments are equal`(commonMainCompileTask)
-        }
-    }
-
-
-    private fun `assert setupCompilerArgs and createCompilerArguments are equal`(compile: KotlinNativeCompile) {
-        val argumentsFromCompilerArgumentsProducer = compile.createCompilerArguments(
-            CreateCompilerArgumentsContext(
-                includeArgumentTypes = setOf(Primitive, PluginClasspath),
-                isLenient = true
-            )
-        )
-        val argumentsFromBuildCompilerArgs = K2NativeCompilerArguments().apply {
-            @Suppress("DEPRECATION_ERROR")
-            compile.setupCompilerArgs(this, false, true)
-        }
-
-        assertEquals(
-            ArgumentUtils.convertArgumentsToStringList(argumentsFromBuildCompilerArgs),
-            ArgumentUtils.convertArgumentsToStringList(argumentsFromCompilerArgumentsProducer)
-        )
-    }
-
     @Test
     fun `test - simple project - failing dependency - lenient`() {
         val project = buildProjectWithMPP()

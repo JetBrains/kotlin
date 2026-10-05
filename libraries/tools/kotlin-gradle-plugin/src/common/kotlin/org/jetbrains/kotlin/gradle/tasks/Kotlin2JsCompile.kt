@@ -133,13 +133,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     internal abstract val getIsWasmPlatform: Property<Boolean>
 
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
-    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        @Suppress("DEPRECATION_ERROR")
-        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
-    }
-
     /**
      * In some cases, test compilations may have both main compilation outputs as directory and klib.
      * This produces compiler warning about having two similar Klibs as inputs.
