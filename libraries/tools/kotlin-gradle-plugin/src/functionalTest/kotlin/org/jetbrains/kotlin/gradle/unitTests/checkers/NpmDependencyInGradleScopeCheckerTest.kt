@@ -76,6 +76,7 @@ class NpmDependencyInGradleScopeCheckerTest {
 
                 sourceSets.getByName("jsMain").dependencies {
                     npm("is-odd-even", "1.0.0")
+                    npm("is-odd", project.provider { "1.0.0" })
                     npmDev("karma", "6.4.0")
                     npmOptional("is-even", "1.0.0")
                     npmPeer("react", "18.0.0")
