@@ -305,7 +305,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     var result = "fail"
     builder {

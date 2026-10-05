@@ -12,7 +12,7 @@ import kotlin.reflect.*
 // CHECK: internal unnamed_addr constant { %struct.ObjHeader, ptr, ptr, i1 } { %struct.ObjHeader { ptr {{.*}} }, ptr [[REG_FOR_CLASSIFIER_FIELD:@[0-9]+]], ptr [[REG_FOR_ARGUMENTS_FIELD:@[0-9]+]], i1 false }
 // CHECK-NOT: internal unnamed_addr constant { %struct.ObjHeader, ptr, ptr, i1 } { %struct.ObjHeader { ptr {{.*}} }, ptr [[REG_FOR_CLASSIFIER_FIELD]], ptr [[REG_FOR_ARGUMENTS_FIELD]], i1 false }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     println(1024)
     println(1024)

@@ -1,7 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 
-// CHECK-LABEL: define i64 @"kfun:#foo(){}kotlin.Long"()
+// CHECK-LABEL: define i64 @"kfun:#foo(){}kotlin.Long{{(\[[^"]*\])?}}"()
 fun foo(): Long {
     // CHECK-NOT: @LONG_CACHE
     val data: Map<String, Any> = mapOf()
@@ -26,7 +26,7 @@ fun callBar(f: Boolean): ULong {
 }
 // CHECK: ret i64
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     val resultFoo = foo()
     val resultBar = callBar(false)

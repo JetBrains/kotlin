@@ -41,7 +41,7 @@ fun builderInt(c: suspend () -> Int) {
     c.startCoroutine(EmptyContinuation)
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     builderInt { return@builderInt callsIntrinsicInt() }
     builderUnit { callsIntrinsicUnit() }

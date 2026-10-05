@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
+import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.getConstArgument
+import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
@@ -47,12 +50,11 @@ object KonanBinaryInterface {
 
     val IrFunction.functionName: String get() = mangler.run { signatureString(compatibleMode = true) }
 
-    val IrFunction.symbolName: String
-        get() {
-            require(isExported(this)) { "Asked for symbol name for a private function ${render()}" }
+    fun IrFunction.symbolName(libraryFingerprint: FingerprintHash?): String {
+        require(isExported(this)) { "Asked for symbol name for a private function ${render()}" }
 
-            return funSymbolNameImpl(null)
-        }
+        return funSymbolNameImpl(null, libraryFingerprint)
+    }
 
     val IrField.symbolName: String get() = withPrefix(MANGLE_FIELD_PREFIX, fieldSymbolNameImpl())
 
@@ -72,7 +74,7 @@ object KonanBinaryInterface {
         this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)
                 ?: this.annotations.findAnnotation(RuntimeNames.exportedBridge)
 
-    private fun IrFunction.funSymbolNameImpl(containerName: String?): String {
+    private fun IrFunction.funSymbolNameImpl(containerName: String?, libraryFingerprint: FingerprintHash? = null): String {
         if (isExternal) {
             this.externalSymbolOrThrow()?.let {
                 return it
@@ -86,7 +88,13 @@ object KonanBinaryInterface {
         }
 
         val mangle = mangler.run { mangleString(compatibleMode = true) }
-        return withPrefix(MANGLE_FUN_PREFIX, containerName?.plus(".$mangle") ?: mangle)
+        // Different libraries can declare functions with the same mangled signature (KT-81760),
+        // so the library fingerprint is used to tell them apart.
+        // This is only a workaround: proper solution waits for KT-81761.
+        val name = containerName?.plus(".$mangle")
+                ?: libraryFingerprint?.let { "$mangle[$it]" }
+                ?: mangle
+        return withPrefix(MANGLE_FUN_PREFIX, name)
     }
 
     private fun IrField.fieldSymbolNameImpl(): String {
@@ -138,7 +146,8 @@ fun IrFunction.computeFunctionName() = with(KonanBinaryInterface) { functionName
 
 fun IrFunction.computeFullName() = parent.fqNameForIrSerialization.child(Name.identifier(computeFunctionName())).asString()
 
-fun IrFunction.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.replaceSpecialSymbols()
+fun IrFunction.computeSymbolName(libraryFingerprint: FingerprintHash? = null) =
+        with(KonanBinaryInterface) { symbolName(libraryFingerprint) }.replaceSpecialSymbols()
 
 fun IrFunction.computePrivateSymbolName(containerName: String) = with(KonanBinaryInterface) { privateSymbolName(containerName) }.replaceSpecialSymbols()
 
@@ -160,9 +169,13 @@ internal fun IrSimpleFunction.computeSymbolName(
         forImplementation: Boolean,
         internalSymbolNameBuilder: () -> String? = { -> null },
 ): String = with(KonanBinaryInterface) {
-    val symbolName = if (isExported(this@computeSymbolName))
-        computeSymbolName()
-    else {
+    val symbolName = if (isExported(this@computeSymbolName)) {
+        val library = getPackageFragment().module.kotlinLibrary
+        val cachedLibraries = context.config.cachedLibraries
+        val isCachedLibrary = library != null &&
+                (library == context.config.libraryToCache?.klib || cachedLibraries.isLibraryCached(library))
+        computeSymbolName(if (isCachedLibrary) cachedLibraries.getLibraryFingerprint(library) else null)
+    } else {
         internalSymbolNameBuilder() ?: run {
             val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
                 ?: this@computeSymbolName.file.path

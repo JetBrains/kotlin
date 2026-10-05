@@ -7,11 +7,11 @@
 
 import kotlinx.cinterop.*
 
-// CHECK-AAPCS-OPT-LABEL: define i1 @"kfun:kotlinx.cinterop.StableRef#equals(kotlin.Any?){}kotlin.Boolean"(ptr %0, ptr %1)
-// CHECK-DEFAULTABI-OPT-LABEL: define zeroext i1 @"kfun:kotlinx.cinterop.StableRef#equals(kotlin.Any?){}kotlin.Boolean"(ptr %0, ptr %1)
-// CHECK-WINDOWSX64-OPT-LABEL: define zeroext i1 @"kfun:kotlinx.cinterop.StableRef#equals(kotlin.Any?){}kotlin.Boolean"(ptr %0, ptr %1)
+// CHECK-AAPCS-OPT-LABEL: define i1 @"kfun:kotlinx.cinterop.StableRef#equals(kotlin.Any?){}kotlin.Boolean{{(\[[^"]*\])?}}"(ptr %0, ptr %1)
+// CHECK-DEFAULTABI-OPT-LABEL: define zeroext i1 @"kfun:kotlinx.cinterop.StableRef#equals(kotlin.Any?){}kotlin.Boolean{{(\[[^"]*\])?}}"(ptr %0, ptr %1)
+// CHECK-WINDOWSX64-OPT-LABEL: define zeroext i1 @"kfun:kotlinx.cinterop.StableRef#equals(kotlin.Any?){}kotlin.Boolean{{(\[[^"]*\])?}}"(ptr %0, ptr %1)
 
-// CHECK-OPT: call ptr @"kfun:kotlinx.cinterop#<StableRef-unbox>(kotlin.Any?){}kotlinx.cinterop.StableRef<-1:0>?"
+// CHECK-OPT: call ptr @"kfun:kotlinx.cinterop#<StableRef-unbox>(kotlin.Any?){}kotlinx.cinterop.StableRef<-1:0>?{{(\[[^"]*\])?}}"
 
 // CHECK-OPT-LABEL: epilogue:
 

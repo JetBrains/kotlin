@@ -36,7 +36,7 @@ fun bar() = B()
 // CHECK-LABEL: epilogue:
 fun baz(): A = bar()
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     println(Foo(42))
     println(foo(42))

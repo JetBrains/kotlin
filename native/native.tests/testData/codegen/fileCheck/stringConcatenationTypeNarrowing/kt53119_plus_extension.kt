@@ -9,13 +9,13 @@ import kotlin.test.*
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#manualPlusExtensionAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
@@ -30,7 +30,7 @@ fun manualPlusExtensionAny(maybeStr: String?, maybeAny: kotlin.Any?): kotlin.Str
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret ptr
@@ -41,12 +41,12 @@ fun manualPlusExtensionString(maybeStr: String?, str: String): kotlin.String =
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionAny
 // CHECK-OPT-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin#plus__at__kotlin.String?(kotlin.Any?)
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 
 // CHECK: ret ptr
 
@@ -60,7 +60,7 @@ fun generatedPlusExtensionAny(maybeStr: String?, maybeAny: Any?): String {
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret ptr
@@ -74,13 +74,13 @@ data class Foo(val bar: Int)
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
 
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret ptr
@@ -92,11 +92,11 @@ fun generatedPlusExtensionFoo(maybeStr: String?, foo: Foo): String {
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension#generatedPlusExtensionMaybeFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_extension.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 

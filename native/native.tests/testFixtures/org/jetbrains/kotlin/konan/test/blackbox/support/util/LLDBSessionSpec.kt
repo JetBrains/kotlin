@@ -82,8 +82,12 @@ abstract class LLDBSessionSpec {
             val angledInlineBreakpointOffset = Regex("""<\+\d+>( \[inlined])""")
             val targetStoppedLine = Regex("""Target \d+: .* stopped\.\n""")
             val setFormatLine = Regex("""\(lldb\) settings set .*-format .*\n""")
+            // Kotlin function symbols from cached libraries end with a library fingerprint, which depends on the library contents:
+            // `kfun:#foo(){}kotlin.String[1x2y3z.4a5b6c]` -> `kfun:#foo(){}kotlin.String`.
+            val functionLibraryFingerprint = Regex("""(kfun:.*?}[^ \n\[]*)\[[0-9a-z]+\.[0-9a-z]+]""")
 
             return lldbOutput
+                .replace(functionLibraryFingerprint, "$1")
                 .replace(executablePathRegexp, "<path to executable>")
                 .replace(lldbScriptPath, "<path to lldb script>")
                 .replace(testHelperImportLine, "")

@@ -15,13 +15,13 @@ object C {
     val x = listOf(1, 2, 3)
 }
 
-// CHECK-LABEL: define i32 @"kfun:#f(){}kotlin.Int"()
+// CHECK-LABEL: define i32 @"kfun:#f(){}kotlin.Int{{(\[[^"]*\])?}}"()
 // CHECK-NOT: EnterFrame
 fun f() = A.x + B.y
 // CHECK: {{^}}epilogue:
 
 // test that assumption on how EnterFrame looks like is not broken
-// CHECK-LABEL: define void @"kfun:#g(){}"()
+// CHECK-LABEL: define void @"kfun:#g(){}{{(\[[^"]*\])?}}"()
 // CHECK: EnterFrame
 fun g() {
     val x = C.x
@@ -29,7 +29,7 @@ fun g() {
 // CHECK: {{^}}epilogue:
 
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     val f = f()
     if (f != 12)

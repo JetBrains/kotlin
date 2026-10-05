@@ -9,7 +9,7 @@ import kotlin.test.*
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
@@ -25,7 +25,7 @@ fun manualPlusMemberAny(str: String, maybeAny: kotlin.Any?): kotlin.String =
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 
 // CHECK: ret ptr
 
@@ -35,7 +35,7 @@ fun manualPlusMemberString(str1: String, str2: String): kotlin.String =
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
@@ -52,7 +52,7 @@ fun generatedPlusMemberAny(str: String, maybeAny: Any?): String {
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret ptr
@@ -65,7 +65,7 @@ data class Foo(val bar: Int)
 
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT Foo#toString(){}kotlin.String
 
 // CHECK-OPT: call ptr @Kotlin_String_plusImpl
@@ -78,7 +78,7 @@ fun manualPlusMemberFoo(str1: String, foo: Foo): kotlin.String =
 
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberMaybeFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 

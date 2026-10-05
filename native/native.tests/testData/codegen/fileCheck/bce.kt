@@ -1,7 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // FILECHECK_STAGE: CStubs
 
-// CHECK-LABEL: define void @"kfun:#forEachIndicies(){}"()
+// CHECK-LABEL: define void @"kfun:#forEachIndicies(){}{{(\[[^"]*\])?}}"()
 fun forEachIndicies() {
     val array = Array(10) { 0 }
 
@@ -13,7 +13,7 @@ fun forEachIndicies() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forUntilSize(){}"()
+// CHECK-LABEL: define void @"kfun:#forUntilSize(){}{{(\[[^"]*\])?}}"()
 fun forUntilSize() {
     val array = Array(10) { 0L }
     // CHECK: {{^}}do_while_loop{{.*}}:
@@ -24,7 +24,7 @@ fun forUntilSize() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forRangeUntilSize(){}"()
+// CHECK-LABEL: define void @"kfun:#forRangeUntilSize(){}{{(\[[^"]*\])?}}"()
 @ExperimentalStdlibApi
 fun forRangeUntilSize() {
     val array = Array(10) { 0L }
@@ -36,7 +36,7 @@ fun forRangeUntilSize() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forDownToSize(){}"()
+// CHECK-LABEL: define void @"kfun:#forDownToSize(){}{{(\[[^"]*\])?}}"()
 fun forDownToSize() {
     val array = Array(10) { 0L }
 
@@ -54,7 +54,7 @@ fun forDownToSize() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forRangeToSize(){}"()
+// CHECK-LABEL: define void @"kfun:#forRangeToSize(){}{{(\[[^"]*\])?}}"()
 fun forRangeToSize() {
     val array = Array(10) { 0L }
 
@@ -74,7 +74,7 @@ fun forRangeToSize() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forRangeToWithStep(){}"()
+// CHECK-LABEL: define void @"kfun:#forRangeToWithStep(){}{{(\[[^"]*\])?}}"()
 fun forRangeToWithStep() {
     val array = Array(10) { 0L }
 
@@ -86,7 +86,7 @@ fun forRangeToWithStep() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forUntilWithStep(){}"()
+// CHECK-LABEL: define void @"kfun:#forUntilWithStep(){}{{(\[[^"]*\])?}}"()
 fun forUntilWithStep() {
     val array = CharArray(10) { '0' }
     // CHECK: {{^}}do_while_loop{{.*}}:
@@ -97,7 +97,7 @@ fun forUntilWithStep() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forRangeUntilWithStep(){}"()
+// CHECK-LABEL: define void @"kfun:#forRangeUntilWithStep(){}{{(\[[^"]*\])?}}"()
 @ExperimentalStdlibApi
 fun forRangeUntilWithStep() {
     val array = CharArray(10) { '0' }
@@ -109,7 +109,7 @@ fun forRangeUntilWithStep() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forDownToWithStep(){}"()
+// CHECK-LABEL: define void @"kfun:#forDownToWithStep(){}{{(\[[^"]*\])?}}"()
 fun forDownToWithStep() {
     val array = UIntArray(10) { 0U }
     // CHECK: {{^}}do_while_loop{{.*}}:
@@ -120,7 +120,7 @@ fun forDownToWithStep() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forIndiciesWithStep(){}"()
+// CHECK-LABEL: define void @"kfun:#forIndiciesWithStep(){}{{(\[[^"]*\])?}}"()
 fun forIndiciesWithStep() {
     val array = Array(10) { 0L }
     // CHECK: {{^}}do_while_loop{{.*}}:
@@ -131,7 +131,7 @@ fun forIndiciesWithStep() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forWithIndex(){}"()
+// CHECK-LABEL: define void @"kfun:#forWithIndex(){}{{(\[[^"]*\])?}}"()
 fun forWithIndex() {
     val array = Array(10) { 100 }
 
@@ -143,7 +143,7 @@ fun forWithIndex() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forReversed(){}"()
+// CHECK-LABEL: define void @"kfun:#forReversed(){}{{(\[[^"]*\])?}}"()
 fun forReversed() {
     val array = Array(10) { 100 }
     // CHECK: {{^}}do_while_loop{{.*}}:
@@ -154,7 +154,7 @@ fun forReversed() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forRangeUntilReversed(){}"()
+// CHECK-LABEL: define void @"kfun:#forRangeUntilReversed(){}{{(\[[^"]*\])?}}"()
 @ExperimentalStdlibApi
 fun forRangeUntilReversed() {
     val array = Array(10) { 100 }
@@ -168,7 +168,7 @@ fun forRangeUntilReversed() {
 
 fun foo(a: Int, b : Int): Int = a + b * 2
 
-// CHECK-LABEL: define void @"kfun:#forEachCall(){}"()
+// CHECK-LABEL: define void @"kfun:#forEachCall(){}{{(\[[^"]*\])?}}"()
 fun forEachCall() {
     val array = Array(10) { 100 }
     var sum = 0
@@ -180,7 +180,7 @@ fun forEachCall() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#forLoop(){}"()
+// CHECK-LABEL: define void @"kfun:#forLoop(){}{{(\[[^"]*\])?}}"()
 fun forLoop() {
     val array = Array(10) { 100 }
     var sum = 0
@@ -192,7 +192,7 @@ fun forLoop() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#innerLoop(){}"()
+// CHECK-LABEL: define void @"kfun:#innerLoop(){}{{(\[[^"]*\])?}}"()
 fun innerLoop() {
     val array = Array(10) { 100 }
     val array1 = Array(3) { 0 }
@@ -210,7 +210,7 @@ fun innerLoop() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#argsInFunctionCall(){}"()
+// CHECK-LABEL: define void @"kfun:#argsInFunctionCall(){}{{(\[[^"]*\])?}}"()
 fun argsInFunctionCall() {
     val array = Array(10) { 100 }
 
@@ -221,13 +221,13 @@ fun argsInFunctionCall() {
     for (i in 0..size1) {
         // CHECK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
         // CHECK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
-        // CHECK: {{call|invoke}} i32 @"kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int"
+        // CHECK: {{call|invoke}} i32 @"kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int{{(\[[^"]*\])?}}"
         foo(array[i], array[i])
     }
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define void @"kfun:#smallLoop(){}"()
+// CHECK-LABEL: define void @"kfun:#smallLoop(){}{{(\[[^"]*\])?}}"()
 fun smallLoop() {
     val array = Array(10) { 100 }
 
@@ -243,7 +243,7 @@ object TopLevelObject {
     val array = Array(10) { 100 }
 }
 
-// CHECK-LABEL: define void @"kfun:#topLevelObject(){}"()
+// CHECK-LABEL: define void @"kfun:#topLevelObject(){}{{(\[[^"]*\])?}}"()
 fun topLevelObject() {
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0 until TopLevelObject.array.size) {
@@ -255,7 +255,7 @@ fun topLevelObject() {
 
 val array = Array(10) { 100 }
 
-// CHECK-LABEL: define void @"kfun:#topLevelProperty(){}"()
+// CHECK-LABEL: define void @"kfun:#topLevelProperty(){}{{(\[[^"]*\])?}}"()
 fun topLevelProperty() {
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0..array.size - 2) {
@@ -271,7 +271,7 @@ open class Base() {
 
 class Child() : Base()
 
-// CHECK-LABEL: define void @"kfun:#childClassWithFakeOverride(){}"()
+// CHECK-LABEL: define void @"kfun:#childClassWithFakeOverride(){}{{(\[[^"]*\])?}}"()
 fun childClassWithFakeOverride() {
     val child = Child()
     // CHECK: {{^}}do_while_loop{{.*}}:
@@ -294,7 +294,7 @@ class Third {
     val second = Second()
 }
 
-// CHECK-LABEL: define void @"kfun:#chainedReceivers(){}"()
+// CHECK-LABEL: define void @"kfun:#chainedReceivers(){}{{(\[[^"]*\])?}}"()
 fun chainedReceivers() {
     val obj = Third()
     val obj1 = obj
@@ -308,7 +308,7 @@ fun chainedReceivers() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 @ExperimentalStdlibApi
 fun box(): String {
     forEachIndicies()

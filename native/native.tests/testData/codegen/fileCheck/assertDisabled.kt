@@ -5,8 +5,8 @@
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
-// CHECK-LABEL: define i32 @"kfun:#nonEmptySize(kotlin.IntArray){}kotlin.Int"
-// CHECK-NOT: call void @"kfun:kotlin.AssertionError#<init>(kotlin.Any?){}"
+// CHECK-LABEL: define i32 @"kfun:#nonEmptySize(kotlin.IntArray){}kotlin.Int{{(\[[^"]*\])?}}"
+// CHECK-NOT: call void @"kfun:kotlin.AssertionError#<init>(kotlin.Any?){}{{(\[[^"]*\])?}}"
 fun nonEmptySize(x: IntArray): Int {
     assert(x.size != 0) { "x.size = ${x.size}" }
     return x.size

@@ -22,7 +22,7 @@ fun f(): Any {
 
 fun g() = f()
 
-// CHECK-LABEL: define {{.*}}ptr @"kfun:#h(kotlin.Boolean){}kotlin.Any"
+// CHECK-LABEL: define {{.*}}ptr @"kfun:#h(kotlin.Boolean){}kotlin.Any{{(\[[^"]*\])?}}"
 @Retain
 fun h(cond: Boolean): Any {
     // We have to check actual _call_ to a function, not just callee mention.
@@ -42,7 +42,7 @@ fun h(cond: Boolean): Any {
 // CHECK-LABEL: ret
 }
 
-// CHECK-LABEL: define {{.*}}ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define {{.*}}ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 @Retain
 fun box(): String {
     // CHECK-SMALLBINARY: {{call .*Kotlin_mm_safePointFunctionPrologue\(\)}}

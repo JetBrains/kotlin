@@ -41,7 +41,7 @@ import kotlinx.cinterop.*
 // CHECK-WINDOWSX64-CACHE_NO: declare zeroext i1 @Kotlin_Char_isHighSurrogate(i16)
 
 // Check that we pass attributes to functions imported from runtime.
-// CHECK-LABEL: void @"kfun:#checkRuntimeFunctionImport(){}"()
+// CHECK-LABEL: void @"kfun:#checkRuntimeFunctionImport(){}{{(\[[^"]*\])?}}"()
 fun checkRuntimeFunctionImport() {
     // CHECK-DEFAULTABI: call zeroext i1 @Kotlin_Char_isHighSurrogate(i16 zeroext {{.*}})
     // CHECK-AAPCS: call i1 @Kotlin_Char_isHighSurrogate(i16 {{.*}})
@@ -53,9 +53,9 @@ fun checkRuntimeFunctionImport() {
     0.0f.isNaN()
 }
 
-// CHECK-LABEL: void @"kfun:#checkDirectInterop(){}"()
-// CHECK-LABEL-AAPCS: void @"kfun:#checkDirectInterop(){}"()
-// CHECK-LABEL-WINDOWSX64: void @"kfun:#checkDirectInterop(){}"()
+// CHECK-LABEL: void @"kfun:#checkDirectInterop(){}{{(\[[^"]*\])?}}"()
+// CHECK-LABEL-AAPCS: void @"kfun:#checkDirectInterop(){}{{(\[[^"]*\])?}}"()
+// CHECK-LABEL-WINDOWSX64: void @"kfun:#checkDirectInterop(){}{{(\[[^"]*\])?}}"()
 fun checkDirectInterop() {
     // compiler generates quite lovely names for bridges
     // (e.g. `_66696c65636865636b5f7369676e6578745f7a65726f6578745f696e7465726f70_knbridge0`),
@@ -82,7 +82,7 @@ fun checkDirectInterop() {
     callbackUser(staticCFunction { int: Int, short: Short -> int + short })
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     checkRuntimeFunctionImport()
     checkDirectInterop()

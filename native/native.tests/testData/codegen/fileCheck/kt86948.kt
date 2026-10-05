@@ -20,7 +20,7 @@ fun consume(b: Boolean) = b
 // it does not, so the check is not statically known and must be kept.
 
 // The type check is in a general expression position (the `visitTypeOperator` path).
-// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#testa(){}kotlin.Boolean"
+// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#testa(){}kotlin.Boolean{{(\[[^"]*\])?}}"
 fun testa(): Boolean {
     val a = A()
     var x: Any = a
@@ -38,7 +38,7 @@ fun testa(): Boolean {
 }
 
 // The type check is assigned to a Boolean variable (the `buildBooleanPredicate` path).
-// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#testb(){}kotlin.Boolean"
+// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#testb(){}kotlin.Boolean{{(\[[^"]*\])?}}"
 fun testb(): Boolean {
     val a = A()
     var x: Any = a
@@ -56,7 +56,7 @@ fun testb(): Boolean {
 }
 
 // The safe cast is assigned to a nullable variable (the `buildNullablePredicate` path).
-// CHECK-LABEL: define i32 @"kfun:#testc(){}kotlin.Int"
+// CHECK-LABEL: define i32 @"kfun:#testc(){}kotlin.Int{{(\[[^"]*\])?}}"
 fun testc(): Int {
     val a = A()
     var x: Any = a
@@ -73,7 +73,7 @@ fun testc(): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     if (testa()) return "FAIL KT-86948 (general position): type check wrongly optimized"
     if (testb()) return "FAIL KT-86948 (boolean var): type check wrongly optimized"

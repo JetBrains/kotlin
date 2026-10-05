@@ -94,7 +94,7 @@ fun test5(x: Int, o: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#baz(A){}kotlin.Boolean"
+// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#baz(A){}kotlin.Boolean{{(\[[^"]*\])?}}"
 fun baz(a: A) = a.x == 3
 // CHECK-LABEL: epilogue:
 
@@ -644,7 +644,7 @@ fun test28(o_: Any, o2_: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define i32 @"kfun:#test29(kotlin.Any){}kotlin.Int"
+// CHECK-LABEL: define i32 @"kfun:#test29(kotlin.Any){}kotlin.Int{{(\[[^"]*\])?}}"
 fun test29(o: Any): Int {
     var result = 0
     do {
@@ -669,7 +669,7 @@ fun test29(o: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define i32 @"kfun:#test30(kotlin.Any){}kotlin.Int"
+// CHECK-LABEL: define i32 @"kfun:#test30(kotlin.Any){}kotlin.Int{{(\[[^"]*\])?}}"
 fun test30(o: Any): Int {
     var result = 0
     do {
@@ -694,7 +694,7 @@ fun test30(o: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define i32 @"kfun:#test31(kotlin.Any){}kotlin.Int"
+// CHECK-LABEL: define i32 @"kfun:#test31(kotlin.Any){}kotlin.Int{{(\[[^"]*\])?}}"
 fun test31(o: Any): Int {
     var result = 0
     do {
@@ -718,7 +718,7 @@ fun test31(o: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define i32 @"kfun:#test32(kotlin.Any;kotlin.Int){}kotlin.Int"
+// CHECK-LABEL: define i32 @"kfun:#test32(kotlin.Any;kotlin.Int){}kotlin.Int{{(\[[^"]*\])?}}"
 fun test32(o: Any, x: Int): Int {
     var result = x
     while (result < 10) {
@@ -736,7 +736,7 @@ fun test32(o: Any, x: Int): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define i32 @"kfun:#test33(kotlin.Any;kotlin.Any;kotlin.Int){}kotlin.Int"
+// CHECK-LABEL: define i32 @"kfun:#test33(kotlin.Any;kotlin.Any;kotlin.Int){}kotlin.Int{{(\[[^"]*\])?}}"
 fun test33(o1: Any, o2: Any, x: Int): Int {
     var result = x
 // CHECK-DEBUG: call ptr @"kfun:kotlin.native.internal#downcast
@@ -758,7 +758,7 @@ fun test33(o1: Any, o2: Any, x: Int): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define i32 @"kfun:#test34(kotlin.Any;kotlin.Int){}kotlin.Int"
+// CHECK-LABEL: define i32 @"kfun:#test34(kotlin.Any;kotlin.Int){}kotlin.Int{{(\[[^"]*\])?}}"
 fun test34(o: Any, x: Int): Int {
     try {
         getAny()
@@ -893,9 +893,9 @@ fun test40(o: IntWrapper?): Int {
     return o?.x ?: -1
 }
 
-// CHECK-LABEL: define internal void @"kfun:Test40.<init>#internal"
+// CHECK-LABEL: define internal void @"kfun:Test40.<init>#internal{{(\[[^"]*\])?}}"
 object Test40 {
-    // CHECK: call void @"kfun:A#<init>(kotlin.String;kotlin.Int;kotlin.Int){}"
+    // CHECK: call void @"kfun:A#<init>(kotlin.String;kotlin.Int;kotlin.Int){}{{(\[[^"]*\])?}}"
     // CHECK: call i32 @"kfun:#test39(kotlin.Any){}kotlin.Int
     // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
     // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
@@ -903,7 +903,7 @@ object Test40 {
     // CHECK: getelementptr inbounds nuw %"kclassbody:Test40#internal"
     val z1 = test39(A("zzz", 42, 117)) // To deny possibility of placing into static data.
 
-    // CHECK: call void @"kfun:IntWrapper#<constructor>#static(kotlin.Int){}"
+    // CHECK: call void @"kfun:IntWrapper#<constructor>#static(kotlin.Int){}{{(\[[^"]*\])?}}"
     // CHECK: call i32 @"kfun:#test40(IntWrapper?){}kotlin.Int
     // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
     // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
@@ -1123,7 +1123,7 @@ fun test48c(o: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     val a = A("zzz", 42, 117)
     val b = B(a)

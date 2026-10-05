@@ -9,10 +9,10 @@ enum class COLOR {
     BLUE
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     for (i in COLOR.values()) {
-        // CHECK-DEBUG: = call i32 @"kfun:kotlin.Enum#<get-ordinal>(){}kotlin.Int"(
+        // CHECK-DEBUG: = call i32 @"kfun:kotlin.Enum#<get-ordinal>(){}kotlin.Int{{(\[[^"]*\])?}}"(
         // We inline .ordinal property access in case of opt build, so check direct field load instead.
         // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:kotlin.Enum#internal", ptr %{{[0-9a-z]*}}, i32 0, i32 2
         print(when (i) {

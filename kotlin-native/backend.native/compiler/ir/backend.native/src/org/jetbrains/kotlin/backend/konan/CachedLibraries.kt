@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
 import java.nio.file.Path
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.Path
 import kotlin.io.path.absolute
 import kotlin.io.path.absolutePathString
@@ -283,6 +284,11 @@ class CachedLibraries(
             }
         }
     }.toMap()
+
+    private val libraryFingerprints = ConcurrentHashMap<KotlinLibrary, FingerprintHash>()
+
+    fun getLibraryFingerprint(library: KotlinLibrary): FingerprintHash =
+            libraryFingerprints.computeIfAbsent(library) { SerializedKlibFingerprint(it.path.toFile()).klibFingerprint }
 
     fun isLibraryCached(library: KotlinLibrary, allowIncomplete: Boolean = false): Boolean =
             getLibraryCache(library, allowIncomplete) != null

@@ -16,7 +16,7 @@ fun bar(): Boolean {
     return count % 2 == 0
 }
 
-// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#foo(kotlin.Any){}kotlin.Boolean"
+// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#foo(kotlin.Any){}kotlin.Boolean{{(\[[^"]*\])?}}"
 fun foo(x: Any): Boolean {
     var previousBar = false
     var iterations = 0
@@ -36,7 +36,7 @@ fun foo(x: Any): Boolean {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     return if (foo(Any())) "fail" else "OK"
 }

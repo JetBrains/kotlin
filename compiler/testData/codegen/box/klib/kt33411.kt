@@ -1,7 +1,4 @@
-// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64
-// IGNORE_NATIVE: cacheMode=STATIC_PER_FILE_EVERYWHERE && target=linux_x64
-
-// ISSUE: KT-33411, KT-66338
+// ISSUE: KT-33411, KT-66338, KT-81760
 
 // MODULE: m1
 // FILE: m1.kt

@@ -7,7 +7,7 @@ package codegen.stringConcatenationTypeNarrowing.kt53119_append_manual
 import kotlin.test.*
 
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendMaybeAny(kotlin.Any?)
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
+// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 // CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
@@ -21,7 +21,7 @@ fun appendMaybeAny(maybeAny: Any?): String {
 }
 
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendAny(kotlin.Any)
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
+// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 // CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 
@@ -66,7 +66,7 @@ fun appendString(str: String): String {
 data class Foo(val bar: Int)
 
 // CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual#appendFoo(codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo)
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String"
+// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_manual.Foo#toString(){}kotlin.String{{(\[[^"]*\])?}}"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 // CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 

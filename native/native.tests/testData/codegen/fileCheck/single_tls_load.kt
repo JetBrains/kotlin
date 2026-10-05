@@ -11,7 +11,7 @@ import kotlin.native.Retain
 
 class Wrapper(x: Int)
 
-// CHECK-LABEL: define {{.*}}ptr @"kfun:#f(kotlin.Int;kotlin.String){}kotlin.String"
+// CHECK-LABEL: define {{.*}}ptr @"kfun:#f(kotlin.Int;kotlin.String){}kotlin.String{{(\[[^"]*\])?}}"
 @Retain
 fun f(x: Int, s: String): String {
     // CHECK: _ZN6kotlin2mm14ThreadRegistry22currentThreadDataNode_E

@@ -8,7 +8,7 @@ import kotlinx.cinterop.*
 
 val arr: Array<String> = arrayOf("1")
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String {
     println(arr.size.toByte() == arr[0].toByte())

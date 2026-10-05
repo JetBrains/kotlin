@@ -35,6 +35,6 @@ internal fun checkFrame(goldFunName: String, actualLine: String) {
     val findResult = regex.find(actualLine)
 
     val (funName, offset) = findResult?.destructured ?: throw Error("Cannot find '$goldFunName + <int>' in $actualLine")
-    assertEquals(goldFunName, funName)
+    assertEquals(goldFunName, funName.substringBefore('['))
     assertTrue(offset.toInt() > 0)
 }

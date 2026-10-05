@@ -7,8 +7,8 @@
 
 import kotlinx.cinterop.*
 
-// CHECK-OPT-LABEL: define ptr @"kfun:kotlinx.cinterop#interpretOpaquePointed(kotlin.native.internal.NativePtr){}kotlinx.cinterop.NativePointed"(ptr %0)
-// CHECK-OPT: call ptr @"kfun:kotlinx.cinterop#<NativePointed-unbox>(kotlin.Any?){}kotlinx.cinterop.NativePointed?"
+// CHECK-OPT-LABEL: define ptr @"kfun:kotlinx.cinterop#interpretOpaquePointed(kotlin.native.internal.NativePtr){}kotlinx.cinterop.NativePointed{{(\[[^"]*\])?}}"(ptr %0)
+// CHECK-OPT: call ptr @"kfun:kotlinx.cinterop#<NativePointed-unbox>(kotlin.Any?){}kotlinx.cinterop.NativePointed?{{(\[[^"]*\])?}}"
 
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String = memScoped {

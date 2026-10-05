@@ -17,7 +17,7 @@ suspend fun suspendForever(): Int = suspendCoroutineUninterceptedOrReturn {
 // CHECK-LABEL: define internal ptr @"kfun:$fooCOROUTINE
 
 // CHECK-NOT: ; Function Attrs: {{.*}}noreturn
-// CHECK-LABEL: define ptr @"kfun:#foo#suspend(kotlin.coroutines.Continuation<kotlin.Nothing>){}kotlin.Any"
+// CHECK-LABEL: define ptr @"kfun:#foo#suspend(kotlin.coroutines.Continuation<kotlin.Nothing>){}kotlin.Any{{(\[[^"]*\])?}}"
 suspend fun foo(): Nothing {
     suspendForever()
     throw Error()
@@ -31,7 +31,7 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     builder {
         bar()

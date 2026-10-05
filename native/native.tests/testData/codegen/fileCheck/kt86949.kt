@@ -13,7 +13,7 @@ class A
 
 fun bar() = true
 
-// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#foo(){}kotlin.Boolean"
+// CHECK-LABEL: define {{i1|zeroext i1}} @"kfun:#foo(){}kotlin.Boolean{{(\[[^"]*\])?}}"
 fun foo(): Boolean {
     val a = A()
     var x: Any = a
@@ -33,7 +33,7 @@ fun foo(): Boolean {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     return if (foo()) "fail" else "OK"
 }

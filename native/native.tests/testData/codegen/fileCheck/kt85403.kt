@@ -13,7 +13,7 @@ val b = 42
 open class A
 class A1 : A()
 
-// CHECK-LABEL: define i32 @"kfun:#foo(A){}kotlin.Int"
+// CHECK-LABEL: define i32 @"kfun:#foo(A){}kotlin.Int{{(\[[^"]*\])?}}"
 fun foo(a: A): Int {
 // CHECK-DEBUG: @IsSubtype{{.*}}@"kclass:A1"
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
@@ -41,7 +41,7 @@ fun bar(x: B): Int {
     }
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String{{(\[[^"]*\])?}}"
 fun box(): String {
     if (foo(A1()) != 1) return "fail 1"
     if (foo(A()) != 0) return "fail 2"
