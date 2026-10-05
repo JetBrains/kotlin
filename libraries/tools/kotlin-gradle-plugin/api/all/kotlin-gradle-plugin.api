@@ -4539,7 +4539,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMo
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMocha$Companion {
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask, org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/typescript/TypeScriptValidationTask$Companion;
 	public static final field NAME Ljava/lang/String;
 	public final fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
@@ -4558,7 +4558,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/webpack/Infrastructure
 	public final fun setValue (Z)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpack : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/webpack/KotlinWebpack : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/report/UsesBuildMetricsService, org/jetbrains/kotlin/gradle/targets/js/dsl/WebpackRulesDsl, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask, org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService {
 	public fun cssSupport (Lorg/gradle/api/Action;)V
 	public final fun doExecute ()V
 	public final fun getArgs ()Ljava/util/List;
