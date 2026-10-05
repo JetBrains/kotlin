@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -24,11 +25,13 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetConfigurator.Companion.configureJsDefaultOptions
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
+import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTask
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmResolverPlugin
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -178,8 +181,10 @@ internal constructor(
 
     private val commonLazy by commonLazyDelegate
 
-    private fun registerTypeScriptCheckTask(binary: JsIrBinary): TaskProvider<TypeScriptValidationTask> {
-        val linkTask = binary.linkTask
+    private fun registerTypeScriptCheckTask(
+        binary: JsIrBinary,
+        inputDirectory: Provider<Directory>,
+    ): TaskProvider<TypeScriptValidationTask> {
         val compilation = binary.compilation
         return project.registerTask(binary.validateGeneratedTsTaskName, listOf(compilation)) {
             it.versions.value(
@@ -188,7 +193,7 @@ internal constructor(
                     { project.jsToolingProject().wasmKotlinNodeJsRootExtension.versions },
                 )
             ).disallowChanges()
-            it.inputDir.set(linkTask.flatMap { it.destinationDirectory })
+            it.inputDir.set(inputDirectory)
             it.validationStrategy.set(
                 when (binary.mode) {
                     KotlinJsBinaryMode.DEVELOPMENT -> propertiesProvider.jsIrGeneratedTypeScriptValidationDevStrategy
@@ -311,18 +316,49 @@ internal constructor(
     override fun generateTypeScriptDefinitions() {
         shouldGenerateTypeScriptDefinitions.set(true)
         compilations
-            .all {
-                it.binaries
+            .all { compilation ->
+                compilation.binaries
                     .withType(JsIrBinary::class.java)
                     .all { binary ->
-                        val tsValidationTask = registerTypeScriptCheckTask(binary)
+                        if (binary.target.wasmTargetType == null && propertiesProvider.jsGenerateRichTypeScriptDeclarations) {
+                            val dtsTask = registerDtsGenerationTask(binary)
 
-                        binary.linkTask.configure { linkTask ->
-                            linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
-                            linkTask.finalizedBy(tsValidationTask)
+                            val tsValidationTask = registerTypeScriptCheckTask(
+                                binary,
+                                dtsTask.flatMap { it.outputDirectory },
+                            )
+                            dtsTask.configure { it.finalizedBy(tsValidationTask) }
+                            binary.linkSyncTask.configure { it.from.from(dtsTask) }
+                        } else {
+                            val tsValidationTask = registerTypeScriptCheckTask(
+                                binary,
+                                binary.linkTask.flatMap { it.destinationDirectory },
+                            )
+                            binary.linkTask.configure { linkTask ->
+                                linkTask.compilerOptions.freeCompilerArgs.add(GENERATE_D_TS)
+                                linkTask.finalizedBy(tsValidationTask)
+                            }
                         }
                     }
             }
+    }
+
+    private fun registerDtsGenerationTask(binary: JsIrBinary): TaskProvider<KotlinJsDtsGenerationTask> {
+        val linkTask = binary.linkTask
+        val configurations = project.configurations
+
+        return project.locateOrRegisterTask<KotlinJsDtsGenerationTask>(binary.dtsGenerationTaskName) { task ->
+            KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
+                linkTask.get().compilerOptions,
+                task.linkCompilerOptions,
+            )
+            task.klibs.from(linkTask.map { it.libraries })
+            task.entryModule.set(linkTask.flatMap { it.entryModule })
+            task.granularity.set(linkTask.map { it.outputGranularity })
+            task.kotlinBuildToolsApiClasspath.from(configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME))
+
+            task.outputDirectory.set(binary.outputDirBase.map { it.dir(KotlinJsDtsGenerationTask.OUTPUT_DIRECTORY_NAME) })
+        }
     }
 
     override val compilerOptions: KotlinJsCompilerOptions = project.objects
