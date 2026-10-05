@@ -584,7 +584,8 @@ abstract class IncrementalCompilerRunner<
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
             dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
-            dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins())
+            val sourceFilesPreviouslyGeneratedByPlugins = caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins()
+            dirtySources.addAll(sourceFilesPreviouslyGeneratedByPlugins)
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
             caches.compilerPluginFilesCache.removeOutputsGeneratedByPlugins()
@@ -624,6 +625,7 @@ abstract class IncrementalCompilerRunner<
                 compiled
             }
             icContext.compilerGeneratedSyntheticSources.clear()
+            icContext.compilerGeneratedSyntheticSources.addAll(sourceFilesPreviouslyGeneratedByPlugins)
             icContext.compilerGeneratedSyntheticSources.addAll(outputItemsCollector.sourceFileGeneratedForPlugin)
 
             dirtySources.addAll(compiledSources)

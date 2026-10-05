@@ -36,4 +36,21 @@ class SandboxPluginTest : BaseCompilationTest() {
             }
         }
     }
+
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @DisplayName("KT-89912 JS/Wasm IC fails after removing FIR-generated file")
+    fun testGeneratingThenRemovingTopLevelCallables(scenario: ScenarioCreator) {
+        scenario {
+            val module = module("sandbox-plugin", compilationConfigAction = { operation: BaseCompilationOperation.Builder ->
+                operation.compilerArguments[CommonCompilerArguments.COMPILER_PLUGINS] = listOf(PLUGIN_SANDBOX_PLUGIN)
+            })
+
+            module.compile {}
+            module.replaceFileWithVersion("main.kt", "removed_callables")
+            module.compile {
+                assertCompiledSources("main.kt")
+                assertLogContainsLines(LogLevel.DEBUG, "Incremental compilation completed")
+            }
+        }
+    }
 }
