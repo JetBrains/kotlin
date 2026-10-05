@@ -86,18 +86,13 @@ internal object NpmDependencyInGradleScopeChecker : KotlinGradleProjectChecker {
         NpmDependencyScopeDeprecated.PEER -> "npmPeer"
     }
 
-    private fun KotlinGradleProjectCheckerContext.renderArguments(dependency: NpmDependencyDeprecated): String {
+    private fun renderArguments(dependency: NpmDependencyDeprecated): String {
         val version = dependency.getVersion()
-        if (!version.startsWith(NPM_DEP_FILE_VERSION_PREFIX)) {
-            return """"${dependency.getName()}", "$version""""
+        return if (version.startsWith(NPM_DEP_FILE_VERSION_PREFIX)) {
+            """"${dependency.getName()}", File("${version.removePrefix(NPM_DEP_FILE_VERSION_PREFIX)}")"""
+        } else {
+            """"${dependency.getName()}", "$version""""
         }
-
-        val directory = File(version.removePrefix(NPM_DEP_FILE_VERSION_PREFIX))
-        val relativeToProject = directory.relativeToOrNull(project.projectDir.normalizedAbsoluteFile())
-        val path = relativeToProject?.invariantSeparatorsPath?.takeIf { !it.startsWith("..") }
-            ?: directory.invariantSeparatorsPath
-
-        return """"${dependency.getName()}", project.file("$path")"""
     }
 }
 

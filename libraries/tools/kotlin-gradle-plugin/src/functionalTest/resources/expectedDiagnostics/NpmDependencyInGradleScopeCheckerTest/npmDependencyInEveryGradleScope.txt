@@ -1,0 +1,44 @@
+[IncorrectCompileOnlyDependencyWarning | WARNING] Unsupported `compileOnly` Dependencies in Kotlin Targets
+A compileOnly dependency is used in targets: Kotlin/JS, Kotlin/Wasm.
+Dependencies:
+    - compile-only-dependency:1.0.0 (source sets: jsMain)
+
+Using compileOnly dependencies in these targets is not currently supported, because compileOnly dependencies must be present during the compilation of projects that depend on this project.
+
+To ensure consistent compilation behaviour, compileOnly dependencies should be exposed as api dependencies.
+
+Example:
+
+    kotlin {
+        sourceSets {
+            nativeMain {
+                dependencies {
+                    compileOnly("org.example:lib:1.2.3")
+                    // additionally add the compileOnly dependency as an api dependency:
+                    api("org.example:lib:1.2.3")
+                }
+            }
+        }
+    }
+
+This warning can be suppressed in gradle.properties:
+
+    kotlin.suppressGradlePluginWarnings=IncorrectCompileOnlyDependencyWarning
+
+Please expose compileOnly dependencies as api dependencies.
+----
+[NpmDependencyInGradleScope | WARNING] NPM dependencies are declared in Gradle dependency scopes
+NPM dependencies are passed to Gradle dependency scopes:
+    - 'jsMain' source set: api(npm("api-dependency", "1.0.0"))
+    - 'jsMain' source set: compileOnly(npm("compile-only-dependency", "1.0.0"))
+    - 'jsMain' source set: implementation(npm("implementation-dependency", "1.0.0"))
+    - 'jsMain' source set: runtimeOnly(npm("runtime-only-dependency", "1.0.0"))
+    - 'wasmJsMain' source set: implementation(npm("wasm-dependency", "1.0.0"))
+
+This is deprecated. Declare NPM dependencies just by calling npm, npmDev, npmOptional and so on.
+Don't wrap them to Gradle dependency scopes api, implementation, runtimeOnly etc.
+Replace 'api(npm("api-dependency", "1.0.0"))' with 'npm("api-dependency", "1.0.0")' in the 'jsMain' source set.
+Replace 'compileOnly(npm("compile-only-dependency", "1.0.0"))' with 'npm("compile-only-dependency", "1.0.0")' in the 'jsMain' source set.
+Replace 'implementation(npm("implementation-dependency", "1.0.0"))' with 'npm("implementation-dependency", "1.0.0")' in the 'jsMain' source set.
+Replace 'implementation(npm("wasm-dependency", "1.0.0"))' with 'npm("wasm-dependency", "1.0.0")' in the 'wasmJsMain' source set.
+Replace 'runtimeOnly(npm("runtime-only-dependency", "1.0.0"))' with 'npm("runtime-only-dependency", "1.0.0")' in the 'jsMain' source set.
