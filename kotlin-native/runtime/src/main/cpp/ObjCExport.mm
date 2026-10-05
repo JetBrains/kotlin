@@ -10,6 +10,7 @@
 
 #if KONAN_OBJC_INTEROP
 
+#include <algorithm>
 #include <cstdlib>
 #include <map>
 #import <mutex>
@@ -194,6 +195,9 @@ __attribute__((weak)) int Kotlin_ObjCExport_sortedClassAdaptersNum = 0;
 __attribute__((weak)) const ObjCTypeAdapter** Kotlin_ObjCExport_sortedProtocolAdapters = nullptr;
 __attribute__((weak)) int Kotlin_ObjCExport_sortedProtocolAdaptersNum = 0;
 
+__attribute__((weak)) const ObjCTypeAdapter** Kotlin_ObjCExport_sortedCategoryAdapters = nullptr;
+__attribute__((weak)) int Kotlin_ObjCExport_sortedCategoryAdaptersNum = 0;
+
 __attribute__((weak)) bool Kotlin_ObjCExport_initTypeAdapters = false;
 
 static const ObjCTypeAdapter* findClassAdapter(Class clazz) {
@@ -201,6 +205,27 @@ static const ObjCTypeAdapter* findClassAdapter(Class clazz) {
         Kotlin_ObjCExport_sortedClassAdapters,
         Kotlin_ObjCExport_sortedClassAdaptersNum
   );
+}
+
+template <typename F>
+static void forEachCategoryAdapter(const char* className, F&& action) {
+  const ObjCTypeAdapter** begin = Kotlin_ObjCExport_sortedCategoryAdapters;
+  const ObjCTypeAdapter** end = begin + Kotlin_ObjCExport_sortedCategoryAdaptersNum;
+  auto it = std::lower_bound(begin, end, className, [](const ObjCTypeAdapter* adapter, const char* name) {
+    return strcmp(adapter->objCName, name) < 0;
+  });
+  for (; it != end && strcmp((*it)->objCName, className) == 0; ++it) {
+    action(*it);
+  }
+}
+
+static void addCategoryMethods(Class clazz) {
+  forEachCategoryAdapter(class_getName(clazz), [clazz](const ObjCTypeAdapter* adapter) {
+    for (int i = 0; i < adapter->directAdapterNum; ++i) {
+      const ObjCToKotlinMethodAdapter* methodAdapter = adapter->directAdapters + i;
+      class_addMethod(clazz, sel_registerName(methodAdapter->selector), methodAdapter->imp, methodAdapter->encoding);
+    }
+  });
 }
 
 static const ObjCTypeAdapter* findProtocolAdapter(Protocol* prot) {
@@ -277,6 +302,8 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
   if (!isClassForPackage) {
     setAssociatedTypeInfo(clazz, typeInfo);
   }
+
+  addCategoryMethods(clazz);
 
   for (int i = 0; i < typeAdapter->directAdapterNum; ++i) {
     const ObjCToKotlinMethodAdapter* adapter = typeAdapter->directAdapters + i;
@@ -925,6 +952,21 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       if (adapter->itableIndex != -1 && superITable != nullptr)
         addToITable(adapter->interfaceId, adapter->itableIndex, adapter->kotlinImpl);
     }
+  }
+
+  for (const TypeInfo* t = superType; t != nullptr; t = t->superType_) {
+    const ObjCTypeAdapter* typeAdapter = getTypeAdapter(t);
+    if (typeAdapter == nullptr) continue;
+
+    forEachCategoryAdapter(typeAdapter->objCName, [&](const ObjCTypeAdapter* categoryAdapter) {
+      for (int i = 0; i < categoryAdapter->reverseAdapterNum; ++i) {
+        const KotlinToObjCMethodAdapter* adapter = &categoryAdapter->reverseAdapters[i];
+        if ((!isSwiftExportSubclass || t == theAnyTypeInfo) &&
+            definedSelectors.find(sel_registerName(adapter->selector)) == definedSelectors.end()) continue;
+
+        throwIfCantBeOverridden(clazz, adapter);
+      }
+    });
   }
 
   // Compiler relies on using reverse adapters here from all supertypes
