@@ -209,10 +209,10 @@ class CoroutineTransformerMethodVisitor(
 
             // When calling default functions, we do not pass continuation as the last parameter.
             // So, go backwards until we find continuation load
-            val suspendCall = suspensionPoint.suspensionCallBegin.next.next
+            val suspendCall = suspensionPoint.suspensionCallInvoke
             if (suspendCall is MethodInsnNode && suspendCall.name.endsWith(JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX)) {
                 val methodType = Type.getMethodType(suspendCall.desc)
-                var cursor: AbstractInsnNode? = suspensionPoint.suspensionCallBegin.previous
+                var cursor: AbstractInsnNode? = suspensionPoint.suspensionCallBegin.findPreviousOrNull { it.isMeaningful }
                 for (argType in methodType.argumentTypes.reversed()) {
                     if (argType == CONTINUATION_ASM_TYPE) break
                     cursor = cursor?.findPreviousOrNull { it.isMeaningful }
@@ -1619,6 +1619,16 @@ internal class SuspensionPoint(
     // INVOKESTATIC InlineMarker.mark()
     val suspensionCallEnd: AbstractInsnNode
 ) {
+    val suspensionCallInvoke: AbstractInsnNode?
+        get() {
+            val callOrOptionalMarkerCode: AbstractInsnNode? = suspensionCallBegin.next.next
+            val optionalMarker = callOrOptionalMarkerCode?.next
+            // Unit and generic suspend calls can have another marker between the before-suspend marker and the call.
+            return if (optionalMarker?.let { isSuspendInlineMarker(it) } == true) {
+                optionalMarker.next
+            } else callOrOptionalMarkerCode
+        }
+
     var hasEnclosingTryCatch: Boolean = false
     lateinit var tryCatchBlocksContinuationLabel: LabelNode
 
