@@ -101,6 +101,8 @@ internal object ClasspathSnapshotShrinker {
         allClasses: List<AccessibleClassSnapshot>,
         referencedClasses: List<AccessibleClassSnapshot>
     ): List<AccessibleClassSnapshot> {
+        if (referencedClasses.isEmpty()) return emptyList()
+
         val referencedClassIds = referencedClasses.map { it.classId }
         val impactingClassesResolver = AllImpacts.getReverseResolver(allClasses)
         val transitivelyReferencedClassIds: Set<ClassId> = /* Must be a Set for the presence check below */
