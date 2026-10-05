@@ -272,6 +272,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
 
     @Suppress("OVERRIDE_DEPRECATION")
     override fun devNpm(directory: File): NpmDependencyDeprecated =
+        @Suppress("DEPRECATION")
         devNpm(
             name = moduleName(directory),
             directory = directory
@@ -310,6 +311,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
     override fun optionalNpm(
         directory: File,
     ): NpmDependencyDeprecated =
+        @Suppress("DEPRECATION")
         optionalNpm(
             name = moduleName(directory),
             directory = directory,
