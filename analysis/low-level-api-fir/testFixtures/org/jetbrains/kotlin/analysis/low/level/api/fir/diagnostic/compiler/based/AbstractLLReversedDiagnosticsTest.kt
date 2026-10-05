@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.AbstractAlternativeKtFile
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.llFirTestDataFile
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.utils.bind
@@ -62,7 +61,6 @@ class ReversedFirIdenticalChecker(testServices: TestServices) : AbstractAlternat
         if (".reversed." !in testDataFile.path) return
         val originalFile = testDataFile.originalTestDataFile.path.replace(".reversed", "").let(::File)
         val baseFile = originalFile.llFirTestDataFile.takeIf(File::exists)
-            ?: originalFile.firTestDataFile.takeIf(File::exists)
             ?: originalFile
 
         val baseContent = readContent(baseFile, trimLines = false)
