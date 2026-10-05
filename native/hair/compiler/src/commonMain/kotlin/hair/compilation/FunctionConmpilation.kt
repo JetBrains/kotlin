@@ -11,4 +11,8 @@ class FunctionCompilation(val moduleCompilation: Compilation, val function: Hair
     // TODO current compilation stage?
 
     fun dumpHair(title: String) = moduleCompilation.config.hairDumper?.dump(this, title)
+
+    inline fun dumpHairRaw(title: String, contents: () -> String) {
+        moduleCompilation.config.hairDumper?.dumpSimple(this, title, contents())
+    }
 }

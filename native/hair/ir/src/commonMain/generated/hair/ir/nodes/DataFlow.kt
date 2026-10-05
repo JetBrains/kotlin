@@ -59,6 +59,24 @@ class AssignVar internal constructor(form: Form, control: Controlling?, assigned
 }
 
 
+class Pi internal constructor(form: Form, control: Controlling?, value: Node?, origin: Node?) : BlockBody(form, listOf(control, value, origin)), ValueNode {
+    val valueIndex: Int = 1
+    val originIndex: Int = 2
+    
+    override fun paramName(index: Int): String = when (index) {
+        0 -> "control"
+        1 -> "value"
+        2 -> "origin"
+        else -> error("Unexpected arg index: $index")
+    }
+    
+    override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitPi(this)
+    companion object {
+        internal fun form(session: Session) = SimpleControlFlowForm(session, "Pi")
+    }
+}
+
+
 class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValues: Node?) : NodeBase(form, listOf(block, *joinedValues)), ValueNode {
     val blockIndex: Int = 0
     val joinedValuesIndex: Int = 1
