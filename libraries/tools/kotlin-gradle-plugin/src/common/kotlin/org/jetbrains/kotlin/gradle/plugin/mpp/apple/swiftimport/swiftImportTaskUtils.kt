@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
-import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.SerializationException
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
@@ -33,8 +31,34 @@ internal abstract class SwiftImportFingerprintInput {
 
 }
 
-internal fun File.readSwiftImportFingerprint(): SwiftImportFingerprint =
-    fingerprintJson.decodeFromString<SwiftImportFingerprint>(readText())
+internal fun File.readSwiftImportFingerprint(): SwiftImportFingerprint {
+    val content = readText()
+
+    return try {
+        return fingerprintJson.decodeFromString<SwiftImportFingerprint>(content)
+    } catch (_: SerializationException) {
+        readLegacySwiftImportFingerprint(content)
+    }
+}
+
+private fun readLegacySwiftImportFingerprint(
+    content: String,
+): SwiftImportFingerprint {
+
+    val lines = content
+        .lineSequence()
+        .filter(String::isNotBlank)
+        .toList()
+
+    require(lines.size >= 2) {
+        "Invalid legacy Swift import fingerprint format"
+    }
+
+    return SwiftImportFingerprint(
+        taskInvalidationFingerprint = lines[0],
+        incrementalFingerprint = lines[1],
+    )
+}
 
 internal abstract class LocalPackageTrackingInputs {
 

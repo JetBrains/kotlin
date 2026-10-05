@@ -1132,7 +1132,7 @@ class SwiftPMImportUnitTests {
         """.trimIndent()
         )
 
-        assertThrows<SerializationException> {
+        assertDoesNotThrow {
             cleanupTask.clean()
         }
     }
