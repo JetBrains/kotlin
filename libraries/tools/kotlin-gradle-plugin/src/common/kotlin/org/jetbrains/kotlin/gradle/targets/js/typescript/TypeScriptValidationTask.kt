@@ -9,10 +9,13 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -23,6 +26,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.requestDefaultNodeJs
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.resolveNodeJsExecutable
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import javax.inject.Inject
 
@@ -51,6 +57,7 @@ import javax.inject.Inject
  *
  * @see org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
  */
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 @DisableCachingByDefault
 abstract class TypeScriptValidationTask
 @Inject
@@ -60,7 +67,7 @@ internal constructor(
     final override val compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
     private val execOps: ExecOperations,
-) : DefaultTask(), RequiresNpmDependenciesTask {
+) : DefaultTask(), RequiresNpmDependenciesTask, UsesNodeJsToolchainService {
 
     private val npmProject: NpmProject = compilation.npmProject
 
@@ -79,6 +86,9 @@ internal constructor(
 
     @get:Input
     abstract val validationStrategy: Property<KotlinIrJsGeneratedTSValidationStrategy>
+
+    @get:Input
+    internal val nodeJsRequest: Provider<NodeJsRequest> = compilation.project.requestDefaultNodeJs()
 
     private val generatedDts
         get() = inputDir.asFileTree.matching {
@@ -101,7 +111,7 @@ internal constructor(
         val progressLogger = objects.newBuildOpLogger()
         val result = execWithProgress(progressLogger, "typescript", execOps) {
             it.workingDir(npmProjectDir)
-            it.executable(npmProject.nodeExecutable)
+            it.executable(nodeJsToolchainService.get().resolveNodeJsExecutable(npmProject, nodeJsRequest))
             it.args = listOf(modules.require("typescript/bin/tsc")) + "--noEmit" + files
         }
 
