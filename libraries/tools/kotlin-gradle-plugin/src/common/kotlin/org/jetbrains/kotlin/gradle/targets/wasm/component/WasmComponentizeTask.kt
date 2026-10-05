@@ -175,7 +175,7 @@ internal constructor() : DefaultTask() {
         val adaptFile = temporaryDir
             .resolve("wasi_snapshot_preview1.command.wasm")
             .also {
-                dist.copyTo(it)
+                dist.copyTo(it, overwrite = true)
             }
 
         val componentDirectory = outputDirectory.getFile()
@@ -225,10 +225,10 @@ internal constructor() : DefaultTask() {
                 repo.isAllowInsecureProtocol = allowInsecureProtocol.get()
 
                 repo.patternLayout {
-                    it.artifact("v[revision]/wasi_snapshot_preview1.command.wasm")
+                    it.artifact("v[revision]/[artifact].[ext]")
                 }
                 repo.metadataSources { it.artifact() }
-                repo.content { it.includeModule("bytecodealliance.wasmtime", "wasmtime") }
+                repo.content { it.includeModule("bytecodealliance.wasmtime", "wasi_snapshot_preview1.command") }
             }
         }
 
