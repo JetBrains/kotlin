@@ -1,8 +1,8 @@
 # Module kotlin-stdlib
 
-## Kotlin Standard Library
+## Kotlin standard library
 
-The Kotlin Standard Library provides living essentials for everyday work with Kotlin.
+The Kotlin standard library provides living essentials for everyday work with Kotlin.
 These include:
   - Higher-order functions implementing idiomatic patterns ([let][kotlin.let], [apply][kotlin.apply], [use][kotlin.io.use], [synchronized][kotlin.synchronized], etc).
   - Extension functions providing querying operations for collections (eager) and sequences (lazy).
