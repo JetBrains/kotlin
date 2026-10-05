@@ -56,7 +56,7 @@ internal open class CoroutineImplStackSwitching<T, R>(
             return
         }
 
-        val completionResult = try {
+        val coroutineResult = try {
             val outcome = doResume()
             if (outcome === COROUTINE_SUSPENDED) return // isRunning was already cleared before parking
             Result.success(outcome)
@@ -65,7 +65,7 @@ internal open class CoroutineImplStackSwitching<T, R>(
         }
         isRunning = false // the stack ran to completion
 
-        completeWith(completionResult)
+        completeWith(coroutineResult)
     }
 
     @Suppress("UNCHECKED_CAST")
