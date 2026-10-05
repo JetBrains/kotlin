@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.CompilationDependenciesPair.Companion.toFormattedString
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSeverity.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.NpmDependencyInGradleScopeUsage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.ResolvedVariant
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
@@ -2708,6 +2709,39 @@ internal object SharedNpmProjectInvalidPackageJson : ToolingDiagnosticFactory(
                             "'${PropertiesProvider.PropertyNames.KOTLIN_JS_GENERATE_RICH_TYPESCRIPT_DECLARATIONS}=false' in your gradle.properties, " +
                             "or bump the Kotlin Build Tools API version to $minimalSupportedVersion or higher."
                 }
+        }
+    }
+
+    internal object NpmDependencyInGradleScope : ToolingDiagnosticFactory(
+        WARNING,
+        DiagnosticGroup.Kgp.Deprecation,
+    ) {
+        operator fun invoke(usages: List<NpmDependencyInGradleScopeUsage>) = build {
+            val deprecatedDeclarations = usages
+                .map { "    - '${it.sourceSetName}' source set: ${it.dependencyScope}(${it.deprecatedDeclaration})" }
+                .distinct()
+                .sorted()
+                .joinToString("\n")
+
+            val replacements = usages
+                .map {
+                    "Replace '${it.dependencyScope}(${it.deprecatedDeclaration})' with '${it.replacement}' " +
+                            "in the '${it.sourceSetName}' source set."
+                }
+                .distinct()
+                .sorted()
+
+            title("NPM dependencies are declared in Gradle dependency scopes")
+                .description {
+                    """
+                    |NPM dependencies are passed to Gradle dependency scopes:
+                    |$deprecatedDeclarations
+                    |
+                    |This is deprecated. Declare NPM dependencies just by calling npm, npmDev, npmOptional and so on.
+                    |Don't wrap them to Gradle dependency scopes api, implementation, runtimeOnly etc.
+                    """.trimMargin()
+                }
+                .solutions { replacements }
         }
     }
 }
