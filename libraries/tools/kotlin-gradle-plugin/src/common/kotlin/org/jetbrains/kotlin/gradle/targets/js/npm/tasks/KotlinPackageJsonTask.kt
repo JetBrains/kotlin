@@ -16,8 +16,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.sources.npmDependenciesCollector
+import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
@@ -184,7 +183,7 @@ abstract class KotlinPackageJsonTask :
 
                 compilation.allKotlinSourceSets.forAll { sourceSet ->
                     task.declaredNpmDependencies.addAll(
-                        sourceSet.internal.npmDependenciesCollector.npmDependencies.map { dependencies ->
+                        sourceSet.npmDependenciesCollector.npmDependencies.map { dependencies ->
                             dependencies.map { "${it.scope} ${it.name}:${it.version}" }
                         }
                     )
