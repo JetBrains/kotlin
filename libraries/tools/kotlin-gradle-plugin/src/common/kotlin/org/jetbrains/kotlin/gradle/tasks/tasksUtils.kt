@@ -90,7 +90,7 @@ internal fun TaskWithLocalState.cleanOutputsAndLocalState(reason: String? = null
 internal fun cleanOutputsAndLocalState(
     outputFiles: Iterable<File>,
     log: KotlinLogger,
-    metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    metrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
     reason: String? = null
 ) {
     log.kotlinDebug {

@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 
 class TestBuildReporter(
     val testICReporter: TestICReporter,
-    buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
-) : BuildReporter<BuildTimeMetric, BuildPerformanceMetric>(testICReporter, buildMetricsReporter) {
+    buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>
+) : BuildReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>(testICReporter, buildMetricsReporter) {
     fun reportCachesDump(cachesDump: String) {
         testICReporter.cachesDump = cachesDump
     }

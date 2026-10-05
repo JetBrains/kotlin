@@ -196,7 +196,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     protected open fun createCompilerServicesFacade(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilerServicesFacadeBase =
         BaseCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER))
 
-    protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
+    protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>) {
         if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
             this[XX_KGP_METRICS_COLLECTOR_OUT] = ByteArrayOutputStream().apply {
                 ObjectOutputStream(this).writeObject(metricsReporter)

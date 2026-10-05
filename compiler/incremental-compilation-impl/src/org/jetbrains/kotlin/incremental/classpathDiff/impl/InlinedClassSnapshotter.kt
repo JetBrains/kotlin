@@ -49,7 +49,7 @@ internal class ExtraInfoGeneratorWithInlinedClassSnapshotting(
 private class InstanceBasedSnapshotter(
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
     private val classFileToDescriptorMap: Map<ClassFileWithContentsProvider, ClassDescriptorForProcessing>,
-    private val metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val metrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
 ) {
 
     private val knownClassUsages = HashMap<JvmClassName, Set<JvmClassName>>()
@@ -171,7 +171,7 @@ private class PrefixBasedSnapshotter(
 internal class InlinedClassSnapshotter(
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
     private val classFileToDescriptorMap: Map<ClassFileWithContentsProvider, ClassDescriptorForProcessing>,
-    private val metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
+    private val metrics: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>,
 ): ClassMultiHashProvider {
     private val instanceBasedSnapshotter = InstanceBasedSnapshotter(classNameToClassFileMap, classFileToDescriptorMap, metrics)
     private val prefixBasedSnapshotter = PrefixBasedSnapshotter(classNameToClassFileMap)

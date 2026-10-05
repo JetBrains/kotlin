@@ -19,7 +19,7 @@ import java.io.File
 internal class BuildToolsApiBuildICReporter(
     private val kotlinLogger: KotlinLogger,
     private val rootProjectDir: File?,
-    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>?,
+    private val buildMetricsReporter: BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>?,
 ) : ICReporterBase(rootProjectDir) {
     override fun report(message: () -> String, severity: ICReporter.ReportSeverity) {
         when (severity) {

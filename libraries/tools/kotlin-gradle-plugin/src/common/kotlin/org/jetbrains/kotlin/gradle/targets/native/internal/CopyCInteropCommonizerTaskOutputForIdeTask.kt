@@ -33,7 +33,7 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
         commonizeCInteropTask.map { it.allOutputDirectories }
 
     @get:Internal
-    val metrics: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>> = project.objects
+    val metrics: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>> = project.objects
         .property(GradleBuildMetricsReporter())
 
     private val allInteropGroups: MutableList<Pair<CInteropCommonizerGroup, File>> = mutableListOf()

@@ -16,7 +16,7 @@ interface BuildOperationRecord {
     val isFromKotlinPlugin: Boolean
     val startTimeMs: Long // Measured by System.currentTimeMillis()
     val totalTimeMs: Long
-    val buildMetrics: BuildMetrics<BuildTimeMetric, BuildPerformanceMetric>
+    val buildMetrics: BuildMetrics<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>
     val didWork: Boolean
     val skipMessage: String?
     val icLogLines: List<String>

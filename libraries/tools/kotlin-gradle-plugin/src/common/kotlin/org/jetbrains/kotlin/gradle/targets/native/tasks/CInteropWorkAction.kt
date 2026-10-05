@@ -36,7 +36,7 @@ internal interface CInteropWorkParameters : WorkParameters {
     val headerHashMap: MapProperty<String, String>
 
     // Runner configuration
-    val metricsReporter: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>
+    val metricsReporter: Property<BuildMetricsReporter<BuildTimeMetric<out BuildPerformanceMetric>, BuildPerformanceMetric>>
     val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
     val konanPropertiesService: Property<KonanPropertiesBuildService>
     val actualNativeHomeDirectory: Property<File>
