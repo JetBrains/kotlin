@@ -193,7 +193,6 @@ fun Project.configureKotlinCompilationOptions() {
                         "-Xdont-warn-on-error-suppression",
 
                         *if (skipNewLanguageFeatures) emptyArray() else dogfoodedExperimentalFeatures.toTypedArray(),
-                        "-Xallow-pre-17-runtime-jdk", // KT-88174
                         redundantCliArgWarningSuppression.takeUnless { skipNewLanguageFeatures },
                     )
                 }
