@@ -348,8 +348,7 @@ abstract class KotlinCompile @Inject constructor(
         args: K2JVMCompilerArguments,
     ) {
         val kotlinCompilerVersion = kotlinCompilerVersion.orNull
-        val shouldSkipCheck = runViaBuildToolsApi.get() &&
-                kotlinCompilerVersion != null &&
+        val shouldSkipCheck = kotlinCompilerVersion != null &&
                 kotlinCompilerVersion <= KotlinToolingVersion(2, 2, 19, null)
         if (!shouldSkipCheck && kotlinDslPluginIsPresent.get() && args.freeArgs.any { it.startsWith("-Xjvm-default") }) {
             val xJvmDefaultArg = args.freeArgs.first { it.startsWith("-Xjvm-default") }
