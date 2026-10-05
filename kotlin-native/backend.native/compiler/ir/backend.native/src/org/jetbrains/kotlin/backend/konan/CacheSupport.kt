@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.filesToCache
+import org.jetbrains.kotlin.konan.config.fullExportedNamePrefix
 import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
 import org.jetbrains.kotlin.konan.config.makePerFileCache
 import org.jetbrains.kotlin.konan.config.preLinkCaches
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.irOrFail
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -86,11 +89,13 @@ class CacheSupport(
                         ?: configuration.reportCompilationErrorAndThrow("auto cacheable root $it is not found or is not a directory")
             }
 
+    private val cacheDirectories = configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.map {
+        Path(it).takeIf { it.isDirectory() }
+                ?: configuration.reportCompilationErrorAndThrow("cache directory $it is not found or is not a directory")
+    }
+
     private val implicitCacheDirectories = buildList {
-        configuration[NativeConfigurationKeys.CACHE_DIRECTORIES]!!.forEach {
-            add(Path(it).takeIf { it.isDirectory() }
-                    ?: configuration.reportCompilationErrorAndThrow("cache directory $it is not found or is not a directory"))
-        }
+        addAll(cacheDirectories)
         systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null }?.let { add(it) }
         autoCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() }?.let { add(it) }
         incrementalCacheDirectory?.let { add(it) }
@@ -102,7 +107,12 @@ class CacheSupport(
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
         val singleFileStrategy = libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile
         val baseLibraryCacheDirectory = cacheDirectory.resolve(
-                if (singleFileStrategy == null)
+                if (produce.isObjCCache)
+                    CachedLibraries.getObjCCachedLibraryName(
+                        libraryToCache.klib,
+                        configuration.fullExportedNamePrefix ?: "",
+                    )
+                else if (singleFileStrategy == null)
                     CachedLibraries.getCachedLibraryName(libraryToCache.klib)
                 else
                     CachedLibraries.getPerFileCachedLibraryName(libraryToCache.klib)
@@ -164,7 +174,15 @@ class CacheSupport(
     } ?: configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = Path(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
-        val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
+        val libraryCache = if (produce.isObjCCache) {
+            if (libraryToAddToCache.isCInteropLibrary() || libraryToAddToCache.isCommonizedCInteropLibrary()) {
+                configuration.reportCompilationErrorAndThrow(
+                        "-produce objc_cache does not support cinterop libraries: ${libraryToAddToCache.path}")
+            }
+            null
+        } else {
+            cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
+        }
         if (libraryCache is CachedLibraries.Cache.Monolithic)
             null
         else {

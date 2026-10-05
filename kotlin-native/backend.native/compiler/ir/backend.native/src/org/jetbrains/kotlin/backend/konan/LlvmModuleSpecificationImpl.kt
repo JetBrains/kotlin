@@ -58,3 +58,15 @@ internal class CacheLlvmModuleSpecification(
                 ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
 }
+
+internal class ObjCCacheLlvmModuleSpecification(
+        cachedLibraries: CachedLibraries,
+) : LlvmModuleSpecificationBase(cachedLibraries) {
+    override val isFinal = false
+
+    override fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean = true
+
+    override fun containsLibrary(library: KotlinLibrary): Boolean = false
+
+    override fun containsDeclaration(declaration: IrDeclaration): Boolean = false
+}

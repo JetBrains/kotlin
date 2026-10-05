@@ -60,4 +60,4 @@ val CompilerOutputKind.isObjCCache: Boolean
     get() = this == CompilerOutputKind.OBJC_CACHE
 
 val CompilerOutputKind.isCache: Boolean
-    get() = this.isFullCache || this.isHeaderCache
+    get() = this.isFullCache || this.isHeaderCache || this.isObjCCache

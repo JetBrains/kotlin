@@ -349,8 +349,10 @@ internal class CodeGeneratorVisitor(
     override fun visitModuleFragment(declaration: IrModuleFragment) {
         context.log{"visitModule                    : ${ir2string(declaration)}"}
 
-        initializeCachedBoxes(generationState)
-        declaration.acceptChildrenVoid(this)
+        if (!context.config.produce.isObjCCache) {
+            initializeCachedBoxes(generationState)
+            declaration.acceptChildrenVoid(this)
+        }
 
         runAndProcessInitializers(null) {
             // Note: has to be before `objCExport.generate` below, which is what emits the adapter tables,
@@ -370,7 +372,9 @@ internal class CodeGeneratorVisitor(
             }
         }
 
-        appendStaticInitializers()
+        if (!context.config.produce.isObjCCache) {
+            appendStaticInitializers()
+        }
     }
 
     //-------------------------------------------------------------------------//

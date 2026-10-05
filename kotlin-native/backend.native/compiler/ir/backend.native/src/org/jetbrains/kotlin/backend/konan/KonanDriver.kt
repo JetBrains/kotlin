@@ -146,7 +146,7 @@ class KonanDriver(
                 return
         }
 
-        if (!config.produce.isHeaderCache) {
+        if (!config.produce.isHeaderCache && !config.produce.isObjCCache) {
             config.cacheSupport.checkConsistency()
         }
 

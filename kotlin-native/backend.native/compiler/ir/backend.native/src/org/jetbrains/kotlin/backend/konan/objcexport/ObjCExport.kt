@@ -19,13 +19,22 @@ import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.objcGenerics
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.klibModuleOriginOrNull
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.bufferedWriter
+import kotlin.io.path.createDirectories
 import kotlin.io.path.createTempFile
 import kotlin.io.path.name
 import kotlin.io.path.writeLines
+
+private val ModuleDescriptor.library: KotlinLibrary?
+    get() = (klibModuleOriginOrNull as? DeserializedKlibModuleOrigin)?.library
 
 internal fun produceObjCExportInterface(
     context: NativeBackendPhaseContext,
@@ -33,7 +42,7 @@ internal fun produceObjCExportInterface(
 ): ObjCExportedInterface {
     val config = context.config
     require(config.target.family.isAppleFamily)
-    require(config.produce == CompilerOutputKind.FRAMEWORK)
+    require(config.produce == CompilerOutputKind.FRAMEWORK || config.produce.isObjCCache)
 
     val topLevelNamePrefix = context.objCExportTopLevelNamePrefix
 
@@ -42,7 +51,18 @@ internal fun produceObjCExportInterface(
     //   and can't do this per-module, e.g. due to global name conflict resolution.
 
     val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
-    val moduleDescriptors = listOf(moduleDescriptor) + moduleDescriptor.getExportedDependenciesInCanonicalRTO(config)
+    val libraryToCacheModule = if (config.produce.isObjCCache) {
+        val klib = requireNotNull(config.librariesToCache.keys.singleOrNull()) {
+            "Producing objc_cache requires a single library to cache"
+        }
+        requireNotNull(moduleDescriptor.allDependencyModules.firstOrNull { it.library == klib }) {
+            "Cannot find module descriptor for library to cache: ${klib.uniqueName}"
+        }
+    } else {
+        null
+    }
+    val moduleDescriptors = (listOfNotNull(moduleDescriptor, libraryToCacheModule) +
+            moduleDescriptor.getExportedDependenciesInCanonicalRTO(config)).distinct()
     val entryPoints = config.objcEntryPoints
     val expandEntryPoints = config.configuration.getBoolean(BinaryOptions.objcExportExpandEntryPoints)
     val effectiveEntryPoints = if (entryPoints != ObjCEntryPoints.ALL && expandEntryPoints) {
@@ -82,11 +102,12 @@ internal fun produceObjCExportInterface(
             },
             explicitMethodFamily = explicitMethodFamily,
     )
+    val headerModuleDescriptors = libraryToCacheModule?.let { listOf(it) } ?: moduleDescriptors
     val shouldExportKDoc = context.shouldExportKDoc()
     val additionalImports = context.config.configuration.getNotNull(NativeConfigurationKeys.FRAMEWORK_IMPORT_HEADERS)
     val headerGenerator = ObjCExportHeaderGenerator.createInstance(
-            moduleDescriptors, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
-            additionalImports = additionalImports)
+            headerModuleDescriptors, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames, shouldExportKDoc = shouldExportKDoc,
+            additionalImports = additionalImports, restrictToLocalModules = config.produce.isObjCCache)
     headerGenerator.translateModule()
     return headerGenerator.buildInterface()
 }
@@ -183,7 +204,7 @@ internal class ObjCExport(
             ObjCExportBlockCodeGenerator(codegen).generate()
         }
 
-        if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
+        if (!config.isFinalBinary && !config.produce.isObjCCache) return // TODO: emit RTTI to the same modules as classes belong to.
 
         val mapper = exportedInterface?.mapper ?: ObjCExportMapper(config.languageVersionSettings, unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
@@ -201,6 +222,20 @@ internal class ObjCExport(
 
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
+
+        if (config.produce.isObjCCache) {
+            val library = requireNotNull(config.librariesToCache.keys.singleOrNull())
+            val metadata = ObjCCacheMetadata(
+                    classAdapters = objCCodeGenerator.objCCacheClassAdapters,
+                    protocolAdapters = objCCodeGenerator.objCCacheProtocolAdapters,
+                    categoryAdapters = objCCodeGenerator.objCCacheCategoryAdapters,
+                    exportedLibraries = config.cachedLibraries.exportedDependencies(library, config.exportedLibrariesForObjCCache),
+            )
+            generationState.outputFiles.objcCacheMetadataFile?.let { file ->
+                file.parent.createDirectories()
+                file.bufferedWriter().use { metadata.serialize(it) }
+            }
+        }
     }
 }
 
