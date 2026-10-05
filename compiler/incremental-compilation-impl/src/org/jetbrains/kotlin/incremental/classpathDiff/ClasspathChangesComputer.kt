@@ -35,9 +35,10 @@ internal object ClasspathChangesComputer {
     fun computeClasspathChanges(
         lookupStorage: LookupStorage,
         lazyClasspathSnapshot: LazyClasspathSnapshot,
-        reporter: ClasspathSnapshotBuildReporter
+        reporter: ClasspathSnapshotBuildReporter,
     ): ProgramSymbolSet {
-        val currentClasspathSnapshot = lazyClasspathSnapshot.getCurrentClasspathSnapshot(LazySnapshotLoadingMetrics.OnClasspathDiffComputation)
+        val currentClasspathSnapshot =
+            lazyClasspathSnapshot.getCurrentClasspathSnapshot(LazySnapshotLoadingMetrics.OnClasspathDiffComputation)
         val shrunkCurrentClasspathAgainstPreviousLookups = lazyClasspathSnapshot
             .getComputedShrunkClasspathAgainstPreviousLookups(lookupStorage, LazySnapshotLoadingMetrics.OnClasspathDiffComputation)
         reporter.debug {
@@ -127,7 +128,7 @@ internal object ClasspathChangesComputer {
     private fun computeClassChanges(
         currentClassSnapshots: List<AccessibleClassSnapshot>,
         previousClassSnapshots: List<AccessibleClassSnapshot>,
-        metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>
+        metrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     ): ProgramSymbolSet {
         val [currentKotlinClassSnapshots, currentJavaClassSnapshots] = currentClassSnapshots.partition { it is KotlinClassSnapshot }
         val [previousKotlinClassSnapshots, previousJavaClassSnapshots] = previousClassSnapshots.partition { it is KotlinClassSnapshot }
@@ -188,7 +189,7 @@ internal object ClasspathChangesComputer {
 
     private fun computeCoarseGrainedKotlinClassChanges(
         currentClassSnapshots: List<KotlinClassSnapshot>,
-        previousClassSnapshots: List<KotlinClassSnapshot>
+        previousClassSnapshots: List<KotlinClassSnapshot>,
     ): ProgramSymbolSet {
         // Note: We have removed unchanged classes earlier in computeChangedAndImpactedSet method, so here we only have changed classes.
         return ProgramSymbolSet.Collector().run {
@@ -205,7 +206,7 @@ internal object ClasspathChangesComputer {
 
     private fun computeFineGrainedKotlinClassChanges(
         currentClassSnapshots: List<KotlinClassSnapshot>,
-        previousClassSnapshots: List<KotlinClassSnapshot>
+        previousClassSnapshots: List<KotlinClassSnapshot>,
     ): ProgramSymbolSet {
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
