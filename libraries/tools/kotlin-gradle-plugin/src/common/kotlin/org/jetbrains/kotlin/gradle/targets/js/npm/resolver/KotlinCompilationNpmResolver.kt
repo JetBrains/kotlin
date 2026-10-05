@@ -20,6 +20,7 @@ import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.util.Path
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.npm.npmDependenciesCollector
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
@@ -216,7 +217,8 @@ class KotlinCompilationNpmResolver(
         }.get()
     }
 
-    private inner class ConfigurationVisitor {
+    @InternalKotlinGradlePluginApi
+    inner class ConfigurationVisitor {
         private val internalDependencies = mutableSetOf<InternalDependency>()
         private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
