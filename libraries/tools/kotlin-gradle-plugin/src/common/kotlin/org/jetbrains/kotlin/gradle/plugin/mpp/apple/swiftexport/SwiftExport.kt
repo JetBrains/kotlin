@@ -154,7 +154,7 @@ internal fun Project.registerSwiftExportTask(
         }
         copyTask.configure { task ->
             task.filterInterfacesToOwnModules.set(true)
-            task.swiftModulesFile.set(swiftExportTask.map { it.parameters.swiftModulesFile.get() })
+            task.swiftModulesFile.set(swiftExportTask.flatMap { it.parameters.swiftModulesFile })
         }
     }
 
@@ -228,9 +228,7 @@ private fun Project.registerSwiftExportRun(
         )
 
         // Output
-        task.outputDirectory.set(outputDirectory)
-        task.parameters.outputPath.set(task.outputDirectory.dir("files"))
-        task.parameters.swiftModulesFile.set(task.outputDirectory.file(swiftApiModuleName.map { "modules/$it.json" }))
+        task.parameters.outputDirectory.set(outputDirectory)
     }
 }
 
@@ -246,7 +244,7 @@ private fun registerSwiftExportCompilationAndGetBinary(
         invokeWhenCreated = { swiftExportCompilation ->
             swiftExportCompilation.associateWith(mainCompilation)
 
-            swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.flatMap { it.outputDirectory })
+            swiftExportCompilation.defaultSourceSet.kotlin.srcDir(swiftExportTask.flatMap { it.parameters.outputDirectory })
 
             swiftExportCompilation.compileTaskProvider.configure {
                 it.compilerOptions.optIn.add("kotlin.experimental.ExperimentalNativeApi")
@@ -295,7 +293,7 @@ private fun Project.registerPackageGeneration(
             file(Distribution(konanDistribution.root.absolutePath).kotlinRuntimeForSwiftHome)
         )
 
-        task.swiftModulesFile.set(swiftExportTask.map { it.parameters.swiftModulesFile.get() })
+        task.swiftModulesFile.set(swiftExportTask.flatMap { it.parameters.swiftModulesFile })
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.swiftApiModuleName.set(swiftApiModuleName)
 

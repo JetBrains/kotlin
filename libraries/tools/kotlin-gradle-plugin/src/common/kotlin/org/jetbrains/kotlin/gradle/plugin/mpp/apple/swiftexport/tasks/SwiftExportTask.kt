@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
@@ -77,13 +76,6 @@ internal abstract class SwiftExportTask @Inject constructor(
 
     @get:Nested
     abstract val parameters: SwiftExportTaskParameters
-
-    /**
-     * The directory of the run. `parameters.outputPath` and `parameters.swiftModulesFile` are inside it, and so
-     * are the support modules Swift Export writes next to them. Emptied before every run.
-     */
-    @get:OutputDirectory
-    abstract val outputDirectory: DirectoryProperty
 
     /**
      * The complete compilation dependency graph the exported modules are resolved from.
@@ -253,9 +245,8 @@ internal abstract class SwiftExportTask @Inject constructor(
 
         swiftExportQueue.submit(SwiftExportAction::class.java) { workParameters ->
             workParameters.bridgeModuleName.set(parameters.bridgeModuleName)
-            workParameters.outputPath.set(parameters.outputPath)
+            workParameters.outputDirectory.set(parameters.outputDirectory)
             workParameters.stableDeclarationsOrder.set(parameters.stableDeclarationsOrder)
-            workParameters.swiftModulesFile.set(parameters.swiftModulesFile)
             workParameters.swiftModules.set(swiftModules)
             workParameters.swiftExportSettings.set(parameters.swiftExportSettings)
             workParameters.konanDistribution.set(kotlinNativeProvider.flatMap { it.bundleDirectory }.map { Distribution(it) })
@@ -287,7 +278,7 @@ internal abstract class SwiftExportTask @Inject constructor(
 
     private fun cleanup() {
         fileSystem.delete {
-            it.delete(outputDirectory)
+            it.delete(parameters.outputDirectory)
         }
     }
 

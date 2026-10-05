@@ -31,8 +31,7 @@ class CopySwiftExportIntermediatesForConsumerTest {
             resolve("SharedBridge/Shared.h").apply { parentFile.mkdirs(); writeText("") }
             resolve("SharedBridge/module.modulemap").writeText("")
         }
-        val modulesFile = project.projectDir.resolve("modules/Shared.json").apply {
-            parentFile.mkdirs()
+        val modulesFile = project.projectDir.resolve("modules.json").apply {
             val shared = GradleSwiftExportModule.SwiftOnly(File("/Shared.swift"), "Shared", emptyList())
             writeText(SerializationTools.writeToJson(GradleSwiftExportModules(listOf(shared), 0)))
         }
