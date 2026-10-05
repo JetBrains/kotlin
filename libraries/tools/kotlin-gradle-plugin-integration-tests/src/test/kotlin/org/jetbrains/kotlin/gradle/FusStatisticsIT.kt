@@ -969,14 +969,6 @@ class FusStatisticsIT : KGPBaseTest() {
             ) { fusFiles ->
                 assertFilesCombinedContains(fusFiles, "KOTLIN_BTA_USED=true")
             }
-
-            validateFusFiles(
-                "compileKotlin",
-                buildAction = BuildActions.build,
-                buildOptions = buildOptions.copy(runViaBuildToolsApi = false),
-            ) { fusFiles ->
-                assertFilesCombinedContains(fusFiles, "KOTLIN_BTA_USED=false")
-            }
         }
     }
 

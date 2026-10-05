@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLICATION_FORMAT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API
@@ -482,11 +481,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val allowIncompleteKotlinArchivePublication: Boolean
         get() = booleanProperty(KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION) ?: false
 
-    @Suppress("DEPRECATION")
-    @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
-    val runKotlinCompilerViaBuildToolsApi: Provider<Boolean>
-        get() = booleanProvider(KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
-
     val runKotlinJsCompilerViaBuildToolsApi: Provider<Boolean>
         get() = booleanProvider(KOTLIN_JS_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
 
@@ -496,13 +490,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val runKotlinMetadataCompilerViaBuildToolsApi: Provider<Boolean>
         get() = booleanProvider(KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API).orElse(true)
 
-    @Suppress("DEPRECATION")
-    // Uses [runKotlinCompilerViaBuildToolsApi] as the default value provider to avoid warnings when BTA is explicitly disabled
     val generateCompilerRefIndex: Provider<Boolean>
         get() = booleanProvider(KOTLIN_GENERATE_COMPILER_REF_INDEX).orElse(
-            runKotlinCompilerViaBuildToolsApi.zip(project.providers.provider { isCiBuild() }) { runsViaBta, isCi ->
-                runsViaBta && !isCi
-            }
+            project.providers.provider { !isCiBuild() }
         )
 
     val allowLegacyMppDependencies: Boolean
@@ -887,8 +877,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING = property("kotlin.options.suppressFreeCompilerArgsModificationWarning")
         val KOTLIN_JVM_ADD_CLASSES_VARIANT = property("kotlin.jvm.addClassesVariant")
 
-        @Deprecated("KT-85433: non-BTA JVM compiler invocation is deprecated")
-        val KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.compiler.runViaBuildToolsApi")
         val KOTLIN_JS_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.js.runViaBuildToolsApi")
         val KOTLIN_WASM_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.wasm.runViaBuildToolsApi")
         val KOTLIN_METADATA_RUN_COMPILER_VIA_BUILD_TOOLS_API = property("kotlin.metadata.runViaBuildToolsApi")

@@ -341,10 +341,6 @@ class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
     @GradleTest
     fun testBta(gradleVersion: GradleVersion) = test(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = true))
 
-    @DisplayName("KT-84152: In-process compilation should not leave active threads")
-    @GradleTest
-    fun testNonBta(gradleVersion: GradleVersion) = test(gradleVersion, buildOptions = defaultBuildOptions.copy(runViaBuildToolsApi = false))
-
     private fun test(
         gradleVersion: GradleVersion,
         buildOptions: BuildOptions
