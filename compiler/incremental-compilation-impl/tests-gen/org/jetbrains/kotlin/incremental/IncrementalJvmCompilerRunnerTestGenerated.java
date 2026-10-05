@@ -73,6 +73,12 @@ public class IncrementalJvmCompilerRunnerTestGenerated extends AbstractIncrement
     }
 
     @Test
+    @TestMetadata("bridgeWithThrows")
+    public void testBridgeWithThrows() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/bridgeWithThrows/");
+    }
+
+    @Test
     @TestMetadata("changeTypeImplicitlyWithCircularDependency")
     public void testChangeTypeImplicitlyWithCircularDependency() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeTypeImplicitlyWithCircularDependency/");
