@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("TYPEALIAS_EXPANSION_DEPRECATION")
+
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.artifacts.Dependency
@@ -60,18 +62,17 @@ data class NpmDependency(
     override fun getReason(): String? = reason
 }
 
-@Suppress("DEPRECATION")
 internal fun directoryNpmDependency(
     objectFactory: ObjectFactory,
-    scope: NpmDependency.Scope,
+    scope: NpmDependencyScopeDeprecated,
     name: String,
     directory: File,
-): NpmDependency {
+): NpmDependencyDeprecated {
     check(directory.isDirectory) {
         "Dependency on local path should point on directory but $directory found"
     }
 
-    return NpmDependency(
+    return NpmDependencyDeprecated(
         objectFactory = objectFactory,
         scope = scope,
         name = name,
