@@ -30,6 +30,7 @@ abstract class NodeVisitor<R> {
     open fun visitVarOp(node: VarOp): R = visitBlockBody(node)
     open fun visitReadVar(node: ReadVar): R = visitVarOp(node)
     open fun visitAssignVar(node: AssignVar): R = visitVarOp(node)
+    open fun visitPi(node: Pi): R = visitBlockBody(node)
     open fun visitPhi(node: Phi): R = visitNode(node)
     open fun visitPhiPlaceholder(node: PhiPlaceholder): R = visitNode(node)
     open fun visitParam(node: Param): R = visitNode(node)

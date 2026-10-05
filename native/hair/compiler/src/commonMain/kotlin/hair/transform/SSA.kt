@@ -69,7 +69,7 @@ fun Session.buildSSA() {
                     }
                     is If -> n.uses.forEach {
                         it as IfProjection
-                        patchInput(it.uses.single() as BlockEntry, it)
+                        patchInput(it.next, it)
                     }
 
                     else -> {}

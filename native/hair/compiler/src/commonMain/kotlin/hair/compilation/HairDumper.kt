@@ -12,7 +12,7 @@ import hair.utils.generateGraphviz
 
 abstract class HairDumper {
     fun dump(compilation: FunctionCompilation, title: String) {
-        with (compilation.session) {
+        with(compilation.session) {
             val [dump, withGCM] = try {
                 withGCM {
                     generateGraphviz(contextOf<GCMResult>()) to true
@@ -26,6 +26,10 @@ abstract class HairDumper {
                 contents = dump
             )
         }
+    }
+
+    fun dumpSimple(compilation: FunctionCompilation, title: String, contents: String) {
+        dumpImpl(compilation.function, title, contents)
     }
 
     abstract fun dumpImpl(f: HairFunction, title: String, contents: String)

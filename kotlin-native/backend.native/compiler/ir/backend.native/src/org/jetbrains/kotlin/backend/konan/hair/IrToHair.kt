@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.*
 import hair.compilation.*
 import hair.ir.*
 import hair.ir.nodes.*
+import hair.opt.eliminateBoundsCheck
 import hair.opt.optimize
 import hair.sym.CmpOp
 import hair.sym.HairType
@@ -503,8 +504,16 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
 
             funCompilation.dumpHair("initial_ir")
 
+            insertPis()
+            funCompilation.dumpHair("after_pis_insertion")
+
             buildSSA()
             funCompilation.dumpHair("initial_ir_after_SSA")
+
+            context(funCompilation) {
+                eliminateBoundsCheck()
+            }
+            funCompilation.dumpHair("after_bce")
 
             optimize()
             // TODO log IR in optimize after each iteration

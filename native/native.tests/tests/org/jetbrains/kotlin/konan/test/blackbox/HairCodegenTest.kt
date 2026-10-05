@@ -103,4 +103,11 @@ class HairCodegenTest : AbstractNativeSimpleTest() {
     @Test fun intArrayGetSet() = runHairTest("arrays/intArrayGetSet.kt")
     @Test fun longArrayGetSet() = runHairTest("arrays/longArrayGetSet.kt")
     @Test fun referenceArrayGetSet() = runHairTest("arrays/referenceArrayGetSet.kt")
+
+    // BCE
+    @Test fun outOfBoundsThrows() = runHairTest("bce/outOfBoundsThrows.kt")
+    @Test fun loopOverIndices() = runHairTest("bce/loopOverIndices.kt")
+    @Test fun nestedGuard() = runHairTest("bce/nestedGuard.kt")
+    @Test fun constantIndex() = runHairTest("bce/constantIndex.kt")
+    @Test fun redundantSecondAccess() = runHairTest("bce/redundantSecondAccess.kt")
 }
