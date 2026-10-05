@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -20,7 +21,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFramewor
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.CacheMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.provisionedXcodeCompilerArgs
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -28,6 +32,7 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
@@ -400,6 +405,87 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         module4.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("main.kt"), module4)
         add(module4)
     })
+
+    private val objCCacheArgs: List<String>
+        get() = listOf(
+            "-produce", "objc_cache",
+            "-Xadd-cache=${testRunSettings.get<KotlinNativeHome>().stdlibFile.absolutePath}",
+            "-module-name", "Kt",
+            "-Xcache-directory=${buildDir.absolutePath}",
+        )
+
+    private fun doTestProduceObjCCacheValidation(args: List<String>, expectedError: String, requireAppleHost: Boolean = true) {
+        if (requireAppleHost) Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+        val result = callCompiler(
+            compilerArgs = (args + provisionedXcodeCompilerArgs).toTypedArray(),
+            kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>().classLoader,
+        )
+        assertEquals(ExitCode.COMPILATION_ERROR, result.exitCode, result.toolOutput)
+        assertEquals(listOf("error: $expectedError"), result.toolOutput.lines().filter { it.startsWith("error: ") })
+    }
+
+    @Test
+    fun testProduceObjCCacheRequiresAddCache() = doTestProduceObjCCacheValidation(
+        objCCacheArgs.filterNot { it.startsWith("-Xadd-cache=") },
+        "-produce objc_cache requires -Xadd-cache to be specified",
+    )
+
+    @Test
+    fun testProduceObjCCacheRequiresModuleName() = doTestProduceObjCCacheValidation(
+        objCCacheArgs - listOf("-module-name", "Kt"),
+        "-produce objc_cache requires -module-name to be specified",
+    )
+
+    @Test
+    fun testProduceObjCCacheRequiresCacheDirectory() = doTestProduceObjCCacheValidation(
+        objCCacheArgs.filterNot { it.startsWith("-Xcache-directory=") },
+        "-produce objc_cache requires -Xcache-directory to be specified",
+    )
+
+    @Test
+    fun testProduceObjCCacheRejectsAutoCacheDirectory() = doTestProduceObjCCacheValidation(
+        objCCacheArgs.filterNot { it.startsWith("-Xcache-directory=") } + "-Xauto-cache-dir=${buildDir.absolutePath}",
+        "-produce objc_cache requires -Xcache-directory to be specified",
+    )
+
+    @Test
+    fun testProduceObjCCacheRejectsSourceFiles() = doTestProduceObjCCacheValidation(
+        objCCacheArgs + testClashingBindClassToObjCNameRootDir.resolve("class.kt").absolutePath,
+        "-produce objc_cache does not accept source files",
+    )
+
+    @Test
+    fun testProduceObjCCacheRejectsNonAppleTarget() = doTestProduceObjCCacheValidation(
+        objCCacheArgs + listOf("-target", "linux_x64"),
+        "producing objc_cache is only supported for Apple targets, but target is linux_x64",
+        requireAppleHost = false,
+    )
+
+    @Test
+    fun testProduceObjCCacheRejectsPerFileCache() =
+        doTestProduceObjCCacheValidation(objCCacheArgs + "-Xmake-per-file-cache", "-produce objc_cache does not support per-file caching")
+
+    @Test
+    fun testProduceObjCCacheRejectsOptimization() =
+        doTestProduceObjCCacheValidation(objCCacheArgs + "-opt", "-produce objc_cache does not support optimization (-opt)")
+
+    @Test
+    fun testProduceObjCCacheRejectsOutput() = doTestProduceObjCCacheValidation(
+        objCCacheArgs + listOf("-o", buildDir.resolve("out").absolutePath),
+        "-Xadd-cache already implicitly sets output file name",
+    )
+
+    @Test
+    fun testProduceObjCCacheRejectsSwiftExport() = doTestProduceObjCCacheValidation(
+        objCCacheArgs + "-Xbinary=swiftExport=true",
+        "-produce objc_cache does not support Swift Export (-Xbinary=swiftExport=true)",
+    )
+
+    @Test
+    fun testProduceObjCCacheRejectsInclude() = doTestProduceObjCCacheValidation(
+        objCCacheArgs + "-Xinclude=${testRunSettings.get<KotlinNativeHome>().stdlibFile.absolutePath}",
+        "-produce objc_cache does not accept -Xinclude",
+    )
 }
 
 @TestDataPath("\$PROJECT_ROOT")

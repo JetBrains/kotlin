@@ -227,7 +227,8 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         return if (exportedLibraries.isNotEmpty() &&
             outputKind != CompilerOutputKind.FRAMEWORK &&
             outputKind != CompilerOutputKind.STATIC &&
-            outputKind != CompilerOutputKind.DYNAMIC
+            outputKind != CompilerOutputKind.DYNAMIC &&
+            outputKind != CompilerOutputKind.OBJC_CACHE
         ) {
             report(
                 KONAN_ARGUMENT_STRONG_WARNING,
