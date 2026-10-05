@@ -1,4 +1,4 @@
-## Samples for the Standard Library
+## Samples for the standard library
 
 This project contains samples for the standard library functions. 
 They are located in the [test](test) source root and each sample is written like a small unit test.
@@ -26,7 +26,7 @@ in the template, and then all specializations should be regenerated. See [the st
 depending on the specialization. 
 
 - Each sample should be self contained, but you can introduce local classes and functions in it.
-Do not use external references other than the Standard Library itself and JDK.
+Do not use external references other than the standard library itself and JDK.
 
 - Use only the following subset of assertions:
 
