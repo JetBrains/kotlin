@@ -473,7 +473,6 @@ class KotlinNpmDependenciesCollectorTest {
             .getByName(compilationName)
             .npmProject.packageJsonTask
             .declaredNpmDependencies.get()
-            .map { it.uniqueRepresentation() }
 
     private fun KotlinNpmDependency.uniqueRepresentation(): String =
         "$scope $name:$version"
