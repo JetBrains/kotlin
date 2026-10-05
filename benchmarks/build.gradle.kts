@@ -1,5 +1,6 @@
 import kotlinx.benchmark.gradle.JmhBytecodeGeneratorTask
 import kotlinx.benchmark.gradle.benchmark
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     id("common-configuration")
@@ -55,6 +56,14 @@ benchmark {
             iterationTimeUnit = "sec"
             warmups = 10
             iterations = 30
+        }
+
+        register("classpathSnapshotShrinker") {
+            include(".*ClasspathSnapshotShrinkerBenchmark.*")
+            iterationTime = 1
+            iterationTimeUnit = "sec"
+            warmups = 5
+            iterations = 10
         }
 
         // The compiler frontend benchmarks: `org.jetbrains.kotlin.benchmarks.jmh.compilation.*`.
@@ -120,6 +129,10 @@ afterEvaluate {
         addJarPathProperty("classpathSnapshot.gradleApi", project.dependencies.gradleApi())
     }
 
+    tasks.named<JavaExec>("testClasspathSnapshotShrinkerBenchmark") {
+        addJarPathProperty("classpathSnapshot.gradleApi", project.dependencies.gradleApi())
+    }
+
     tasks.named<JavaExec>("testCompilationBenchmark") {
         val ideaHomeForTests = project.configurations
             .detachedConfiguration(project.dependencies.project(":", configuration = "ideaHomeForTests"))
@@ -144,6 +157,17 @@ afterEvaluate {
         addJarPathProperty(TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH, ":kotlin-script-runtime")
         addJarPathProperty(TestCompilePaths.KOTLIN_TEST_JAR_PATH, ":kotlin-test")
     }
+}
+
+// The classpath snapshot benchmarks measure internals of the incremental compiler
+tasks.named<KotlinJvmCompile>("compileTestKotlin") {
+    friendPaths.from(
+        configurations.testCompileClasspath.map { configuration ->
+            configuration.incoming.artifacts.artifacts.filter { artifact ->
+                (artifact.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == ":compiler:incremental-compilation-impl"
+            }.map { it.file }
+        }
+    )
 }
 
 tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
