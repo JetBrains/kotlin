@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 
+import org.jetbrains.kotlin.gradle.util.ProcessRunResult
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.nio.file.Path
@@ -34,10 +35,10 @@ internal fun TestProject.buildXcodeProject(
     appendToProperties: () -> String = { "" },
     derivedDataPath: Path? = projectPath.resolve("xcodeDerivedData"),
     expectedExitCode: Int = 0,
-) {
+): ProcessRunResult {
     prepareForXcodebuild(appendToProperties)
 
-    xcodebuild(
+    return xcodebuild(
         xcodeproj = xcodeproj,
         scheme = scheme,
         configuration = configuration,
@@ -65,8 +66,8 @@ internal fun TestProject.xcodebuild(
     buildSettingOverrides: Map<String, String> = emptyMap(),
     derivedDataPath: Path? = projectPath.resolve("xcodeDerivedData"),
     expectedExitCode: Int = 0,
-) {
-    xcodebuild(
+): ProcessRunResult {
+    return xcodebuild(
         cmd = buildList {
             infix fun String.set(value: Any?) {
                 if (value != null) {
@@ -146,7 +147,7 @@ private fun TestProject.xcodebuild(
     workingDir: Path,
     testRunEnvironment: Map<String, String>,
     expectedExitCode: Int,
-) {
+): ProcessRunResult {
     val xcodebuildResult = runProcess(
         cmd = cmd,
         environmentVariables = environmentVariables.environmentalVariables + testRunEnvironment.mapKeys {
@@ -158,6 +159,18 @@ private fun TestProject.xcodebuild(
     xcodebuildResult.assertProcessRunResult {
         assertEquals(expectedExitCode, exitCode, "Exit code mismatch for `xcodebuild`.")
     }
+    return xcodebuildResult
+}
+
+/**
+ * Task outcomes of the Gradle run inside `xcodebuild`, by task path: `null` if the task executed, otherwise its label,
+ * e.g. `UP-TO-DATE`. Gradle prints them because it isn't writing to a terminal there.
+ */
+internal fun ProcessRunResult.gradleTaskOutcomes(): Map<String, String?> {
+    val taskLine = Regex("""^> Task (:\S+)(?: (\S+))?$""")
+    return output.lineSequence()
+        .mapNotNull { taskLine.matchEntire(it.trim()) }
+        .associate { it.groupValues[1] to it.groupValues[2].ifEmpty { null } }
 }
 
 private fun TestProject.overrideMavenLocalIfNeeded() {
