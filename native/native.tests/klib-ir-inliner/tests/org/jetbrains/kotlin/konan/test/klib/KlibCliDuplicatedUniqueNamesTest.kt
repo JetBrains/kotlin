@@ -135,7 +135,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
             assertFalse(isSuccessfulCompilationExpected) { "Compilation was expected to succeed" }
 
             val unresolvedReferenceErrorPresent = compilerOutput.any {
-                it.contains("error: unresolved reference")
+                it.contains("error: [UNRESOLVED_REFERENCE] Unresolved reference")
             }
             assertTrue(unresolvedReferenceErrorPresent == isUnresolvedReferenceErrorExpected)
         }
@@ -148,7 +148,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
 
     companion object {
         private const val DUPLICATED_UNIQUE_NAME = "DUPLICATED_UNIQUE_NAME"
-        private val DuplicatedUniqueNameMessagePattern = Regex("(\\w+): KLIB loader: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
+        private val DuplicatedUniqueNameMessagePattern = Regex("(\\w+):.*KLIB loader: The same 'unique_name=$DUPLICATED_UNIQUE_NAME' found in more than one library")
 
         private fun DuplicatedUniqueNameStrategy.asCliArgument(): String {
             return CommonKlibBasedCompilerArguments::duplicatedUniqueNameStrategy.cliArgument(alias)

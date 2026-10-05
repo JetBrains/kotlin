@@ -100,29 +100,29 @@ abstract class NativePartialLinkageDiagnosticsTest : AbstractNativeSimpleTest() 
             lines().any { it.contains(diagnosticRegex) }
 
         fun reflectionTargetSymbolDiagnosticRegex(severity: String, kind: String, name: String) =
-            Regex("$severity: <lib2>.*Reference to $kind '$name' can not be evaluated: No $kind found for symbol 'lib1/.*")
+            Regex("$severity: \\[MINOR_PARTIAL_LINKAGE_ISSUE\\] <lib2>.*Reference to $kind '$name' can not be evaluated: No $kind found for symbol 'lib1/.*")
 
         fun referenceToUnlinkedConstructorSymbol(severity: String) =
-            Regex("$severity: <lib2>.*Reference to constructor 'A.<init>' can not be evaluated: Expression uses unlinked class symbol 'lib1/A.*")
+            Regex("$severity: \\[MAJOR_PARTIAL_LINKAGE_ISSUE\\] <lib2>.*Reference to constructor 'A.<init>' can not be evaluated: Expression uses unlinked class symbol 'lib1/A.*")
 
         fun memberOfUnlinkedClassesDiagnosticRegex(severity: String) =
-            Regex("$severity: <lib2>.*Class 'KlassWithUnlinkedSymbol' created by constructor 'KlassWithUnlinkedSymbol.<init>' uses unlinked class symbol 'lib1/A.*")
+            Regex("$severity: \\[MINOR_PARTIAL_LINKAGE_ISSUE\\] <lib2>.*Class 'KlassWithUnlinkedSymbol' created by constructor 'KlassWithUnlinkedSymbol.<init>' uses unlinked class symbol 'lib1/A.*")
 
         fun unboundInlineFunctionSymbolDiagnosticRegex(severity: String, name: String) =
-            Regex("$severity: <main>.*Expression can not be evaluated: No function found for symbol 'lib1/$name.*")
+            Regex("$severity: \\[MINOR_PARTIAL_LINKAGE_ISSUE\\] <main>.*Expression can not be evaluated: No function found for symbol 'lib1/$name.*")
 
         fun unboundFunctionDiagnosticRegex(severity: String) =
-            Regex("$severity: <lib2>.*Function 'foo' can not be called: No function found for symbol 'lib1/foo.*")
+            Regex("$severity: \\[MAJOR_PARTIAL_LINKAGE_ISSUE\\] <lib2>.*Function 'foo' can not be called: No function found for symbol 'lib1/foo.*")
 
         fun unusableAnnotationDiagnosticRegex(severity: String, name: String) =
-            Regex("$severity: <lib2>.*Unusable annotation '$name.<init>' has been removed from class 'KlassWithUnlinkedSymbol'")
+            Regex("$severity: \\[MINOR_PARTIAL_LINKAGE_ISSUE\\] <lib2>.*Unusable annotation '$name.<init>' has been removed from class 'KlassWithUnlinkedSymbol'")
 
         fun noAnnotationConstructorDiagnosticRegex(severity: String, name: String) =
-            Regex("$severity: <lib2>.*Constructor '$name.<init>' can not be called: No constructor found for symbol 'lib1/$name.<init>.*")
+            Regex("$severity: \\[MINOR_PARTIAL_LINKAGE_ISSUE\\] <lib2>.*Constructor '$name.<init>' can not be called: No constructor found for symbol 'lib1/$name.<init>.*")
 
         fun unusableAnnotationConstructorDiagnosticRegex(severity: String) =
             Regex(
-                "$severity: <lib2>.*Constructor 'NoDefault.<init>' can not be called: The constructor has some value" +
+                "$severity: \\[MINOR_PARTIAL_LINKAGE_ISSUE\\] <lib2>.*Constructor 'NoDefault.<init>' can not be called: The constructor has some value" +
                         " parameters for which neither the call site provides an argument, nor do they have a default value: p"
             )
 

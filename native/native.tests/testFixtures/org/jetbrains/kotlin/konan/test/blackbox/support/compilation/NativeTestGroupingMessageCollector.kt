@@ -138,13 +138,13 @@ internal class NativeTestGroupingMessageCollector(
         private const val PRE_RELEASE_WARNING_PREFIX = "Following manually enabled features will force generation of pre-release binaries: "
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
-        private const val UNKNOWN_FRIEND_LIBRARIES_WARNING_PREFIX = "There are libraries in -friend-modules CLI argument that are not included in -library CLI argument:"
+        private const val UNKNOWN_FRIEND_LIBRARIES_WARNING_PREFIX = "[COMPILER_ARGUMENTS_WARNING] There are libraries in -friend-modules CLI argument that are not included in -library CLI argument:"
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
-        private const val KLIB_LOADER_WARNING_PREFIX = "KLIB loader: "
+        private const val KLIB_LOADER_WARNING_PREFIX = "[KLIB_LOADING_WARNING] KLIB loader: "
         private const val CONTEXT_RECEIVERS_WARNING_PREFIX = "Experimental context receivers are superseded by context parameters"
 
         private val K1_LANGUAGE_VERSIONS_WARNING_REGEX = Regex("Language version 1.[0-9.]+ is deprecated and its support will be removed in a future version of Kotlin")
-        private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^<[^<>]+>( @ (?:(?!: ).)+)?: .*")
+        private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^\\[.*_PARTIAL_LINKAGE_ISSUE\\] <[^<>]+>( @ (?:(?!: ).)+)?: .*")
         private val ARGUMENT_PASSED_MULTIPLE_TIMES_WARNING_REGEX = Regex("Argument '.*' is passed multiple times: .*")
         private val OUTDATED_RUNTIME_JDK_WARNING_REGEX = """Running Kotlin compiler using JDK \d+ will not be supported in future versions of Kotlin.*""".toRegex()
 

@@ -83,7 +83,7 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
                 )
                 fail { "Compilation should fail" }
             } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("error: invalid ABI version")) { "Unexpected error message: ${cte.reason}" }
+                assertTrue(cte.reason.contains("error: [COMPILER_ARGUMENTS_ERROR] Invalid ABI version")) { "Unexpected error message: ${cte.reason}" }
             }
         }
     }
@@ -137,7 +137,7 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
                 )
                 fail { "Compilation should fail" }
             } catch (cte: CompilationToolException) {
-                assertTrue(cte.reason.contains("error: invalid metadata version")) { "Unexpected error message: ${cte.reason}" }
+                assertTrue(cte.reason.contains("error: [COMPILER_ARGUMENTS_ERROR] Invalid metadata version")) { "Unexpected error message: ${cte.reason}" }
             }
         }
     }
