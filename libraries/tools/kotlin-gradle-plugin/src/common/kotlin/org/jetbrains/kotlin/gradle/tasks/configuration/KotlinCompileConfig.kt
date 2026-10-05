@@ -158,16 +158,11 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 emptySet()
             }
         })
-        parameters.compilationViaBuildToolsApi.set(true)
         parameters.kgpVersion.set(kgpVersion)
 
         val isMultiplatform = project.multiplatformExtensionOrNull != null
         parameters.expandTypeAliases.set(
             project.kotlinPropertiesProvider.expandTypeAliasesInClasspathSnapshots.map { it && isMultiplatform }
-        )
-
-        parameters.suppressVersionInconsistencyChecks.set(
-            project.kotlinPropertiesProvider.suppressBuildToolsApiVersionConsistencyChecks
         )
 
         parameters.buildToolsImplVersion.set(classpath.map { configuration -> configuration.findBuildToolsApiImplVersion() })

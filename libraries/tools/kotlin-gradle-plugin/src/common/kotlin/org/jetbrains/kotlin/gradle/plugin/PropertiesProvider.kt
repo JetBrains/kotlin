@@ -560,14 +560,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val abiValidationBannedTargets: String?
         get() = property(PropertyNames.ABI_VALIDATION_BANNED_TARGETS).orNull
 
-
-    /**
-     * Allows suppressing the diagnostic [KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency].
-     * Required only for Kotlin repo bootstrapping.
-     */
-    val suppressBuildToolsApiVersionConsistencyChecks: Boolean
-        get() = booleanProperty(PropertyNames.KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS) ?: false
-
     private val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
 
     internal fun property(propertyName: String): Provider<String> = propertiesBuildService.property(propertyName, project)
@@ -890,8 +882,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = property(KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS_PROPERTY)
         val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = property("kotlin.native.ignoreDisabledTargets")
 
-        val KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS =
-            property("kotlin.internal.suppress.buildToolsApiVersionConsistencyChecks")
         val KOTLIN_USER_HOME_DIR = property("kotlin.user.home")
         val KOTLIN_PROJECT_PERSISTENT_DIR = property("kotlin.project.persistent.dir")
         val KOTLIN_PROJECT_PERSISTENT_DIR_GRADLE_DISABLE_WRITE = property("kotlin.project.persistent.dir.gradle.disableWrite")

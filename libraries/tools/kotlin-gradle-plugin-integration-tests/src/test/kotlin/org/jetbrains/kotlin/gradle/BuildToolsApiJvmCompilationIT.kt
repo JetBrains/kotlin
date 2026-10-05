@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.asFinishLogMessage
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -19,60 +18,6 @@ import kotlin.io.path.writeText
 @JvmGradlePluginTests
 class BuildToolsApiJvmCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true)
-
-    @GradleTest
-    @DisplayName("Build Tools version consistency checker works if the old way of compilation is used together with the build tools API transform")
-    fun versionConsistencyDiagnosticWorks(gradleVersion: GradleVersion) {
-        project(
-            "simpleProject", gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                runViaBuildToolsApi = false,
-                incremental = false,
-            ),
-        ) {
-            build("assemble") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
-            }
-            chooseCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
-            buildAndFail("assemble") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
-                assertOutputContains("Expected version: ${defaultBuildOptions.kotlinVersion}")
-                assertOutputContains("Actual resolved version: ${TestVersions.Kotlin.STABLE_RELEASE}")
-            }
-        }
-    }
-
-    @GradleTest
-    @DisplayName("Build Tools version consistency checker disabled if compilation goes via the build tools api")
-    fun versionConsistencyDiagnosticDisabled(gradleVersion: GradleVersion) {
-        project(
-            "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
-                incremental = false,
-            )
-        ) {
-            chooseCompilerVersion(TestVersions.Kotlin.STABLE_RELEASE)
-            buildGradle.append(
-                """
-                kotlin {
-                    coreLibrariesVersion = "${TestVersions.Kotlin.STABLE_RELEASE}"
-                }
-                """.trimIndent()
-            )
-            buildGradle.append( // FIXME: this is a workaround for KT-68107
-                // language=Gradle
-                """
-                configurations {
-                    kotlinCompilerPluginClasspathMain {
-                        resolutionStrategy.force("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:${TestVersions.Kotlin.STABLE_RELEASE}")
-                    }
-                }    
-                """.trimIndent()
-            )
-            build("assemble") {
-                assertNoDiagnostic(KotlinToolingDiagnostics.BuildToolsApiVersionInconsistency)
-            }
-        }
-    }
 
     @GradleTest
     @DisplayName("Classpath snapshotting works with a compiler older than the snapshotting options known to KGP")

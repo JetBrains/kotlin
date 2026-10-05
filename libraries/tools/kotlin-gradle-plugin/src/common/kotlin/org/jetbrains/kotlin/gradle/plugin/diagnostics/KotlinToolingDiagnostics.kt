@@ -1350,23 +1350,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object BuildToolsApiVersionInconsistency : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(expectedVersion: String, actualVersion: String?) = build {
-            title("Build Tools API Version Mismatch Detected")
-                .description {
-                    """
-                    Artifact $KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL must have version aligned with the version of KGP when compilation via the Build Tools API is disabled.
-    
-                    Expected version: $expectedVersion
-                    Actual resolved version: ${actualVersion ?: "not found"}
-                    """.trimIndent()
-                }
-                .solution {
-                    "Please ensure that the version of the Build Tools API artifact is aligned with the version of the Kotlin Gradle Plugin."
-                }
-        }
-    }
-
     object WasmSourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(nameOfRequestedSourceSet: String) = build {
             title("Wasm Source Sets Missing Due to Renaming in Kotlin 1.9.20")
