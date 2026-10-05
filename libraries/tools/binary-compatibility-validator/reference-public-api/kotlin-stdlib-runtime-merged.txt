@@ -4288,6 +4288,11 @@ public abstract class kotlin/jvm/internal/Lambda : java/io/Serializable, kotlin/
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class kotlin/jvm/internal/ListStaticMembers {
+	public fun <init> ()V
+	public static final fun of ([Ljava/lang/Object;)Ljava/util/List;
+}
+
 public class kotlin/jvm/internal/LocalVariableReference : kotlin/jvm/internal/PropertyReference0 {
 	public fun <init> ()V
 	public fun get ()Ljava/lang/Object;
@@ -4325,6 +4330,11 @@ public class kotlin/jvm/internal/MagicApiIntrinsics {
 	public static fun intMagicApiCall (Ljava/lang/Object;)I
 	public static fun voidMagicApiCall (I)V
 	public static fun voidMagicApiCall (Ljava/lang/Object;)V
+}
+
+public final class kotlin/jvm/internal/MutableListStaticMembers {
+	public fun <init> ()V
+	public static final fun of ([Ljava/lang/Object;)Ljava/util/List;
 }
 
 public class kotlin/jvm/internal/MutableLocalVariableReference : kotlin/jvm/internal/MutablePropertyReference0 {
@@ -4402,6 +4412,11 @@ public class kotlin/jvm/internal/MutablePropertyReference2Impl : kotlin/jvm/inte
 	public fun <init> (Lkotlin/reflect/KDeclarationContainer;Ljava/lang/String;Ljava/lang/String;)V
 	public fun get (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun set (Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+}
+
+public final class kotlin/jvm/internal/MutableSetStaticMembers {
+	public fun <init> ()V
+	public static final fun of ([Ljava/lang/Object;)Ljava/util/Set;
 }
 
 public final class kotlin/jvm/internal/PackageReference : kotlin/jvm/internal/ClassBasedDeclarationContainer {
@@ -4614,6 +4629,11 @@ public abstract interface annotation class kotlin/jvm/internal/RepeatableContain
 
 public abstract interface annotation class kotlin/jvm/internal/SerializedIr : java/lang/annotation/Annotation {
 	public abstract fun b ()[Ljava/lang/String;
+}
+
+public final class kotlin/jvm/internal/SetStaticMembers {
+	public fun <init> ()V
+	public static final fun of ([Ljava/lang/Object;)Ljava/util/Set;
 }
 
 public final class kotlin/jvm/internal/ShortCompanionObject {
