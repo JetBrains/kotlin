@@ -193,11 +193,14 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
     val functionJvmSignature = (this as? ReflectKFunction)?.signature
     val jvmNameIfFunction = functionJvmSignature?.substringBeforeLast('(')
     val functionJvmDescriptor = functionJvmSignature?.substring(jvmNameIfFunction!!.length)
-    // JVM signature of suspend functions has a continuation parameter, which is absent in `kotlinParameterTypes`, so we drop it to keep
-    // Java and Kotlin parameter lists aligned.
-    val javaParameterTypes = functionJvmDescriptor?.let {
-        container.jClass.safeClassLoader.parseAndLoadDescriptor(it, loadReturnType = false).parameters.dropContinuationIfSuspend(isSuspend)
+    // JVM signature of an inline class function is the signature of the static "-impl" method, whose first parameter is the receiver.
+    val hasReceiverInJvmSignature = functionJvmSignature != null &&
+            (originalContainer as? KClassImpl<*>)?.isJvmInlineValue == true &&
+            parameters.any { it.kind == KParameter.Kind.INSTANCE }
+    val jvmParameterTypes = functionJvmDescriptor?.let {
+        container.jClass.safeClassLoader.parseAndLoadDescriptor(it, loadReturnType = false).parameters
     }.orEmpty()
+    val javaParameterTypes = jvmParameterTypes.alignWithKotlinParameters(isSuspend, hasReceiverInJvmSignature)
     return EquatableCallableSignature(
         kind,
         name,
@@ -209,10 +212,10 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
             // Workaround KT-13077: `javaMethod` doesn't work for builtins, so find the method manually, falling back to erased types.
             val method = when (this) {
                 is JavaKNamedFunction -> jMethod
-                is ReflectKFunction -> findOriginalJavaMethod(jvmNameIfFunction!!, javaParameterTypes)
+                is ReflectKFunction -> findOriginalJavaMethod(jvmNameIfFunction!!, jvmParameterTypes)
                 else -> null
             }
-            method?.genericParameterTypes?.toList()?.dropContinuationIfSuspend(isSuspend) ?: javaParameterTypes
+            method?.genericParameterTypes?.toList()?.alignWithKotlinParameters(isSuspend, hasReceiverInJvmSignature) ?: javaParameterTypes
         },
         isSuspend,
         isStatic,
@@ -233,7 +236,10 @@ private fun ReflectKFunction.findOriginalJavaMethod(name: String, parameterTypes
     return originalContainer.findMethodBySignature(jvmName, signature.substring(jvmName.length)) ?: method
 }
 
-private fun <T> List<T>.dropContinuationIfSuspend(isSuspend: Boolean): List<T> = if (isSuspend) dropLast(1) else this
+// JVM signature of suspend functions has a continuation parameter, and JVM signature of inline class members has a receiver parameter,
+// both of which are absent in `kotlinParameterTypes`, so we drop them to keep Java and Kotlin parameter lists aligned.
+private fun <T> List<T>.alignWithKotlinParameters(isSuspend: Boolean, hasReceiver: Boolean): List<T> =
+    subList(if (hasReceiver) 1 else 0, if (isSuspend) size - 1 else size)
 
 internal val Class<*>.isKotlinClassOrPackage: Boolean
     get() = getAnnotation(Metadata::class.java) != null
