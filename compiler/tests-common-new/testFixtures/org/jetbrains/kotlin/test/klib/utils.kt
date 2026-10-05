@@ -43,7 +43,8 @@ internal fun TestServices.throwUnmutingErrorIfNeeded(stringDirective: StringDire
 /**
  * Check whether defaultLanguageVersion and `target platform name` match to one of values of ignore directive in formats:
  * - `<VERSION>`, for ex., `1.9.20` or `2.0` or `2.2.21` or `*`
- * - `<TARGETPLATFORM_LIST>:<VERSION>`, for ex., `JS:2.0` or `JS,Native:*` or `JS,Wasm:2.2.20` or `ANY:1.9` or `ANY:2.0,2.1`
+ * - `<TARGETPLATFORM_LIST>:<VERSION>`, for ex., `JS:2.0` or `JS,Native:*` or `JS,Wasm:2.2.20` or `ANY:1.9` or `ANY:2.0,2.1`.
+ *   A platform can be narrowed down to its target: `Wasm-JS:2.4` or `Wasm-WASI:*`
  */
 internal fun TestServices.versionAndTargetAreIgnored(directive: StringDirective, defaultLanguageVersion: LanguageVersion): Boolean {
     val firstModule = moduleStructure.modules.first()
@@ -63,8 +64,8 @@ internal fun TestServices.versionAndTargetAreIgnored(directive: StringDirective,
                     val targets = parts[0].split(TARGETS_SEPARATOR).map { it.uppercase() }
 
                     @OptIn(TestInfrastructureInternals::class)
-                    val componentPlatformNames = defaultsProvider.targetPlatform.componentPlatforms.map {
-                        it.platformName.uppercase()
+                    val componentPlatformNames = defaultsProvider.targetPlatform.componentPlatforms.flatMap {
+                        listOf(it.platformName.uppercase(), "${it.platformName}-${it.targetName}".uppercase())
                     }
                     if (componentPlatformNames.any(targets::contains))
                         return true
