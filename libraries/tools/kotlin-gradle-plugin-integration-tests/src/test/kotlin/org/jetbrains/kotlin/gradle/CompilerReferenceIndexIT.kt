@@ -231,22 +231,6 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("CRI generation can't be enabled without BTA. KT-83161")
-    fun testCriWithoutBta(gradleVersion: GradleVersion) {
-        project(
-            "kotlinProject",
-            gradleVersion,
-        ) {
-            build("assemble", buildOptions = buildOptions.copy(runViaBuildToolsApi = false, generateCompilerRefIndex = true)) {
-                assertHasDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
-            }
-            build("assemble", buildOptions = buildOptions.copy(runViaBuildToolsApi = true, generateCompilerRefIndex = true)) {
-                assertNoDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
-            }
-        }
-    }
-
-    @GradleTest
     @DisplayName("Enabling CRI invalidates compileKotlin UP-TO-DATE state. KT-86118")
     fun testEnablingCriInvalidatesCompileKotlinUpToDate(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
@@ -282,9 +266,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
             generateCompilerRefIndex = true,
         ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         project("jvm-and-js-hmpp", gradleVersion, buildOptions = options) {
-            build("compileKotlinJvm") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
-            }
+            build("compileKotlinJvm")
             build("compileKotlinJs") {
                 assertNoDiagnostic(KotlinToolingDiagnostics.GeneratingCompilerRefIndexWithoutBuildToolsApi)
             }

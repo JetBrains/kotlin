@@ -77,8 +77,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
             task.incremental = false
             task.useModuleDetection.convention(false)
-            @Suppress("DEPRECATION")
-            task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
+            task.runViaBuildToolsApi.convention(true).finalizeValueOnRead()
             task.generateCompilerRefIndex.convention(propertiesProvider.generateCompilerRefIndex).finalizeValueOnRead()
 
             task.explicitApiMode

@@ -137,11 +137,7 @@ internal fun collectProjectConfigurationTimeMetrics(
             project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
         )
 
-        @Suppress("DEPRECATION")
-        configurationTimeMetrics.put(
-            BooleanMetrics.KOTLIN_BTA_USED,
-            project.kotlinPropertiesProvider.runKotlinCompilerViaBuildToolsApi.get()
-        )
+        configurationTimeMetrics.put(BooleanMetrics.KOTLIN_BTA_USED, true)
 
         configurationTimeMetrics.put(
             StringMetrics.KOTLIN_COMPILER_VERSION,
