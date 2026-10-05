@@ -463,6 +463,7 @@ private fun signaturesOnlyLibraryFile(
         signatures: IrArrayReader,
         signatureStrings: IrArrayReader,
 ): IrLibraryFile = object : IrLibraryFile() {
+    override fun declarationKind(index: Int): ProtoDeclaration.DeclaratorCase = error("Declaration's kind are not needed for IdSignature deserialization")
     override fun declaration(index: Int) = error("Declarations are not needed for IdSignature deserialization")
     override fun type(index: Int) = error("Types are not needed for IdSignature deserialization")
     override fun expressionBody(index: Int) = error("Expression bodies are not needed for IdSignature deserialization")
