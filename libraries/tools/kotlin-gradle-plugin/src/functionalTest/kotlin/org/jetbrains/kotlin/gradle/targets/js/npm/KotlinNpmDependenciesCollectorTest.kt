@@ -81,6 +81,7 @@ class KotlinNpmDependenciesCollectorTest {
 
                 sourceSets.commonMain {
                     dependencies {
+                        npm("is-even", version)
                         npmDev("webpack", version)
                     }
                 }
@@ -90,8 +91,8 @@ class KotlinNpmDependenciesCollectorTest {
         }.evaluate()
 
         assertEquals(
-            listOf("DEV webpack:5.0.0"),
-            project.collectedNpmDependencies(),
+            listOf("DEV webpack:5.0.0", "NORMAL is-even:5.0.0"),
+            project.collectedNpmDependencies().sorted(),
         )
     }
 

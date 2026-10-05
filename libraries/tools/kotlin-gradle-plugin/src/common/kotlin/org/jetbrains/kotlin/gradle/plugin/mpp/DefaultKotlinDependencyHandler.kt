@@ -114,6 +114,17 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
 
     override fun npm(
         name: String,
+        version: Provider<String>,
+    ) {
+        npmDependenciesCollector.add(
+            name = name,
+            version = version,
+            scope = KotlinNpmDependency.Scope.NORMAL,
+        )
+    }
+
+    override fun npm(
+        name: String,
         directory: File,
     ): NpmDependencyDeprecated =
         directoryNpmDependency(
