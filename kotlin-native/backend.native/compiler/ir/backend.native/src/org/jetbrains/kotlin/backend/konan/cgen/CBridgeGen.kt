@@ -722,12 +722,8 @@ private fun CCallbackBuilder.buildValueReturn(function: IrSimpleFunction, valueR
     kotlinBridge.body = bridgeBuilder.kotlinIrBuilder.irBlockBody {
         kotlinBridgeStatements.forEach { +it }
     }
-
-    // The C bridge is declared by the C code calling it, see [CCallbackBuilder.buildCBridgeCall].
-    val cBridgeDeclaration = ""
     kotlinBridge.annotations += listOf(
-            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner,
-                    stubs.language, cBridgeDeclaration)
+            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner)
     )
     stubs.addKotlin(kotlinBridge)
 }
