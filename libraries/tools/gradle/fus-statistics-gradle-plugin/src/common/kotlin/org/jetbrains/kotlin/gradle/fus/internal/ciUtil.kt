@@ -18,6 +18,7 @@
 
 package org.jetbrains.kotlin.gradle.fus.internal
 
+// TODO KT-89996: Extract and reuse the CI detection logic
 fun isCiBuild() = detectedCiProperty() != null
 fun detectedCiProperty() = isGenericCI()
     ?: isJenkins()
