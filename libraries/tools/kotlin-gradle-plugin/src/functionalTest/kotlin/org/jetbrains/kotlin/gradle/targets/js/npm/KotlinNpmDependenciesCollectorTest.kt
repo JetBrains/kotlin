@@ -97,28 +97,7 @@ class KotlinNpmDependenciesCollectorTest {
     }
 
     @Test
-    fun `only the first declaration of an npm package name is collected`() {
-        val project = buildProjectWithMPP {
-            kotlin {
-                js { nodejs() }
-
-                sourceSets.commonMain {
-                    dependencies {
-                        implementation(npm("is-even", "1.0.0"))
-                        implementation(npm("is-even", "2.0.0"))
-                    }
-                }
-            }
-        }.evaluate()
-
-        assertEquals(
-            listOf("NORMAL is-even:1.0.0"),
-            project.collectedNpmDependencies(),
-        )
-    }
-
-    @Test
-    fun `only the first declaration of an npm package name is collected across the deprecated and the new DSL`() {
+    fun `multiple declarations of an npm package names are collected`() {
         val project = buildProjectWithMPP {
             kotlin {
                 js { nodejs() }
@@ -126,7 +105,6 @@ class KotlinNpmDependenciesCollectorTest {
                 sourceSets.commonMain {
                     dependencies {
                         npmDev("is-even", "2.0.0")
-                        implementation(npm("is-even", "1.0.0"))
                         npmDev("is-even", project.provider { "3.0.0" })
                     }
                 }
@@ -134,7 +112,7 @@ class KotlinNpmDependenciesCollectorTest {
         }.evaluate()
 
         assertEquals(
-            listOf("DEV is-even:2.0.0"),
+            listOf("DEV is-even:2.0.0", "DEV is-even:3.0.0"),
             project.collectedNpmDependencies(),
         )
     }
