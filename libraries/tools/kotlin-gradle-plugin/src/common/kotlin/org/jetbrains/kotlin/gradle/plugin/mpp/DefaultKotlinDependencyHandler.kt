@@ -359,11 +359,3 @@ internal fun ObjectFactory.DefaultKotlinDependencyHandler(
     project: Project,
     npmDependenciesCollector: KotlinNpmDependenciesCollector,
 ) = newInstance<DefaultKotlinDependencyHandler>(parent, project, npmDependenciesCollector)
-
-private fun KotlinNpmDependency.Scope.toDeprecatedScope(): NpmDependencyScopeDeprecated =
-    when (this) {
-        KotlinNpmDependency.Scope.NORMAL -> NpmDependencyScopeDeprecated.NORMAL
-        KotlinNpmDependency.Scope.DEV -> NpmDependencyScopeDeprecated.DEV
-        KotlinNpmDependency.Scope.OPTIONAL -> NpmDependencyScopeDeprecated.OPTIONAL
-        KotlinNpmDependency.Scope.PEER -> NpmDependencyScopeDeprecated.PEER
-    }
