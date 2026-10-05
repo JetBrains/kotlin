@@ -271,9 +271,9 @@ sealed class CacheMode {
             if (debuggable) append("-g")
             if (optimized) append("-opt")
             append(cacheKind)
-            if (checkStateAtExternalCalls) append("-check_state_at_external_calls")
             append("-user")
             append("-pl")
+            if (checkStateAtExternalCalls) append("-checkStateAtExternalCalls=true")
         }
     }
 }

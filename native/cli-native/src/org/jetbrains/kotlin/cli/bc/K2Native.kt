@@ -36,13 +36,10 @@ import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.konan.KonanPendingCompilationError
-import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.konanProducedArtifactKind
-import org.jetbrains.kotlin.konan.config.overrideKonanProperties
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.native.pipeline.NativeKlibCliPipeline
@@ -299,12 +296,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)?.let {
                 spawnedConfiguration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, it)
             }
-            configuration[NativeConfigurationKeys.OVERRIDE_KONAN_PROPERTIES]?.let {
-                spawnedConfiguration.overrideKonanProperties = it
-            }
-            configuration.get(BinaryOptions.checkStateAtExternalCalls)?.let {
-                spawnedConfiguration.put(BinaryOptions.checkStateAtExternalCalls, it)
-            }
+            // Note: the native-specific options are propagated by `setupConfiguration` (see `setupCommonOptionsForCaches`).
             spawnedConfiguration.setupConfiguration()
 
             if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(spawnedConfiguration)) {

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.pipeline.NativeKlibConfigurationUpdater
 import kotlin.io.path.Path
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments, rootDisposable: Disposable) = with(NativeConfigurationKeys) {
@@ -258,28 +257,17 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
 
 private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()
 
-internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSecondStageCompilationConfig) = with(NativeConfigurationKeys) {
-    konanTarget = config.target.toString()
-    put(DEBUG, config.debug)
-    put(OPTIMIZATION, config.optimizationsEnabled)
-    put(BinaryOptions.enableReleaseBinaryCache, config.enableReleaseBinaryCache)
+/**
+ * Passes to a cache build all the options which are to be propagated to it according to their [CachePolicy]
+ * (see [NativeSecondStageCompilationConfig.cacheBuildOptions]).
+ */
+internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSecondStageCompilationConfig) {
+    config.cacheBuildOptions.setUp(this)
+
+    // Not native-specific options.
+    put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, config.threadsCount)
     config.configuration.phaseConfig?.let { phaseConfig = it }
     setupPartialLinkageConfig(config.partialLinkageConfig)
-    putIfNotNull(EXTERNAL_DEPENDENCIES, config.externalDependenciesFile?.absolutePathString())
-    put(PROPERTY_LAZY_INITIALIZATION, config.propertyLazyInitialization)
-    put(BinaryOptions.genericSafeCasts, config.genericSafeCasts)
-    put(BinaryOptions.stripDebugInfoFromNativeLibs, !config.useDebugInfoInNativeLibs)
-    put(ALLOCATION_MODE, config.allocationMode)
-    put(BinaryOptions.gc, config.gc)
-    put(BinaryOptions.gcSchedulerType, config.gcSchedulerType)
-    put(BinaryOptions.runtimeAssertionsMode, config.runtimeAssertsMode)
-    put(BinaryOptions.swiftExport, config.swiftExport)
-    put(CommonConfigurationKeys.PARALLEL_BACKEND_THREADS, config.threadsCount)
-    putIfNotNull(KONAN_DATA_DIR, config.distribution.localKonanDir.absolutePath)
-    putIfNotNull(BinaryOptions.minidumpLocation, config.minidumpLocation)
-    putIfNotNull(BinaryOptions.macabi, config.macabi)
-    putIfNotNull(BinaryOptions.cCallMode, config.cCallMode)
-    putIfNotNull(RUNTIME_LOGS, config.configuration.runtimeLogs)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

@@ -11,135 +11,139 @@ import kotlin.properties.ReadOnlyProperty
 
 // Note: options defined in this class are a part of user interface, including the names:
 // users can pass these options using a -Xbinary=name=value compiler argument or corresponding Gradle DSL.
+// Each option must declare its [CachePolicy]: whether it should be passed to the compilations building the compiler caches,
+// and whether it should be a part of the cache flavor.
 object BinaryOptions : BinaryOptionRegistry() {
-    val runtimeAssertionsMode by option<RuntimeAssertsMode>()
+    val runtimeAssertionsMode by option<RuntimeAssertsMode>(CachePolicy.AFFECTS_RUNTIME)
 
-    val checkStateAtExternalCalls by booleanOption()
+    val checkStateAtExternalCalls by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val memoryModel by option<MemoryModel>()
+    val memoryModel by option<MemoryModel>(CachePolicy.NOT_PROPAGATED)
 
-    val freezing by option<Freezing>()
+    val freezing by option<Freezing>(CachePolicy.NOT_PROPAGATED)
 
-    val stripDebugInfoFromNativeLibs by booleanOption()
+    val stripDebugInfoFromNativeLibs by booleanOption(CachePolicy.AFFECTS_RUNTIME)
 
-    val sourceInfoType by option<SourceInfoType>()
-    val coreSymbolicationImageListType by option<CoreSymbolicationImageListType>()
+    val sourceInfoType by option<SourceInfoType>(CachePolicy.NOT_PROPAGATED)
+    val coreSymbolicationImageListType by option<CoreSymbolicationImageListType>(CachePolicy.NOT_PROPAGATED)
 
-    val androidProgramType by option<AndroidProgramType>()
+    val androidProgramType by option<AndroidProgramType>(CachePolicy.NOT_PROPAGATED)
 
-    val unitSuspendFunctionObjCExport by option<UnitSuspendFunctionObjCExport>()
+    val unitSuspendFunctionObjCExport by option<UnitSuspendFunctionObjCExport>(CachePolicy.NOT_PROPAGATED)
 
-    val objcExportSuspendFunctionLaunchThreadRestriction by option<ObjCExportSuspendFunctionLaunchThreadRestriction>()
+    val objcExportSuspendFunctionLaunchThreadRestriction by option<ObjCExportSuspendFunctionLaunchThreadRestriction>(CachePolicy.NOT_PROPAGATED)
 
-    val objcExportDisableSwiftMemberNameMangling by booleanOption()
+    val objcExportDisableSwiftMemberNameMangling by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val objcExportIgnoreInterfaceMethodCollisions by booleanOption()
+    val objcExportIgnoreInterfaceMethodCollisions by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val objcExportReportNameCollisions by booleanOption()
+    val objcExportReportNameCollisions by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val objcExportErrorOnNameCollisions by booleanOption()
+    val objcExportErrorOnNameCollisions by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val objcExportEntryPointsPath by stringOption()
-    val objcExportExpandEntryPoints by booleanOption()
+    val objcExportEntryPointsPath by stringOption(CachePolicy.NOT_PROPAGATED)
+    val objcExportExpandEntryPoints by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val objcExportExplicitMethodFamily by booleanOption()
+    val objcExportExplicitMethodFamily by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val objcExportBlockExplicitParameterNames by booleanOption()
+    val objcExportBlockExplicitParameterNames by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val dumpObjcSelectorToSignatureMapping by stringOption()
+    val dumpObjcSelectorToSignatureMapping by stringOption(CachePolicy.NOT_PROPAGATED)
 
-    val gc by option<GC>(shortcut = { it.shortcut })
+    val gc by option<GC>(CachePolicy.AFFECTS_RUNTIME, shortcut = { it.shortcut })
 
-    val gcSchedulerType by option<GCSchedulerType>(hideValue = { it.deprecatedWithReplacement != null })
+    val gcSchedulerType by option<GCSchedulerType>(CachePolicy.AFFECTS_RUNTIME, hideValue = { it.deprecatedWithReplacement != null })
 
-    val gcMarkSingleThreaded by booleanOption()
+    val gcMarkSingleThreaded by booleanOption(CachePolicy.AFFECTS_RUNTIME)
 
-    val fixedBlockPageSize by uintOption()
+    val fixedBlockPageSize by uintOption(CachePolicy.AFFECTS_RUNTIME)
 
-    val concurrentWeakSweep by booleanOption()
+    val concurrentWeakSweep by booleanOption(CachePolicy.AFFECTS_RUNTIME)
 
-    val concurrentMarkMaxIterations by uintOption()
+    val concurrentMarkMaxIterations by uintOption(CachePolicy.NOT_PROPAGATED)
 
-    val gcMutatorsCooperate by booleanOption()
+    val gcMutatorsCooperate by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val auxGCThreads by uintOption()
+    val auxGCThreads by uintOption(CachePolicy.NOT_PROPAGATED)
 
-    val linkRuntime by option<RuntimeLinkageStrategy>()
+    val linkRuntime by option<RuntimeLinkageStrategy>(CachePolicy.AFFECTS_RUNTIME)
 
-    val bundleId by stringOption()
-    val bundleShortVersionString by stringOption()
-    val bundleVersion by stringOption()
+    val bundleId by stringOption(CachePolicy.NOT_PROPAGATED)
+    val bundleShortVersionString by stringOption(CachePolicy.NOT_PROPAGATED)
+    val bundleVersion by stringOption(CachePolicy.NOT_PROPAGATED)
 
-    val appStateTracking by option<AppStateTracking>()
+    val appStateTracking by option<AppStateTracking>(CachePolicy.NOT_PROPAGATED)
 
-    val sanitizer by option<SanitizerKind>()
+    val sanitizer by option<SanitizerKind>(CachePolicy.AFFECTS_CODEGEN)
 
-    val compileBitcodeWithXcodeLlvm by booleanOption()
+    val compileBitcodeWithXcodeLlvm by booleanOption(CachePolicy.PROPAGATED)
 
-    val objcDisposeOnMain by booleanOption()
+    val objcDisposeOnMain by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val objcDisposeWithRunLoop by booleanOption()
+    val objcDisposeWithRunLoop by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val disableMmap by booleanOption()
+    val disableMmap by booleanOption(CachePolicy.AFFECTS_RUNTIME)
 
-    val mmapTag by uintOption()
+    val mmapTag by uintOption(CachePolicy.NOT_PROPAGATED)
 
-    val enableSafepointSignposts by booleanOption()
+    val enableSafepointSignposts by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val forceNativeThreadStateForFunctions by listOption(StringValueParser)
+    val forceNativeThreadStateForFunctions by listOption(CachePolicy.INCOMPATIBLE_WITH_CACHES, StringValueParser)
 
-    val packFields by booleanOption()
+    val packFields by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val cInterfaceMode by option<CInterfaceGenerationMode>()
+    val cInterfaceMode by option<CInterfaceGenerationMode>(CachePolicy.NOT_PROPAGATED)
 
-    val globalDataLazyInit by booleanOption()
+    val globalDataLazyInit by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val swiftExport by booleanOption()
+    val swiftExport by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val genericSafeCasts by booleanOption()
+    val genericSafeCasts by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val smallBinary by booleanOption()
+    val smallBinary by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val preCodegenInlineThreshold by uintOption()
+    // The pre-codegen inliner isn't supported with caches.
+    val preCodegenInlineThreshold by uintOption(CachePolicy.NOT_PROPAGATED)
 
-    val enableDebugTransparentStepping by booleanOption()
+    val enableDebugTransparentStepping by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val debugCompilationDir by stringOption()
+    val debugCompilationDir by stringOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val pagedAllocator by booleanOption()
+    val pagedAllocator by booleanOption(CachePolicy.AFFECTS_RUNTIME)
 
-    val latin1Strings by booleanOption()
+    val latin1Strings by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val stackProtector by option<StackProtectorMode>()
+    val stackProtector by option<StackProtectorMode>(CachePolicy.AFFECTS_CODEGEN)
 
-    val minidumpLocation by stringOption()
+    val minidumpLocation by stringOption(CachePolicy.AFFECTS_RUNTIME)
 
-    val minidumpOnSIGTERM by booleanOption()
+    val minidumpOnSIGTERM by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val cCallMode by option<CCallMode>()
+    val cCallMode by option<CCallMode>(CachePolicy.AFFECTS_CODEGEN)
 
     /**
      * Generate a macOS Catalyst binary for the given architecture
      */
-    val macabi by booleanOption()
+    val macabi by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val escapeAnalysisPropagateExiledToHeapObjects by booleanOption()
+    val escapeAnalysisPropagateExiledToHeapObjects by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val perFileCacheForStdlib by booleanOption()
+    val perFileCacheForStdlib by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
     /**
      * When `true`, llvm postprocessing will be done in Kotlin compiler;
      * when `false`, new custom llvm C++ passes will be used.
      * This option exists as a workaround, if new passes introduce regressions.
      */
-    val runLLVMPassesInCompiler by booleanOption()
+    val runLLVMPassesInCompiler by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
-    val enableReleaseBinaryCache by booleanOption()
+    val enableReleaseBinaryCache by booleanOption(CachePolicy.PROPAGATED)
 }
 
 open class BinaryOption<T : Any>(
         val name: String,
         val valueParser: ValueParser<T>,
+        val cachePolicy: CachePolicy,
         val compilerConfigurationKey: CompilerConfigurationKey<T> = CompilerConfigurationKey.create(name)
 ) {
     interface ValueParser<T : Any> {
@@ -161,27 +165,30 @@ open class BinaryOptionRegistry {
 
     fun getByName(name: String): BinaryOption<*>? = registeredOptionsByName[name]
 
-    protected fun booleanOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<Boolean>>> =
+    val all: Collection<BinaryOption<*>>
+        get() = registeredOptionsByName.values
+
+    protected fun booleanOption(cachePolicy: CachePolicy): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<Boolean>>> =
             PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, BooleanValueParser)
+                val option = BinaryOption(property.name, BooleanValueParser, cachePolicy)
                 register(option)
                 ReadOnlyProperty { _, _ ->
                     option.compilerConfigurationKey
                 }
             }
 
-    protected fun uintOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<UInt>>> =
+    protected fun uintOption(cachePolicy: CachePolicy): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<UInt>>> =
             PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, UIntValueParser)
+                val option = BinaryOption(property.name, UIntValueParser, cachePolicy)
                 register(option)
                 ReadOnlyProperty { _, _ ->
                     option.compilerConfigurationKey
                 }
             }
 
-    protected fun stringOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<String>>> =
+    protected fun stringOption(cachePolicy: CachePolicy): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<String>>> =
             PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, StringValueParser)
+                val option = BinaryOption(property.name, StringValueParser, cachePolicy)
                 register(option)
                 ReadOnlyProperty { _, _ ->
                     option.compilerConfigurationKey
@@ -189,18 +196,23 @@ open class BinaryOptionRegistry {
             }
 
     protected fun <T : Any> listOption(
+            cachePolicy: CachePolicy,
             elementValueParser: BinaryOption.ValueParser<T>
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<List<T>>>> = PropertyDelegateProvider { _, property ->
-        val option = BinaryOption(property.name, ListValueParser(elementValueParser))
+        val option = BinaryOption(property.name, ListValueParser(elementValueParser), cachePolicy)
         register(option)
         ReadOnlyProperty { _, _ ->
             option.compilerConfigurationKey
         }
     }
 
-    protected inline fun <reified T : Enum<T>> option(noinline shortcut : (T) -> String? = { null }, noinline hideValue: (T) -> Boolean = { false }): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<T>>> =
+    protected inline fun <reified T : Enum<T>> option(
+            cachePolicy: CachePolicy,
+            noinline shortcut: (T) -> String? = { null },
+            noinline hideValue: (T) -> Boolean = { false },
+    ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<T>>> =
             PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, EnumValueParser(enumValues<T>().toList(), shortcut, hideValue))
+                val option = BinaryOption(property.name, EnumValueParser(enumValues<T>().toList(), shortcut, hideValue), cachePolicy)
                 register(option)
                 ReadOnlyProperty { _, _ ->
                     option.compilerConfigurationKey

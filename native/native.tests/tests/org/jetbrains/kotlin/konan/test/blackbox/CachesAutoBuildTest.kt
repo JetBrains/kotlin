@@ -98,13 +98,36 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         assertTrue(main2.exists())
     }
 
+    @Test
+    @TestMetadata("assertionsInCachedLib")
+    fun testAssertionsInCachedLib() {
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/assertionsInCachedLib")
+        val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
+        val main = compileToCompiledExecutable(
+            rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), listOf("-enable-assertions"), lib
+        )
+
+        // The cache flavor depends on whether the assertions are enabled by default, so don't rely on it.
+        assertTrue(autoCacheDir.listFiles().orEmpty().any { it.resolve("lib").exists() })
+        // The assertions are to be enabled in the cache of the library as well.
+        runExecutableAndVerify(main.testCase, main.testExecutable)
+    }
+
     private fun compileToExecutable(
         sourcesDir: File,
         autoCacheFrom: File,
         cacheDirectories: List<File>,
         additionalArgs: List<String>,
         vararg dependencies: KLIB
-    ): File {
+    ): File = compileToCompiledExecutable(sourcesDir, autoCacheFrom, cacheDirectories, additionalArgs, *dependencies).executableFile
+
+    private fun compileToCompiledExecutable(
+        sourcesDir: File,
+        autoCacheFrom: File,
+        cacheDirectories: List<File>,
+        additionalArgs: List<String>,
+        vararg dependencies: KLIB
+    ): CompiledExecutable {
         autoCacheDir.mkdirs()
         return compileToExecutableInOneStage(
             sourcesDir,
@@ -117,7 +140,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
                 ) + cacheDirectories.map { "-Xcache-directory=${it.absolutePath}" } + additionalArgs
             ),
             *dependencies
-        ).executableFile
+        )
     }
 
     private val autoCacheDir: File get() = buildDir.resolve("__auto_cache__")

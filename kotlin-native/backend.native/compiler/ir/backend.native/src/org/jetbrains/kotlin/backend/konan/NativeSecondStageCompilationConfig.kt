@@ -35,6 +35,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.Properties
 import kotlin.io.path.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.isDirectory
 import kotlin.io.path.name
 
@@ -497,72 +498,61 @@ class NativeSecondStageCompilationConfig(
     // By default use the new C++ passes.
     val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
 
-    private fun StringBuilder.appendCommonCacheFlavor() {
+    /**
+     * The options passed to the cache builds, which also make up the cache flavor.
+     * The options adjusted by the compiler are declared here with their resulting and default values,
+     * all others are passed as is (see [CacheBuildOptions]).
+     */
+    internal val cacheBuildOptions = CacheBuildOptions(configuration).apply {
+        // Accounted for in the cache flavor prefix.
+        propagate(NativeConfigurationKeys.KONAN_TARGET, target.toString())
+        propagate(NativeConfigurationKeys.DEBUG, debug)
+        propagate(NativeConfigurationKeys.OPTIMIZATION, optimizationsEnabled)
+        // Don't affect the caches.
+        propagate(BinaryOptions.enableReleaseBinaryCache, enableReleaseBinaryCache)
+        propagate(NativeConfigurationKeys.EXTERNAL_DEPENDENCIES, externalDependenciesFile?.absolutePathString())
+        propagate(NativeConfigurationKeys.KONAN_DATA_DIR, distribution.localKonanDir.absolutePath)
+
+        option(BinaryOptions.perFileCacheForStdlib, perFileCacheForStdlib, defaultPerFileCacheForStdlib)
+        option(NativeConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, propertyLazyInitialization, defaultPropertyLazyInitialization)
+        option(BinaryOptions.sanitizer, sanitizer, default = null)
+        option(BinaryOptions.checkStateAtExternalCalls, checkStateAtExternalCalls, default = false)
+        option(BinaryOptions.stackProtector, stackProtectorMode, StackProtectorMode.NO)
+        option(BinaryOptions.genericSafeCasts, genericSafeCasts, defaultGenericSafeCasts)
+        option(BinaryOptions.macabi, macabi, default = false)
+        option(BinaryOptions.cCallMode, cCallMode, defaultCCallMode)
+        option(BinaryOptions.latin1Strings, latin1Strings, defaultLatin1Strings)
+        // The Gradle plugin enables assertions for debuggable binaries, and the distribution caches are built accordingly.
+        option(NativeConfigurationKeys.ENABLE_ASSERTIONS, assertsEnabled, default = !optimizationsEnabled)
+        option(NativeConfigurationKeys.DEBUG_INFO_VERSION, configuration.debugInfoVersion ?: 1, default = 1)
+        option(BinaryOptions.swiftExport, swiftExport, default = false)
+
+        option(BinaryOptions.stripDebugInfoFromNativeLibs, !useDebugInfoInNativeLibs, default = true)
+        option(NativeConfigurationKeys.ALLOCATION_MODE, allocationMode, defaultAllocationMode)
+        option(BinaryOptions.gc, gc, defaultGC)
+        option(BinaryOptions.gcSchedulerType, gcSchedulerType, defaultGCSchedulerType)
+        option(BinaryOptions.runtimeAssertionsMode, runtimeAssertsMode, RuntimeAssertsMode.IGNORE)
+        option(BinaryOptions.disableMmap, disableMmap, defaultDisableMmap)
+        option(BinaryOptions.gcMarkSingleThreaded, gcMarkSingleThreaded, defaultGcMarkSingleThreaded)
+        option(BinaryOptions.fixedBlockPageSize, fixedBlockPageSize, defaultFixedBlockPageSize)
+        option(BinaryOptions.pagedAllocator, pagedAllocator, defaultPagedAllocator)
+        // Only whether the crash dumps are enabled matters for the caches, the location is used by the final binary.
+        option(BinaryOptions.minidumpLocation, minidumpLocation, default = null) { "enabled" }
+        // Only whether the logging is enabled matters for the caches, the levels are used by the final binary.
+        option(NativeConfigurationKeys.RUNTIME_LOGS, configuration.runtimeLogs, default = null) { "enabled" }
+    }
+
+    private val cacheFlavorPrefix = buildString {
         append(target.toString())
         if (debug) append("-g")
         if (optimizationsEnabled) append("-opt")
         append("STATIC")
-
-        if (perFileCacheForStdlib != defaultPerFileCacheForStdlib)
-            append("-stdlib_cache${if (perFileCacheForStdlib) "PERFILE" else "MONOLITHIC"}")
-        if (propertyLazyInitialization != defaultPropertyLazyInitialization)
-            append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
-        if (sanitizer != null)
-            append("-sanitizer${sanitizer.name}")
-        if (checkStateAtExternalCalls)
-            append("-check_state_at_external_calls")
-        if (stackProtectorMode != StackProtectorMode.NO)
-            append("-stack_protector${stackProtectorMode.name}")
-        if (genericSafeCasts != defaultGenericSafeCasts)
-            append("-generic_safe_casts${if (genericSafeCasts) "ENABLE" else "DISABLE"}")
-        // Ideally, we would like to use targetTriple instead, but this requires a lot of changes in our test infrastructure.
-        if (macabi) {
-            append("-macabi")
-        }
-        if (cCallMode != defaultCCallMode)
-            append("-ccall_mode${cCallMode.name}")
-        if (latin1Strings != defaultLatin1Strings)
-            append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
     }
 
-    private val systemCacheFlavorString = buildString {
-        // Note: when appending a new flavor into the cache, be sure to update
-        // [CompilerConfiguration.setupCommonOptionsForCaches] if needed.
+    private val systemCacheFlavorString =
+            "$cacheFlavorPrefix-system" + cacheBuildOptions.flavor(setOf(CachePolicy.AFFECTS_RUNTIME, CachePolicy.AFFECTS_CODEGEN))
 
-        appendCommonCacheFlavor()
-        append("-system")
-
-        if (useDebugInfoInNativeLibs)
-            append("-runtime_debug")
-        if (allocationMode != defaultAllocationMode)
-            append("-allocator${allocationMode.name}")
-        if (gc != defaultGC)
-            append("-gc${gc.shortcut}")
-        if (gcSchedulerType != defaultGCSchedulerType)
-            append("-gc_scheduler${gcSchedulerType.name}")
-        if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)
-            append("-runtime_asserts${runtimeAssertsMode.name}")
-        if (disableMmap != defaultDisableMmap)
-            append("-disable_mmap${if (disableMmap) "TRUE" else "FALSE"}")
-        if (gcMarkSingleThreaded != defaultGcMarkSingleThreaded)
-            append("-gc_mark_single_threaded${if (gcMarkSingleThreaded) "TRUE" else "FALSE"}")
-        if (fixedBlockPageSize != defaultFixedBlockPageSize)
-            append("-fixed_block_page_size$fixedBlockPageSize")
-        if (pagedAllocator != defaultPagedAllocator)
-            append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
-        if (minidumpLocation != null)
-            append("-with_crash_dumps")
-        if (runtimeLogsEnabled)
-            append("-runtime_logs_enabled")
-    }
-
-    private val userCacheFlavorString = buildString {
-        appendCommonCacheFlavor()
-        append("-user")
-        append("-pl")
-        if (swiftExport)
-            append("-swift_export")
-    }
+    private val userCacheFlavorString = "$cacheFlavorPrefix-user-pl" + cacheBuildOptions.flavor(setOf(CachePolicy.AFFECTS_CODEGEN))
 
     internal val systemCacheDirectory = Path(distribution.systemCacheRootDirectory.absolutePath).resolve(systemCacheFlavorString)
 
@@ -582,8 +572,7 @@ class NativeSecondStageCompilationConfig(
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled && !enableReleaseBinaryCache -> "with global optimizations"
-        forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
-        else -> null
+        else -> configuration.findOptionIncompatibleWithCaches()?.let { "with $it" }
     }
 
     internal var cacheSupport: CacheSupport = createCacheSupport(

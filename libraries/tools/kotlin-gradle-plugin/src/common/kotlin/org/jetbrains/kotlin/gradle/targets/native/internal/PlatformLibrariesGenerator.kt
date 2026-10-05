@@ -167,6 +167,8 @@ internal class PlatformLibrariesGenerator(
                 ).absolutePath
             )
             args.addArg("-cache-arg", "-g")
+            // Debuggable binaries are compiled with assertions enabled, and the compiler expects such caches by default.
+            args.addArg("-cache-arg", "-enable-assertions")
             val additionalCacheFlags = konanPropertiesService.get().additionalCacheFlags(konanTarget)
             additionalCacheFlags.forEach {
                 args.addArg("-cache-arg", it)

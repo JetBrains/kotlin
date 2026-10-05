@@ -132,6 +132,9 @@ open class KonanCacheTask @Inject constructor(
                 add("-Xbinary=enableReleaseBinaryCache=true")
             } else {
                 add("-g")
+                // Debuggable binaries are compiled with assertions enabled by the Gradle plugin,
+                // and the compiler expects such caches by default (see the cache flavor computation).
+                add("-enable-assertions")
             }
             add("-target")
             add(target.get())
