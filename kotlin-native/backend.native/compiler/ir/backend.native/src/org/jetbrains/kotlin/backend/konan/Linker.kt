@@ -50,6 +50,7 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
             CompilerOutputKind.TEST_BUNDLE,
             CompilerOutputKind.DYNAMIC_CACHE,
             CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
+            CompilerOutputKind.OBJC_CACHE,
             CompilerOutputKind.STATIC_CACHE,
             CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
             CompilerOutputKind.PROGRAM -> run {

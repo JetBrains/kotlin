@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
+import org.jetbrains.kotlin.library.metadata.isCommonizedCInteropLibrary
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Path
@@ -715,6 +718,14 @@ class NativeSecondStageCompilationConfig(
     val isInteropStubs: Boolean
         get() = manifestProperties?.getProperty("interop") == "true"
 }
+
+val NativeSecondStageCompilationConfig.exportedLibrariesForObjCCache: Set<KotlinLibrary>
+    get() {
+        val includedPaths = loadedKlibs.included.map { it.canonicalPath }.toSet()
+        return loadedKlibs.exported
+            .filter { !it.isNativeStdlib && !it.isCInteropLibrary() && !it.isCommonizedCInteropLibrary() && it.canonicalPath !in includedPaths }
+            .toSet()
+    }
 
 private fun String.isRelease(): Boolean {
     // major.minor.patch-meta-build where patch, meta and build are optional.

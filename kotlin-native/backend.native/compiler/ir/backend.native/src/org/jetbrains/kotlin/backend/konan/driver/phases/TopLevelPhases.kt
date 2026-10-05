@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmDeclarations
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.isCache
 import org.jetbrains.kotlin.konan.target.isFullCache
 import org.jetbrains.kotlin.konan.target.isHeaderCache
+import org.jetbrains.kotlin.konan.target.isObjCCache
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.util.*
 import org.jetbrains.kotlin.utils.atMostOne
@@ -106,7 +108,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             try {
                 val module = fragment.irModule
                 newEngine(generationState) { generationStateEngine ->
-                    if (context.config.produce.isCache) {
+                    if (context.config.produce.isFullCache || context.config.produce.isHeaderCache) {
                         generationStateEngine.runAndMeasurePhase(BuildAdditionalCacheInfoPhase, module)
                         if (context.config.produce.isHeaderCache) return@newEngine
                     }
@@ -159,6 +161,9 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 
         fun List<BackendJobFragment>.runAllLowerings(): List<NativeGenerationState> {
             val generationStates = this.map { fragment -> createGenerationState(fragment) }
+            if (context.config.produce.isObjCCache) {
+                return generationStates
+            }
             val fragmentWithState = this.zip(generationStates)
 
             // In Kotlin/Native, lowerings are run not over modules, but over individual files.
@@ -375,7 +380,9 @@ private fun PhaseEngine<out NativeBackendContext>.splitIntoFragments(
         }
     } else {
         val cacheInfo = config.librariesToCache.values.atMostOne()
-        val llvmModuleSpecification = if (config.produce.isCache) {
+        val llvmModuleSpecification = if (config.produce.isObjCCache) {
+            ObjCCacheLlvmModuleSpecification(config.cachedLibraries)
+        } else if (config.produce.isCache) {
             CacheLlvmModuleSpecification(config.cachedLibraries, cacheInfo!!)
         } else {
             DefaultLlvmModuleSpecification(config.cachedLibraries)
@@ -446,7 +453,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
     val [linkerInput, cacheBinaries] = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
         when {
-            context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
+            context.config.produce == CompilerOutputKind.STATIC_CACHE || context.config.produce.isObjCCache -> {
                 compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
@@ -548,6 +555,11 @@ internal fun <Context, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase:
  * @return absolute path to object file.
  */
 private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
+    if (context.config.produce.isObjCCache) {
+        context.llvmDeclarations = LlvmDeclarations(emptyMap())
+        runAndMeasurePhase(CodegenPhase, CodegenInput(module, irBuiltIns, emptyMap()))
+        return
+    }
     val optimize = context.shouldOptimize()
     // It's ok to run global optimizations on a cache as long as it doesn't have other dependencies (stdlib)
     val runGlobalOptimizations = optimize && !context.config.cachedLibraries.hasStaticCaches

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
-import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.report
@@ -47,7 +46,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                         CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.HEADER_CACHE -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.OBJC_CACHE -> config.configuration.reportCompilationErrorAndThrow("-produce objc_cache is not supported yet")
+                        CompilerOutputKind.OBJC_CACHE -> produceObjCFramework(engine, config, environment)
                         CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
                     }
                 }
@@ -60,6 +59,8 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
      * - Objective-C header
      * - Info.plist
      * - Binary (if -Xomit-framework-binary is not passed).
+     *
+     * With `-produce objc_cache`, compile the Objective-C export of one library into a cache instead.
      */
     private fun produceObjCFramework(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = performanceManager.tryMeasurePhaseTime(PhaseType.Analysis) { engine.runK1Frontend(config, environment) }
@@ -67,12 +68,15 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
 
         val objCExportedInterface = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
             engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput).also {
-                engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, it))
+                if (config.produce == CompilerOutputKind.FRAMEWORK) {
+                    engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, it))
+                }
             }
         }
-        if (config.omitFrameworkBinary) {
+        if (config.produce == CompilerOutputKind.FRAMEWORK && config.omitFrameworkBinary) {
             return
         }
+
         val [linkKlibsOutput, objCCodeSpec] = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) {
             engine.linkKlibs(frontendOutput) {
                 it.runPhase(CreateObjCExportCodeSpecPhase, objCExportedInterface)

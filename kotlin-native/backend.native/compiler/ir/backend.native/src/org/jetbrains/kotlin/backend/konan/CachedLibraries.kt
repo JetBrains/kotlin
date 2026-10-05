@@ -48,7 +48,7 @@ private fun getArtifactName(target: KonanTarget, baseName: String, kind: Compile
 class CachedLibraries(
         private val configuration: CompilerConfiguration,
         private val target: KonanTarget,
-        klibDag: KlibDAG,
+        private val klibDag: KlibDAG,
         explicitCaches: Map<KotlinLibrary, String>,
         implicitCacheDirectories: List<Path>,
         autoCacheDirectory: Path,
@@ -259,6 +259,12 @@ class CachedLibraries(
             implicitCacheDirectories.flatMap { dir -> dir.listDirectoryEntriesIfDirectoryExists().map { it.name to it } }
                     .toMap()
 
+    fun exportedDependencies(library: KotlinLibrary, exportedLibraries: Set<KotlinLibrary>): List<String> =
+            klibDag.getAllDependencies(library)
+                    .filter { it in exportedLibraries }
+                    .map { it.uniqueName }
+                    .sorted()
+
     private fun KotlinLibrary.trySelectCacheAt(dirBuilder: (String) -> Path?) =
             sequenceOf(getPerFileCachedLibraryName(this), getCachedLibraryName(this))
                     .map(dirBuilder)
@@ -320,6 +326,12 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
+        fun getObjCCachedLibraryName(libraryName: String, moduleName: String): String =
+                "$libraryName-$moduleName.objc_cache"
+
+        fun getObjCCachedLibraryName(library: KotlinLibrary, moduleName: String): String =
+                getObjCCachedLibraryName(library.uniqueName, moduleName)
+
         fun computeDependenciesFingerprint(
                 dependencies: List<KotlinLibrary>,
         ): FingerprintHash {
@@ -344,6 +356,7 @@ class CachedLibraries(
         const val PER_FILE_CACHE_BINARY_LEVEL_DIR_NAME = "bin"
 
         const val METADATA_FILE_NAME = "metadata.properties"
+        const val OBJC_CACHE_METADATA_FILE_NAME = "objc_cache_metadata.properties"
         const val BITCODE_DEPENDENCIES_FILE_NAME = "bitcode_deps"
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
@@ -351,5 +364,38 @@ class CachedLibraries(
         const val TRIVIAL_GETTERS_FILE_NAME = "trivial_getters"
         const val OBJC_ADAPTERS_FILE_NAME = "objc_adapters"
         const val PARTIAL_LINKAGE_ISSUES_FILE_NAME = "pl_issues"
+    }
+}
+
+data class ObjCCacheAdapterEntry(val objcName: String, val isInterface: Boolean, val symbolName: String) {
+    companion object {
+        fun typeAdapter(objcName: String, isInterface: Boolean) = ObjCCacheAdapterEntry(
+            objcName, isInterface, "_Kotlin_ObjCExport_TypeAdapter_${if (isInterface) "Protocol" else "Class"}_$objcName",
+        )
+
+        fun categoryAdapter(objcName: String, library: KotlinLibrary) = ObjCCacheAdapterEntry(
+            objcName, isInterface = false, "_Kotlin_ObjCExport_CategoryAdapter_${objcName}_${library.uniqueName.replace('.', '_')}",
+        )
+    }
+}
+
+class ObjCCacheMetadata(
+    val classAdapters: List<ObjCCacheAdapterEntry>,
+    val protocolAdapters: List<ObjCCacheAdapterEntry>,
+    val categoryAdapters: List<ObjCCacheAdapterEntry>,
+    val exportedLibraries: List<String>,
+) {
+    fun serialize(writer: java.io.Writer) {
+        writer.appendLine("format=$FORMAT_VERSION")
+        writer.appendLine("classAdapters=${classAdapters.serializeEntries()}")
+        writer.appendLine("protocolAdapters=${protocolAdapters.serializeEntries()}")
+        writer.appendLine("categoryAdapters=${categoryAdapters.serializeEntries()}")
+        writer.appendLine("exportedLibraries=${exportedLibraries.sorted().joinToString(";")}")
+    }
+
+    companion object {
+        const val FORMAT_VERSION = 1
+
+        private fun List<ObjCCacheAdapterEntry>.serializeEntries() = map { it.objcName }.sorted().joinToString(";")
     }
 }
