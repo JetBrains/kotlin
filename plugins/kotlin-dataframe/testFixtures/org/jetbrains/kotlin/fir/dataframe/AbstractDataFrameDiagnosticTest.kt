@@ -39,7 +39,6 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
                 "selectDuringTyping.kt",
                 "dataSchemaVisibility.kt",
                 "localDataFrameReturnType.kt",
-                "refinedCallReturnTypeMismatch.kt"
             ).joinToString("|"),
         ) {
             enableLazyResolvePhaseChecking()
