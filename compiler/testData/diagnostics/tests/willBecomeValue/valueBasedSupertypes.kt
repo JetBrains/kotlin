@@ -2,6 +2,7 @@
 // LANGUAGE: +FullValueClasses
 // WITH_STDLIB
 // SKIP_JAVAC
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 
 // FILE: jdk/internal/ValueBased.java
 package jdk.internal;

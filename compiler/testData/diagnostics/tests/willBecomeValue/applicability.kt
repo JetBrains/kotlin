@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE: +FullValueClasses
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 
 @WillBecomeValue
 class Final(val x: Int) {

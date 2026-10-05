@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 
 // 'Any.equals'/'Any.hashCode' compare and hash by identity, and 'Any.toString' renders the identity hash code, so all
 // three change behavior once the class becomes a value class and must be overridden.

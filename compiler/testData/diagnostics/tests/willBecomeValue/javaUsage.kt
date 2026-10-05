@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 
 // FILE: J.java
 import kotlin.WillBecomeValue;

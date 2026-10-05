@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 
 @WillBecomeValue
 class Key(val x: Int) {

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: LOWERINGS
 // LANGUAGE: +CustomEqualsInValueClasses +FullValueClasses
 // WITH_STDLIB
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 
 @JvmInline
 value class Inline(val x: Int) {

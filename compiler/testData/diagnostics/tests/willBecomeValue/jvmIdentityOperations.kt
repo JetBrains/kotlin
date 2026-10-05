@@ -2,6 +2,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FULL_JDK
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 
 import java.lang.ref.WeakReference
 import java.util.IdentityHashMap

@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +MultiPlatformProjects, +AllowExpectValueClassesWithNoPrimaryConstructor
 // WITH_STDLIB
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 // MODULE: common
 
 @WillBecomeValue

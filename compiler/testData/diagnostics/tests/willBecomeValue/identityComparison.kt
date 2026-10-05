@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // DIAGNOSTICS: -UNUSED_VARIABLE
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 
 @WillBecomeValue
 class Wrapper(val x: Int) {

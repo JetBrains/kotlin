@@ -1,5 +1,6 @@
 // VALHALLA_VALUE_CLASSES
 // LANGUAGE: +FullValueClasses
+// OPT_IN: kotlin.ExperimentalValueClassesApi
 // CHECK_BYTECODE_TEXT
 
 @WillBecomeValue
