@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
 import org.jetbrains.kotlin.gradle.utils.withBuilder
 import java.net.URI
 import java.time.Duration
@@ -19,7 +20,7 @@ import java.time.Duration
 internal class KotlinBrowserRunnerConfig(
     val flowId: String = "default",
     val timeout: Duration = Duration.ofMinutes(2),
-    val kotlinTestCliArguments: List<String> = emptyList(),
+    val kotlinTestArguments: KotlinTestRunnerCliArgs,
     val testsFinishedMarker: String = "KOTLIN_TEST_FINISHED",
 ) {
     fun buildUrlWithConfigState(base: URI): URI {
@@ -31,7 +32,9 @@ internal class KotlinBrowserRunnerConfig(
         val config = KotlinTestRunnerConfig(
             reporterOptions = ReporterOptions(flowId = flowId),
             mochaSetupOptions = MochaSetupOptions(timeout = timeout.toMillis().toString()),
-            kotlinTestCliArguments = kotlinTestCliArguments,
+            kotlinTestCliArguments = kotlinTestArguments.toList(),
+            include = kotlinTestArguments.include.toList(),
+            exclude = kotlinTestArguments.exclude.toList(),
             testsFinishedMarker = testsFinishedMarker,
         )
         return Json.encodeToString(KotlinTestRunnerConfig.serializer(), config)
@@ -41,7 +44,9 @@ internal class KotlinBrowserRunnerConfig(
     internal data class KotlinTestRunnerConfig(
         val reporterOptions: ReporterOptions,
         val mochaSetupOptions: MochaSetupOptions,
-        val kotlinTestCliArguments: List<String>,
+        val kotlinTestCliArguments: List<String>, // TODO: remove as part of KT-89926
+        val include: List<String>,
+        val exclude: List<String>,
         val testsFinishedMarker: String,
     )
 

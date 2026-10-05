@@ -149,7 +149,7 @@ internal class KotlinPlaywrightJsTestFramework(
         val cliArgs = KotlinTestRunnerCliArgs(
             include = task.includePatterns,
             exclude = task.excludePatterns,
-        ).toList()
+        )
 
         val browsersDirectory = frameworkTaskInputs.playwrightBrowsersDirectory.getFile().toPath()
 
@@ -196,7 +196,7 @@ internal class KotlinPlaywrightJsTestFramework(
     private fun BrowserRunnerInput.createPwRunnerSpec(
         kind: PwBrowserKind,
         browsersDirectory: Path,
-        cliArgs: List<String>,
+        cliArgs: KotlinTestRunnerCliArgs,
     ): PwRunnerSpec = PwRunnerSpec(
         name = name.get(),
         browserKind = kind,
@@ -212,12 +212,12 @@ internal class KotlinPlaywrightJsTestFramework(
         browserDataDir = browserDataDir.orNull?.asFile?.toPath() ?: Files.createTempDirectory("kotlin-browser-context"),
     )
 
-    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: List<String>, isDebug: Boolean): URI {
+    private fun BrowserRunnerInput.buildRunnerUrl(baseUrl: URI, cliArgs: KotlinTestRunnerCliArgs, isDebug: Boolean): URI {
         val runnerConfig = KotlinBrowserRunnerConfig(
             // disable timeout for debug sessions
             timeout = if (isDebug) Duration.ZERO else timeout.get(),
             testsFinishedMarker = finishMarker.get(),
-            kotlinTestCliArguments = cliArgs
+            kotlinTestArguments = cliArgs
         )
         return runnerConfig.buildUrlWithConfigState(baseUrl)
     }
