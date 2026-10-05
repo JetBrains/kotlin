@@ -31,5 +31,5 @@ ap/Processor.kt
 Test.kt
 
 # output
-warning: running Kotlin compiler using JDK 8 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17 or supplying '-Xallow-pre-17-runtime-jdk' (which will only work until Kotlin 2.5.20-Beta1). See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.
-warning: [kapt] Stub writer threads (4) have no effect with the 'jtree' stub generation scheme, stubs are written sequentially. Use the 'direct' scheme to write stubs in parallel.
+warning: [COMPILER_ARGUMENTS_WARNING] Running Kotlin compiler using JDK 8 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17 or supplying '-Xallow-pre-17-runtime-jdk' (which will only work until Kotlin 2.5.20-Beta1). See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.
+warning: [KAPT_STRONG_WARNING] [kapt] Stub writer threads (4) have no effect with the 'jtree' stub generation scheme, stubs are written sequentially. Use the 'direct' scheme to write stubs in parallel.

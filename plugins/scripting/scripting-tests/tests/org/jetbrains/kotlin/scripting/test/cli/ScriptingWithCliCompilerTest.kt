@@ -106,7 +106,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "unresolved reference\\W*CompilerOptions"
+                "Unresolved reference\\W*CompilerOptions"
             ),
         )
         runWithK2JVMCompiler(
@@ -135,7 +135,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "unrecognized script type: someScript.+"
+                "Unrecognized script type: someScript.+"
             )
         )
         runWithK2JVMCompiler(
@@ -149,7 +149,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "error: invalid argument: -abracadabra"
+                "error: \\[SCRIPTING_ERROR\\] Invalid argument: -abracadabra"
             )
         )
         runWithK2JVMCompiler(
@@ -163,7 +163,7 @@ class ScriptingWithCliCompilerTest {
             ),
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
-                "error: invalid argument: -abracadabra"
+                "error: \\[SCRIPTING_ERROR\\] Invalid argument: -abracadabra"
             )
         )
     }
@@ -264,8 +264,8 @@ class ScriptingWithCliCompilerTest {
                     )
                 )
             }
-            assertTrue(err.contains("error: unresolved reference 'SimpleScript_main'"), "Expecting an error about unresolved 'SimpleScript_main', got:\n$err")
-            assertTrue(err.contains("error: unresolved reference 'ok'"), "Expecting an error about unresolved 'ok', got:\n$err")
+            assertTrue(err.contains("error: [UNRESOLVED_REFERENCE] Unresolved reference 'SimpleScript_main'"), "Expecting an error about unresolved 'SimpleScript_main', got:\n$err")
+            assertTrue(err.contains("error: [UNRESOLVED_REFERENCE] Unresolved reference 'ok'"), "Expecting an error about unresolved 'ok', got:\n$err")
             assertEquals(ExitCode.COMPILATION_ERROR.code, ret.code)
         }
     }

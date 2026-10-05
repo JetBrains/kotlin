@@ -1,2 +1,2 @@
-warning: the '-d' option with a directory destination is ignored because '-Xbuild-file' is specified
+warning: [COMPILER_ARGUMENTS_WARNING] The '-d' option with a directory destination is ignored because '-Xbuild-file' is specified
 OK

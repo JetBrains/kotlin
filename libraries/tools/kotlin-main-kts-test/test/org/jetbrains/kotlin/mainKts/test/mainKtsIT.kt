@@ -290,7 +290,7 @@ class MainKtsIT {
             runWithK2JVMCompiler(
                 scrErr.absolutePath,
                 expectedExitCode = 1,
-                expectedSomeErrPatterns = listOf(".*cannot inline bytecode built with JVM target $jvmTarget.*"),
+                expectedSomeErrPatterns = listOf(".*Cannot inline bytecode built with JVM target $jvmTarget.*"),
                 classpath = listOf(mainKtsJar)
             )
             runWithK2JVMCompiler(

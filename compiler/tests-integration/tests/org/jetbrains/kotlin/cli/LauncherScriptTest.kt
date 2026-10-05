@@ -452,7 +452,7 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "$testDataDirectory/helloWorld.kt",
             K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
-            expectedStderr = "warning: running Kotlin compiler using JDK 11 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17 or supplying '-Xallow-pre-17-runtime-jdk' (which will only work until Kotlin 2.5.20-Beta1). See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+            expectedStderr = "warning: [COMPILER_ARGUMENTS_WARNING] Running Kotlin compiler using JDK 11 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17 or supplying '-Xallow-pre-17-runtime-jdk' (which will only work until Kotlin 2.5.20-Beta1). See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
             expectedExitCode = 0,
         )
     }
@@ -589,7 +589,7 @@ Caused by: java.lang.AssertionError: assert
             expectedExitCode = 1,
             expectedStdout = "",
             expectedStderr = $$"""
-                $TMP_DIR$/test.kt:1:20: [1;31merror: [0;1minitializer type mismatch: expected 'String', actual 'Int'.[m
+                $TMP_DIR$/test.kt:1:20: [1;31merror: [0;1m[INITIALIZER_TYPE_MISMATCH] Initializer type mismatch: expected 'String', actual 'Int'.[m
                 val result: String = 42
                                    ^
                 
@@ -747,7 +747,7 @@ Caused by: java.lang.AssertionError: assert
 
         val exceptionMessage = "exception: java.lang.IllegalStateException: Actualization of common dependencies failed on"
         assertFalse(exceptionMessage in output) { "Output:\n$output" }
-        val errorMessage = "error: the binary declaration 'Some.foo' from '<regular dependencies of <common>>' doesn't match the binary declaration 'Some.foo' from '<regular dependencies of main>' because parameter types are different."
+        val errorMessage = "error: [EXPECT_ACTUAL_IR_MISMATCH] The binary declaration 'Some.foo' from '<regular dependencies of <common>>' doesn't match the binary declaration 'Some.foo' from '<regular dependencies of main>' because parameter types are different."
         assertTrue(errorMessage in output) { "Output:\n$output" }
     }
 }

@@ -67,7 +67,7 @@ abstract class AbstractWebKlibVersionsTest {
 
             val compilerOutputLines = result.output.lines()
             assertTrue(compilerOutputLines.any {
-                it.contains("error: invalid ABI version")
+                it.contains("error: [COMPILER_ARGUMENTS_ERROR] Invalid ABI version")
             })
         }
     }
@@ -112,7 +112,7 @@ abstract class AbstractWebKlibVersionsTest {
 
             val compilerOutputLines = result.output.lines()
             assertTrue(compilerOutputLines.any {
-                it.contains("error: invalid metadata version")
+                it.contains("error: [COMPILER_ARGUMENTS_ERROR] Invalid metadata version")
             })
         }
     }

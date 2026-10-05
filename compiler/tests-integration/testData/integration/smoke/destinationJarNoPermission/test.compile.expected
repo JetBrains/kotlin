@@ -1,4 +1,4 @@
 ERR:
-error: invalid jar path: [Temp]/noPermissionDir/test.jar
+error: [COMPILER_ARGUMENTS_ERROR] Invalid jar path: [Temp]/noPermissionDir/test.jar
 
 Return code: 1

@@ -1,7 +1,7 @@
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyOfEnclosingClass/source.kt:6:5: error: cannot access 'test.Super' which is a supertype of 'test.SubClass'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyOfEnclosingClass/source.kt:6:5: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.SubClass'. Check your module classpath for missing or conflicting dependencies.
     SubClass().Inner() // Error - dispatch receiver misses supertype
     ^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyOfEnclosingClass/source.kt:6:16: error: cannot access 'test.Super' which is a supertype of 'test.SubClass'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyOfEnclosingClass/source.kt:6:16: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.SubClass'. Check your module classpath for missing or conflicting dependencies.
     SubClass().Inner() // Error - dispatch receiver misses supertype
                ^^^^^
 COMPILATION_ERROR

@@ -258,7 +258,7 @@ class ReplSnippetStatelessCompilationTest {
             assertEquals(true, (evaluated.get().result as? ResultValue.Value)?.value)
 
             // Conversely, a plain `.custom.kts` source is a script, so it sees no snippet history.
-            compiler.compileExpectingFailure("x > 3", "plain.custom.kts", listOf("unresolved reference 'x'"))
+            compiler.compileExpectingFailure("x > 3", "plain.custom.kts", listOf("Unresolved reference 'x'"))
         }
     }
 
