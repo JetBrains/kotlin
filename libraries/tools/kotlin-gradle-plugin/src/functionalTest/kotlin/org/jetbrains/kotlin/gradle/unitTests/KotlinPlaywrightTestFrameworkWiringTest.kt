@@ -23,18 +23,24 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightBrowserInstall
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwBrowserKind
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertDependsOn
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions.Companion.processLaunchOptions
 import org.junit.jupiter.api.io.TempDir
 import java.net.URI
+import java.net.URLDecoder
+import java.net.URLEncoder
 import java.nio.file.Path
 import java.time.Duration
+import kotlin.jvm.java
 import kotlin.test.*
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 
 class KotlinPlaywrightTestFrameworkWiringTest {
 
@@ -370,7 +376,67 @@ class KotlinPlaywrightTestFrameworkWiringTest {
         assertEquals(mockLocation4, webkit2Runner.testsLocation.get())
     }
 
+    @Test
+    fun `test browser runner URL contains correct configuration data`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    browser {
+                        testTask {
+                            it.filter.excludeTestsMatching("JsBrowserFilterTest.assertFails")
+                        }
+                        test {
+                            it.chromium {
+                                it.timeout.set(42.seconds)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        project.evaluate()
+
+        // simulate configuration from CLI that happens after evaluation
+        val testTask = project.tasks.named("jsBrowserTest", KotlinJsTest::class.java).get()
+        testTask.filter.includeTestsMatching("JsBrowserFilterTest.assertOk")
+        testTask.filter.includeTestsMatching("test↘balloon↘utf-8🎈*")
+
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(testTask.testFramework)
+        // mock existence of pw-core/cli.js to be able to call `createTestExecutionSpec`
+        val npmToolingEnvDir = tempDirectory.resolve("npm-tooling").toFile()
+        npmToolingEnvDir.resolve("node_modules/playwright-core/cli.js").apply {
+            parentFile.mkdirs()
+            createNewFile()
+        }
+        framework.npmToolingEnvDir.set(npmToolingEnvDir)
+
+        val executionSpec = assertIs<PwExecutionSpec>(
+            framework.createTestExecutionSpec(
+                task = testTask,
+                launchOpts = project.objects.processLaunchOptions(),
+                nodeJsArgs = mutableListOf(),
+                debug = false,
+            )
+        )
+        val baseUri = URI("http://localhost:8080/test.html")
+        val actualUrl = executionSpec.runners.first().buildTestsExecutionerUrl(baseUri, false)
+        val expectedUrl = baseUri.resolve(
+            "test.html?kotlinTestConfig=" + """
+                {"reporterOptions":{"flowId":"default"},"mochaSetupOptions":{"timeout":"42000"},"kotlinTestCliArguments":["--include","test↘balloon↘utf-8🎈*,JsBrowserFilterTest.assertOk","--exclude","JsBrowserFilterTest.assertFails"],"include":["test↘balloon↘utf-8🎈*","JsBrowserFilterTest.assertOk"],"exclude":["JsBrowserFilterTest.assertFails"],"testsFinishedMarker":"KOTLIN_TEST_FINISHED"}
+            """.trimIndent().urlEncode()
+        )
+        @OptIn(ExperimentalKotlinTestApi::class)
+        assertEquals(
+            expectedUrl,
+            actualUrl
+        ) {
+            "URL mismatch. Decoded actual URL: ${actualUrl.urlDecode()}"
+        }
+    }
 }
+
+private fun String.urlEncode(): String = URLEncoder.encode(this, Charsets.UTF_8)
+private fun URI.urlDecode(): String = URLDecoder.decode(this.toString(), Charsets.UTF_8)
 
 private class BrowserTestProject(
     val project: ProjectInternal,
