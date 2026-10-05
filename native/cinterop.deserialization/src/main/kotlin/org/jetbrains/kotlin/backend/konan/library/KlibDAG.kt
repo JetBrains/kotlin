@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.packageFqName
+import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -64,7 +65,11 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
     }
 
     val librariesReverseTopoSorted: List<KotlinLibrary> by lazy {
-        DFS.topologicalOrder(dag.keys) { library -> dag.getValue(library).directDependencies }.reversed()
+        val canonicalOrder = dag.keys.sortedWith(compareBy({ it.uniqueName }, { it.canonicalPath.pathString }))
+        val rank = canonicalOrder.withIndex().associate { [index, library] -> library to index }
+        DFS.topologicalOrder(canonicalOrder) { library ->
+            dag.getValue(library).directDependencies.sortedBy(rank::getValue)
+        }.reversed()
     }
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =
