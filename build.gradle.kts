@@ -341,13 +341,11 @@ tasks {
         dependsOn(":js:js.tests:jsES6Test")
     }
 
-    // TODO(KT-72720): Promote to QualityGate.Nightly
-    testLifecycleTask("jsES5InlineAnonymousFunctionsTest", QualityGate.Undefined) {
+    testLifecycleTask("jsES5InlineAnonymousFunctionsTest", QualityGate.Nightly) {
         dependsOn(":js:js.tests:jsES5InlineAnonymousFunctionsTest")
     }
 
-    // TODO(KT-72720): Promote to QualityGate.Nightly
-    testLifecycleTask("jsES6InlineAnonymousFunctionsTest", QualityGate.Undefined) {
+    testLifecycleTask("jsES6InlineAnonymousFunctionsTest", QualityGate.Nightly) {
         dependsOn(":js:js.tests:jsES6InlineAnonymousFunctionsTest")
     }
 
