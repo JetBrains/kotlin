@@ -173,4 +173,41 @@ class NpmDependenciesIT : KGPBaseTest() {
             projectWithNpmDependenciesCollector.wasmJsPublicPackageJson()
         )
     }
+
+    @GradleTest
+    fun `npm version is correctly wired with the package json task inputs`(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                kotlinMultiplatform.apply {
+                    js {
+                        nodejs()
+                    }
+
+                    wasmJs {
+                        nodejs()
+                    }
+
+                    sourceSets.webMain.dependencies {
+                        npm("is-odd", project.providers.gradleProperty("isOddVersion"))
+                    }
+                }
+            }
+
+            build("jsPublicPackageJson", "wasmJsPublicPackageJson", "-PisOddVersion=1.0.0") {
+                assertTasksExecuted(":jsPublicPackageJson", ":wasmJsPublicPackageJson")
+            }
+
+            build("jsPublicPackageJson", "wasmJsPublicPackageJson", "-PisOddVersion=1.0.0") {
+                assertTasksUpToDate(":jsPublicPackageJson", ":wasmJsPublicPackageJson")
+            }
+
+            build("jsPublicPackageJson", "wasmJsPublicPackageJson", "-PisOddVersion=2.0.0") {
+                assertTasksExecuted(":jsPublicPackageJson", ":wasmJsPublicPackageJson")
+            }
+        }
+    }
 }
