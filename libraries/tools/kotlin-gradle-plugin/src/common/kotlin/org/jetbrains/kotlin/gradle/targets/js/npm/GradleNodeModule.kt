@@ -18,6 +18,7 @@ data class GradleNodeModule(val name: String, val version: String, val path: Fil
         get() = SemVer.from(version)
 
     @get:Synchronized
+    @Suppress("DEPRECATION")
     val dependencies: Set<NpmDependencyDeclaration> by lazy {
         val pJson = path.resolve("package.json").reader().use {
             Gson().fromJson(it, JsonObject::class.java)
