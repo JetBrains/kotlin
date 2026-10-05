@@ -467,31 +467,6 @@ public actual fun Double.withSign(sign: Double): Double = kotlin.wasm.internal.w
 public actual fun Double.withSign(sign: Int): Double = kotlin.wasm.internal.wasm_f64_copysign(this, sign.toDouble())
 
 /**
- * Returns the ulp (unit in the last place) of this value.
- *
- * An ulp is a positive distance between this value and the next nearest [Double] value larger in magnitude.
- *
- * Special cases:
- *   - `NaN.ulp` is `NaN`
- *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
- *   - `x.ulp` is `2^971` when `x` is `Double.MAX_VALUE` or `-Double.MAX_VALUE`
- *   - `0.0.ulp` is `Double.MIN_VALUE`
- *
- * @see nextUp
- * @see nextDown
- * @see nextTowards
- * @sample samples.math.MathSamples.Doubles.ulp
- * @sample samples.math.MathSamples.Doubles.discreteValues
- */
-@SinceKotlin("1.2")
-public actual val Double.ulp: Double get() = when {
-    this < 0 -> (-this).ulp
-    this.isNaN() || this == Double.POSITIVE_INFINITY -> this
-    this == Double.MAX_VALUE -> this - this.nextDown()
-    else -> this.nextUp() - this
-}
-
-/**
  * Returns the [Double] value nearest to this value in a direction of positive infinity.
  *
  * Special cases:
