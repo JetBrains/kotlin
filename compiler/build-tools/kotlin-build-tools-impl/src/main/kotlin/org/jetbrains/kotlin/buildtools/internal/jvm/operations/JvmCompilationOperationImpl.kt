@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -67,6 +68,7 @@ internal class JvmCompilationOperationImpl(
     override val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val compilerVersion: String,
+    @Transient // TODO
     @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: JvmIncrementalCompilationConfiguration? = null,
     @SerialName("KOTLINSCRIPT_EXTENSIONS") internal var kotlinScriptExtensions: Array<String>? = null,
 ) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, @Contextual K2JVMCompilerArguments>(),

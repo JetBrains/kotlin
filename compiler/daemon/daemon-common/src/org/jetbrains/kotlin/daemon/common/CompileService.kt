@@ -180,4 +180,19 @@ interface CompileService : Remote {
             replStateId: Int,
             codeLine: ReplCodeLine
     ): CallResult<ReplCompileResult>
+
+    @Throws(RemoteException::class)
+    fun execute(
+        operation: ByteArray,
+        operationId: Int,
+        callbackChannel: DaemonCallbackChannel,
+    ): CallResult<ByteArray>
+}
+
+interface DaemonCallbackChannel : Remote {
+    /**
+     * Reports different kind of diagnostic messages from compile daemon to compile daemon clients (jps, gradle, ...)
+     */
+    @Throws(RemoteException::class)
+    fun report(message: ByteArray)
 }

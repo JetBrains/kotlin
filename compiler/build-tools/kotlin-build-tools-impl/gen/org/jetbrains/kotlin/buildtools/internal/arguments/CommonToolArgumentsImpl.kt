@@ -1,6 +1,10 @@
 // This file was generated automatically. See the README.md file
 // DO NOT MODIFY IT MANUALLY.
 
+@file:UseSerializers(
+  ListOfPathsAsStringSerializer::class,
+  PathAsStringSerializer::class,
+)
 @file:OptIn(ExperimentalCompilerArgument::class)
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
@@ -26,7 +30,10 @@ import kotlin.collections.mutableSetOf
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.ListOfPathsAsStringSerializer
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument

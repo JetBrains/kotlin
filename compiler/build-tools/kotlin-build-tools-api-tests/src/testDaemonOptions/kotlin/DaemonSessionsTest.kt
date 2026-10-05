@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsSubstringExactlyTimes
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2PlatformAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.CompilationOutcome
+import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ProjectWithPolicyCreator
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
 import org.junit.jupiter.api.DisplayName
@@ -22,7 +23,7 @@ class DaemonSessionsTest : BaseCompilationTest() {
         runSingleShotDaemonTest(kotlinToolchains) { daemonPolicy, _ ->
             project(daemonPolicy) {
                 val module = module("basic-multimodule-project/module-1")
-                module.compile {
+                module.compile(forceOutput = LogLevel.INFO) {
                     assertDaemonConnectionWasCreated(true)
                 }
                 module.compile {

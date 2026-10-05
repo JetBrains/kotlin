@@ -182,7 +182,7 @@ public fun main() {
                 }
             }
         }
-    val lookupTrackerForOperation100 = jvmoperation.prepareForSerialization()
+    val lookupTrackerForOperation100 = jvmoperation.prepareForSerialization(1)
     println(Json.encodeToString(jvmoperation))
 }
 

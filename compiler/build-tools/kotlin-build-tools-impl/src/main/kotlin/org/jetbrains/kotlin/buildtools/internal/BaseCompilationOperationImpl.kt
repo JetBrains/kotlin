@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Transient
 import org.jetbrains.kotlin.build.report.metrics.*
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
+import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
@@ -59,18 +61,26 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
     }
 
-    override fun prepareForSerialization(): CompilerLookupTracker? {
-        lookupTrackerPlaceholder = lookupTracker?.let { CompilerLookupTrackerPlaceholder(100) } // TODO
-        return lookupTracker
+    override fun getResultSerializer(): KSerializer<CompilationResult> {
+        return CompilationResultSerializer
     }
 
-    @SerialName("LOOKUP_TRACKER")
-    @Transient
-//    @kotlinx.serialization.Serializable(with = CompilerLookupTrackerPlaceholder::class)
-    internal var lookupTracker: CompilerLookupTracker? = null
+    override fun prepareForSerialization(operationId: Int): List<MessageVisitor> {
+        val messageVisitors = mutableListOf<MessageVisitor>()
+        lookupTracker?.let { messageVisitors.add(LookupMessageVisitor(it, operationId)) }
+        return messageVisitors
+    }
 
-    @SerialName("LOOKUP_TRACKER_PLACEHOLDER")
-    private var lookupTrackerPlaceholder: CompilerLookupTrackerPlaceholder? = null
+    @Transient
+    @SerialName("LOOKUP_TRACKER")
+    internal var lookupTracker: CompilerLookupTracker? = null
+        set(value) {
+            hasLookupTracker = value != null
+            field = value
+        }
+
+    @SerialName("HAS_LOOKUP_TRACKER")
+    private var hasLookupTracker: Boolean = false
 
     @SerialName("COMPILER_ARGUMENTS_LOG_LEVEL")
     internal var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = CompilerArgumentsLogLevel.DEBUG

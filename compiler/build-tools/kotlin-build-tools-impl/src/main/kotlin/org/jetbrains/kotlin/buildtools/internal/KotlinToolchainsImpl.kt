@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
 import org.jetbrains.kotlin.buildtools.api.abi.AbiValidationToolchain
@@ -14,15 +18,26 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.metadata.KotlinMetadataPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.internal.abi.AbiValidationToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.classloading.LruClassLoadersCache
 import org.jetbrains.kotlin.buildtools.internal.cri.CriToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
+import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
+import org.jetbrains.kotlin.buildtools.internal.serializability.Messages
+import org.jetbrains.kotlin.buildtools.internal.serializability.btaSerializersModule
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.daemon.common.DaemonCallbackChannel
+import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
+import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.*
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.incrementAndFetch
 
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
@@ -66,11 +81,13 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         return BuildSessionImpl(this, RandomProjectUUID(), classloadersCache)
     }
 
+    @OptIn(ExperimentalAtomicApi::class)
     private class BuildSessionImpl(
         override val kotlinToolchains: KotlinToolchainsImpl,
         override val projectId: ProjectId,
         val classloadersCache: LruClassLoadersCache,
     ) : KotlinToolchains.BuildSession {
+        private val lastOperationId = AtomicInt(0)
         private val sessionIsAliveFlagFile = lazy { createSessionIsAliveFlagFile() }
         private val executorDelegate = lazy {
             Executors.newCachedThreadPool()
@@ -93,6 +110,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             return executeOperation(operation, logger = null)
         }
 
+        @OptIn(ExperimentalSerializationApi::class)
         override fun <R> executeOperation(
             operation: BuildOperation<R>,
             executionPolicy: ExecutionPolicy,
@@ -117,7 +135,29 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                 }
                 unwrapExecutionException(executor.submit(operationBody))
             } else {
-                operationBody.call()
+                executionPolicy as DaemonExecutionPolicyImpl
+                if (operation is BtaSerializable) {
+                    val operationId = lastOperationId.incrementAndFetch()
+                    val trackers: List<MessageVisitor> = operation.prepareForSerialization(operationId)
+                    val messageRenderer =
+                        if (operation is BaseCompilationOperationImpl<*, *>) operation[BaseCompilationOperationImpl.COMPILER_MESSAGE_RENDERER] else DefaultCompilerMessageRenderer
+                    val warningsAsError =
+                        operation is BaseCompilationOperationImpl<*, *> && operation.compilerArguments[CommonToolArgumentsImpl.WERROR]
+
+                    val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, messageRenderer, warningsAsError)
+                    val daemon = daemonConnectionRegistry.getCompileServiceSession(executionPolicy, loggerAdapter)
+                        ?: error("Unable to get daemon connection")
+                    val protobuf = ProtoBuf {
+                        serializersModule = btaSerializersModule
+                    }
+                    val serializedOperation = protobuf.encodeToByteArray(operation as BtaSerializable)
+                    val callbackChannel = BtaCallbackChannel(protobuf)
+                    val result = daemon.compileService.execute(serializedOperation, operationId, callbackChannel).get()
+                    @Suppress("UNCHECKED_CAST")
+                    protobuf.decodeFromByteArray(operation.getResultSerializer(), result) as R
+                } else {
+                    operationBody.call()
+                }
             }
         }
 
@@ -163,5 +203,17 @@ internal sealed interface BtaApiVersion {
 
 internal class ExecutionContext(
     val classloadersCache: LruClassLoadersCache?,
-    val daemonConnectionRegistry: DaemonConnectionRegistry
+    val daemonConnectionRegistry: DaemonConnectionRegistry,
 )
+
+
+@OptIn(ExperimentalSerializationApi::class)
+internal class BtaCallbackChannel(
+    val protoBuf: ProtoBuf,
+    port: Int = SOCKET_ANY_FREE_PORT,
+) : DaemonCallbackChannel,
+    UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) {
+    override fun report(message: ByteArray) {
+        println(protoBuf.decodeFromByteArray<Messages>(message))
+    }
+}

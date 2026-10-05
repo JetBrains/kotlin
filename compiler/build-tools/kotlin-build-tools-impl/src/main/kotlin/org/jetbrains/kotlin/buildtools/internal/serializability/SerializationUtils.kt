@@ -7,12 +7,18 @@ package org.jetbrains.kotlin.buildtools.internal.serializability
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
@@ -51,3 +57,24 @@ internal object PathAsStringSerializer : KSerializer<Path> {
 
 internal object ListOfPathsAsStringSerializer : KSerializer<List<Path>> by ListSerializer(PathAsStringSerializer)
 
+internal object CompilationResultSerializer : KSerializer<CompilationResult> {
+    override val descriptor = PrimitiveSerialDescriptor("CompilationResult", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: CompilationResult) = encoder.encodeString(value.name)
+
+    override fun deserialize(decoder: Decoder): CompilationResult = CompilationResult.valueOf(decoder.decodeString())
+}
+
+public val btaSerializersModule: SerializersModule = SerializersModule {
+    polymorphic(BtaSerializable::class) {
+        subclass(JvmCompilationOperationImpl::class)
+    }
+    polymorphic(Messages::class) {
+        subclass(Messages.LogLine::class)
+    }
+}
+
+public interface Messages {
+    @Serializable
+    public data class LogLine(public val logLine: String) : Messages
+}

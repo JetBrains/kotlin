@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.buildtools.internal.serializability
 
-import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
+import kotlinx.serialization.KSerializer
+import org.jetbrains.kotlin.buildtools.internal.MessageVisitor
 
-internal interface BtaSerializable {
-    fun prepareForSerialization(): CompilerLookupTracker?
+public interface BtaSerializable {
+    public fun prepareForSerialization(operationId: Int): List<MessageVisitor>
+    public fun getResultSerializer(): KSerializer<out Any>
 }

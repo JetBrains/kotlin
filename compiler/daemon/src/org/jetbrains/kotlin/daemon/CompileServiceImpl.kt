@@ -9,6 +9,12 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.PolymorphicSerializer
+import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
+import kotlinx.serialization.protobuf.ProtoBuf
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
@@ -16,7 +22,10 @@ import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteReporter
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
+import org.jetbrains.kotlin.buildtools.internal.serializability.Messages
+import org.jetbrains.kotlin.buildtools.internal.serializability.btaSerializersModule
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -1069,6 +1078,37 @@ class CompileServiceImpl(
                 }
             }
         }
+
+    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalSerializationApi::class)
+    override fun execute(
+        operation: ByteArray,
+        operationId: Int,
+        callbackChannel: DaemonCallbackChannel,
+    ): CompileService.CallResult<ByteArray> {
+        val kotlinToolchains = KotlinToolchains.loadImplementation(
+            System.getProperty("java.class.path").split(File.pathSeparator).map { Path(it) }
+        )
+        val protobuf = ProtoBuf {
+            serializersModule = btaSerializersModule
+        }
+        val buildOperation = protobuf.decodeFromByteArray<BtaSerializable>(operation) as BuildOperation<*>
+        log.info("Received operation: $buildOperation")
+        buildOperation as BtaSerializable
+
+        callbackChannel.report(
+            protobuf.encodeToByteArray(
+                PolymorphicSerializer(Messages::class),
+                Messages.LogLine("HELLO FROM DAEMON!")
+            )
+        )
+        @Suppress("UNCHECKED_CAST")
+        return CompileService.CallResult.Good(
+            ProtoBuf.encodeToByteArray(
+                buildOperation.getResultSerializer() as KSerializer<CompilationResult>,
+                CompilationResult.COMPILATION_SUCCESS
+            )
+        )
+    }
 
     override fun periodicAndAfterSessionCheck() {
 

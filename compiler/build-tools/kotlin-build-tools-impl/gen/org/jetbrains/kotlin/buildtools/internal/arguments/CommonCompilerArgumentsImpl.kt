@@ -1,6 +1,10 @@
 // This file was generated automatically. See the README.md file
 // DO NOT MODIFY IT MANUALLY.
 
+@file:UseSerializers(
+  ListOfPathsAsStringSerializer::class,
+  PathAsStringSerializer::class,
+)
 @file:OptIn(ExperimentalCompilerArgument::class)
 @file:Suppress("EnumValuesSoftDeprecate")
 
@@ -28,6 +32,7 @@ import kotlin.collections.toTypedArray
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.AnnotationDefaultTargetMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ExplicitApiMode
@@ -36,6 +41,8 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.NameBasedDestructuringMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.ReturnValueCheckerMode
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.enums.VerifyIrMode
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.ListOfPathsAsStringSerializer
+import org.jetbrains.kotlin.buildtools.`internal`.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.`internal`.serializability.findPropertyWithSerialName
 import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
