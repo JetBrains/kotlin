@@ -23,7 +23,7 @@ abstract class Freezable {
 
     private var frozen: Boolean = false
 
-    protected open fun copyOf(): Freezable = copyBean(this)
+    protected abstract fun copyOf(): Freezable
 
     internal fun copyOfInternal(): Freezable = copyOf()
     internal fun getInstanceWithFreezeStatus(value: Boolean) = if (value == frozen) this else copyOf().apply { frozen = value }
