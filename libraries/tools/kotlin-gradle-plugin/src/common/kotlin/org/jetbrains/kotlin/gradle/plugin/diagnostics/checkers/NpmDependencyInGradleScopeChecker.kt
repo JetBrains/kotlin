@@ -57,16 +57,15 @@ internal object NpmDependencyInGradleScopeChecker : KotlinGradleProjectChecker {
             project.configurations
                 .findByName(configurationName)
                 ?.dependencies
+                ?.withType(NpmDependencyDeprecated::class.java)
                 ?.configureEach { dependency ->
-                    if (dependency is NpmDependencyDeprecated) {
-                        val arguments = renderArguments(dependency)
-                        usages += NpmDependencyInGradleScopeUsage(
-                            sourceSetName = sourceSet.name,
-                            dependencyScope = dependencyScope,
-                            deprecatedDeclaration = "${dependency.deprecatedFunction()}($arguments)",
-                            replacement = "${dependency.replacementFunction()}($arguments)",
-                        )
-                    }
+                    val arguments = renderArguments(dependency)
+                    usages += NpmDependencyInGradleScopeUsage(
+                        sourceSetName = sourceSet.name,
+                        dependencyScope = dependencyScope,
+                        deprecatedDeclaration = "${dependency.deprecatedFunction()}($arguments)",
+                        replacement = "${dependency.replacementFunction()}($arguments)",
+                    )
                 }
         }
         return usages
