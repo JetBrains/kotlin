@@ -398,6 +398,11 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
                 }
             }
+
+            tasks.named<Jar>(sourceSets.getByName("main").sourcesJarTaskName) {
+                addEmbeddedSources()
+                addEmbeddedSources(sourceSets.getByName("main").embeddedConfigurationName)
+            }
         }
 
         // Workaround for https://youtrack.jetbrains.com/issue/KT-52987
