@@ -57,6 +57,7 @@ sealed class NpmResolverPluginApplierTest(
      *
      * Add npm dependencies (both regular and file-based) to `commonMain`.
      */
+    @Suppress("DEPRECATION") // the deprecated npm(directory) declaration is covered on purpose
     private fun setupProject(
         configure: Project.() -> Unit = {},
     ): Project {
