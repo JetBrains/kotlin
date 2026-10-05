@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import kotlinx.serialization.SerializationException
 import org.gradle.api.Project
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.internal.project.ProjectInternal
@@ -33,8 +34,9 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
 import java.nio.file.Files
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.assertDoesNotThrow
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -1105,6 +1107,34 @@ class SwiftPMImportUnitTests {
         )
 
 
+    }
+
+    @Test
+    fun `KT-89622 - cleanup supports fingerprint created by Kotlin 2_4_20`() {
+        val project = swiftPMImportProject()
+        project.evaluate()
+
+        val cleanupTask = project.tasks.getByName(
+            CleanSwiftImportFingerprintArtifacts.TASK_NAME
+        )
+        assertIs<CleanSwiftImportFingerprintArtifacts>(cleanupTask)
+
+        val fingerprintFile = project.layout.buildDirectory
+            .file("kotlin/syntheticPackageFingerprint")
+            .get()
+            .asFile
+
+        fingerprintFile.parentFile.mkdirs()
+        fingerprintFile.writeText(
+            """
+        5a8709a16f
+        5a8709a16f
+        """.trimIndent()
+        )
+
+        assertThrows<SerializationException> {
+            cleanupTask.clean()
+        }
     }
 }
 
