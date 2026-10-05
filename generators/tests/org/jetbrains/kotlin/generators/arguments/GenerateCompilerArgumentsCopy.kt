@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.arguments
 
+import org.jetbrains.kotlin.arguments.collectProperties
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.JpsPluginSettings
