@@ -382,9 +382,11 @@ internal class ExecutableWasmWasi(
             val wasmtimeEnv = WasmtimePlugin.applyWithEnvSpec(project)
             env.set(wasmtimeEnv.env)
             adapter =
-                ivyDependencyProvider.map { ivyDep ->
+                wasmtimeEnv.version.map { version ->
                     project.configurations.detachedConfiguration(
-                        project.dependencies.create(ivyDep)
+                        project.dependencies.create(
+                            "bytecodealliance.wasmtime:wasi_snapshot_preview1.command:${version}@wasm"
+                        )
                     )
                         .also { conf -> conf.isTransitive = false }
                 }
