@@ -37,13 +37,25 @@ class MainPackageGuesser {
             it.getPackageFragments() // Includes also all parent packages, e.g. the root one.
         }
 
-        val nonEmptyPackages = allPackages
-            .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
-            .map { it.fqName }.distinct()
+        var commonNonEmptyPackage: FqName? = null
+        for (fragment in allPackages) {
+            val current = commonNonEmptyPackage
+            if (current != null && fragment.fqName.isSubpackageOf(current)) continue
+            if (fragment.getMemberScope().getContributedDescriptors().isEmpty()) continue
+            commonNonEmptyPackage = current?.commonAncestorWith(fragment.fqName) ?: fragment.fqName
+        }
 
         return allPackages.map { it.fqName }.distinct()
-            .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
+            .filter { candidate -> commonNonEmptyPackage == null || commonNonEmptyPackage.isSubpackageOf(candidate) }
             // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
             .maxByOrNull { it.asString().length }
+    }
+
+    private fun FqName.commonAncestorWith(other: FqName): FqName {
+        var ancestor = this
+        while (!other.isSubpackageOf(ancestor)) {
+            ancestor = ancestor.parent()
+        }
+        return ancestor
     }
 }
