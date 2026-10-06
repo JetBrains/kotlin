@@ -67,9 +67,11 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
+import org.jetbrains.kotlin.gradle.targets.web.npm.NpmResolutionMode
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
@@ -802,6 +804,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val npmSharedDependenciesProjectMode: Provider<String>
         get() = property(PropertyNames.NPM_SHARED_DEPENDENCIES_PROJECT_MODE)
 
+    val npmResolutionMode: Provider<NpmResolutionMode>
+        get() = enumProvider<NpmResolutionMode>(PropertyNames.NPM_RESOLUTION_MODE)
+            .orElse(
+                if (project.isProjectIsolationEnabled) NpmResolutionMode.ISOLATED_PROJECTS else NpmResolutionMode.LEGACY
+            )
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = get(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -937,6 +945,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_DISABLE_SWIFTPM_IMPORT = property("kotlin.disableSwiftPMImport")
 
         val KOTLIN_WASM_COMPILATION_MODE = property("kotlin.wasm.compilationMode")
+
+        val NPM_RESOLUTION_MODE = property("kotlin.npmResolutionMode")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used

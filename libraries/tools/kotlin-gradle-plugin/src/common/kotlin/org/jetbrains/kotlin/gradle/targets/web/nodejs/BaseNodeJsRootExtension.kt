@@ -13,6 +13,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.targets.js.internal.checkIsJsToolingProject
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
@@ -31,7 +33,9 @@ abstract class BaseNodeJsRootExtension internal constructor(
 ) : HasPlatformDisambiguator {
 
     init {
-        check(project.rootProject == project)
+        checkIsJsToolingProject(project) {
+            "Cannot create ${BaseNodeJsRootExtension::class.simpleName} in ${project.displayName}. It can only be created in ${project.jsToolingProject().displayName}."
+        }
 
         val projectProperties = PropertiesProvider.Companion(project)
 
