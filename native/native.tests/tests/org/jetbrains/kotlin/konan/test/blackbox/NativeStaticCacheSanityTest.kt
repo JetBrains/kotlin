@@ -91,9 +91,7 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
     @Test
     fun eagerInitializationOrderIsCorrectWithCaches() {
         assumeExecutableIsRun()
-        assertThrows(AssertionError::class.java) {
-            doTestEagerInitializationOrderIsCorrect(useCaches = true)
-        }
+        doTestEagerInitializationOrderIsCorrect(useCaches = true)
     }
 
     private fun doTestEagerInitializationOrderIsCorrect(useCaches: Boolean) {
@@ -220,9 +218,7 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
     @Test
     fun eagerInitializationSameFileSideEffectIsVisibleWithCaches() {
         assumeExecutableIsRun()
-        assertThrows(AssertionError::class.java) {
-            doTestEagerInitializationSameFileSideEffectIsVisible(useCaches = true)
-        }
+        doTestEagerInitializationSameFileSideEffectIsVisible(useCaches = true)
     }
 
     private fun doTestEagerInitializationSameFileSideEffectIsVisible(useCaches: Boolean) = doTestEagerInitializationSideEffectIsVisible(
@@ -278,9 +274,7 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
     @Test
     fun eagerInitializationCrossFileSideEffectIsVisibleWithCaches() {
         assumeExecutableIsRun()
-        assertThrows(AssertionError::class.java) {
-            doTestEagerInitializationCrossFileSideEffectIsVisible(useCaches = true)
-        }
+        doTestEagerInitializationCrossFileSideEffectIsVisible(useCaches = true)
     }
 
     private fun doTestEagerInitializationCrossFileSideEffectIsVisible(useCaches: Boolean) = doTestEagerInitializationSideEffectIsVisible(
@@ -335,9 +329,7 @@ class NativeStaticCacheSanityTest : AbstractNativeSimpleTest() {
     @Test
     fun eagerInitializationCrossLibrarySideEffectIsVisibleWithCaches() {
         assumeExecutableIsRun()
-        assertThrows(AssertionError::class.java) {
-            doTestEagerInitializationCrossLibrarySideEffectIsVisible(useCaches = true)
-        }
+        doTestEagerInitializationCrossLibrarySideEffectIsVisible(useCaches = true)
     }
 
     private fun doTestEagerInitializationCrossLibrarySideEffectIsVisible(useCaches: Boolean) = doTestEagerInitializationSideEffectIsVisible(
