@@ -1122,6 +1122,7 @@ static Class getOrCreateClass(const TypeInfo* typeInfo) {
 
   const ObjCTypeAdapter* typeAdapter = getTypeAdapter(typeInfo);
   if (typeAdapter != nullptr) {
+    kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(true);
     result = objc_getClass(typeAdapter->objCName);
     setClassEnsureInitialized(typeInfo, result);
   } else {
