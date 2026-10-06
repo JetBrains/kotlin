@@ -13,6 +13,8 @@ import org.junit.platform.engine.FilterResult.excluded
 import org.junit.platform.engine.FilterResult.included
 import org.junit.platform.engine.TestDescriptor
 import org.junit.platform.engine.TestTag
+import org.junit.platform.engine.support.descriptor.ClassSource
+import org.junit.platform.engine.support.descriptor.MethodSource
 import org.junit.platform.launcher.PostDiscoveryFilter
 import java.nio.ByteBuffer
 import java.security.MessageDigest
@@ -48,9 +50,21 @@ internal class TestShardingPostDiscoveryFilter(
         if (!configuration.isShardingEnabled) return included("No shards configured")
         val isTestMethod = test.type == TestDescriptor.Type.TEST || test.mayRegisterTests()
         if (!isTestMethod) return included("Classes/Containers are always enabled")
-        if (testsShardDynamicTag in test.tags) return included("Test is sharded dynamically")
 
         val currentShard = configuration.currentShard
+
+        /* Methods and classes with a recorded duration are balanced by duration, as a whole (see TestShardTimings) */
+        val timedShard = test.testClassName()?.let { className -> configuration.timedShardOf(className, test.testMethodName()) }
+        if (timedShard != null) {
+            return if (timedShard == currentShard) {
+                included("Current shard: '$currentShard'. Shard by duration: '$timedShard'")
+            } else {
+                excluded("Current shard: '$currentShard'. Shard by duration: '$timedShard'")
+            }
+        }
+
+        if (testsShardDynamicTag in test.tags) return included("Test is sharded dynamically")
+
         val distributionKey = test.shardingDistributionKey(configuration).encodeToByteArray()
         val thisTestShard = calculateTestShard(distributionKey, configuration.totalShards, configuration.shardSeed)
         return if (thisTestShard == currentShard) {
@@ -103,6 +117,24 @@ internal fun TestDescriptor.shardingDistributionKey(configuration: TestShardingC
         else -> error("Unexpected Test Engine ID: ${uniqueId.engineId}")
     }
 }
+
+/**
+ * The binary name of the class of this test (e.g. `Outer$Nested`), as recorded in [TestShardTimings].
+ * Taken from the test source, which every engine of this repository reports for its tests and classes.
+ */
+internal fun TestDescriptor.testClassName(): String? = generateSequence(this) { it.parent.getOrNull() }
+    .mapNotNull { descriptor ->
+        when (val source = descriptor.source.getOrNull()) {
+            is MethodSource -> source.className
+            is ClassSource -> source.className
+            else -> null
+        }
+    }
+    .firstOrNull()
+
+/** The JVM name of the test method (or template, or factory) of this test, as recorded in [TestShardTimings]. */
+internal fun TestDescriptor.testMethodName(): String? = generateSequence(this) { it.parent.getOrNull() }
+    .firstNotNullOfOrNull { descriptor -> (descriptor.source.getOrNull() as? MethodSource)?.methodName }
 
 /**
  * Execution-time counterpart of [TestDescriptor.shardingDistributionKey], used to salt the invocations of a test template (see [shard]):

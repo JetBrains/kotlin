@@ -10,7 +10,7 @@ import org.gradle.kotlin.dsl.withType
 
 internal fun Project.configureTestSharding() {
     tasks.withType<Test>().configureEach {
-        val testShardingArguments = project.testShardingArguments
+        val testShardingArguments = project.testShardingArguments(this)
         jvmArgumentProviders.add(testShardingArguments)
 
         doFirst {
@@ -19,7 +19,8 @@ internal fun Project.configureTestSharding() {
                     error("Test sharding is only supported on 'Junit5'")
                 }
 
-                logger.quiet("Running tests in shard ${testShardingArguments.currentShard.get()}/${testShardingArguments.totalShards.get()}")
+                val timings = testShardingArguments.timings.singleOrNull { it.isFile }?.let { " (balanced by durations from '${it.name}')" }.orEmpty()
+                logger.quiet("Running tests in shard ${testShardingArguments.currentShard.get()}/${testShardingArguments.totalShards.get()}$timings")
             }
         }
     }

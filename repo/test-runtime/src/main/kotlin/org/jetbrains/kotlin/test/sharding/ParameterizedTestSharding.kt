@@ -68,6 +68,9 @@ fun Iterable<Arguments>.shard(context: ExtensionContext): Iterable<Arguments> {
     val configuration = readTestShardingConfiguration(context)
     if (!configuration.isShardingEnabled) return this
 
+    /* The template or its class is balanced by its recorded duration: the discovery-time sharding assigned the whole template to this shard */
+    if (configuration.timedShardOf(templateContext.requiredTestClass.name, templateContext.requiredTestMethod.name) != null) return this
+
     val list = toList()
     if (list.isEmpty()) return list
 

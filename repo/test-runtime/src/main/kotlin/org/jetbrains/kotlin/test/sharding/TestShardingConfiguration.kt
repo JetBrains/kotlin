@@ -13,9 +13,11 @@ import kotlin.jvm.optionals.getOrNull
  * - [currentShard]: the 1-based shard to run (`tests.currentShard`), or `-1` to run all tests,
  * - [totalShards]: the number of shards (`tests.totalShards`), or `-1` when sharding is disabled,
  * - [shardSeed]: reshuffles the assignment of tests to shards (`tests.shardSeed`),
- * - [shardByMethod]: applies [ShardByMethod] to all test classes (`tests.shardByMethod`).
+ * - [shardByMethod]: applies [ShardByMethod] to all test classes (`tests.shardByMethod`),
+ * - [timingsFile]: recorded durations of the test classes of the task (`tests.shardTimings`), see [TestShardTimings],
+ * - [task]: the path of the test task, which orders shards with equal loads (`tests.shardTask`).
  *
- * This only holds the settings: the assignment of tests to shards is implemented by [calculateTestShard].
+ * This only holds the settings: the assignment of tests to shards is implemented by [timedShardOf] and [calculateTestShard].
  * The Gradle test tasks pass these as system properties (see [readTestShardingConfigurationFromSystemProperties]).
  * Extensions read them from the JUnit configuration parameters, which fall back to the system properties
  * (see [readTestShardingConfiguration]), so that tests can run several shards within one JVM.
@@ -25,6 +27,8 @@ internal data class TestShardingConfiguration(
     val totalShards: Int = -1,
     val shardSeed: Int = 0,
     val shardByMethod: Boolean = false,
+    val timingsFile: String? = null,
+    val task: String? = null,
 ) {
     /* Check inputs */
     init {
@@ -42,9 +46,22 @@ private const val currentShardKey = "tests.currentShard"
 private const val totalShardsKey = "tests.totalShards"
 private const val shardSeedKey = "tests.shardSeed"
 private const val shardByMethodKey = "tests.shardByMethod"
+private const val shardTimingsKey = "tests.shardTimings"
+private const val shardTaskKey = "tests.shardTask"
 
 internal val TestShardingConfiguration.isShardingEnabled: Boolean
     get() = currentShard != -1 && totalShards != -1
+
+/**
+ * The shard of the test method [methodName] of [className] by its recorded duration, or else by the duration of its class (see [TestShardTimings]).
+ * `null` if sharding is disabled, no timings are configured, or neither has a recorded duration.
+ * A timed method or class runs whole on its shard: [ShardByMethod], [DynamicTestSharding] and [ParameterizedTestSharding] do not split it.
+ */
+internal fun TestShardingConfiguration.timedShardOf(className: String, methodName: String?): Int? {
+    if (!isShardingEnabled) return null
+    val timingsFile = timingsFile ?: return null
+    return TestShardTimings.load(timingsFile).shardOf(className, methodName, totalShards, salt = task.orEmpty(), seed = shardSeed)
+}
 
 internal fun readTestShardingConfigurationFromSystemProperties(): TestShardingConfiguration =
     readTestShardingConfiguration(System::getProperty)
@@ -58,6 +75,8 @@ private fun readTestShardingConfiguration(value: (key: String) -> String?): Test
     totalShards = value(totalShardsKey)?.toIntOrNull() ?: -1,
     shardSeed = value(shardSeedKey)?.toIntOrNull() ?: 0,
     shardByMethod = value(shardByMethodKey) == "true",
+    timingsFile = value(shardTimingsKey)?.takeIf { it.isNotBlank() },
+    task = value(shardTaskKey)?.takeIf { it.isNotBlank() },
 )
 
 /** All settings as JUnit configuration parameters (e.g., for a `LauncherDiscoveryRequestBuilder`), including the disabled ones. */
@@ -66,4 +85,6 @@ internal fun TestShardingConfiguration.toConfigurationParameters(): Map<String, 
     totalShardsKey to totalShards.toString(),
     shardSeedKey to shardSeed.toString(),
     shardByMethodKey to shardByMethod.toString(),
+    shardTimingsKey to timingsFile.orEmpty(),
+    shardTaskKey to task.orEmpty(),
 )

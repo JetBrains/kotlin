@@ -81,7 +81,12 @@ internal class DynamicTestShardingExtension : ParameterResolver,
         parameterContext: ParameterContext,
         extensionContext: ExtensionContext,
     ): DynamicTestShardingContext {
-        val sharding = DynamicTestShardingContextImpl(readTestShardingConfiguration(extensionContext))
+        val configuration = readTestShardingConfiguration(extensionContext)
+        val sharding = DynamicTestShardingContextImpl(
+            configuration,
+            /* The discovery-time sharding assigned the whole factory to this shard */
+            isTimed = configuration.timedShardOf(extensionContext.requiredTestClass.name, extensionContext.requiredTestMethod.name) != null,
+        )
         extensionContext.getStore(namespace).put(DynamicTestShardingContext::class.java, sharding)
         return sharding
     }
@@ -119,6 +124,7 @@ internal class DynamicTestShardingExtension : ParameterResolver,
 @OptIn(ExperimentalAtomicApi::class)
 private class DynamicTestShardingContextImpl(
     private val configuration: TestShardingConfiguration,
+    private val isTimed: Boolean,
 ) : DynamicTestShardingContext {
     val isSharded: AtomicBoolean = AtomicBoolean(false)
 
@@ -127,6 +133,7 @@ private class DynamicTestShardingContextImpl(
             error("'shardBy' can only be called once")
         }
 
+        if (isTimed) return elements.toList()
         return elements.filter { value -> isCurrentShard(key(value), configuration) }
     }
 }

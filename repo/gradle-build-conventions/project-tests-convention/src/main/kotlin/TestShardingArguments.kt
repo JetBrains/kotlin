@@ -4,23 +4,49 @@
  */
 
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
+import org.gradle.api.tasks.testing.Test
 import org.gradle.process.CommandLineArgumentProvider
 
 internal const val CURRENT_TEST_SHARD_KEY = "tests.currentShard"
 internal const val TOTAL_TEST_SHARDS_KEY = "tests.totalShards"
 internal const val TEST_SHARD_SEED_KEY = "tests.shardSeed"
 
-internal val Project.testShardingArguments: TestShardingArguments
-    get() {
-        val arguments = objects.newInstance(TestShardingArguments::class.java)
-        arguments.currentShard.set(project.providers.gradleProperty(CURRENT_TEST_SHARD_KEY).map { it.toInt() })
-        arguments.totalShards.set(project.providers.gradleProperty(TOTAL_TEST_SHARDS_KEY).map { it.toInt() })
-        arguments.shardSeed.set(project.providers.gradleProperty(TEST_SHARD_SEED_KEY).map { it.toInt() })
-        return arguments
-    }
+internal const val TEST_SHARD_TIMINGS_KEY = "tests.shardTimings"
+internal const val TEST_SHARD_TASK_KEY = "tests.shardTask"
+
+/**
+ * Recorded durations of the test classes of a test task (see `TestShardTimings` in `:repo:test-runtime`):
+ * `<project directory>/test-shard-timings/<task name>.tsv`. Sharded runs of a task with this file balance its shards by duration.
+ */
+internal const val TEST_SHARD_TIMINGS_DIRECTORY = "test-shard-timings"
+
+internal fun Project.testShardingArguments(task: Test): TestShardingArguments {
+    val arguments = objects.newInstance(TestShardingArguments::class.java)
+    val currentShard = providers.gradleProperty(CURRENT_TEST_SHARD_KEY).map { it.toInt() }
+    arguments.currentShard.set(currentShard)
+    arguments.totalShards.set(providers.gradleProperty(TOTAL_TEST_SHARDS_KEY).map { it.toInt() })
+    arguments.shardSeed.set(providers.gradleProperty(TEST_SHARD_SEED_KEY).map { it.toInt() })
+
+    /*
+    Only an input of sharded runs: refreshing the timings must not invalidate the cache of unsharded runs.
+    The file may not exist: a missing input file is fingerprinted as missing, so adding it later reruns the task.
+     */
+    val timingsFile = layout.projectDirectory.file("$TEST_SHARD_TIMINGS_DIRECTORY/${task.name}.tsv").asFile
+    arguments.timingsPath.set(currentShard.map { timingsFile.absolutePath })
+    arguments.timings.from(currentShard.map { listOf(timingsFile) }.orElse(emptyList()))
+
+    /* Orders shards with equal loads differently in every task, see 'TestShardTimings.assign' */
+    arguments.task.set(task.path)
+    return arguments
+}
 
 abstract class TestShardingArguments : CommandLineArgumentProvider {
 
@@ -35,6 +61,18 @@ abstract class TestShardingArguments : CommandLineArgumentProvider {
     @get:Input
     @get:Optional
     abstract val shardSeed: Property<Int>
+
+    /* The content decides the assignment of test classes to shards, the location does not */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    abstract val timings: ConfigurableFileCollection
+
+    /* Set for sharded runs only, see 'timings' */
+    @get:Internal
+    abstract val timingsPath: Property<String>
+
+    @get:Input
+    abstract val task: Property<String>
 
     override fun asArguments(): Iterable<String> {
         if (!currentShard.isPresent && !totalShards.isPresent) {
@@ -60,6 +98,8 @@ abstract class TestShardingArguments : CommandLineArgumentProvider {
             "-D$CURRENT_TEST_SHARD_KEY=${currentShard}",
             "-D$TOTAL_TEST_SHARDS_KEY=${totalShards}",
             if (shardSeed.isPresent) "-D$TEST_SHARD_SEED_KEY=${shardSeed.get()}" else null,
+            if (timingsPath.isPresent) "-D$TEST_SHARD_TIMINGS_KEY=${timingsPath.get()}" else null,
+            "-D$TEST_SHARD_TASK_KEY=${task.get()}",
         )
     }
 }
