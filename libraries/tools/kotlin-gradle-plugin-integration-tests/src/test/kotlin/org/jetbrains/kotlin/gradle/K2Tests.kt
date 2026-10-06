@@ -16,22 +16,19 @@ import org.junit.jupiter.api.condition.OS
 import kotlin.test.Ignore
 import kotlin.test.assertEquals
 
+// FIXME(KT-69597): Previously hardcoded to language version 2.0.
 @Disabled("Used for local testing only")
 @MppGradlePluginTests
 @DisplayName("K2: Hierarchical multiplatform")
-class K2HierarchicalMppIT : HierarchicalMppIT() {
-    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copy(languageVersion = "2.0")
-}
+class K2HierarchicalMppIT : HierarchicalMppIT()
 
+// FIXME(KT-69597): Previously hardcoded to language version 2.0.
 @Disabled("Used for local testing only")
-class K2CommonizerIT : CommonizerIT() {
-    override val defaultBuildOptions: BuildOptions get() = super.defaultBuildOptions.copy(languageVersion = "2.0")
-}
+class K2CommonizerIT : CommonizerIT()
 
+// FIXME(KT-69597): Previously hardcoded to language version 2.0.
 @Ignore
-class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
-}
+class K2CommonizerHierarchicalIT : CommonizerHierarchicalIT()
 
 @MppGradlePluginTests
 @DisplayName("K2: custom tests")

@@ -45,7 +45,8 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
     @GradleTest
     @Disabled("KT-60943: Will be fixed in K2")
     fun `test - K2 - shared native compilation - assemble`(gradleVersion: GradleVersion) {
-        project("kt-57944-k2-native-compilation", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0")) {
+        // FIXME(KT-69597): Previously hardcoded to language version 2.0.
+        project("kt-57944-k2-native-compilation", gradleVersion) {
             build("assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":compileNativeMainKotlinMetadata")

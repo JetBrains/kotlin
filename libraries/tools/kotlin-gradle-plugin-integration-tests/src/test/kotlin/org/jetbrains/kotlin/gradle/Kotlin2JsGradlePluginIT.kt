@@ -938,16 +938,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testK2JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.append(
-                """
-                    rootProject.subprojects.forEach {
-                        it.tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile> {
-                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
-                        }
-                    }
-                """.trimIndent()
-            )
-
             build(":app:compileProductionExecutableKotlinJs")
 
             projectPath.resolve("app/src/jsMain/kotlin/App.kt").modify {

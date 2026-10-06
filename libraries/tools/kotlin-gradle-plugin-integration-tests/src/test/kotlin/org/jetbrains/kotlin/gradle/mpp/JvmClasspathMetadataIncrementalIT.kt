@@ -20,7 +20,7 @@ class JvmClasspathMetadataIncrementalIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
             logLevel = LogLevel.DEBUG,
-            languageVersion = "2.0",
+            // FIXME(KT-69597): Previously hardcoded to language version 2.0.
             enableJvmIncrementalCompilationOfCommonSources = true,
         )
 
