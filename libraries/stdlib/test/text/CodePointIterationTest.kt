@@ -171,11 +171,11 @@ class CodePointIterationTest {
     @Test
     fun iteration() {
         fun String.codePointSequences(): List<CodePointSequence> = listOf(
-            this.codePointSequence(),
-            (this as CharSequence).codePointSequence(),
-            StringBuilder(this).codePointSequence(),
-            this.toCharArray().codePointSequence(),
-            "${Char.MIN_HIGH_SURROGATE}$this${Char.MIN_LOW_SURROGATE}".toCharArray().codePointSequence(1, 1 + this.length)
+            this.asCodePointSequence(),
+            (this as CharSequence).asCodePointSequence(),
+            StringBuilder(this).asCodePointSequence(),
+            this.toCharArray().asCodePointSequence(),
+            "${Char.MIN_HIGH_SURROGATE}$this${Char.MIN_LOW_SURROGATE}".toCharArray().asCodePointSequence(1, 1 + this.length)
         )
 
         val string = "abc😀def"
@@ -189,9 +189,9 @@ class CodePointIterationTest {
         }
 
         val charArray = "abc".toCharArray()
-        assertFailsWith<IndexOutOfBoundsException> { charArray.codePointSequence(startIndex = -1) }
-        assertFailsWith<IndexOutOfBoundsException> { charArray.codePointSequence(endIndex = 4) }
-        assertFailsWith<IllegalArgumentException> { charArray.codePointSequence(startIndex = 2, endIndex = 1) }
+        assertFailsWith<IndexOutOfBoundsException> { charArray.asCodePointSequence(startIndex = -1) }
+        assertFailsWith<IndexOutOfBoundsException> { charArray.asCodePointSequence(endIndex = 4) }
+        assertFailsWith<IllegalArgumentException> { charArray.asCodePointSequence(startIndex = 2, endIndex = 1) }
     }
 
     @Test
@@ -212,7 +212,7 @@ class CodePointIterationTest {
             assertEquals(2, iterator.previousIndex())
             assertEquals('c'.toCodePoint(), iterator.previous())
 
-            assertEquals(string.substring(2).codePointSequence().toList(), iterator.asSequence().toList())
+            assertEquals(string.substring(2).asCodePointSequence().toList(), iterator.asSequence().toList())
             assertFalse(iterator.hasNext())
             assertFailsWith<NoSuchElementException> { iterator.next() }
             assertEquals(string.length, iterator.nextIndex())
@@ -223,7 +223,7 @@ class CodePointIterationTest {
             }
             assertFailsWith<NoSuchElementException> { iterator.previous() }
             assertEquals(-1, iterator.previousIndex())
-            assertEquals(string.reversed().codePointSequence().toList(), reverseResult)
+            assertEquals(string.reversed().asCodePointSequence().toList(), reverseResult)
 
             assertFailsWith<IndexOutOfBoundsException> { iterator.advanceByCodePoints(-1) }
             assertFailsWith<IndexOutOfBoundsException> { iterator.advanceByCodePoints(string.codePointCount() + 1) }
