@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
+import java.util.PriorityQueue
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.pathString
@@ -88,24 +89,49 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
         // itself isn't stable. So a DFS would place sibling libraries in the result in an unstable order.
         // Probably reproducible for a fixed command line, but perturbed by adding, removing or moving a library
         // that nothing depends on.
-        // Kahn's algorithm never uses that order. `KlibDAGNode.directDependencies` is consulted only to ask
-        // whether a library's dependencies have all been emitted already.
         //
         // NB! this relies on `dag` preserving insertion order.
-        val remaining = LinkedHashSet(dag.keys) // Load order.
-        val emitted = LinkedHashSet<KotlinLibrary>(dag.size) // Insertion order
 
-        while (remaining.isNotEmpty()) {
-            // The first library in load order all of whose dependencies have already been emitted.
-            val next = remaining.firstOrNull { library ->
-                emitted.containsAll(dag.getValue(library).directDependencies)
-            } ?: remaining.first() // The fallback should be unreachable in an acyclic graph.
+        val librariesInLoadOrder = ArrayList<KotlinLibrary>(dag.size) // Resolves a [LibraryIndex] back to a library.
+        // The number of dependencies each library is still waiting for, indexed by [LibraryIndex].
+        val pendingDependencies = IntArray(dag.size)
+        // Reverse edges. A dependent is appended in load order, and only the size of `directDependencies` feeds
+        // the counter — so that HashSet's order cannot reach the output.
+        val dependents = HashMap<KotlinLibrary, MutableList<LibraryIndex>>(2 * dag.size) // Reverse edges
+        // Of the libraries that are ready to be emitted, always take the one that comes first in load order.
+        val ready = PriorityQueue<LibraryIndex>()
 
-            remaining -= next
-            emitted += next
+        dag.entries.forEachIndexed { index, entry ->
+            val dependencies = entry.value.directDependencies
+
+            librariesInLoadOrder += entry.key // Appended at `index`, so that is the [LibraryIndex] used below.
+            pendingDependencies[index] = dependencies.size
+            // Nothing has been emitted yet, so a library is ready exactly when it has no dependencies at all.
+            if (dependencies.isEmpty()) ready += index
+
+            for (dependency in dependencies) {
+                dependents.getOrPut(dependency) { ArrayList() } += index
+            }
         }
 
-        emitted.toList()
+        val emitted = ArrayList<KotlinLibrary>(dag.size)
+        while (ready.isNotEmpty()) {
+            val next = librariesInLoadOrder[ready.poll()]
+            emitted += next
+
+            for (dependent in dependents[next].orEmpty()) {
+                pendingDependencies[dependent] -= 1
+                if (pendingDependencies[dependent] == 0) ready += dependent
+            }
+        }
+
+        if (emitted.size != dag.size) {
+            // Unreachable in an acyclic graph: anything left is part of a cycle, or depends on one, and so
+            // never became ready.
+            librariesInLoadOrder.filterIndexedTo(emitted) { index, _ -> pendingDependencies[index] != 0 }
+        }
+
+        emitted
     }
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =
@@ -473,3 +499,9 @@ private fun Collection<KotlinLibrary>.associateByCanonicalPathPreventingDuplicat
 
     return librariesByCanonicalPath
 }
+
+/**
+ * A library's position in the load order, i.e. its index in the load-ordered list of a [KlibDAG]'s libraries.
+ * Only an alias. Used to keep the index-based bookkeeping of [KlibDAG.librariesReverseTopoSorted] readable.
+ */
+private typealias LibraryIndex = Int

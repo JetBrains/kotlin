@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Files
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.pathString
 
@@ -89,6 +91,39 @@ class LoadedNativeKlibsOrderTest {
         )
 
         assertEquals(listOf("stdlib", "shared", "regular"), loaded.all.map { it.uniqueName })
+    }
+
+    @Test
+    fun `a library named by several different paths keeps the position of its first mention`() {
+        val nativeHome = emulateNativeDistribution(platformLibs = emptyList())
+        val first = klib("first")
+        val shared = klib("shared")
+        val last = klib("last")
+        val sharedPath = Path(shared)
+
+        // The same library, spelled three more ways. `KlibLoader` keys its deduplication on
+        // `Path.toRealPath()`, which both normalizes and resolves symlinks, so every spelling collapses onto
+        // the same entry and the FIRST one decides the position: `shared` has to stay between `first` and
+        // `last` instead of moving to wherever it was last mentioned.
+        val viaRedundantSegments = sharedPath.parent.resolve(".").resolve(sharedPath.fileName).pathString
+        // Both of these can legitimately be unavailable -- creating a symlink may be denied, and a path
+        // relative to the working directory does not exist if it sits on another filesystem root -- so each
+        // is contributed only when it could be built. The ones that remain still pin the behaviour.
+        val viaSymlink = runCatching {
+            Files.createSymbolicLink(tempDir.resolve("link-to-shared"), sharedPath).pathString
+        }.getOrNull()
+        val viaRelativePath = runCatching {
+            Path("").toAbsolutePath().relativize(sharedPath).pathString
+        }.getOrNull()
+
+        val loaded = loadNativeKlibs(
+            configuration(nativeHome) {
+                konanLibraries = listOfNotNull(first, shared, last, viaRedundantSegments, viaSymlink, viaRelativePath)
+            },
+            nativeTarget = TEST_TARGET,
+        )
+
+        assertEquals(listOf("stdlib", "first", "shared", "last"), loaded.all.map { it.uniqueName })
     }
 
     @Test

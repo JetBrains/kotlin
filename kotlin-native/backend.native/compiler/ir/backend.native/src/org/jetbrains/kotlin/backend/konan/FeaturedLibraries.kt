@@ -35,8 +35,7 @@ internal fun ModuleDescriptor.getExportedDependenciesInCanonicalRTO(config: Nati
             .mapIndexed { index, library -> library to index }
             .toMap()
     return getExportedDependencies(config).sortedBy { module ->
-        (module.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library?.let(libraryReverseTopoRank::get)
-                ?: Int.MAX_VALUE
+        libraryReverseTopoRank.getValue((module.klibModuleOrigin as DeserializedKlibModuleOrigin).library)
     }
 }
 
