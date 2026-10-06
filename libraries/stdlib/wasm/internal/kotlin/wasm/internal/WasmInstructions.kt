@@ -580,3 +580,7 @@ internal fun wasm_i64_popcnt(a: Long): Long =
 @WasmOp(WasmOp.I64_CTZ)
 internal fun wasm_i64_ctz(a: Long): Long =
     implementedAsIntrinsic
+
+@ExcludedFromCodegen
+internal fun <T> array_new_data(address: Int, length: Int, dataIdx: Int): T =
+    implementedAsIntrinsic
