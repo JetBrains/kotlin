@@ -521,7 +521,6 @@ include(
     ":compiler:fir:fir-serialization",
     ":compiler:fir:fir-deserialization",
     ":compiler:fir:fir-jvm",
-    ":compiler:fir:fir-js",
     ":compiler:fir:fir-native",
     ":compiler:fir:modularized-tests",
     ":compiler:fir:checkers",

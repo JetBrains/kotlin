@@ -33,7 +33,6 @@ dependencies {
     testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
     testFixturesApi(project(":compiler:fir:fir-jvm"))
-    testFixturesApi(project(":compiler:fir:fir-js"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:frontend"))
     testFixturesApi(project(":compiler:frontend.java"))
