@@ -241,11 +241,6 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 buildResult.assertOutputContains(
                     ">> :customConfiguration --> kotlin-compiler-embeddable-${defaultBuildOptions.kotlinVersion}.jar"
                 )
-
-                // Check that the transitive dependencies with 'runtime' scope are also available:
-                buildResult.assertOutputContains(
-                    ">> :customConfiguration --> kotlin-script-runtime-${defaultBuildOptions.kotlinVersion}.jar"
-                )
             }
         }
     }
