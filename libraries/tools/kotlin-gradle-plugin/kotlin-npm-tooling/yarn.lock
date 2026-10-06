@@ -2058,10 +2058,10 @@ kind-of@^6.0.2:
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.3.tgz#07c05034a6c349fa06e24fa35aa76db4580ce4dd"
   integrity sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==
 
-kotlin-web-helpers@^3.5.3:
-  version "3.5.3"
-  resolved "https://registry.yarnpkg.com/kotlin-web-helpers/-/kotlin-web-helpers-3.5.3.tgz#4c85e5e3ce011ea82f8fe2ff9c01c6fa50989b41"
-  integrity sha512-ZJ/1Ti+9sPplfS9Rpe67lT4WPazgyaz5JKQpf7HEXzZs4ARnT9005TUZr3Zg81HIUi/HKrx4/CI9gkGGkNFoLg==
+kotlin-web-helpers@^3.5.4:
+  version "3.5.4"
+  resolved "https://registry.yarnpkg.com/kotlin-web-helpers/-/kotlin-web-helpers-3.5.4.tgz#d93eeaf82c903f59a6773fad6f118930fd8f2791"
+  integrity sha512-whaRyyH+cqtkz+FnGt6kgryCROsDt8VJeitC7ZbARgEKe6Fx15cGQCM7TzUuX2fT5Hx67CR5BMS03+zSGWwNQg==
 
 launch-editor@^2.14.1:
   version "2.14.1"
