@@ -26,7 +26,7 @@ object KotlinStubVersions {
      * Classfile stub version should be increased if changes are made to classfile stub building subsystem (org.jetbrains.kotlin.idea.decompiler.classFile)
      * Increasing this version will lead to reindexing of all classfiles.
      * */
-    const val CLASSFILE_STUB_VERSION = BINARY_STUB_VERSION + 0
+    const val CLASSFILE_STUB_VERSION = BINARY_STUB_VERSION + 1
 
     /**
      * BuiltIn stub version should be increased if changes are made to builtIn stub building subsystem (org.jetbrains.kotlin.idea.decompiler.builtIns)
