@@ -461,8 +461,10 @@ public class KtPsiUtil {
      * 15 -- super and other<p>
      *
      * The suppression is used because the field is used in IntelliJ monorepo.
+     * @deprecated IntelliJ monorepo contains a copy of this field which should be used instead.
      */
-    @SuppressWarnings("WeakerAccess")
+    @Deprecated
+    @SuppressWarnings({"WeakerAccess", "DeprecatedIsStillUsed"})
     public static final int MAX_PRIORITY = CollectionsKt.count(BinaryOperationPrecedence.getEntries()) + 3;
 
     /**
@@ -501,8 +503,13 @@ public class KtPsiUtil {
         return MAX_PRIORITY;
     }
 
-    /** Returns {@code true} if the parentheses in {@code expression} are redundant and could be removed. */
-    @SuppressWarnings("unused") // used in intellij repo
+    /**
+     * Returns {@code true} if the parentheses in {@code expression} are redundant and could be removed.
+     *
+     * @deprecated IntelliJ monorepo contains a copy of this method which should be used instead.
+     */
+    @SuppressWarnings("unused")
+    @Deprecated
     public static boolean areParenthesesUseless(@NotNull KtParenthesizedExpression expression) {
         KtExpression innerExpression = expression.getExpression();
         if (innerExpression == null) return true;
@@ -515,7 +522,10 @@ public class KtPsiUtil {
      * Returns {@code true} if parentheses around {@code innerExpression} are required for the code to keep its meaning, given that they
      * currently appear as {@code currentInner} inside {@code parentElement}. Accounts for operator precedence and the many syntactic
      * special cases where parentheses cannot be dropped.
+     *
+     * @deprecated IntelliJ monorepo contains a copy of this method which should be used instead.
      */
+    @Deprecated
     public static boolean areParenthesesNecessary(
             @NotNull KtExpression innerExpression,
             @NotNull KtExpression currentInner,
