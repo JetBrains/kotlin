@@ -1,0 +1,10 @@
+ORIGINAL KDOC:
+* ```kotlin
+ *   /*a*/ val x = 1
+ *   /*b*/ val y = 2
+ * ```
+CONTENT:
+```kotlin
+/*a*/val x = 1
+  /*b*/val y = 2
+```

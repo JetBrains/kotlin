@@ -1,0 +1,42 @@
+ORIGINAL KDOC:
+* ```kotlin
+ * class O {
+ *   /*static*/ var static_init_state: Int = 1
+ *   /*static*/ var instance: O?
+ *   /*static*/ fun getInstance(): O {
+ *       if (!static_init_state) return O.instance /* implicitly cast to O */
+ *       if (static_init_state == 2) {
+ *         staticInitializationFailureWithClassName(O::class)
+ *       }
+ *       static_init_state = 0
+ *       try {
+ *         O()
+ *       } catch (reason: Throwable) {
+ *         static_init_state = 2
+ *         kotlin.internal.staticInitializationFailure(reason, null)
+ *       }
+ *     return O.instance /* implicitly cast to O */
+ *   }
+ * }
+ * ```
+CONTENT:
+```kotlin
+class O {
+  /*static*/var static_init_state: Int = 1
+  /*static*/var instance: O?
+  /*static*/fun getInstance(): O {
+      if (!static_init_state) return O.instance /* implicitly cast to O */
+      if (static_init_state == 2) {
+        staticInitializationFailureWithClassName(O::class)
+      }
+      static_init_state = 0
+      try {
+        O()
+      } catch (reason: Throwable) {
+        static_init_state = 2
+        kotlin.internal.staticInitializationFailure(reason, null)
+      }
+    return O.instance /* implicitly cast to O */
+  }
+}
+```
