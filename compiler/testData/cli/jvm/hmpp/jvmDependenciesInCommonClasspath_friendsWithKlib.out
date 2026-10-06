@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/hmpp/src/jvmDependencyConsumer_common.kt:1:31: error: unresolved reference 'produceInt'.
+fun commonProduceInt(): Int = produceInt()
+                              ^^^^^^^^^^
+COMPILATION_ERROR
