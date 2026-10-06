@@ -45,6 +45,7 @@ class JavaElementFinder(
 
         findClassesAndObjects(qualifiedName, scope, answer)
         answer.addAll(kotlinAsJavaSupport.getFacadeClasses(qualifiedName, scope))
+        answer.addAll(kotlinAsJavaSupport.getScriptClasses(qualifiedName, scope))
         answer.addAll(kotlinAsJavaSupport.getKotlinInternalClasses(qualifiedName, scope))
 
         sortByPreferenceToSourceFile(answer, scope)

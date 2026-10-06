@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
-import org.jetbrains.kotlin.analysis.api.javaInterop.asFacadePsiClass
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.symbols.symbol
@@ -215,10 +214,6 @@ abstract class AbstractSymbolLightClassesTestBase(
         val project = ktFile.project
         return findLightClass(fqname, GlobalSearchScope.fileScope(ktFile), project)
             ?: findLightClass(fqname, project)
-            // TODO: KT-78534 JavaElementFinder: support script search
-            ?: analyze(ktFile) {
-                ktFile.script?.takeIf { it.fqName.asString() == fqname }?.symbol?.asFacadePsiClass()
-            }
     }
 
     protected fun findLightClass(fqname: String, project: Project): PsiClass? {
