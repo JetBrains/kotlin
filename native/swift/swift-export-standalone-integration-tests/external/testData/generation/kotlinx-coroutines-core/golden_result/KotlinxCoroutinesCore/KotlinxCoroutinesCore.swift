@@ -6136,7 +6136,7 @@ package func kotlinx_coroutines_Deferred_await__reverse_swift(_ `self`: Swift.Un
 }()
     let __cancellation: KotlinCoroutineSupport.KotlinTask = KotlinCoroutineSupport.KotlinTask.__createClassWrapper(externalRCRef: cancellation)
     withKotlinTask(__continuation, __exception, __cancellation) {
-        try await _self.await()
+        try await _self.`await`()
     }
     return true
 }
