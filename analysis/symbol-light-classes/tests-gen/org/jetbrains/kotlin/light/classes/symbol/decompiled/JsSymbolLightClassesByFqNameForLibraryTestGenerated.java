@@ -347,6 +347,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("JavaDollarClassInSignature.kt")
+  public void testJavaDollarClassInSignature() {
+    run("JavaDollarClassInSignature.kt");
+  }
+
+  @Test
   @TestMetadata("JvmNameOnMember.kt")
   public void testJvmNameOnMember() {
     run("JvmNameOnMember.kt");

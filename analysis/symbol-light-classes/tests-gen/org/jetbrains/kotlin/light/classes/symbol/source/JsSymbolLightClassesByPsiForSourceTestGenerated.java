@@ -77,6 +77,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
+  @TestMetadata("backingFieldInitializedLater.kt")
+  public void testBackingFieldInitializedLater() {
+    run("backingFieldInitializedLater.kt");
+  }
+
+  @Test
   @TestMetadata("classModifiers.kt")
   public void testClassModifiers() {
     run("classModifiers.kt");
@@ -104,6 +110,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   @TestMetadata("coroutines.kt")
   public void testCoroutines() {
     run("coroutines.kt");
+  }
+
+  @Test
+  @TestMetadata("covariantListReturnOverride.kt")
+  public void testCovariantListReturnOverride() {
+    run("covariantListReturnOverride.kt");
   }
 
   @Test
@@ -188,6 +200,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   @TestMetadata("deprecatedHiddenProperty_setter.kt")
   public void testDeprecatedHiddenProperty_setter() {
     run("deprecatedHiddenProperty_setter.kt");
+  }
+
+  @Test
+  @TestMetadata("dollarInTypeNames.kt")
+  public void testDollarInTypeNames() {
+    run("dollarInTypeNames.kt");
   }
 
   @Test
@@ -383,6 +401,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
+  @TestMetadata("sealedPermits.kt")
+  public void testSealedPermits() {
+    run("sealedPermits.kt");
+  }
+
+  @Test
   @TestMetadata("simpleFunctions.kt")
   public void testSimpleFunctions() {
     run("simpleFunctions.kt");
@@ -428,6 +452,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   @TestMetadata("typealiasInTypeArguments.kt")
   public void testTypealiasInTypeArguments() {
     run("typealiasInTypeArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("unresolvedAnnotations.kt")
+  public void testUnresolvedAnnotations() {
+    run("unresolvedAnnotations.kt");
   }
 
   @Test
@@ -567,6 +597,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     @TestMetadata("indirectInheritanceStubs.kt")
     public void testIndirectInheritanceStubs() {
       run("indirectInheritanceStubs.kt");
+    }
+
+    @Test
+    @TestMetadata("javaCollectionSuperclass.kt")
+    public void testJavaCollectionSuperclass() {
+      run("javaCollectionSuperclass.kt");
     }
 
     @Test

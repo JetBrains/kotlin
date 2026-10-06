@@ -347,6 +347,12 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("JavaDollarClassInSignature.kt")
+  public void testJavaDollarClassInSignature() {
+    run("JavaDollarClassInSignature.kt");
+  }
+
+  @Test
   @TestMetadata("JvmNameOnMember.kt")
   public void testJvmNameOnMember() {
     run("JvmNameOnMember.kt");
@@ -805,6 +811,12 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     @TestMetadata("AnnotationModifiers.kt")
     public void testAnnotationModifiers() {
       run("AnnotationModifiers.kt");
+    }
+
+    @Test
+    @TestMetadata("delegationThroughCyclicHierarchy.kt")
+    public void testDelegationThroughCyclicHierarchy() {
+      run("delegationThroughCyclicHierarchy.kt");
     }
 
     @Test
