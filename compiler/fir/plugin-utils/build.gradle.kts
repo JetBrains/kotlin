@@ -11,9 +11,6 @@ kotlin {
 
 dependencies {
     api(project(":core:compiler.common"))
-    api(project(":compiler:fir:cones"))
-    api(project(":compiler:fir:tree"))
-    api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
     implementation(project(":core:util.runtime"))
 
