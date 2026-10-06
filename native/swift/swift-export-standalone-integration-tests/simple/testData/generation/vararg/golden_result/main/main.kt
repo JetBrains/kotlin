@@ -11,7 +11,7 @@ internal external fun main_internal_functional_type_callee_SwiftU2EVoid__TypesOf
 
 @ExportedBridge("Accessor_Inner_init_allocate")
 public fun Accessor_Inner_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Accessor.Inner>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Accessor.Inner>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -21,21 +21,21 @@ public fun Accessor_Inner_init_initialize__TypesOfArguments__Swift_UnsafeMutable
     val __y = y
     val __z = interpretObjCPointer<kotlin.collections.List<Boolean>>(z).toBooleanArray()
     val __outer__ = kotlin.native.internal.ref.dereferenceExternalRCRef(outer__) as Accessor
-    val _result = run { kotlin.native.internal.initInstance(____kt, (__outer__ as Accessor).Inner(__y, *__z)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, (__outer__ as Accessor).Inner(__y, *__z))
+    return true
 }
 
 @ExportedBridge("Accessor_Inner_y_get")
 public fun Accessor_Inner_y_get(self: kotlin.native.internal.NativePtr): Double {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Accessor.Inner
-    val _result = run { __self.y }
+    val _result = __self.y
     return _result
 }
 
 @ExportedBridge("Accessor_Inner_z_get")
 public fun Accessor_Inner_z_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Accessor.Inner
-    val _result = run { __self.z }
+    val _result = __self.z
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -43,28 +43,28 @@ public fun Accessor_Inner_z_get(self: kotlin.native.internal.NativePtr): kotlin.
 public fun Accessor_Inner_z_set__TypesOfArguments__ExportedKotlinPackages_kotlin_BooleanArray__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Accessor.Inner
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as kotlin.BooleanArray
-    val _result = run { __self.z = __newValue }
-    return run { _result; true }
+    __self.z = __newValue
+    return true
 }
 
 @ExportedBridge("Accessor_get__TypesOfArguments__Swift_Int32__")
 public fun Accessor_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, i: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Accessor
     val __i = i
-    val _result = run { __self.`get`(__i) }
+    val _result = __self.`get`(__i)
     return _result
 }
 
 @ExportedBridge("Accessor_x_get")
 public fun Accessor_x_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Accessor
-    val _result = run { __self.x }
+    val _result = __self.x
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Accessor_init_allocate")
 public fun __root___Accessor_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Accessor>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Accessor>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -72,14 +72,14 @@ public fun __root___Accessor_init_allocate(): kotlin.native.internal.NativePtr {
 public fun __root___Accessor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Array_Swift_Int32__Vararg___(__kt: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __x = interpretObjCPointer<kotlin.collections.List<Int>>(x).toIntArray()
-    val _result = run { kotlin.native.internal.initInstance(____kt, Accessor(*__x)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Accessor(*__x))
+    return true
 }
 
 @ExportedBridge("__root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___")
 public fun __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPackages_kotlin_Number__Vararg___(x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __x = interpretObjCPointer<kotlin.collections.List<kotlin.Number>>(x).toTypedArray()
-    val _result = run { asNumberList<kotlin.Number>(*__x) }
+    val _result = asNumberList<kotlin.Number>(*__x)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else _result.objcPtr()
 }
 
@@ -87,50 +87,50 @@ public fun __root___asNumberList__TypesOfArguments__Swift_Array_ExportedKotlinPa
 public fun __root___extension__TypesOfArgumentsE__main_Accessor_Swift_Array_Swift_Double__Vararg___(`receiver`: kotlin.native.internal.NativePtr, d: kotlin.native.internal.NativePtr): Boolean {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as Accessor
     val __d = interpretObjCPointer<kotlin.collections.List<Double>>(d).toDoubleArray()
-    val _result = run { __receiver.extension(*__d) }
-    return run { _result; true }
+    __receiver.extension(*__d)
+    return true
 }
 
 @ExportedBridge("__root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__")
 public fun __root___oneMore__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(a: kotlin.native.internal.NativePtr, b: Int): Boolean {
     val __a = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(a).toTypedArray()
     val __b = b
-    val _result = run { oneMore(*__a, b = __b) }
-    return run { _result; true }
+    oneMore(*__a, b = __b)
+    return true
 }
 
 @ExportedBridge("__root___setTag__TypesOfArguments__Swift_Array_Swift_String__Vararg___")
 public fun __root___setTag__TypesOfArguments__Swift_Array_Swift_String__Vararg___(tag: kotlin.native.internal.NativePtr): Boolean {
     val __tag = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(tag).toTypedArray()
-    val _result = run { setTag(*__tag) }
-    return run { _result; true }
+    setTag(*__tag)
+    return true
 }
 
 @ExportedBridge("__root___setTag__TypesOfArguments__Swift_Array_Swift_String___")
 public fun __root___setTag__TypesOfArguments__Swift_Array_Swift_String___(tags: kotlin.native.internal.NativePtr): Boolean {
     val __tags = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(tags)
-    val _result = run { setTag(__tags) }
-    return run { _result; true }
+    setTag(__tags)
+    return true
 }
 
 @ExportedBridge("__root___simple__TypesOfArguments__Swift_Array_Swift_String__Vararg___")
 public fun __root___simple__TypesOfArguments__Swift_Array_Swift_String__Vararg___(s: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __s = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(s).toTypedArray()
-    val _result = run { simple(*__s) }
+    val _result = simple(*__s)
     return _result.objcPtr()
 }
 
 @ExportedBridge("__root___varargsWithClosure__TypesOfArguments__Swift_Array_U2829202D_U20Swift_Void__Vararg___")
 public fun __root___varargsWithClosure__TypesOfArguments__Swift_Array_U2829202D_U20Swift_Void__Vararg___(inp: kotlin.native.internal.NativePtr): Boolean {
     val __inp = interpretObjCPointer<kotlin.collections.List<Function0<Unit>>>(inp).toTypedArray()
-    val _result = run { varargsWithClosure(*__inp) }
-    return run { _result; true }
+    varargsWithClosure(*__inp)
+    return true
 }
 
 @ExportedBridge("__root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__")
 public fun __root___withDefault__TypesOfArguments__Swift_Array_Swift_String__Vararg__Swift_Int32__(a: kotlin.native.internal.NativePtr, b: Int): Boolean {
     val __a = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(a).toTypedArray()
     val __b = b
-    val _result = run { withDefault(*__a, b = __b) }
-    return run { _result; true }
+    withDefault(*__a, b = __b)
+    return true
 }

@@ -92,48 +92,48 @@ public fun KeywordLabels_double__TypesOfArguments__Swift_Int32____reverse(self: 
 public fun BaseDriver_addInts__TypesOfArguments__Swift_Array_Swift_Int32__Vararg___(self: kotlin.native.internal.NativePtr, queryKeys: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as BaseDriver
     val __queryKeys = interpretObjCPointer<kotlin.collections.List<Int>>(queryKeys).toIntArray()
-    val _result = run { __self.addInts(*__queryKeys) }
-    return run { _result; true }
+    __self.addInts(*__queryKeys)
+    return true
 }
 
 @ExportedBridge("BaseDriver_addInts__TypesOfArguments__Swift_Array_Swift_Int32__Vararg____direct", nonVirtualTargetMethod = "addInts")
 public fun BaseDriver_addInts__TypesOfArguments__Swift_Array_Swift_Int32__Vararg____direct(self: kotlin.native.internal.NativePtr, queryKeys: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as BaseDriver
     val __queryKeys = interpretObjCPointer<kotlin.collections.List<Int>>(queryKeys).toIntArray()
-    val _result = run { __self.addInts(*__queryKeys) }
-    return run { _result; true }
+    __self.addInts(*__queryKeys)
+    return true
 }
 
 @ExportedBridge("BaseDriver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg___")
 public fun BaseDriver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg___(self: kotlin.native.internal.NativePtr, queryKeys: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as BaseDriver
     val __queryKeys = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(queryKeys).toTypedArray()
-    val _result = run { __self.addListener(*__queryKeys) }
-    return run { _result; true }
+    __self.addListener(*__queryKeys)
+    return true
 }
 
 @ExportedBridge("BaseDriver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg____direct", nonVirtualTargetMethod = "addListener")
 public fun BaseDriver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg____direct(self: kotlin.native.internal.NativePtr, queryKeys: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as BaseDriver
     val __queryKeys = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(queryKeys).toTypedArray()
-    val _result = run { __self.addListener(*__queryKeys) }
-    return run { _result; true }
+    __self.addListener(*__queryKeys)
+    return true
 }
 
 @ExportedBridge("BaseDriver_addOptionalInts__TypesOfArguments__Swift_Array_Swift_Optional_Swift_Int32___Vararg___")
 public fun BaseDriver_addOptionalInts__TypesOfArguments__Swift_Array_Swift_Optional_Swift_Int32___Vararg___(self: kotlin.native.internal.NativePtr, queryKeys: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as BaseDriver
     val __queryKeys = interpretObjCPointer<kotlin.collections.List<Int?>>(queryKeys).toTypedArray()
-    val _result = run { __self.addOptionalInts(*__queryKeys) }
-    return run { _result; true }
+    __self.addOptionalInts(*__queryKeys)
+    return true
 }
 
 @ExportedBridge("BaseDriver_addOptionalInts__TypesOfArguments__Swift_Array_Swift_Optional_Swift_Int32___Vararg____direct", nonVirtualTargetMethod = "addOptionalInts")
 public fun BaseDriver_addOptionalInts__TypesOfArguments__Swift_Array_Swift_Optional_Swift_Int32___Vararg____direct(self: kotlin.native.internal.NativePtr, queryKeys: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as BaseDriver
     val __queryKeys = interpretObjCPointer<kotlin.collections.List<Int?>>(queryKeys).toTypedArray()
-    val _result = run { __self.addOptionalInts(*__queryKeys) }
-    return run { _result; true }
+    __self.addOptionalInts(*__queryKeys)
+    return true
 }
 
 @ExportedBridge("Driver_addListener__TypesOfArguments__Swift_Array_Swift_String__Vararg__anyU20main__Driver_Listener__")
@@ -141,8 +141,8 @@ public fun Driver_addListener__TypesOfArguments__Swift_Array_Swift_String__Varar
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Driver
     val __queryKeys = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(queryKeys).toTypedArray()
     val __listener = kotlin.native.internal.ref.dereferenceExternalRCRef(listener) as Driver.Listener
-    val _result = run { __self.addListener(*__queryKeys, listener = __listener) }
-    return run { _result; true }
+    __self.addListener(*__queryKeys, listener = __listener)
+    return true
 }
 
 @ExportedBridge("ExtensionVararg_join__TypesOfArgumentsE__Swift_String_Swift_Array_Swift_String__Vararg___")
@@ -150,7 +150,7 @@ public fun ExtensionVararg_join__TypesOfArgumentsE__Swift_String_Swift_Array_Swi
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ExtensionVararg
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __parts = interpretObjCPointer<kotlin.collections.List<kotlin.String>>(parts).toTypedArray()
-    val _result = run { __self.run { __receiver.join(*__parts) } }
+    val _result = __self.run { __receiver.join(*__parts) }
     return _result.objcPtr()
 }
 
@@ -158,7 +158,7 @@ public fun ExtensionVararg_join__TypesOfArgumentsE__Swift_String_Swift_Array_Swi
 public fun KeywordLabels_count__TypesOfArguments__Swift_Array_Swift_Int32__Vararg___(self: kotlin.native.internal.NativePtr, inout: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KeywordLabels
     val __inout = interpretObjCPointer<kotlin.collections.List<Int>>(inout).toIntArray()
-    val _result = run { __self.count(*__inout) }
+    val _result = __self.count(*__inout)
     return _result
 }
 
@@ -166,19 +166,19 @@ public fun KeywordLabels_count__TypesOfArguments__Swift_Array_Swift_Int32__Varar
 public fun KeywordLabels_double__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, inout: Int): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as KeywordLabels
     val __inout = inout
-    val _result = run { __self.double(__inout) }
+    val _result = __self.double(__inout)
     return _result
 }
 
 @ExportedBridge("__root___BaseDriver_init_allocate")
 public fun __root___BaseDriver_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<BaseDriver>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<BaseDriver>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___BaseDriver_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___BaseDriver_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, BaseDriver()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, BaseDriver())
+    return true
 }

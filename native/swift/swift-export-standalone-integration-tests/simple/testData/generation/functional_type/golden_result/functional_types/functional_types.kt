@@ -18,13 +18,13 @@ public fun __root___consume_block_consuming_block__TypesOfArguments__U2840escapi
             run<Unit> { _result }
         }
     }
-    val _result = run { consume_block_consuming_block(__block) }
-    return run { _result; true }
+    consume_block_consuming_block(__block)
+    return true
 }
 
 @ExportedBridge("functional_types_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun functional_types_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer__(pointerToBlock: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
-    val _result = run { (__pointerToBlock as Function0<Unit>).invoke() }
-    return run { _result; true }
+    (__pointerToBlock as Function0<Unit>).invoke()
+    return true
 }

@@ -27,8 +27,8 @@ public fun __root___foo__TypesOfArguments__U28Swift_Int32U29202D_U20Swift_Void__
             run<Unit> { _result }
         }
     }
-    val _result = run { foo(__i) }
-    return run { _result; true }
+    foo(__i)
+    return true
 }
 
 @ExportedBridge("__root___fooAny__TypesOfArguments__U28anyU20KotlinRuntimeSupport__KotlinBridgeableU29202D_U20Swift_Void__")
@@ -42,8 +42,8 @@ public fun __root___fooAny__TypesOfArguments__U28anyU20KotlinRuntimeSupport__Kot
             run<Unit> { _result }
         }
     }
-    val _result = run { fooAny(__i) }
-    return run { _result; true }
+    fooAny(__i)
+    return true
 }
 
 @ExportedBridge("__root___fooList__TypesOfArguments__U28Swift_Array_Swift_Int32_U29202D_U20Swift_Void__")
@@ -57,8 +57,8 @@ public fun __root___fooList__TypesOfArguments__U28Swift_Array_Swift_Int32_U29202
             run<Unit> { _result }
         }
     }
-    val _result = run { fooList(__i) }
-    return run { _result; true }
+    fooList(__i)
+    return true
 }
 
 @ExportedBridge("__root___fooString__TypesOfArguments__U28Swift_Optional_Swift_String_U29202D_U20Swift_Void__")
@@ -72,6 +72,6 @@ public fun __root___fooString__TypesOfArguments__U28Swift_Optional_Swift_String_
             run<Unit> { _result }
         }
     }
-    val _result = run { fooString(__i) }
-    return run { _result; true }
+    fooString(__i)
+    return true
 }

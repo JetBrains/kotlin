@@ -5,6 +5,6 @@ import kotlinx.cinterop.*
 
 @ExportedBridge("__root___today")
 public fun __root___today(): kotlin.native.internal.NativePtr {
-    val _result = run { today() }
+    val _result = today()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

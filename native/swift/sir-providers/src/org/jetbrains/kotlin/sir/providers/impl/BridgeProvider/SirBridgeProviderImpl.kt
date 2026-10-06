@@ -820,7 +820,6 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
 
     if (isAsync) {
         val [continuation, exception, cancellation] = asyncParameters ?: error("Async function must have a continuation & cancellation")
-        val errorParameter = errorParameter ?: error("Async function must have an error parameter")
         add(
             """
             swiftCoroutine(__${continuation.name}, __${exception.name}, __${cancellation.name.kotlinIdentifier}) {
@@ -829,23 +828,34 @@ private fun BridgeFunctionDescriptor.createKotlinBridge(
             """.trimIndent().prependIndent(indent)
         )
     } else {
+        // Avoid wrapping call sites in `run { }`: thousands of such lambdas noticeably slow down bridge compilation.
+        val resultLines = if (returnType == Bridge.AsVoid) {
+            """
+                $callSite
+                return true
+            """.trimIndent()
+        } else {
+            """
+                val $resultName = $callSite
+                return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
+            """.trimIndent()
+        }
         if (errorParameter != null) {
             // TODO: is it correct to use the first type only here?
             val defaultValue = returnType.kotlinType.defaultValue
+            // `trimMargin` instead of `trimIndent`: the latter would see the unindented continuation lines of `resultLines`.
             add(
                 """
-            try {
-                val $resultName = run { $callSite }
-                return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}
-            } catch (error: Throwable) {
-                __${errorParameter.name}.value = StableRef.create(error).asCPointer()
-                return $defaultValue
-            }
-            """.trimIndent().prependIndent(indent)
+                |try {
+                |${resultLines.prependIndent(indent)}
+                |} catch (error: Throwable) {
+                |    __${errorParameter.name}.value = StableRef.create(error).asCPointer()
+                |    return $defaultValue
+                |}
+                """.trimMargin().prependIndent(indent)
             )
         } else {
-            add("${indent}val $resultName = run { $callSite }")
-            add("${indent}return ${returnType.inKotlinSources.kotlinToSwift(typeNamer, resultName)}")
+            add(resultLines.prependIndent(indent))
         }
     }
     add("}")

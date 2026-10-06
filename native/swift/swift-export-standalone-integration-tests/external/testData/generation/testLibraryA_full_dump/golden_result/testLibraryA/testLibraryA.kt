@@ -6,39 +6,39 @@ import kotlinx.cinterop.*
 
 @ExportedBridge("org_jetbrains_a_MyLibraryA_init_allocate")
 public fun org_jetbrains_a_MyLibraryA_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<org.jetbrains.a.MyLibraryA>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<org.jetbrains.a.MyLibraryA>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("org_jetbrains_a_MyLibraryA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun org_jetbrains_a_MyLibraryA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, org.jetbrains.a.MyLibraryA()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, org.jetbrains.a.MyLibraryA())
+    return true
 }
 
 @ExportedBridge("org_jetbrains_a_MyLibraryA_returnInt")
 public fun org_jetbrains_a_MyLibraryA_returnInt(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as org.jetbrains.a.MyLibraryA
-    val _result = run { __self.returnInt() }
+    val _result = __self.returnInt()
     return _result
 }
 
 @ExportedBridge("org_jetbrains_a_MyLibraryA_returnMe")
 public fun org_jetbrains_a_MyLibraryA_returnMe(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as org.jetbrains.a.MyLibraryA
-    val _result = run { __self.returnMe() }
+    val _result = __self.returnMe()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("org_jetbrains_a_topLevelFunction")
 public fun org_jetbrains_a_topLevelFunction(): Int {
-    val _result = run { org.jetbrains.a.topLevelFunction() }
+    val _result = org.jetbrains.a.topLevelFunction()
     return _result
 }
 
 @ExportedBridge("org_jetbrains_a_topLevelProperty_get")
 public fun org_jetbrains_a_topLevelProperty_get(): Int {
-    val _result = run { org.jetbrains.a.topLevelProperty }
+    val _result = org.jetbrains.a.topLevelProperty
     return _result
 }
