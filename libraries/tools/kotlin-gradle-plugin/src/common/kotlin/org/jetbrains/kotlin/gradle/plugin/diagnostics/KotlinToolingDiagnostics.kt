@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.abi.KlibTargetType
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -32,11 +33,12 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDepe
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.UnresolvedComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.normalized
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsVersion
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -2680,6 +2682,7 @@ internal object KotlinToolingDiagnostics {
         predefinedSeverity = WARNING,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
+        @OptIn(ExperimentalNodeJsToolchainDsl::class)
         operator fun invoke(
             installedVersion: NodeJsVersion,
             requestedVersion: NodeJsVersion,
@@ -2701,10 +2704,11 @@ internal object KotlinToolingDiagnostics {
         predefinedSeverity = WARNING,
         predefinedGroup = DiagnosticGroup.Kgp.Misconfiguration,
     ) {
+        @OptIn(ExperimentalNodeJsToolchainDsl::class)
         operator fun invoke(version: NodeJsVersion, minimalSupportedMajorVersion: Int) = build {
-            title("Node.js $version is not supported")
+            title("Node.js ${version.normalized} is not supported")
                 .description {
-                    "Node.js $version is not supported by the Kotlin Gradle Plugin. " +
+                    "Node.js ${version.normalized} is not supported by the Kotlin Gradle Plugin. " +
                             "The minimal supported version is $minimalSupportedMajorVersion."
                 }
                 .solution {

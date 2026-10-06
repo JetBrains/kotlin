@@ -741,7 +741,7 @@ class JsBrowserTestsWithPlaywrightIT : KGPBaseTest() {
                 chromium()
             }
 
-            build(":jsBrowserTest", nodeJsToolchain("SYSTEM_PATH")) {
+            build(":jsBrowserTest", nodeJsToolchain("PREINSTALLED")) {
                 assertTasksExecuted(":kotlinInstallPlaywrightChromium", ":jsBrowserTest")
                 assertOutputContains("dummy test")
                 val installationsDir = kotlinUserHome.nodeJsInstallationsDir

@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
 import org.gradle.api.Project
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.BuildPlatform
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsExecutable
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.nodeJsServiceName
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.reportDiagnosticWhenNodeJsVersionUnsupported
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.ByteArrayOutputStream
 import java.util.concurrent.ConcurrentHashMap
@@ -23,18 +26,11 @@ import javax.inject.Inject
 /**
  * A [NodeJsToolchainService] that uses a pre-installed Node.js instead of downloading one.
  */
-abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
+internal abstract class PreInstalledNodeJsToolchainServiceImpl @Inject internal constructor(
     private val objects: ObjectFactory,
-    private val providers: ProviderFactory,
     private val execOperations: ExecOperations,
-) : NodeJsToolchainService<PreInstalledNodeJsToolchainService.Parameters> {
-
-    abstract class Parameters : NodeJsToolchainService.Parameters {
-        /**
-         * The command used to run the pre-installed Node.js, for example `node` or a full path.
-         */
-        abstract val nodeJsExecutable: Property<String>
-    }
+) : PreInstalledNodeJsToolchainService {
 
     private val logger = Logging.getLogger(PreInstalledNodeJsToolchainService::class.java)
 
@@ -52,9 +48,9 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
             if (requestedVersion != null && requestedVersion.normalized != installedVersion.normalized) {
                 logger.warn(
                     "Node.js $installedVersion found by '$command' does not match the requested " +
-                    "version $requestedVersion. The requested version cannot be provisioned, because " +
-                    "the Node.js toolchain is configured to use a pre-installed Node.js. " +
-                    "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.nodejs.toolchain=DOWNLOAD."
+                            "version $requestedVersion. The requested version cannot be provisioned, because " +
+                            "the Node.js toolchain is configured to use a pre-installed Node.js. " +
+                            "Please update the pre-installed Node.js or configure the Kotlin Gradle Plugin to download Node.js by setting kotlin.js.nodejs.toolchain=DOWNLOAD."
                 )
             }
             nodeJsRequest.platform.orNull?.let { platform ->
@@ -104,12 +100,24 @@ abstract class PreInstalledNodeJsToolchainService @Inject internal constructor(
         private const val DELIMITER: Char = ' '
         private const val DETECT_SCRIPT = "[process.versions.node, process.platform, process.arch].join('$DELIMITER')"
 
-        internal fun registerIfAbsent(project: Project): Provider<PreInstalledNodeJsToolchainService> {
-            return project.gradle.sharedServices.registerIfAbsent(
+        internal fun registerIfAbsent(
+            gradle: Gradle,
+            configureBuildServiceParameters: (PreInstalledNodeJsToolchainService.Parameters) -> Unit,
+        ): Provider<PreInstalledNodeJsToolchainServiceImpl> {
+            return gradle.sharedServices.registerIfAbsent(
                 nodeJsServiceName,
-                PreInstalledNodeJsToolchainService::class.java
+                PreInstalledNodeJsToolchainServiceImpl::class.java,
             ) { spec ->
-                spec.parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath.getOrElse("node"))
+                spec.parameters.nodeJsExecutable.convention("node")
+                configureBuildServiceParameters(spec.parameters)
+            }
+        }
+
+        internal fun registerIfAbsent(project: Project): Provider<PreInstalledNodeJsToolchainServiceImpl> {
+            return registerIfAbsent(
+                project.gradle,
+            ) { parameters ->
+                parameters.nodeJsExecutable.set(project.kotlinPropertiesProvider.nodeJsToolchainLocalPath.orElse("node"))
             }
         }
     }

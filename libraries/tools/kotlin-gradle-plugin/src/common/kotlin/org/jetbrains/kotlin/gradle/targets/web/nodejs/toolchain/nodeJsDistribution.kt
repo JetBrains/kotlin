@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalNodeJsToolchainDsl::class)
+
 package org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain
 
 import org.gradle.api.file.ArchiveOperations
@@ -10,6 +12,9 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.BuildPlatform
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
 import org.jetbrains.kotlin.gradle.internal.unameExecResult
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.OsType
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.computeNodeBinDir

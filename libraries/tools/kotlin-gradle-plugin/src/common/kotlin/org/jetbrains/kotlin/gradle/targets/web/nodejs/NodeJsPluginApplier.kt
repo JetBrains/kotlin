@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsSetupTask
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.parsePlatform
 import org.jetbrains.kotlin.gradle.targets.web.HasPlatformDisambiguator
-import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainService.Companion.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.currentHostPlatform
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import kotlin.reflect.KClass
@@ -36,8 +35,6 @@ internal class NodeJsPluginApplier(
 ) {
 
     fun apply(project: Project) {
-        registerNodeJsToolchainServiceIfAbsent(project)
-
         //TODO KT-89605: if NodeJsToolchainService is used, no need to configure node js old way
 
         val nodeJs = project.createNodeJsEnvSpec(nodeJsEnvSpecKlass, nodeJsEnvSpecName)
