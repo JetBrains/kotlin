@@ -187,16 +187,8 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidExtension$Defaul
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension : org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtension {
-	public abstract fun getReturnValueCheckerMode ()Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
-	public abstract fun getReturnValueCheckerModeForTests ()Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;
-	public abstract fun returnValueChecker ()V
-	public abstract fun returnValueChecker (Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;)V
-	public abstract fun setReturnValueCheckerMode (Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;)V
-	public abstract fun setReturnValueCheckerModeForTests (Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension$DefaultImpls {
-	public static synthetic fun returnValueChecker$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinBaseExtension;Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;Lorg/jetbrains/kotlin/gradle/dsl/ReturnValueCheckerMode;ILjava/lang/Object;)V
+	public abstract fun getReturnValueCheckerMode ()Lorg/gradle/api/provider/Property;
+	public abstract fun getReturnValueCheckerModeForTests ()Lorg/gradle/api/provider/Property;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinBrowserBundler : java/lang/Enum {
@@ -1151,13 +1143,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinJvmFact
 	public abstract fun registerKotlinJvmCompileTask (Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun registerKotlinJvmCompileTask (Ljava/lang/String;Ljava/lang/String;)Lorg/gradle/api/tasks/TaskProvider;
 	public abstract fun registerKotlinJvmCompileTask (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/tasks/TaskProvider;
-	public abstract fun registerKotlinJvmCompileTask (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinJvmFactory$DefaultImpls {
 	public static synthetic fun registerKaptGenerateStubsTask$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJvmFactory;Ljava/lang/String;Lorg/gradle/api/tasks/TaskProvider;Lorg/jetbrains/kotlin/gradle/dsl/KaptExtensionConfig;Lorg/gradle/api/provider/Provider;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
 	public static synthetic fun registerKotlinJvmCompileTask$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJvmFactory;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
-	public static synthetic fun registerKotlinJvmCompileTask$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJvmFactory;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/dsl/KotlinJvmCompilerOptions;Lorg/gradle/api/provider/Provider;Lorg/gradle/api/provider/Provider;ILjava/lang/Object;)Lorg/gradle/api/tasks/TaskProvider;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinPlatformType : java/lang/Enum, java/io/Serializable, org/gradle/api/Named {
@@ -1495,6 +1485,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/BaseKotlinComp
 	public abstract fun getMultiPlatformEnabled ()Lorg/gradle/api/provider/Property;
 	public abstract fun getPluginClasspath ()Lorg/gradle/api/file/ConfigurableFileCollection;
 	public abstract fun getPluginOptions ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getReturnValueCheckerMode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getSourceSetName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getUseModuleDetection ()Lorg/gradle/api/provider/Property;
 }

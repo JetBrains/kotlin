@@ -153,7 +153,7 @@ abstract class AbstractKotlinNativeCompile<
 
     @get:Input
     @get:Optional
-    internal abstract val returnValueCheckerMode: Property<ReturnValueCheckerMode>
+    abstract val returnValueCheckerMode: Property<ReturnValueCheckerMode>
 
     @get:Internal
     internal val konanTarget by providerFactory.provider {

@@ -93,7 +93,7 @@ internal fun KotlinBaseExtension.explicitApiModeAsCompilerArg(): String? {
 internal fun ReturnValueCheckerMode.toCompilerValue() = when (this) {
     // "disable" is the compiler default for 'CommonCompilerArguments.returnValueChecker'. The argument serializer
     // compares each field to a fresh default instance and omits matches, so setting this value emits no
-    // -Xreturn-value-checker flag (a silent no-op). Keep in sync if the compiler default ever changes.
+    // -return-value-checker flag (a silent no-op). Keep in sync if the compiler default ever changes.
     ReturnValueCheckerMode.Disabled -> "disable"
     ReturnValueCheckerMode.Check -> "check"
     ReturnValueCheckerMode.Full -> "full"
@@ -164,23 +164,6 @@ abstract class KotlinProjectExtension @Inject constructor(
 
     override fun explicitApiWarning() {
         explicitApi = ExplicitApiMode.Warning
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    override var returnValueCheckerMode: ReturnValueCheckerMode? = null
-
-    @ExperimentalKotlinGradlePluginApi
-    override var returnValueCheckerModeForTests: ReturnValueCheckerMode? = null
-
-    @ExperimentalKotlinGradlePluginApi
-    override fun returnValueChecker() {
-        returnValueChecker(ReturnValueCheckerMode.Check, ReturnValueCheckerMode.Check)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    override fun returnValueChecker(mode: ReturnValueCheckerMode, testMode: ReturnValueCheckerMode) {
-        returnValueCheckerMode = mode
-        returnValueCheckerModeForTests = testMode
     }
 
     @ExperimentalKotlinGradlePluginApi

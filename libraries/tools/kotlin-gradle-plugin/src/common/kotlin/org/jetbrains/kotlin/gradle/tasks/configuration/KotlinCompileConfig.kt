@@ -113,7 +113,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
     constructor(
         project: Project,
         explicitApiMode: Provider<ExplicitApiMode>,
-        returnValueCheckerMode: Provider<ReturnValueCheckerMode> = project.providers.provider<ReturnValueCheckerMode> { null },
+        returnValueCheckerMode: Provider<ReturnValueCheckerMode>
     ) : super(
         project,
         explicitApiMode,
