@@ -8,6 +8,7 @@ import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import utils.assertIsInstance
 import utils.assertNotNull
@@ -15,6 +16,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInAnalysisApi
 @OptIn(ExperimentalDokkaApi::class)
 class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types") {
 

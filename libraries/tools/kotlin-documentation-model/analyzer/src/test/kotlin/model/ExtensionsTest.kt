@@ -10,9 +10,11 @@ import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.WithExtraProperties
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import kotlin.test.Test
 
+@MustRunOnChangesInAnalysisApi
 class ExtensionsTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
     private fun <T : WithExtraProperties<R>, R : Documentable> T.checkExtension(name: String = "extension") =
         with(extra[CallableExtensions]?.extensions) {

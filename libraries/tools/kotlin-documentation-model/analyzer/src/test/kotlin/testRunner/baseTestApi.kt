@@ -102,7 +102,6 @@ public class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
     }
 }
 
-@MustRunOnChangesInAnalysisApi
 public abstract class BaseAbstractTest(
     logger: TestLogger = TestLogger(DokkaConsoleLogger(LoggingLevel.DEBUG))
 ) : AbstractTest<BaseTestMethods, BaseTestBuilder, BaseDokkaTestGenerator>(

@@ -15,6 +15,7 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Param
 import org.jetbrains.dokka.model.doc.See
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.OnlyJavaPsi
 import utils.OnlyJavaSymbols
 import utils.assertContains
@@ -24,6 +25,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInAnalysisApi
 class JavaTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         sourceSets {

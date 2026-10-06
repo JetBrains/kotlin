@@ -15,12 +15,14 @@ import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.model.firstMemberOfType
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.OnlyJavaPsi
 import utils.text
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
+@MustRunOnChangesInAnalysisApi
 class JavadocParserTest : BaseAbstractTest() {
 
     @Test
