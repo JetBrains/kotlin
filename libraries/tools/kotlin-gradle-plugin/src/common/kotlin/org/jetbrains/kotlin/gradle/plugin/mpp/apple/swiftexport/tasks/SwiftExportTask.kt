@@ -10,6 +10,8 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
@@ -33,7 +35,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportDepende
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportMetadata
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfigurationWithArtifacts
+import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.konan.target.Distribution
 import javax.inject.Inject
 
@@ -41,6 +45,7 @@ import javax.inject.Inject
 internal abstract class SwiftExportTask @Inject constructor(
     private val workerExecutor: WorkerExecutor,
     private val fileSystem: FileSystemOperations,
+    objectFactory: ObjectFactory,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
 
     internal abstract class ModuleInput {
@@ -205,6 +210,21 @@ internal abstract class SwiftExportTask @Inject constructor(
     @get:Internal
     abstract val ignoreExperimentalDiagnostic: Property<Boolean>
 
+    @get:Input
+    internal val customJvmArgs: ListProperty<String> = objectFactory
+        .listProperty<String>()
+        .chainedFinalizeValueOnRead()
+
+    /**
+     * [customJvmArgs] with `-Xmx1g` appended unless they already set `-Xmx`.
+     */
+    @get:Internal
+    internal val workerJvmArgs: List<String>
+        get() {
+            val jvmArgs = customJvmArgs.get()
+            return if (jvmArgs.any { it.startsWith("-Xmx") }) jvmArgs else jvmArgs + DEFAULT_MAX_HEAP_SIZE
+        }
+
     @TaskAction
     fun run() {
         if (!ignoreExperimentalDiagnostic.get()) {
@@ -216,6 +236,7 @@ internal abstract class SwiftExportTask @Inject constructor(
         // Run Swift Export with process isolation to avoid leakage for AA/IntelliJ classes. See KT-73438
         val swiftExportQueue = workerExecutor.processIsolation { workerSpec ->
             workerSpec.classpath.from(swiftExportClasspath)
+            workerSpec.forkOptions.jvmArgs(workerJvmArgs)
             // With this flag of true, we would have to embed kotlinx.coroutines.internal.intellij.IntellijCoroutines into somewhere,
             // to avoid ClassNotFoundException. As it's currently unclear how to embed this class, we disable it for now.
             workerSpec.forkOptions.systemProperties.put("ide.can.use.coroutines.fork", "false")
@@ -280,6 +301,11 @@ internal abstract class SwiftExportTask @Inject constructor(
         fileSystem.delete {
             it.delete(parameters.outputDirectory)
         }
+    }
+
+    private companion object {
+        // Gradle gives worker processes 512 MB by default, which is too little for larger modules.
+        const val DEFAULT_MAX_HEAP_SIZE = "-Xmx1g"
     }
 
     private fun warnAboutExperimentalSwiftExportFeature() {

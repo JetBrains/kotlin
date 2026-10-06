@@ -593,6 +593,16 @@ class SwiftExportUnitTests {
     }
 
     @Test
+    fun `test swift export worker max heap size defaults to 1g`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+
+        assertEquals(listOf("-Xmx1g"), swiftExportTask.workerJvmArgs)
+    }
+
+    @Test
     fun `test swift export invalid module name`() {
         val project = swiftExportProject {
             moduleName.set("Shared.Module")
