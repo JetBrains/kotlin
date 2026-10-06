@@ -1,0 +1,1 @@
+throw new Exception("Expected to fail")
