@@ -122,11 +122,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
 
     FirDeclarationOrigin.Precompiled -> KaSymbolOrigin.SOURCE
     FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns, FirDeclarationOrigin.BuiltInsFallback -> KaSymbolOrigin.LIBRARY
-    is FirDeclarationOrigin.Java.Source,
-    is FirDeclarationOrigin.Java.Plugin
-        // Currently, `JAVA_SOURCE` is used both for `Source` and `Generated` origins to preserve backward compatibility.
-        // However, a new `KaSymbolOrigin.JAVA_GENERATED` can be introduced later if necessary.
-        -> KaSymbolOrigin.JAVA_SOURCE
+    is FirDeclarationOrigin.Java.Source -> KaSymbolOrigin.JAVA_SOURCE
     is FirDeclarationOrigin.Java.Library -> KaSymbolOrigin.JAVA_LIBRARY
     is FirDeclarationOrigin.Java.Plugin -> KaSymbolOrigin.PLUGIN
     FirDeclarationOrigin.SamConstructor -> KaSymbolOrigin.SAM_CONSTRUCTOR

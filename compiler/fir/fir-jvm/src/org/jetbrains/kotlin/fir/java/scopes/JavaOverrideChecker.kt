@@ -297,8 +297,8 @@ class JavaOverrideChecker internal constructor(
             return false
         }
 
-        if (overrideCandidate.origin.let { it is FirDeclarationOrigin.Java && (it.fromSource || it.generated) } ||
-            baseDeclaration.origin.let { it is FirDeclarationOrigin.Java && (it.fromSource || it.generated) }
+        if (overrideCandidate.origin.let { it is FirDeclarationOrigin.Java && it.sourceOrGenerated } &&
+            baseDeclaration.origin == FirDeclarationOrigin.Source
         ) {
             // For override from Java source against the Kotlin base the following check of return type kinds is not important
             // From the other side, it can provoke problems in case baseDeclaration is from source and has an implicit return type

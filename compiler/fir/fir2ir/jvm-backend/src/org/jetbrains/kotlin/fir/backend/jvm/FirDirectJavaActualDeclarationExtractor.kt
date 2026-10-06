@@ -41,7 +41,7 @@ class FirDirectJavaActualDeclarationExtractor private constructor(
 
     override fun extract(expectIrClass: IrClass): IrClassSymbol? {
         val javaActualDeclaration = javaSymbolProvider.getClassLikeSymbolByClassId(expectIrClass.classIdOrFail)
-            ?.takeIf { symbol -> symbol.origin.let { it is FirDeclarationOrigin.Java.Source && (it.fromSource || it.generated) } }
+            ?.takeIf { symbol -> symbol.origin.let { it is FirDeclarationOrigin.Java && it.sourceOrGenerated } }
         if (javaActualDeclaration != null) {
             return classifierStorage.getIrClassSymbol(javaActualDeclaration)
         }

@@ -33,6 +33,8 @@ sealed class FirDeclarationOrigin(
 
             override fun hashCode(): Int = key.hashCode()
         }
+
+        val sourceOrGenerated: Boolean get() = fromSource || generated
     }
 
     val isBuiltIns: Boolean get() = this == BuiltIns || this == BuiltInsFallback
