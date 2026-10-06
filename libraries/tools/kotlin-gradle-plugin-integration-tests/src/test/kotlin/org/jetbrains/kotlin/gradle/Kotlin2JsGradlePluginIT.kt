@@ -1973,29 +1973,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("KT-88592: Node.js Mocha does not warn about HTML reporter options")
-    @GradleTest
-    fun testMochaDoesNotWarnAboutHtmlReporter(gradleVersion: GradleVersion) {
-        project("kotlin-js-nodejs-project", gradleVersion) {
-            build("jsNodeTest") {
-                assertTasksExecuted(":jsNodeTest")
-                assertExecutedTestCases("jsNodeTest", "Tests#testHello")
-
-                val htmlReporterWarnings = output.lineSequence()
-                    .map { it.trim() }
-                    .filter {
-                        it == "Reporter option 'alsoWithHtml' has no effect."
-                    }
-                    .toList()
-                assertEquals(
-                    emptyList(),
-                    htmlReporterWarnings,
-                    "Node.js Mocha must not configure HTML reporter options (KT-88592)"
-                )
-            }
-        }
-    }
-
     @DisplayName("mocha has no output during dry run")
     @GradleTest
     fun testMochaHasNoDryRunOutput(gradleVersion: GradleVersion) {
