@@ -79,7 +79,6 @@ object CompilerModules {
         ":compiler:fir:plugin-utils",
         ":compiler:fir:tree",
         ":compiler:fir:fir-jvm",
-        ":compiler:fir:fir-js",
         ":compiler:fir:fir-native",
         ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:raw-fir:psi2fir",
