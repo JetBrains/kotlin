@@ -19,6 +19,8 @@ public typealias DeprecatedWarningSubClass = ExportedKotlinPackages.org.kotlin.f
 public typealias DeprecatedWarningSubClass_SealedType = ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass_SealedType
 public typealias EnumClassA = ExportedKotlinPackages.org.kotlin.foo.EnumClassA
 public typealias EnumClassB = ExportedKotlinPackages.org.kotlin.foo.EnumClassB
+public typealias ExportedContainedInheritor = ExportedKotlinPackages.org.kotlin.foo.ExportedContainedInheritor
+public typealias ExportedContainedInheritor_SealedType = ExportedKotlinPackages.org.kotlin.foo.ExportedContainedInheritor_SealedType
 public typealias InterfaceC = ExportedKotlinPackages.org.kotlin.foo.InterfaceC
 public typealias InterfaceC_SealedType = ExportedKotlinPackages.org.kotlin.foo.InterfaceC_SealedType
 public typealias MyClassA = ExportedKotlinPackages.org.kotlin.foo.MyClassA
@@ -60,6 +62,8 @@ public typealias SealedInterfaceA = ExportedKotlinPackages.org.kotlin.foo.Sealed
 public typealias SealedInterfaceA_SealedType = ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType
 public typealias SealedInterfaceB = ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB
 public typealias SealedInterfaceB_SealedType = ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB_SealedType
+public typealias SealedInterfaceWithContainedInheritor = ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor
+public typealias SealedInterfaceWithContainedInheritor_SealedType = ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor_SealedType
 public typealias SealedNonOptInClass = ExportedKotlinPackages.org.kotlin.foo.SealedNonOptInClass
 public typealias SealedNonOptInClass_SealedType = ExportedKotlinPackages.org.kotlin.foo.SealedNonOptInClass_SealedType
 @_spi(org$kotlin$foo$OptInA)
@@ -70,10 +74,12 @@ public typealias _InterfaceC = ExportedKotlinPackages.org.kotlin.foo._InterfaceC
 public typealias _QueryResult = ExportedKotlinPackages.org.kotlin.foo._QueryResult
 public typealias _SealedInterfaceA = ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA
 public typealias _SealedInterfaceB = ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceB
+public typealias _SealedInterfaceWithContainedInheritor = ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceWithContainedInheritor
 public typealias __InterfaceC = ExportedKotlinPackages.org.kotlin.foo.__InterfaceC
 public typealias __QueryResult = ExportedKotlinPackages.org.kotlin.foo.__QueryResult
 public typealias __SealedInterfaceA = ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA
 public typealias __SealedInterfaceB = ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceB
+public typealias __SealedInterfaceWithContainedInheritor = ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceWithContainedInheritor
 public final class _ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValue: KotlinRuntime.KotlinBase {
     public var value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
@@ -152,7 +158,21 @@ extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceB {
     }
 }
 @_documentation(visibility: internal)
+extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor where Self : ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceWithContainedInheritor {
+    public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor_SealedType {
+        switch self {
+        case let value as ExportedKotlinPackages.org.kotlin.foo.ExportedContainedInheritor: .exportedContainedInheritor(.init(value))
+        default: .unknown(.init(self))
+        }
+    }
+}
+extension ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor {
+}
+@_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.QueryResult, ExportedKotlinPackages.org.kotlin.foo.__QueryResult where Wrapped : ExportedKotlinPackages.org.kotlin.foo._QueryResult {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceWithContainedInheritor where Wrapped : ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceWithContainedInheritor {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA where Wrapped : ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
@@ -165,6 +185,9 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.org.ko
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._QueryResult {
+}
+@_documentation(visibility: internal)
+extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceWithContainedInheritor {
 }
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
@@ -418,6 +441,26 @@ extension ExportedKotlinPackages.org.kotlin.foo {
             }
         }
     }
+    public enum SealedInterfaceWithContainedInheritor_SealedType: KotlinRuntimeSupport.SealedType {
+        case exportedContainedInheritor(ExportedKotlinPackages.org.kotlin.foo.ExportedContainedInheritor_SealedType)
+        case unknown(ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor_SealedType.Unknown)
+        public struct Unknown: KotlinRuntimeSupport.SealedType {
+            public let value: ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor
+            init(
+                _ value: ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor
+            ) {
+                self.value = value
+            }
+        }
+        public var value: ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor {
+            get {
+                switch self {
+                case let .exportedContainedInheritor(type): type.value
+                case let .unknown(type): type.value
+                }
+            }
+        }
+    }
     public enum SealedNonOptInClass_SealedType: KotlinRuntimeSupport.SealedType {
         case nonSealedNonOptInClassA(ExportedKotlinPackages.org.kotlin.foo.NonSealedNonOptInClassA_SealedType)
         @_spi(org$kotlin$foo$OptInA)
@@ -457,6 +500,9 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public protocol SealedInterfaceB: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA, ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceB {
         func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceA_SealedType
     }
+    public protocol SealedInterfaceWithContainedInheritor: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceWithContainedInheritor {
+        func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor_SealedType
+    }
     @objc(_ExportedKotlinPackages_org_kotlin_foo_InterfaceC)
     public protocol _InterfaceC: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
     }
@@ -469,6 +515,9 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     @objc(_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceB)
     public protocol _SealedInterfaceB: ExportedKotlinPackages.org.kotlin.foo._SealedInterfaceA {
     }
+    @objc(_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceWithContainedInheritor)
+    public protocol _SealedInterfaceWithContainedInheritor {
+    }
     public protocol __InterfaceC: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
     }
     public protocol __QueryResult: KotlinRuntimeSupport._KotlinBridgeable {
@@ -476,6 +525,8 @@ extension ExportedKotlinPackages.org.kotlin.foo {
     public protocol __SealedInterfaceA: KotlinRuntimeSupport._KotlinBridgeable {
     }
     public protocol __SealedInterfaceB: KotlinRuntimeSupport._KotlinBridgeable, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceA {
+    }
+    public protocol __SealedInterfaceWithContainedInheritor: KotlinRuntimeSupport._KotlinBridgeable {
     }
     public final class ClassC: ExportedKotlinPackages.org.kotlin.foo.SealedClassA {
         public init() {
@@ -557,6 +608,22 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         }
         public override func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedClassNonDeprecated_SealedType {
             .deprecatedWarningSubClass(.init(self))
+        }
+    }
+    public final class ExportedContainedInheritor: KotlinRuntime.KotlinBase, ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor, ExportedKotlinPackages.org.kotlin.foo.__SealedInterfaceWithContainedInheritor {
+        public override init() {
+            let __kt = org_kotlin_foo_ExportedContainedInheritor_init_allocate()
+            super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
+            { org_kotlin_foo_ExportedContainedInheritor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt); return () }()
+        }
+        package override init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer,
+            options: KotlinRuntime.KotlinBaseConstructionOptions
+        ) {
+            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
+        }
+        public func sealedType() -> ExportedKotlinPackages.org.kotlin.foo.SealedInterfaceWithContainedInheritor_SealedType {
+            .exportedContainedInheritor(.init(self))
         }
     }
     public final class MyClassA: KotlinRuntime.KotlinBase {
@@ -883,6 +950,14 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         public let value: ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass
         init(
             _ value: ExportedKotlinPackages.org.kotlin.foo.DeprecatedWarningSubClass
+        ) {
+            self.value = value
+        }
+    }
+    public struct ExportedContainedInheritor_SealedType: KotlinRuntimeSupport.SealedType {
+        public let value: ExportedKotlinPackages.org.kotlin.foo.ExportedContainedInheritor
+        init(
+            _ value: ExportedKotlinPackages.org.kotlin.foo.ExportedContainedInheritor
         ) {
             self.value = value
         }
