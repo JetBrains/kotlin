@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -161,7 +160,6 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         }
     }
 
-    @OptIn(KtNonPublicApi::class)
     private fun analyzeImpl(module: TestModule, moduleData: FirModuleData): FirOutputPartForDependsOnModule {
         val firParser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 

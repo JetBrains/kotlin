@@ -64,7 +64,9 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
     protected open fun runTest(filePath: String) {
         val absolutePath = ForTestCompileRuntime.transformTestDataPath(filePath).path
         val file = createKtFile(absolutePath)
-        val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
+        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(file.text))
+        session.registerReplSnippetConfiguratorForReplFixture(filePath)
+        val firFile = file.toFirFile(session, BodyBuildingMode.NORMAL)
         val firFileDump = dumpFirFile(firFile)
         val expectedPath = expectedPath(absolutePath, ".txt")
         TestDataAssertions.assertEqualsToFile(File(expectedPath), firFileDump)
@@ -72,9 +74,8 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase("", "kt") {
     }
 
     /**
-     * Tree-based counterpart of `KtTestUtil.createFile` marking `*.repl.kts` PSI files with `markAsReplSnippet()`:
-     * tree-based builders decide between a script and a REPL snippet through the registered
-     * [FirReplSnippetConfiguratorExtension]s, so a no-op one accepting every source is registered for REPL fixtures.
+     * Raw FIR builders decide between a script and a REPL snippet through the registered [FirReplSnippetConfiguratorExtension]s,
+     * so a no-op one accepting every source is registered for `*.repl.kts` fixtures.
      */
     @OptIn(PluginServicesInitialization::class)
     protected fun FirSession.registerReplSnippetConfiguratorForReplFixture(filePath: String) {
