@@ -8,10 +8,12 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.StringValue
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.assertEquals
 
+@MustRunOnChangesInAnalysisApi
 class FileLevelJvmNameTest : BaseAbstractTest() {
     private val testConfiguration = dokkaConfiguration {
         sourceSets {

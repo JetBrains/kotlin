@@ -5,12 +5,14 @@
 package translators
 
 import org.jetbrains.dokka.model.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.AbstractModelTest
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@MustRunOnChangesInAnalysisApi
 class KMPTest : AbstractModelTest("/src/main/kotlin/kmp/Test.kt", "kmp") {
 
     // copy-pasted org.jetbrains.dokka.analysis.test.api.util.getResourceAbsolutePath

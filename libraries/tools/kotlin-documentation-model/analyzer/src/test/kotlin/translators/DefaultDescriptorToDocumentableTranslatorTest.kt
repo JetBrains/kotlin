@@ -13,9 +13,11 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.text
 import kotlin.test.*
 
+@MustRunOnChangesInAnalysisApi
 class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         suppressObviousFunctions = false

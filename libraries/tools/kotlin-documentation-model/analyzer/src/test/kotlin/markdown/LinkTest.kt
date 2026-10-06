@@ -12,12 +12,14 @@ import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import utils.text
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
+@MustRunOnChangesInAnalysisApi
 class LinkTest : BaseAbstractTest() {
 
     val configuration = dokkaConfiguration {

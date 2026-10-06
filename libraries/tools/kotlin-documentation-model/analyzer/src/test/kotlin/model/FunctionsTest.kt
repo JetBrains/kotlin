@@ -17,7 +17,9 @@ import utils.name
 import utils.text
 import kotlin.test.Test
 import org.jetbrains.dokka.ExperimentalDokkaApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 
+@MustRunOnChangesInAnalysisApi
 @OptIn(ExperimentalDokkaApi::class)
 class FunctionTest : AbstractModelTest("/src/main/kotlin/function/Test.kt", "function") {
 

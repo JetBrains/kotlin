@@ -13,11 +13,12 @@ import org.jetbrains.dokka.links.TypeConstructor
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.KotlinModifier.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import kotlin.test.assertNull
 import kotlin.test.Test
 import utils.*
 
-
+@MustRunOnChangesInAnalysisApi
 class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
 
     @Test

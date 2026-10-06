@@ -15,6 +15,7 @@ import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.transformers.documentation.ClashingDriIdentifier
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInAnalysisApi
 import org.junit.jupiter.api.Nested
 import translators.findClasslike
 import kotlin.test.Test
@@ -22,7 +23,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-
+@MustRunOnChangesInAnalysisApi
 class ExpectActualsTest : BaseAbstractTest() {
 
     private val multiplatformConfiguration = dokkaConfiguration {
