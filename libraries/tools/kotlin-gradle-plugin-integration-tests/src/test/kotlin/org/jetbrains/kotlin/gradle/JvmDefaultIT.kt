@@ -72,7 +72,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 id("kotlin-dsl")
             }
 
-            overrideOldGradleBoundLanguageVersionsWith21()
+            overrideOldGradleBoundLanguageVersionsWith23()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -110,7 +110,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
             buildScriptInjection {
                 useCompilerVersion("2.2.0")
             }
-            overrideOldGradleBoundLanguageVersionsWith21()
+            overrideOldGradleBoundLanguageVersionsWith23()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             build(":compileKotlin") {
@@ -140,7 +140,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            overrideOldGradleBoundLanguageVersionsWith21()
+            overrideOldGradleBoundLanguageVersionsWith23()
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -176,7 +176,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                     }
                 }
             }
-            overrideOldGradleBoundLanguageVersionsWith21()
+            overrideOldGradleBoundLanguageVersionsWith23()
 
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
@@ -204,15 +204,14 @@ internal class JvmDefaultIT : KGPBaseTest() {
     )
 
     // Gradle versions 8.* and before use either LV 1.4 or 1.8, but they both are currently disabled
-    private fun TestProject.overrideOldGradleBoundLanguageVersionsWith21() {
+    private fun TestProject.overrideOldGradleBoundLanguageVersionsWith23() {
         buildScriptInjection {
             project.afterEvaluate {
                 project.afterEvaluate {
                     project.tasks.named("compileKotlin", KotlinJvmCompile::class.java) {
-                        @Suppress("DEPRECATION")
                         it.compilerOptions {
-                            languageVersion.set(KotlinVersion.KOTLIN_2_1)
-                            apiVersion.set(KotlinVersion.KOTLIN_2_1)
+                            languageVersion.set(KotlinVersion.KOTLIN_2_3)
+                            apiVersion.set(KotlinVersion.KOTLIN_2_3)
                         }
                     }
                 }

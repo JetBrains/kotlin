@@ -1,7 +1,4 @@
-fun test() {
-    while (true) {
-        run {
-            break
-        }
-    }
+fun main() {
+    // FF: UnnamedLocalVariables
+    val _ = minOf(1, 2)
 }

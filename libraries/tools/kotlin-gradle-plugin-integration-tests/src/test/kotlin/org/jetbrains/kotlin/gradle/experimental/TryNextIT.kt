@@ -255,18 +255,19 @@ class TryNextIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
+            val version = KotlinVersion.firstNonDeprecated
 
             buildGradle.appendText(
                 """
                 |
-                |kotlin.compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+                |kotlin.compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.${version.name})
                 """.trimMargin()
             )
 
             build("compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
 
-                assertCompilerArgument(":compileKotlin", "-language-version 2.1")
+                assertCompilerArgument(":compileKotlin", "-language-version ${version.version}")
             }
         }
     }
