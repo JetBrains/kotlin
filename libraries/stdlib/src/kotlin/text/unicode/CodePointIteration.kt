@@ -287,7 +287,7 @@ public expect fun CharArray.offsetByCodePoints(index: Int, codePointOffset: Int,
  *
  * Any unpaired surrogate chars are passed to the [action] as individual code points.
  *
- * @see codePointSequence
+ * @see asCodePointSequence
  * @see codePointIterator
  */
 @SinceKotlin("2.5")
@@ -304,7 +304,7 @@ public inline fun String.forEachCodePoint(action: (CodePoint) -> Unit) {
  *
  * Any unpaired surrogate chars are passed to the [action] as individual code points.
  *
- * @see codePointSequence
+ * @see asCodePointSequence
  * @see codePointIterator
  */
 @SinceKotlin("2.5")
@@ -329,7 +329,7 @@ public inline fun CharSequence.forEachCodePoint(action: (CodePoint) -> Unit) {
  * @param endIndex The ending of the array range, exclusive. Defaults to the size of the char array.
  * @throws IndexOutOfBoundsException If [startIndex] or [endIndex] is out of the valid range `0..charArray.size` or `endIndex < startIndex`.
  *
- * @see codePointSequence
+ * @see asCodePointSequence
  * @see codePointIterator
  */
 @SinceKotlin("2.5")
@@ -354,7 +354,7 @@ internal inline fun forEachCodePointImpl(startIndex: Int, endIndex: Int, codePoi
 /**
  * A sequence of Unicode code points.
  *
- * The sequence can be obtained from a [String], [CharSequence], or a [CharArray] with the [codePointSequence] function.
+ * The sequence can be obtained from a [String], [CharSequence], or a [CharArray] with the [asCodePointSequence] function.
  * The sequence allows iterating through the code points in the container in the direction from the beginning to the end.
  */
 @SinceKotlin("2.5")
@@ -469,10 +469,10 @@ private abstract class AbstractCodePointIterator(startIndex: Int, val endIndex: 
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
-public fun String.codePointSequence(): CodePointSequence =
+public fun String.asCodePointSequence(): CodePointSequence =
     object : CodePointSequence {
         override fun iterator(): CodePointIterator = object : AbstractCodePointIterator(0, length) {
-            override fun codePointAt(index: Int): CodePoint = this@codePointSequence.codePointAt(index)
+            override fun codePointAt(index: Int): CodePoint = this@asCodePointSequence.codePointAt(index)
         }
     }
 
@@ -485,10 +485,10 @@ public fun String.codePointSequence(): CodePointSequence =
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
-public fun CharSequence.codePointSequence(): CodePointSequence =
+public fun CharSequence.asCodePointSequence(): CodePointSequence =
     object : CodePointSequence {
         override fun iterator(): CodePointIterator = object : AbstractCodePointIterator(0, length) {
-            override fun codePointAt(index: Int): CodePoint = this@codePointSequence.codePointAt(index)
+            override fun codePointAt(index: Int): CodePoint = this@asCodePointSequence.codePointAt(index)
         }
     }
 
@@ -509,11 +509,11 @@ public fun CharSequence.codePointSequence(): CodePointSequence =
  */
 @SinceKotlin("2.5")
 @ExperimentalUnicodeApi
-public fun CharArray.codePointSequence(startIndex: Int = 0, endIndex: Int = size): CodePointSequence {
+public fun CharArray.asCodePointSequence(startIndex: Int = 0, endIndex: Int = size): CodePointSequence {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, size)
     return object : CodePointSequence {
         override fun iterator(): CodePointIterator = object : AbstractCodePointIterator(startIndex, endIndex) {
-            override fun codePointAt(index: Int): CodePoint = this@codePointSequence.codePointAt(index, this.endIndex)
+            override fun codePointAt(index: Int): CodePoint = this@asCodePointSequence.codePointAt(index, this.endIndex)
         }
     }
 }
