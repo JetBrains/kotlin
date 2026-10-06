@@ -14,10 +14,6 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":kotlin-util-klib-metadata"))
 
-    api(project(":compiler:fir:cones"))
-    api(project(":compiler:fir:tree"))
-    api(project(":compiler:fir:providers"))
-    api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:resolve"))
 
     compileOnly(intellijCore())

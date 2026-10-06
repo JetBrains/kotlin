@@ -9,15 +9,10 @@ plugins {
 dependencies {
     api(project(":compiler:fir:checkers"))
     api(project(":native:base"))
-    api(project(":compiler:fir:cones"))
-    api(project(":compiler:fir:providers"))
-    api(project(":compiler:fir:tree"))
     api(project(":compiler:frontend.common"))
     api(project(":core:compiler.common"))
     api(project(":core:util.runtime"))
     api(project(":kotlin-stdlib"))
-    implementation(project(":compiler:fir:diagnostic-renderers"))
-    implementation(project(":compiler:fir:semantics"))
     implementation(project(":compiler:frontend.common-psi"))
 
     implementation(project(":compiler:psi:psi-api"))

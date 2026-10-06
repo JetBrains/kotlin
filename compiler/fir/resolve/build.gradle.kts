@@ -6,7 +6,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:providers"))
     api(project(":compiler:fir:semantics"))
     implementation(project(":core:util.runtime"))
 

@@ -15,11 +15,7 @@ plugins {
 dependencies {
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
-    implementation(project(":compiler:fir:cones"))
     implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:providers"))
-    implementation(project(":compiler:fir:semantics"))
-    implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:ir.tree"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.common"))
