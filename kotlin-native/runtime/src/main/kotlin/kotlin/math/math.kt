@@ -526,8 +526,8 @@ public actual fun Double.withSign(sign: Int): Double = withSign(sign.toDouble())
  * Returns the [Double] value nearest to this value in a direction of positive infinity.
  *
  * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `NaN.nextUp()` is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp()` is `+Infinity`
  *   - `0.0.nextUp()` is `Double.MIN_VALUE`
  *
  * @see nextTowards
@@ -544,8 +544,8 @@ external public actual fun Double.nextUp(): Double
  * Returns the [Double] value nearest to this value in a direction of negative infinity.
  *
  * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `NaN.nextDown()` is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown()` is `-Infinity`
  *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
  *
  * @see nextUp
@@ -1137,8 +1137,8 @@ public val Float.ulp: Float
  * Returns the [Float] value nearest to this value in a direction of positive infinity.
  *
  * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Float.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `NaN.nextUp()` is `NaN`
+ *   - `Float.POSITIVE_INFINITY.nextUp()` is `+Infinity`
  *   - `0.0f.nextUp()` is `Float.MIN_VALUE`
  *
  * @see nextTowards
@@ -1155,8 +1155,8 @@ external public fun Float.nextUp(): Float
  * Returns the [Float] value nearest to this value in a direction of negative infinity.
  *
  * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Float.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `NaN.nextDown()` is `NaN`
+ *   - `Float.NEGATIVE_INFINITY.nextDown()` is `-Infinity`
  *   - `0.0.nextDown()` is `-Float.MIN_VALUE`
  *
  * @see nextUp

@@ -658,8 +658,8 @@ public actual inline val Double.ulp: Double get() = nativeMath.ulp(this)
  * Returns the [Double] value nearest to this value in a direction of positive infinity.
  *
  * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `NaN.nextUp()` is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp()` is `+Infinity`
  *   - `0.0.nextUp()` is `Double.MIN_VALUE`
  *
  * @see nextTowards
@@ -676,8 +676,8 @@ public actual inline fun Double.nextUp(): Double = nativeMath.nextUp(this)
  * Returns the [Double] value nearest to this value in a direction of negative infinity.
  *
  * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `NaN.nextDown()` is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown()` is `-Infinity`
  *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
  *
  * @see nextUp
@@ -1313,8 +1313,8 @@ public inline val Float.ulp: Float get() = nativeMath.ulp(this)
  * Returns the [Float] value nearest to this value in a direction of positive infinity.
  *
  * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Float.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `NaN.nextUp()` is `NaN`
+ *   - `Float.POSITIVE_INFINITY.nextUp()` is `+Infinity`
  *   - `0.0f.nextUp()` is `Float.MIN_VALUE`
  *
  * @see nextTowards
@@ -1331,8 +1331,8 @@ public inline fun Float.nextUp(): Float = nativeMath.nextUp(this)
  * Returns the [Float] value nearest to this value in a direction of negative infinity.
  *
  * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Float.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `NaN.nextDown()` is `NaN`
+ *   - `Float.NEGATIVE_INFINITY.nextDown()` is `-Infinity`
  *   - `0.0.nextDown()` is `-Float.MIN_VALUE`
  *
  * @see nextUp
