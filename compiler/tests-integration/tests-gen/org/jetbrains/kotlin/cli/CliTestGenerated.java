@@ -209,6 +209,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("jvmDependenciesInCommonClasspath_friendsWithKlib.args")
+    public void testJvmDependenciesInCommonClasspath_friendsWithKlib() {
+      run("jvmDependenciesInCommonClasspath_friendsWithKlib.args");
+    }
+
+    @Test
     @TestMetadata("jvmDependenciesInCommonClasspath_jar.args")
     public void testJvmDependenciesInCommonClasspath_jar() {
       run("jvmDependenciesInCommonClasspath_jar.args");
