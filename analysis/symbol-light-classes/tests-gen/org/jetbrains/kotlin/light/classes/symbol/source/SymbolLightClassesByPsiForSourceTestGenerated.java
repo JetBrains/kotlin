@@ -209,6 +209,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   }
 
   @Test
+  @TestMetadata("errorTypeNullability.kt")
+  public void testErrorTypeNullability() {
+    run("errorTypeNullability.kt");
+  }
+
+  @Test
   @TestMetadata("exposedAnonymousType.kt")
   public void testExposedAnonymousType() {
     run("exposedAnonymousType.kt");
