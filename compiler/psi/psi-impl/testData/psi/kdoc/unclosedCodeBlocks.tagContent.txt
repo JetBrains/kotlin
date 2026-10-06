@@ -1,0 +1,13 @@
+ORIGINAL KDOC:
+* ```kotlin
+ * foo()
+CONTENT:
+```kotlin
+foo()
+
+ORIGINAL KDOC:
+* ```kotlin
+ * /*x*/ foo()
+CONTENT:
+```kotlin
+/*x*/ foo()

@@ -262,13 +262,13 @@ companion object {
     "\u0002\u0002\u0001\u0008\u0002\u0002\u0001\u0009\u0001\u0002\u0001\u000a\u0001\u000b\u0001\u000c"+
     "\u0004\u000a\u0001\u0009\u0001\u000d\u0001\u000e\u0001\u000f\u0001\u000d\u0001\u0010\u0002\u000d"+
     "\u0001\u0011\u0001\u0012\u0001\u0011\u0001\u0013\u0001\u0014\u0001\u0000\u0001\u0015\u0003\u0000"+
-    "\u0001\u0016\u0001\u0017\u0001\u0009\u0001\u0000\u0001\u000c\u0005\u0000\u0001\u0018\u0002\u0000"+
-    "\u0001\u0019\u0003\u0000\u0001\u0009\u0003\u0000\u0001\u000c\u0001\u0000\u0001\u000c\u0001\u0000"+
-    "\u0001\u001a\u0001\u0000\u0001\u001b\u0002\u0000\u0001\u001c\u0002\u0000"
+    "\u0001\u0016\u0001\u0017\u0001\u0009\u0001\u0000\u0001\u000c\u0006\u0000\u0001\u0018\u0001\u0019"+
+    "\u0003\u0000\u0001\u001a\u0001\u001b\u0003\u0000\u0001\u0009\u0003\u0000\u0001\u000c\u0001\u0000"+
+    "\u0001\u000c\u0001\u0000\u0001\u001c\u0001\u0000\u0001\u001d\u0002\u0000\u0001\u001e\u0002\u0000"
 
   @JvmStatic
   private fun zzUnpackAction(): IntArray {
-    val result: IntArray = IntArray(85)
+    val result: IntArray = IntArray(89)
     var offset: Int = 0
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result)
     return result
@@ -301,17 +301,18 @@ companion object {
     "\u0000\u0098\u0000\u00ab\u0000\u00be\u0000\u00d1\u0000\u00e4\u0000\u00f7\u0000\u00d1\u0000\u010a"+
     "\u0000\u00d1\u0000\u00d1\u0000\u00d1\u0000\u011d\u0000\u0130\u0000\u0143\u0000\u0156\u0000\u00e4"+
     "\u0000\u0169\u0000\u017c\u0000\u018f\u0000\u00d1\u0000\u00d1\u0000\u01a2\u0000\u00e4\u0000\u01b5"+
-    "\u0000\u01c8\u0000\u01db\u0000\u01ee\u0000\u00d1\u0000\u0201\u0000\u00d1\u0000\u00e4\u0000\u0214"+
-    "\u0000\u0227\u0000\u023a\u0000\u00d1\u0000\u00d1\u0000\u00e4\u0000\u024d\u0000\u0260\u0000\u00e4"+
-    "\u0000\u00d1\u0000\u0273\u0000\u0286\u0000\u0299\u0000\u00d1\u0000\u02ac\u0000\u02bf\u0000\u02d2"+
-    "\u0000\u02e5\u0000\u02f8\u0000\u030b\u0000\u031e\u0000\u0331\u0000\u0344\u0000\u00d1\u0000\u0227"+
-    "\u0000\u023a\u0000\u00d1\u0000\u0357\u0000\u036a\u0000\u037d\u0000\u0390\u0000\u03a3\u0000\u01c8"+
-    "\u0000\u03b6\u0000\u00d1\u0000\u03c9\u0000\u03dc\u0000\u03ef\u0000\u00d1\u0000\u0402\u0000\u00d1"+
-    "\u0000\u0415\u0000\u0428\u0000\u00d1\u0000\u043b\u0000\u044e"
+    "\u0000\u01c8\u0000\u01db\u0000\u01ee\u0000\u00d1\u0000\u0201\u0000\u00d1\u0000\u0214\u0000\u0227"+
+    "\u0000\u023a\u0000\u024d\u0000\u00d1\u0000\u00d1\u0000\u0260\u0000\u0273\u0000\u0286\u0000\u00e4"+
+    "\u0000\u00d1\u0000\u0299\u0000\u02ac\u0000\u02bf\u0000\u00d1\u0000\u02d2\u0000\u02e5\u0000\u02f8"+
+    "\u0000\u030b\u0000\u031e\u0000\u0331\u0000\u0344\u0000\u0357\u0000\u036a\u0000\u0214\u0000\u00d1"+
+    "\u0000\u00d1\u0000\u023a\u0000\u024d\u0000\u0260\u0000\u00d1\u0000\u00d1\u0000\u037d\u0000\u0390"+
+    "\u0000\u03a3\u0000\u03b6\u0000\u03c9\u0000\u01c8\u0000\u03dc\u0000\u00d1\u0000\u03ef\u0000\u0402"+
+    "\u0000\u0415\u0000\u00d1\u0000\u0428\u0000\u00d1\u0000\u043b\u0000\u044e\u0000\u00d1\u0000\u0461"+
+    "\u0000\u0474"
 
   @JvmStatic
   private fun zzUnpackRowMap(): IntArray {
-    val result: IntArray = IntArray(85)
+    val result: IntArray = IntArray(89)
     var offset: Int = 0
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result)
     return result
@@ -356,32 +357,33 @@ companion object {
     "\u0001\u0000\u0001\u001e\u0001\u0000\u0001\u001e\u000a\u0000\u0001\u003a\u0007\u0000\u0001\u003a"+
     "\u0003\u0000\u0001\u003b\u0001\u0000\u0002\u003c\u0001\u0000\u000e\u003c\u0001\u0000\u0001\u003c"+
     "\u0005\u0000\u0001\u003d\u0007\u0000\u0001\u003d\u0003\u0000\u0001\u003e\u0012\u0000\u0001\u0023"+
-    "\u0002\u0000\u0001\u0025\u0019\u0000\u0001\u0028\u0001\u0000\u0001\u0031\u000a\u0000\u0001\u003f"+
-    "\u000e\u0000\u0001\u0040\u0003\u0000\u0001\u003f\u000f\u0000\u0001\u0041\u0011\u0000\u0001\u002e"+
-    "\u0009\u0000\u0001\u002f\u0001\u0000\u0001\u0031\u0010\u0000\u0001\u0042\u000f\u0000\u0001\u0033"+
-    "\u0003\u0000\u0001\u0043\u0001\u0000\u0001\u0033\u0001\u0000\u0001\u0033\u0002\u0000\u0001\u0044"+
-    "\u0002\u0000\u0002\u0045\u0001\u0000\u000e\u0045\u0001\u0000\u0001\u0045\u0005\u0000\u0001\u0036"+
-    "\u0005\u0000\u0001\u0036\u0001\u0000\u0001\u0036\u0016\u0000\u0001\u0046\u0013\u0000\u0001\u0047"+
-    "\u0005\u0000\u0001\u001e\u0003\u0000\u0001\u0039\u0003\u0000\u0001\u001e\u0003\u0000\u0001\u0048"+
-    "\u0006\u0000\u0001\u003a\u0003\u0000\u0001\u0049\u0001\u0000\u0001\u003a\u0001\u0000\u0001\u003a"+
-    "\u0002\u0000\u0001\u004a\u0002\u0000\u0002\u004b\u0001\u0000\u000e\u004b\u0001\u0000\u0001\u004b"+
-    "\u0002\u003c\u0001\u0000\u000e\u003c\u0001\u004c\u0001\u003c\u0005\u0000\u0001\u003d\u0003\u0000"+
-    "\u0001\u004d\u0001\u0000\u0001\u003d\u0001\u0000\u0001\u003d\u0002\u0000\u0001\u004e\u0002\u0000"+
-    "\u0002\u004f\u0001\u0000\u000e\u004f\u0001\u0000\u0001\u004f\u0005\u0000\u0001\u0033\u0003\u0000"+
-    "\u0001\u0043\u0003\u0000\u0001\u0033\u0002\u0000\u0001\u0044\u0001\u0034\u0001\u0000\u0006\u0050"+
-    "\u0001\u0000\u0007\u0050\u0001\u0000\u0004\u0050\u0002\u0045\u0001\u0000\u000e\u0045\u0001\u0051"+
-    "\u0001\u0045\u0002\u0052\u0002\u0053\u000d\u0052\u0001\u0046\u0001\u0052\u0002\u0047\u0002\u0053"+
-    "\u000f\u0047\u0005\u0000\u0001\u003a\u0003\u0000\u0001\u0049\u0003\u0000\u0001\u003a\u0002\u0000"+
-    "\u0001\u004a\u0001\u003b\u0001\u0000\u0002\u004b\u0001\u0000\u000e\u004b\u0001\u0054\u0001\u004b"+
-    "\u0009\u0000\u0001\u0039\u000e\u0000\u0001\u003d\u0003\u0000\u0001\u004d\u0003\u0000\u0001\u003d"+
-    "\u0002\u0000\u0001\u004e\u0001\u003e\u0001\u0000\u0002\u004f\u0001\u0000\u000e\u004f\u0001\u0055"+
-    "\u0001\u004f\u0009\u0000\u0001\u0043\u0006\u0000\u0001\u0044\u0002\u0000\u0002\u0052\u0002\u0053"+
-    "\u000d\u0052\u0001\u0000\u0001\u0052\u0009\u0000\u0001\u0049\u0006\u0000\u0001\u004a\u000b\u0000"+
-    "\u0001\u004d\u0006\u0000\u0001\u004e\u0002\u0000"
+    "\u0002\u0000\u0001\u0025\u0019\u0000\u0001\u003f\u0001\u0000\u0001\u0040\u0010\u0000\u0001\u0028"+
+    "\u0001\u0000\u0001\u0031\u000a\u0000\u0001\u0041\u000e\u0000\u0001\u0042\u0003\u0000\u0001\u0041"+
+    "\u000f\u0000\u0001\u0043\u0008\u0000\u0001\u0044\u0001\u0000\u0001\u0045\u0019\u0000\u0001\u002e"+
+    "\u0009\u0000\u0001\u002f\u0001\u0000\u0001\u0031\u0010\u0000\u0001\u0046\u000f\u0000\u0001\u0033"+
+    "\u0003\u0000\u0001\u0047\u0001\u0000\u0001\u0033\u0001\u0000\u0001\u0033\u0002\u0000\u0001\u0048"+
+    "\u0002\u0000\u0002\u0049\u0001\u0000\u000e\u0049\u0001\u0000\u0001\u0049\u0005\u0000\u0001\u0036"+
+    "\u0005\u0000\u0001\u0036\u0001\u0000\u0001\u0036\u0016\u0000\u0001\u004a\u0013\u0000\u0001\u004b"+
+    "\u0005\u0000\u0001\u001e\u0003\u0000\u0001\u0039\u0003\u0000\u0001\u001e\u0003\u0000\u0001\u004c"+
+    "\u0006\u0000\u0001\u003a\u0003\u0000\u0001\u004d\u0001\u0000\u0001\u003a\u0001\u0000\u0001\u003a"+
+    "\u0002\u0000\u0001\u004e\u0002\u0000\u0002\u004f\u0001\u0000\u000e\u004f\u0001\u0000\u0001\u004f"+
+    "\u0002\u003c\u0001\u0000\u000e\u003c\u0001\u0050\u0001\u003c\u0005\u0000\u0001\u003d\u0003\u0000"+
+    "\u0001\u0051\u0001\u0000\u0001\u003d\u0001\u0000\u0001\u003d\u0002\u0000\u0001\u0052\u0002\u0000"+
+    "\u0002\u0053\u0001\u0000\u000e\u0053\u0001\u0000\u0001\u0053\u0005\u0000\u0001\u0033\u0003\u0000"+
+    "\u0001\u0047\u0003\u0000\u0001\u0033\u0002\u0000\u0001\u0048\u0001\u0034\u0001\u0000\u0006\u0054"+
+    "\u0001\u0000\u0007\u0054\u0001\u0000\u0004\u0054\u0002\u0049\u0001\u0000\u000e\u0049\u0001\u0055"+
+    "\u0001\u0049\u0002\u0056\u0002\u0057\u000d\u0056\u0001\u004a\u0001\u0056\u0002\u004b\u0002\u0057"+
+    "\u000f\u004b\u0005\u0000\u0001\u003a\u0003\u0000\u0001\u004d\u0003\u0000\u0001\u003a\u0002\u0000"+
+    "\u0001\u004e\u0001\u003b\u0001\u0000\u0002\u004f\u0001\u0000\u000e\u004f\u0001\u0058\u0001\u004f"+
+    "\u0009\u0000\u0001\u0039\u000e\u0000\u0001\u003d\u0003\u0000\u0001\u0051\u0003\u0000\u0001\u003d"+
+    "\u0002\u0000\u0001\u0052\u0001\u003e\u0001\u0000\u0002\u0053\u0001\u0000\u000e\u0053\u0001\u0059"+
+    "\u0001\u0053\u0009\u0000\u0001\u0047\u0006\u0000\u0001\u0048\u0002\u0000\u0002\u0056\u0002\u0057"+
+    "\u000d\u0056\u0001\u0000\u0001\u0056\u0009\u0000\u0001\u004d\u0006\u0000\u0001\u004e\u000b\u0000"+
+    "\u0001\u0051\u0006\u0000\u0001\u0052\u0002\u0000"
 
   @JvmStatic
   private fun zzUnpacktrans(): IntArray {
-    val result: IntArray = IntArray(1121)
+    val result: IntArray = IntArray(1159)
     var offset: Int = 0
     offset = zzUnpacktrans(ZZ_TRANS_PACKED_0, offset, result)
     return result
@@ -426,13 +428,13 @@ companion object {
   private const val ZZ_ATTRIBUTE_PACKED_0: String  =
     "\u000b\u0000\u0001\u0009\u0002\u0001\u0001\u0009\u0001\u0001\u0003\u0009\u0008\u0001\u0002\u0009"+
     "\u0006\u0001\u0001\u0009\u0001\u0001\u0001\u0009\u0004\u0001\u0002\u0009\u0003\u0001\u0001\u0000"+
-    "\u0001\u0009\u0003\u0000\u0001\u0009\u0002\u0001\u0001\u0000\u0001\u0001\u0005\u0000\u0001\u0009"+
-    "\u0002\u0000\u0001\u0009\u0003\u0000\u0001\u0001\u0003\u0000\u0001\u0009\u0001\u0000\u0001\u0001"+
+    "\u0001\u0009\u0003\u0000\u0001\u0009\u0002\u0001\u0001\u0000\u0001\u0001\u0006\u0000\u0002\u0009"+
+    "\u0003\u0000\u0002\u0009\u0003\u0000\u0001\u0001\u0003\u0000\u0001\u0009\u0001\u0000\u0001\u0001"+
     "\u0001\u0000\u0001\u0009\u0001\u0000\u0001\u0009\u0002\u0000\u0001\u0009\u0002\u0000"
 
   @JvmStatic
   private fun zzUnpackAttribute(): IntArray {
-    val result: IntArray = IntArray(85)
+    val result: IntArray = IntArray(89)
     var offset: Int = 0
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result)
     return result
@@ -543,7 +545,7 @@ companion object {
   }
 
   private val isLastToken: Boolean
-    get() = zzMarkedPos == zzBuffer.length
+    get() = zzMarkedPos == zzEndRead
 
   private fun countRepeating(c: Char): Int {
       var current = zzStartRead
@@ -886,45 +888,45 @@ companion object {
             return SyntaxTokenTypes.BAD_CHARACTER
             }
           // fall through
-          29 -> break
+          31 -> break
           2 -> {
             lastBlockType = BlockType.Paragraph
             yybeginAndUpdate(CONTENTS)
             return KDocTokens.TEXT
             }
           // fall through
-          30 -> break
+          32 -> break
           3 -> {
             return SyntaxTokenTypes.WHITE_SPACE
             }
           // fall through
-          31 -> break
+          33 -> break
           4 -> {
             yybeginAndUpdate(LINE_BEGINNING)
             return SyntaxTokenTypes.WHITE_SPACE
             }
           // fall through
-          32 -> break
+          34 -> break
           5 -> {
             lastBlockType = BlockType.Paragraph
             yybeginAndUpdate(CONTENTS)
             return KDocTokens.KDOC_LPAR
             }
           // fall through
-          33 -> break
+          35 -> break
           6 -> {
             lastBlockType = BlockType.Paragraph
             yybeginAndUpdate(CONTENTS)
             return KDocTokens.KDOC_RPAR
             }
           // fall through
-          34 -> break
+          36 -> break
           7 -> {
             yybegin(CONTENTS_BEGINNING)
             return KDocTokens.LEADING_ASTERISK
             }
           // fall through
-          35 -> break
+          37 -> break
           8 -> {
             val state = yystate()
 
@@ -948,7 +950,7 @@ companion object {
             return KDocTokens.TEXT  // internal white space
             }
           // fall through
-          36 -> break
+          38 -> break
           9 -> {
             codeFenceChar = zzBuffer[zzStartRead]
             codeFenceLength = countRepeating(codeFenceChar)
@@ -958,60 +960,60 @@ companion object {
             return KDocTokens.TEXT
             }
           // fall through
-          37 -> break
+          39 -> break
           10 -> {
             yybeginAndUpdate(CONTENTS)
             return KDocTokens.TEXT
             }
           // fall through
-          38 -> break
+          40 -> break
           11 -> {
             consecutiveLineBreakCount++
             yybegin(LINE_BEGINNING)
             return SyntaxTokenTypes.WHITE_SPACE
             }
           // fall through
-          39 -> break
+          41 -> break
           12 -> {
             yybeginAndUpdate(TAG_TEXT_BEGINNING)
             return KDocTokens.MARKDOWN_LINK
             }
           // fall through
-          40 -> break
+          42 -> break
           13 -> {
             yybeginAndUpdate(if (yystate() == INDENTED_CODE_BLOCK) INDENTED_CODE_BLOCK else CODE_BLOCK)
             return KDocTokens.CODE_BLOCK_TEXT
             }
           // fall through
-          41 -> break
+          43 -> break
           14 -> {
             return KDocTokens.CODE_BLOCK_TEXT
             }
           // fall through
-          42 -> break
+          44 -> break
           15 -> {
             yybegin(if (yystate() == INDENTED_CODE_BLOCK) LINE_BEGINNING else CODE_BLOCK_LINE_BEGINNING)
             return SyntaxTokenTypes.WHITE_SPACE
             }
           // fall through
-          43 -> break
+          45 -> break
           16 -> {
             yybegin(CODE_BLOCK_CONTENTS_BEGINNING)
             return KDocTokens.LEADING_ASTERISK
             }
           // fall through
-          44 -> break
+          46 -> break
           17 -> {
             return KDocTokens.CODE_SPAN_TEXT
             }
           // fall through
-          45 -> break
+          47 -> break
           18 -> {
             yybeginAndUpdate(CODE_SPAN_LINE_BEGINNING)
             return SyntaxTokenTypes.WHITE_SPACE
             }
           // fall through
-          46 -> break
+          48 -> break
           19 -> {
             val ch = zzBuffer[zzStartRead]
             val length = countRepeating(ch)
@@ -1026,25 +1028,25 @@ companion object {
             }
             }
           // fall through
-          47 -> break
+          49 -> break
           20 -> {
             yybeginAndUpdate(CODE_SPAN_CONTENTS)
             return KDocTokens.LEADING_ASTERISK
             }
           // fall through
-          48 -> break
+          50 -> break
           21 -> {
             return if (isLastToken) KDocTokens.END else KDocTokens.TEXT
             }
           // fall through
-          49 -> break
+          51 -> break
           22 -> {
             lastBlockType = BlockType.Paragraph
             yybeginAndUpdate(CONTENTS)
             return KDocTokens.MARKDOWN_ESCAPED_CHAR
             }
           // fall through
-          50 -> break
+          52 -> break
           23 -> {
             lastBlockType = BlockType.Paragraph
             val tag = KDocKnownTag.findByTagName(zzBuffer.subSequence(zzStartRead, zzMarkedPos))
@@ -1052,8 +1054,13 @@ companion object {
             return KDocTokens.TAG_NAME
             }
           // fall through
-          51 -> break
+          53 -> break
           24 -> {
+            return if (isLastToken) KDocTokens.END else KDocTokens.CODE_BLOCK_TEXT
+            }
+          // fall through
+          54 -> break
+          25 -> {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = zzBufferL.offsetByCodePoints(zzMarkedPos, -1)
             val ch =  zzBuffer[zzStartRead]
@@ -1069,20 +1076,25 @@ companion object {
             }
             }
           // fall through
-          52 -> break
-          25 -> {
+          55 -> break
+          26 -> {
+            return if (isLastToken) KDocTokens.END else KDocTokens.CODE_SPAN_TEXT
+            }
+          // fall through
+          56 -> break
+          27 -> {
             yybeginAndUpdate(CONTENTS_BEGINNING)
             return KDocTokens.START
             }
           // fall through
-          53 -> break
-          26 -> {
+          57 -> break
+          28 -> {
             yybeginAndUpdate(CONTENTS)
             return KDocTokens.MARKDOWN_LINK
             }
           // fall through
-          54 -> break
-          27 -> {
+          58 -> break
+          29 -> {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = zzBufferL.offsetByCodePoints(zzMarkedPos, -1)
             lastBlockType = BlockType.Paragraph
@@ -1090,8 +1102,8 @@ companion object {
             return KDocTokens.MARKDOWN_LINK
             }
           // fall through
-          55 -> break
-          28 -> {
+          59 -> break
+          30 -> {
             // lookahead expression with fixed lookahead length
             zzMarkedPos = zzBufferL.offsetByCodePoints(zzMarkedPos, -1)
             lastBlockType = BlockType.Code
@@ -1101,7 +1113,7 @@ companion object {
             return KDocTokens.TEXT
             }
           // fall through
-          56 -> break
+          60 -> break
           else ->
             zzScanError(ZZ_NO_MATCH)
         }

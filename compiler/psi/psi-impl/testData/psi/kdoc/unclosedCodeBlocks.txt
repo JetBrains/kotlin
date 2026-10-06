@@ -1,4 +1,4 @@
-KtFile: codeBlockWithBlockComment.kt
+KtFile: unclosedCodeBlocks.kt
   PACKAGE_DIRECTIVE
     <empty list>
   IMPORT_LIST
@@ -11,12 +11,18 @@ KtFile: codeBlockWithBlockComment.kt
       PsiElement(KDOC_TEXT)(' ```kotlin')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_CODE_BLOCK_TEXT)('   /*a*/ val x = 1')
+      PsiElement(KDOC_CODE_BLOCK_TEXT)(' foo()')
+    PsiWhiteSpace('\n ')
+    PsiElement(KDOC_END)('*/')
+  PsiWhiteSpace('\n\n')
+  KDoc
+    PsiElement(KDOC_START)('/**')
+    PsiWhiteSpace('\n ')
+    KDOC_SECTION
+      PsiElement(KDOC_LEADING_ASTERISK)('*')
+      PsiElement(KDOC_TEXT)(' ```kotlin')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_CODE_BLOCK_TEXT)('   /*b*/ val y = 2')
-      PsiWhiteSpace('\n ')
-      PsiElement(KDOC_LEADING_ASTERISK)('*')
-      PsiElement(KDOC_TEXT)(' ```')
+      PsiElement(KDOC_CODE_BLOCK_TEXT)(' /*x*/ foo()')
     PsiWhiteSpace('\n ')
     PsiElement(KDOC_END)('*/')

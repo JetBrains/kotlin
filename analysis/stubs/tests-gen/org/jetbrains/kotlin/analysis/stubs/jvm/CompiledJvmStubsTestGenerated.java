@@ -3744,6 +3744,12 @@ public class CompiledJvmStubsTestGenerated extends AbstractCompiledJvmStubsTest 
     public void testTwoTags() {
       run("TwoTags.kt");
     }
+
+    @Test
+    @TestMetadata("unclosedCodeBlocks.kt")
+    public void testUnclosedCodeBlocks() {
+      run("unclosedCodeBlocks.kt");
+    }
   }
 
   @Nested
