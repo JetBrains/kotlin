@@ -151,6 +151,10 @@ abstract class AbstractKotlinNativeCompile<
     @get:Optional
     internal abstract val explicitApiMode: Property<ExplicitApiMode>
 
+    @get:Input
+    @get:Optional
+    internal abstract val returnValueCheckerMode: Property<ReturnValueCheckerMode>
+
     @get:Internal
     internal val konanTarget by providerFactory.provider {
         (compilation.tcs.compilation as AbstractKotlinNativeCompilation).konanTarget
@@ -396,6 +400,7 @@ internal constructor(
             KotlinNativeCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
             explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+            returnValueCheckerMode.orNull?.run { args.returnValueChecker = toCompilerValue() }
             kotlinNativeProvider.get().konanDataDir.orNull?.let {
                 args.konanDataDir = it
             }
