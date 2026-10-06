@@ -125,6 +125,7 @@ object FirJvmErrors : KtDiagnosticsContainer() {
     val JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JVM_SERIALIZABLE_LAMBDA_ON_INLINED_FUNCTION_LITERALS", ForbidJvmSerializableLambdaOnInlinedFunctionLiterals, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val INCOMPATIBLE_ANNOTATION_TARGETS: KtDiagnosticFactory2<Collection<String>, Collection<String>> = KtDiagnosticFactory2("INCOMPATIBLE_ANNOTATION_TARGETS", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val ANNOTATION_TARGETS_ONLY_IN_JAVA: KtDiagnosticFactory0 = KtDiagnosticFactory0("ANNOTATION_TARGETS_ONLY_IN_JAVA", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
+    val ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
     val RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED: KtDiagnosticFactory1<FirClassLikeSymbol<*>> = KtDiagnosticFactory1("RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED", WARNING, SourceElementPositioningStrategies.DEFAULT, KtAnnotationEntry::class, getRendererFactory())
 
     // Super

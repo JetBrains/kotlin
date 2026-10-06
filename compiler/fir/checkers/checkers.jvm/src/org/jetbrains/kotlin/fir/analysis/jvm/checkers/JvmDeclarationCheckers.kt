@@ -57,6 +57,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirJvmFieldApplicabilityChecker,
             FirJvmSyntheticApplicabilityChecker,
+            FirJvmAnnotationsTargetNonExistentAccessorChecker,
             FirPropertyJavaNullabilityWarningChecker,
         )
 

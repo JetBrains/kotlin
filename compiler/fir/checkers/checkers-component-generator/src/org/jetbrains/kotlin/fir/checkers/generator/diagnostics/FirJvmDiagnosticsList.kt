@@ -184,6 +184,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<Collection<String>>("correspondingKotlinTargets")
         }
         val ANNOTATION_TARGETS_ONLY_IN_JAVA by warning<KtAnnotationEntry>()
+        val ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR by warning<KtAnnotationEntry> {
+            parameter<String>("declarationName")
+        }
         val RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED by warning<KtAnnotationEntry> {
             parameter<FirClassLikeSymbol<*>>("annotationClass")
         }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL_WITH_CONTAINING_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.UNSAFE_CALL_RECEIVER_WITH_HINT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ACCIDENTAL_OVERRIDE_CLASH_BY_JVM_SIGNATURE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ANNOTATION_TARGETS_ONLY_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONFLICT_VERSION_AND_JVM_OVERLOADS_ANNOTATION
@@ -537,6 +538,11 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ANNOTATION_TARGETS_ONLY_IN_JAVA,
             "No Kotlin '@Target' annotation specified (implicitly targeting everything), but one exists for Java."
+        )
+        map.put(
+            ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR,
+            "An accessor will not be generated for ''{0}'', so the annotation will not be written to the class file.",
+            STRING,
         )
         map.put(
             RUNTIME_ANNOTATION_ON_LAMBDA_IS_NOT_RETAINED,
