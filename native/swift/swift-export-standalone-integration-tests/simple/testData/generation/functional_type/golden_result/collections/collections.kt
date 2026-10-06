@@ -30,7 +30,7 @@ public fun __root___consume_block_with_dictRef_id__TypesOfArguments__U28Swift_Di
             interpretObjCPointer<kotlin.collections.Map<kotlin.String, Foo>>(_result)
         }
     }
-    val _result = run { consume_block_with_dictRef_id(__block) }
+    val _result = consume_block_with_dictRef_id(__block)
     return _result.objcPtr()
 }
 
@@ -45,7 +45,7 @@ public fun __root___consume_block_with_dict_id__TypesOfArguments__U28Swift_Dicti
             interpretObjCPointer<kotlin.collections.Map<Int, Int>>(_result)
         }
     }
-    val _result = run { consume_block_with_dict_id(__block) }
+    val _result = consume_block_with_dict_id(__block)
     return _result.objcPtr()
 }
 
@@ -60,7 +60,7 @@ public fun __root___consume_block_with_listRef_id__TypesOfArguments__U28Swift_Ar
             interpretObjCPointer<kotlin.collections.List<Foo>>(_result)
         }
     }
-    val _result = run { consume_block_with_listRef_id(__block) }
+    val _result = consume_block_with_listRef_id(__block)
     return _result.objcPtr()
 }
 
@@ -75,7 +75,7 @@ public fun __root___consume_block_with_list_id__TypesOfArguments__U28Swift_Array
             interpretObjCPointer<kotlin.collections.List<Int>>(_result)
         }
     }
-    val _result = run { consume_block_with_list_id(__block) }
+    val _result = consume_block_with_list_id(__block)
     return _result.objcPtr()
 }
 
@@ -90,6 +90,6 @@ public fun __root___consume_block_with_set_id__TypesOfArguments__U28Swift_Set_Sw
             interpretObjCPointer<kotlin.collections.Set<Int>>(_result)
         }
     }
-    val _result = run { consume_block_with_set_id(__block) }
+    val _result = consume_block_with_set_id(__block)
     return _result.objcPtr()
 }

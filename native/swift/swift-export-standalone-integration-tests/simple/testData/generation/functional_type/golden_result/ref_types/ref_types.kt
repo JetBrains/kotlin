@@ -33,8 +33,8 @@ public fun __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_O
             if (_result == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foo
         }
     }
-    val _result = run { consume_block_with_opt_reftype(__block) }
-    return run { _result; true }
+    consume_block_with_opt_reftype(__block)
+    return true
 }
 
 @ExportedBridge("__root___consume_block_with_reftype_consumer__TypesOfArguments__U28data_FooU29202D_U20Swift_Void__")
@@ -48,8 +48,8 @@ public fun __root___consume_block_with_reftype_consumer__TypesOfArguments__U28da
             run<Unit> { _result }
         }
     }
-    val _result = run { consume_block_with_reftype_consumer(__block) }
-    return run { _result; true }
+    consume_block_with_reftype_consumer(__block)
+    return true
 }
 
 @ExportedBridge("__root___consume_block_with_reftype_factory__TypesOfArguments__U2829202D_U20data_Foo__")
@@ -62,7 +62,7 @@ public fun __root___consume_block_with_reftype_factory__TypesOfArguments__U28292
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foo
         }
     }
-    val _result = run { consume_block_with_reftype_factory(__block) }
+    val _result = consume_block_with_reftype_factory(__block)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -77,7 +77,7 @@ public fun __root___consume_block_with_reftype_unzip__TypesOfArguments__U28data_
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Foo
         }
     }
-    val _result = run { consume_block_with_reftype_unzip(__block) }
+    val _result = consume_block_with_reftype_unzip(__block)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -93,6 +93,6 @@ public fun __root___consume_block_with_reftype_zip__TypesOfArguments__U28data_Fo
             kotlin.native.internal.ref.dereferenceExternalRCRef(_result) as Bar
         }
     }
-    val _result = run { consume_block_with_reftype_zip(__block) }
+    val _result = consume_block_with_reftype_zip(__block)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

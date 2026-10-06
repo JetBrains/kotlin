@@ -42,7 +42,7 @@ public fun Bar_foo__reverse(self: Bar): Unit {
 @ExportedBridge("Bar_bar_get")
 public fun Bar_bar_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Bar
-    val _result = run { __self.bar }
+    val _result = __self.bar
     return _result.objcPtr()
 }
 
@@ -50,49 +50,49 @@ public fun Bar_bar_get(self: kotlin.native.internal.NativePtr): kotlin.native.in
 public fun Bar_bar_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Bar
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { __self.bar = __newValue }
-    return run { _result; true }
+    __self.bar = __newValue
+    return true
 }
 
 @ExportedBridge("Bar_foo")
 public fun Bar_foo(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Bar
-    val _result = run { __self.foo() }
-    return run { _result; true }
+    __self.foo()
+    return true
 }
 
 @ExportedBridge("Baz_someInternalLibFunction")
 public fun Baz_someInternalLibFunction(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz
-    val _result = run { __self.someInternalLibFunction() }
-    return run { _result; true }
+    __self.someInternalLibFunction()
+    return true
 }
 
 @ExportedBridge("Baz_someNormalFunction")
 public fun Baz_someNormalFunction(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz
-    val _result = run { __self.someNormalFunction() }
+    val _result = __self.someNormalFunction()
     return _result.objcPtr()
 }
 
 @ExportedBridge("Baz_someUndocumentedFunction")
 public fun Baz_someUndocumentedFunction(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Baz
-    val _result = run { __self.someUndocumentedFunction() }
+    val _result = __self.someUndocumentedFunction()
     return _result
 }
 
 @ExportedBridge("Foo_a_get")
 public fun Foo_a_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val _result = run { __self.a }
+    val _result = __self.a
     return _result.objcPtr()
 }
 
 @ExportedBridge("Foo_b_get")
 public fun Foo_b_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val _result = run { __self.b }
+    val _result = __self.b
     return _result
 }
 
@@ -101,7 +101,7 @@ public fun Foo_bar__TypesOfArgumentsC2__Swift_String_Swift_Int32__(self: kotlin.
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __a = interpretObjCPointer<kotlin.String>(a)
     val __b = b
-    val _result = run { context(__a, __b) { __self.bar() } }
+    val _result = context(__a, __b) { __self.bar() }
     return _result
 }
 
@@ -109,14 +109,14 @@ public fun Foo_bar__TypesOfArgumentsC2__Swift_String_Swift_Int32__(self: kotlin.
 public fun Foo_baz__TypesOfArgumentsE__Swift_String__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
-    val _result = run { __self.run { __receiver.baz() } }
+    val _result = __self.run { __receiver.baz() }
     return _result
 }
 
 @ExportedBridge("Foo_d_get")
 public fun Foo_d_get(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val _result = run { __self.d }
+    val _result = __self.d
     return _result
 }
 
@@ -124,15 +124,15 @@ public fun Foo_d_get(self: kotlin.native.internal.NativePtr): Boolean {
 public fun Foo_d_set__TypesOfArguments__Swift_Bool__(self: kotlin.native.internal.NativePtr, newValue: Boolean): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __newValue = newValue
-    val _result = run { __self.d = __newValue }
-    return run { _result; true }
+    __self.d = __newValue
+    return true
 }
 
 @ExportedBridge("Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
-    val _result = run { context(__c) { __self.e } }
+    val _result = context(__c) { __self.e }
     return _result
 }
 
@@ -141,14 +141,14 @@ public fun Foo_e_set__TypesOfArgumentsC1__Swift_Int32_anyU20KotlinRuntimeSupport
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val `___` = `_`
     val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
-    val _result = run { context(__c) { __self.e = `___` } }
-    return run { _result; true }
+    context(__c) { __self.e = `___` }
+    return true
 }
 
 @ExportedBridge("Foo_f_get")
 public fun Foo_f_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val _result = run { __self.f }
+    val _result = __self.f
     return _result.objcPtr()
 }
 
@@ -157,27 +157,27 @@ public fun Foo_foo__TypesOfArgumentsC1__Swift_Int32_Swift_String__(self: kotlin.
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __c = c
     val __a = interpretObjCPointer<kotlin.String>(a)
-    val _result = run { context(__a) { __self.foo(__c) } }
-    return run { _result; true }
+    context(__a) { __self.foo(__c) }
+    return true
 }
 
 @ExportedBridge("Foo_g_get__TypesOfArgumentsE__Swift_String__")
 public fun Foo_g_get__TypesOfArgumentsE__Swift_String__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
-    val _result = run { __self.run { __receiver.g } }
+    val _result = __self.run { __receiver.g }
     return _result
 }
 
 @ExportedBridge("__root___Baz_get")
 public fun __root___Baz_get(): kotlin.native.internal.NativePtr {
-    val _result = run { Baz }
+    val _result = Baz
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Foo_init_allocate")
 public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Foo>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -187,29 +187,29 @@ public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRa
     val __a = interpretObjCPointer<kotlin.String>(a)
     val __z = z
     val __c = c
-    val _result = run { kotlin.native.internal.initInstance(____kt, Foo(__a, __z, __c)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Foo(__a, __z, __c))
+    return true
 }
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, Foo()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Foo())
+    return true
 }
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
-    val _result = run { kotlin.native.internal.initInstance(____kt, Foo(__arg)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Foo(__arg))
+    return true
 }
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt: kotlin.native.internal.NativePtr, a: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = interpretObjCPointer<kotlin.String>(a)
-    val _result = run { kotlin.native.internal.initInstance(____kt, Foo(__a)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Foo(__a))
+    return true
 }

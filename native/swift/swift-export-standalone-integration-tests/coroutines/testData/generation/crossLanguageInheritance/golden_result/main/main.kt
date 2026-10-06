@@ -460,7 +460,7 @@ public fun AsyncBase_notOpen(self: kotlin.native.internal.NativePtr, continuatio
 public fun AsyncBase_sync__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, name: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as AsyncBase
     val __name = interpretObjCPointer<kotlin.String>(name)
-    val _result = run { __self.sync(__name) }
+    val _result = __self.sync(__name)
     return _result.objcPtr()
 }
 
@@ -468,7 +468,7 @@ public fun AsyncBase_sync__TypesOfArguments__Swift_String__(self: kotlin.native.
 public fun AsyncBase_sync__TypesOfArguments__Swift_String___direct(self: kotlin.native.internal.NativePtr, name: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as AsyncBase
     val __name = interpretObjCPointer<kotlin.String>(name)
-    val _result = run { __self.sync(__name) }
+    val _result = __self.sync(__name)
     return _result.objcPtr()
 }
 
@@ -974,69 +974,69 @@ public fun AsyncOverloaded_same__TypesOfArguments__Swift_Int32___direct(self: ko
 @ExportedBridge("__root___AsyncAbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun __root___AsyncAbstractBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, AsyncAbstractBase()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, AsyncAbstractBase())
+    return true
 }
 
 @ExportedBridge("__root___AsyncBase_init_allocate")
 public fun __root___AsyncBase_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<AsyncBase>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<AsyncBase>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___AsyncBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___AsyncBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, AsyncBase()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, AsyncBase())
+    return true
 }
 
 @ExportedBridge("__root___AsyncGreeterBase_init_allocate")
 public fun __root___AsyncGreeterBase_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<AsyncGreeterBase>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<AsyncGreeterBase>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___AsyncGreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___AsyncGreeterBase_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, AsyncGreeterBase()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, AsyncGreeterBase())
+    return true
 }
 
 @ExportedBridge("__root___AsyncOverloaded_init_allocate")
 public fun __root___AsyncOverloaded_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<AsyncOverloaded>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<AsyncOverloaded>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___AsyncOverloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___AsyncOverloaded_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, AsyncOverloaded()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, AsyncOverloaded())
+    return true
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__")
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = interpretObjCPointer<kotlin.String>(_1)
-    val _result = run { (__pointerToBlock as Function1<kotlin.String, Unit>).invoke(___1) }
-    return run { _result; true }
+    (__pointerToBlock as Function1<kotlin.String, Unit>).invoke(___1)
+    return true
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else throwableFromReverseBridge(_1)
-    val _result = run { (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1) }
-    return run { _result; true }
+    (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1)
+    return true
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__")
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Int): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = _1
-    val _result = run { (__pointerToBlock as Function1<Int, Unit>).invoke(___1) }
-    return run { _result; true }
+    (__pointerToBlock as Function1<Int, Unit>).invoke(___1)
+    return true
 }

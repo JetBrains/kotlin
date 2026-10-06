@@ -6,32 +6,32 @@ import kotlinx.cinterop.*
 
 @ExportedBridge("__root___Foo_init_allocate")
 public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<Foo>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, Foo()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, Foo())
+    return true
 }
 
 @ExportedBridge("__root___foo_get")
 public fun __root___foo_get(): kotlin.native.internal.NativePtr {
-    val _result = run { foo }
+    val _result = foo
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___foo_set__TypesOfArguments__main_Foo__")
 public fun __root___foo_set__TypesOfArguments__main_Foo__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Foo
-    val _result = run { foo = __newValue }
-    return run { _result; true }
+    foo = __newValue
+    return true
 }
 
 @ExportedBridge("__root___getFoo")
 public fun __root___getFoo(): kotlin.native.internal.NativePtr {
-    val _result = run { getFoo() }
+    val _result = getFoo()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }

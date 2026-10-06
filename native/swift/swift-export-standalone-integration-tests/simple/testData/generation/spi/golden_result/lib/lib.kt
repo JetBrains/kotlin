@@ -109,15 +109,15 @@ public fun InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String
 @OptIn(ExperimentalLibApi::class)
 public fun ExperimentalLibClass_bar(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ExperimentalLibClass
-    val _result = run { __self.bar() }
-    return run { _result; true }
+    __self.bar()
+    return true
 }
 
 @ExportedBridge("ExperimentalLibClass_foo_get")
 @OptIn(ExperimentalLibApi::class)
 public fun ExperimentalLibClass_foo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ExperimentalLibClass
-    val _result = run { __self.foo }
+    val _result = __self.foo
     return _result.objcPtr()
 }
 
@@ -126,31 +126,31 @@ public fun ExperimentalLibClass_foo_get(self: kotlin.native.internal.NativePtr):
 public fun ExperimentalLibClass_foo_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as ExperimentalLibClass
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { __self.foo = __newValue }
-    return run { _result; true }
+    __self.foo = __newValue
+    return true
 }
 
 @ExportedBridge("InternalLibInterface_bar")
 @OptIn(InternalLibApi::class)
 public fun InternalLibInterface_bar(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
-    val _result = run { __self.bar() }
-    return run { _result; true }
+    __self.bar()
+    return true
 }
 
 @ExportedBridge("InternalLibInterface_experimentalFun")
 @OptIn(ExperimentalLibApi::class, InternalLibApi::class)
 public fun InternalLibInterface_experimentalFun(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
-    val _result = run { __self.experimentalFun() }
-    return run { _result; true }
+    __self.experimentalFun()
+    return true
 }
 
 @ExportedBridge("InternalLibInterface_experimentalProp_get")
 @OptIn(ExperimentalLibApi::class, InternalLibApi::class)
 public fun InternalLibInterface_experimentalProp_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
-    val _result = run { __self.experimentalProp }
+    val _result = __self.experimentalProp
     return _result.objcPtr()
 }
 
@@ -159,15 +159,15 @@ public fun InternalLibInterface_experimentalProp_get(self: kotlin.native.interna
 public fun InternalLibInterface_experimentalProp_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { __self.experimentalProp = __newValue }
-    return run { _result; true }
+    __self.experimentalProp = __newValue
+    return true
 }
 
 @ExportedBridge("InternalLibInterface_foo_get")
 @OptIn(InternalLibApi::class)
 public fun InternalLibInterface_foo_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
-    val _result = run { __self.foo }
+    val _result = __self.foo
     return _result.objcPtr()
 }
 
@@ -176,23 +176,23 @@ public fun InternalLibInterface_foo_get(self: kotlin.native.internal.NativePtr):
 public fun InternalLibInterface_foo_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { __self.foo = __newValue }
-    return run { _result; true }
+    __self.foo = __newValue
+    return true
 }
 
 @ExportedBridge("InternalLibInterface_internalFun")
 @OptIn(InternalLibApi::class)
 public fun InternalLibInterface_internalFun(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
-    val _result = run { __self.internalFun() }
-    return run { _result; true }
+    __self.internalFun()
+    return true
 }
 
 @ExportedBridge("InternalLibInterface_internalProp_get")
 @OptIn(InternalLibApi::class)
 public fun InternalLibInterface_internalProp_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
-    val _result = run { __self.internalProp }
+    val _result = __self.internalProp
     return _result.objcPtr()
 }
 
@@ -201,14 +201,14 @@ public fun InternalLibInterface_internalProp_get(self: kotlin.native.internal.Na
 public fun InternalLibInterface_internalProp_set__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, newValue: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as InternalLibInterface
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { __self.internalProp = __newValue }
-    return run { _result; true }
+    __self.internalProp = __newValue
+    return true
 }
 
 @ExportedBridge("__root___ExperimentalLibClass_init_allocate")
 @OptIn(ExperimentalLibApi::class)
 public fun __root___ExperimentalLibClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<ExperimentalLibClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<ExperimentalLibClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -216,14 +216,14 @@ public fun __root___ExperimentalLibClass_init_allocate(): kotlin.native.internal
 @OptIn(ExperimentalLibApi::class)
 public fun __root___ExperimentalLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, ExperimentalLibClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, ExperimentalLibClass())
+    return true
 }
 
 @ExportedBridge("__root___OpenClass_init_allocate")
 @OptIn(OpenClassOptIn::class)
 public fun __root___OpenClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<OpenClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<OpenClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -231,13 +231,13 @@ public fun __root___OpenClass_init_allocate(): kotlin.native.internal.NativePtr 
 @OptIn(OpenClassOptIn::class)
 public fun __root___OpenClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, OpenClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, OpenClass())
+    return true
 }
 
 @ExportedBridge("__root___RegularLibClass_init_allocate")
 public fun __root___RegularLibClass_init_allocate(): kotlin.native.internal.NativePtr {
-    val _result = run { kotlin.native.internal.createUninitializedInstance<RegularLibClass>() }
+    val _result = kotlin.native.internal.createUninitializedInstance<RegularLibClass>()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -246,27 +246,27 @@ public fun __root___RegularLibClass_init_allocate(): kotlin.native.internal.Nati
 public fun __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt: kotlin.native.internal.NativePtr, a: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     val __a = interpretObjCPointer<kotlin.String>(a)
-    val _result = run { kotlin.native.internal.initInstance(____kt, RegularLibClass(__a)) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, RegularLibClass(__a))
+    return true
 }
 
 @ExportedBridge("__root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
 public fun __root___RegularLibClass_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, RegularLibClass()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, RegularLibClass())
+    return true
 }
 
 @ExportedBridge("__root___experimentalLibFunction")
 @OptIn(ExperimentalLibApi::class)
 public fun __root___experimentalLibFunction(): Boolean {
-    val _result = run { experimentalLibFunction() }
-    return run { _result; true }
+    experimentalLibFunction()
+    return true
 }
 
 @ExportedBridge("__root___experimentalLibSetter_get")
 public fun __root___experimentalLibSetter_get(): kotlin.native.internal.NativePtr {
-    val _result = run { experimentalLibSetter }
+    val _result = experimentalLibSetter
     return _result.objcPtr()
 }
 
@@ -274,14 +274,14 @@ public fun __root___experimentalLibSetter_get(): kotlin.native.internal.NativePt
 @OptIn(ExperimentalLibApi::class)
 public fun __root___experimentalLibSetter_set__TypesOfArguments__Swift_String__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { experimentalLibSetter = __newValue }
-    return run { _result; true }
+    experimentalLibSetter = __newValue
+    return true
 }
 
 @ExportedBridge("__root___experimentalProperty_get")
 @OptIn(ExperimentalLibApi::class)
 public fun __root___experimentalProperty_get(): kotlin.native.internal.NativePtr {
-    val _result = run { experimentalProperty }
+    val _result = experimentalProperty
     return _result.objcPtr()
 }
 
@@ -289,8 +289,8 @@ public fun __root___experimentalProperty_get(): kotlin.native.internal.NativePtr
 @OptIn(ExperimentalLibApi::class)
 public fun __root___experimentalProperty_set__TypesOfArguments__Swift_String__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { experimentalProperty = __newValue }
-    return run { _result; true }
+    experimentalProperty = __newValue
+    return true
 }
 
 @ExportedBridge("__root___fooA__TypesOfArgumentsC1__lib_ExperimentalLibClass_anyU20lib_InternalLibInterface__")
@@ -298,14 +298,14 @@ public fun __root___experimentalProperty_set__TypesOfArguments__Swift_String__(n
 public fun __root___fooA__TypesOfArgumentsC1__lib_ExperimentalLibClass_anyU20lib_InternalLibInterface__(b: kotlin.native.internal.NativePtr, a: kotlin.native.internal.NativePtr): Boolean {
     val __b = kotlin.native.internal.ref.dereferenceExternalRCRef(b) as ExperimentalLibClass
     val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as InternalLibInterface
-    val _result = run { context(__a) { fooA(__b) } }
-    return run { _result; true }
+    context(__a) { fooA(__b) }
+    return true
 }
 
 @ExportedBridge("__root___fooA_get")
 @OptIn(InternalLibApi::class)
 public fun __root___fooA_get(): kotlin.native.internal.NativePtr {
-    val _result = run { fooA }
+    val _result = fooA
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -313,28 +313,28 @@ public fun __root___fooA_get(): kotlin.native.internal.NativePtr {
 @OptIn(ExperimentalLibApi::class, InternalLibApi::class)
 public fun __root___fooB__TypesOfArgumentsE__anyU20lib_InternalLibInterface__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as InternalLibInterface
-    val _result = run { __receiver.fooB() }
+    val _result = __receiver.fooB()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___fooB_get")
 @OptIn(ExperimentalLibApi::class)
 public fun __root___fooB_get(): kotlin.native.internal.NativePtr {
-    val _result = run { fooB }
+    val _result = fooB
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___fooC")
 @OptIn(InternalLibApi::class)
 public fun __root___fooC(): kotlin.native.internal.NativePtr {
-    val _result = run { fooC() }
+    val _result = fooC()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___fooD")
 @OptIn(ExperimentalLibApi::class)
 public fun __root___fooD(): kotlin.native.internal.NativePtr {
-    val _result = run { fooD() }
+    val _result = fooD()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -342,7 +342,7 @@ public fun __root___fooD(): kotlin.native.internal.NativePtr {
 @OptIn(InternalLibApi::class)
 public fun __root___genericFunction__TypesOfArguments__anyU20lib_InternalLibInterface__(a: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as InternalLibInterface
-    val _result = run { genericFunction<InternalLibInterface>(__a) }
+    val _result = genericFunction<InternalLibInterface>(__a)
     return _result.objcPtr()
 }
 
@@ -350,20 +350,20 @@ public fun __root___genericFunction__TypesOfArguments__anyU20lib_InternalLibInte
 @OptIn(InternalLibApi::class)
 public fun __root___genericProperty_get__TypesOfArgumentsE__anyU20lib_InternalLibInterface__(`receiver`: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as InternalLibInterface
-    val _result = run { __receiver.genericProperty }
+    val _result = __receiver.genericProperty
     return _result.objcPtr()
 }
 
 @ExportedBridge("__root___internalLibFunction")
 @OptIn(InternalLibApi::class)
 public fun __root___internalLibFunction(): Boolean {
-    val _result = run { internalLibFunction() }
-    return run { _result; true }
+    internalLibFunction()
+    return true
 }
 
 @ExportedBridge("__root___internalLibSetter_get")
 public fun __root___internalLibSetter_get(): kotlin.native.internal.NativePtr {
-    val _result = run { internalLibSetter }
+    val _result = internalLibSetter
     return _result.objcPtr()
 }
 
@@ -371,14 +371,14 @@ public fun __root___internalLibSetter_get(): kotlin.native.internal.NativePtr {
 @OptIn(InternalLibApi::class)
 public fun __root___internalLibSetter_set__TypesOfArguments__Swift_String__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { internalLibSetter = __newValue }
-    return run { _result; true }
+    internalLibSetter = __newValue
+    return true
 }
 
 @ExportedBridge("__root___internalProperty_get")
 @OptIn(InternalLibApi::class)
 public fun __root___internalProperty_get(): kotlin.native.internal.NativePtr {
-    val _result = run { internalProperty }
+    val _result = internalProperty
     return _result.objcPtr()
 }
 
@@ -386,19 +386,19 @@ public fun __root___internalProperty_get(): kotlin.native.internal.NativePtr {
 @OptIn(InternalLibApi::class)
 public fun __root___internalProperty_set__TypesOfArguments__Swift_String__(newValue: kotlin.native.internal.NativePtr): Boolean {
     val __newValue = interpretObjCPointer<kotlin.String>(newValue)
-    val _result = run { internalProperty = __newValue }
-    return run { _result; true }
+    internalProperty = __newValue
+    return true
 }
 
 @ExportedBridge("__root___normalLibFunction")
 public fun __root___normalLibFunction(): Boolean {
-    val _result = run { normalLibFunction() }
-    return run { _result; true }
+    normalLibFunction()
+    return true
 }
 
 @ExportedBridge("__root___returnAlias")
 @OptIn(InternalLibApi::class)
 public fun __root___returnAlias(): kotlin.native.internal.NativePtr {
-    val _result = run { returnAlias() }
+    val _result = returnAlias()
     return _result.objcPtr()
 }

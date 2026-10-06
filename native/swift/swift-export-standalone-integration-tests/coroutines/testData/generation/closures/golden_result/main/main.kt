@@ -26,7 +26,7 @@ public fun __root___accept_suspend_fun_with_context__TypesOfArguments__U28Swift_
             }
         }
     }
-    val _result = run { accept_suspend_fun_with_context(__block) }
+    val _result = accept_suspend_fun_with_context(__block)
     return _result
 }
 
@@ -45,7 +45,7 @@ public fun __root___accept_suspend_function_type__TypesOfArguments__U282920async
             }
         }
     }
-    val _result = run { accept_suspend_function_type(__block) }
+    val _result = accept_suspend_function_type(__block)
     return _result
 }
 
@@ -53,14 +53,14 @@ public fun __root___accept_suspend_function_type__TypesOfArguments__U282920async
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(pointerToBlock: kotlin.native.internal.NativePtr, _1: Int): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = _1
-    val _result = run { (__pointerToBlock as Function1<Int, Unit>).invoke(___1) }
-    return run { _result; true }
+    (__pointerToBlock as Function1<Int, Unit>).invoke(___1)
+    return true
 }
 
 @ExportedBridge("main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___")
 public fun main_internal_functional_type_caller_SwiftU2EVoid__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_Error___(pointerToBlock: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr): Boolean {
     val __pointerToBlock = kotlin.native.internal.ref.dereferenceExternalRCRef(pointerToBlock)!!
     val ___1 = if (_1 == kotlin.native.internal.NativePtr.NULL) null else throwableFromReverseBridge(_1)
-    val _result = run { (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1) }
-    return run { _result; true }
+    (__pointerToBlock as Function1<kotlin.Throwable?, Unit>).invoke(___1)
+    return true
 }

@@ -43,14 +43,14 @@ public fun kotlin_collections_Iterator_next__reverse(self: kotlin.collections.It
 public fun kotlin_Array_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
     val __index = index
-    val _result = run { __self.`get`(__index) }
+    val _result = __self.`get`(__index)
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("kotlin_Array_iterator")
 public fun kotlin_Array_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -59,14 +59,14 @@ public fun kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
     val __index = index
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
-    val _result = run { __self.`set`(__index, __value) }
-    return run { _result; true }
+    __self.`set`(__index, __value)
+    return true
 }
 
 @ExportedBridge("kotlin_Array_size_get")
 public fun kotlin_Array_size_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.Array<kotlin.Any?>
-    val _result = run { __self.size }
+    val _result = __self.size
     return _result
 }
 
@@ -74,14 +74,14 @@ public fun kotlin_Array_size_get(self: kotlin.native.internal.NativePtr): Int {
 public fun kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(self: kotlin.native.internal.NativePtr, index: Int): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
     val __index = index
-    val _result = run { __self.`get`(__index) }
+    val _result = __self.`get`(__index)
     return _result
 }
 
 @ExportedBridge("kotlin_ByteArray_iterator")
 public fun kotlin_ByteArray_iterator(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
-    val _result = run { __self.iterator() }
+    val _result = __self.iterator()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
@@ -90,48 +90,48 @@ public fun kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
     val __index = index
     val __value = value
-    val _result = run { __self.`set`(__index, __value) }
-    return run { _result; true }
+    __self.`set`(__index, __value)
+    return true
 }
 
 @ExportedBridge("kotlin_ByteArray_size_get")
 public fun kotlin_ByteArray_size_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.ByteArray
-    val _result = run { __self.size }
+    val _result = __self.size
     return _result
 }
 
 @ExportedBridge("kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__", nonVirtualTargetMethod = "<init>")
 public fun kotlin_collections_ByteIterator_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
-    val _result = run { kotlin.native.internal.initInstance(____kt, kotlin.collections.ByteIterator()) }
-    return run { _result; true }
+    kotlin.native.internal.initInstance(____kt, kotlin.collections.ByteIterator())
+    return true
 }
 
 @ExportedBridge("kotlin_collections_ByteIterator_next")
 public fun kotlin_collections_ByteIterator_next(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
-    val _result = run { __self.next() }
+    val _result = __self.next()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_ByteIterator_nextByte")
 public fun kotlin_collections_ByteIterator_nextByte(self: kotlin.native.internal.NativePtr): Byte {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.ByteIterator
-    val _result = run { __self.nextByte() }
+    val _result = __self.nextByte()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_Iterator_hasNext")
 public fun kotlin_collections_Iterator_hasNext(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
-    val _result = run { __self.hasNext() }
+    val _result = __self.hasNext()
     return _result
 }
 
 @ExportedBridge("kotlin_collections_Iterator_next")
 public fun kotlin_collections_Iterator_next(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.collections.Iterator<kotlin.Any?>
-    val _result = run { __self.next() }
+    val _result = __self.next()
     return if (_result == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
