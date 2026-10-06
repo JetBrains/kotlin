@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.cli.Logger
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.components.metadata
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadataVersion
 
 internal class DefaultModulesProvider private constructor(
@@ -67,7 +66,7 @@ internal class DefaultModulesProvider private constructor(
 
         val moduleHeader = metadata.moduleHeaderData
 
-        val fragmentNames = parseModuleHeader(moduleHeader).packageFragmentNameList.toSet()
+        val fragmentNames = metadata.getPackageNames()
         val fragments = fragmentNames.map { fragmentName ->
             val partNames = metadata.getPackageFragmentNames(fragmentName)
             partNames.map { partName -> metadata.getPackageFragment(fragmentName, partName) }
