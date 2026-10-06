@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
+import java.util.PriorityQueue
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.pathString
@@ -63,8 +63,75 @@ class KlibDAG internal constructor(private val dag: Map<KotlinLibrary, KlibDAGNo
         )
     }
 
+    /**
+     * All libraries of this DAG in the canonical RTO:
+     * - dependencies before dependents
+     * - everything the edges leave unconstrained decided by [dag]'s keys, i.e. by the order of
+     *   [LoadedNativeKlibs.all]: at each step the first library in that order whose dependencies have all
+     *   been emitted is the one emitted next.
+     *
+     * Example: with keys `[X, Y, Z]` and the single edge `X -> Z` the result is `[Y, Z, X]`.
+     *
+     * Why [LoadedNativeKlibs.all] is chosen as a tie-breaker:
+     * We used to derive the order of siblings based on the `depends` property of the dependent's manifest, which
+     * was a stable list of dependencies.
+     * Since we're removing the `depends` property we are left with a few options:
+     * - Sort by IR-driven edges. We discover the dependency graph by the actual IR edges, which is not stable.
+     * - Sort libraries by something like `path` or `uniqueName`. This isn't stable for the one-stage mode, in which
+     * an intermediate klib is being produced with a random name and path somewhere in a temporary directory.
+     * - Sort by the `LoadedNativeKlibs.all` order. This gives us a stable order for a given compilation configuration.
+     * So, `LoadedNativeKlibs.all` was chosen as the second-best alternative to `depends`.
+     */
     val librariesReverseTopoSorted: List<KotlinLibrary> by lazy {
-        DFS.topologicalOrder(dag.keys) { library -> dag.getValue(library).directDependencies }.reversed()
+        // Kahn's algorithm is used rather than a DFS because a DFS takes its *neighbour* order as part of
+        // the output order, and `KlibDAGNode.directDependencies` is an unordered `HashSet`. Even if it was
+        // a `LinkedHashSet` its order would be tied to the order we discover IR links between modules, which
+        // itself isn't stable. So a DFS would place sibling libraries in the result in an unstable order.
+        // Probably reproducible for a fixed command line, but perturbed by adding, removing or moving a library
+        // that nothing depends on.
+        //
+        // NB! this relies on `dag` preserving insertion order.
+
+        val librariesInLoadOrder = ArrayList<KotlinLibrary>(dag.size) // Resolves a [LibraryIndex] back to a library.
+        // The number of dependencies each library is still waiting for, indexed by [LibraryIndex].
+        val pendingDependencies = IntArray(dag.size)
+        // Reverse edges. A dependent is appended in load order, and only the size of `directDependencies` feeds
+        // the counter — so that HashSet's order cannot reach the output.
+        val dependents = HashMap<KotlinLibrary, MutableList<LibraryIndex>>(2 * dag.size) // Reverse edges
+        // Of the libraries that are ready to be emitted, always take the one that comes first in load order.
+        val ready = PriorityQueue<LibraryIndex>()
+
+        dag.entries.forEachIndexed { index, entry ->
+            val dependencies = entry.value.directDependencies
+
+            librariesInLoadOrder += entry.key // Appended at `index`, so that is the [LibraryIndex] used below.
+            pendingDependencies[index] = dependencies.size
+            // Nothing has been emitted yet, so a library is ready exactly when it has no dependencies at all.
+            if (dependencies.isEmpty()) ready += index
+
+            for (dependency in dependencies) {
+                dependents.getOrPut(dependency) { ArrayList() } += index
+            }
+        }
+
+        val emitted = ArrayList<KotlinLibrary>(dag.size)
+        while (ready.isNotEmpty()) {
+            val next = librariesInLoadOrder[ready.poll()]
+            emitted += next
+
+            for (dependent in dependents[next].orEmpty()) {
+                pendingDependencies[dependent] -= 1
+                if (pendingDependencies[dependent] == 0) ready += dependent
+            }
+        }
+
+        if (emitted.size != dag.size) {
+            // Unreachable in an acyclic graph: anything left is part of a cycle, or depends on one, and so
+            // never became ready.
+            librariesInLoadOrder.filterIndexedTo(emitted) { index, _ -> pendingDependencies[index] != 0 }
+        }
+
+        emitted
     }
 
     operator fun get(library: KotlinLibrary): KlibDAGNode =
@@ -432,3 +499,9 @@ private fun Collection<KotlinLibrary>.associateByCanonicalPathPreventingDuplicat
 
     return librariesByCanonicalPath
 }
+
+/**
+ * A library's position in the load order, i.e. its index in the load-ordered list of a [KlibDAG]'s libraries.
+ * Only an alias. Used to keep the index-based bookkeeping of [KlibDAG.librariesReverseTopoSorted] readable.
+ */
+private typealias LibraryIndex = Int
