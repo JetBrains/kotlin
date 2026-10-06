@@ -22,7 +22,7 @@ internal class KlibMetadataComponentWriterImpl(
         val layout = KlibMetadataComponentLayout(root)
         layout.metadataDir.createDirectories()
 
-        layout.moduleHeaderFile.writeBytes(metadata.module)
+        metadata.module?.let { layout.moduleHeaderFile.writeBytes(it) }
 
         metadata.fragmentNames.forEachIndexed { index, packageFqName ->
             val packageFragmentDir: Path = layout.getPackageFragmentsDir(packageFqName)
