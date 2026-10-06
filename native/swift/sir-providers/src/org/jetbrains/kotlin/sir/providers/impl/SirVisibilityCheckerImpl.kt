@@ -95,8 +95,10 @@ public class SirVisibilityCheckerImpl(
             // `toString`, `hashCode` and `equals` pre provided as `description`, `hash`, and `isEqual` by KotlinBase.
             return@withSessions SirAvailability.Unavailable("kotlin.Any members are exposed as through KotlinBase")
         }
-        if ((ktSymbol.containingSymbol as? KaDeclarationSymbol?)?.sirAvailability() is SirAvailability.Unavailable) {
-            return@withSessions SirAvailability.Unavailable("Declaration's lexical parent is unavailable")
+        when (val parentAvailability = (ktSymbol.containingSymbol as? KaDeclarationSymbol?)?.sirAvailability()) {
+            is SirAvailability.Unavailable -> return@withSessions SirAvailability.Unavailable("Declaration's lexical parent is unavailable")
+            is SirAvailability.Available -> visibility.value = parentAvailability.visibility
+            is SirAvailability.Hidden, null -> {}
         }
         if (ktSymbol.hasNonPublicOptIns) {
             return@withSessions SirAvailability.Unavailable("Declarations with non-public OptIn requirements are unsupported")

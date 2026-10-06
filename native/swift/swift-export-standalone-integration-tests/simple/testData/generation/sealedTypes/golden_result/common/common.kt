@@ -5,6 +5,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.ClassE::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE6ClassEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.DeprecatedErrorSubClass::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE23DeprecatedErrorSubClassC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.DeprecatedWarningSubClass::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE25DeprecatedWarningSubClassC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.ExportedContainedInheritor::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE26ExportedContainedInheritorC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.MyClassA::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE8MyClassAC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.MyClassA.Inner::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE8MyClassAC5InnerC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.MyClassB::class, "22ExportedKotlinPackages3orgO6kotlinO3fooO6commonE8MyClassBC")
@@ -26,6 +27,7 @@
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.QueryResult::class, "_ExportedKotlinPackages_org_kotlin_foo_QueryResult")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.SealedInterfaceA::class, "_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceA")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.SealedInterfaceB::class, "_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceB")
+@file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.SealedInterfaceWithContainedInheritor::class, "_ExportedKotlinPackages_org_kotlin_foo_SealedInterfaceWithContainedInheritor")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.QueryResult.AsyncValue::class, "6common61_ExportedKotlinPackages_org_kotlin_foo_QueryResult_AsyncValueC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(org.kotlin.foo.QueryResult.Value::class, "6common56_ExportedKotlinPackages_org_kotlin_foo_QueryResult_ValueC")
 
@@ -145,6 +147,19 @@ public fun org_kotlin_foo_EnumClassB_ordinal(self: kotlin.native.internal.Native
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as org.kotlin.foo.EnumClassB
     val _result = run { __self.ordinal }
     return _result
+}
+
+@ExportedBridge("org_kotlin_foo_ExportedContainedInheritor_init_allocate")
+public fun org_kotlin_foo_ExportedContainedInheritor_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = run { kotlin.native.internal.createUninitializedInstance<org.kotlin.foo.ExportedContainedInheritor>() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("org_kotlin_foo_ExportedContainedInheritor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun org_kotlin_foo_ExportedContainedInheritor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Boolean {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val _result = run { kotlin.native.internal.initInstance(____kt, org.kotlin.foo.ExportedContainedInheritor()) }
+    return run { _result; true }
 }
 
 @ExportedBridge("org_kotlin_foo_MyClassA_init_allocate")

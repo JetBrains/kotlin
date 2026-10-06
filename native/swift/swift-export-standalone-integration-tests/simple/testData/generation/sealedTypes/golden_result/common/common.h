@@ -39,6 +39,10 @@ void * org_kotlin_foo_EnumClassB_SIX();
 
 int32_t org_kotlin_foo_EnumClassB_ordinal(void * self);
 
+void * org_kotlin_foo_ExportedContainedInheritor_init_allocate();
+
+_Bool org_kotlin_foo_ExportedContainedInheritor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * org_kotlin_foo_MyClassA_init_allocate();
 
 _Bool org_kotlin_foo_MyClassA_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
