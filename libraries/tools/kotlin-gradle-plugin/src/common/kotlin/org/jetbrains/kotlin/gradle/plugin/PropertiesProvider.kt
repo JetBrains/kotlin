@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
+import org.jetbrains.kotlin.gradle.targets.web.npm.NpmDependencyCollectionMode
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -790,6 +791,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val npmSharedDependenciesProjectMode: Provider<String>
         get() = property(PropertyNames.NPM_SHARED_DEPENDENCIES_PROJECT_MODE)
 
+    /**
+     * Internal property, added to test KT-89427.
+     * Must be removed after KT-80311.
+     */
+    val npmDependencyCollectionMode: Provider<NpmDependencyCollectionMode>
+        get() = enumProvider<NpmDependencyCollectionMode>(PropertyNames.NPM_DEPENDENCY_COLLECTION_MODE)
+            .orElse(NpmDependencyCollectionMode.LEGACY)
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = get(deprecatedPropName)
         if (deprecatedProperty != null) {
@@ -966,6 +975,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
 
         val NPM_SHARED_DEPENDENCIES_PROJECT_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.npm.sharedNpmDependenciesProjectMode")
+        val NPM_DEPENDENCY_COLLECTION_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.npm.dependencyCollectionMode")
     }
 
     companion object {
