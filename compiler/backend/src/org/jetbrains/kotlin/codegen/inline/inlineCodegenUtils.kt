@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
+import org.jetbrains.kotlin.codegen.optimization.common.intConstantOrError
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -481,24 +482,13 @@ private fun isFinallyMarker(node: AbstractInsnNode, name: String): Boolean {
     return INLINE_MARKER_CLASS_NAME == node.owner && name == node.name
 }
 
-fun getConstant(ins: AbstractInsnNode): Int {
-    val opcode = ins.opcode
-    return when (opcode) {
-        in Opcodes.ICONST_0..Opcodes.ICONST_5 -> opcode - Opcodes.ICONST_0
-        Opcodes.BIPUSH, Opcodes.SIPUSH -> (ins as IntInsnNode).operand
-        else -> {
-            (ins as LdcInsnNode).cst as Int
-        }
-    }
-}
 fun removeFinallyMarkers(intoNode: MethodNode) {
     val instructions = intoNode.instructions
     var curInstr: AbstractInsnNode? = instructions.first
     while (curInstr != null) {
         if (isFinallyMarker(curInstr)) {
             val marker = curInstr
-            //just to assert
-            getConstant(marker.previous)
+            marker.previous.intConstantOrError //just to assert
             curInstr = curInstr.next
             instructions.remove(marker.previous)
             instructions.remove(marker)

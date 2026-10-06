@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.inline.coroutines.markNoinlineLambdaIfSuspen
 import org.jetbrains.kotlin.codegen.inline.coroutines.surroundInvokesWithSuspendMarkersIfNeeded
 import org.jetbrains.kotlin.codegen.optimization.ApiVersionCallsPreprocessingMethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.FixStackWithLabelNormalizationMethodTransformer
+import org.jetbrains.kotlin.codegen.optimization.common.intConstantOrError
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.nodeType
 import org.jetbrains.kotlin.codegen.optimization.common.removeEmptyCatchBlocks
@@ -662,7 +663,7 @@ class MethodInliner(
                     cur is MethodInsnNode -> {
                         if (isFinallyStart(cur)) {
                             //TODO deep index calc could be more precise
-                            currentFinallyDeep = getConstant(cur.previous)
+                            currentFinallyDeep = cur.previous.intConstantOrError
                         }
 
                         val owner = cur.owner
@@ -1198,7 +1199,7 @@ class MethodInliner(
             while (cur != null) {
                 if (cur is MethodInsnNode && isFinallyMarker(cur)) {
                     val constant = cur.previous
-                    val curDeep = getConstant(constant)
+                    val curDeep = constant.intConstantOrError
                     node.instructions.insert(constant, LdcInsnNode(curDeep + finallyDeepShift))
                     node.instructions.remove(constant)
                 }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.coroutines.withInstructionAdapter
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.optimization.common.intConstantOrError
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.ir.declarations.*
@@ -409,7 +410,7 @@ class IrInlineCodegen(
             processor.processInstruction(curInstr, true)
             if (isFinallyStart(curInstr)) {
                 //TODO depth index calc could be more precise
-                curFinallyDepth = getConstant(curInstr.previous)
+                curFinallyDepth = curInstr.previous.intConstantOrError
             }
 
             val extension = extensionPoints[curInstr]
