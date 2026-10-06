@@ -12,7 +12,6 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("android-sdk-provisioner")
-    id("gradle-plugin-compiler-dependency-configuration") // the test compilation's output is injected into test project's build classpath for the buildscript injection
     id("kotlin-git.gradle-build-conventions.file-leak-detector-downloader")
     id("kgp-jacoco-offline")
 }
@@ -39,6 +38,28 @@ kotlin {
         )
         // Avoid having to use JvmSerializableLambda in build script injections
         freeCompilerArgs.add("-Xlambdas=class")
+    }
+}
+
+// the test compilation's output is injected into test project's build classpath for the buildscript injection
+configureKotlinCompileTasksGradleCompatibility()
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        // Required for minimal supported Gradle version, otherwise 'JvmNullOutSpilledCoroutineLocals' language feature breaks coroutines
+        languageVersion = KotlinVersion.KOTLIN_2_1
+        apiVersion = KotlinVersion.KOTLIN_2_1
+    }
+}
+
+// Aligning compiler plugins, remove after bootstrap with fix for KT-81629 happens
+val catalogs = extensions.getByType<VersionCatalogsExtension>()
+val libsCatalog = catalogs.named("libs")
+val kgpCompilerVersion = libsCatalog.findVersion("kotlin.for.gradle.plugins.compilation").get().requiredVersion
+project.configurations.named(org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME + "Test") {
+    resolutionStrategy {
+        eachDependency {
+            if (this.requested.group == "org.jetbrains.kotlin") useVersion(kgpCompilerVersion)
+        }
     }
 }
 

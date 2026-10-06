@@ -95,7 +95,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             }
         }) { fragmentDependencies ->
             val visitedDependencies = mutableSetOf<String>()
-            for ([_, dependencies] in fragmentDependencies) {
+            for ((_, dependencies) in fragmentDependencies) {
                 for (dependency in dependencies) {
                     assertTrue(
                         visitedDependencies.add(dependency),
@@ -233,7 +233,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     )
                 },
             )
-            for ([_, particularCompileArgs] in compileArgs) {
+            for ((_, particularCompileArgs) in compileArgs) {
                 val fragmentDependencies = particularCompileArgs.fragmentDependencies
                 val dependenciesPerFragment = fragmentDependencies
                     .groupBy({ it.substringBefore(":") }) { it.substringAfter(":") }
@@ -438,7 +438,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 )
                 val specificSourceSets = sourceSetNames - "commonMain"
                 val outputPerTask = compileTasks.associateWith { getOutputForTask(it, logLevel = LogLevel.INFO) }
-                for ([task, taskOutput] in outputPerTask) {
+                for ((task, taskOutput) in outputPerTask) {
                     assertFalse(
                         taskOutput.contains("generatedSource_commonMain_\\d+.kt:\\d+:\\d+ Unresolved reference 'commonMain'".toRegex()),
                         "$task should be able to resolve `commonMain()`\n$taskOutput"
