@@ -122,10 +122,10 @@ private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymb
     annotations.isNotEmpty() -> false
 
     // Annotations on the backing field could appear later during resolution
-    anchorElement is FirBackingFieldSymbol -> anchorElement.propertySymbol.annotations.any {
+    anchorElement is FirBackingFieldSymbol -> anchorElement.propertySymbol.annotations.none {
         when (it.useSiteTarget) {
-            null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.ALL -> false
-            else -> true
+            null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.ALL -> true
+            else -> false
         }
     }
 

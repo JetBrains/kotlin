@@ -2,6 +2,7 @@ public final class A /* test.A*/ {
   @kotlin.jvm.JvmField()
   public int plain = 2 /* initializer type: int */;
 
+  @kotlin.jvm.JvmField()
   public int withPropertyAnnotation = 1 /* initializer type: int */;
 
   public  A();//  .ctor()

@@ -1,1 +1,1 @@
-private final? [ResolvedTo(RAW_FIR)] backing field field: Int
+@R|kotlin/jvm/JvmField|[Types]() private final? [ResolvedTo(TYPES)] backing field field: R|kotlin/Int|
