@@ -46,7 +46,7 @@ class ReturnValueCheckerModeTest {
     @Test
     fun returnValueCheckerAppliesToBothMainAndTest() {
         val project = buildProjectWithJvm()
-        project.kotlinJvmExtension.returnValueChecker()
+        project.kotlinJvmExtension.returnValueCheckerMode.set(ReturnValueCheckerMode.Check)
         project.evaluate()
 
         assertContains(project.compileArguments("compileKotlin"), "-Xreturn-value-checker=check")
@@ -57,7 +57,10 @@ class ReturnValueCheckerModeTest {
     @Test
     fun returnValueCheckerSeparateTestMode() {
         val project = buildProjectWithJvm()
-        project.kotlinJvmExtension.returnValueChecker(ReturnValueCheckerMode.Full, ReturnValueCheckerMode.Check)
+        project.kotlinJvmExtension.apply {
+            returnValueCheckerMode.set(ReturnValueCheckerMode.Full)
+            returnValueCheckerModeForTests.set(ReturnValueCheckerMode.Check)
+        }
         project.evaluate()
 
         assertContains(project.compileArguments("compileKotlin"), "-Xreturn-value-checker=full")
@@ -72,7 +75,10 @@ class ReturnValueCheckerModeTest {
     @Test
     fun returnValueCheckerDisabledForTests() {
         val project = buildProjectWithJvm()
-        project.kotlinJvmExtension.returnValueChecker(ReturnValueCheckerMode.Check, ReturnValueCheckerMode.Disabled)
+        project.kotlinJvmExtension.apply {
+            returnValueCheckerMode.set(ReturnValueCheckerMode.Check)
+            returnValueCheckerModeForTests.set(ReturnValueCheckerMode.Disabled)
+        }
         project.evaluate()
 
         assertContains(project.compileArguments("compileKotlin"), "-Xreturn-value-checker=check")
@@ -89,7 +95,7 @@ class ReturnValueCheckerModeTest {
     fun returnValueCheckerForTestsOnly() {
         // Only the test mode is configured; production is left unset.
         val project = buildProjectWithJvm()
-        project.kotlinJvmExtension.returnValueCheckerModeForTests = ReturnValueCheckerMode.Check
+        project.kotlinJvmExtension.returnValueCheckerModeForTests.set(ReturnValueCheckerMode.Check)
         project.evaluate()
 
         assertFalse(
@@ -109,7 +115,7 @@ class ReturnValueCheckerModeTest {
                 linuxX64()
                 linuxArm64()
                 applyDefaultHierarchyTemplate()
-                returnValueChecker()
+                returnValueCheckerMode.set(ReturnValueCheckerMode.Check)
             }
         }
         project.evaluate()
@@ -139,7 +145,8 @@ class ReturnValueCheckerModeTest {
                 linuxX64()
                 linuxArm64()
                 applyDefaultHierarchyTemplate()
-                returnValueChecker(ReturnValueCheckerMode.Full, ReturnValueCheckerMode.Check)
+                returnValueCheckerMode.set(ReturnValueCheckerMode.Full)
+                returnValueCheckerModeForTests.set(ReturnValueCheckerMode.Check)
             }
         }
         project.evaluate()
