@@ -53,12 +53,13 @@ class ReflectionCodeSanityTest {
         }
 
         if (badClasses.isNotEmpty()) {
-            fail("Some classes in reflection.jvm contain more fields than it is allowed. Please optimize storage in these classes:\n\n" +
-                         badClasses.entries.joinToString("\n") { entry ->
-                             val [klass, fields] = entry
-                             "$klass has ${fields.size} fields but max allowed = ${classesWithMaxAllowedFields[klass.simpleName]}:\n" +
-                                     fields.joinToString("\n") { "    $it" }
-                         })
+            fail(
+                "Some classes in reflection.jvm contain more fields than it is allowed. Please optimize storage in these classes:\n\n" +
+                        badClasses.entries.joinToString("\n") { entry ->
+                            val [klass, fields] = entry
+                            "$klass has ${fields.size} fields but max allowed = ${classesWithMaxAllowedFields[klass.simpleName]}:\n" +
+                                    fields.joinToString("\n") { "    $it" }
+                        })
         }
     }
 }
