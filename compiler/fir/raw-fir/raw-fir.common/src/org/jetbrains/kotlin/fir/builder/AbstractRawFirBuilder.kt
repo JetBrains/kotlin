@@ -1279,7 +1279,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         UNDERSCORE_IS_RESERVED, MULTIPLE_LABEL
     }
 
-    protected open fun isReplSnippet(script: Node, sourceFile: KtSourceFile): Boolean {
+    private fun isReplSnippet(script: Node, sourceFile: KtSourceFile): Boolean {
         val scriptSource = script.toFirSourceElement()
         return baseSession.extensionService.replSnippetConfigurators.any {
             it.isReplSnippetsSource(sourceFile, scriptSource)
