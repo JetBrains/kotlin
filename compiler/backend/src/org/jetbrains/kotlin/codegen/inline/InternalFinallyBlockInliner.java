@@ -21,6 +21,7 @@ import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.*;
@@ -325,7 +326,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
     ) {
         if (isInsOrJumpInsideFinally) {
             if (isFinallyMarker(currentIns.getNext())) {
-                Integer constant = getConstant(currentIns);
+                int constant = UtilKt.getIntConstantOrError(currentIns);
                 finallyBlockCopy.visitLdcInsn(constant + depthShift);
             } else {
                 currentIns.accept(finallyBlockCopy); //VISIT
@@ -535,14 +536,14 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         AbstractInsnNode meaningful = getNextMeaningful(startFinallyChain);
         assert meaningful != null : "Can't find meaningful in finally block" + startFinallyChain;
 
-        Integer finallyDepth = getConstant(meaningful);
+        int finallyDepth = UtilKt.getIntConstantOrError(meaningful);
         AbstractInsnNode endFinallyChainExclusive = nextIntervalWithSameDefaultHandler.getNode().start;
         AbstractInsnNode current = meaningful.getNext();
         while (endFinallyChainExclusive != current) {
             current = current.getNext();
             if (isFinallyEnd(current)) {
-                Integer currentDepth = getConstant(current.getPrevious());
-                if (currentDepth.equals(finallyDepth)) {
+                int currentDepth = UtilKt.getIntConstantOrError(current.getPrevious());
+                if (currentDepth == finallyDepth) {
                     endFinallyChainExclusive = current.getNext();
                     break;
                 }
