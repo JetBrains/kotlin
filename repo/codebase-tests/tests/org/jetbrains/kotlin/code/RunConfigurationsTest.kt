@@ -49,7 +49,7 @@ class RunConfigurationsTest {
     }
 
     private fun testDryRunConfiguration(config: GradleRunConfiguration) {
-        val projectDir = config.projectPath.replace("\$PROJECT_DIR\$", ".")
+        val projectDir = config.projectPath.replace($$"$PROJECT_DIR$", ".")
 
         val arguments = buildList {
             addAll(config.taskNames)

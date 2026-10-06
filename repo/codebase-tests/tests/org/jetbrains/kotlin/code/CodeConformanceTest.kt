@@ -79,9 +79,9 @@ class CodeConformanceTest {
             "jps/jps-plugin/src",
         )
 
-        targetDirs.map {
+        targetDirs.flatMap {
             FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
-        }.flatten().forEach { sourceFile ->
+        }.forEach { sourceFile ->
             val matcher = canonicalPattern.matcher(sourceFile.readText())
             if (matcher.find()) {
                 fail("KT-69613 canonicalPath and canonicalFile apis should not be used: ${matcher.group()}\nin file: $sourceFile")
@@ -103,9 +103,9 @@ class CodeConformanceTest {
             "compiler/build-tools/kotlin-build-tools-cri-impl/src",
         )
 
-        targetDirs.map {
+        targetDirs.flatMap {
             FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
-        }.flatten().forEach { sourceFile ->
+        }.forEach { sourceFile ->
             val matcher = absolutePathStringPattern.matcher(sourceFile.readText())
             if (matcher.find()) {
                 fail("KT-83715 absolutePathString should not be used as it loses information about FileSystem: ${matcher.group()}\nin file: $sourceFile")
@@ -363,7 +363,7 @@ class CodeConformanceTest {
      */
     @Test
     fun testNoHardcodedPathSeparatorInSSOT() {
-        val pattern = Pattern.compile("""(?<![\\$])\$\{File\.pathSeparator\}""")
+        val pattern = Pattern.compile("""(?<![\\$])\$\{File\.pathSeparator}""")
         val targetDirs = listOf(
             "compiler/arguments/src/org/jetbrains/kotlin/arguments/dsl/types"
         )
@@ -385,7 +385,7 @@ class CodeConformanceTest {
 
                 fail(
                     "[KT-84449] Platform-specific File.pathSeparator must be escaped for runtime evaluation. " +
-                            "Use \\${'$'}{File.pathSeparator} or raw string literals.\nin file: $sourceFile"
+                            $$"Use \\${File.pathSeparator} or raw string literals.\nin file: $$sourceFile"
                 )
             }
         }
