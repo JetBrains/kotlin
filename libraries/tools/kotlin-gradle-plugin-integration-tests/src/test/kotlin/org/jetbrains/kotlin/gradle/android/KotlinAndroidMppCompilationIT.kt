@@ -50,7 +50,7 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
                                     else -> null
                                 }
                             }
-                            .associate { [sourceSetName, compileTask] ->
+                            .associate { (sourceSetName, compileTask) ->
                                 val args = compileTask
                                     .pluginOptions
                                     .get()
@@ -61,7 +61,7 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
                             }
                     }
                     task.doFirst {
-                        compilations.get().forEach { sourceSetName, [args, cp] ->
+                        compilations.get().forEach { sourceSetName, (args, cp) ->
                             println("$sourceSetName=args=>$args")
                             println("$sourceSetName=cp=>$cp")
                         }
