@@ -725,7 +725,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             }
 
             buildAndFail("assemble") {
-                assertOutputContains("AA.kt:3:8 Unresolved reference 'bar'.")
+                assertOutputContains("AA.kt:3:8 [UNRESOLVED_REFERENCE] Unresolved reference 'bar'.")
             }
         }
     }

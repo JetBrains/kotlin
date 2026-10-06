@@ -18,7 +18,7 @@ source.kt
 -Kapt-stubs=default/stubs
 
 # output
-info: note: info-as-warnings test message
+info: [KAPT_INFO] Note: info-as-warnings test message
 
 # kapt
 source.kt
@@ -32,6 +32,6 @@ source.kt
 -Kapt-info-as-warnings=true
 
 # output
-warning: note: info-as-warnings test message
+warning: [KAPT_WARNING] Note: info-as-warnings test message
 
 # after

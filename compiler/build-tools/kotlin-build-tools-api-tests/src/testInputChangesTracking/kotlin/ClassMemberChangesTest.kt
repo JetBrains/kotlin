@@ -112,7 +112,7 @@ class ClassMemberChangesTest : BaseCompilationTest() {
             mod.changeFile("ChildClass.kt") { "$it\n" }
 
             mod.compile {
-                expectFailWithError(".*ChildClass\\.kt:\\d+:\\d+ 'getPrefix' overrides nothing.*".toRegex())
+                expectFailWithError(".*ChildClass\\.kt:\\d+:\\d.*'getPrefix' overrides nothing.*".toRegex())
             }
         }
     }

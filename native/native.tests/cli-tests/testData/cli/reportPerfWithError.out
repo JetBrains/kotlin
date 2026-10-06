@@ -1,4 +1,4 @@
-testData/cli/reportPerfWithError.kt:1:17: error: initializer type mismatch: expected 'String', actual 'Int'.
+testData/cli/reportPerfWithError.kt:1:17: error: [INITIALIZER_TYPE_MISMATCH] Initializer type mismatch: expected 'String', actual 'Int'.
 val str: String = 42
                 ^
 COMPILATION_ERROR

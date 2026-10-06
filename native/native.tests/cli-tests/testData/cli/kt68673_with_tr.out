@@ -1,2 +1,2 @@
-warning: use `-Xinclude=<path-to-klib>` to pass libraries that contain tests.
+warning: [KONAN_ARGUMENT_STRONG_WARNING] Use `-Xinclude=<path-to-klib>` to pass libraries that contain tests.
 OK

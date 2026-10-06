@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/diagnosticTests/firDfa.kt:3:10: warning: unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
+compiler/testData/cli/jvm/diagnosticTests/firDfa.kt:3:10: warning: [UNNECESSARY_NOT_NULL_ASSERTION] Unnecessary non-null assertion (!!) on a non-null receiver of type 'String'.
         x!!.length
          ^^
-compiler/testData/cli/jvm/diagnosticTests/firDfa.kt:3:13: warning: unused return value of 'length'.
+compiler/testData/cli/jvm/diagnosticTests/firDfa.kt:3:13: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'length'.
         x!!.length
             ^^^^^^
 OK

@@ -141,7 +141,7 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
             "kotlinr", "-no-stdlib", "-e", "println(42)",
             expectedExitCode = 1,
             expectedStderr = """
-                script.kts:1:1: error: unresolved reference 'println'.
+                script.kts:1:1: error: [SCRIPTING_ERROR] [UNRESOLVED_REFERENCE] Unresolved reference 'println'.
                 println(42)
                 ^
                 """.trimIndent()
@@ -181,7 +181,7 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
         runProcess(
             "kotlinr", "-howtorun", "script", "$testDataDirectory/noInline.myscript",
             expectedExitCode = 1,
-            expectedStderr = "error: unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
+            expectedStderr = "error: [SCRIPTING_ERROR] Unrecognized script type: noInline.myscript; Specify path to the script file as the first argument\n"
         )
         runProcess(
             "kotlinr",
@@ -190,7 +190,7 @@ class ScriptingLauncherTest : TestCaseWithTmpdir() {
             ".kts",
             "$testDataDirectory/noInline.myscript",
             expectedExitCode = 1,
-            expectedStderr = """plugins/scripting/scripting-tests/testData/cli/launcher/noInline.myscript:1:7: error: unresolved reference 'CompilerOptions'.
+            expectedStderr = """plugins/scripting/scripting-tests/testData/cli/launcher/noInline.myscript:1:7: error: [SCRIPTING_ERROR] [UNRESOLVED_REFERENCE] Unresolved reference 'CompilerOptions'.
 @file:CompilerOptions("-Xno-inline")
       ^
 """

@@ -1,2 +1,2 @@
-error: no class roots are found in the JDK path: $TESTDATA_DIR$
+error: [ROOTS_RESOLUTION_ERROR] No class roots are found in the JDK path: $TESTDATA_DIR$
 COMPILATION_ERROR

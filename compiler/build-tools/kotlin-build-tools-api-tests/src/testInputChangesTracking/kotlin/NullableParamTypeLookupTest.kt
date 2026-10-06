@@ -53,7 +53,7 @@ class NullableParamTypeLookupTest : BaseCompilationTest() {
                 expectFail()
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*/a.kt:3:13 Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.".toRegex()
+                    ".*/a.kt:3:13.*Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.".toRegex()
                 )
                 assertCompiledSources(setOf("a.kt"))
             }

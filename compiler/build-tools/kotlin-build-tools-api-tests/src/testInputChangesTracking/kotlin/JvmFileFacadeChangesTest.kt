@@ -60,7 +60,7 @@ class JvmFileFacadeChangesTest : BaseCompilationTest() {
 
             mod.compile {
                 // the incremental round reports the last unresolved segment, a clean build reports the qualifier
-                expectFailWithError(".*Usage\\.kt:\\d+:\\d+ Unresolved reference '(Foo|bar)'.*".toRegex())
+                expectFailWithError(".*Usage\\.kt:\\d+:\\d+.*Unresolved reference '(Foo|bar)'.*".toRegex())
             }
         }
     }

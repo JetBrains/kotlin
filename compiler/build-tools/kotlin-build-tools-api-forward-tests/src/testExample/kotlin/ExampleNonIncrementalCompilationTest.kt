@@ -74,11 +74,11 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
 
             module1.compile {
                 expectFail()
-                assertLogContainsPatterns(LogLevel.ERROR, ".*bar\\.kt:1:1 Syntax error: Expecting a top level declaration.*".toRegex())
+                assertLogContainsPatterns(LogLevel.ERROR, ".*bar\\.kt:1:1.*Syntax error: Expecting a top level declaration.*".toRegex())
 
                 // equals to
 
-                expectFailWithError(".*bar\\.kt:1:1 Syntax error: Expecting a top level declaration.*".toRegex())
+                expectFailWithError(".*bar\\.kt:1:1.*Syntax error: Expecting a top level declaration.*".toRegex())
             }
         }
     }

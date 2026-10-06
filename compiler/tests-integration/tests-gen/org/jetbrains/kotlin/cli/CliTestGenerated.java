@@ -1761,6 +1761,12 @@ public class CliTestGenerated extends AbstractCliTest {
     }
 
     @Test
+    @TestMetadata("dontReportInternalDiagnosticNames.args")
+    public void testDontReportInternalDiagnosticNames() {
+      run("dontReportInternalDiagnosticNames.args");
+    }
+
+    @Test
     @TestMetadata("errorSuppressionNoWarning.args")
     public void testErrorSuppressionNoWarning() {
       run("errorSuppressionNoWarning.args");
@@ -2064,12 +2070,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("reportAllWarnings.args")
     public void testReportAllWarnings() {
       run("reportAllWarnings.args");
-    }
-
-    @Test
-    @TestMetadata("reportInternalDiagnosticNames.args")
-    public void testReportInternalDiagnosticNames() {
-      run("reportInternalDiagnosticNames.args");
     }
 
     @Test

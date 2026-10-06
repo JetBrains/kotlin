@@ -1,2 +1,2 @@
-$TESTDATA_DIR$/clashingBindClassToObjCName/privateClass.kt:1:1: error: cannot bind ObjC class `MyPrivateClassObjC` to MyPrivateClass: class cannot have ObjC class attachments
+$TESTDATA_DIR$/clashingBindClassToObjCName/privateClass.kt:1:1: error: [NATIVE_BACKEND_ERROR] Cannot bind ObjC class `MyPrivateClassObjC` to MyPrivateClass: class cannot have ObjC class attachments
 COMPILATION_ERROR

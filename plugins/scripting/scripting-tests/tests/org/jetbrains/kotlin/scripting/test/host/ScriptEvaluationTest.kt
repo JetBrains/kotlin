@@ -73,7 +73,7 @@ class ScriptEvaluationTest {
             """.trimIndent().toScriptSource("script.kts")
         )
         assertTrue(res is ResultWithDiagnostics.Failure)
-        if (!res.reports.any { it.message == "Object 'User' captures the script class instance. Try to use class or anonymous object instead." }) {
+        if (!res.reports.any { it.message == "[SCRIPT_CAPTURING_OBJECT] Object 'User' captures the script class instance. Try to use class or anonymous object instead." }) {
             fail("expecting error about object capturing script instance, got:\n  ${res.reports.joinToString("\n  ") { it.message }}")
         }
     }

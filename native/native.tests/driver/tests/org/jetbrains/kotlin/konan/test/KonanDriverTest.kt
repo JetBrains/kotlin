@@ -293,7 +293,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             "-l", libFile2.absolutePath,
             "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
         ).let {
-            val expectedMessage = "warning: KLIB loader: The same 'unique_name=lib' found in more than one library"
+            val expectedMessage = "warning: [KLIB_LOADING_WARNING] KLIB loader: The same 'unique_name=lib' found in more than one library"
             assertTrue(
                 it.stderr.contains(expectedMessage),
                 "`$expectedMessage` must be in stdout.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"

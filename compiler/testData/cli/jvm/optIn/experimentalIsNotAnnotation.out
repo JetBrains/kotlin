@@ -1,3 +1,3 @@
-warning: class 'org.test.NotAnAnnotation1' is not an opt-in requirement marker.
-warning: class 'org.test.NotAnAnnotation2' is not an opt-in requirement marker.
+warning: [NOT_AN_OPT_IN_REQUIREMENT_MARKER] Class 'org.test.NotAnAnnotation1' is not an opt-in requirement marker.
+warning: [NOT_AN_OPT_IN_REQUIREMENT_MARKER] Class 'org.test.NotAnAnnotation2' is not an opt-in requirement marker.
 OK

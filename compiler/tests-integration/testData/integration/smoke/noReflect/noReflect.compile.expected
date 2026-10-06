@@ -1,8 +1,8 @@
 ERR:
-noReflect.kt:5:23: warning: call uses reflection API which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath.
+noReflect.kt:5:23: warning: [NO_REFLECTION_IN_CLASS_PATH] Call uses reflection API which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath.
         String::class.annotations
                       ^^^^^^^^^^^
-noReflect.kt:5:23: warning: unused return value of 'annotations'.
+noReflect.kt:5:23: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'annotations'.
         String::class.annotations
                       ^^^^^^^^^^^
 

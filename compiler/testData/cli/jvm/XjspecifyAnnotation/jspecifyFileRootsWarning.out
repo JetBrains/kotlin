@@ -1,10 +1,10 @@
-compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:4:11: error: null cannot be a value of a non-null type 'String'.
+compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:4:11: error: [NULL_FOR_NONNULL_TYPE] Null cannot be a value of a non-null type 'String'.
     a.foo(null)
           ^^^^
-compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:12: error: unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
+compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:12: error: [UNSAFE_CALL] Unsafe call on receiver of nullable type 'String?'. Consider using a safe call '?.' or non-null asserted call '!!.'.
     a.bar().length
            ^
-compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:13: warning: unused return value of 'length'.
+compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyUsage.kt:5:13: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'length'.
     a.bar().length
             ^^^^^^
 COMPILATION_ERROR

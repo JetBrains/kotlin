@@ -30,7 +30,7 @@ class TypealiasChangesTest : BaseCompilationTest() {
                 //  the stale expansion and the build fails, unlike a clean build. Once fixed, it has to succeed with
                 //  `assertCompiledSources("Service.kt", "alias.kt", "ServiceUsage.kt", "AliasUsage.kt")`.
                 expectFailWithError(
-                    ".*ServiceUsage\\.kt:\\d+:\\d+ Argument type mismatch: actual type is 'Int', but 'String' was expected.*".toRegex()
+                    ".*ServiceUsage\\.kt:\\d+:\\d+.*Argument type mismatch: actual type is 'Int', but 'String' was expected.*".toRegex()
                 )
                 assertCompiledSources("alias.kt", "ServiceUsage.kt", "AliasUsage.kt")
             }
@@ -51,7 +51,7 @@ class TypealiasChangesTest : BaseCompilationTest() {
                 // TODO(KT-28233): `Base.kt` does not get into the dirty set, so the new `Derived.foo(): String` is
                 //  checked against the stale `Base.foo(): Int` and the build fails, unlike a clean build.
                 //  Once fixed, it has to succeed with `assertCompiledSources("Base.kt", "Derived.kt", "types.kt")`.
-                expectFailWithError(".*Derived\\.kt:\\d+:\\d+ Return type of .* is not a subtype.*".toRegex())
+                expectFailWithError(".*Derived\\.kt:\\d+:\\d+.*Return type of .* is not a subtype.*".toRegex())
                 assertCompiledSources("Derived.kt", "types.kt")
             }
         }

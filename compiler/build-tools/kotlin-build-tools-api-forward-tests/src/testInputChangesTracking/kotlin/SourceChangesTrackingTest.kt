@@ -180,8 +180,8 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
                 expectFail()
                 assertCompiledSources("Main.kt")
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
-                assertLogDoesNotContainPatterns(LogLevel.ERROR, ".*Main\\.kt:8:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
-                assertLogContainsPatterns(LogLevel.ERROR, ".*Main\\.kt:14:19 This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
+                assertLogDoesNotContainPatterns(LogLevel.ERROR, ".*Main\\.kt:8:19.*This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
+                assertLogContainsPatterns(LogLevel.ERROR, ".*Main\\.kt:14:19.*This declaration needs opt-in\\. Its usage must be marked with '@Experimental' or '@OptIn\\(Experimental::class\\)'.*".toRegex())
             }
         }
     }

@@ -1,5 +1,5 @@
 ERR:
-reflect.kt:6:19: warning: unused return value of 'annotations'.
+reflect.kt:6:19: warning: [RETURN_VALUE_NOT_USED] Unused return value of 'annotations'.
     String::class.annotations
                   ^^^^^^^^^^^
 

@@ -3,19 +3,19 @@ Compiling files:
   src/KotlinClass.kt
   src/usages.kt
 Exit code: COMPILATION_ERROR
-  Unresolved reference 'setFoo' on receiver of type 'JavaClass'.
-  'val' cannot be reassigned.
-  Overload resolution ambiguity between candidates:
+  [UNRESOLVED_REFERENCE] Unresolved reference 'setFoo' on receiver of type 'JavaClass'.
+  [VAL_REASSIGNMENT] 'val' cannot be reassigned.
+  [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity between candidates:
 var bazBaz: Int
 val bazBaz: Int
-  Overload resolution ambiguity between candidates:
+  [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity between candidates:
 var bazBaz: Int
 val bazBaz: Int
-  Unresolved reference 'boo' on receiver of type 'JavaClass'.
-  Overload resolution ambiguity between candidates:
+  [UNRESOLVED_REFERENCE] Unresolved reference 'boo' on receiver of type 'JavaClass'.
+  [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity between candidates:
 var bazBaz: Int
 val bazBaz: Int
-  Overload resolution ambiguity between candidates:
+  [OVERLOAD_RESOLUTION_AMBIGUITY] Overload resolution ambiguity between candidates:
 var bazBaz: Int
 val bazBaz: Int
-  Unresolved reference 'boo' on receiver of type 'KotlinClass'.
+  [UNRESOLVED_REFERENCE] Unresolved reference 'boo' on receiver of type 'KotlinClass'.

@@ -888,10 +888,11 @@ with bodies.""",
         }
 
     @Argument(
-        value = "-Xrender-internal-diagnostic-names",
-        description = "Render the internal names of warnings and errors.",
+        value = "-Xrender-diagnostic-names",
+        deprecatedName = "-Xrender-internal-diagnostic-names",
+        description = "Render the string identifiers of warnings and errors, like [RETURN_TYPE_MISMATCH].",
     )
-    var renderInternalDiagnosticNames: Boolean = false
+    var renderInternalDiagnosticNames: Boolean = true
         set(value) {
             checkFrozen()
             field = value

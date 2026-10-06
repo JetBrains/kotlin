@@ -34,7 +34,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("A.kt", "add-my-annotation-and-deprecation")
             mod.compile {
                 assertCompiledSources("A.kt", "B.kt")
-                assertLogContainsPatterns(LogLevel.WARN, ".*B\\.kt:6:13 'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
+                assertLogContainsPatterns(LogLevel.WARN, ".*B\\.kt:6:13.*'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
             }
         }
     }
@@ -57,7 +57,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
             lib.compile()
             app.compile {
                 assertCompiledSources("C.kt")
-                assertLogContainsPatterns(LogLevel.WARN, ".*C\\.kt:6:13 'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
+                assertLogContainsPatterns(LogLevel.WARN, ".*C\\.kt:6:13.*'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
             }
         }
     }
@@ -72,14 +72,14 @@ class AnnotationChangesTest : BaseCompilationTest() {
             mod.replaceFileWithVersion("A.kt", "add-deprecation")
             mod.compile {
                 assertCompiledSources("A.kt", "B.kt")
-                assertLogContainsPatterns(LogLevel.WARN, ".*B\\.kt:6:13 'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
+                assertLogContainsPatterns(LogLevel.WARN, ".*B\\.kt:6:13.*'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
             }
 
             mod.replaceFileWithVersion("A.kt", "add-deprecation-error")
             mod.compile {
                 expectFail()
                 assertCompiledSources("A.kt", "B.kt")
-                assertLogContainsPatterns(LogLevel.ERROR, ".*B\\.kt:6:13 'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
+                assertLogContainsPatterns(LogLevel.ERROR, ".*B\\.kt:6:13.*'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
             }
         }
     }
@@ -96,7 +96,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
             lib.compile()
             app.compile {
                 assertCompiledSources("C.kt")
-                assertLogContainsPatterns(LogLevel.WARN, ".*C\\.kt:6:13 'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
+                assertLogContainsPatterns(LogLevel.WARN, ".*C\\.kt:6:13.*'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
             }
 
             lib.replaceFileWithVersion("A.kt", "add-deprecation-error")
@@ -105,7 +105,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
             app.compile {
                 expectFail()
                 assertCompiledSources("C.kt")
-                assertLogContainsPatterns(LogLevel.ERROR, ".*C\\.kt:6:13 'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
+                assertLogContainsPatterns(LogLevel.ERROR, ".*C\\.kt:6:13.*'fun foo\\(\\): Unit' is deprecated. Deprecated.".toRegex())
             }
         }
     }
@@ -144,7 +144,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 assertCompiledSources("Ann.kt", "Foo.kt", "Main.kt")
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*Main\\.kt:7:5 This declaration needs opt-in\\..*".toRegex()
+                    ".*Main\\.kt:7:5.*This declaration needs opt-in\\..*".toRegex()
                 )
             }
         }
@@ -169,7 +169,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 assertCompiledSources("Main.kt")
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*Main\\.kt:7:5 This declaration needs opt-in\\..*".toRegex()
+                    ".*Main\\.kt:7:5.*This declaration needs opt-in\\..*".toRegex()
                 )
             }
         }
@@ -189,7 +189,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 assertCompiledSources("Ann.kt", "Bar.kt", "Main.kt")
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*Main\\.kt:7:5 This declaration needs opt-in\\..*".toRegex()
+                    ".*Main\\.kt:7:5.*This declaration needs opt-in\\..*".toRegex()
                 )
             }
         }
@@ -209,7 +209,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 assertCompiledSources("Ann.kt", "Base.kt", "Main.kt")
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*Main\\.kt:\\d+:\\d+ This declaration needs opt-in\\..*".toRegex()
+                    ".*Main\\.kt:\\d+:\\d+.*This declaration needs opt-in\\..*".toRegex()
                 )
             }
         }
@@ -229,7 +229,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 assertCompiledSources("Ann.kt", "Marked.kt", "Main.kt")
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*Main\\.kt:7:5 This declaration needs opt-in\\..*".toRegex()
+                    ".*Main\\.kt:7:5.*This declaration needs opt-in\\..*".toRegex()
                 )
             }
         }
@@ -249,7 +249,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 assertCompiledSources("Ann.kt", "C.kt", "Main.kt")
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*Main\\.kt:\\d+:\\d+ This declaration needs opt-in\\..*".toRegex()
+                    ".*Main\\.kt:\\d+:\\d+.*This declaration needs opt-in\\..*".toRegex()
                 )
             }
         }
@@ -269,7 +269,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 assertCompiledSources("Ann.kt", "Obj.kt", "Main.kt")
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*Main\\.kt:\\d+:\\d+ This declaration needs opt-in\\..*".toRegex()
+                    ".*Main\\.kt:\\d+:\\d+.*This declaration needs opt-in\\..*".toRegex()
                 )
             }
         }
@@ -289,7 +289,7 @@ class AnnotationChangesTest : BaseCompilationTest() {
                 assertCompiledSources("Ann.kt", "Base.kt", "Main.kt")
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    ".*Main\\.kt:\\d+:\\d+ Base declaration of supertype .* needs opt-in\\..*".toRegex()
+                    ".*Main\\.kt:\\d+:\\d+.*Base declaration of supertype .* needs opt-in\\..*".toRegex()
                 )
             }
         }

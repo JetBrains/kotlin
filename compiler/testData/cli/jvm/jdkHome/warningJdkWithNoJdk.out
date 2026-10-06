@@ -1,2 +1,2 @@
-warning: the '-jdk-home' option is ignored because '-no-jdk' is specified
+warning: [COMPILER_ARGUMENTS_WARNING] The '-jdk-home' option is ignored because '-no-jdk' is specified
 OK

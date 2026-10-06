@@ -1,2 +1,2 @@
-warning: no target platform specified, using default
+warning: [COMPILER_ARGUMENTS_WARNING] No target platform specified, using default
 OK

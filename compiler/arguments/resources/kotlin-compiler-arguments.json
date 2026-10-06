@@ -5847,12 +5847,18 @@
                         "deprecatedMessage": null
                     },
                     {
-                        "name": "Xrender-internal-diagnostic-names",
+                        "name": "Xrender-diagnostic-names",
                         "shortName": null,
-                        "deprecatedName": null,
+                        "deprecatedName": "Xrender-internal-diagnostic-names",
                         "description": {
-                            "current": "Render the internal names of warnings and errors.",
-                            "valueInVersions": []
+                            "current": "Render the string identifiers of warnings and errors, like [RETURN_TYPE_MISMATCH].",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "1.7.0",
+                                    "maxReleaseVersion": "2.4.20",
+                                    "value": "Render the internal names of warnings and errors."
+                                }
+                            ]
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
@@ -5864,8 +5870,14 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": false,
-                                "valueInVersions": []
+                                "current": true,
+                                "valueInVersions": [
+                                    {
+                                        "minReleaseVersion": "1.7.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": false
+                                    }
+                                ]
                             }
                         },
                         "valueDescription": {
@@ -5885,8 +5897,14 @@
                                 "valueInVersions": []
                             },
                             "defaultValue": {
-                                "current": false,
-                                "valueInVersions": []
+                                "current": true,
+                                "valueInVersions": [
+                                    {
+                                        "minReleaseVersion": "1.7.0",
+                                        "maxReleaseVersion": "2.4.20",
+                                        "value": false
+                                    }
+                                ]
                             }
                         },
                         "deprecatedMessage": null

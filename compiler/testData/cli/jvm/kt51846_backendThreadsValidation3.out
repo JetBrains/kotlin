@@ -1,2 +1,2 @@
-error: -Xbackend-threads value cannot be negative
+error: [COMPILER_ARGUMENTS_ERROR] -Xbackend-threads value cannot be negative
 COMPILATION_ERROR

@@ -1,4 +1,4 @@
-warning: the following target names passed to the -Xmanifest-native-targets are not recognized:
+warning: [KONAN_ARGUMENT_STRONG_WARNING] The following target names passed to the -Xmanifest-native-targets are not recognized:
 unknown_target
 
 List of known target names:

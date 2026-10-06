@@ -34,7 +34,7 @@ class JavaNullabilityAnnotationChangesTest : BaseCompilationTest() {
             mod.changeFile("Usage.kt") { "$it\n" }
 
             mod.compile {
-                expectFailWithError(".*Usage\\.kt:\\d+:\\d+ Initializer type mismatch: expected 'String', actual 'String\\?'.*".toRegex())
+                expectFailWithError(".*Usage\\.kt:\\d+:\\d+.*Initializer type mismatch: expected 'String', actual 'String\\?'.*".toRegex())
             }
         }
     }

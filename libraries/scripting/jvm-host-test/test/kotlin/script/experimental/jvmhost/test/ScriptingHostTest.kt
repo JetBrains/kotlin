@@ -608,7 +608,7 @@ class ScriptingHostTest {
     @Test
     fun testKotlinPackage() {
         val greeting = "Hello from script!"
-        val error = "Only the Kotlin standard library is allowed to use the 'kotlin' package."
+        val error = "[KOTLIN_PACKAGE_USAGE] Only the Kotlin standard library is allowed to use the 'kotlin' package."
         val script = "package kotlin\nprintln(\"$greeting\")"
         val res0 = evalScript(script)
         assertTrue(res0.reports.any { it.message == error })
@@ -690,7 +690,7 @@ class ScriptingHostTest {
         }
         val res = makeScriptingHost().eval(script.toScriptSource(), compilationConfiguration1, null)
         assertTrue(res is ResultWithDiagnostics.Failure)
-        if (res.reports.none { it.message.startsWith("The feature \"break continue in inline lambdas\" is only available since language version 2.2") })
+        if (res.reports.none { it.message.contains("The feature \"break continue in inline lambdas\" is only available since language version 2.2") })
             fail("Error report about language version not found. Reported:\n  ${res.reports.joinToString("\n  ") { it.message }}")
     }
 
@@ -977,7 +977,7 @@ internal fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
 
 private val UNRESOLVED_CLASS_MESSAGES = arrayOf(
     "unable to load class kotlin.script.experimental.jvmhost.test.forScript.NotExistent", // K1
-    "Unresolved reference 'kotlin.script.experimental.jvmhost.test.forScript.NotExistent'.", // K2
+    "[UNRESOLVED_REFERENCE] Unresolved reference 'kotlin.script.experimental.jvmhost.test.forScript.NotExistent'.", // K2
 )
 
 private val IS_COMPILING_WITH_K2 =

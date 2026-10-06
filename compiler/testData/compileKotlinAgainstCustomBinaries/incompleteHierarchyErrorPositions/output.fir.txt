@@ -1,46 +1,46 @@
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:3:1: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:3:1: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
 class SubSub : Sub()
 ^^^^^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:4:14: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:4:14: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
 class Client<T : Sub>(val prop: T)
              ^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:5:6: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:5:6: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
 fun <T : Sub> withTypeParam() {}
      ^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:5: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:5: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
     Sub().unresolved()
     ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
     Sub().unresolved()
           ^^^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: unresolved reference 'unresolved' on receiver of type 'Sub'.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:12:11: error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolved' on receiver of type 'Sub'.
     Sub().unresolved()
           ^^^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:5: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:5: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
     SubSub().unresolved()
     ^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'SubSub'. Check your module classpath for missing or conflicting dependencies.
     SubSub().unresolved()
              ^^^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: unresolved reference 'unresolved' on receiver of type 'SubSub'.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:13:14: error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolved' on receiver of type 'SubSub'.
     SubSub().unresolved()
              ^^^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:14:15: error: cannot access 'test.Super' which is a supertype of '<anonymous>'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:14:15: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of '<anonymous>'. Check your module classpath for missing or conflicting dependencies.
     val obj = object : Sub() {}
               ^^^^^^^^^^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:15:25: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:15:25: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
     withCallRefArg(Sub::resolved)
                         ^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:16:5: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:16:5: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
     Sub().resolved()
     ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:16:11: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:16:11: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
     Sub().resolved()
           ^^^^^^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:17:5: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:17:5: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
     Sub().extension()
     ^^^
-compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:17:11: error: cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyErrorPositions/source.kt:17:11: error: [MISSING_DEPENDENCY_SUPERCLASS] Cannot access 'test.Super' which is a supertype of 'test.Sub'. Check your module classpath for missing or conflicting dependencies.
     Sub().extension()
           ^^^^^^^^^
 COMPILATION_ERROR

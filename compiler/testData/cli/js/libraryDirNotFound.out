@@ -1,8 +1,8 @@
-warning: the argument '-Xir-produce-klib-dir' is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
-compiler/testData/cli/js/withLib.kt:2:8: error: unresolved reference 'library'.
+warning: [DEPRECATED_CLI_ARG] The argument '-Xir-produce-klib-dir' is deprecated since Kotlin 2.4.20. It will be removed in one of the future releases. Use '-nopack' instead to determine if a packed klib file will be produced. Setting this argument to something other than `null` overrides the value from '-nopack'.
+compiler/testData/cli/js/withLib.kt:2:8: error: [UNRESOLVED_IMPORT] Unresolved reference 'library'.
 import library.sample.*
        ^^^^^^^
-compiler/testData/cli/js/withLib.kt:6:13: error: unresolved reference 'pairAdd'.
+compiler/testData/cli/js/withLib.kt:6:13: error: [UNRESOLVED_REFERENCE] Unresolved reference 'pairAdd'.
     val x = pairAdd(p)
             ^^^^^^^
 COMPILATION_ERROR

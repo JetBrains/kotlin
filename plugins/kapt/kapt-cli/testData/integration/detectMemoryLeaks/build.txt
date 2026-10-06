@@ -22,7 +22,7 @@ ap/LeakingProcessor.kt
 Test.kt
 
 # output
-warning: [kapt] Memory leak detected!
+warning: [KAPT_STRONG_WARNING] [kapt] Memory leak detected!
 Location: 'apt.LeakingProcessor', static field 'leakedProcessor'
 Field leaks an Annotation Processing component (LeakingProcessor).
 
@@ -40,6 +40,6 @@ Field leaks an Annotation Processing component (LeakingProcessor).
 Test.kt
 
 # output
-warning: [kapt] The 'default' value for 'detectMemoryLeaks' is deprecated. Use 'standard' instead.
+warning: [KAPT_STRONG_WARNING] [kapt] The 'default' value for 'detectMemoryLeaks' is deprecated. Use 'standard' instead.
 
 # after

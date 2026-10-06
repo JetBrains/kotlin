@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/annotationDefaultTargetWithOptIn.kt:4:10: error: opt-in requirement marker annotation cannot be used on parameter.
+compiler/testData/cli/jvm/annotationDefaultTargetWithOptIn.kt:4:10: error: [OPT_IN_MARKER_ON_WRONG_TARGET] Opt-in requirement marker annotation cannot be used on parameter.
 class My(@Marker val x: String)
          ^^^^^^^
 COMPILATION_ERROR
