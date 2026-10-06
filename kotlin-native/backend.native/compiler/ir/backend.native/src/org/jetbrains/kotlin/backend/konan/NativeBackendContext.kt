@@ -47,6 +47,7 @@ private var IrClass.layoutBuilder: ClassLayoutBuilder? by irAttribute(copyByDefa
  * @property irModules The list of IR module fragments in the reverse topological order. This list only contains IR modules
  *   that are treated as "useful", i.e. each of them either was explicitly passed via CLI argument to the compiler or was loaded
  *   from the Kotlin/Native distribution implicitly and has at least one declaration that has been loaded/linked from it.
+ *   The order is important, e.g., for calling the eager initializers of the libraries, see [LinkKlibsOutput.irModules].
  */
 internal class NativeBackendContext(
         config: NativeSecondStageCompilationConfig,

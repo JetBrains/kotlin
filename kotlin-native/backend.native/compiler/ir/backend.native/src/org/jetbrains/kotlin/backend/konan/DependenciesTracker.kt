@@ -82,7 +82,8 @@ private sealed class FileOrigin {
  * N.B. The "dependencies tracker" is created lately in the 2nd phase pipeline. We have an assumption that it may implicitly
  * rely on the RTO of klibs, so we've made the dependency on RTO to be explicit and with no additional cost.
  * This was achieved by getting the list of [IrModuleFragment], which is already in RTO after the IR linkage stage, and extracting
- * the list of [KotlinLibrary]s from it preserving the order.
+ * the list of [KotlinLibrary]s from it preserving the order. In particular, the RTO is essential for calling the eager initializers
+ * of the libraries in the proper order (see [Dependencies.allBitcodeDependencies]).
  */
 internal class DependenciesTrackerImpl(
         private val llvmModuleSpecification: LlvmModuleSpecification,
@@ -353,9 +354,8 @@ internal class DependenciesTrackerImpl(
             for (dependency in allCachedBitcodeDependencies)
                 allBitcodeDependencies[dependency.library] = dependency
             // This list is used in particular to build the libraries' initializers chain.
-            // The initializers must be called in the topological order, so make sure that the
-            // libraries list being returned is also toposorted.
-            // Note: Unclear, whether the order of libraries is important or not.
+            // The eager initializers must be called in the topological order, so the order of this list is important:
+            // a library must go after all the libraries it depends on. [usefulLibrariesInRTO] guarantees that.
             usefulLibrariesInRTO.mapNotNull { allBitcodeDependencies[it] }
         }
 
