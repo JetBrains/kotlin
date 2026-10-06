@@ -143,33 +143,37 @@ abstract class BaseCompilationTransaction : CompilationTransaction {
 }
 
 /**
- * A base for the transactions that create and remove output files.
+ * Tracks the parent directories of the files deleted inside [classesDir] and removes the ones that became empty.
+ * The [classesDir] itself is never removed.
  */
-abstract class BaseOutputsAwareCompilationTransaction(
+class EmptyClassDirectoriesCleaner(
     /**
      * The classes output directory. Empty parent directories of deleted files are removed only within it and never the directory itself.
      */
     classesDir: Path,
-) : BaseCompilationTransaction() {
+) {
     private val classesDir = classesDir.toAbsolutePath().normalize()
 
     /**
-     * Parent directories of the files removed since the last [deleteEmptyClassDirectories] call, all located inside [classesDir].
+     * Parent directories of the files removed since the last [deleteEmptyDirectories] call, all located inside [classesDir].
      */
     private val directoriesToCleanUp = hashSetOf<Path>()
 
     /**
-     * Remembers the parent directory of the deleted [outputFile] as a candidate for [deleteEmptyClassDirectories]
+     * Remembers the parent directory of the deleted [outputFile] as a candidate for [deleteEmptyDirectories]
      * if the file is located inside [classesDir].
      */
-    protected fun registerDeletedFile(outputFile: Path) {
+    fun registerDeletedFile(outputFile: Path) {
         val parent = outputFile.toAbsolutePath().normalize().parent ?: return
         if (parent != classesDir && parent.startsWith(classesDir)) {
             directoriesToCleanUp.add(parent)
         }
     }
 
-    override fun deleteEmptyClassDirectories() {
+    /**
+     * Removes the directories registered via [registerDeletedFile] (and their ancestors inside [classesDir]) that are empty now.
+     */
+    fun deleteEmptyDirectories() {
         val directories = hashSetOf<Path>()
         // potentially removing an empty directory may make its parent directory empty as well
         for (candidate in directoriesToCleanUp) {
@@ -216,7 +220,9 @@ class ReadOnlyCompilationTransaction : CompilationTransaction, BaseCompilationTr
  */
 class NonRecoverableCompilationTransaction(
     classesDir: Path,
-) : CompilationTransaction, BaseOutputsAwareCompilationTransaction(classesDir) {
+) : CompilationTransaction, BaseCompilationTransaction() {
+    private val directoriesCleaner = EmptyClassDirectoriesCleaner(classesDir)
+
     override fun registerAddedOrChangedFile(outputFile: Path) {
         // do nothing
     }
@@ -224,9 +230,11 @@ class NonRecoverableCompilationTransaction(
     override fun deleteFile(outputFile: Path) {
         if (Files.exists(outputFile)) {
             Files.delete(outputFile)
-            registerDeletedFile(outputFile)
+            directoriesCleaner.registerDeletedFile(outputFile)
         }
     }
+
+    override fun deleteEmptyClassDirectories() = directoriesCleaner.deleteEmptyDirectories()
 
     override fun close() {
         checkForExecutionException()
@@ -246,7 +254,8 @@ class RecoverableCompilationTransaction(
     private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     private val stashDir: Path,
     classesDir: Path,
-) : CompilationTransaction, BaseOutputsAwareCompilationTransaction(classesDir) {
+) : CompilationTransaction, BaseCompilationTransaction() {
+    private val directoriesCleaner = EmptyClassDirectoriesCleaner(classesDir)
     private val fileRelocationRegistry = hashMapOf<Path, Path?>()
     private var filesCounter = 0
 
@@ -273,7 +282,7 @@ class RecoverableCompilationTransaction(
         if (!Files.exists(outputFile)) {
             return
         }
-        registerDeletedFile(outputFile)
+        directoriesCleaner.registerDeletedFile(outputFile)
         if (isFileRelocationIsAlreadyRegisteredFor(outputFile)) {
             reporter.debug { "Deleting $outputFile" }
             Files.delete(outputFile)
@@ -294,6 +303,8 @@ class RecoverableCompilationTransaction(
     private fun getNextRelocatedFilePath(): Path = stashDir.resolve("$filesCounter.backup").also { filesCounter++ }
 
     private fun isFileRelocationIsAlreadyRegisteredFor(outputFile: Path) = outputFile in fileRelocationRegistry
+
+    override fun deleteEmptyClassDirectories() = directoriesCleaner.deleteEmptyDirectories()
 
     /**
      * Reverts all the file changes registered in this transaction.

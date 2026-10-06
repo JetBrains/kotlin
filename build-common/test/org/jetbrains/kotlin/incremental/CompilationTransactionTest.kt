@@ -177,7 +177,7 @@ class ReadOnlyCompilationTransactionTest : BaseCompilationTransactionTest() {
     }
 }
 
-abstract class BaseOutputsAwareCompilationTransactionTest : BaseCompilationTransactionTest() {
+abstract class OutputsAwareCompilationTransactionTest : BaseCompilationTransactionTest() {
     @Test
     fun testDeletingLastFileRemovesEmptyParentDirectoriesUpToOutputRoot() {
         val file = workingDir.resolve("test/bar/A.class")
@@ -228,7 +228,7 @@ abstract class BaseOutputsAwareCompilationTransactionTest : BaseCompilationTrans
     }
 }
 
-class NonRecoverableCompilationTransactionTest : BaseOutputsAwareCompilationTransactionTest() {
+class NonRecoverableCompilationTransactionTest : OutputsAwareCompilationTransactionTest() {
     override fun createTransaction() = NonRecoverableCompilationTransaction(classesDir = workingDir)
 
     @Test
@@ -316,7 +316,7 @@ class NonRecoverableCompilationTransactionTest : BaseOutputsAwareCompilationTran
     }
 }
 
-class RecoverableCompilationTransactionTest : BaseOutputsAwareCompilationTransactionTest() {
+class RecoverableCompilationTransactionTest : OutputsAwareCompilationTransactionTest() {
     override fun createTransaction() = RecoverableCompilationTransaction(DoNothingBuildReporter, stashDir, workingDir)
 
     @Test
