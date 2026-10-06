@@ -531,8 +531,8 @@ public expect val Double.ulp: Double
  * Returns the [Double] value nearest to this value in a direction of positive infinity.
  *
  * Special cases:
- *   - `NaN.nextUp() is `NaN`
- *   - `Double.POSITIVE_INFINITY.nextUp() is `+Infinity`
+ *   - `NaN.nextUp()` is `NaN`
+ *   - `Double.POSITIVE_INFINITY.nextUp()` is `+Infinity`
  *   - `0.0.nextUp()` is `Double.MIN_VALUE`
  *
  * @see nextTowards
@@ -548,8 +548,8 @@ public expect fun Double.nextUp(): Double
  * Returns the [Double] value nearest to this value in a direction of negative infinity.
  *
  * Special cases:
- *   - `NaN.nextDown() is `NaN`
- *   - `Double.NEGATIVE_INFINITY.nextDown() is `-Infinity`
+ *   - `NaN.nextDown()` is `NaN`
+ *   - `Double.NEGATIVE_INFINITY.nextDown()` is `-Infinity`
  *   - `0.0.nextDown()` is `-Double.MIN_VALUE`
  *
  * @see nextUp
