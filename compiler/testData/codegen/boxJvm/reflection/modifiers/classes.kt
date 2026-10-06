@@ -17,6 +17,8 @@ sealed class S {
 @JvmInline
 value class V(val value: String)
 
+sealed interface SI
+
 fun box(): String {
     assertTrue(S::class.isSealed)
     assertFalse(S::class.isFinal)
@@ -27,6 +29,11 @@ fun box(): String {
     assertFalse(S::class.isCompanion)
     assertFalse(S::class.isFun)
     assertFalse(S::class.isValue)
+
+    assertTrue(SI::class.isSealed)
+    assertFalse(SI::class.isFinal)
+    assertFalse(SI::class.isOpen)
+    assertFalse(SI::class.isAbstract)
 
     assertFalse(S.DataClass::class.isSealed)
     assertTrue(S.DataClass::class.isData)

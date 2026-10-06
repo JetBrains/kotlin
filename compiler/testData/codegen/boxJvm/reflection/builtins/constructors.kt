@@ -40,10 +40,9 @@ fun box(): String {
         "fun `<init>`(): kotlin.Float",
         Float::class.javaObjectType.kotlin.constructors.joinToString("\n"),
     )
-    assertEquals(
-        "[]",
-        Float::class.constructors.single().annotations.toString(),
-    )
+    for (klass in listOf(Boolean::class, Char::class, Byte::class, Short::class, Int::class, Long::class, Float::class, Double::class)) {
+        assertEquals("[]", klass.constructors.single().annotations.toString(), klass.toString())
+    }
 
     assertEquals(
         """

@@ -6,9 +6,7 @@ package test;
 public class JOuter<T> {
     public class Mid<U> {
         public class Inner {
-            public final String value;
-
-            public Inner(T t, U u) { value = t + ":" + u; }
+            public Inner(T t, U u) {}
 
             public T t() { return null; }
             public JOuter<T>.Mid<U>.Inner self() { return this; }
@@ -25,6 +23,7 @@ import kotlin.test.assertEquals
 
 // Complements kt89280_innerClassOfGenericOuterInJava.kt and innerClassConstructor tests (KT-81854) with two levels of
 // generic inner classes, where the constructor's instance parameter and return types mention type parameters of both outers.
+// See nestedAndInnerCombinations*.kt for calls of such constructors.
 
 class KOuter<T> {
     inner class Mid<U> {
@@ -40,11 +39,11 @@ private fun KFunction<*>.signature(): String =
     parameters.joinToString(prefix = "(", postfix = ") -> $returnType") { "${it.kind}: ${it.type}" }
 
 fun box(): String {
-    val kCtor = KOuter.Mid.Inner::class.constructors.single()
-    assertEquals("(INSTANCE: test.KOuter<T>.Mid<U>, VALUE: T, VALUE: U) -> test.KOuter<T>.Mid<U>.Inner", kCtor.signature())
+    assertEquals(
+        "(INSTANCE: test.KOuter<T>.Mid<U>, VALUE: T, VALUE: U) -> test.KOuter<T>.Mid<U>.Inner",
+        KOuter.Mid.Inner::class.constructors.single().signature(),
+    )
     assertEquals("fun test.KOuter<T>.Mid<U>.Inner.self(): test.KOuter<T>.Mid<U>.Inner", KOuter.Mid.Inner::class.members.single { it.name == "self" }.toString())
-    val kInner = kCtor.call(KOuter<Int>().Mid<String>(), 1, "a")
-    assertEquals("1:a", "${kInner.t}:${kInner.u}")
 
     // Star projections are created for type parameters of all outer classes (see KT-82093).
     assertEquals("test.KOuter<*>.Mid<*>.Inner", KOuter.Mid.Inner::class.starProjectedType.toString())
@@ -63,9 +62,6 @@ fun box(): String {
     } else {
         assertEquals("(INSTANCE: test.JOuter<T>.Mid<U>, VALUE: T!, VALUE: U!) -> test.JOuter<T>.Mid<U>.Inner", jCtor.signature())
     }
-    assertEquals("2:b", jCtor.call(JOuter<Int>().Mid<String>(), 2, "b").value)
-    val bound = JOuter<Int>().Mid<String>()::Inner
-    assertEquals("3:c", bound.call(3, "c").value)
 
     return "OK"
 }
