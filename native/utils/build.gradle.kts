@@ -1,5 +1,3 @@
-import org.gradle.internal.os.OperatingSystem
-
 plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
@@ -36,7 +34,6 @@ configureKotlinCompileTasksGradleCompatibility()
 
 tasks {
     withType<Test>().configureEach {
-        inputs.property("os.name", OperatingSystem.current().name)
         useJUnitPlatform()
     }
 }
