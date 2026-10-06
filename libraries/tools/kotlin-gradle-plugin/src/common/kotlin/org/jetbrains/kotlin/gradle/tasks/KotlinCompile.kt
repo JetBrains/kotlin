@@ -223,7 +223,7 @@ abstract class KotlinCompile @Inject constructor(
             returnValueCheckerMode.orNull?.run { args.returnValueChecker = toCompilerValue() }
 
             if (useFirRunner.get()) {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 if (compilerOptions.languageVersion.orElse(KotlinVersion.DEFAULT).get() < KotlinVersion.KOTLIN_2_0) {
                     reportDiagnostic(
                         KotlinToolingDiagnostics.IcFirMisconfigurationLV(
