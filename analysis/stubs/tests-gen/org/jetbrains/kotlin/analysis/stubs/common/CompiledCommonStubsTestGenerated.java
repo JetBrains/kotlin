@@ -3506,6 +3506,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     }
 
     @Test
+    @TestMetadata("codeBlockWithBlockComment.kt")
+    public void testCodeBlockWithBlockComment() {
+      run("codeBlockWithBlockComment.kt");
+    }
+
+    @Test
     @TestMetadata("CodeBlocks.kt")
     public void testCodeBlocks() {
       run("CodeBlocks.kt");
@@ -3623,6 +3629,12 @@ public class CompiledCommonStubsTestGenerated extends AbstractCompiledCommonStub
     @TestMetadata("kt86184.kt")
     public void testKt86184() {
       run("kt86184.kt");
+    }
+
+    @Test
+    @TestMetadata("kt89933.kt")
+    public void testKt89933() {
+      run("kt89933.kt");
     }
 
     @Test
