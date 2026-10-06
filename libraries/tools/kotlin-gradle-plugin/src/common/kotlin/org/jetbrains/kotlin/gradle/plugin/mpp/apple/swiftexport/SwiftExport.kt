@@ -218,6 +218,7 @@ private fun Project.registerSwiftExportRun(
         task.mainCompilationOutputFiles.from(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)
+        task.customJvmArgs.set(kotlinPropertiesProvider.swiftExportJvmArgs)
         task.mainModuleInput.moduleName.set(swiftApiModuleName)
         task.mainModuleInput.flattenPackage.set(swiftApiFlattenPackage)
         task.kotlinNativeProvider.set(
