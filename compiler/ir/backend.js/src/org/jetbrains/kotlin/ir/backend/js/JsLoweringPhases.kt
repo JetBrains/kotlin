@@ -143,6 +143,7 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::JsCallableReferenceLowering,
     ::JsSingleAbstractMethodLowering,
     ::TailrecLowering,
+    ::TrivialEnumClassLowering,
     ::EnumClassConstructorLowering,
     ::EnumClassConstructorBodyTransformer,
     ::LocalDelegatedPropertiesLowering,
