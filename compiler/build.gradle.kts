@@ -91,5 +91,8 @@ projectTests {
     withMockJdkAnnotationsJar()
 }
 
-val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt", testSourceSet)
-
+val generateTestData by generator(
+    "org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt",
+    testSourceSet,
+    inputKind = GeneratorInputKind.RuntimeClasspath,
+)
