@@ -23,7 +23,7 @@ internal class DirtyFilesCachedHistory(workingDir: File) {
     private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
 
     fun store(withTransaction: CompilationTransaction, allDirtySources: Collection<File>) {
-        val text = allDirtySources.joinToString(separator = System.lineSeparator()) { it.normalize().absolutePath }
+        val text = allDirtySources.joinToString(separator = System.lineSeparator()) { it.normalize().path }
         withTransaction.writeText(dirtySourcesSinceLastTimeFile.toPath(), text)
     }
 

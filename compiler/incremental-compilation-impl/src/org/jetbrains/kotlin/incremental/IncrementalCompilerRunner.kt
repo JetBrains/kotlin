@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -594,7 +595,11 @@ abstract class IncrementalCompilerRunner<
             val expectActualTracker = ExpectActualTrackerImpl()
 
             val outputItemsCollector = OutputItemsCollectorImpl()
-            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
+            val forwardingOutputItemsCollector =
+                ForwardingOutputItemsCollector(outputItemsCollector, addSourceFileGeneratedForPluginAction = {
+                    icContext.compilerGeneratedSyntheticSources.add(it)
+                })
+            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, forwardingOutputItemsCollector)
             val fileMappingTracker = ICFileMappingTrackerImpl(transactionOutputsRegistrar)
 
             val [sourcesToCompile, removedKotlinSources] = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
@@ -818,4 +823,33 @@ fun extractKotlinSourcesFromFreeCompilerArguments(
     }
     compilerArguments.freeArgs = freeArgs
     return allKotlinFiles
+}
+
+private class ForwardingOutputItemsCollector(
+    val collector: OutputItemsCollector,
+    private val addAction: (Collection<File>, File) -> Unit = { _, _ -> },
+    private val addSourceReferencedByCompilerPluginAction: (File) -> Unit = { _ -> },
+    private val addOutputFileGeneratedForPluginAction: (File) -> Unit = { _ -> },
+    private val addSourceFileGeneratedForPluginAction: (File) -> Unit = { _ -> },
+) : OutputItemsCollector {
+    override fun add(sourceFiles: Collection<File>, outputFile: File) {
+        collector.add(sourceFiles, outputFile)
+        addAction(sourceFiles, outputFile)
+    }
+
+    override fun addSourceReferencedByCompilerPlugin(sourceFile: File) {
+        collector.addSourceReferencedByCompilerPlugin(sourceFile)
+        addSourceReferencedByCompilerPluginAction(sourceFile)
+    }
+
+    override fun addOutputFileGeneratedForPlugin(outputFile: File) {
+        collector.addOutputFileGeneratedForPlugin(outputFile)
+        addOutputFileGeneratedForPluginAction(outputFile)
+    }
+
+    override fun addSourceFileGeneratedForPlugin(sourceFile: File) {
+        collector.addSourceFileGeneratedForPlugin(sourceFile)
+        addSourceFileGeneratedForPluginAction(sourceFile)
+    }
+
 }
