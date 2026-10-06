@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.cli.jvm.compiler.CliVirtualFileFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
-import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
+import org.jetbrains.kotlin.jvm.environment.JvmCompilationEnvironment
 import org.jetbrains.kotlin.jvm.environment.asJvmClasspathRootId
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -80,6 +82,9 @@ import kotlin.script.experimental.jvm.util.classpathFromClass
  * The session sees the classpath of the regular compilation supplied by the host via [getRegularClasspath], which expected to contain
  * the dependencies of the script and host configurations, and the classpath roots of the accepted annotation classes. The session is
  * created for every call, and only if the script has annotations that could be accepted by its `onAnnotations` refinement handlers.
+ *
+ * This code runs inside the IDE, which ships `:compiler:cli-base` but not `:compiler:cli`: nothing from `:compiler:cli`
+ * (e.g. `VfsBasedProjectEnvironment`, `KotlinCoreEnvironment`, the CLI diagnostics reporters) may be used on this path.
  */
 class PsiScriptAnnotationsCollector(
     private val getRegularClasspath: (KtFile) -> List<File> = { emptyList() },
@@ -159,12 +164,11 @@ private fun createAnnotationResolutionSession(
     }.map { JavaRoot(it, JavaRoot.RootType.BINARY) }
     val projectEnvironment = AnnotationResolutionProjectEnvironment(
         project,
-        listOfNotNull(jarFileSystem, localFileSystem),
+        roots.map { it.file },
         JvmDependenciesIndexImpl(roots),
     ) { scope ->
         JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply { addRoots(roots, configuration) }
     }
-    projectEnvironment.registerIndexedClasspathRoots(roots.map { it.file })
     val sessionFactoryContext = FirJvmSessionFactory.Context(
         configuration = configuration,
         projectEnvironment = projectEnvironment,
@@ -202,15 +206,21 @@ private fun createAnnotationResolutionSession(
  */
 private class AnnotationResolutionProjectEnvironment(
     project: Project,
-    knownFileSystems: List<VirtualFileSystem>,
+    roots: List<VirtualFile>,
     private val index: JvmDependenciesIndex,
-    getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
-) : VfsBasedProjectEnvironment(project, knownFileSystems, getPackagePartProviderFn) {
+    private val getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
+) : JvmCompilationEnvironment {
+
+    // the index contains only the script's roots, so a single scope over them serves any requested classpath
+    private val scope: GlobalSearchScope = RootsScope(project, roots)
 
     override fun getJavaModuleResolver(): JavaModuleResolver = NoJavaModulesResolver
 
     override fun getKotlinClassFinder(classpath: JvmClasspath): KotlinClassFinder =
-        CliVirtualFileFinder(index, psiSearchScope(classpath), enableSearchInCtSym = false, perfManager = null)
+        CliVirtualFileFinder(index, scope, enableSearchInCtSym = false, perfManager = null)
+
+    override fun getPackagePartProvider(classpath: JvmClasspath): PackagePartProvider =
+        getPackagePartProviderFn(scope)
 
     fun classNamesOnlyJavaInterop(): FirJavaInterop = object : FirJavaInterop {
         override fun createBinaryJavaFacade(session: FirSession, moduleData: FirModuleData, classpath: JvmClasspath): FirJavaFacade =
@@ -219,6 +229,11 @@ private class AnnotationResolutionProjectEnvironment(
         override fun createJavaSourcesFacade(session: FirSession, moduleData: FirModuleData): FirJavaFacade =
             FirJavaFacadeForModule(session, moduleData, ClassNamesOnlyJavaClassFinder(index))
     }
+}
+
+private class RootsScope(project: Project, private val roots: Collection<VirtualFile>) :
+    DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+    override fun contains(file: VirtualFile): Boolean = roots.any { VfsUtilCore.isAncestor(it, file, false) }
 }
 
 private class ClassNamesOnlyJavaClassFinder(private val index: JvmDependenciesIndex) : JavaClassFinder {
