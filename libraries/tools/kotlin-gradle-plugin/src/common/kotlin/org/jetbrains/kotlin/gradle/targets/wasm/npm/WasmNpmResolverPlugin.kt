@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.npm
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmTarget
  */
 abstract class WasmNpmResolverPlugin internal constructor() : CommonNpmResolverPlugin {
     override fun apply(project: Project) {
-        val wasmNodeJsRootPlugin = WasmNodeJsRootPlugin.apply(project.rootProject)
+        val wasmNodeJsRootPlugin = WasmNodeJsRootPlugin.apply(project.jsToolingProject())
 
         val applier = NpmResolverPluginApplier(
             { wasmNodeJsRootPlugin },
