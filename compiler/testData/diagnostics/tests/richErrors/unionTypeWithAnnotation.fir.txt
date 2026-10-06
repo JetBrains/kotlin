@@ -11,6 +11,6 @@ FILE: unionTypeWithAnnotation.kt
         }
 
     }
-    public final fun foo(): R|union(primary=kotlin/String, errors=Foo)| {
+    public final fun foo(): R|@R|Ann|()  union(primary=kotlin/String, errors=Foo)| {
         ^foo String()
     }
