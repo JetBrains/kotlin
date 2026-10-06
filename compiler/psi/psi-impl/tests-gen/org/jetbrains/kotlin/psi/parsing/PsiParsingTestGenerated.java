@@ -3756,6 +3756,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     public void testTwoTags() {
       run("TwoTags.kt");
     }
+
+    @Test
+    @TestMetadata("unclosedCodeBlocks.kt")
+    public void testUnclosedCodeBlocks() {
+      run("unclosedCodeBlocks.kt");
+    }
   }
 
   @Nested
