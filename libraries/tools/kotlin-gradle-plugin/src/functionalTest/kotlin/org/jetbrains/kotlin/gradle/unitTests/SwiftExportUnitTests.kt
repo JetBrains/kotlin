@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositori
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -600,6 +601,29 @@ class SwiftExportUnitTests {
         val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
 
         assertEquals(listOf("-Xmx1g"), swiftExportTask.workerJvmArgs)
+    }
+
+    @Test
+    fun `test swift export worker jvm args from property keep default max heap size`() {
+        val project = swiftExportProject()
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_JVM_ARGS, " -XX:+UseG1GC  -Dfoo=bar ")
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+
+        assertEquals(listOf("-XX:+UseG1GC", "-Dfoo=bar"), swiftExportTask.customJvmArgs.get())
+        assertEquals(listOf("-XX:+UseG1GC", "-Dfoo=bar", "-Xmx1g"), swiftExportTask.workerJvmArgs)
+    }
+
+    @Test
+    fun `test swift export worker max heap size from property overrides default`() {
+        val project = swiftExportProject()
+        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_JVM_ARGS, "-Xmx4g -XX:+UseG1GC")
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.withType(SwiftExportTask::class.java).single()
+
+        assertEquals(listOf("-Xmx4g", "-XX:+UseG1GC"), swiftExportTask.workerJvmArgs)
     }
 
     @Test
