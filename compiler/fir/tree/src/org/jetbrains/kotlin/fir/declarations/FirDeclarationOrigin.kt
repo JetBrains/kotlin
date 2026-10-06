@@ -62,7 +62,30 @@ sealed class FirDeclarationOrigin(
 
     object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()
-    object Enhancement : FirDeclarationOrigin()
+    sealed class Enhancement(displayName: String, generated: Boolean) : FirDeclarationOrigin(displayName, generated = generated) {
+        class Plugin(val key: GeneratedDeclarationKey) : Enhancement(displayName = "Enhancement(Plugin[$key])", generated = true) {
+            override fun equals(other: Any?): Boolean {
+                if (this === other) return true
+                if (other !is Java.Plugin) return false
+                return key == other.key
+            }
+
+            override fun hashCode(): Int = key.hashCode()
+        }
+
+        companion object : Enhancement(displayName = "Enhancement", generated = false)
+    }
+
+    companion object {
+        private fun Enhancement(key: GeneratedDeclarationKey? = null): Enhancement = key?.let { Enhancement.Plugin(key) } ?: Enhancement
+
+        fun Enhancement(origin: FirDeclarationOrigin): Enhancement = when (origin) {
+            is Plugin -> Enhancement(origin.key)
+            is Java.Plugin -> Enhancement(origin.key)
+            else -> Enhancement
+        }
+    }
+
     object ImportedFromObjectOrStatic : FirDeclarationOrigin()
     sealed class SubstitutionOverride(displayName: String) : FirDeclarationOrigin(displayName, fromSupertypes = true) {
         object DeclarationSite : SubstitutionOverride("SubstitutionOverride(DeclarationSite)")

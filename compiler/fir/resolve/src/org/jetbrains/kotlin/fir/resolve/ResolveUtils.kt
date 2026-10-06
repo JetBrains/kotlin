@@ -726,7 +726,7 @@ internal fun FirFunction.forbiddenNamedArgumentsTargetOrNull(originScope: FirTyp
             initial.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(originScope) }
         }
 
-        FirDeclarationOrigin.Enhancement -> {
+        is FirDeclarationOrigin.Enhancement -> {
             ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION.takeUnless { symbol.hasOverrideThatAllowsNamedArguments(originScope) }
         }
 

@@ -293,7 +293,7 @@ class FirSyntheticPropertiesScope private constructor(
             @OptIn(ScopeFunctionRequiresPrewarm::class)
             val overriddenWithScope = scope.getDirectOverriddenFunctionsWithBaseScope(symbol)
 
-            if (symbol.origin == FirDeclarationOrigin.Enhancement) {
+            if (symbol.origin is FirDeclarationOrigin.Enhancement) {
                 /**
                  * If there is no overridden then we found java root and want to stick with it
                  * Otherwise we are in the middle of the hierarchy, so leaf potentially can be from Kotlin

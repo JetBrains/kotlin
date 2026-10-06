@@ -213,7 +213,7 @@ class Fir2IrConverter(
             if (JavaToKotlinClassMap.mapKotlinToJava(klass.classId.asSingleFqName().toUnsafe()) != null) {
                 klass.unsubstitutedScope().processAllFunctions {
                     // additional check to add IR declarations only in declaring class
-                    if (it.origin == FirDeclarationOrigin.Enhancement && it.callableId.classId == klass.classId) {
+                    if (it.origin is FirDeclarationOrigin.Enhancement && it.callableId.classId == klass.classId) {
                         add(it.fir)
                     }
                 }

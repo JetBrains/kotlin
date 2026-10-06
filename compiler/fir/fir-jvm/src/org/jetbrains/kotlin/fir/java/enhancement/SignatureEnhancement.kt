@@ -365,7 +365,7 @@ class FirSignatureEnhancement(
 
         var typeParameterSubstitutor: ConeSubstitutor? = null
         val declarationOrigin =
-            if (isIntersectionOverride) FirDeclarationOrigin.IntersectionOverride else FirDeclarationOrigin.Enhancement
+            if (isIntersectionOverride) FirDeclarationOrigin.IntersectionOverride else FirDeclarationOrigin.Enhancement(firMethod.origin)
 
         val function = when (firMethod) {
             is FirConstructor -> {

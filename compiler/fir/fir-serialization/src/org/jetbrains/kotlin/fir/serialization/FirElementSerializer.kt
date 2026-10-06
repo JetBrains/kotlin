@@ -232,7 +232,7 @@ class FirElementSerializer private constructor(
             if (declaration.isGeneratedStaticEnumMember(klass)) continue // ??? Miss values() & valueOf()
             if (!declaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) continue
             // We have such declarations when compiling stdlib, but we don't need them as serialized bultins metadata
-            if (declaration.origin == FirDeclarationOrigin.Enhancement
+            if (declaration.origin is FirDeclarationOrigin.Enhancement
                 || declaration.origin == FirDeclarationOrigin.Synthetic.FakeHiddenInPreparationForNewJdk) {
                 continue
             }

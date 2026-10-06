@@ -620,7 +620,7 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
         return when (origin) {
             is FirDeclarationOrigin.Java -> true
             is FirDeclarationOrigin.Synthetic.JavaProperty -> true
-            FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
+            is FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
                 is KtFakeSourceElementKind.EnumGeneratedDeclaration -> false
                 else -> true
             }
