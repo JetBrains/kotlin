@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6PrimaryConstructorReplacement
+import org.jetbrains.kotlin.ir.backend.js.lower.isLoweredTrivialEnum
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.defaultArgumentsOriginalFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -93,7 +94,9 @@ val IrClass.isInstantiableEnum: Boolean
     get() = isEnumClass && !isExpect && !isEffectivelyExternal()
 
 val IrDeclaration.parentEnumClassOrNull: IrClass?
-    get() = parents.filterIsInstance<IrClass>().firstOrNull { it.isInstantiableEnum }
+    get() = parents.filterIsInstance<IrClass>().firstOrNull {
+        it.isInstantiableEnum || it.isLoweredTrivialEnum
+    }
 
 fun IrFunctionSymbol.isUnitInstanceFunction(context: JsIrBackendContext): Boolean {
     return owner.origin === JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION &&

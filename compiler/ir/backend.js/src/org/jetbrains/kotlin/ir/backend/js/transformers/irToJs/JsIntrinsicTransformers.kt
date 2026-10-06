@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.BOXES_CREATION_ORIGIN
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6PrimaryConstructorOptimizationLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.boxesContainer
 import org.jetbrains.kotlin.ir.backend.js.lower.exportedInlineClassBoxFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -194,6 +196,11 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsInvocation(JsNameRef(Namer.SLICE_FUNCTION, translateCallArguments(call, context).single()))
             }
 
+            add(symbols.jsArrayIndexOf) { call, context ->
+                val args = translateCallArguments(call, context)
+                JsInvocation(JsNameRef(Namer.INDEXOF_FUNCTION, args[0]), args[1])
+            }
+
             add(symbols.isLongCompiledToBigInt) { _, _ ->
                 JsBooleanLiteral(backendContext.configuration.compileLongAsBigint)
             }
@@ -227,10 +234,16 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                         .apply { isInlineClassBoxing = true }
                 }
 
-                val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
+                val boxesContainer = inlineClass.boxesContainer
 
-                JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
-                    .apply { isInlineClassBoxing = true }
+                if (boxesContainer != null && call.origin != BOXES_CREATION_ORIGIN) {
+                    val fieldName = context.getNameForField(boxesContainer)
+                    JsArrayAccess(fieldName.makeRef(), arg)
+                } else {
+                    val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
+                    JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
+                        .apply { isInlineClassBoxing = true }
+                }
             }
 
             add(symbols.jsUnboxIntrinsic) { call, context ->

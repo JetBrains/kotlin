@@ -478,6 +478,7 @@ class BackendJsSymbols(
     val taggedArrayCopy: IrSimpleFunctionSymbol by CallableIds.taggedArrayCopy.functionSymbol()
 
     val jsArraySlice by CallableIds.slice.functionSymbol()
+    val jsArrayIndexOf by CallableIds.jsArrayIndexOf.functionSymbol()
 
     val jsCall by CallableIds.jsCall.functionSymbol()
     val jsBind by CallableIds.jsBind.functionSymbol()
@@ -699,6 +700,7 @@ private object CallableIds {
     val jsSliceArrayLikeFromIndex = "jsSliceArrayLikeFromIndex".jsCallableId
     val jsSliceArrayLikeFromIndexToIndex = "jsSliceArrayLikeFromIndexToIndex".jsCallableId
     val slice = "slice".jsCallableId
+    val jsArrayIndexOf = "jsArrayIndexOf".jsCallableId
     val jsCall = "jsCall".jsCallableId
     val jsBind = "jsBind".jsCallableId
     val charSequenceGet = "charSequenceGet".jsCallableId

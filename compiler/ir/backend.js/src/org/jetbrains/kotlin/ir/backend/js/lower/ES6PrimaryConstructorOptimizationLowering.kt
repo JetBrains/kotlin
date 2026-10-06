@@ -52,13 +52,11 @@ internal class ES6PrimaryConstructorOptimizationLowering(private val context: Js
         irClass.removeInteropConstructor()
 
         val constructorReplacement = declaration.convertToRegularConstructor(irClass)
+            // Since the previous constructor was in the roots, the new should be also added
+            .also(context.dceRoots::add)
 
         if (declaration == defaultConstructor) {
             irClass.defaultConstructorForReflection = constructorReplacement
-        }
-
-        if (constructorReplacement.isExported(backendContext)) {
-            context.dceRoots.add(constructorReplacement)
         }
 
         return listOf(constructorReplacement)

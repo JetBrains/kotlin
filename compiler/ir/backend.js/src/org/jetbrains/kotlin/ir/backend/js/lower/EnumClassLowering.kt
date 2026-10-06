@@ -25,9 +25,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrSpreadElementImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -427,14 +430,14 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
 
     private fun createEnumEntriesBody(entriesGetter: IrFunction, enumClass: IrClass): IrBlockBody {
         val entriesField = enumClass.buildEntriesField()
-        val valuesFunction = enumClass.searchForValuesFunction()
         val createEnumEntriesFunction = context.symbols.createEnumEntries
         return context.createIrBuilder(entriesGetter.symbol).run {
             irBlockBody {
                 +irIfThen(
                     irEqualsNull(irGetField(null, entriesField)),
                     irSetField(null, entriesField, irCall(createEnumEntriesFunction).apply {
-                        arguments[0] = irCall(valuesFunction)
+                        arguments[0] = enumClass.boxesContainer?.let { irGetField(null, it) }
+                            ?: irCall(enumClass.searchForValuesFunction())
                     })
                 )
                 +irReturn(irGetField(null, entriesField))
@@ -459,36 +462,64 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
 
     private fun createEnumValueOfBody(valueOfFun: IrFunction, irClass: IrClass): IrBlockBody {
         val nameParameter = valueOfFun.parameters[0]
+        val arrayIndexOf = (context as? JsIrBackendContext)?.symbols?.jsArrayIndexOf
 
         return context.createIrBuilder(valueOfFun.symbol).run {
             irBlockBody {
-                +irWhen(
-                    irClass.defaultType,
-                    irClass.enumEntries.map {
-                        irBranch(
-                            irEquals(irGet(nameParameter), irString(it.name.identifier)), irReturn(irCall(it.getInstanceFun!!))
-                        )
-                    } memoryOptimizedPlus irElseBranch(irBlock {
-                        +irCall(throwIAESymbol).apply {
-                            arguments[0] = irConcat().apply {
-                                addArgument(irString("No enum constant ${irClass.kotlinFqName}."))
-                                addArgument(irGet(nameParameter))
-                            }
-                        }
+                val namesContainerField = irClass.namesContainer
+                val throwIAE = irCall(throwIAESymbol).apply {
+                    arguments[0] = irConcat().apply {
+                        addArgument(irString("No enum constant ${irClass.kotlinFqName}."))
+                        addArgument(irGet(nameParameter))
+                    }
+                }
+
+                if (namesContainerField != null && arrayIndexOf != null) {
+                    val ordinal = createTmpVariable(irCall(arrayIndexOf).apply {
+                        arguments[0] = irGetField(null, namesContainerField)
+                        arguments[1] = irGet(nameParameter)
                     })
-                )
+                    +irIfThen(
+                        irEqeqeq(irGet(ordinal), (-1).toIrConst(context.irBuiltIns.intType)),
+                        throwIAE
+                    )
+                    +irReturn(irGet(ordinal, irClass.defaultType))
+                } else {
+                    +irWhen(
+                        irClass.defaultType,
+                        irClass.enumEntries.map {
+                            irBranch(
+                                irEquals(irGet(nameParameter), irString(it.name.identifier)), irReturn(irCall(it.getInstanceFun!!))
+                            )
+                        } memoryOptimizedPlus irElseBranch(irBlock { +throwIAE })
+                    )
+                }
             }
         }
     }
 
     private fun createEnumValuesBody(valuesFun: IrFunction, irClass: IrClass): IrBlockBody {
         return context.createIrBuilder(valuesFun.symbol).run {
-            irBlockBody { +irReturn(arrayOfEnumEntriesOf(irClass)) }
+            irBlockBody {
+                val arrayOfEntries: IrExpression = irClass.boxesContainer?.let {
+                    arrayOfEnumEntriesFromBoxes(it, irClass)
+                } ?: arrayOfEnumEntriesOf(irClass)
+                +irReturn(arrayOfEntries)
+            }
         }
     }
 
     private fun IrBuilderWithScope.arrayOfEnumEntriesOf(enumClass: IrClass) =
         irVararg(enumClass.defaultType, enumClass.enumEntries.memoryOptimizedMap { irCall(it.getInstanceFun!!) })
+
+    private fun IrBuilderWithScope.arrayOfEnumEntriesFromBoxes(boxesContainer: IrField, enumClass: IrClass) =
+        IrVarargImpl(
+            startOffset,
+            endOffset,
+            context.irBuiltIns.arrayClass.typeWith(enumClass.defaultType),
+            enumClass.defaultType,
+            listOf(IrSpreadElementImpl(startOffset, endOffset, irGetField(null,boxesContainer)))
+        )
 }
 
 private val IrClass.enumEntries: List<IrEnumEntry>

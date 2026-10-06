@@ -13,7 +13,7 @@ public actual abstract class Enum<E : Enum<E>> actual constructor(@kotlin.intern
 
     actual final override fun equals(other: Any?): Boolean = this === other
 
-    actual final override fun hashCode(): Int = identityHashCode(this)
+    actual final override fun hashCode(): Int = ordinal
 
     actual override fun toString(): String = name
 
