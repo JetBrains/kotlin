@@ -676,6 +676,12 @@ public class SourceLikeLazyAnnotationsResolveTestGenerated extends AbstractSourc
     }
 
     @Test
+    @TestMetadata("jvmField_withPropertyTargetAnnotation_backingField.kt")
+    public void testJvmField_withPropertyTargetAnnotation_backingField() {
+      run("jvmField_withPropertyTargetAnnotation_backingField.kt");
+    }
+
+    @Test
     @TestMetadata("jvmName_getter.kt")
     public void testJvmName_getter() {
       run("jvmName_getter.kt");

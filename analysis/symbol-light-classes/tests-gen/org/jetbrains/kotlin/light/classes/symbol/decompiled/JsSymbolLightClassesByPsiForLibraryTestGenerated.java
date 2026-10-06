@@ -275,6 +275,12 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Test
+  @TestMetadata("jvmFieldWithPropertyTargetAnnotation.kt")
+  public void testJvmFieldWithPropertyTargetAnnotation() {
+    run("jvmFieldWithPropertyTargetAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("jvmName.kt")
   public void testJvmName() {
     run("jvmName.kt");
