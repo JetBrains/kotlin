@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArt
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.publishing.addPgpSignatureHelpers
 import org.jetbrains.kotlin.gradle.tasks.publishing.addPomValidationHelpers
@@ -115,6 +116,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         KotlinNativeBundleBuildService.registerIfAbsent(project)
 
+        registerNodeJsToolchainServiceIfAbsent(project)
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {

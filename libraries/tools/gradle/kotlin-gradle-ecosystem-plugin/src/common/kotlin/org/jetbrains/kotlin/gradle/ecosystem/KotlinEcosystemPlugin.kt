@@ -15,6 +15,11 @@ class KotlinEcosystemPlugin : Plugin<Settings> {
     private val logger = Logging.getLogger("KotlinEcosystemPlugin")
 
     override fun apply(settings: Settings) {
-
+        settings.extensions.create(
+            KotlinEcosystemExtension::class.java,
+            "kotlin",
+            KotlinEcosystemExtensionImpl::class.java,
+            settings,
+        )
     }
 }

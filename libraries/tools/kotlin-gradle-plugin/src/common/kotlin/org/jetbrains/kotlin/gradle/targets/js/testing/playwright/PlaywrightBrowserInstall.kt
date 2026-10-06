@@ -16,6 +16,8 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
@@ -28,12 +30,14 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependenciesTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.KotlinInterprocessDirectoryLock
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.nodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "Playwright cli manages caches on its own")
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 internal abstract class PlaywrightBrowserInstall @Inject constructor(
     @Internal
     @Transient
@@ -46,11 +50,12 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
     @get:Input
     @get:Optional
     internal val nodeExecutable: Provider<String> = nodeJsToolchainService.flatMap {
-        if (it is DisabledNodeJsToolchainService) {
+        if (it is DisabledNodeJsToolchainServiceImpl) {
             objects.property(compilation.nodeJsEnvSpec).flatMap { it.executable }
         } else objects.property()
     }
 
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
     @get:Input
     internal val nodeJsRequest: Provider<NodeJsRequest> = compilation.project.requestDefaultNodeJs()
 
@@ -107,6 +112,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
             }
         }
 
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
     @TaskAction
     fun installBrowsers() {
         val modules = NpmProjectModules(npmToolingEnvDir.getFile())
@@ -116,7 +122,7 @@ internal abstract class PlaywrightBrowserInstall @Inject constructor(
         val lock = KotlinInterprocessDirectoryLock(outputDir.getFile())
 
         val nodeJsExecutable = nodeJsToolchainService.get().let { service ->
-            if (service is DisabledNodeJsToolchainService) {
+            if (service is DisabledNodeJsToolchainServiceImpl) {
                 nodeExecutable.get()
             } else {
                 service.request(nodeJsRequest.get()).get().executable.orNull ?: error("Node js executable should be provisioned")

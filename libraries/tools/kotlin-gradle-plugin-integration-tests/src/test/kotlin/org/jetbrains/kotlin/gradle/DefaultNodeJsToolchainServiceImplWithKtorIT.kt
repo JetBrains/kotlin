@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalNodeJsToolchainDsl::class)
+
 package org.jetbrains.kotlin.gradle
 
 import io.ktor.http.*
@@ -23,9 +25,14 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.property
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.BuildPlatform
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsVersion
+import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.*
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.awaitInitialization
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
@@ -43,7 +50,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 /**
- * Tests [DefaultNodeJsToolchainService] - the Node.js toolchain that downloads and installs Node.js.
+ * Tests [DefaultNodeJsToolchainServiceImpl] - the Node.js toolchain that downloads and installs Node.js.
  *
  * The distributions are served by a local Ktor server instead of the official Node.js distribution, so that
  * the tests are hermetic and fast, and a distribution can be broken on purpose. Only the layout of a served
@@ -52,16 +59,7 @@ import kotlin.test.assertTrue
  * A download is only verified against the published checksums when it comes from the official Node.js
  * distribution, so the verification is intentionally out of the scope of these tests.
  */
-@DisplayName("Node.js toolchain provisioning")
-@JsGradlePluginTests
-class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
-    companion object {
-        private const val REQUEST_DEFAULT_NODE_JS_TOOLCHAIN = "-Pkotlin.js.nodejs.toolchain=DOWNLOAD"
-        private const val REQUEST_NODE_JS_INSTALLATION_DIR = "-Pkotlin.js.nodejs.toolchain.default.install.path"
-
-        private const val REQUEST_NODE_JS_DOWNLOAD_URL = "-Pkotlin.js.nodejs.toolchain.default.download.url"
-    }
-
+abstract class DefaultNodeJsToolchainServiceImplWithKtorIT : KGPBaseTest() {
     @DisplayName("Each requested Node.js distribution is downloaded only once")
     @GradleTest
     fun testEachDistributionIsDownloadedOnce(gradleVersion: GradleVersion) {
@@ -121,7 +119,13 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
                 .createDirectories()
             val leftover = incompleteInstallation.resolve("leftover.txt").also { it.writeText("existed node js should not be overwritten") }
 
-            nodeJsToolchainProject(gradleVersion, server, requestedVersions = listOf(NODE_JS_VERSION), installationsDir = tempDir, buildAction = BuildActions.buildAndFail) {
+            nodeJsToolchainProject(
+                gradleVersion,
+                server,
+                requestedVersions = listOf(NODE_JS_VERSION),
+                installationsDir = tempDir,
+                buildAction = BuildActions.buildAndFail,
+            ) {
                 assertEquals(listOf(archiveRequest(NODE_JS_VERSION, hostPlatform)), server.downloadRequests)
                 assertTrue { leftover.exists() }
             }
@@ -159,7 +163,7 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
                 server,
                 requests,
                 installationsDir = tempDir,
-                buildOptions = defaultBuildOptions.copy(freeArgs = defaultBuildOptions.freeArgs + "--offline")
+                buildOptions = defaultBuildOptions.copy(freeArgs = defaultBuildOptions.freeArgs + "--offline"),
             ) {
                 assertEquals(listOf(archiveRequest(NODE_JS_VERSION, hostPlatform)), server.downloadRequests)
             }
@@ -207,12 +211,17 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
     @GradleTest
     fun testUnsupportedVersionIsInstalledWithAWarning(gradleVersion: GradleVersion) {
         runWithNodeJsDistributionServer { server ->
-            nodeJsToolchainProject(gradleVersion, server, requestedVersions = listOf(UNSUPPORTED_NODE_JS_VERSION), buildAssertions = {
-                assertOutputContains(
-                    "Node.js $UNSUPPORTED_NODE_JS_VERSION is not supported by the Kotlin Gradle Plugin. " +
-                            "The minimal supported version is 18."
-                )
-            }) { installationDir ->
+            nodeJsToolchainProject(
+                gradleVersion,
+                server,
+                requestedVersions = listOf(UNSUPPORTED_NODE_JS_VERSION),
+                buildAssertions = {
+                    assertOutputContains(
+                        "Node.js $UNSUPPORTED_NODE_JS_VERSION is not supported by the Kotlin Gradle Plugin. " +
+                                "The minimal supported version is 18."
+                    )
+                },
+            ) { installationDir ->
                 assertEquals(
                     listOf(hostPlatform.distributionName(UNSUPPORTED_NODE_JS_VERSION), hostPlatform.distributionName(UNSUPPORTED_NODE_JS_VERSION).lockFileDir()).sorted(),
                     installationDir.installedDistributions().sorted(),
@@ -230,7 +239,7 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
                 gradleVersion,
                 server,
                 buildTask = "help",
-                requestedVersions = listOf(NODE_JS_VERSION)
+                requestedVersions = listOf(NODE_JS_VERSION),
             ) { installationDir ->
                 assertEquals(emptyList(), server.downloadRequests)
                 assertEquals(emptyList(), installationDir.installedDistributions())
@@ -246,6 +255,19 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
      */
     private val TestProject.defaultInstallationsDir: Path get() = projectPath.resolve("nodejs-toolchain")
 
+    /**
+     * Adjusts the options of every build of a test, to select and configure the default Node.js toolchain service
+     * installing into [installationsPath] and downloading from [distributionsBaseUrl].
+     */
+    protected open fun BuildOptions.withToolchainConfiguration(installationsPath: Path, distributionsBaseUrl: String): BuildOptions = this
+
+    /**
+     * Configures a test project, to select and configure the default Node.js toolchain service
+     * installing into [installationsPath] and downloading from [distributionsBaseUrl].
+     */
+    protected open fun TestProject.configureToolchain(installationsPath: Path, distributionsBaseUrl: String) {}
+
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
     private fun nodeJsToolchainProject(
         gradleVersion: GradleVersion,
         server: NodeJsDistributionServer,
@@ -264,10 +286,11 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
     ) {
         addKgpToBuildScriptCompilationClasspath()
 
+        val installationsPath = installationsDir ?: defaultInstallationsDir
+        configureToolchain(installationsPath, server.downloadBaseUrl)
+
         buildScriptInjection {
-            // The Node.js toolchain service is registered, and wired into every task that uses it, by the
-            // Node.js plugin. It is the only plugin applied, so that nothing but the toolchain is under test.
-            project.plugins.apply(NodeJsPlugin::class.java)
+            project.applyMultiplatform {}
 
             abstract class ProvisionNodeJsTask @Inject constructor(
                 objects: ObjectFactory,
@@ -302,18 +325,10 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
             }
         }
 
-        val installationsPath = installationsDir ?: defaultInstallationsDir
-
         buildAction(
             buildTask?.let { arrayOf(it) }
                 ?: requestedVersions.mapIndexed(::provisionTaskName).toTypedArray(),
-            buildOptions.copy(
-                freeArgs = buildOptions.freeArgs + listOf(
-                    REQUEST_DEFAULT_NODE_JS_TOOLCHAIN,
-                    "$REQUEST_NODE_JS_INSTALLATION_DIR=${installationsPath.absolutePathString()}",
-                    "$REQUEST_NODE_JS_DOWNLOAD_URL=${server.downloadBaseUrl}",
-                )
-            ),
+            buildOptions.withToolchainConfiguration(installationsPath, server.downloadBaseUrl),
             buildAssertions
         )
 
@@ -383,6 +398,57 @@ class DefaultNodeJsToolchainServiceWithKtorIT : KGPBaseTest() {
 
         /** The requested archives, `v<version>/<archive name>` each, in the order they were requested in. */
         val downloadRequests: List<String> get() = requests.toList()
+    }
+}
+
+/**
+ * Selects and configures the default Node.js toolchain service with the `kotlin.js.nodejs.toolchain*` Gradle properties.
+ */
+@DisplayName("Node.js toolchain provisioning configured with Gradle properties")
+@JsGradlePluginTests
+class DefaultNodeJsToolchainServiceImplWithKtorGradlePropertiesIT : DefaultNodeJsToolchainServiceImplWithKtorIT() {
+    companion object {
+        private const val REQUEST_DEFAULT_NODE_JS_TOOLCHAIN = "-Pkotlin.js.nodejs.toolchain=DOWNLOAD"
+        private const val REQUEST_NODE_JS_INSTALLATION_DIR = "-Pkotlin.js.nodejs.toolchain.default.install.path"
+        private const val REQUEST_NODE_JS_DOWNLOAD_URL = "-Pkotlin.js.nodejs.toolchain.default.download.url"
+    }
+
+    override fun BuildOptions.withToolchainConfiguration(installationsPath: Path, distributionsBaseUrl: String): BuildOptions = copy(
+        freeArgs = freeArgs + listOf(
+            REQUEST_DEFAULT_NODE_JS_TOOLCHAIN,
+            "$REQUEST_NODE_JS_INSTALLATION_DIR=${installationsPath.absolutePathString()}",
+            "$REQUEST_NODE_JS_DOWNLOAD_URL=$distributionsBaseUrl",
+        )
+    )
+}
+
+/**
+ * Selects and configures the default Node.js toolchain service with the Kotlin ecosystem settings plugin.
+ */
+@DisplayName("Node.js toolchain provisioning configured with the settings plugin")
+@JsGradlePluginTests
+class DefaultNodeJsToolchainServiceImplWithKtorSettingsPluginIT : DefaultNodeJsToolchainServiceImplWithKtorIT() {
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    override fun TestProject.configureToolchain(installationsPath: Path, distributionsBaseUrl: String) {
+        addEcosystemPluginToBuildScriptCompilationClasspath()
+
+        val nodeJsInstallationDir = installationsPath.toFile()
+
+        // The Node.js toolchain service used by the build is selected and configured in settings, the same way
+        // a user does it with `kotlin { toolchainManagement { nodeJs { ... } } }` in settings.gradle.kts.
+        // Settings are evaluated before the Node.js plugin is applied to a project, and the plugin registers
+        // the toolchain service as soon as it is applied, where only the first registration wins.
+        settingsBuildScriptInjection {
+            settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+            settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                nodeJs {
+                    toolchainService {
+                        installationDir.fileValue(nodeJsInstallationDir)
+                        downloadBaseUrl.set(distributionsBaseUrl)
+                    }
+                }
+            }
+        }
     }
 }
 

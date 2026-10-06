@@ -5,18 +5,26 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.version
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsExecutable
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
+import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
+import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -594,6 +602,92 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    @JsGradlePluginTests
+    @DisplayName("Node.js toolchain service is reported")
+    @GradleTest
+    fun testNodeJsToolchainServiceIsReported(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    nodeJs {
+                        toolchainService {
+                            installationDir.file("some-path")
+                            downloadBaseUrl.set("some-invalid-url")
+                        }
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                registerTaskToPrintNodeJsToolchainService()
+            }
+
+            validateFusDirectory("printNodeJsToolchainService", buildAssertions = {
+                assertOutputContains("Node JS Toolchain Service is DefaultNodeJsToolchainServiceImpl\$Inject")
+            }) { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    StringListMetrics.NODE_JS_TOOLCHAIN_SERVICE.name,
+                    listOf("download")
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    @JsGradlePluginTests
+    @DisplayName("Custom Node.js toolchain service is reported")
+    @GradleTest
+    fun testNodeJsCustomToolchainServiceIsReported(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+
+                abstract class CustomNodeJsToolchainService : NodeJsToolchainService<NodeJsToolchainService.Parameters> {
+                    override fun request(nodeJsRequest: NodeJsRequest): Provider<NodeJsExecutable> {
+                        throw UnsupportedOperationException("CustomNodeJsToolchainService is not supported")
+                    }
+                }
+
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    nodeJs {
+                        toolchainService(CustomNodeJsToolchainService::class) {}
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                registerTaskToPrintNodeJsToolchainService()
+            }
+
+            validateFusDirectory("printNodeJsToolchainService", buildAssertions = {
+                assertOutputContains("Node JS Toolchain Service is FusStatisticsIT\$testNodeJsCustomToolchainServiceIsReported\$1\$1\$CustomNodeJsToolchainService\$Inject")
+            }) { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    StringListMetrics.NODE_JS_TOOLCHAIN_SERVICE.name,
+                    listOf("custom")
+                )
+            }
+        }
+    }
+
     @DisplayName("native compiler arguments")
     @GradleTest
     @NativeGradlePluginTests
@@ -1066,6 +1160,20 @@ class FusStatisticsIT : KGPBaseTest() {
         )
     }
 
+}
+
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
+private fun GradleProjectBuildScriptInjectionContext.registerTaskToPrintNodeJsToolchainService() {
+    project.applyMultiplatform {} //kotlin plugin is required for FUS to be collected
+    project.plugins.apply(NodeJsPlugin::class.java)
+    abstract class PrintNodeJsToolchainServiceTask : DefaultTask(), UsesNodeJsToolchainService {
+        @TaskAction
+        fun action() {
+            println("Node JS Toolchain Service is ${nodeJsToolchainService.get().javaClass.simpleName}")
+        }
+    }
+    project.tasks.register("printNodeJsToolchainService", PrintNodeJsToolchainServiceTask::class.java) {
+    }
 }
 
 private fun Path.assertFusReportContains(vararg expectedMetrics: String) {
