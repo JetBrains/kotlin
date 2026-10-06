@@ -3359,7 +3359,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsEnvSpec$C
 	public final fun getEXTENSION_NAME ()Ljava/lang/String;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec : org/gradle/api/tasks/AbstractExecTask, org/jetbrains/kotlin/gradle/targets/js/npm/RequiresNpmDependenciesTask, org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/nodejs/NodeJsExec$Companion;
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 	protected fun exec ()V
