@@ -203,7 +203,7 @@ class CodePoints {
 
     @Sample
     fun isLowerCase() {
-        val codePoints = "1Aa+𐐀𐐨".codePointSequence()
+        val codePoints = "1Aa+𐐀𐐨".asCodePointSequence()
         val [lowerCases, notLowerCases] = codePoints.partition { it.isLowerCase() }
         assertPrints(lowerCases, "[a, 𐐨]")
         assertPrints(notLowerCases, "[1, A, +, 𐐀]")
@@ -211,7 +211,7 @@ class CodePoints {
 
     @Sample
     fun isUpperCase() {
-        val codePoints = "1Aa+𐐀𐐨".codePointSequence()
+        val codePoints = "1Aa+𐐀𐐨".asCodePointSequence()
         val [upperCases, notUpperCases] = codePoints.partition { it.isUpperCase() }
         assertPrints(upperCases, "[A, 𐐀]")
         assertPrints(notUpperCases, "[1, a, +, 𐐨]")
@@ -219,7 +219,7 @@ class CodePoints {
 
     @Sample
     fun isTitleCase() {
-        val codePoints = "ǅ_ǈ_ǋ_ǲ_1Aa+𐐀𐐨".codePointSequence()
+        val codePoints = "ǅ_ǈ_ǋ_ǲ_1Aa+𐐀𐐨".asCodePointSequence()
         val [titleCases, notTitleCases] = codePoints.partition { it.isTitleCase() }
         assertPrints(titleCases, "[ǅ, ǈ, ǋ, ǲ]")
         assertPrints(notTitleCases, "[_, _, _, _, 1, A, a, +, 𐐀, 𐐨]")
@@ -228,13 +228,13 @@ class CodePoints {
     @Sample
     fun isWhitespace() {
         val string = "\r\n😁\t\t\u00a0Kotlin"
-        val withoutWhitespace = string.codePointSequence().filterNot { it.isWhitespace() }.joinToString("")
+        val withoutWhitespace = string.asCodePointSequence().filterNot { it.isWhitespace() }.joinToString("")
         assertPrints(withoutWhitespace, "😁Kotlin")
     }
 
     @Sample
     fun uppercase() {
-        val codePoints = "aω1ŉA+ß𐐨".codePointSequence()
+        val codePoints = "aω1ŉA+ß𐐨".asCodePointSequence()
         val uppercaseCodePoints = codePoints.map { it.uppercaseCodePoint() }.toList()
         val uppercase = codePoints.map { it.uppercase() }.toList()
         assertPrints(uppercaseCodePoints, "[A, Ω, 1, ŉ, A, +, ß, 𐐀]")
@@ -243,7 +243,7 @@ class CodePoints {
 
     @Sample
     fun lowercase() {
-        val codePoints = "AΩ1a+İ𐐀".codePointSequence()
+        val codePoints = "AΩ1a+İ𐐀".asCodePointSequence()
         val lowercaseCodePoints = codePoints.map { it.lowercaseCodePoint() }.toList()
         val lowercase = codePoints.map { it.lowercase() }.toList()
         assertPrints(lowercaseCodePoints, "[a, ω, 1, a, +, i, 𐐨]")
@@ -252,7 +252,7 @@ class CodePoints {
 
     @Sample
     fun titlecase() {
-        val codePoints = "a+ǅŉß𐐨".codePointSequence()
+        val codePoints = "a+ǅŉß𐐨".asCodePointSequence()
         val titlecaseCodePoints = codePoints.map { it.titlecaseCodePoint() }.toList()
         val titlecase = codePoints.map { it.titlecase() }.toList()
         assertPrints(titlecaseCodePoints, "[A, +, ǅ, ŉ, ß, 𐐀]")

@@ -15,7 +15,7 @@ class CodePointStringBuilderTest {
 
     @Test
     fun appendByOne() {
-        val codePoints = string.codePointSequence()
+        val codePoints = string.asCodePointSequence()
 
         val results = listOf(
             buildString {
@@ -40,7 +40,7 @@ class CodePointStringBuilderTest {
         val result = buildString {
             assertFailsWith<IndexOutOfBoundsException> { insertCodePointAt(-1, CodePoint.MAX_VALUE) }
             assertFailsWith<IndexOutOfBoundsException> { insertCodePointAt(1, CodePoint.MAX_VALUE) }
-            string.codePointSequence().forEach { insertCodePointAt(0, it) }
+            string.asCodePointSequence().forEach { insertCodePointAt(0, it) }
         }
         assertEquals(string.reversed(), result)
     }
@@ -68,7 +68,7 @@ class CodePointStringBuilderTest {
             assertFailsWith<IndexOutOfBoundsException> { deleteCodePointAt(-1) }
             assertFailsWith<IndexOutOfBoundsException> { deleteCodePointAt(length) }
 
-            repeat(string.codePointSequence().count()) { deleteCodePointAt(0) }
+            repeat(string.asCodePointSequence().count()) { deleteCodePointAt(0) }
         }
         assertEquals(0, result.length)
     }
