@@ -226,11 +226,10 @@ internal class KonanInteropModuleDeserializer(
             val kmClass = metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = false)
                     ?.firstOrNull() as? KmClass ?: continue
             if (kmClass.inheritsFromCStructOrEnum()) {
-                // At first, pass removeMetadataRepresentation = false, because we only use the metadata class to check if it is a C struct or enum.
-                // If it is, pass removeMetadataRepresentation = true, because we are going to actually deserialize it. This helps to ensure
-                // we only deserialize a given class once.
-                metadataReader.retrieveDeclarationsById(id, removeMetadataRepresentation = true)
-                transformer.transformTopLevelClass(kmClass)
+                // Ask linker about the class instead of deserializing it directly from metadata.
+                // This ensures that, if two interop Klibs define a class with the same ID, only one of them will be chosen, deterministically.
+                val classSig = ClassId.fromString(kmClass.name).toCInteropSignature(isCInterop = true)
+                val _ = linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(classSig, BinarySymbolData.SymbolKind.CLASS_SYMBOL, this)
             }
         }
     }
