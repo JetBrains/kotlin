@@ -1,5 +1,4 @@
-warning: language version 2.1 is deprecated and its support will be removed in a future version of Kotlin. Update the version to 2.3.
-compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:10: warning: 'public' generic exposes its 'internal' parameter bound type 'Foo'. This will be prohibited in the future.
-fun <T : Foo> foo(x: T?) = x
-         ^^^
+compiler/testData/cli/jvm/progressive/progressiveTest.kt:3:9: warning: 'operator' modifier is not applicable to function: must override 'equals()' in Any. This will become an error in language version 2.5. See: https://youtrack.jetbrains.com/issue/KT-86143
+        operator fun equals(a: Int, b: Int): Boolean = true
+        ^^^^^^^^
 OK
