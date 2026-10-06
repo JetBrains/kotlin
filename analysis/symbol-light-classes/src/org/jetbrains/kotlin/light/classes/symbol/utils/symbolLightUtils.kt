@@ -164,7 +164,7 @@ internal enum class NullabilityAnnotation {
 
 context(session: KaSession)
 internal fun getRequiredNullabilityAnnotation(type: KaType): NullabilityAnnotation {
-    if (type is KaClassErrorType) return NullabilityAnnotation.NON_NULLABLE
+    if (type is KaClassErrorType) return NullabilityAnnotation.create(type.isMarkedNullable)
     val ktType = type.fullyExpandedType
 
     when {
