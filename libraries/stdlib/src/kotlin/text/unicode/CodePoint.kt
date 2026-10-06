@@ -202,7 +202,8 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * Adds the specified integer [other] value to this code point.
      *
      * Returns a new [CodePoint] with the code value equal to the sum of this code point's value and [other].
-     * If the result is outside the valid code point range `0..0x10FFFF`, it wraps around using modulo arithmetic.
+     * The operation is performed using modulo `0x10FFFF + 1` arithmetics,
+     * so that the resulting code is always in the valid code point range `0..0x10FFFF`.
      *
      * @param other The integer value to add to this code point.
      * @return A [CodePoint] representing the sum of this code point and [other], wrapped within the valid range.
@@ -210,7 +211,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * @see inc
      */
     public operator fun plus(other: Int): CodePoint =
-        (this.code + other).toCodePoint()
+        (this.code + other.mod(MAX_CODE_POINT_VALUE + 1)).toCodePoint()
 
     /**
      * Subtracts the [other] code point from this code point and returns the difference as an [Int].
@@ -229,7 +230,8 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * Subtracts the specified integer [other] value from this code point.
      *
      * Returns a new [CodePoint] with the code value equal to the difference of this code point's [code] and [other].
-     * If the result is outside the valid code point range `0..0x10FFFF`, it wraps around using modulo arithmetic.
+     * The operation is performed using modulo `0x10FFFF + 1` arithmetics,
+     * so that the resulting code is always in the valid code point range `0..0x10FFFF`.
      *
      * @param other The integer value to subtract from this code point.
      * @return A [CodePoint] representing the difference of this code point and [other], wrapped within the valid range.
@@ -237,7 +239,7 @@ public value class CodePoint(public val code: Int) : Comparable<CodePoint> {
      * @see dec
      */
     public operator fun minus(other: Int): CodePoint =
-        (this.code - other).toCodePoint()
+        (this.code - other.mod(MAX_CODE_POINT_VALUE + 1)).toCodePoint()
 
     /**
      * Returns the next code point by incrementing this code point's value by 1.
