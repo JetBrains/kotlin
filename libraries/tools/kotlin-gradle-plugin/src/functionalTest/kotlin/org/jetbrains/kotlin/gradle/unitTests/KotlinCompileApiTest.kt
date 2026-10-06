@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.ReturnValueCheckerMode
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
@@ -160,6 +162,19 @@ class KotlinCompileApiTest {
         )
 
         assertEquals((task.get() as KotlinCompile).explicitApiMode.get(), ExplicitApiMode.Strict)
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @Test
+    fun testCustomReturnValueCheckerMode() {
+        val task = plugin.registerKotlinJvmCompileTask(
+            "customKotlinCompile",
+            topLevelCompilerOptions,
+            project.provider { ExplicitApiMode.Disabled },
+            project.provider { ReturnValueCheckerMode.Check },
+        )
+
+        assertEquals(ReturnValueCheckerMode.Check, (task.get() as KotlinCompile).returnValueCheckerMode.get())
     }
 
     @Test
