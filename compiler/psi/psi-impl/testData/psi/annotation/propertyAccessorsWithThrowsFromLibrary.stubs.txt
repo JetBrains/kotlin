@@ -1,0 +1,129 @@
+FILE[kind=Facade[packageFqName=lib, facadeFqName=lib.LibKt]]
+  facadeFqName: lib.LibKt
+  partSimpleName: "LibKt"
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=lib]
+  IMPORT_LIST
+  CLASS[classId=lib/Retained, fqName=lib.Retained, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Retained, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+              REFERENCE_EXPRESSION[referencedName=BINARY]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=PROPERTY_GETTER]
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=PROPERTY_SETTER]
+  CLASS[classId=lib/SourceOnly, fqName=lib.SourceOnly, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SourceOnly, superNames=[]]
+    MODIFIER_LIST[annotation]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Retention]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+              REFERENCE_EXPRESSION[referencedName=SOURCE]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Target]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=PROPERTY_GETTER]
+          VALUE_ARGUMENT[isSpread=false]
+            DOT_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+              REFERENCE_EXPRESSION[referencedName=PROPERTY_SETTER]
+  PROPERTY[fqName=lib.value, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=value]
+    MODIFIER_LIST[]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retained]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Retained]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retained]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Retained]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SourceOnly]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=SourceOnly]
+      ANNOTATION_ENTRY[hasValueArguments=false, shortName=SourceOnly]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=SourceOnly]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Throws]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_GETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Throws]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=java]
+                  REFERENCE_EXPRESSION[referencedName=io]
+                REFERENCE_EXPRESSION[referencedName=IOException]
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=java]
+                  REFERENCE_EXPRESSION[referencedName=lang]
+                REFERENCE_EXPRESSION[referencedName=IllegalStateException]
+      ANNOTATION_ENTRY[hasValueArguments=true, shortName=Throws]
+        ANNOTATION_TARGET[useSiteTarget=PROPERTY_SETTER]
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=Throws]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            CLASS_LITERAL_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  REFERENCE_EXPRESSION[referencedName=java]
+                  REFERENCE_EXPRESSION[referencedName=io]
+                REFERENCE_EXPRESSION[referencedName=FileNotFoundException]
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION[referencedName=String]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
+      VALUE_PARAMETER_LIST
+      STRING_TEMPLATE
+        LITERAL_STRING_TEMPLATE_ENTRY[text=OK]
+    PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
+      VALUE_PARAMETER_LIST
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
