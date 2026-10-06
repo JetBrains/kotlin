@@ -63,7 +63,7 @@ class LazyMapWithCCTest : KGPBaseTest() {
                 project.tasks.register("writeLazy") {
                     it.dependsOn(lazy)
                     it.doLast {
-                        lazyResult.writeText(lazy.get().toString())
+                        lazyResult.writeText(lazy.get())
                     }
                 }
             }
