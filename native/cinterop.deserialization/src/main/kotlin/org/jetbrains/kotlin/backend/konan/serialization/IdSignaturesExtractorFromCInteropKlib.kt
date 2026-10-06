@@ -207,7 +207,7 @@ class IdSignaturesExtractorFromCInteropKlib(private val library: KotlinLibrary) 
             library.metadataVersion?.toArray() ?: error("No metadata version specified in ${library.path}")
         )
 
-        override val moduleHeaderData get() = metadata.moduleHeaderData
+        override val moduleHeaderData get() = metadata.moduleHeaderData ?: error("No metadata header data found")
         override fun packageMetadataParts(fqName: String) = metadata.getPackageFragmentNames(fqName)
         override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
     }

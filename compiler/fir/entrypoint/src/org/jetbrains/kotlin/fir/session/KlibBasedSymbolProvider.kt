@@ -49,7 +49,7 @@ class KlibBasedSymbolProvider(
         }
 
 
-    private val moduleHeaders: Map<KotlinLibrary, KlibMetadataProtoBuf.Header> by lazy {
+    private val moduleHeaders: Map<KotlinLibrary, KlibMetadataProtoBuf.Header?> by lazy {
         resolvedLibraries.associateWith {
             parseModuleHeader(metadataProvider(it).moduleHeaderData)
         }
@@ -89,7 +89,7 @@ class KlibBasedSymbolProvider(
         packageFqName: FqName
     ): KlibDeserializedContainerSource = KlibDeserializedContainerSource(
         resolvedLibrary,
-        moduleHeaders[resolvedLibrary]!!,
+        moduleHeaders[resolvedLibrary],
         deserializationConfiguration,
         packageFqName,
         resolvedLibrary.incompatibility

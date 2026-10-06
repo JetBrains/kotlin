@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.library
 
 class SerializedMetadata(
-    val module: ByteArray,
+    val module: ByteArray?,
     val fragments: List<List<ByteArray>>,
     val fragmentNames: List<String>,
     val metadataVersion: IntArray,

@@ -143,7 +143,7 @@ class KlibModuleMetadata(
         ): KlibModuleMetadata {
             checkMetadataVersionForRead(library.metadataVersion, lenient)
 
-            val moduleHeader = parseModuleHeader(library.moduleHeaderData)
+            val moduleHeader = parseModuleHeader(library.moduleHeaderData) ?: error("Header file was not found")
             val moduleFragments = moduleHeader.packageFragmentNameList.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
