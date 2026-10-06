@@ -308,6 +308,6 @@ package func SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_
 @_cdecl("SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift")
 package func SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ count: Swift.Int32) -> Any {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
-    let _result: Swift.Array<Swift.String> = _self.repeat(receiver, count: count)
+    let _result: Swift.Array<Swift.String> = _self.`repeat`(receiver, count: count)
     return _result
 }

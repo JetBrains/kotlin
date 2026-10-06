@@ -13,3 +13,12 @@ open class BaseDriver {
     open fun addInts(vararg queryKeys: Int) {}
     open fun addOptionalInts(vararg queryKeys: Int?) {}
 }
+
+interface KeywordLabels {
+    fun count(vararg inout: Int): Int
+    fun double(inout: Int): Int
+}
+
+interface ExtensionVararg {
+    fun String.join(vararg parts: String): String
+}

@@ -90,7 +90,7 @@ package func weird_A_bar_get__reverse_swift(_ `self`: Swift.UnsafeMutableRawPoin
 package func weird_A_throws__reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ _out_error: Swift.UnsafeMutablePointer<Swift.UnsafeMutableRawPointer?>) -> Swift.Bool {
     let _self = ExportedKotlinPackages.weird.A.__createClassWrapper(externalRCRef: `self`)
     do {
-        let _result: Swift.Void = try _self.throws()
+        let _result: Swift.Void = try _self.`throws`()
         return { _result; return true }()
     } catch {
         _out_error.pointee = KotlinRuntimeSupport.kotlinThrowableRCRef(for: error)
