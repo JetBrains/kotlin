@@ -172,6 +172,27 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinJsCompile$DefaultImpls 
 	public static fun kotlinOptions (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsCompile;Lorg/gradle/api/Action;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinJsProjectExtension : org/jetbrains/kotlin/gradle/dsl/KotlinSingleTargetExtension, org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder {
+	public fun <init> (Lorg/gradle/api/Project;)V
+	public fun getDefaultJsCompilerType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public fun getIR ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public synthetic fun getTargetFuture$kotlin_gradle_plugin_common ()Lorg/jetbrains/kotlin/gradle/utils/Future;
+	public final synthetic fun getTargets ()Lorg/gradle/api/NamedDomainObjectContainer;
+	public final synthetic fun js ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public final synthetic fun js (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public final synthetic fun js (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public final synthetic fun js (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public final synthetic fun js (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public final synthetic fun js (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public final synthetic fun js (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public static synthetic fun js$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsProjectExtension;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public static synthetic fun js$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsProjectExtension;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public static synthetic fun js$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsProjectExtension;Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;
+	public final synthetic fun registerTargetObserver (Lkotlin/jvm/functions/Function1;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinJvmCompile : org/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile {
 }
 
