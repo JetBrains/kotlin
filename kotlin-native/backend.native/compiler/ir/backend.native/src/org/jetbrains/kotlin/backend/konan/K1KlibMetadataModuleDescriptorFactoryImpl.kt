@@ -210,10 +210,7 @@ private fun createDeserializedPackageFragments(
     val metadata = library.metadata
     val header = parseModuleHeader(metadata.moduleHeaderData)
 
-    val nonEmptyPackageFqNames = buildSet {
-        addAll(header.packageFragmentNameList)
-        removeAll(header.emptyPackageList)
-    }
+    val nonEmptyPackageFqNames = metadata.getPackageNames()
 
     return nonEmptyPackageFqNames.flatMap {
         val packageFqName = FqName(it)

@@ -51,9 +51,6 @@ class KlibIcMetadataComponent(
         result
     }
 
-    val packageFragmentNameList: Collection<String>
-        get() = fragments.keys
-
     override val moduleHeaderData: Nothing
         get() = error("moduleHeaderData is not implemented")
 
@@ -63,5 +60,9 @@ class KlibIcMetadataComponent(
 
     override fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray {
         return fragments[packageFqName]?.get(fragmentName) ?: error("Metadata not found for package $packageFqName part $fragmentName")
+    }
+
+    override fun getPackageNames(): Set<String> {
+        return fragments.keys
     }
 }

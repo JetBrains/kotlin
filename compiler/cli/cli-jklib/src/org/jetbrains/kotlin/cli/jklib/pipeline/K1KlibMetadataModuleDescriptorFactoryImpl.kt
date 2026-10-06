@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
@@ -193,10 +192,7 @@ private fun createDeserializedPackageFragments(
     val metadata = library.metadata
     val header = parseModuleHeader(metadata.moduleHeaderData)
 
-    val nonEmptyPackageFqNames = buildSet {
-        addAll(header.packageFragmentNameList)
-        removeAll(header.emptyPackageList)
-    }
+    val nonEmptyPackageFqNames = metadata.getPackageNames()
 
     return nonEmptyPackageFqNames.flatMap {
         val packageFqName = FqName(it)

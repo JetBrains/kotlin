@@ -200,6 +200,13 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._CompletableJob {
 @_documentation(visibility: internal)
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithFactory {
 }
+extension ExportedKotlinPackages.test.not.factory {
+    public static func ClassWithFactoryInAPackage(
+        arg: any KotlinRuntimeSupport._KotlinBridgeable
+    ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
+        return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()))
+    }
+}
 extension ExportedKotlinPackages.test.factory {
     public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase {
         public override init() {
@@ -257,13 +264,6 @@ extension ExportedKotlinPackages.test.factory {
         arg: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
         return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()))
-    }
-}
-extension ExportedKotlinPackages.test.not.factory {
-    public static func ClassWithFactoryInAPackage(
-        arg: any KotlinRuntimeSupport._KotlinBridgeable
-    ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
-        return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()))
     }
 }
 extension ExportedKotlinPackages.test.factory.modules {

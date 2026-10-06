@@ -34,6 +34,9 @@ interface KlibMetadataComponent : KlibComponent {
     /** The concrete package fragment in the raw form (bytes, yet to be deserialized to [ProtoBuf.PackageFragment]). */
     fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray
 
+    /** The names of all packages inside given klib. */
+    fun getPackageNames(): Set<String>
+
     companion object Kind : KlibComponent.Kind<KlibMetadataComponent, KlibMetadataComponentLayout> {
         override fun createLayout(root: Path) = KlibMetadataComponentLayout(root)
 

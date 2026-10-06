@@ -38,8 +38,7 @@ class KlibIcCacheBasedSymbolProvider(
 
     override val fragmentNamesInLibraries: Map<String, List<KlibIcData>> by lazy {
         buildMap<String, SmartList<KlibIcData>> {
-            // TODO this cast can be removed after KT-89276
-            for (fragmentName in (icData.metadata as KlibIcMetadataComponent).packageFragmentNameList) {
+            for (fragmentName in icData.metadata.getPackageNames()) {
                 getOrPut(fragmentName) { SmartList() }
                     .add(icData)
             }
@@ -48,8 +47,7 @@ class KlibIcCacheBasedSymbolProvider(
 
     override val knownPackagesInLibraries: Set<FqName> by lazy {
         buildSet<FqName> {
-            // TODO this cast can be removed after KT-89276
-            for (fragmentName in (icData.metadata as KlibIcMetadataComponent).packageFragmentNameList) {
+            for (fragmentName in icData.metadata.getPackageNames()) {
                 var curPackage = FqName(fragmentName)
                 while (!curPackage.isRoot) {
                     add(curPackage)

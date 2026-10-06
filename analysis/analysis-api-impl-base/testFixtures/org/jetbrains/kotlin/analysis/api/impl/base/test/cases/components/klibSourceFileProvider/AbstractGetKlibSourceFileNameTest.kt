@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
@@ -54,9 +53,7 @@ abstract class AbstractGetKlibSourceFileNameTest : AbstractAnalysisApiBasedTest(
 
             val metadata = library.metadata
 
-            val headerProto = parseModuleHeader(metadata.moduleHeaderData)
-
-            val packageMetadataSequence = headerProto.packageFragmentNameList.asSequence().flatMap { packageFragmentName ->
+            val packageMetadataSequence = metadata.getPackageNames().asSequence().flatMap { packageFragmentName ->
                 metadata.getPackageFragmentNames(packageFragmentName).asSequence().map { packageMetadataPart ->
                     metadata.getPackageFragment(packageFragmentName, packageMetadataPart)
                 }
