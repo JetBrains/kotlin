@@ -136,7 +136,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildResult.assertSuccessful()
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
         assertEquals(1, warnings.size, "Warning about invalid package prefix in module 2 is expected: $warnings")
-        assertEquals("Invalid package prefix name is ignored: invalid-prefix.test", warnings.first().messageText)
+        assertEquals("[CLASSPATH_RESOLUTION_WARNING] Invalid package prefix name is ignored: invalid-prefix.test", warnings.first().messageText)
     }
 
     @Test
@@ -668,7 +668,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertSuccessful()
 
         val actualWarnings = result.getMessages(BuildMessage.Kind.WARNING).map { it.messageText }
-        val expectedWarnings = filesToBeReported.map { "Classpath entry points to a non-existent location: $it" }
+        val expectedWarnings = filesToBeReported.map { "[ROOTS_RESOLUTION_WARNING] Classpath entry points to a non-existent location: $it" }
 
         val expectedText = expectedWarnings.sorted().joinToString("\n")
         val actualText = actualWarnings.sorted().joinToString("\n")
@@ -707,7 +707,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertFailed()
         val errors = result.getMessages(BuildMessage.Kind.ERROR)
 
-        assertEquals("Only the Kotlin standard library is allowed to use the 'kotlin' package.", errors.single().messageText)
+        assertEquals("[KOTLIN_PACKAGE_USAGE] Only the Kotlin standard library is allowed to use the 'kotlin' package.", errors.single().messageText)
     }
 
     @Test

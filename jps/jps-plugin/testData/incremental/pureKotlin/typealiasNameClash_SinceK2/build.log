@@ -20,7 +20,7 @@ End of files
 Exit code: ABORT
 ------------------------------------------
 COMPILATION FAILED
-Redeclaration:
+[CLASSIFIER_REDECLARATION] Redeclaration:
 typealias Foo = Int
-Redeclaration:
+[CLASSIFIER_REDECLARATION] Redeclaration:
 interface Foo : Any

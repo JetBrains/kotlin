@@ -228,7 +228,7 @@ internal class ClasspathMetadataIncrementalTest : BaseCompilationTest() {
             // `result.kt` is untouched, so the only way it can stop compiling is by being recompiled: the removal of the cached
             // metadata of `base.kt` must mark its call site of `A1` dirty instead of leaving a stale `ResultKt.class` behind.
             module.compile {
-                expectFailWithError(".*commonMain/result\\.kt:6:25 Unresolved reference 'A1'.*".toRegex())
+                expectFailWithError(".*commonMain/result\\.kt:6:25.*Unresolved reference 'A1'.*".toRegex())
                 assertCompiledSources("commonMain/result.kt")
             }
         }

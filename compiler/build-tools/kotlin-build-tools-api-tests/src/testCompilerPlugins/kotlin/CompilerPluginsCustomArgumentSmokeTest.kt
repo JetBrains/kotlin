@@ -123,7 +123,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                 expectFail()
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    "Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax.*".toRegex(RegexOption.DOT_MATCHES_ALL)
+                    "\\[COMPILER_ARGUMENTS_ERROR\\] Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax.*".toRegex(RegexOption.DOT_MATCHES_ALL)
                 )
             }
         }
@@ -161,7 +161,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                 expectFail()
                 assertLogContainsPatterns(
                     LogLevel.ERROR,
-                    "Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax.*".toRegex(RegexOption.DOT_MATCHES_ALL)
+                    "\\[COMPILER_ARGUMENTS_ERROR\\] Mixing legacy and modern plugin arguments is prohibited. Please use only one syntax.*".toRegex(RegexOption.DOT_MATCHES_ALL)
                 )
             }
         }
