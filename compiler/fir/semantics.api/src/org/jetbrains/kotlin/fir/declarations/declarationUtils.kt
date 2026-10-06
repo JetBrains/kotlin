@@ -259,7 +259,7 @@ fun FirConstructorSymbol.getConstructedClass(session: FirSession): FirRegularCla
 
 @PrivateForInline
 inline val FirDeclarationOrigin.isJavaOrEnhancement: Boolean
-    get() = this is FirDeclarationOrigin.Java || this == FirDeclarationOrigin.Enhancement
+    get() = this is FirDeclarationOrigin.Java || this is FirDeclarationOrigin.Enhancement
 
 @OptIn(PrivateForInline::class)
 val FirDeclaration.isJavaOrEnhancement: Boolean
