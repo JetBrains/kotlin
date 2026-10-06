@@ -1,4 +1,2 @@
-compiler/testData/cli/jvm/hmpp/src/jvmDependencyConsumer_common.kt:1:31: error: unresolved reference 'produceInt'.
-fun commonProduceInt(): Int = produceInt()
-                              ^^^^^^^^^^
-COMPILATION_ERROR
+info: KLIB loader: Not a Kotlin library, or a library with invalid format: $TMP_DIR$/dependency/
+OK

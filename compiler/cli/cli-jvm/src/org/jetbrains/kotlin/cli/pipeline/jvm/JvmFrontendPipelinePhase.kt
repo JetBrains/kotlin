@@ -361,15 +361,17 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 )
             },
             additionalProvidersForMetadataLibrarySessionsInHmppMode = l@{ session, moduleDataProvider, scopeProvider, libraries, rawRegularDependencies, rawFriendDependencies ->
-                /*
-                 * If no klibs were passed to the dependencies of the common fragment we try to interpret the fragment
-                 * classpath as JVM classpath (with .jar and .class files).
-                 *
-                 * This could happen in a single-target project setup.
-                 */
-                if (libraries.isNotEmpty()) return@l emptyList()
-                val dependencies = (rawRegularDependencies + rawFriendDependencies).mapNotNull { Path(it).takeIf { path -> path.exists() } }
-                if (dependencies.isEmpty()) return@l emptyList()
+                // Treat libraries that could not be loaded as klibs as JVM classpath (with .jar and .class files).
+                // This can happen in a single-target project setup.
+
+                fun String.toPathIfExists() = Path(this).takeIf { path -> path.exists() }
+
+                val dependencies = buildList {
+                    rawRegularDependencies.mapNotNullTo(this) { it.toPathIfExists() }
+                    rawFriendDependencies.mapNotNullTo(this) { it.toPathIfExists() }
+                    removeAll(libraries.mapTo(mutableSetOf()) { it.path })
+                }.ifEmpty { return@l emptyList() }
+
                 val classpath = JvmClasspath.Roots(dependencies.map(JvmClasspathRootId::of))
                 val kotlinClassFinder = projectEnvironment.getKotlinClassFinder(classpath)
                 val moduleData = moduleDataProvider.allModuleData.first { it.session == session }
