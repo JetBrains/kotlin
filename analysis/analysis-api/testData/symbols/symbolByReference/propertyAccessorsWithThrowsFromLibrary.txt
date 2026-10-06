@@ -40,9 +40,9 @@ KaKotlinPropertySymbol:
   getter: KaPropertyGetterSymbol:
     anchorPsi: KtPropertyAccessor
     annotations: [
-      kotlin/jvm/Throws(exceptionClasses = [java.io.IOException::class, java.lang.IllegalStateException::class])
-        psi: null
       lib/Retained()
+        psi: null
+      kotlin/jvm/Throws(exceptionClasses = [java.io.IOException::class, java.lang.IllegalStateException::class])
         psi: null
     ]
     callableId: null
@@ -106,9 +106,9 @@ KaKotlinPropertySymbol:
   setter: KaPropertySetterSymbol:
     anchorPsi: KtPropertyAccessor
     annotations: [
-      kotlin/jvm/Throws(exceptionClasses = [java.io.FileNotFoundException::class])
-        psi: null
       lib/Retained()
+        psi: null
+      kotlin/jvm/Throws(exceptionClasses = [java.io.FileNotFoundException::class])
         psi: null
     ]
     callableId: null

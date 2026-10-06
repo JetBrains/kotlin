@@ -316,16 +316,17 @@ private class JvmClsAnnotationLoader(
                 }
             }
 
-            open inner class MemberAnnotationVisitor(protected val signature: MemberSignature, extraAnnotations: List<AnnotationWithArgs>) :
+            open inner class MemberAnnotationVisitor(protected val signature: MemberSignature, private val extraAnnotations: List<AnnotationWithArgs>) :
                 KotlinJvmBinaryClass.AnnotationVisitor {
 
-                private val result = ArrayList<AnnotationWithArgs>().apply { addAll(extraAnnotations) }
+                private val result = ArrayList<AnnotationWithArgs>()
 
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
                     return loadAnnotationIfNotSpecial(classId, source, result)
                 }
 
                 override fun visitEnd() {
+                    result.addAll(extraAnnotations)
                     if (result.isNotEmpty()) {
                         memberAnnotations[signature] = result
                     }
