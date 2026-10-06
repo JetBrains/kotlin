@@ -77,9 +77,10 @@ private fun registerIfAbsent(
  * Registers the [NodeJsToolchainService] selected for the build, and makes every
  * [UsesNodeJsToolchainService] task in [project] use it.
  */
+@OptIn(ExperimentalNodeJsToolchainDsl::class)
 internal fun registerNodeJsToolchainServiceIfAbsent(
     project: Project,
-) {
+): Provider<out NodeJsToolchainService<out NodeJsToolchainService.Parameters>> {
     val serviceProvider = registerIfAbsent(project)
 
     SingleActionPerProject.run(project, UsesNodeJsToolchainService::class.java.name) {
@@ -89,7 +90,7 @@ internal fun registerNodeJsToolchainServiceIfAbsent(
         }
         NodeJsToolchainServiceMetrics.collectServiceCreated(project, serviceProvider)
     }
-
+    return serviceProvider
 }
 
 /**
@@ -139,11 +140,12 @@ internal enum class NodeJsToolchainMode {
  * Intended to be a task input, so the task is not tied to the old executable when the toolchain is enabled.
  * Use [resolveNodeJsExecutable] to get the executable to run.
  */
+@Suppress("DEPRECATION")
 internal fun Provider<NodeJsToolchainService<*>>.legacyNodeJsExecutable(
     objects: ObjectFactory,
     compilation: KotlinJsIrCompilation,
 ): Provider<String> = flatMap {
-    if (it is DisabledNodeJsToolchainServiceImpl) {
+    if (it.isNodeJsToolchainDisabled()) {
         objects.property(compilation.nodeJsEnvSpec).flatMap { it.executable }
     } else objects.property()
 }
@@ -156,14 +158,14 @@ internal fun Provider<NodeJsToolchainService<*>>.legacyNodeJsExecutable(
 internal fun NodeJsToolchainService<*>.resolveNodeJsExecutable(
     legacyNodeExecutable: Provider<String>,
     nodeJsRequest: Provider<NodeJsRequest>,
-): String = if (this is DisabledNodeJsToolchainServiceImpl) {
+): String = if (this.isNodeJsToolchainDisabled()) {
     legacyNodeExecutable.get()
 } else {
     request(nodeJsRequest.get()).get().executable.orNull ?: error("Node js executable should be provisioned")
 }
 
 /**
- * Returns the Node.js executable provisioned by this service, or [legacyNodeExecutable] when the toolchain is disabled.
+ * Returns the Node.js executable provisioned by this service, or provisioned by [npmProject] when the toolchain is disabled.
  *
  * Provisions Node.js, so it must only be called at execution time.
  */
@@ -171,11 +173,13 @@ internal fun NodeJsToolchainService<*>.resolveNodeJsExecutable(
 internal fun NodeJsToolchainService<*>.resolveNodeJsExecutable(
     npmProject: NpmProject,
     nodeJsRequest: Provider<NodeJsRequest>,
-): String = if (this is DisabledNodeJsToolchainServiceImpl) {
+): String = if (isNodeJsToolchainDisabled()) {
     npmProject.nodeExecutable
 } else {
     request(nodeJsRequest.get()).get().executable.orNull ?: error("Node js executable should be provisioned")
 }
+
+internal fun NodeJsToolchainService<*>.isNodeJsToolchainDisabled(): Boolean = this is DisabledNodeJsToolchainServiceImpl
 
 private val DEFAULT_NODE_JS_VERSION = "24.16.0"
 internal fun Project.requestDefaultNodeJs(): Provider<NodeJsRequest> = provider {

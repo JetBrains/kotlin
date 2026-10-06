@@ -25,6 +25,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.internal.operations.BuildOperationListenerManager
 import org.jetbrains.kotlin.compilerRunner.btapi.BuildSessionService
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
+import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_COMPAT
@@ -81,6 +82,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     private val logger = Logging.getLogger(DefaultKotlinBasePlugin::class.java)
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
+    @OptIn(ExperimentalNodeJsToolchainDsl::class)
     override fun apply(project: Project) {
         project.checkCompilerEmbeddableInClasspath()
         project.registerDefaultVariantImplementations()
