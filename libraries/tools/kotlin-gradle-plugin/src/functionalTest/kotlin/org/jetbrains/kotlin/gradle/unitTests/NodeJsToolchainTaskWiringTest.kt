@@ -12,7 +12,10 @@ import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.WebpackBundleKotlinJsTests
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.KotlinPlaywrightJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.DefaultNodeJsToolchainServiceImpl
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.DisabledNodeJsToolchainServiceImpl
@@ -30,6 +33,8 @@ import org.jetbrains.kotlin.gradle.utils.property
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class NodeJsToolchainTaskWiringTest {
@@ -75,13 +80,68 @@ class NodeJsToolchainTaskWiringTest {
 
     @Test
     fun `webpack bundle task for js tests uses the node js toolchain service`() {
-        val project = buildJsBrowserProject()
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    browser {
+                        test.apply { chromium() }
+                    }
+                }
+            }
+        }
+        project.evaluate()
 
         val task = project.tasks.withType(WebpackBundleKotlinJsTests::class.java).singleOrNull()
-            ?: return // the bundle task exists only when js tests are configured
+        assertNotNull(task, "Expected the bundle task to be registered once a browser runner is declared")
         assertIs<UsesNodeJsToolchainService>(task)
         assertTrue(task.nodeJsToolchainService.isPresent)
-        assertEquals("24.16.0", task.nodeJsRequest.get().version.get().version)
+    }
+
+    @Test
+    fun `node js exec does not resolve the executable at configuration time`() {
+        val project = buildProjectWithMPP(
+            preApplyCode = {
+                propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN, "download")
+            }
+        ) {
+            with(multiplatformExtension) {
+                js {
+                    nodejs()
+                    binaries.executable()
+                }
+            }
+        }
+        project.evaluate()
+        assertIs<DefaultNodeJsToolchainServiceImpl>(project.registeredService())
+
+        val tasks = project.tasks.withType(NodeJsExec::class.java).toList()
+        assertTrue(tasks.isNotEmpty(), "Expected at least one NodeJsExec task")
+        tasks.forEach { task ->
+            assertIs<UsesNodeJsToolchainService>(task)
+            assertNull(task.executable, "Expected ${task.name} to resolve Node.js only at execution time")
+            assertTrue(!task.nodeExecutable.isPresent, "Expected no legacy executable when the toolchain is enabled")
+            assertEquals("24.16.0", task.nodeJsRequest.get().version.get().version)
+        }
+    }
+
+    @Test
+    fun `playwright framework resolves the legacy executable when the toolchain is disabled`() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    browser {
+                        test.apply { chromium() }
+                    }
+                }
+            }
+        }
+        project.evaluate()
+        assertIs<DisabledNodeJsToolchainServiceImpl>(project.registeredService())
+
+        val framework = assertIs<KotlinPlaywrightJsTestFramework>(
+            (project.tasks.getByName("jsBrowserTest") as KotlinJsTest).testFramework
+        )
+        assertTrue(framework.executable.get().isNotBlank(), "Expected the legacy executable to be resolved")
     }
 
     @Test
