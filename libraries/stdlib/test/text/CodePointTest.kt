@@ -107,18 +107,46 @@ class CodePointTest {
 
     @Test
     fun arithmetics() {
+        val modulo = CodePoint.MAX_VALUE.code + 1
         for ([c1, c2, diff] in listOf(
             Triple('a'.toCodePoint(), 'c'.toCodePoint(), 2),
             Triple(0x1F600.toCodePoint(), 0x1FA00.toCodePoint(), 0x400),
             Triple(CodePoint.MAX_VALUE, CodePoint.MIN_VALUE, -0x10FFFF),
+            Triple(0x10FFFF.toCodePoint(), 0x10FFFE.toCodePoint(), -1),
         )) {
             assertEquals(c2, c1 + diff)
             assertEquals(c1, c2 - diff)
+            assertEquals(c2, c1 - -diff)
+            assertEquals(c1, c2 + -diff)
+            assertEquals(c1, c1 + diff - diff)
+            assertEquals(c2, c2 - diff + diff)
             assertEquals(diff, c2 - c1)
             assertEquals(-diff, c1 - c2)
+            val expectedDiff = if (c2 > c1) diff.mod(modulo) else diff.mod(modulo) - modulo
+            assertEquals(expectedDiff, diff)
 
-            assertEquals(c2, c1 + (diff + (CodePoint.MAX_VALUE.code + 1)))
-            assertEquals(c2, c1 + (diff - (CodePoint.MAX_VALUE.code + 1)))
+            assertEquals(c2, c1 + (diff + modulo))
+            assertEquals(c2, c1 + (diff - modulo))
+        }
+        // non-linear cases with integer overflow
+        for ([c1, c2, diff] in listOf(
+            Triple(CodePoint.MAX_VALUE, (CodePoint.MAX_VALUE.code + Int.MAX_VALUE.mod(modulo)).toCodePoint(), Int.MAX_VALUE),
+            Triple(CodePoint.MIN_VALUE, Int.MIN_VALUE.toCodePoint(), Int.MIN_VALUE),
+            Triple(0x90000.toCodePoint(), CodePoint.MIN_VALUE, Int.MIN_VALUE),
+            Triple(0x8FFFF.toCodePoint(), CodePoint.MAX_VALUE, Int.MIN_VALUE),
+            Triple(0x8FFFF.toCodePoint(), CodePoint.MIN_VALUE, Int.MIN_VALUE + 1),
+        )) {
+            assertEquals(c2, c1 + diff)
+            assertEquals(c1, c2 - diff)
+            if (diff != Int.MIN_VALUE) {
+                assertEquals(c2, c1 - -diff)
+                assertEquals(c1, c2 + -diff)
+            }
+            assertEquals(c1, c1 + diff - diff)
+            assertEquals(c2, c2 - diff + diff)
+            val expectedDiff = if (c2 > c1) diff.mod(modulo) else diff.mod(modulo) - modulo
+            assertEquals(expectedDiff, c2 - c1)
+            assertEquals(-expectedDiff, c1 - c2)
         }
 
         assertEquals(CodePoint.MIN_VALUE, CodePoint.MAX_VALUE + 1)
