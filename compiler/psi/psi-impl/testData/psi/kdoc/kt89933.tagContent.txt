@@ -22,9 +22,9 @@ ORIGINAL KDOC:
 CONTENT:
 ```kotlin
 class O {
-  /*static*/var static_init_state: Int = 1
-  /*static*/var instance: O?
-  /*static*/fun getInstance(): O {
+  /*static*/ var static_init_state: Int = 1
+  /*static*/ var instance: O?
+  /*static*/ fun getInstance(): O {
       if (!static_init_state) return O.instance /* implicitly cast to O */
       if (static_init_state == 2) {
         staticInitializationFailureWithClassName(O::class)

@@ -5,6 +5,6 @@ ORIGINAL KDOC:
  * ```
 CONTENT:
 ```kotlin
-/*a*/val x = 1
-  /*b*/val y = 2
+/*a*/ val x = 1
+/*b*/ val y = 2
 ```

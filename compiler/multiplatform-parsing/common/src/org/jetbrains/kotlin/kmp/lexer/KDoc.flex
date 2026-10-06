@@ -52,7 +52,7 @@ import kotlin.jvm.JvmStatic // Not needed on JVM, but needed when compiling othe
   }
 
   private val isLastToken: Boolean
-    get() = zzMarkedPos == zzBuffer.length
+    get() = zzMarkedPos == zzEndRead
 
   private fun countRepeating(c: Char): Int {
       var current = zzStartRead
@@ -133,6 +133,7 @@ BACKTICK_CODE_FENCE_START = "``" {BACKTICK_STRING} [^`{LINE_BREAK_CHAR}]*
 TILDA_CODE_FENCE_START = "~~" {TILDA_STRING} [^{LINE_BREAK_CHAR}]*
 CODE_FENCE_START={BACKTICK_CODE_FENCE_START} | {TILDA_CODE_FENCE_START}
 CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
+KDOC_END = "*"+ "/"
 
 %%
 
@@ -142,7 +143,19 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
             return KDocTokens.START
 }
 
-"*"+ "/" {
+<CODE_SPAN_CONTENTS> {
+    {KDOC_END} {
+            return if (isLastToken) KDocTokens.END else KDocTokens.CODE_SPAN_TEXT
+    }
+}
+
+<INDENTED_CODE_BLOCK, CODE_BLOCK_CONTENTS_BEGINNING, CODE_BLOCK> {
+    {KDOC_END} {
+            return if (isLastToken) KDocTokens.END else KDocTokens.CODE_BLOCK_TEXT
+    }
+}
+
+{KDOC_END} {
             return if (isLastToken) KDocTokens.END else KDocTokens.TEXT
 }
 
@@ -254,7 +267,7 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
     {LINE_BREAK_CHAR} {
             yybeginAndUpdate(CODE_SPAN_LINE_BEGINNING)
             return SyntaxTokenTypes.WHITE_SPACE
-      }
+    }
 
     {BACKTICK_STRING} {
             val ch = zzBuffer[zzStartRead]
@@ -268,11 +281,11 @@ CODE_FENCE_END={BACKTICK_STRING} | {TILDA_STRING}
             } else {
                 return KDocTokens.CODE_SPAN_TEXT
             }
-      }
+    }
 
     [^] {
             return KDocTokens.CODE_SPAN_TEXT
-      }
+    }
 }
 
 <CODE_SPAN_LINE_BEGINNING> {
