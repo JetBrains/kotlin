@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.test.TestMetadata
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -775,10 +774,6 @@ open class CommonizerIT : KGPBaseTest() {
     @TestMetadata("emptyKts")
     @OsCondition(enabledOnCI = [OS.LINUX, OS.WINDOWS, OS.MAC])
     @GradleTest
-    @Disabled(
-        "A NoClassDefFoundError for 'kotlin/coroutines/jvm/internal/SpillingKt' is produced during this test, " +
-                "likely due to 'buildScriptReturn' inject in 'nonPlatformCinteropsClasspath()'."
-    )
     fun testCommonizationOfNonPlatformShouldWorkOnlyForSupportedTargets(gradleVersion: GradleVersion) {
         nativeProject("emptyKts", gradleVersion) {
             addKgpToBuildScriptCompilationClasspath()
