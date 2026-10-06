@@ -86,13 +86,58 @@ class CInteropDeserializationTest : AbstractNativeSimpleTest() {
         generateExecutable(includedLibrary = mainKlibDir, cinteropKlibDir)
     }
 
-    private inline fun compileToCInteropLibrary(defFileContents: () -> String): Path {
-        val defFile = sourcesDir.resolve("cinterop_lib.def").apply { writeText(defFileContents()) }
+    @Test
+    fun `Same C struct in two C-interop libraries (KT-89825)`() {
+        val firstKlibDir = compileToCInteropLibrary("first", ["-pkg", "cinterop"]) {
+            """
+                language = C
+                ---
+                typedef struct RustBuffer { long long len; } RustBuffer;
+                static RustBuffer first_alloc(long long len) {
+                    RustBuffer b = { len }; 
+                    return b; 
+                }
+            """.trimIndent()
+        }
+        val secondKlibDir = compileToCInteropLibrary("second", ["-pkg", "cinterop"]) {
+            """
+                language = C
+                ---
+                typedef struct RustBuffer { long long len; } RustBuffer;
+                static RustBuffer second_alloc(long long len) {
+                    RustBuffer b = { len }; 
+                    return b; 
+                }
+            """.trimIndent()
+        }
+
+        val mainKlibDir = compileToRegularLibrary(firstKlibDir, secondKlibDir) {
+            """
+                @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
+                import kotlinx.cinterop.useContents
+
+                fun main() {
+                    cinterop.first_alloc(1).useContents { len }
+                    cinterop.second_alloc(2).useContents { len }
+                }
+            """.trimIndent()
+        }
+
+        generateExecutable(includedLibrary = mainKlibDir, firstKlibDir, secondKlibDir)
+    }
+
+    private inline fun compileToCInteropLibrary(
+        name: String = "cinterop_lib",
+        cinteropArgs: List<String> = [],
+        defFileContents: () -> String,
+    ): Path {
+        val defFile = sourcesDir.resolve("$name.def").apply { writeText(defFileContents()) }
 
         val libraryDir = cinteropToLibrary(
             defFile,
             outputDir = buildDir,
-            TestCInteropArgs("-nopack")
+            TestCInteropArgs(["-nopack"] + cinteropArgs)
         ).assertSuccess().resultingArtifact.klibFile
 
         assertTrue(libraryDir.isDirectory)

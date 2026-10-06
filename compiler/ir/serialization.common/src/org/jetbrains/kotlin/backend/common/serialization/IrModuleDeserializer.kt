@@ -86,6 +86,8 @@ abstract class IrModuleDeserializer(
      */
     abstract fun getDefinedPackageNames(): Set<FqName>?
 
+    open val preferLinkingToTheCurrentModule: Boolean get() = true
+
     abstract operator fun contains(idSig: IdSignature): Boolean
     abstract fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol?
     abstract fun deserializedSymbolNotFound(idSig: IdSignature): Nothing

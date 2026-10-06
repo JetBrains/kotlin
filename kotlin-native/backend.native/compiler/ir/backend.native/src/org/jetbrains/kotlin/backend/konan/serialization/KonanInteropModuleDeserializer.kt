@@ -64,6 +64,14 @@ internal class KonanInteropModuleDeserializer(
         require(klib.isCInteropLibrary())
     }
 
+    // Allow to link against a declaration from another C interop module, even if this module also defines one with the same signature.
+    // This avoids an error when two declarations could try to bind to the same signature (KT-89825). Now, the first one to be deserialized
+    // will be used from all modules.
+    // This is only enabled for interop Klibs because:
+    // a) For compatibility with previous versions of Kotlin.
+    // b) They are likely more susceptible to duplicated declarations then regular Klibs, e.g. when two C libraries use the same header file.
+    override val preferLinkingToTheCurrentModule: Boolean get() = false
+
     private val symbolTable = linker.symbolTable
     private val metadataReader = KlibMetadataReader(klib)
     private val moduleHeaderProto: KlibMetadataProtoBuf.Header? by lazy { parseModuleHeader(klib.metadata.moduleHeaderData) }

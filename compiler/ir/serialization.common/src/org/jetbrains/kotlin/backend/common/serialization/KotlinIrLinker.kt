@@ -112,8 +112,9 @@ abstract class KotlinIrLinker(
         // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
         // handle such situation appropriately. See KT-41378.
 
+        var currentModuleIfSearched: IrModuleDeserializer? = null
         var actualModuleDeserializer: IrModuleDeserializer? = null
-        if (topLevelSignature in moduleDeserializer) {
+        if (moduleDeserializer.preferLinkingToTheCurrentModule) {
             // First, look for the declaration in the current module (the module with a use-site of this signature).
             // This influences how duplicated declarations are handled. Longer explanation:
             //
@@ -131,11 +132,14 @@ abstract class KotlinIrLinker(
             // - If only libA or libB reference class C, and that reference is the first one met by the linker, the corresponding version
             //     of class C will be linked.
             // - Otherwise, class C will be arbitrarily linked from either libA or libB.
-            actualModuleDeserializer = moduleDeserializer
+            if (topLevelSignature in moduleDeserializer) {
+                actualModuleDeserializer = moduleDeserializer
+            }
+            currentModuleIfSearched = moduleDeserializer
         }
         if (actualModuleDeserializer == null) {
             val candidateModules = getModulesDefiningPackage(topLevelSignature.packageFqName())
-            actualModuleDeserializer = candidateModules.firstOrNull { it != moduleDeserializer && topLevelSignature in it }
+            actualModuleDeserializer = candidateModules.firstOrNull { it != currentModuleIfSearched && topLevelSignature in it }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
