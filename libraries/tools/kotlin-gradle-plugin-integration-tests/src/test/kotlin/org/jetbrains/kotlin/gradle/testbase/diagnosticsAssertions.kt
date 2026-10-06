@@ -155,7 +155,7 @@ fun BuildResult.extractProjectsAndTheirDiagnosticsInBlocks(): List<String> {
     }
 
 
-    for ([index, line] in output.lines().withIndex()) {
+    for ((index, line) in output.lines().withIndex()) {
         when {
             line.trim() == VERBOSE_DIAGNOSTIC_SEPARATOR -> endDiagnostic(line, index)
 
@@ -240,7 +240,7 @@ private fun extractRenderedDiagnostics(
 
     return generateSequence {
         extractNextDiagnosticAndIndex(diagnostic, fromText, startIndex = parsedPrefix, expectedSeverity = expectedSeverity)
-            ?.also { [_, newPrefix] -> parsedPrefix = newPrefix }
+            ?.also { (_, newPrefix) -> parsedPrefix = newPrefix }
             ?.first
     }.toList()
 }

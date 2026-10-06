@@ -82,7 +82,7 @@ class MppCrossCompilationIT : KGPBaseTest() {
                         }
 
                         it.doLast {
-                            checks.forEach { [targetName, provider] ->
+                            checks.forEach { (targetName, provider) ->
                                 println("Property check [$targetName]: ${provider.get()}")
                             }
                         }

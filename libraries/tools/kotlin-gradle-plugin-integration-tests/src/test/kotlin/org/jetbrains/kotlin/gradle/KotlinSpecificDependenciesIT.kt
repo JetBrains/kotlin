@@ -675,8 +675,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 "\ndependencies { \"$configuration\"(\"$kotlinTestMultiplatformDependency\") }"
             }
         )
-        classpathElementsExpectedByTask.forEach { [task, expected] ->
-            val [notInClasspath, inClasspath] = expected.partition { it.startsWith("!") }
+        classpathElementsExpectedByTask.forEach { (task, expected) ->
+            val (notInClasspath, inClasspath) = expected.partition { it.startsWith("!") }
             checkTaskCompileClasspath(
                 task,
                 inClasspath,
@@ -684,8 +684,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 isBuildGradleKts = isBuildGradleKts
             )
         }
-        filesExpectedByConfiguration.forEach { [configuration, expected] ->
-            val [notInItems, inItems] = expected.partition { it.startsWith("!") }
+        filesExpectedByConfiguration.forEach { (configuration, expected) ->
+            val (notInItems, inItems) = expected.partition { it.startsWith("!") }
             checkConfigurationContent(
                 configuration,
                 inItems,

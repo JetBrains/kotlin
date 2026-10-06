@@ -393,7 +393,7 @@ internal fun addSwiftPmGitTag(
     tag: String,
     files: Map<String, String>? = null,
 ) {
-    files?.forEach { [filePath, fileContent] ->
+    files?.forEach { (filePath, fileContent) ->
         val f = repoDir.resolve(filePath)
         f.parent.createDirectories()
         f.writeText(fileContent)
@@ -906,7 +906,7 @@ internal fun BuildResult.assertResolvedVersions(
     val actual = parsePackageResolved(persistedPackageResolved.readText())
 
     val expected = SwiftPmPackageResolved(
-        pins = expectedPins.map { [repoRef, version] ->
+        pins = expectedPins.map { (repoRef, version) ->
             checkoutRepoDir?.let { checkoutRepoDir ->
                 assertCheckoutVersion(checkoutRepoDir, repoRef, version)
             }
