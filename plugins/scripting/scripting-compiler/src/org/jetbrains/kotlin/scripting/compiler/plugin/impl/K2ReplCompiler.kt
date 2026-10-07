@@ -120,16 +120,17 @@ class K2ReplCompiler(
         ): K2ReplCompilationState {
 
             val moduleName = Name.special("<REPL>")
+            val effectiveHostConfig = effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration)
             val compilerContext = createIsolatedCompilationContext(
                 scriptCompilationConfiguration,
-                hostConfiguration,
+                effectiveHostConfig,
                 messageCollector,
                 rootDisposable
             ) {
-                add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
+                add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(effectiveHostConfig))
             }
 
-            val shared = createScriptingSharedState(compilerContext, hostConfiguration, moduleName) {
+            val shared = createScriptingSharedState(compilerContext, effectiveHostConfig, moduleName) {
                 ReplModuleDataProvider(it.map(File::toPath))
             }
             return K2ReplCompilationState(shared, scriptCompilationConfiguration, messageCollector, compilerContext)

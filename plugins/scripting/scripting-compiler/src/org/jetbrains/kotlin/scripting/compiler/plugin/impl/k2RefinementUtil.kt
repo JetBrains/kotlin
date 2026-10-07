@@ -13,17 +13,28 @@ import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
 import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
+
+internal fun effectiveHostConfiguration(
+    explicit: ScriptingHostConfiguration,
+    configuration: ScriptCompilationConfiguration,
+): ScriptingHostConfiguration =
+    explicit.withDefaultsFrom(
+        configuration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
+    )
 
 fun ScriptCompilationConfiguration.refineAllForK2(
     script: SourceCode,
     hostConfiguration: ScriptingHostConfiguration,
     collectAnnotationData: (SourceCode, ScriptCompilationConfiguration) -> ResultWithDiagnostics<ScriptCollectedData>?
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-    with {
-        this@with.hostConfiguration.update { it.withDefaultsFrom(hostConfiguration) }
-        updateClasspath(hostConfiguration[ScriptingHostConfiguration.configurationDependencies]?.toClassPathOrEmpty())
+    effectiveHostConfiguration(hostConfiguration, this).let { effectiveHostConfig ->
+        with {
+            this@with.hostConfiguration(effectiveHostConfig)
+            updateClasspath(effectiveHostConfig[ScriptingHostConfiguration.configurationDependencies]?.toClassPathOrEmpty())
+        }
     }
         .refineBeforeParsing(script)
         .onSuccess {
@@ -51,4 +62,3 @@ fun ScriptCompilationConfiguration.refineAllForK2(
                 resolvedImportScripts(resolvedScripts)
             }.asSuccess()
         }
-
