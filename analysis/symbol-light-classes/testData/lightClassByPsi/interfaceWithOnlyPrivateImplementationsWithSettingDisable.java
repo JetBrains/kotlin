@@ -1,8 +1,4 @@
 public abstract interface OnlyPrivateImplementations /* OnlyPrivateImplementations*/ {
-  private abstract int getBar();//  getBar()
-
-  private abstract void foo();//  foo()
-
   public abstract void baz();//  baz()
 
   public static final class DefaultImpls /* OnlyPrivateImplementations.DefaultImpls*/ {
