@@ -1,4 +1,4 @@
-// ES_MODULES
+// TARGET_BACKEND: WASM_JS
 // FILE: jsModuleWithQualifierOnVariable.mjs
 let a = {
     b: {
@@ -18,6 +18,7 @@ export { a, getX };
 // FILE: lib1.kt
 package qualified
 
+@Suppress("JS_MODULE_PROHIBITED_ON_VAR")
 @JsModule("./jsModuleWithQualifierOnVariable.mjs")
 @JsQualifier("a.b")
 external var x: Int
