@@ -582,5 +582,6 @@ internal fun wasm_i64_ctz(a: Long): Long =
     implementedAsIntrinsic
 
 @ExcludedFromCodegen
+@UsedFromCompilerGeneratedCode
 internal fun <T> array_new_data(address: Int, length: Int, dataIdx: Int): T =
     implementedAsIntrinsic
