@@ -468,11 +468,13 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return File(dirFile, "$fileName$postfix.xml")
         }
 
+        // Several compilations may run concurrently in one JVM (e.g. in a multiplex build worker),
+        // so claim the file atomically instead of checking for existence first.
         var outputFile: File
         do {
             outputFile = file()
             counter++
-        } while (outputFile.exists())
+        } while (!outputFile.createNewFile())
 
         // Write XML using StAX
         outputFile.bufferedWriter().use { writer ->
