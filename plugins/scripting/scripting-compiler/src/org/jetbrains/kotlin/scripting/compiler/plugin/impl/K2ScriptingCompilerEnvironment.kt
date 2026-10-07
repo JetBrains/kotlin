@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.disableStandardScriptDefinition
+import org.jetbrains.kotlin.config.inlineConstTracker
+import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
@@ -82,15 +85,22 @@ internal class K2ScriptingCompilerEnvironmentImpl(
         projectEnvironment.getPackagePartProvider(sessionFactoryContext.librariesClasspath)
 
     override fun updateContext(configuration: CompilerConfiguration) {
-        val previous = sessionFactoryContext
-        sessionFactoryContext = FirJvmSessionFactory.Context(
-            configuration = configuration,
-            projectEnvironment = previous.projectEnvironment,
-            librariesClasspath = previous.librariesClasspath,
-            javaInterop = previous.javaInterop,
-        )
+        sessionFactoryContext = sessionFactoryContext.updatedFor(configuration)
     }
 }
+
+/**
+ * The context captures the JVM target and the inline constant tracker of the configuration it is created from,
+ * so it is recreated only when they differ, e.g. after applying the refined compiler options.
+ */
+internal fun FirJvmSessionFactory.Context.updatedFor(configuration: CompilerConfiguration): FirJvmSessionFactory.Context =
+    if ((configuration.jvmTarget ?: JvmTarget.DEFAULT) == jvmTarget && configuration.inlineConstTracker === inlineConstTracker) this
+    else FirJvmSessionFactory.Context(
+        configuration = configuration,
+        projectEnvironment = projectEnvironment,
+        librariesClasspath = librariesClasspath,
+        javaInterop = javaInterop,
+    )
 
 open class ScriptingModuleDataProvider(private val baseName: String, baseLibraryPaths: List<Path>) : ModuleDataProvider() {
 

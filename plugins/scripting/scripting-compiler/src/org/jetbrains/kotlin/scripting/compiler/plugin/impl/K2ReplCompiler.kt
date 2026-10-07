@@ -148,7 +148,12 @@ class K2ReplCompilationState internal constructor(
     internal val moduleDataProvider: ReplModuleDataProvider = shared.moduleDataProvider
     internal val projectEnvironment: VfsBasedProjectEnvironment = shared.librarySessions.projectEnvironment
     internal val sharedLibrarySession: FirSession = shared.librarySessions.sharedLibrarySession
-    internal val sessionFactoryContext: FirJvmSessionFactory.Context = shared.librarySessions.sessionFactoryContext
+    internal var sessionFactoryContext: FirJvmSessionFactory.Context = shared.librarySessions.sessionFactoryContext
+        private set
+
+    internal fun updateContext(configuration: CompilerConfiguration) {
+        sessionFactoryContext = sessionFactoryContext.updatedFor(configuration)
+    }
 
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
 
@@ -295,19 +300,8 @@ private fun compileImpl(
         }.valueOr { return it }
     allSourceFiles.addAll(0, newSources)
 
-    // Updating compiler options
-    val baseCompilerOptions = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
-    val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) { file ->
-        getRefinedConfiguration(file)[ScriptCompilationConfiguration.compilerOptions]?.takeIf { it != baseCompilerOptions } ?: emptyList()
-    }
-    if (updatedCompilerOptions.isNotEmpty()) {
-        compilerConfiguration.updateWithCompilerOptions(
-            updatedCompilerOptions,
-            messageCollector,
-            state.compilerContext.ignoredOptionsReportingState,
-            true
-        )
-    }
+    compilerConfiguration.applyRefinedCompilerOptions(state.compilerContext, allSourceFiles, messageCollector, ::getRefinedConfiguration)
+    state.updateContext(compilerConfiguration)
 
     val [libModuleData, newClassPath] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
 

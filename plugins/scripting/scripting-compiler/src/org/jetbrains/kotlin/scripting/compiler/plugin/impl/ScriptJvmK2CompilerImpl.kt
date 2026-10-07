@@ -189,19 +189,10 @@ class ScriptJvmK2CompilerImpl(
         // The imported scripts should be analyzed before the main one.
         allSourceFiles.addAll(0, newSources)
 
-        val ignoredOptionsReportingState = state.compilerContext.ignoredOptionsReportingState
-        val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) {
-            getRefinedConfiguration(it)[ScriptCompilationConfiguration.compilerOptions] ?: emptyList()
-        }
-        if (updatedCompilerOptions.isNotEmpty() && updatedCompilerOptions != state.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]) {
-            compilerConfiguration.updateWithCompilerOptions(
-                updatedCompilerOptions,
-                reportingCtx.messageCollector,
-                ignoredOptionsReportingState,
-                true
-            )
-            state.updateContext(compilerConfiguration)
-        }
+        compilerConfiguration.applyRefinedCompilerOptions(
+            state.compilerContext, allSourceFiles, reportingCtx.messageCollector, ::getRefinedConfiguration
+        )
+        state.updateContext(compilerConfiguration)
 
         if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
 
