@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.toSystemIndep
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptingModuleDataProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.effectiveHostConfiguration
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
@@ -88,7 +89,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                             { _, scriptCompilationConfiguration ->
                                 getOrCreateSessionForAnnotationResolution(
                                     scriptCompilationConfiguration,
-                                    scriptCompilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: hostConfiguration,
+                                    effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration),
                                     configuration,
                                     environment
                                 )

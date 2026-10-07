@@ -127,19 +127,20 @@ class K2ReplCompiler(
         ): ReplCompilerState {
 
             val moduleName = Name.special("<REPL>")
+            val effectiveHostConfig = effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration)
             val compilerContext = createIsolatedCompilationContext(
                 scriptCompilationConfiguration,
-                hostConfiguration,
+                effectiveHostConfig,
                 messageCollector,
                 rootDisposable
             ) {
-                add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
+                add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(effectiveHostConfig))
             }
 
             val compilerConfiguration = compilerContext.environment.configuration
             compilerConfiguration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
+                ScriptDefinition.FromConfigurations(effectiveHostConfig, scriptCompilationConfiguration, null)
             )
             val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
             val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
@@ -149,7 +150,7 @@ class K2ReplCompiler(
                 it.setScriptDefinitionsSources(definitionSources)
                 it.setScriptDefinitions(definitions)
             }
-            val hostConfigurationWithProvider = hostConfiguration.with {
+            val hostConfigurationWithProvider = effectiveHostConfig.with {
                 scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
                 scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
             }
