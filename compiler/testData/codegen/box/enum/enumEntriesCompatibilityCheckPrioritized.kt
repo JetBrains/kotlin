@@ -1,4 +1,5 @@
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:1.9
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: ANY:1.9,2.0
+// ^^^ The PrioritizedEnumEntries LF is enabled by default only since Kotlin 2.1.
 // FULL_JDK
 // WITH_STDLIB
 
