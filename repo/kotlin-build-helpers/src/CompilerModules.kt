@@ -424,6 +424,7 @@ object CompilerModules {
         ":kotlin-util-klib-metadata",
         ":native:kotlin-native-utils",
         ":compiler:build-tools:kotlin-build-tools-api",
+        ":compiler:build-tools:kotlin-build-tools-api-jps",
     )
 
     val compilerArtifactsForIde = listOfNotNull(
