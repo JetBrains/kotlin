@@ -124,6 +124,8 @@ internal fun produceObjCExportInterface(
         config.produce.isObjCCache -> {
             val units = headerGenerator.translateUnits().single()
             headerGenerator.assembleHeader(listOf(ObjCExportModuleUnits(0, units)))
+            val exportedModules = moduleDescriptors.toSet()
+            headerGenerator.translateReferencedClassesOfModules(units) { it !in exportedModules }
             return headerGenerator.buildInterface(objCCacheUnits = units)
         }
         cachedModules.isNotEmpty() -> {
@@ -258,6 +260,8 @@ internal class ObjCExport(
                     protocolAdapters = objCCodeGenerator.objCCacheProtocolAdapters,
                     categoryAdapters = objCCodeGenerator.objCCacheCategoryAdapters,
                     exportedLibraries = config.cachedLibraries.exportedDependencies(library, config.exportedLibrariesForObjCCache),
+                    extraClassAdapters = objCCodeGenerator.objCCacheExtraClassAdapters,
+                    extraProtocolAdapters = objCCodeGenerator.objCCacheExtraProtocolAdapters,
             )
             generationState.outputFiles.objcCacheMetadataFile?.let { file ->
                 file.parent.createDirectories()
@@ -279,7 +283,7 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
     // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
     // so the easiest way to achieve this (quickly) is to compile a stub by clang.
 
-    val protocolNames = generatedClasses.mapNotNull { descriptor ->
+    val protocolNames = protocolStubClasses.mapNotNull { descriptor ->
         if (descriptor.isInterface) namer.getClassOrProtocolName(descriptor).objCName else null
     }
     if (protocolNames.isEmpty()) return

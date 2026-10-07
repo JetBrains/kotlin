@@ -452,6 +452,8 @@ class ObjCCacheMetadata(
     val protocolAdapters: List<ObjCCacheAdapterEntry>,
     val categoryAdapters: List<ObjCCacheAdapterEntry>,
     val exportedLibraries: List<String>,
+    val extraClassAdapters: List<ObjCCacheAdapterEntry>,
+    val extraProtocolAdapters: List<ObjCCacheAdapterEntry>,
 ) {
     fun serialize(writer: java.io.Writer) {
         writer.appendLine("format=$FORMAT_VERSION")
@@ -459,6 +461,8 @@ class ObjCCacheMetadata(
         writer.appendLine("protocolAdapters=${protocolAdapters.serializeEntries()}")
         writer.appendLine("categoryAdapters=${categoryAdapters.serializeEntries()}")
         writer.appendLine("exportedLibraries=${exportedLibraries.sorted().joinToString(";")}")
+        writer.appendLine("extraClassAdapters=${extraClassAdapters.serializeEntries()}")
+        writer.appendLine("extraProtocolAdapters=${extraProtocolAdapters.serializeEntries()}")
     }
 
     companion object {
@@ -476,6 +480,8 @@ class ObjCCacheMetadata(
                 protocolAdapters = parseTypeAdapters("protocolAdapters", isInterface = true),
                 categoryAdapters = parseList("categoryAdapters").map { ObjCCacheAdapterEntry.categoryAdapter(it, library) },
                 exportedLibraries = parseList("exportedLibraries"),
+                extraClassAdapters = parseTypeAdapters("extraClassAdapters", isInterface = false),
+                extraProtocolAdapters = parseTypeAdapters("extraProtocolAdapters", isInterface = true),
             )
         }
     }

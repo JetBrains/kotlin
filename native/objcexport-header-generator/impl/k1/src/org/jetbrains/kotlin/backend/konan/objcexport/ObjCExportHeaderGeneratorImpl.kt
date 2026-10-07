@@ -25,5 +25,6 @@ internal class ObjCExportHeaderGeneratorImpl(
         additionalImports
 
     override fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean =
-        descriptor.module !in cachedModules && (!restrictToLocalModules || descriptor.module in moduleDescriptors)
+        descriptor.module !in cachedModules &&
+                (!restrictToLocalModules || descriptor.module in moduleDescriptors || isTranslatedAsExtraModule(descriptor.module))
 }
