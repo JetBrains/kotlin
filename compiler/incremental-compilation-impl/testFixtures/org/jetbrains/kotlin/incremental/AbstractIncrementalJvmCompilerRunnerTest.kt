@@ -103,7 +103,6 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         outputDirs = null,
                         kotlinSourceFilesExtensions = kotlinExtensions,
                         icFeatures = IncrementalCompilationFeatures(
-                            withAbiSnapshot = false,
                             usePreciseJavaTracking = verifiedPreciseJavaTracking
                         ),
                         lookupTrackerDelegate = testLookupTracker
