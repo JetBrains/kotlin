@@ -30,11 +30,15 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
+import org.jetbrains.kotlin.fir.extensions.DeclarationGenerationContext
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.getSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -60,6 +64,7 @@ import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassifierTypeImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.AbstractSignatureParts
 import org.jetbrains.kotlin.load.java.typeEnhancement.PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE
 import org.jetbrains.kotlin.load.java.typeEnhancement.PredefinedFunctionEnhancementInfo
@@ -72,6 +77,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.util.EnumMap
@@ -1154,8 +1160,53 @@ class FirSignatureEnhancement(
         }
     }
 
-    private fun FirTypeRef.toConeKotlinType(mode: FirJavaTypeConversionMode, source: KtSourceElement?): ConeKotlinType =
-        toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, source, mode)
+    private fun FirTypeRef.toConeKotlinType(mode: FirJavaTypeConversionMode, source: KtSourceElement?): ConeKotlinType {
+        val coneType = toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack, source, mode)
+        return runIf(this is FirJavaTypeRef && type is JavaClassifierTypeImpl && type.classifier == null) {
+            // TODO: drop this branch together with old Java facade (KT-70023)
+            getClassLikeSymbolFromExtensionService()?.constructType(
+                typeArguments = coneType.typeArguments
+            )?.toTrivialFlexibleType(session.typeContext)
+        } ?: coneType
+    }
+
+    /**
+     * This function is an introduced quirk for temporary support of Java type resolve for generated classes
+     *
+     * @return generated class symbol that matches the given Java type reference, null otherwise
+     */
+    private fun FirJavaTypeRef.getClassLikeSymbolFromExtensionService(): FirClassLikeSymbol<*>? {
+        val classifierQualifiedName = (type as? JavaClassifierTypeImpl)?.classifierQualifiedName?.let { FqName(it) }
+            ?: return null
+        val context = DeclarationGenerationContext.Nested(owner.symbol, null)
+        val shortName = classifierQualifiedName.shortName()
+        val parent = classifierQualifiedName.parent()
+        var parentSymbol: FirClassSymbol<*>? = owner.symbol
+        if (!parent.isRoot) {
+            val packageFqName = owner.classId.packageFqName
+            val relativeClassName = if (classifierQualifiedName.startsWith(packageFqName)) {
+                // my.package.Owner.Builder
+                FqName(classifierQualifiedName.asString().substring(packageFqName.asString().length + 1))
+            } else {
+                // Assume it's a qualified class name from the same package, like Owner.Builder
+                // We don't consider accesses from other packages here (as then full-pledged resolve is required)
+                classifierQualifiedName
+            }
+            return session.symbolProvider.getClassLikeSymbolByClassId(ClassId(packageFqName, relativeClassName, isLocal = false))
+        }
+        // If we know just a short name (like Builder), go bottom-up the owner class hierarchy to find a class
+        // that may contain such a generated nested class
+        while (parentSymbol != null) {
+            if (session.extensionService.declarationGenerators.any {
+                    shortName in it.getNestedClassifiersNames(parentSymbol, context)
+                }
+            ) {
+                return session.symbolProvider.getClassLikeSymbolByClassId(parentSymbol.classId.createNestedClassId(shortName))
+            }
+            parentSymbol = parentSymbol.getContainingClassSymbol() as? FirClassSymbol<*>
+        }
+        return null
+    }
 }
 
 /**
