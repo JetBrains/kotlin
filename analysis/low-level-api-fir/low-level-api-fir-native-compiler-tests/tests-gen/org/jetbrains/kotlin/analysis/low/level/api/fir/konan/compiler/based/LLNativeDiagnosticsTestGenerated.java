@@ -121,6 +121,12 @@ public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnostic
   }
 
   @Test
+  @TestMetadata("identityHashCodeOnWillBecomeValueClass.kt")
+  public void testIdentityHashCodeOnWillBecomeValueClass() {
+    run("identityHashCodeOnWillBecomeValueClass.kt");
+  }
+
+  @Test
   @TestMetadata("interfaceCompanionBlockProperty.kt")
   public void testInterfaceCompanionBlockProperty() {
     run("interfaceCompanionBlockProperty.kt");
