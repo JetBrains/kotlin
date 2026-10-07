@@ -1,4 +1,5 @@
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.HasConfigurableKotlinCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -53,20 +54,26 @@ kotlin {
     metadata() // For common sources in IDE
 
     jvm()
-
+    val buildFeatures = serviceOf<BuildFeatures>()
     js {
-        browser()
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            browser()
+            nodejs()
+        }
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            nodejs()
+        }
     }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
-        nodejs()
+        if (!buildFeatures.isolatedProjects.active.get()) {
+            nodejs()
+        }
     }
 
     if (kotlinBuildProperties.isInIdeaSync.get()) {
