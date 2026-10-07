@@ -121,7 +121,7 @@ abstract class ObjCCacheTestBase : AbstractNativeSimpleTest() {
     protected fun Properties.records(key: String): List<String> = getProperty(key).orEmpty().split(";").filter { it.isNotBlank() }
 
     protected fun Properties.adapterSymbols(): List<String> =
-        stringPropertyNames().filter { it.endsWith("Adapters") }
+        stringPropertyNames().filter { it.endsWith("Adapters") && !it.startsWith("extra") }
             .flatMap { records(it) }.map { it.substringAfter(",") }
 
     protected fun definedSymbols(binary: File): List<String> =
@@ -266,7 +266,13 @@ class ObjCCacheTest : ObjCCacheTestBase() {
         val units = GZIPInputStream(binDir.resolve("objc_cache_units.txt.gz").inputStream()).bufferedReader().use { it.readText() }
         assertTrue("LayoutWorker" in units) { "Expected the header units to declare LayoutWorker" }
         val metadata = objCCacheMetadata(libraries.cacheDir, "layoutLib")
-        assertEquals(setOf("classAdapters", "protocolAdapters", "categoryAdapters", "exportedLibraries"), metadata.stringPropertyNames())
+        assertEquals(
+            setOf(
+                "classAdapters", "protocolAdapters", "categoryAdapters", "exportedLibraries",
+                "extraClassAdapters", "extraProtocolAdapters",
+            ),
+            metadata.stringPropertyNames(),
+        )
         assertTrue("LayoutWorker" in metadata.getProperty("classAdapters")) { "Expected an adapter of LayoutWorker in $metadata" }
         assertTrue("LayoutProtocol" in metadata.getProperty("protocolAdapters")) { "Expected an adapter of LayoutProtocol in $metadata" }
         val archiveSymbols = definedSymbols(binDir.listFiles { file: File -> file.extension == "a" }.orEmpty().single())
@@ -678,6 +684,87 @@ class ObjCCacheTest : ObjCCacheTestBase() {
             try assertTrue(NSProtocolFromString("KtAlphaListener") != nil)
             try assertTrue(NSProtocolFromString("KtBetaListener") != nil)
             """
+        )
+    }
+
+    @Test
+    fun testStaticFrameworkExtraClassesFromCaches() {
+        val libraries = compileLibraries(
+            Library(
+                "libA",
+                """
+                package liba
+                open class Alpha(val name: String) {
+                    open fun greet(): String = "Hello " + name
+                }
+                enum class Shade { LIGHT, DARK }
+                interface Labeled {
+                    fun label(): String
+                }
+                """,
+                isExported = false,
+            ),
+            Library(
+                "libB",
+                """
+                package libb
+                import liba.*
+                class Beta(val alpha: Alpha, val shade: Shade) : Labeled {
+                    override fun label(): String = "beta " + alpha.name + " " + shade.name
+                }
+                fun Alpha.shout(): String = name.uppercase()
+                fun Shade.flip(): Shade = if (this == Shade.DARK) Shade.LIGHT else Shade.DARK
+                interface Named : Labeled {
+                    fun named(): String
+                }
+                class Gamma(name: String) : Alpha(name)
+                """,
+                listOf("libA"),
+            ),
+            Library(
+                "libC",
+                """
+                package libc
+                import liba.*
+                fun Alpha.whisper(): String = name.lowercase()
+                fun callGreet(alpha: Alpha): String = alpha.greet()
+                fun describe(labeled: Labeled): String = labeled.label()
+                """,
+                listOf("libA"),
+            ),
+        )
+        fun extraAdapters(libraryName: String, key: String) =
+            objCCacheMetadata(libraries.cacheDir, libraryName).records(key).map { it.substringBefore(",") }
+        assertTrue(extraAdapters("libB", "extraClassAdapters").containsAll(listOf("KtLibAAlpha", "KtLibAShade")))
+        assertTrue("KtLibALabeled" in extraAdapters("libB", "extraProtocolAdapters"))
+        assertTrue("KtLibAAlpha" in extraAdapters("libC", "extraClassAdapters"))
+        val libBArchive = objCCacheBinDir(libraries.cacheDir, "libB").listFiles { file: File -> file.extension == "a" }.orEmpty().single()
+        assertEquals(1, definedSymbols(libBArchive).count { it.endsWith("_OBJC_PROTOCOL_\$_KtNamed") }) {
+            "Expected the libB cache to define the Objective-C protocol KtNamed"
+        }
+
+        val framework = linkFramework(libraries)
+        framework.assertObjCCachesLinked("libB", "libC")
+        assertEquals(2, framework.symbols.count { it.endsWith("_Kotlin_ObjCExport_TypeAdapter_Class_KtLibAAlpha") })
+        framework.runSwift(
+            declarations = """
+                class SwiftAlpha : LibAAlpha {
+                    override func greet() -> String {
+                        return "Swift " + name
+                    }
+                }
+                """,
+            body = """
+                let alpha = LibAAlpha(name: "Cached")
+                try assertEquals(actual: alpha.greet(), expected: "Hello Cached")
+                try assertEquals(actual: alpha.shout(), expected: "CACHED")
+                try assertEquals(actual: alpha.whisper(), expected: "cached")
+                try assertEquals(actual: LibAShade.light.flip(), expected: LibAShade.dark)
+                let beta = Beta(alpha: alpha, shade: LibAShade.dark)
+                try assertEquals(actual: beta.label(), expected: "beta Cached DARK")
+                try assertEquals(actual: LibCKt.describe(labeled: beta), expected: "beta Cached DARK")
+                try assertEquals(actual: LibCKt.callGreet(alpha: SwiftAlpha(name: "S")), expected: "Swift S")
+                """,
         )
     }
 }

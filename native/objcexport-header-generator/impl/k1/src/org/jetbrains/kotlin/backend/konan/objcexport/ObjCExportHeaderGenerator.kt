@@ -42,6 +42,10 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     private var liveAssembler: ObjCExportHeaderAssembler? = null
     private val referencedClasses = mutableMapOf<String, ClassDescriptor>()
     private val insertedLines = mutableListOf<Pair<Int, List<String>>>()
+    private var protocolStubs: Pair<List<String>, Set<ClassDescriptor>>? = null
+    private var isExtraModule: (ModuleDescriptor) -> Boolean = { false }
+
+    protected fun isTranslatedAsExtraModule(module: ModuleDescriptor): Boolean = isExtraModule(module)
 
     open val shouldExportKDoc = false
 
@@ -58,11 +62,11 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     @InternalKotlinNativeApi
     fun buildInterface(objCCacheUnits: ObjCExportUnits? = null): ObjCExportedInterface {
         val header = buildHeader()
-        val protocolStubHeaderLines =
-            if (insertedLines.isEmpty() && objCCacheUnits == null) emptyList() else header.renderForProtocolStubs()
+        val [protocolStubHeaderLines, protocolStubClasses] = protocolStubs
+            ?: Pair(if (insertedLines.isEmpty()) emptyList() else header.renderForProtocolStubs(), generatedClasses)
         return ObjCExportedInterface(
             generatedClasses, extensions, topLevel, header.render(shouldExportKDoc, insertedLines), namer, mapper,
-            protocolStubHeaderLines, objCCacheUnits,
+            protocolStubHeaderLines, protocolStubClasses, objCCacheUnits,
         )
     }
 
@@ -159,6 +163,14 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             }
         }
         return ObjCExportHeaderAssembler.Entries(classes, categoryMembers, files)
+    }
+
+    @InternalKotlinNativeApi
+    fun translateReferencedClassesOfModules(units: ObjCExportUnits, modules: (ModuleDescriptor) -> Boolean) {
+        protocolStubs = buildHeader().renderForProtocolStubs() to generatedClasses.toSet()
+        isExtraModule = modules
+        units.events.mapNotNull { referencedClasses[it.classId] }.filter { modules(it.module) }.forEach { requireClassOrInterface(it) }
+        translateExtraClasses()
     }
 
     private class ModuleStructure(

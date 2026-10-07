@@ -19,5 +19,6 @@ class ObjCExportedInterface internal constructor(
     val namer: ObjCExportNamer,
     val mapper: ObjCExportMapper,
     val protocolStubHeaderLines: List<String> = emptyList(),
+    val protocolStubClasses: Set<ClassDescriptor> = generatedClasses,
     val objCCacheUnits: ObjCExportUnits? = null,
 )
