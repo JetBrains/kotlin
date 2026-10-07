@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSpreadElementImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -480,7 +481,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
                         arguments[1] = irGet(nameParameter)
                     })
                     +irIfThen(
-                        irEqeqeq(irGet(ordinal), (-1).toIrConst(context.irBuiltIns.intType)),
+                        irEqeqeq(irGet(ordinal), JsIrBuilder.buildInt(context.irBuiltIns.intType, -1)),
                         throwIAE
                     )
                     +irReturn(irGet(ordinal, irClass.defaultType))
