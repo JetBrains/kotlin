@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.KaShortenOptions
-import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
+import org.jetbrains.kotlin.analysis.api.components.KaShortenStrategy
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -26,8 +26,8 @@ internal class KaReferenceShortenerBridge(
         file: KtFile,
         selection: TextRange,
         shortenOptions: KaShortenOptions,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy,
+        classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy,
     ): ShortenCommand =
         context(analysisSession) {
             collectPossibleReferenceShorteningsEndpoint(file, selection, shortenOptions, classShortenStrategy, callableShortenStrategy)
@@ -36,8 +36,8 @@ internal class KaReferenceShortenerBridge(
     override fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         shortenOptions: KaShortenOptions,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy,
+        classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy,
     ): ShortenCommand =
         context(analysisSession) {
             collectPossibleReferenceShorteningsInElementEndpoint(element, shortenOptions, classShortenStrategy, callableShortenStrategy)

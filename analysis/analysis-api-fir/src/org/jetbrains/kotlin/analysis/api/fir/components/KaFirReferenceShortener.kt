@@ -79,8 +79,8 @@ internal class KaFirReferenceShortener(
     override fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         shortenOptions: KaShortenOptions,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
+        classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy
     ): ShortenCommand = withPsiValidityAssertion(element) {
         collectPossibleReferenceShortenings(
             element.containingKtFile,
@@ -95,8 +95,8 @@ internal class KaFirReferenceShortener(
         file: KtFile,
         selection: TextRange,
         shortenOptions: KaShortenOptions,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
+        classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy
     ): ShortenCommand = withPsiValidityAssertion(file) {
         require(!file.isCompiled) { "No sense to collect references for shortening in compiled file $file" }
 
@@ -139,10 +139,10 @@ internal class KaFirReferenceShortener(
             selection,
             additionalImports,
             classShortenStrategy = {
-                minOf(classShortenStrategy(buildSymbol(it) as KaClassLikeSymbol), ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED)
+                minOf(classShortenStrategy(buildSymbol(it) as KaClassLikeSymbol), KaShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED)
             },
             callableShortenStrategy = {
-                minOf(callableShortenStrategy(buildSymbol(it) as KaCallableSymbol), ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED)
+                minOf(callableShortenStrategy(buildSymbol(it) as KaCallableSymbol), KaShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED)
             },
         )
         kDocCollector.visitElement(declarationToVisit)
@@ -253,9 +253,9 @@ private enum class ImportKind {
             }
         }
 
-        fun fromShortenOption(option: ShortenStrategy): ImportKind? = when (option) {
-            ShortenStrategy.SHORTEN_AND_IMPORT -> EXPLICIT
-            ShortenStrategy.SHORTEN_AND_STAR_IMPORT -> STAR
+        fun fromShortenOption(option: KaShortenStrategy): ImportKind? = when (option) {
+            KaShortenStrategy.SHORTEN_AND_IMPORT -> EXPLICIT
+            KaShortenStrategy.SHORTEN_AND_STAR_IMPORT -> STAR
             else -> null
         }
     }
@@ -521,8 +521,8 @@ private class ElementsToShortenCollector(
     private val towerContextProvider: FirTowerDataContextProvider,
     private val containingFile: KtFile,
     private val selection: TextRange,
-    private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
-    private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
+    private val classShortenStrategy: (FirClassLikeSymbol<*>) -> KaShortenStrategy,
+    private val callableShortenStrategy: (FirCallableSymbol<*>) -> KaShortenStrategy,
     private val resolutionFacade: LLResolutionFacade,
 ) {
     val typesToShorten: MutableList<ShortenType> = mutableListOf()
@@ -818,7 +818,7 @@ private class ElementsToShortenCollector(
         val classSymbol = shorteningContext.toClassSymbol(qualifierClassId) ?: return null
 
         val option = classShortenStrategy(classSymbol)
-        if (option == ShortenStrategy.DO_NOT_SHORTEN) return null
+        if (option == KaShortenStrategy.DO_NOT_SHORTEN) return null
 
         if (
             contextSensitiveResolutionIsEnabled &&
@@ -836,9 +836,9 @@ private class ElementsToShortenCollector(
         if (shortenClassifierIfAlreadyImported(qualifierClassId, qualifierElement, classSymbol, positionScopes)) {
             return createElementToShorten(qualifierElement)
         }
-        if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return null
+        if (option == KaShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return null
 
-        val importAllInParent = option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT
+        val importAllInParent = option == KaShortenStrategy.SHORTEN_AND_STAR_IMPORT
         if (importBreaksExistingReferences(qualifierClassId, importAllInParent)) return null
 
         // Find class with the same name that's already available in this file.
@@ -1174,7 +1174,7 @@ private class ElementsToShortenCollector(
         val propertySymbol = firPropertyAccess.referencedSymbol ?: return
 
         val option = callableShortenStrategy(propertySymbol)
-        if (option == ShortenStrategy.DO_NOT_SHORTEN) return
+        if (option == KaShortenStrategy.DO_NOT_SHORTEN) return
 
         if (
             contextSensitiveResolutionIsEnabled &&
@@ -1196,7 +1196,7 @@ private class ElementsToShortenCollector(
             addElementToShorten(createElementToShorten(qualifiedProperty))
             return
         }
-        if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
+        if (option == KaShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
 
         findCallableQualifiedAccessToShorten(
             firPropertyAccess,
@@ -1235,7 +1235,7 @@ private class ElementsToShortenCollector(
         val calledSymbol = findUnambiguousReferencedCallableId(calleeReference) ?: return
 
         val option = callableShortenStrategy(calledSymbol)
-        if (option == ShortenStrategy.DO_NOT_SHORTEN) return
+        if (option == KaShortenStrategy.DO_NOT_SHORTEN) return
 
         shortenIfAlreadyImportedAsAlias(qualifiedCallExpression, calledSymbol.callableId?.asSingleFqName())?.let {
             addElementToShorten(it)
@@ -1248,7 +1248,7 @@ private class ElementsToShortenCollector(
             addElementToShorten(createElementToShorten(qualifiedCallExpression))
             return
         }
-        if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
+        if (option == KaShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return
 
         findCallableQualifiedAccessToShorten(
             functionCall,
@@ -1262,11 +1262,11 @@ private class ElementsToShortenCollector(
     private fun findCallableQualifiedAccessToShorten(
         qualifiedAccess: FirQualifiedAccessExpression,
         calledSymbol: FirCallableSymbol<*>,
-        option: ShortenStrategy,
+        option: KaShortenStrategy,
         qualifiedCallExpression: KtDotQualifiedExpression,
         availableCallables: List<AvailableSymbol<FirCallableSymbol<*>>>,
     ): ElementToShorten? {
-        if (option == ShortenStrategy.DO_NOT_SHORTEN) return null
+        if (option == KaShortenStrategy.DO_NOT_SHORTEN) return null
         if (!canBePossibleToImportReceiver(qualifiedAccess)) return null
 
         val nameToImport = shorteningContext.convertToImportableName(calledSymbol)
@@ -1280,9 +1280,9 @@ private class ElementsToShortenCollector(
             otherCallables.all { importKind.hasHigherPriorityThan(it.importKind) } -> {
                 when {
                     matchedCallables.isEmpty() -> {
-                        if (nameToImport == null || option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return null
+                        if (nameToImport == null || option == KaShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) return null
 
-                        val importAllInParent = option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT
+                        val importAllInParent = option == KaShortenStrategy.SHORTEN_AND_STAR_IMPORT
                         if (importBreaksExistingReferences(calledSymbol, importAllInParent)) return null
 
                         createElementToShorten(
@@ -1293,7 +1293,7 @@ private class ElementsToShortenCollector(
                     }
 
                     // Respect caller's request to star import this symbol.
-                    matchedCallables.any { it.importKind == ImportKind.EXPLICIT } && option == ShortenStrategy.SHORTEN_AND_STAR_IMPORT ->
+                    matchedCallables.any { it.importKind == ImportKind.EXPLICIT } && option == KaShortenStrategy.SHORTEN_AND_STAR_IMPORT ->
                         createElementToShorten(qualifiedCallExpression, nameToImport, importAllInParent = true)
 
                     else -> createElementToShorten(qualifiedCallExpression)
@@ -1392,13 +1392,13 @@ private class ElementsToShortenCollector(
      * We need a better way to decide shortening strategy
      * for labeled and regular `this` expressions (KT-63555).
      */
-    private fun thisLabelShortenStrategy(thisReference: FirThisReference): ShortenStrategy {
+    private fun thisLabelShortenStrategy(thisReference: FirThisReference): KaShortenStrategy {
         val referencedSymbol = thisReference.referencedMemberSymbol
 
         val strategy = when (referencedSymbol) {
             is FirClassLikeSymbol<*> -> classShortenStrategy(referencedSymbol)
             is FirCallableSymbol<*> -> callableShortenStrategy(referencedSymbol)
-            else -> ShortenStrategy.DO_NOT_SHORTEN
+            else -> KaShortenStrategy.DO_NOT_SHORTEN
         }
 
         return strategy
@@ -1410,7 +1410,7 @@ private class ElementsToShortenCollector(
         val labeledThisPsi = thisReference.psi as? KtThisExpression ?: return
         if (!labeledThisPsi.inSelection) return
 
-        if (thisLabelShortenStrategy(thisReference) == ShortenStrategy.DO_NOT_SHORTEN) return
+        if (thisLabelShortenStrategy(thisReference) == KaShortenStrategy.DO_NOT_SHORTEN) return
 
         if (thisReference.referencesClosestReceiver()) {
             addElementToShorten(createElementToShorten(labeledThisPsi))
@@ -1527,8 +1527,8 @@ private class KDocQualifiersToShortenCollector(
     private val analysisSession: KaFirSession,
     private val selection: TextRange,
     private val additionalImports: AdditionalImports,
-    private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
-    private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
+    private val classShortenStrategy: (FirClassLikeSymbol<*>) -> KaShortenStrategy,
+    private val callableShortenStrategy: (FirCallableSymbol<*>) -> KaShortenStrategy,
 ) : KtVisitorVoid() {
     val kDocQualifiersToShorten: MutableList<ShortenKDocQualifier> = mutableListOf()
     override fun visitElement(element: PsiElement) {
@@ -1561,8 +1561,8 @@ private class KDocQualifiersToShortenCollector(
     private fun shouldShortenKDocQualifier(
         kDocName: KDocName,
         additionalImports: AdditionalImports,
-        classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
-        callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
+        classShortenStrategy: (FirClassLikeSymbol<*>) -> KaShortenStrategy,
+        callableShortenStrategy: (FirCallableSymbol<*>) -> KaShortenStrategy,
     ): Boolean {
         val fqName = kDocName.getQualifiedNameAsFqName().dropFakeRootPrefixIfPresent()
 
@@ -1604,12 +1604,12 @@ private class KDocQualifiersToShortenCollector(
                 when (symbol) {
                     is KaCallableSymbol -> callableShortenStrategy(symbol.firSymbol)
                     is KaClassLikeSymbol -> classShortenStrategy(symbol.firSymbol)
-                    else -> ShortenStrategy.DO_NOT_SHORTEN
+                    else -> KaShortenStrategy.DO_NOT_SHORTEN
                 }
             }
 
             val singleStrategy = shortenStrategies.distinct().singleOrNull() ?: return false
-            return singleStrategy != ShortenStrategy.DO_NOT_SHORTEN
+            return singleStrategy != KaShortenStrategy.DO_NOT_SHORTEN
         }
     }
 

@@ -10,8 +10,8 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
-import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy
+import org.jetbrains.kotlin.analysis.api.components.KaShortenStrategy.Companion.defaultCallableShortenStrategy
+import org.jetbrains.kotlin.analysis.api.components.KaShortenStrategy.Companion.defaultClassShortenStrategy
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
@@ -38,8 +38,8 @@ public interface KaReferenceShortener : KaSessionComponent {
         file: KtFile,
         selection: TextRange = file.textRange,
         shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+        classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = defaultClassShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = defaultCallableShortenStrategy
     ): ShortenCommand
 
     /**
@@ -54,8 +54,8 @@ public interface KaReferenceShortener : KaSessionComponent {
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
-        classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
-        callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+        classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = defaultClassShortenStrategy,
+        callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = defaultCallableShortenStrategy
     ): ShortenCommand
 }
 
@@ -70,7 +70,7 @@ public interface KaReferenceShortener : KaSessionComponent {
  * on references that rely on context-sensitive resolution (e.g., enum entries and sealed class subobjects that can be resolved
  * without an explicit qualifier when the expected type is known from context).
  *
- * This applies only when the corresponding [ShortenStrategy] is [ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED] or higher.
+ * This applies only when the corresponding [KaShortenStrategy] is [KaShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED] or higher.
  *
  * See [org.jetbrains.kotlin.config.LanguageFeature.ContextSensitiveResolutionUsingExpectedType].
  */
@@ -93,7 +93,7 @@ public data class KaShortenOptions(
 }
 
 @KaIdeApi
-public enum class ShortenStrategy {
+public enum class KaShortenStrategy {
     /** Skip shortening references to this symbol. */
     DO_NOT_SHORTEN,
 
@@ -134,7 +134,7 @@ public enum class ShortenStrategy {
     @KaIdeApi
     public companion object {
         @KaIdeApi
-        public val defaultClassShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = {
+        public val defaultClassShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = {
             if (it.classId?.isNestedClass == true) {
                 SHORTEN_IF_ALREADY_IMPORTED
             } else {
@@ -143,7 +143,7 @@ public enum class ShortenStrategy {
         }
 
         @KaIdeApi
-        public val defaultCallableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = { symbol ->
+        public val defaultCallableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = { symbol ->
             when (symbol) {
                 is KaEnumEntrySymbol -> SHORTEN_IF_ALREADY_IMPORTED
 
@@ -241,8 +241,8 @@ public fun collectPossibleReferenceShortenings(
     file: KtFile,
     selection: TextRange = file.textRange,
     shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
-    classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
-    callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+    classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = defaultClassShortenStrategy,
+    callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = defaultCallableShortenStrategy
 ): ShortenCommand {
     @OptIn(KaImplementationDetail::class)
     return internals.referenceShortener.collectPossibleReferenceShortenings(
@@ -263,8 +263,8 @@ context(session: KaSession)
 public fun collectPossibleReferenceShorteningsInElement(
     element: KtElement,
     shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
-    classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
-    callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+    classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = defaultClassShortenStrategy,
+    callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = defaultCallableShortenStrategy
 ): ShortenCommand {
     @OptIn(KaImplementationDetail::class)
     return internals.referenceShortener.collectPossibleReferenceShorteningsInElement(

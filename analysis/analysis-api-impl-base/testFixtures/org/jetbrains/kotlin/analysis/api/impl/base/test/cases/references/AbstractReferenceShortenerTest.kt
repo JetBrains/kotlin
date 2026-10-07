@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
 import org.jetbrains.kotlin.analysis.api.components.KaShortenOptions
-import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
+import org.jetbrains.kotlin.analysis.api.components.KaShortenStrategy
 import org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.ShorteningResultsRenderer.renderShorteningResults
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -32,7 +32,7 @@ abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedTest() {
                 buildMap {
                     this += "default settings" to collectPossibleReferenceShorteningsInElement(element)
 
-                    this += ShortenStrategy.entries.associate { option ->
+                    this += KaShortenStrategy.entries.associate { option ->
                         val shorteningsForOption = collectPossibleReferenceShorteningsInElement(
                             element,
                             shortenOptions = KaShortenOptions.ALL_ENABLED,

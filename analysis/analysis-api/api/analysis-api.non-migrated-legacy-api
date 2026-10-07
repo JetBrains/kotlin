@@ -5,13 +5,13 @@ KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.Ka
 KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.computeMissingCases()
 KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.asPsiType(PsiElement, Boolean, KaTypeMappingMode, Boolean, Boolean?, Boolean, Boolean)
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.KaShortenOptions
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.KaShortenStrategy
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenCommand
-KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.TypeToShortenInfo
-KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, KaShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
-KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, KaShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, KaShortenOptions, (KaClassLikeSymbol) -> KaShortenStrategy, (KaCallableSymbol) -> KaShortenStrategy)
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, KaShortenOptions, (KaClassLikeSymbol) -> KaShortenStrategy, (KaCallableSymbol) -> KaShortenStrategy)
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiver
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeImplicitArgumentValue
