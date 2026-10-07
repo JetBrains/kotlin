@@ -263,6 +263,18 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   }
 
   @Test
+  @TestMetadata("interfaceWithOnlyPrivateImplementations.kt")
+  public void testInterfaceWithOnlyPrivateImplementations() {
+    run("interfaceWithOnlyPrivateImplementations.kt");
+  }
+
+  @Test
+  @TestMetadata("interfaceWithOnlyPrivateImplementationsWithSettingDisable.kt")
+  public void testInterfaceWithOnlyPrivateImplementationsWithSettingDisable() {
+    run("interfaceWithOnlyPrivateImplementationsWithSettingDisable.kt");
+  }
+
+  @Test
   @TestMetadata("jvmField.kt")
   public void testJvmField() {
     run("jvmField.kt");
@@ -350,6 +362,18 @@ public class JsSymbolLightClassesByPsiForLibraryTestGenerated extends AbstractJs
   @TestMetadata("overriddenReturnTypeNullability.kt")
   public void testOverriddenReturnTypeNullability() {
     run("overriddenReturnTypeNullability.kt");
+  }
+
+  @Test
+  @TestMetadata("privateMethodInInterfaceWithSettingDisable.kt")
+  public void testPrivateMethodInInterfaceWithSettingDisable() {
+    run("privateMethodInInterfaceWithSettingDisable.kt");
+  }
+
+  @Test
+  @TestMetadata("privateMethodInInterfaceWithSettingNoCompatibility.kt")
+  public void testPrivateMethodInInterfaceWithSettingNoCompatibility() {
+    run("privateMethodInInterfaceWithSettingNoCompatibility.kt");
   }
 
   @Test

@@ -686,6 +686,12 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("CompanionBlockInInterfacePrivateJvmDefaultDisable.kt")
+    public void testCompanionBlockInInterfacePrivateJvmDefaultDisable() {
+      run("CompanionBlockInInterfacePrivateJvmDefaultDisable.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionBlockInInterfaceWithDefaultImpls.kt")
     public void testCompanionBlockInInterfaceWithDefaultImpls() {
       run("CompanionBlockInInterfaceWithDefaultImpls.kt");
@@ -850,6 +856,18 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("ExplicitBackingFieldInInterface.kt")
+    public void testExplicitBackingFieldInInterface() {
+      run("ExplicitBackingFieldInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("ExplicitBackingFieldInInterfaceJvmDefaultDisable.kt")
+    public void testExplicitBackingFieldInInterfaceJvmDefaultDisable() {
+      run("ExplicitBackingFieldInInterfaceJvmDefaultDisable.kt");
+    }
+
+    @Test
     @TestMetadata("ExtendedActualClass.kt")
     public void testExtendedActualClass() {
       run("ExtendedActualClass.kt");
@@ -943,6 +961,18 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
     @TestMetadata("MultiplatformJvmFacade.kt")
     public void testMultiplatformJvmFacade() {
       run("MultiplatformJvmFacade.kt");
+    }
+
+    @Test
+    @TestMetadata("PrivateExplicitBackingFieldInInterface.kt")
+    public void testPrivateExplicitBackingFieldInInterface() {
+      run("PrivateExplicitBackingFieldInInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("PrivateExplicitBackingFieldInInterfaceJvmDefaultDisable.kt")
+    public void testPrivateExplicitBackingFieldInInterfaceJvmDefaultDisable() {
+      run("PrivateExplicitBackingFieldInInterfaceJvmDefaultDisable.kt");
     }
 
     @Test
