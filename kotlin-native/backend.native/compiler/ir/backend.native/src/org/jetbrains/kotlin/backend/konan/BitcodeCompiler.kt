@@ -60,6 +60,14 @@ internal class BitcodeCompiler(
                         debug -> configurables.clangDebugFlags
                         else -> configurables.clangNooptFlags
                     })
+                    // Kotlin functions have no `minsize`, so the AArch64 default outlining policy skips them.
+                    // Only for an explicit smallBinary (not the watchOS default), unless the flags already set the outliner.
+                    val outlineForSmallBinary = optimize && config.smallBinary &&
+                            config.configuration.get(BinaryOptions.smallBinary) == true &&
+                            config.target.architecture == Architecture.ARM64
+                    if (outlineForSmallBinary && none { it.trimStart('-').startsWith("enable-machine-outliner") }) {
+                        addAll(listOf("-mllvm", "-enable-machine-outliner=always"))
+                    }
                     addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
                 }
         val bitcodePath = bitcodeFile.absoluteFile.normalize().path
