@@ -31,10 +31,8 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginR
 import org.jetbrains.kotlin.scripting.compiler.plugin.requiresLegacyScriptRuntime
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.*
@@ -267,11 +265,6 @@ private fun createInitialCompilerConfiguration(
         configureJdkClasspathRoots()
 
         put(JVMConfigurationKeys.USE_FAST_JAR_FILE_SYSTEM, true)
-
-        add(
-            ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-            ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
-        )
 
         val pluginClasspaths = baseArguments.pluginClasspaths.asList()
         val pluginOptions = baseArguments.pluginOptions.asList()

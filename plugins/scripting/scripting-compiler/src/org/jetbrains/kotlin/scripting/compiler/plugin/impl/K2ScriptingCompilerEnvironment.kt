@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.disableStandardScriptDefinition
@@ -33,7 +31,6 @@ import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -184,16 +181,9 @@ fun createCompilerState(
     val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
         (it as? JvmDependency)?.classpath ?: emptyList()
     }
-    val shared = createScriptingSharedState(
-        compilerContext, hostConfiguration, moduleName, classpath,
-        registerPlugins = {
-            val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
-            with(ScriptingK2CompilerPluginRegistrar()) { extensionStorage.registerExtensions(compilerConfiguration) }
-            extensionStorage.registerInProject(compilerContext.environment.project) {
-                "Error on plugin registration: ${it.javaClass.name}"
-            }
-        },
-    ) { ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), it.map(File::toPath)) }
+    val shared = createScriptingSharedState(compilerContext, hostConfiguration, moduleName, classpath) {
+        ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), it.map(File::toPath))
+    }
 
     return K2ScriptingCompilerEnvironmentImpl(shared, scriptCompilationConfiguration, messageCollector, compilerContext)
 }
@@ -219,14 +209,12 @@ internal fun <P : ModuleDataProvider> createScriptingSharedState(
     hostConfiguration: ScriptingHostConfiguration,
     moduleName: Name,
     classpath: List<File>,
-    registerPlugins: () -> Unit = {},
     createModuleDataProvider: (List<File>) -> P,
 ): ScriptingSharedState<P> {
     val compilerConfiguration = compilerContext.environment.configuration
     val hostConfigurationWithProvider =
         compilerConfiguration.addScriptDefinitionAndConfigureHost(hostConfiguration, compilerContext.baseScriptCompilationConfiguration)
     compilerConfiguration.scriptingHostConfiguration = hostConfigurationWithProvider
-    registerPlugins()
     val moduleDataProvider = createModuleDataProvider(classpath)
     val librarySessions = createScriptingLibrarySessions(compilerContext, moduleName, classpath, moduleDataProvider)
     return ScriptingSharedState(hostConfigurationWithProvider, moduleDataProvider, librarySessions)
