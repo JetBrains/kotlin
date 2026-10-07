@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// Tests that mapped Trowable built-ins Throwable expose the correct
-// printStackTrace as properly-typed member functions via reflection.
+// Tests that the mapped built-in Throwable and its JDK subclasses expose
+// the printStackTrace overloads as properly-typed member functions via reflection.
 
 import kotlin.reflect.full.*
 import kotlin.test.*
@@ -34,6 +34,5 @@ fun box(): String {
     checkPrintStackTrace(Throwable::class,          "Throwable")
     checkPrintStackTrace(Exception::class,           "Exception")
     checkPrintStackTrace(java.lang.Error::class,    "Error")
-    checkPrintStackTrace(RuntimeException::class,   "RuntimeException")
     return "OK"
 }

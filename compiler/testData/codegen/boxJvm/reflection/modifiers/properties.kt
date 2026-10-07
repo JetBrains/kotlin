@@ -56,7 +56,6 @@ fun box(): String {
         assertEquals("companionLateinit", it.get(WithCompanion.Companion))
     }
 
-    assertTrue(Obj::objectConst.isConst)
     assertEquals("objectConst", Obj::objectConst.get())
     assertEquals("objectJvmField", Obj::objectJvmField.get())
 

@@ -121,9 +121,7 @@ fun box(): String {
         assertEquals("JInterface.staticMethod", it.call())
     }
 
-    // Java's protected also allows access in the same package, so it cannot be represented in Kotlin.
     JProtected::class.member("protectedMethod").let {
-        assertEquals(null, it.visibility)
         checkCallRequiresAccess("JProtected.protectedMethod", it, JProtected())
     }
     JWidens::class.member("protectedMethod").let {

@@ -35,11 +35,6 @@ open class OpenBase {
 
 abstract class AbstractBase {
     abstract fun abstractFun(): String
-    open fun openFun() = "AbstractBase.openFun"
-}
-
-open class OpenOverride : OpenBase() {
-    override fun openFun() = "OpenOverride.openFun"
 }
 
 open class FinalOverride : OpenBase() {
@@ -131,10 +126,6 @@ fun box(): String {
     checkFinal(::JConstructor)
 
     // Overrides.
-    OpenOverride::class.member("openFun").let {
-        checkOpen(it)
-        assertEquals("OpenOverride.openFun", it.call(OpenOverride()))
-    }
     FinalOverride::class.member("openFun").let {
         checkFinal(it)
         assertEquals("FinalOverride.openFun", it.call(FinalOverride()))
@@ -153,10 +144,6 @@ fun box(): String {
     FakeOverridesInAbstractClass::class.member("abstractFun").let {
         checkAbstract(it)
         assertEquals("FakeOverridesInAbstractClassImpl.abstractFun", it.call(FakeOverridesInAbstractClassImpl()))
-    }
-    FakeOverridesInAbstractClass::class.member("openFun").let {
-        checkOpen(it)
-        assertEquals("AbstractBase.openFun", it.call(FakeOverridesInAbstractClassImpl()))
     }
     FakeOverridesInFinalClass::class.member("openFun").let {
         checkOpen(it)

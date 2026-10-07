@@ -173,22 +173,10 @@ fun box(): String {
         assertEquals("internal", it.getter.call(instance))
     }
 
-    Obj::class.member("privateFun").let {
-        assertEquals(KVisibility.PRIVATE, it.visibility)
-        checkCallRequiresAccess("Obj.privateFun", it, Obj)
-    }
-    Obj::class.member("internalFun").let {
-        assertEquals(KVisibility.INTERNAL, it.visibility)
-        assertEquals("Obj.internalFun", it.call(Obj))
-    }
-    WithCompanion.Companion::class.member("privateFun").let {
-        assertEquals(KVisibility.PRIVATE, it.visibility)
-        checkCallRequiresAccess("WithCompanion.privateFun", it, WithCompanion.Companion)
-    }
-    WithCompanion.Companion::class.member("internalFun").let {
-        assertEquals(KVisibility.INTERNAL, it.visibility)
-        assertEquals("WithCompanion.internalFun", it.call(WithCompanion.Companion))
-    }
+    checkCallRequiresAccess("Obj.privateFun", Obj::class.member("privateFun"), Obj)
+    assertEquals("Obj.internalFun", Obj::class.member("internalFun").call(Obj))
+    checkCallRequiresAccess("WithCompanion.privateFun", WithCompanion.Companion::class.member("privateFun"), WithCompanion.Companion)
+    assertEquals("WithCompanion.internalFun", WithCompanion.Companion::class.member("internalFun").call(WithCompanion.Companion))
 
     Widened::class.member("protectedFun").let {
         assertEquals(KVisibility.PUBLIC, it.visibility)

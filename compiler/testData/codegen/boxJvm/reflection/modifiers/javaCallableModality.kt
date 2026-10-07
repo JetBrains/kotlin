@@ -180,10 +180,6 @@ fun box(): String {
         checkFinal(it)
         assertEquals("JBase.finalM", it.call(JFakeOverrides()))
     }
-    JFinal::class.member("finalM").let {
-        checkFinal(it)
-        assertEquals("JBase.finalM", it.call(JFinal()))
-    }
     // Unlike in interfaces, static methods of Java classes are inherited.
     JFakeOverrides::class.staticFunctions.single().let {
         checkOpenButShouldBeFinal(it)

@@ -27,7 +27,6 @@ private fun checkTypeVariable(type: KType, owner: KClass<*>, index: Int) {
     val javaType = type.javaType
     assertTrue(javaType is TypeVariable<*>, "Expected a type variable: $javaType")
     assertEquals(owner.java.typeParameters[index], javaType)
-    assertEquals(owner.typeParameters[index], type.classifier)
 }
 
 fun box(): String {

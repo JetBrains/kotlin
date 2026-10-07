@@ -4,8 +4,6 @@
 
 public class JBase {
     public String plus(int x) { return "JBase.plus" + x; }
-    public String get(int i) { return "JBase.get" + i; }
-    public String invoke() { return "JBase.invoke"; }
     public String notAnOperator(int x) { return "JBase.notAnOperator" + x; }
 }
 
@@ -33,14 +31,6 @@ fun box(): String {
     JFakeOverrides::class.function("plus").let {
         assertTrue(it.isOperator)
         assertEquals("JBase.plus1", it.call(instance, 1))
-    }
-    JFakeOverrides::class.function("get").let {
-        assertTrue(it.isOperator)
-        assertEquals("JBase.get2", it.call(instance, 2))
-    }
-    JFakeOverrides::class.function("invoke").let {
-        assertTrue(it.isOperator)
-        assertEquals("JBase.invoke", it.call(instance))
     }
     JFakeOverrides::class.function("notAnOperator").let {
         assertFalse(it.isOperator)

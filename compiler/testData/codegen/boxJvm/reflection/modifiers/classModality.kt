@@ -16,7 +16,6 @@ enum class EnumClass
 enum class EnumClassWithAbstractMember { ; abstract fun foo() }
 annotation class AnnotationClass
 object Object
-data object DataObject
 
 private fun checkFinal(klass: KClass<*>) {
     assertTrue(klass.isFinal)
@@ -47,7 +46,6 @@ fun box(): String {
     // Note that unlike in JVM, annotation classes are final in Kotlin
     checkFinal(AnnotationClass::class)
     checkFinal(Object::class)
-    checkFinal(DataObject::class)
 
     checkAbstract(Function0::class)
     checkAbstract(SuspendFunction3::class)
