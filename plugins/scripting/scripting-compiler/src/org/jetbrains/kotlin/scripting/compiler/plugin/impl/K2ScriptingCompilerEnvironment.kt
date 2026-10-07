@@ -41,6 +41,8 @@ import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 interface K2ScriptingCompilerEnvironment {
     val baseScriptCompilationConfiguration: ScriptCompilationConfiguration
@@ -178,10 +180,7 @@ fun createCompilerState(
     val moduleName = (compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)?.let { Name.guessByFirstCharacter(it) }
         ?: Name.special("<script-module>"))
     val scriptCompilationConfiguration = compilerContext.baseScriptCompilationConfiguration
-    val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-        (it as? JvmDependency)?.classpath ?: emptyList()
-    }
-    val shared = createScriptingSharedState(compilerContext, hostConfiguration, moduleName, classpath) {
+    val shared = createScriptingSharedState(compilerContext, hostConfiguration, moduleName) {
         ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), it.map(File::toPath))
     }
 
@@ -208,17 +207,31 @@ internal fun <P : ModuleDataProvider> createScriptingSharedState(
     compilerContext: SharedScriptCompilationContext,
     hostConfiguration: ScriptingHostConfiguration,
     moduleName: Name,
-    classpath: List<File>,
     createModuleDataProvider: (List<File>) -> P,
 ): ScriptingSharedState<P> {
     val compilerConfiguration = compilerContext.environment.configuration
-    val hostConfigurationWithProvider =
-        compilerConfiguration.addScriptDefinitionAndConfigureHost(hostConfiguration, compilerContext.baseScriptCompilationConfiguration)
+    val baseConfiguration = compilerContext.baseScriptCompilationConfiguration
+    val hostConfigurationWithProvider = compilerConfiguration.addScriptDefinitionAndConfigureHost(hostConfiguration, baseConfiguration)
     compilerConfiguration.scriptingHostConfiguration = hostConfigurationWithProvider
+    val classpath = baseConfiguration.baseCompilationClasspath()
     val moduleDataProvider = createModuleDataProvider(classpath)
     val librarySessions = createScriptingLibrarySessions(compilerContext, moduleName, classpath, moduleDataProvider)
     return ScriptingSharedState(hostConfigurationWithProvider, moduleDataProvider, librarySessions)
 }
+
+internal fun ScriptCompilationConfiguration.baseCompilationClasspath(): List<File> =
+    this[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
+        when (it) {
+            is JvmDependency -> it.classpath
+            // FIR has no class-loader based symbol provider yet, so the loader is expanded to its classpath, KT-60443.
+            is JvmDependencyFromClassLoader -> scriptCompilationClasspathFromContext(
+                classLoader = it.getClassLoader(this),
+                wholeClasspath = true,
+                unpackJarCollections = true,
+            )
+            else -> emptyList()
+        }
+    }
 
 internal fun CompilerConfiguration.addScriptDefinitionAndConfigureHost(
     hostConfiguration: ScriptingHostConfiguration,
