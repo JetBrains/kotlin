@@ -67,7 +67,7 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
             }
         }
 
-        val actualText = buildOutputString(beforeString, afterString)
+        val actualText = buildOutputString(beforeString.withoutAnnotationPsi(), afterString.withoutAnnotationPsi())
         val actualTextPretty = buildOutputString(beforeStringPretty, afterStringPretty)
 
         assertEqualsToTestOutputFile(actualText)
@@ -90,4 +90,12 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
             }
         }
     }
+
+    /**
+     * Type pointers restore annotations from scratch and intentionally do not restore their PSI,
+     * so the annotation PSI is rendered as `null` to keep it out of the before/after comparison.
+     */
+    private fun String.withoutAnnotationPsi(): String = replace(ANNOTATION_PSI_REGEX, "$1null")
+
+    private val ANNOTATION_PSI_REGEX = Regex("""^(\s*psi:\s*)KtAnnotationEntry$""", RegexOption.MULTILINE)
 }

@@ -6,7 +6,7 @@ KaUsualClassType:
   abbreviation: null
   annotations: [
     Anno(number = 1, s = "a1")
-      psi: KtAnnotationEntry
+      psi: null
   ]
   classId: kotlin/String
   qualifiers: [

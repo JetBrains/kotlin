@@ -6,7 +6,7 @@ KaUsualClassType:
   abbreviation: null
   annotations: [
     Complex(arrayOfArrays = [[1, 2], [3, 4]], classA = error("non-annotation value"), classAArray = [], functionType = error("non-annotation value"), intArray = [true, false])
-      psi: KtAnnotationEntry
+      psi: null
   ]
   classId: kotlin/collections/List
   qualifiers: [

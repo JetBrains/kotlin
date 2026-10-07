@@ -1,27 +1,4 @@
-Type has changed on restoration
-
-Before:
-
-KaUsualClassType:
-  abbreviation: null
-  annotations: [
-    Complex(concatenation = "str-3", importedEntry = constants.E.A, length = 3, logic = true, maxValue = 2147483647, negative = -3, nestedArray = [/Nested(classes = [kotlin.String::class], ), /Nested(i = 3, , classes = [kotlin.Int::class, constants.E::class], )], qualifiedEntry = constants.E.B, shift = 8, targets = [kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.CLASS], template = "astrb3", unsigned = 7u, unsignedArray = [1u, 2u], x = [3, 4])
-      psi: KtAnnotationEntry
-  ]
-  classId: kotlin/String
-  qualifiers: [
-    KaResolvedClassTypeQualifier:
-      name: String
-      symbol: KaNamedClassSymbol(kotlin/String)
-      typeArguments: []
-  ]
-  symbol: KaNamedClassSymbol(kotlin/String)
-  typeArguments: []
-  isMarkedNullable: false
-  isNullable: false
-  hasFlexibleNullability: false
-
-After:
+Restored type is the same as the original one
 
 KaUsualClassType:
   abbreviation: null

@@ -6,11 +6,11 @@ KaUsualClassType:
   abbreviation: null
   annotations: [
     null()
-      psi: KtAnnotationEntry
+      psi: null
     null()
-      psi: KtAnnotationEntry
+      psi: null
     null()
-      psi: KtAnnotationEntry
+      psi: null
   ]
   classId: kotlin/collections/List
   qualifiers: [
@@ -22,11 +22,11 @@ KaUsualClassType:
           abbreviation: null
           annotations: [
             null()
-              psi: KtAnnotationEntry
+              psi: null
             null()
-              psi: KtAnnotationEntry
+              psi: null
             null()
-              psi: KtAnnotationEntry
+              psi: null
           ]
           classId: kotlin/String
           qualifiers: [
@@ -48,11 +48,11 @@ KaUsualClassType:
       abbreviation: null
       annotations: [
         null()
-          psi: KtAnnotationEntry
+          psi: null
         null()
-          psi: KtAnnotationEntry
+          psi: null
         null()
-          psi: KtAnnotationEntry
+          psi: null
       ]
       classId: kotlin/String
       qualifiers: [

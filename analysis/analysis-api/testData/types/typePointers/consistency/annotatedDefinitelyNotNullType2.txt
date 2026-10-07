@@ -11,9 +11,9 @@ KaDefinitelyNotNullType:
       anchorPsi: KtTypeParameter
       annotations: [
         Anno3()
-          psi: KtAnnotationEntry
+          psi: null
         AnnoWithArgs3(x = "")
-          psi: KtAnnotationEntry
+          psi: null
       ]
       isActual: false
       isExpect: false
