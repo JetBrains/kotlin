@@ -338,7 +338,8 @@ internal object SPMManifestGenerator {
         kotlinBinaryTarget: String? = null,
         platforms: List<SwiftPackagePlatform> = emptyList(),
     ): String = buildStringBlock {
-        line("// swift-tools-version: 5.9")
+        // 6.1 for `traits:` on the imported packages.
+        line("// swift-tools-version: 6.1")
         line()
         line("import PackageDescription")
         block("let package = Package(", ")") {
@@ -379,6 +380,9 @@ internal object SPMManifestGenerator {
                         }
                     }
                 }
+                // A 6.x manifest builds in the Swift 6 language mode by default, which the generated sources don't
+                // compile in. Swift 5 is what they compiled in before.
+                entry { line("swiftLanguageModes: [.v5]") }
             }
         }
     }
