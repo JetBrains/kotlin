@@ -151,16 +151,17 @@ private fun compileImpl(
     val targetId = TargetId(snippet.name!!, "java-production")
 
     fun ScriptCompilationConfiguration.refineAll(source: SourceCode): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-        refineAllViaFir(source, state.hostConfiguration, { _, _ -> state.sessionForAnnotationResolution }, convertToFir)
+        refineAllWithFirAnnotationSession(source, state.hostConfiguration, { _, _ -> state.sessionForAnnotationResolution }, convertToFir)
 
     // The annotation-based refinement converts the snippet and fails on its syntax errors before the check below,
     // so the incomplete snippet should be recognized here as well.
     var snippetRefinementRawFir: Pair<BaseDiagnosticsCollector, KtSourceFile?>? = null
-    val refinedSnippetConfiguration = initialScriptCompilationConfiguration.refineAllViaFir(
-        snippet, state.hostConfiguration, { _, _ -> state.sessionForAnnotationResolution }
-    ) { session, collector ->
-        convertToFir(session, collector).also { snippetRefinementRawFir = collector to it.sourceFile }
-    }.valueOr { failure ->
+    val refinedSnippetConfiguration = initialScriptCompilationConfiguration.refineAllWithFirAnnotationSession(
+        snippet, state.hostConfiguration, { _, _ -> state.sessionForAnnotationResolution },
+        convertToFir = { session, collector ->
+            convertToFir(session, collector).also { snippetRefinementRawFir = collector to it.sourceFile }
+        }
+    ).valueOr { failure ->
         val [collector, snippetFile] = snippetRefinementRawFir ?: return failure
         if (!collector.isIncompleteSnippet(snippet, snippetFile)) return failure
         return ResultWithDiagnostics.Failure(listOf(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code")) + failure.reports)
