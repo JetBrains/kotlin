@@ -19,14 +19,15 @@ package org.jetbrains.kotlin.psi
 import com.intellij.psi.PsiClass
 
 /**
- * A service that computes the Java light classes exposed by a [KtFile] (its file facade class and top-level class declarations).
+ * A service that computes the Java classes of a [KtFile]: the [PsiClass]es for the JVM classes that correspond to the file, such as its
+ * file facade class and top-level classes.
  *
- * It backs [KtFile.getClasses]; the concrete implementation is supplied by the surrounding platform, since light-class generation depends
- * on the analysis environment.
+ * It backs [KtFile.getClasses]. The implementation is supplied by the platform, since it depends on the analysis environment: for example,
+ * the classes may be light classes built from the Kotlin declarations or, for a compiled file, Java classes built from its class file.
  */
 interface KtFileClassProvider {
     /**
-     * Returns the Java light classes contributed by the given file, or an empty array if none are available.
+     * Returns the Java classes of [file], or an empty array if the platform provides none for it.
      */
     fun getFileClasses(file: KtFile): Array<PsiClass>
 }
