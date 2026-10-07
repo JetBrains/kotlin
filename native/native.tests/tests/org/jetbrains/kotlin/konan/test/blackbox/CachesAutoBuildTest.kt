@@ -98,6 +98,28 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         assertTrue(main2.exists())
     }
 
+    // KT-89892: binary options affecting the generated code must be propagated to the cache builds.
+    @Test
+    @TestMetadata("latin1Strings")
+    fun testLatin1Strings() {
+        val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/latin1Strings")
+        val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
+        val main = compileToExecutable(
+            rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), listOf("-Xbinary=latin1Strings=true"), lib
+        )
+
+        assertTrue(main.exists())
+
+        // The literal from the cached `lib` must be encoded as Latin-1 (one byte per char), not as UTF-16.
+        val marker = "KT89892Latin1StringsMarker"
+        val binary = main.readBytes()
+        assertTrue(binary.contains(marker.toByteArray(Charsets.ISO_8859_1))) { "Latin-1 encoded string not found in $main" }
+        assertFalse(binary.contains(marker.toByteArray(Charsets.UTF_16LE))) { "UTF-16 encoded string found in $main" }
+    }
+
+    private fun ByteArray.contains(pattern: ByteArray): Boolean =
+        (0..size - pattern.size).any { start -> pattern.indices.all { this[start + it] == pattern[it] } }
+
     private fun compileToExecutable(
         sourcesDir: File,
         autoCacheFrom: File,
