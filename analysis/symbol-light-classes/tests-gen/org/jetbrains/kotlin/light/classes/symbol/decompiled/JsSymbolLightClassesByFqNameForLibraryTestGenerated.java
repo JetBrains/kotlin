@@ -686,6 +686,12 @@ public class JsSymbolLightClassesByFqNameForLibraryTestGenerated extends Abstrac
     }
 
     @Test
+    @TestMetadata("CompanionBlockInInterfacePrivateJvmDefaultDisable.kt")
+    public void testCompanionBlockInInterfacePrivateJvmDefaultDisable() {
+      run("CompanionBlockInInterfacePrivateJvmDefaultDisable.kt");
+    }
+
+    @Test
     @TestMetadata("CompanionBlockInInterfaceWithDefaultImpls.kt")
     public void testCompanionBlockInInterfaceWithDefaultImpls() {
       run("CompanionBlockInInterfaceWithDefaultImpls.kt");
