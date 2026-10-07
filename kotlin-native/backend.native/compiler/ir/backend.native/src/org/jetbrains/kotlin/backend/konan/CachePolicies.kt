@@ -176,10 +176,11 @@ internal class CacheBuildOptions(private val configuration: CompilerConfiguratio
     }
 
     /**
-     * Returns the part of the cache flavor accounting for the options with the [policies].
+     * Returns the part of the cache flavor accounting for the options with the [policy].
      * It is empty for the default options.
      */
-    fun flavor(policies: Set<CachePolicy>): String = buildString {
+    fun flavor(vararg policy: CachePolicy): String = buildString {
+        val policies = setOf(*policy)
         declaredOptions.forEach { option -> option.flavor(policies)?.let(::append) }
         for (key in keysPropagatedToCacheBuilds) {
             if (key in declaredKeys || cachePolicies[key] !in policies) continue
@@ -197,5 +198,8 @@ internal class CacheBuildOptions(private val configuration: CompilerConfiguratio
 private fun renderFlavorValue(value: Any): String = when (value) {
     is Enum<*> -> value.name
     is Boolean, is Number, is UInt -> value.toString()
-    else -> MessageDigest.getInstance("SHA-256").digest(value.toString().toByteArray()).take(4).joinToString("") { "%02x".format(it) }
+    else -> {
+        MessageDigest.getInstance("SHA-256").digest(value.toString().toByteArray())
+                .take(4).joinToString("") { "%02x".format(it) }
+    }
 }

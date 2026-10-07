@@ -501,15 +501,16 @@ class NativeSecondStageCompilationConfig(
     /**
      * The options passed to the cache builds, which also make up the cache flavor.
      * The options adjusted by the compiler are declared here with their resulting and default values,
-     * all others are passed as is (see [CacheBuildOptions]).
+     * all others are propagated as is (see [CacheBuildOptions]).
      */
     internal val cacheBuildOptions = CacheBuildOptions(configuration).apply {
         // Accounted for in the cache flavor prefix.
         propagate(NativeConfigurationKeys.KONAN_TARGET, target.toString())
         propagate(NativeConfigurationKeys.DEBUG, debug)
         propagate(NativeConfigurationKeys.OPTIMIZATION, optimizationsEnabled)
-        // Don't affect the caches.
+        // Accounted for with -opt prefix.
         propagate(BinaryOptions.enableReleaseBinaryCache, enableReleaseBinaryCache)
+
         propagate(NativeConfigurationKeys.EXTERNAL_DEPENDENCIES, externalDependenciesFile?.absolutePathString())
         propagate(NativeConfigurationKeys.KONAN_DATA_DIR, distribution.localKonanDir.absolutePath)
 
@@ -526,7 +527,6 @@ class NativeSecondStageCompilationConfig(
         option(NativeConfigurationKeys.ENABLE_ASSERTIONS, assertsEnabled, default = !optimizationsEnabled)
         option(NativeConfigurationKeys.DEBUG_INFO_VERSION, configuration.debugInfoVersion ?: 1, default = 1)
         option(BinaryOptions.swiftExport, swiftExport, default = false)
-
         option(BinaryOptions.stripDebugInfoFromNativeLibs, !useDebugInfoInNativeLibs, default = true)
         option(NativeConfigurationKeys.ALLOCATION_MODE, allocationMode, defaultAllocationMode)
         option(BinaryOptions.gc, gc, defaultGC)
@@ -550,9 +550,10 @@ class NativeSecondStageCompilationConfig(
     }
 
     private val systemCacheFlavorString =
-            "$cacheFlavorPrefix-system" + cacheBuildOptions.flavor(setOf(CachePolicy.AFFECTS_RUNTIME, CachePolicy.AFFECTS_CODEGEN))
+            "$cacheFlavorPrefix-system" + cacheBuildOptions.flavor(CachePolicy.AFFECTS_RUNTIME, CachePolicy.AFFECTS_CODEGEN)
 
-    private val userCacheFlavorString = "$cacheFlavorPrefix-user-pl" + cacheBuildOptions.flavor(setOf(CachePolicy.AFFECTS_CODEGEN))
+    private val userCacheFlavorString =
+            "$cacheFlavorPrefix-user-pl" + cacheBuildOptions.flavor(CachePolicy.AFFECTS_CODEGEN)
 
     internal val systemCacheDirectory = Path(distribution.systemCacheRootDirectory.absolutePath).resolve(systemCacheFlavorString)
 
