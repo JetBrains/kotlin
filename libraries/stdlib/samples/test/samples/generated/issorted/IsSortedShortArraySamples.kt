@@ -13,67 +13,69 @@ package samples.generated.issorted
 
 import samples.*
 import kotlin.math.abs
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class IsSortedShortArraySamples {
 
     @Sample
     fun isSorted() {
-        assertPrints(shortArrayOf().isSorted(), "true")
-        assertPrints(shortArrayOf(1).isSorted(), "true")
+        assertTrue(shortArrayOf().isSorted())
+        assertTrue(shortArrayOf(1).isSorted())
 
         val sorted = shortArrayOf(1, 2, 3, 4, 5)
-        assertPrints(sorted.isSorted(), "true")
+        assertTrue(sorted.isSorted())
 
         val unsorted = shortArrayOf(2, 1, 3, 4, 5)
-        assertPrints(unsorted.isSorted(), "false")
+        assertFalse(unsorted.isSorted())
     }
 
     @Sample
     fun isSortedDescending() {
-        assertPrints(shortArrayOf().isSortedDescending(), "true")
-        assertPrints(shortArrayOf(5).isSortedDescending(), "true")
+        assertTrue(shortArrayOf().isSortedDescending())
+        assertTrue(shortArrayOf(5).isSortedDescending())
 
         val sorted = shortArrayOf(5, 4, 3, 2, 1)
-        assertPrints(sorted.isSortedDescending(), "true")
+        assertTrue(sorted.isSortedDescending())
 
         val unsorted = shortArrayOf(4, 5, 3, 2, 1)
-        assertPrints(unsorted.isSortedDescending(), "false")
+        assertFalse(unsorted.isSortedDescending())
     }
 
     @Sample
     fun isSortedWith() {
-        assertPrints(shortArrayOf().isSortedWith(naturalOrder()), "true")
-        assertPrints(shortArrayOf(1).isSortedWith(naturalOrder()), "true")
+        assertTrue(shortArrayOf().isSortedWith(naturalOrder()))
+        assertTrue(shortArrayOf(1).isSortedWith(naturalOrder()))
 
         val sorted = shortArrayOf(1, 2, 3, 4, 5)
-        assertPrints(sorted.isSortedWith(naturalOrder()), "true")
-        assertPrints(sorted.isSortedWith(reverseOrder()), "false")
+        assertTrue(sorted.isSortedWith(naturalOrder()))
+        assertFalse(sorted.isSortedWith(reverseOrder()))
 
         val reversed = shortArrayOf(5, 4, 3, 2, 1)
-        assertPrints(reversed.isSortedWith(reverseOrder()), "true")
+        assertTrue(reversed.isSortedWith(reverseOrder()))
     }
 
     @Sample
     fun isSortedBy() {
-        assertPrints(shortArrayOf().isSortedBy { it * it }, "true")
-        assertPrints(shortArrayOf(1).isSortedBy { it * it }, "true")
+        assertTrue(shortArrayOf().isSortedBy { it * it })
+        assertTrue(shortArrayOf(1).isSortedBy { it * it })
 
         val values = shortArrayOf(1, -2, 3, -4, 5)
-        assertPrints(values.isSortedBy { it * it }, "true")
-        assertPrints(values.isSortedBy { abs(it.toInt()) }, "true")
-        assertPrints(values.isSortedBy { it }, "false")
-        assertPrints(shortArrayOf(1, 2).isSortedBy { if (it.toInt() == 1) null else it }, "true")
+        assertTrue(values.isSortedBy { it * it })
+        assertTrue(values.isSortedBy { abs(it.toInt()) })
+        assertFalse(values.isSortedBy { it })
+        assertTrue(shortArrayOf(1, 2).isSortedBy { if (it.toInt() == 1) null else it })
     }
 
     @Sample
     fun isSortedByDescending() {
-        assertPrints(shortArrayOf().isSortedByDescending { it * it }, "true")
-        assertPrints(shortArrayOf(5).isSortedByDescending { it * it }, "true")
+        assertTrue(shortArrayOf().isSortedByDescending { it * it })
+        assertTrue(shortArrayOf(5).isSortedByDescending { it * it })
 
         val values = shortArrayOf(5, -4, 3, -2, 1)
-        assertPrints(values.isSortedByDescending { it * it }, "true")
-        assertPrints(values.isSortedByDescending { abs(it.toInt()) }, "true")
-        assertPrints(values.isSortedByDescending { it }, "false")
-        assertPrints(shortArrayOf(2, 1).isSortedByDescending { if (it.toInt() == 1) null else it }, "true")
+        assertTrue(values.isSortedByDescending { it * it })
+        assertTrue(values.isSortedByDescending { abs(it.toInt()) })
+        assertFalse(values.isSortedByDescending { it })
+        assertTrue(shortArrayOf(2, 1).isSortedByDescending { if (it.toInt() == 1) null else it })
     }
 }
