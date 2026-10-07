@@ -1,6 +1,6 @@
 // HEADER_MODE
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, WASM_JS, NATIVE
+
 // Public property with explicit type
 val a: String = "A"
 // Public property with implicit type
