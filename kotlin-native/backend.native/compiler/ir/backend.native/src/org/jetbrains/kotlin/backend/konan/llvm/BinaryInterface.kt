@@ -146,8 +146,11 @@ fun IrFunction.computeFunctionName() = with(KonanBinaryInterface) { functionName
 
 fun IrFunction.computeFullName() = parent.fqNameForIrSerialization.child(Name.identifier(computeFunctionName())).asString()
 
-fun IrFunction.computeSymbolName(libraryFingerprint: FingerprintHash? = null) =
+fun IrFunction.computeDisambiguatedSymbolName(libraryFingerprint: FingerprintHash) =
         with(KonanBinaryInterface) { symbolName(libraryFingerprint) }.replaceSpecialSymbols()
+
+fun IrFunction.computeSymbolName() =
+        with(KonanBinaryInterface) { symbolName(libraryFingerprint = null) }.replaceSpecialSymbols()
 
 fun IrFunction.computePrivateSymbolName(containerName: String) = with(KonanBinaryInterface) { privateSymbolName(containerName) }.replaceSpecialSymbols()
 
@@ -174,11 +177,14 @@ internal fun IrSimpleFunction.computeSymbolName(
         val cachedLibraries = context.config.cachedLibraries
         val isCachedLibrary = library != null &&
                 (library == context.config.libraryToCache?.klib || cachedLibraries.isLibraryCached(library))
-        computeSymbolName(if (isCachedLibrary) cachedLibraries.getLibraryFingerprint(library) else null)
+        if (isCachedLibrary)
+            computeDisambiguatedSymbolName(cachedLibraries.getLibraryFingerprint(library))
+        else
+            computeSymbolName()
     } else {
         internalSymbolNameBuilder() ?: run {
             val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
-                ?: this@computeSymbolName.file.path
+                    ?: this@computeSymbolName.file.path
             computePrivateSymbolName(containerName)
         }
     }
