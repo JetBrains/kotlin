@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationIfWillBecomeValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -38,6 +39,8 @@ internal object FirNativeIdentityHashCodeCallOnValueTypeObjectChecker : FirFunct
                 val argumentType = expression.extensionReceiver?.resolvedType ?: return
                 if (argumentType.isValueType()) {
                     reporter.reportOn(expression.source, FirNativeErrors.IDENTITY_HASH_CODE_ON_VALUE_TYPE, argumentType)
+                } else {
+                    reportIdentitySensitiveOperationIfWillBecomeValueClass(expression.source, argumentType)
                 }
             }
             weakReferenceConstructorCallableId -> {
