@@ -292,6 +292,8 @@ internal constructor(private val rawValue: Long) :
          * - The format of string returned by the default [Duration.toString] and `toString` in a specific unit,
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
          *
+         * A component value that is too large to be represented as a finite duration is treated as infinite.
+         *
          * @throws IllegalArgumentException if the string doesn't represent a duration in any of the supported formats.
          * @sample samples.time.Durations.parse
          */
@@ -331,7 +333,10 @@ internal constructor(private val rawValue: Long) :
          * - Restricted ISO-8601 duration composite representation, e.g. `P1DT2H3M4.058S`, see [toIsoString] and [parseIsoString].
          * - The format of string returned by the default [Duration.toString] and `toString` in a specific unit,
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
-         *   @sample samples.time.Durations.parse
+         *
+         * A component value that is too large to be represented as a finite duration is treated as infinite.
+         *
+         * @sample samples.time.Durations.parse
          */
         public fun parseOrNull(value: String): Duration? =
             parseDuration(value, strictIso = false, throwException = false).onInvalid { null }
@@ -1192,11 +1197,14 @@ private fun parseDefaultStringFormat(
         isFirstComponent = false
 
         val longStartIndex = index
-        val longValue = LongParser.default.parse(value, index) { longEndIndex, _, hasOverflow ->
+        val overflow: Boolean
+        var longValue = LongParser.default.parse(value, index) { longEndIndex, _, hasOverflow ->
             // A numeric value has to be non-empty, and it has to be followed by a unit (i.e., it cannot be the last in string)
-            if (longEndIndex == longStartIndex || longEndIndex == length || hasOverflow) return handleError(throwException)
+            if (longEndIndex == longStartIndex || longEndIndex == length) return handleError(throwException)
             index = longEndIndex
+            overflow = hasOverflow
         }
+        val longEndIndex = index
 
         val hasFractionalPart = value[index] == '.'
         val fractionStartIndex: Int
@@ -1219,12 +1227,19 @@ private fun parseDefaultStringFormat(
         if (prevUnit != null && prevUnit <= unit) return handleError(throwException, "Unexpected order of duration components")
         prevUnit = unit
 
+        // Beyond Long, only ns and us values can still be finite, larger units saturate to infinity in the else branch below.
+        if (overflow && unit < DurationUnit.MILLISECONDS) {
+            val subMillisDigits = if (unit == DurationUnit.NANOSECONDS) 6 else 3
+            val millisEndIndex = longEndIndex - subMillisDigits
+            val millis = value.substring(longStartIndex, millisEndIndex).toLongOrNull()?.coerceAtMost(MAX_MILLIS) ?: MAX_MILLIS
+            totalMillis = totalMillis.addMillisWithoutOverflow(millis)
+            longValue = value.substring(millisEndIndex, longEndIndex).toLong()
+        }
+
         when (unit) {
             DurationUnit.MICROSECONDS -> {
                 // We extract the millisecond portion from microseconds and transfer it to totalMillis.
-                // Since totalMillis is at most MAX_MILLIS (Long.MAX_VALUE / 2) and the added value is at most Long.MAX_VALUE / 1_000,
-                // their sum (Long.MAX_VALUE / 2 + Long.MAX_VALUE / 1_000) will never overflow.
-                totalMillis += longValue / MICROS_IN_MILLIS
+                totalMillis = totalMillis.addMillisWithoutOverflow(longValue / MICROS_IN_MILLIS)
                 // If it's possible to represent milliseconds as nanoseconds, we convert the last 3 digits of microseconds to nanoseconds.
                 if (totalMillis <= MAX_NANOS / NANOS_IN_MILLIS) {
                     // Value is at most 999_000
