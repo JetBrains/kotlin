@@ -31,13 +31,13 @@ import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.findEntry
-import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.config.jvmDefaultMode
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getIntroducedAtVersionFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmSyntheticAnnotation
@@ -618,7 +618,6 @@ context(session: KaSession)
 internal fun createInnerClasses(
     declarationContainer: KaDeclarationContainerSymbol,
     containingClass: SymbolLightClassBase,
-    classOrObject: KtClassOrObject?,
 ): List<SymbolLightClassBase> {
     val result = SmartList<SymbolLightClassBase>()
 
@@ -626,10 +625,7 @@ internal fun createInnerClasses(
         symbol.asPsiClass() as? SymbolLightClassBase
     }
 
-    if (containingClass is SymbolLightClassForInterface &&
-        classOrObject?.hasInterfaceDefaultImpls == true &&
-        containingClass.jvmDefaultMode != JvmDefaultMode.NO_COMPATIBILITY
-    ) {
+    if (containingClass is SymbolLightClassForInterface && containingClass.hasDefaultImpls) {
         result.add(SymbolLightClassForInterfaceDefaultImpls(containingClass))
     }
 
@@ -643,6 +639,38 @@ internal fun createInnerClasses(
 
     return result
 }
+
+/**
+ * Whether the JVM backend generates the `DefaultImpls` class for this interface, see
+ * `org.jetbrains.kotlin.backend.jvm.lower.InterfaceLowering`. The members it holds are computed by
+ * [SymbolLightClassForInterfaceDefaultImpls.getOwnMethods]:
+ * - With `-jvm-default=disable`, `DefaultImpls` holds the implementations of all members with a body, private ones included.
+ * - With `-jvm-default=enable`, `DefaultImpls` holds only compatibility delegates to the non-private JVM default methods.
+ * - With `-jvm-default=no-compatibility`, `DefaultImpls` isn't generated.
+ *
+ * The check is PSI-based to avoid resolving the members.
+ */
+private val SymbolLightClassForInterface.hasDefaultImpls: Boolean
+    get() {
+        val declaration = classOrObjectDeclaration ?: return false
+        val includePrivateMembers = when (jvmDefaultMode) {
+            JvmDefaultMode.DISABLE -> true
+            JvmDefaultMode.ENABLE -> false
+            JvmDefaultMode.NO_COMPATIBILITY -> return false
+        }
+
+        return declaration.declarations.any { member ->
+            val hasBody = when (member) {
+                is KtNamedFunction -> member.hasBody()
+                is KtProperty -> member.hasDelegateExpressionOrInitializer() ||
+                        member.getter?.hasBody() == true ||
+                        member.setter?.hasBody() == true
+                else -> false
+            }
+
+            hasBody && (includePrivateMembers || !member.hasModifier(KtTokens.PRIVATE_KEYWORD))
+        }
+    }
 
 context(session: KaSession)
 internal fun checkIsInheritor(

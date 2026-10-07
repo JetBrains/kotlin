@@ -6,7 +6,4 @@ public abstract interface PrivateInTrait /* PrivateInTrait*/ {
   private default @org.jetbrains.annotations.Nullable() java.lang.String getN();//  getN()
 
   private default void setNn(@org.jetbrains.annotations.NotNull() java.lang.String);//  setNn(@org.jetbrains.annotations.NotNull() java.lang.String)
-
-  public static final class DefaultImpls /* PrivateInTrait.DefaultImpls*/ {
-  }
 }
