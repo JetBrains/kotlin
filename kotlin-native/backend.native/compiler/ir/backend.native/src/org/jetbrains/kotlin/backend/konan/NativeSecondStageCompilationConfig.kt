@@ -118,6 +118,8 @@ class NativeSecondStageCompilationConfig(
     }
     val inlineForPerformance get() = !debug && !smallBinary
 
+    // The Gradle plugin enables assertions for debuggable binaries, and the distribution caches are built accordingly.
+    val defaultAsserts = !optimizationsEnabled
     val assertsEnabled = configuration.enableAssertions
 
     val sanitizer = configuration.get(BinaryOptions.sanitizer)?.takeIf {
@@ -523,6 +525,8 @@ class NativeSecondStageCompilationConfig(
             append("-ccall_mode${cCallMode.name}")
         if (latin1Strings != defaultLatin1Strings)
             append("-latin1_strings${if (latin1Strings) "ENABLE" else "DISABLE"}")
+        if (assertsEnabled != defaultAsserts)
+            append("-asserts${if (assertsEnabled) "ENABLE" else "DISABLE"}")
     }
 
     private val systemCacheFlavorString = buildString {
