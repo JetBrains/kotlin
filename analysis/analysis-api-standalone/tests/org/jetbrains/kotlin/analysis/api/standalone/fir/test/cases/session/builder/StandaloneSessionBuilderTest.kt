@@ -59,6 +59,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.nameWithoutExtension
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(KaExperimentalApi::class)
 class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
@@ -701,6 +702,35 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         }
     }
 
+    /**
+     * Java classes for Kotlin class files from binary libraries should be built from the class files alone, without loading the stubs or
+     * ASTs of the decompiled files. The stdlib facade `CollectionsKt` inherits its parts, so looking up a method in it involves them all.
+     */
+    @Test
+    fun testJvmClassesForKotlinLibraryClassFiles() {
+        val libraryRoots = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath())
+
+        testLightClasses(JvmPlatforms.defaultJvmPlatform, libraryRoots = libraryRoots) {
+            val abstractList = findLibraryClass("kotlin.collections.AbstractList")!!
+
+            val collectionsKt = findLibraryClass("kotlin.collections.CollectionsKt")!!
+            assertTrue(collectionsKt.findMethodsByName("listOf", true).isNotEmpty())
+
+            val parts = generateSequence(collectionsKt.superClass) { it.superClass }.toList()
+            assertTrue(parts.isNotEmpty())
+            assertTrue(parts.all { "CollectionsKt__" in it.name!! }, parts.map { it.name }.toString())
+
+            val decompiledFiles = (listOf(abstractList, collectionsKt) + parts).map { findDecompiledFile(it) }
+
+            // KT-89902: the decompiled files should have neither stubs nor ASTs
+            assertEquals(listOf("AbstractList.class", "CollectionsKt.class"), decompiledFiles.filter { it.isStubLoaded }.map { it.name })
+            assertEquals(parts.map { "${it.name}.class" }, decompiledFiles.filter { it.isContentsLoaded }.map { it.name })
+
+            // The navigation element of the class file is computed on demand
+            assertEquals(findDecompiledFile(abstractList), abstractList.containingFile.navigationElement)
+        }
+    }
+
     @Test
     fun testJavaScriptLightClasses() = testLightClasses(JsPlatforms.defaultJsPlatform) { mainModule ->
         // By default, light classes are not available for non-JVM platforms
@@ -739,6 +769,19 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
 
     private fun StandaloneAnalysisAPISession.findLightClass(fqName: String): PsiClass? =
         JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.projectScope(project))
+
+    private fun StandaloneAnalysisAPISession.findLibraryClass(fqName: String): PsiClass? =
+        JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project))
+
+    private fun StandaloneAnalysisAPISession.findDecompiledFile(psiClass: PsiClass): KtFile =
+        PsiManager.getInstance(project).findFile(psiClass.containingFile.virtualFile) as KtFile
+
+    /**
+     * Whether the stub of the file is loaded. Unlike [KtFile.getStub], it doesn't build the stub.
+     */
+    @Suppress("UnstableApiUsage")
+    private val KtFile.isStubLoaded: Boolean
+        get() = derefStub() != null
 
     private fun testLightClasses(
         platform: TargetPlatform,
