@@ -4,14 +4,14 @@ KaCompletionCandidateChecker: org.jetbrains.kotlin.analysis.api.components.creat
 KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase
 KaExpressionInformationProvider: org.jetbrains.kotlin.analysis.api.components.computeMissingCases()
 KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.asPsiType(PsiElement, Boolean, KaTypeMappingMode, Boolean, Boolean?, Boolean, Boolean)
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.KaShortenOptions
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenCommand
-KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenOptions
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.TypeToShortenInfo
-KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
-KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, KaShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, KaShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiver
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeContext
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaScopeImplicitArgumentValue

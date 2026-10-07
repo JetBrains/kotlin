@@ -37,7 +37,7 @@ public interface KaReferenceShortener : KaSessionComponent {
     public fun collectPossibleReferenceShortenings(
         file: KtFile,
         selection: TextRange = file.textRange,
-        shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
+        shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
     ): ShortenCommand
@@ -53,7 +53,7 @@ public interface KaReferenceShortener : KaSessionComponent {
     @KaIdeApi
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
-        shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
+        shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
     ): ShortenCommand
@@ -75,16 +75,16 @@ public interface KaReferenceShortener : KaSessionComponent {
  * See [org.jetbrains.kotlin.config.LanguageFeature.ContextSensitiveResolutionUsingExpectedType].
  */
 @KaIdeApi
-public data class ShortenOptions(
+public data class KaShortenOptions(
     public val removeThis: Boolean = false,
     public val removeThisLabels: Boolean = false,
     public val removeContextSensitiveResolutionQualifiers: Boolean = false,
 ) {
     @KaIdeApi
     public companion object {
-        public val DEFAULT: ShortenOptions = ShortenOptions()
+        public val DEFAULT: KaShortenOptions = KaShortenOptions()
 
-        public val ALL_ENABLED: ShortenOptions = ShortenOptions(
+        public val ALL_ENABLED: KaShortenOptions = KaShortenOptions(
             removeThis = true,
             removeThisLabels = true,
             removeContextSensitiveResolutionQualifiers = true,
@@ -240,7 +240,7 @@ context(session: KaSession)
 public fun collectPossibleReferenceShortenings(
     file: KtFile,
     selection: TextRange = file.textRange,
-    shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
+    shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
     classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
     callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
 ): ShortenCommand {
@@ -262,7 +262,7 @@ public fun collectPossibleReferenceShortenings(
 context(session: KaSession)
 public fun collectPossibleReferenceShorteningsInElement(
     element: KtElement,
-    shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
+    shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
     classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
     callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
 ): ShortenCommand {

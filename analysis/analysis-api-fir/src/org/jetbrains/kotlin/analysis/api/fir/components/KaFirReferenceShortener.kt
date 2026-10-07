@@ -78,7 +78,7 @@ internal class KaFirReferenceShortener(
 
     override fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
-        shortenOptions: ShortenOptions,
+        shortenOptions: KaShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
     ): ShortenCommand = withPsiValidityAssertion(element) {
@@ -94,7 +94,7 @@ internal class KaFirReferenceShortener(
     override fun collectPossibleReferenceShortenings(
         file: KtFile,
         selection: TextRange,
-        shortenOptions: ShortenOptions,
+        shortenOptions: KaShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy
     ): ShortenCommand = withPsiValidityAssertion(file) {
@@ -516,7 +516,7 @@ private class CollectingVisitor(private val collector: ElementsToShortenCollecto
 }
 
 private class ElementsToShortenCollector(
-    private val shortenOptions: ShortenOptions,
+    private val shortenOptions: KaShortenOptions,
     private val shorteningContext: FirShorteningContext,
     private val towerContextProvider: FirTowerDataContextProvider,
     private val containingFile: KtFile,

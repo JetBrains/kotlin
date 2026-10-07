@@ -39,6 +39,8 @@ org.jetbrains.kotlin.analysis.api.components.KaScopeKinds.TypeParameterScope
 org.jetbrains.kotlin.analysis.api.components.KaScopeKinds.TypeScope
 org.jetbrains.kotlin.analysis.api.components.KaScopeProvider
 org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl
+org.jetbrains.kotlin.analysis.api.components.KaShortenOptions.Companion.ALL_ENABLED
+org.jetbrains.kotlin.analysis.api.components.KaShortenOptions.Companion.DEFAULT
 org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
 org.jetbrains.kotlin.analysis.api.components.KaSourceProvider
 org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
@@ -59,8 +61,6 @@ org.jetbrains.kotlin.analysis.api.components.ShortenCommand.listOfTypeToShortenI
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.starImportsToAdd
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.targetFile
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.thisLabelsToShorten
-org.jetbrains.kotlin.analysis.api.components.ShortenOptions.Companion.ALL_ENABLED
-org.jetbrains.kotlin.analysis.api.components.ShortenOptions.Companion.DEFAULT
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultClassShortenStrategy

@@ -193,8 +193,8 @@ org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
 org.jetbrains.kotlin.analysis.api.components.KaKDocProvider.findKDoc()
 org.jetbrains.kotlin.analysis.api.components.KaKDocProvider.findKDoc()
 org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener
-org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener.collectPossibleReferenceShortenings(KtFile, TextRange, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
-org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener.collectPossibleReferenceShorteningsInElement(KtElement, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener.collectPossibleReferenceShortenings(KtFile, TextRange, KaShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener.collectPossibleReferenceShorteningsInElement(KtElement, KaShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
 org.jetbrains.kotlin.analysis.api.components.KaRenderer
 org.jetbrains.kotlin.analysis.api.components.KaRenderer.render(KaDeclarationRenderer)
 org.jetbrains.kotlin.analysis.api.components.KaRenderer.render(KaTypeRenderer, Variance)
@@ -326,6 +326,10 @@ org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl.kind
 org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl.scope
 org.jetbrains.kotlin.analysis.api.components.KaScopeWithKindImpl.token
 org.jetbrains.kotlin.analysis.api.components.KaSessionComponent
+org.jetbrains.kotlin.analysis.api.components.KaShortenOptions
+org.jetbrains.kotlin.analysis.api.components.KaShortenOptions.Companion
+org.jetbrains.kotlin.analysis.api.components.KaShortenOptions.Companion.ALL_ENABLED
+org.jetbrains.kotlin.analysis.api.components.KaShortenOptions.Companion.DEFAULT
 org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor
 org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor.asSignature()
 org.jetbrains.kotlin.analysis.api.components.KaSignatureSubstitutor.asSignature()
@@ -524,10 +528,6 @@ org.jetbrains.kotlin.analysis.api.components.ShortenCommand.listOfTypeToShortenI
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.starImportsToAdd
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.targetFile
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.thisLabelsToShorten
-org.jetbrains.kotlin.analysis.api.components.ShortenOptions
-org.jetbrains.kotlin.analysis.api.components.ShortenOptions.Companion
-org.jetbrains.kotlin.analysis.api.components.ShortenOptions.Companion.ALL_ENABLED
-org.jetbrains.kotlin.analysis.api.components.ShortenOptions.Companion.DEFAULT
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion
 org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
@@ -558,8 +558,8 @@ org.jetbrains.kotlin.analysis.api.components.callableSymbol
 org.jetbrains.kotlin.analysis.api.components.canBeAnalysed()
 org.jetbrains.kotlin.analysis.api.components.collectDiagnostics(KaDiagnosticCheckerFilter)
 org.jetbrains.kotlin.analysis.api.components.collectImplicitReceiverTypes(KtElement)
-org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
-org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, ShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, KaShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
+org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, KaShortenOptions, (KaClassLikeSymbol) -> ShortenStrategy, (KaCallableSymbol) -> ShortenStrategy)
 org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
 org.jetbrains.kotlin.analysis.api.components.combinedMemberScope
 org.jetbrains.kotlin.analysis.api.components.commonSupertype
