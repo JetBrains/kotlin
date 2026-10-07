@@ -10,6 +10,7 @@ import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 class KlibReadStrictLenientTest {
     @Test
@@ -48,6 +49,23 @@ class KlibReadStrictLenientTest {
     }
 
     @Test
+    fun testLenientReadingWithoutHeader() {
+        assertReadingWithoutHeader(lenient = true)
+    }
+
+    @Test
+    fun testStrictReadingWithoutHeader() {
+        assertReadingWithoutHeader(lenient = false)
+    }
+
+    private fun assertReadingWithoutHeader(lenient: Boolean) {
+        val module = readWithVersion(nextVersion, lenient = lenient, withHeader = false)
+        @Suppress("DEPRECATION")
+        assertNull(module.name)
+        assertEquals(listOf("klib"), module.fragments.map { it.fqName })
+    }
+
+    @Test
     fun testWritingWithoutName() {
         val metadata = KlibModuleMetadata(
             name = null,
@@ -62,14 +80,15 @@ class KlibReadStrictLenientTest {
     private val nextVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.next().toArray())
     private val notSupportedVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.next().next().toArray())
 
-    private fun readWithVersion(version: KlibMetadataVersion, lenient: Boolean): KlibModuleMetadata {
+    private fun readWithVersion(version: KlibMetadataVersion, lenient: Boolean, withHeader: Boolean = true): KlibModuleMetadata {
         val metadata = KlibModuleMetadata(
             name = "klib",
             fragments = listOf(KmModuleFragment().apply { fqName = "klib" }),
             metadataVersion = version,
         ).write()
         val provider = object : KlibModuleMetadata.MetadataLibraryProvider {
-            override val moduleHeaderData: ByteArray get() = metadata.header
+            override val moduleHeaderData: ByteArray? get() = metadata.header.takeIf { withHeader }
+            override val packageNames: Set<String> = metadata.fragmentNames.toSet()
             override val metadataVersion: KlibMetadataVersion = metadata.metadataVersion
             override fun packageMetadataParts(fqName: String): Set<String> = metadata.fragmentNames.toSet()
             override fun packageMetadata(fqName: String, partName: String): ByteArray = metadata.fragments.single().single()
