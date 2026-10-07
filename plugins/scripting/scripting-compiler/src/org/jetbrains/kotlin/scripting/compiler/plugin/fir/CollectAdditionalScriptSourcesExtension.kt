@@ -27,14 +27,12 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.requiresLegacyScriptRuntim
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.toSystemIndependentScriptPath
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptingModuleDataProvider
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.compilationClasspathOf
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createScriptingLibrarySessions
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createScriptSourceSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createScriptingSessionFactoryContext
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.effectiveHostConfiguration
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllWithFirAnnotationSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.report
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.resolve.toSourceCode
@@ -79,20 +77,16 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
         fun SourceCode.collectImports(): List<SourceCode>? {
             val refinedScriptCompilationConfiguration =
                 hostConfiguration.getOrStoreRefinedCompilationConfiguration(this) { script, scriptCompilationConfiguration ->
-                    scriptCompilationConfiguration.refineAllForK2(script, hostConfiguration) { script, scriptCompilationConfiguration ->
-                        collectAndResolveScriptAnnotationsViaFir(
-                            script, scriptCompilationConfiguration, hostConfiguration,
-                            { _, scriptCompilationConfiguration ->
-                                getOrCreateSessionForAnnotationResolution(
-                                    scriptCompilationConfiguration,
-                                    effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration),
-                                    configuration,
-                                    environment
-                                )
-                            },
-                            SourceCode::convertToFirViaLightTree
-                        )
-                    }
+                    scriptCompilationConfiguration.refineAllWithFirAnnotationSession(
+                        script, hostConfiguration, { _, scriptCompilationConfiguration ->
+                            getOrCreateSessionForAnnotationResolution(
+                                scriptCompilationConfiguration,
+                                effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration),
+                                configuration,
+                                environment
+                            )
+                        }
+                    )
                 }.onFailure {
                     for (report in it.reports) {
                         configuration.report(report.severity, report.render(withSeverity = false), null)

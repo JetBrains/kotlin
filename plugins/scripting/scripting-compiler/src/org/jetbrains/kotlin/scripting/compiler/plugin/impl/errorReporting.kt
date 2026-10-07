@@ -225,7 +225,7 @@ fun KtDiagnostic.asScriptDiagnostic(sourceCode: SourceCode): ScriptDiagnostic {
         val firstRange = textRanges.first()
         val lastRange = textRanges.last()
         SourceCode.LocationWithId(
-            element.psi?.containingFile?.virtualFile?.path.orEmpty(),
+            element.psi?.containingFile?.virtualFile?.path ?: sourceCode.locationId.orEmpty(),
             SourceCode.Location(
                 firstRange.startOffset.toSourceCodePosition(sourceCode),
                 lastRange.endOffset.toSourceCodePosition(sourceCode)
