@@ -1,0 +1,26 @@
+FILE fqName:<root> fileName:/varargArguments.kt lineStartOffsets: [0, 84, 85, 138, 139, 172]
+  FUN[92, 137] name:same visibility:public modality:FINAL returnType:kotlin.Boolean [inline]
+    VALUE_PARAMETER[101, 115] kind:Regular name:xs index:0 type:kotlin.IntArray varargElementType:kotlin.Int [vararg]
+    BLOCK_BODY[128, 137]
+      RETURN[137, 137] type=kotlin.Nothing from='public final fun same (vararg xs: kotlin.Int): kotlin.Boolean declared in <root>'
+        CALL[128, 137] 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+          ARG arg0: GET_VAR[128, 130] 'xs: kotlin.IntArray declared in <root>.same' type=kotlin.IntArray origin=null
+          ARG arg1: GET_VAR[135, 137] 'xs: kotlin.IntArray declared in <root>.same' type=kotlin.IntArray origin=null
+  FUN[139, 171] name:test visibility:public modality:FINAL returnType:kotlin.Boolean
+    BLOCK_BODY[161, 171]
+      RETURN[171, 171] type=kotlin.Nothing from='public final fun test (): kotlin.Boolean declared in <root>'
+        BLOCK[161, 171] type=kotlin.Boolean origin=INLINE_ARGS_CONTAINER
+          VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.IntArray [val]
+            VARARG[166, 170] type=kotlin.IntArray varargElementType=kotlin.Int
+              CONST[166, 167] Int type=kotlin.Int value=1
+              CONST[169, 170] Int type=kotlin.Int value=2
+          RETURNABLE_BLOCK[161, 171] type=kotlin.Boolean origin=null
+            INLINED_BLOCK[161, 171]->[92, 137] type=kotlin.Boolean origin=null
+              inlinedFunctionSymbol: public final fun same (vararg xs: kotlin.Int): kotlin.Boolean declared in <root>
+              inlinedFunctionFileEntry: FILE_ENTRY path:/varargArguments.kt
+              VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:xs type:kotlin.IntArray [val]
+                GET_VAR[-1, -1] 'val tmp_0: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
+              RETURN[137, 137] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                CALL[128, 137] 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
+                  ARG arg0: GET_VAR[128, 130] 'val xs: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null
+                  ARG arg1: GET_VAR[135, 137] 'val xs: kotlin.IntArray declared in <root>.test' type=kotlin.IntArray origin=null

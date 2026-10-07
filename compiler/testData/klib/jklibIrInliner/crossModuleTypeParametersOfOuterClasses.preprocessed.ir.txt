@@ -1,0 +1,11 @@
+Module: lib
+// CallableId=lib/get
+FUN name:get visibility:private modality:FINAL returnType:T of lib.get [inline]
+  TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+  VALUE_PARAMETER kind:Regular name:<this> index:0 type:lib.Box<T of lib.get>
+  BLOCK_BODY
+    VAR name:v type:T of lib.get [val]
+      CALL 'public final fun <get-value> (): T of lib.Box declared in lib.Box' type=T of lib.get origin=GET_PROPERTY
+        ARG <this>: GET_VAR '<this>: lib.Box<T of lib.get> declared in lib.get' type=lib.Box<T of lib.get> origin=IMPLICIT_ARGUMENT
+    RETURN type=kotlin.Nothing from='private final fun get <T> (<this>: lib.Box<T of lib.get>): T of lib.get [inline] declared in lib'
+      GET_VAR 'val v: T of lib.get [val] declared in lib.get' type=T of lib.get origin=null
