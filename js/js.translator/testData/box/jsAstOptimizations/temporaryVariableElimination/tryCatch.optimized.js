@@ -7,7 +7,6 @@ function bar() {
     return 'result: ' + tmp;
   } catch ($p) {
     if ($p instanceof Exception) {
-      var e = $p;
       return 'error';
     } else {
       throw $p;
@@ -30,3 +29,4 @@ function box() {
   }
   return 'Exception expected';
 }
+

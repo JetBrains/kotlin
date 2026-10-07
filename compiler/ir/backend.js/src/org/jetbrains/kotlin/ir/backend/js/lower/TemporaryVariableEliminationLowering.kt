@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrTry
 import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -62,11 +63,10 @@ import kotlin.collections.hashMapOf
  *
  * Terminology:
  * - _Source._ Variable eligible for elimination, its declaration and initializer (which can be an assignment after a declaration),
- *           and how many times it is used in the function.
+ *             and how many times it is used in the function.
  * - _Tracked variable._ A variable that might be eliminated. Similar to sources, but in this case
  *                       we keep track of the effects of the initializer (init-effects),
  *                       and the effects that happened after the initializer (post-effects).
- * - Note that effects are a possibly-empty set of a `read` effect and a `write` effect.
  *   The enum `PURE` corresponds to `{}`, `READ` to `{read}`, and `WRITE` to `{read,write}`
  *
  * First, we collect:
@@ -95,7 +95,6 @@ import kotlin.collections.hashMapOf
  * - When we encounder a mutation of a variable in `mentioned`:
  *   - We stop tracking any variables in the set.
  *
- *
  * Finally, we transform the ir, replacing the uses of variables in `eliminated` with the initializers,
  * and removing the declarations and late initializers (assignments).
  */
@@ -104,7 +103,7 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
 
     override fun changeAwareLower(irBody: IrBody, container: IrDeclaration): Boolean {
         if (container !is IrFunction) return false
-        debug = container.name.asString() == "bar"
+        debug = container.name.asString() == "box" // for easier debugging, should be removed before merging
         val collector = Collector()
         irBody.accept(collector, CollectingMode())
         val visitor = Visitor(collector.usages, collector.mentioned, container)
@@ -142,28 +141,21 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
         var postEffects: EffectsKind = EffectsKind.PURE,
     )
 
-    private class Source(val neverInitialized: Boolean, var count: Int = 0)
+    private class Source(
+        var neverInitialized: Boolean,
+        var count: Int = 0,
+    )
 
     // needed to ensure we treat things like loops correctly.
     private class CollectingMode(
         val initializers: MutableList<IrSymbol> = mutableListOf(),
-        /** Loops, when's. */
-        var isInNonlinearControlFlow: Boolean = false,
-    ) {
-        inline fun nonlinear(f: () -> Unit) {
-            val old = isInNonlinearControlFlow
-            isInNonlinearControlFlow = true
-            f()
-            isInNonlinearControlFlow = old
-        }
-    }
+    )
 
     // counts how many usages a variable has.
     private inner class Collector : IrVisitor<Unit, CollectingMode>() {
         val usages = hashMapOf<IrSymbol, Source>()
-//        val banned = hashSetOf<IrSymbol>()
 
-        // any variable that is used inside an initializer (or late assignment).
+        // any variable that is used inside an initializer.
         // e.g. `val a = x + y; val b = x + z;` gives { x -> {a, b}, y -> {a}, z -> {b} }
         val mentioned = hashMapOf<IrSymbol, HashSet<IrSymbol>>()
 
@@ -172,14 +164,18 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
         }
 
         override fun visitVariable(declaration: IrVariable, data: CollectingMode) {
-            if (!data.isInNonlinearControlFlow) {
-                usages[declaration.symbol] = Source(declaration.initializer == null)
-                data.initializers.add(declaration.symbol)
-                declaration.acceptChildren(this, data)
-                data.initializers.pop()
-                return
-            }
+            usages[declaration.symbol] = Source(declaration.initializer == null)
+            data.initializers.add(declaration.symbol)
             declaration.acceptChildren(this, data)
+            data.initializers.pop()
+        }
+
+        override fun visitTry(aTry: IrTry, data: CollectingMode) {
+            aTry.tryResult.acceptChildren(this, data)
+            aTry.catches.forEach { it.acceptChildren(this, data) }
+
+            // the finally expression always executes,
+            aTry.finallyExpression?.acceptChildren(this, data)
         }
 
         override fun visitWhen(expression: IrWhen, data: CollectingMode) {
@@ -188,33 +184,21 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
             // the first branch condition is always executed
             expression.branches[0].condition.accept(this, data)
 
-            data.nonlinear {
-                expression.branches[0].result.accept(this, data)
-                expression.branches.asSequence().drop(1).forEach { it.accept(this, data) }
-            }
+            expression.branches[0].result.accept(this, data)
+            expression.branches.asSequence().drop(1).forEach { it.accept(this, data) }
         }
 
         override fun visitLoop(loop: IrLoop, data: CollectingMode) {
-            data.nonlinear {
-                loop.acceptChildren(this, data)
-            }
+            loop.acceptChildren(this, data)
         }
 
         override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: CollectingMode) {
-            if (expression.symbol.owner.origin == JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN) {
-                data.nonlinear {
-                    expression.acceptChildren(this, data)
-                }
-            } else {
-                expression.acceptChildren(this, data)
-            }
-            if (data.isInNonlinearControlFlow) usages.remove(expression.symbol)
-            else usages[expression.symbol]?.let { it.count += 1 }
+            expression.acceptChildren(this, data)
+            usages[expression.symbol]?.let { it.count += 1 }
         }
 
         override fun visitGetValue(expression: IrGetValue, data: CollectingMode) {
-            if (data.isInNonlinearControlFlow) usages.remove(expression.symbol)
-            else usages[expression.symbol]?.let { it.count += 1 }
+            usages[expression.symbol]?.let { it.count += 1 }
 
             data.initializers.forEach {
                 mentioned.computeIfAbsent(expression.symbol) { hashSetOf() }.add(it)
@@ -222,77 +206,23 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
         }
 
         override fun visitSetValue(expression: IrSetValue, data: CollectingMode) {
-            if (!data.isInNonlinearControlFlow) {
-                val owner = expression.symbol.owner
-                if (owner is IrVariable) {
-                    // only a single assignment is supported.
-                    if (usages[owner.symbol]?.let { !it.neverInitialized } ?: true) {
-                        // here either there wasn't a declaration for this variable, or
-                        // it was initialized already.
-                        usages.remove(owner.symbol)
-                    } else if (owner.symbol in usages) {
-                        usages[owner.symbol] = Source(false)
+            val owner = expression.symbol.owner
+            if (owner is IrVariable) {
+                // only a single assignment is supported.
+                usages[owner.symbol]?.let {
+                    if (it.neverInitialized) {
+                        it.neverInitialized = false
                         data.initializers.add(owner.symbol)
                         expression.acceptChildren(this, data)
                         data.initializers.pop()
                         return
+                    } else {
+                        // we don't process variables with multiple assignments
+                        usages.remove(owner.symbol)
                     }
                 }
-            } else {
-                usages.remove(expression.symbol)
             }
             expression.acceptChildren(this, data)
-        }
-    }
-
-    // the main Visitor does the same.
-    // this is used when we only need mutation checking.
-    private inner class MutationChecker(
-        val tracking: HashMap<IrSymbol, TrackedVariable>,
-        val mentioned: HashMap<IrSymbol, HashSet<IrSymbol>>,
-        val effects: (EffectsKind) -> Unit,
-        val function: IrElement,
-    ) : IrVisitorVoid() {
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        override fun visitSetValue(expression: IrSetValue) {
-            effects(expression.computeEffectsOr {
-                if (expression.symbol.owner.parent == function) EffectsKind.PURE else EffectsKind.WRITE
-            })
-            mentioned[expression.symbol]?.let { mentions ->
-                mentions.forEach { tracking.remove(it) }
-            }
-            expression.acceptChildrenVoid(this)
-        }
-
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
-            expression.acceptChildrenVoid(this)
-            effects(expression.computeEffectsOr {
-                expression.symbol.owner.getAnnotatedEffectsOrWrite()
-            })
-        }
-
-        override fun visitGetValue(expression: IrGetValue) {
-            effects(expression.computeEffectsOr {
-                if (expression.symbol.owner.parent == function) EffectsKind.PURE else EffectsKind.READ
-            })
-        }
-
-        override fun visitGetField(expression: IrGetField) {
-            expression.acceptChildrenVoid(this)
-            // we ignore effect analysis here because if DFA comes,
-            // it might treat field reads from local objects as pure.
-            // that would cause our mutation tracked to break as it doesn't
-            // track fields (so `var x = X(); val a = x.field; x.field += 2; call(a)` would break)
-            effects(EffectsKind.READ)
-        }
-
-        override fun visitSetField(expression: IrSetField) {
-            expression.acceptChildrenVoid(this)
-            // same as visitGetField
-            effects(EffectsKind.WRITE)
         }
     }
 
@@ -300,12 +230,12 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
         val usages: HashMap<IrSymbol, Source>,
         val mentioned: HashMap<IrSymbol, HashSet<IrSymbol>>,
         val function: IrElement,
-    ) : IrVisitor<Unit, ((EffectsKind) -> Unit)?>() {
         // we track the variables that might be eliminated.
-        val tracking = hashMapOf<IrSymbol, TrackedVariable>()
-        val eliminated = hashMapOf<IrSymbol, EliminatedVariable>()
-
-        fun barrier(propagate: ((EffectsKind) -> Unit)?, effects: EffectsKind) {
+        val tracking: HashMap<IrSymbol, TrackedVariable> = hashMapOf(),
+        val eliminated: HashMap<IrSymbol, EliminatedVariable> = hashMapOf(),
+        val parent: Visitor? = null,
+    ) : IrVisitor<Unit, ((EffectsKind) -> Unit)?>() {
+        private fun barrier(propagate: ((EffectsKind) -> Unit)?, effects: EffectsKind) {
             if (effects == EffectsKind.PURE) return
             propagate?.invoke(effects)
             val iter = tracking.values.iterator()
@@ -321,16 +251,16 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
                     }
                 }
             }
+            parent?.barrier({}, effects)
         }
+
+        private fun nonlinear() = Visitor(usages, mentioned, function, hashMapOf(), eliminated, this)
 
         override fun visitElement(element: IrElement, data: ((EffectsKind) -> Unit)?) {
             element.acceptChildren(this, data)
         }
 
         override fun visitSetValue(expression: IrSetValue, data: ((EffectsKind) -> Unit)?) {
-            mentioned[expression.symbol]?.let { mentions ->
-                mentions.forEach { tracking.remove(it) }
-            }
             // late initialization
             usages[expression.symbol]?.let { source ->
                 val initializer = expression.value
@@ -358,6 +288,9 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
                 return
             }
             expression.acceptChildren(this, data)
+            mentioned[expression.symbol]?.let { mentions ->
+                mentions.forEach { tracking.remove(it) }
+            }
         }
 
         override fun visitVariable(declaration: IrVariable, data: ((EffectsKind) -> Unit)?) {
@@ -401,46 +334,26 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
             // we can't eliminate variables coming outside of a try block, as
             // they might trigger an exception and the try block changes the control flow.
             // so we put a barrier that prevents elimination (also we don't propagate since this isn't a real effect)
-            barrier({}, EffectsKind.WRITE)
-            aTry.tryResult.acceptChildren(this, data)
+            aTry.tryResult.acceptChildren(nonlinear(), data)
 
-            // catch blocks are non-linear control flow, so we only check for mutations
-            var effects = EffectsKind.PURE
-            aTry.catches.forEach { catch ->
-                catch.acceptChildrenVoid(MutationChecker(tracking, mentioned, {
-                    if (it > effects) effects = it
-                }, function))
-            }
-            barrier(data, effects)
+            aTry.catches.forEach { it.acceptChildren(nonlinear(), data) }
 
             // the finally expression always executes,
             aTry.finallyExpression?.acceptChildren(this, data)
-            super.visitTry(aTry, data)
         }
 
         override fun visitWhen(expression: IrWhen, data: ((EffectsKind) -> Unit)?) {
             if (expression.branches.isEmpty()) return
 
-            // the first branch condition is always executed, so we can eliminate variables there
+            // the first branch condition is always executed
             expression.branches[0].condition.accept(this, data)
 
-            // in the rest of the expression we can't eliminate, but we still need to check for mutations and effects.
-            var effects = EffectsKind.PURE
-            val mutationChecker = MutationChecker(tracking, mentioned, {
-                if (it > effects) effects = it
-            }, function)
-            expression.branches[0].result.acceptVoid(mutationChecker)
-            expression.branches.asSequence().drop(1).forEach { it.acceptVoid(mutationChecker) }
-            barrier(data, effects)
+            expression.branches[0].result.accept(nonlinear(), data)
+            expression.branches.asSequence().drop(1).forEach { it.accept(nonlinear(), data) }
         }
 
         override fun visitLoop(loop: IrLoop, data: ((EffectsKind) -> Unit)?) {
-            // we can't eliminate variables inside loops, so we only check for mutations and effects.
-            var effects = EffectsKind.PURE
-            loop.acceptChildrenVoid(MutationChecker(tracking, mentioned, {
-                if (it > effects) effects = it
-            }, function))
-            barrier(data, effects)
+            loop.acceptChildren(nonlinear(), data)
         }
 
         fun maybeEliminate(expression: IrDeclarationReference, propagate: ((EffectsKind) -> Unit)?) {
@@ -479,7 +392,7 @@ class TemporaryVariableEliminationLowering(val context: JsIrOptimizationContext)
         }
     }
 
-    private sealed class EliminatedVariable{
+    private sealed class EliminatedVariable {
         class UnusedPure : EliminatedVariable()
         class UnusedImpure(val initializer: IrExpression) : EliminatedVariable()
         class Used(val initializer: IrExpression) : EliminatedVariable()
