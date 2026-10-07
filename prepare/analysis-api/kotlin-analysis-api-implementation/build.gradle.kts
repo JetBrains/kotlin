@@ -14,6 +14,7 @@ val analysisApiModules: Array<String> = CompilerModules.analysisApiModules
 
 val additionalCompilerProjects = listOf(
     ":kotlin-annotations-jvm",
+    ":kotlin-power-assert-runtime",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
     ":kotlin-scripting-dependencies",
