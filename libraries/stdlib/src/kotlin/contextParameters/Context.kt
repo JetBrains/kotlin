@@ -14,7 +14,7 @@ package kotlin
 /**
  * Runs the specified [block] with the given value in context scope.
  *
- * As opposed to [with], [context] only makes the value available for
+ * As opposed to [kotlin.with], [context] only makes the value available for
  * context parameter resolution, but not as implicit receiver.
  *
  * @sample samples.misc.ContextParameters.useContext
