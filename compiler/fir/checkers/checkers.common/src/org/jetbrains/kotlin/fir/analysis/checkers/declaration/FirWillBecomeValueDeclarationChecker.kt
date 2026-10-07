@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.isMethodOfAny
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
@@ -53,7 +54,8 @@ object FirWillBecomeValueDeclarationChecker : FirClassChecker(MppCheckerKind.Com
             return
         }
 
-        if (declaration is FirRegularClass) checkIdentityBasedMembers(declaration)
+        // The members of an expect class come from its actual class, which is checked instead.
+        if (declaration is FirRegularClass && !declaration.isExpect) checkIdentityBasedMembers(declaration)
     }
 
     /**
