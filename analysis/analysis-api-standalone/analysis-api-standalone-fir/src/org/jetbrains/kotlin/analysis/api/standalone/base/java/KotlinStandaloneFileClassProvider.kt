@@ -31,9 +31,9 @@ internal class KotlinStandaloneFileClassProvider(private val project: Project) :
         if (file !is KtClsFile) return PsiClass.EMPTY_ARRAY
         val virtualFile = file.virtualFile ?: return PsiClass.EMPTY_ARRAY
 
-        val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
-        val javaClass = DecompiledLightClassesFactory.createClsJavaClassFromVirtualFile(file, virtualFile, classOrObject, project)
-            ?: return PsiClass.EMPTY_ARRAY
+        val javaClass = DecompiledLightClassesFactory.createClsJavaClassFromVirtualFile(file, virtualFile, project) {
+            file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
+        } ?: return PsiClass.EMPTY_ARRAY
 
         return arrayOf(javaClass)
     }

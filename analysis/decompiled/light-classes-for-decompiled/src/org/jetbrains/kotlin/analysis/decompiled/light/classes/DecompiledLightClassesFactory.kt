@@ -100,8 +100,8 @@ object DecompiledLightClassesFactory {
         val javaClsClass = createClsJavaClassFromVirtualFile(
             mirrorFile = file,
             classFile = virtualFile,
-            correspondingClassOrObject = classOrObject,
             project = project,
+            correspondingClassOrObject = { classOrObject },
         ) ?: return null
 
         return builder(file, javaClsClass, classOrObject)
@@ -121,21 +121,26 @@ object DecompiledLightClassesFactory {
         }
     }
 
+    /**
+     * Creates a Java class from [classFile] with [mirrorFile] as its mirror.
+     *
+     * [correspondingClassOrObject] is only needed for the navigation element of the class file, so it is called each time the navigation
+     * element is requested, and never before. This allows callers to avoid computing the declarations of [mirrorFile] eagerly, which may
+     * require building its stub or AST.
+     */
     fun createClsJavaClassFromVirtualFile(
         mirrorFile: KtFile,
         classFile: VirtualFile,
-        correspondingClassOrObject: KtClassOrObject?,
         project: Project,
+        correspondingClassOrObject: () -> KtClassOrObject?,
     ): ClsClassImpl? {
         val javaFileStub = ClsJavaStubByVirtualFileCache.getInstance(project).get(classFile) ?: return null
         javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
         val manager = PsiManager.getInstance(mirrorFile.project)
         val fakeFile = object : ClsFileImpl(ClassFileViewProvider(manager, classFile)) {
             override fun getNavigationElement(): PsiElement {
-                if (correspondingClassOrObject != null) {
-                    return correspondingClassOrObject.navigationElement.containingFile
-                }
-                return super.getNavigationElement()
+                val classOrObject = correspondingClassOrObject() ?: return super.getNavigationElement()
+                return classOrObject.navigationElement.containingFile
             }
 
             override fun getStub() = javaFileStub
