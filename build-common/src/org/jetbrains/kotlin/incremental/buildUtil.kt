@@ -111,8 +111,8 @@ fun updateIncrementalCache(
     javaChangesTracker: JavaClassesTrackerImpl?,
     jvmMetadataTracker: ICJvmMetadataTrackerImpl?,
 ) {
-    // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName, and
-    // `ChangesCollector.protoDataChanges()` keeps the last proto recorded under it, and the platform proto has precedence.
+    // Store common-fragment metadata before class files: an `expect` declaration and its `actual` share an FqName,
+    // so the platform proto is recorded last.
     jvmMetadataTracker?.metadataByModule?.forEach { [moduleName, metadata] ->
         cache.saveMetadataToCache(moduleName, metadata, changesCollector)
     }

@@ -322,7 +322,6 @@ internal open class GradleCompilerRunner(
             val nameToModules = HashMap<String, HashSet<IncrementalModuleEntry>>()
             val jarToClassListFile = HashMap<File, File>()
             val jarToModule = HashMap<File, IncrementalModuleEntry>()
-            val jarToAbiSnapshot = HashMap<File, File>()
 
             val multiplatformProjectTasks = mutableMapOf<Project, MutableSet<String>>()
 
@@ -353,7 +352,6 @@ internal open class GradleCompilerRunner(
                         task.taskModuleName,
                         project.layout.buildDirectory.get().asFile,
                         task.buildHistoryFile.get().asFile,
-                        task.abiSnapshotFile.get().asFile
                     )
                     dirToModule[task.destinationDirectory.get().asFile] = module
                     task.javaOutputDir.orNull?.asFile?.let { dirToModule[it] = module }
@@ -383,7 +381,6 @@ internal open class GradleCompilerRunner(
                             kotlinTask.taskModuleName,
                             project.layout.buildDirectory.get().asFile,
                             kotlinTask.buildHistoryFile.get().asFile,
-                            kotlinTask.abiSnapshotFile.get().asFile
                         )
                         val jarTask = project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask ?: continue
                         jarToModule[jarTask.archiveFile.get().asFile.normalize().absoluteFile] = module
@@ -391,9 +388,6 @@ internal open class GradleCompilerRunner(
                             val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
                             jarToClassListFile[jar.archiveFile.get().asFile.normalize().absoluteFile] =
                                 target.defaultArtifactClassesListFile.get()
-                            //configure abiSnapshot mapping for jars
-                            jarToAbiSnapshot[jar.archiveFile.get().asFile.normalize().absoluteFile] =
-                                target.buildDir.get().file(kotlinTask.abiSnapshotRelativePath).get().asFile
                         }
 
                     }
@@ -406,7 +400,6 @@ internal open class GradleCompilerRunner(
                 nameToModules = nameToModules,
                 jarToClassListFile = jarToClassListFile,
                 jarToModule = jarToModule,
-                jarToAbiSnapshot = jarToAbiSnapshot
             ).also {
                 cachedGradle = WeakReference(gradle)
                 cachedModulesInfo = it
