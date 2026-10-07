@@ -13,29 +13,31 @@ package samples.generated.allequal
 
 import samples.*
 import kotlin.math.abs
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualDoubleArraySamples {
 
     @Sample
     fun allEqual() {
-        assertPrints(doubleArrayOf().allEqual(), "true")
-        assertPrints(doubleArrayOf(1.0).allEqual(), "true")
+        assertTrue(doubleArrayOf().allEqual())
+        assertTrue(doubleArrayOf(1.0).allEqual())
 
         val sameValues = doubleArrayOf(1.0, 1.0, 1.0)
-        assertPrints(sameValues.allEqual(), "true")
+        assertTrue(sameValues.allEqual())
 
         val mixedValues = doubleArrayOf(1.0, 1.0, 2.0)
-        assertPrints(mixedValues.allEqual(), "false")
+        assertFalse(mixedValues.allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints(doubleArrayOf().allEqualBy { it * it }, "true")
-        assertPrints(doubleArrayOf(1.0).allEqualBy { it * it }, "true")
+        assertTrue(doubleArrayOf().allEqualBy { it * it })
+        assertTrue(doubleArrayOf(1.0).allEqualBy { it * it })
 
         val values = doubleArrayOf(1.0, -1.0, 1.0)
-        assertPrints(values.allEqualBy { it * it }, "true")
-        assertPrints(values.allEqualBy { abs(it) }, "true")
-        assertPrints(values.allEqualBy { it * it * it }, "false")
+        assertTrue(values.allEqualBy { it * it })
+        assertTrue(values.allEqualBy { abs(it) })
+        assertFalse(values.allEqualBy { it * it * it })
     }
 }

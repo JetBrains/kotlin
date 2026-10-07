@@ -12,29 +12,31 @@ package samples.generated.allequal
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllEqualCharArraySamples {
 
     @Sample
     fun allEqual() {
-        assertPrints(charArrayOf().allEqual(), "true")
-        assertPrints(charArrayOf('a').allEqual(), "true")
+        assertTrue(charArrayOf().allEqual())
+        assertTrue(charArrayOf('a').allEqual())
 
         val sameValues = charArrayOf('a', 'a', 'a')
-        assertPrints(sameValues.allEqual(), "true")
+        assertTrue(sameValues.allEqual())
 
         val mixedValues = charArrayOf('a', 'a', 'b')
-        assertPrints(mixedValues.allEqual(), "false")
+        assertFalse(mixedValues.allEqual())
     }
 
     @Sample
     fun allEqualBy() {
-        assertPrints(charArrayOf().allEqualBy { it.uppercaseChar() }, "true")
-        assertPrints(charArrayOf('a').allEqualBy { it.uppercaseChar() }, "true")
+        assertTrue(charArrayOf().allEqualBy { it.uppercaseChar() })
+        assertTrue(charArrayOf('a').allEqualBy { it.uppercaseChar() })
 
         val values = charArrayOf('a', 'A', 'a')
-        assertPrints(values.allEqualBy { it.uppercaseChar() }, "true")
-        assertPrints(values.allEqualBy { it.lowercaseChar() }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertTrue(values.allEqualBy { it.uppercaseChar() })
+        assertTrue(values.allEqualBy { it.lowercaseChar() })
+        assertFalse(values.allEqualBy { it })
     }
 }

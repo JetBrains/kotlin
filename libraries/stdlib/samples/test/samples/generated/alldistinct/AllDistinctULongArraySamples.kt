@@ -12,28 +12,30 @@ package samples.generated.alldistinct
 //
 
 import samples.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AllDistinctULongArraySamples {
 
     @Sample
     fun allDistinct() {
-        assertPrints(ulongArrayOf().allDistinct(), "true")
-        assertPrints(ulongArrayOf(1uL).allDistinct(), "true")
+        assertTrue(ulongArrayOf().allDistinct())
+        assertTrue(ulongArrayOf(1uL).allDistinct())
 
         val distinctValues = ulongArrayOf(1uL, 2uL, 3uL)
-        assertPrints(distinctValues.allDistinct(), "true")
+        assertTrue(distinctValues.allDistinct())
 
         val duplicateValues = ulongArrayOf(1uL, 2uL, 1uL)
-        assertPrints(duplicateValues.allDistinct(), "false")
+        assertFalse(duplicateValues.allDistinct())
     }
 
     @Sample
     fun allDistinctBy() {
-        assertPrints(ulongArrayOf().allDistinctBy { it % 2uL }, "true")
-        assertPrints(ulongArrayOf(1uL).allDistinctBy { it % 2uL }, "true")
+        assertTrue(ulongArrayOf().allDistinctBy { it % 2uL })
+        assertTrue(ulongArrayOf(1uL).allDistinctBy { it % 2uL })
 
         val values = ulongArrayOf(1uL, 3uL, 2uL)
-        assertPrints(values.allDistinctBy { it % 2uL }, "false")
-        assertPrints(values.allDistinctBy { it }, "true")
+        assertFalse(values.allDistinctBy { it % 2uL })
+        assertTrue(values.allDistinctBy { it })
     }
 }
