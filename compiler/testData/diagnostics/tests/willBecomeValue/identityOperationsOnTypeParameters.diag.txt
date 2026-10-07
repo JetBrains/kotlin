@@ -1,0 +1,7 @@
+/identityOperationsOnTypeParameters.kt:13:10: warning: Type 'Wrapper' is final, so the value of the type parameter is predetermined.
+
+/identityOperationsOnTypeParameters.kt:17:63: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
+
+/identityOperationsOnTypeParameters.kt:19:10: warning: Type 'Wrapper' is final, so the value of the type parameter is predetermined.
+
+/identityOperationsOnTypeParameters.kt:21:15: warning: Type 'Wrapper' is final, so the value of the type parameter is predetermined.
