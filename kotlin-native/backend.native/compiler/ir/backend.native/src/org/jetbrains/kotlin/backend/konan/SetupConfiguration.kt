@@ -263,6 +263,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(DEBUG, config.debug)
     put(OPTIMIZATION, config.optimizationsEnabled)
     put(ENABLE_ASSERTIONS, config.assertsEnabled)
+// TODO    putIfNotNull(DEBUG_PREFIX_MAP, config.configuration[DEBUG_PREFIX_MAP])
     put(BinaryOptions.enableReleaseBinaryCache, config.enableReleaseBinaryCache)
     config.configuration.phaseConfig?.let { phaseConfig = it }
     setupPartialLinkageConfig(config.partialLinkageConfig)
@@ -283,6 +284,11 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(BinaryOptions.latin1Strings, config.latin1Strings)
     put(BinaryOptions.stackProtector, config.stackProtectorMode)
     putIfNotNull(BinaryOptions.sanitizer, config.sanitizer)
+    put(BinaryOptions.disableMmap, config.disableMmap)
+    put(BinaryOptions.gcMarkSingleThreaded, config.gcMarkSingleThreaded)
+    put(BinaryOptions.fixedBlockPageSize, config.fixedBlockPageSize)
+    put(BinaryOptions.pagedAllocator, config.pagedAllocator)
+    put(BinaryOptions.concurrentWeakSweep, config.concurrentWeakSweep)
     put(BinaryOptions.checkStateAtExternalCalls, config.checkStateAtExternalCalls)
     putIfNotNull(RUNTIME_LOGS, config.configuration.runtimeLogs)
 }
