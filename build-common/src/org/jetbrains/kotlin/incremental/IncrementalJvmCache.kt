@@ -450,7 +450,7 @@ open class IncrementalJvmCache(
             val oldMapValue = storage[key]
             storage[key] = newMapValue
 
-            changesCollector.collectProtoChanges(oldMapValue?.toProtoData(className.packageFqName), newProtoData, packageProtoKey = key)
+            changesCollector.collectProtoChanges(oldMapValue?.toProtoData(className.packageFqName), newProtoData)
         }
 
         fun check(
@@ -459,7 +459,7 @@ open class IncrementalJvmCache(
             val key = className.internalName
             val oldProtoData = storage[key]?.toProtoData(className.packageFqName)
             val newProtoData = ClassProtoData(classProto, stringTable.toNameResolver())
-            changesCollector.collectProtoChanges(oldProtoData, newProtoData, packageProtoKey = key)
+            changesCollector.collectProtoChanges(oldProtoData, newProtoData)
         }
 
         operator fun contains(className: JvmClassName): Boolean =

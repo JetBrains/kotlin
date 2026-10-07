@@ -286,7 +286,6 @@ internal class JsKlibCompilationOperationImpl private constructor(
     private fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return IncrementalCompilationFeatures(
             usePreciseJavaTracking = false,
-            withAbiSnapshot = false,
             preciseCompilationResultsBackup = this[BACKUP_CLASSES],
             keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
             enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
@@ -306,7 +305,6 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
             it.name,
             it.buildDir.toFile(),
             (it.buildHistoryDir ?: it.buildDir).resolve(IncrementalCompilerRunner.BUILD_HISTORY_FILE_NAME).toFile(),
-            null
         )
     }
     return IncrementalModuleInfo(
@@ -317,7 +315,6 @@ private fun List<IncrementalModule>.toIncrementalModuleInfo(rootProjectBuildDir:
         },
         emptyMap(),
         map.mapKeys { it.key.output.toFile() }.toMap(),
-        emptyMap()
     )
 }
 

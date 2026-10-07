@@ -54,7 +54,6 @@ internal fun HasSnapshotBasedIcOptionsAccessor.extractIncrementalCompilationFeat
     val options = this
     return IncrementalCompilationFeatures(
         usePreciseJavaTracking = options[JvmSnapshotBasedIncrementalCompilationOptionsImpl.PRECISE_JAVA_TRACKING],
-        withAbiSnapshot = false,
         preciseCompilationResultsBackup = options[BACKUP_CLASSES],
         keepIncrementalCompilationCachesInMemory = options[KEEP_IC_CACHES_IN_MEMORY],
         enableUnsafeIncrementalCompilationForMultiplatform = options[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],
@@ -64,7 +63,6 @@ internal fun HasSnapshotBasedIcOptionsAccessor.extractIncrementalCompilationFeat
 internal fun JsHistoryBasedIncrementalCompilationConfigurationImpl.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
     return IncrementalCompilationFeatures(
         usePreciseJavaTracking = false,
-        withAbiSnapshot = false,
         preciseCompilationResultsBackup = this[BACKUP_CLASSES],
         keepIncrementalCompilationCachesInMemory = this[KEEP_IC_CACHES_IN_MEMORY],
         enableUnsafeIncrementalCompilationForMultiplatform = this[UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM],

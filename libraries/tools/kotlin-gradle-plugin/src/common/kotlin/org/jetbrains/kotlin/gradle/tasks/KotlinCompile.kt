@@ -512,8 +512,6 @@ abstract class KotlinCompile @Inject constructor(
     override fun makeIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
         return super.makeIncrementalCompilationFeatures().copy(
             usePreciseJavaTracking = usePreciseJavaTracking,
-            /* Disabled on JVM in favor of classpath snapshot machinery */
-            withAbiSnapshot = false,
         )
     }
 

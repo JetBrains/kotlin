@@ -389,7 +389,7 @@ class BuildReportsIT : KGPBaseTest() {
         fun validateSnapshotSizeMetric() {
             // traverse only the `build` directory files, because Gradle also contains a file with the name `last-build.bin`
             val actualSnapshotSize = Files.walk(projectPath.resolve("build")).use { files ->
-                val knownSnapshotFiles = setOf("last-build.bin", "build-history.bin", "abi-snapshot.bin")
+                val knownSnapshotFiles = setOf("last-build.bin", "build-history.bin")
                 files.asSequence().filter { Files.isRegularFile(it) && it.name in knownSnapshotFiles }.map { Files.size(it) }.sum()
             }
             // the first found line of the report should contain a sum of the metric per all the tasks
