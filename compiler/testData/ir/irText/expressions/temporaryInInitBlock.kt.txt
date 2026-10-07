@@ -1,7 +1,4 @@
 class C {
-  val s: String?
-    get
-
   init {
     <this>.#s = { // BLOCK
       val tmp_0: Any? = x
@@ -18,4 +15,8 @@ class C {
 
   }
 
+  val s: String?
+    get
+
 }
+

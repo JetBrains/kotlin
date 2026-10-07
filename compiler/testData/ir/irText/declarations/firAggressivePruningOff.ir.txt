@@ -1,25 +1,4 @@
 FILE fqName:<root> fileName:/firAggressivePruningOff.kt
-  PROPERTY name:unusedPrivateProperty visibility:private modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:unusedPrivateProperty type:kotlin.String visibility:private [final,static]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unusedPrivateProperty> visibility:private modality:FINAL returnType:kotlin.String
-      correspondingProperty: PROPERTY name:unusedPrivateProperty visibility:private modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun <get-unusedPrivateProperty> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:unusedPrivateProperty type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
-  PROPERTY name:privatePropertyReferencedByNonInline visibility:private modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByNonInline type:kotlin.String visibility:private [final,static]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-privatePropertyReferencedByNonInline> visibility:private modality:FINAL returnType:kotlin.String
-      correspondingProperty: PROPERTY name:privatePropertyReferencedByNonInline visibility:private modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun <get-privatePropertyReferencedByNonInline> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByNonInline type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
-  PROPERTY name:privatePropertyReferencedByInline visibility:private modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByInline type:kotlin.String visibility:private [final,static]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-privatePropertyReferencedByInline> visibility:private modality:FINAL returnType:kotlin.String
-      correspondingProperty: PROPERTY name:privatePropertyReferencedByInline visibility:private modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun <get-privatePropertyReferencedByInline> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByInline type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
   FUN name:privateFunReferencedByInline visibility:private modality:FINAL returnType:kotlin.String
     BLOCK_BODY
   FUN name:privateFunReferencedByNonInline visibility:private modality:FINAL returnType:kotlin.String
@@ -34,3 +13,24 @@ FILE fqName:<root> fileName:/firAggressivePruningOff.kt
     BLOCK_BODY
   FUN name:unusedPrivateFun visibility:private modality:FINAL returnType:kotlin.String
     BLOCK_BODY
+  PROPERTY name:privatePropertyReferencedByInline visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByInline type:kotlin.String visibility:private [final,static]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-privatePropertyReferencedByInline> visibility:private modality:FINAL returnType:kotlin.String
+      correspondingProperty: PROPERTY name:privatePropertyReferencedByInline visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-privatePropertyReferencedByInline> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByInline type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  PROPERTY name:privatePropertyReferencedByNonInline visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByNonInline type:kotlin.String visibility:private [final,static]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-privatePropertyReferencedByNonInline> visibility:private modality:FINAL returnType:kotlin.String
+      correspondingProperty: PROPERTY name:privatePropertyReferencedByNonInline visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-privatePropertyReferencedByNonInline> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByNonInline type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  PROPERTY name:unusedPrivateProperty visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:unusedPrivateProperty type:kotlin.String visibility:private [final,static]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-unusedPrivateProperty> visibility:private modality:FINAL returnType:kotlin.String
+      correspondingProperty: PROPERTY name:unusedPrivateProperty visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-unusedPrivateProperty> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:unusedPrivateProperty type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null

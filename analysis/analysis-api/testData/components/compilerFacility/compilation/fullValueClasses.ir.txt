@@ -2,24 +2,6 @@ MODULE_FRAGMENT
   FILE fqName:<root> fileName:fullValueClasses.kt
     CLASS CLASS name:Point modality:FINAL visibility:public [value] superTypes:[<root>.Result]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Point
-      PROPERTY name:x visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Point
-          correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Point'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-                receiver: GET_VAR '<this>: <root>.Point declared in <root>.Point.<get-x>' type=<root>.Point origin=null
-      PROPERTY name:y visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL returnType:kotlin.Int
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Point
-          correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Point'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-                receiver: GET_VAR '<this>: <root>.Point declared in <root>.Point.<get-y>' type=<root>.Point origin=null
       CONSTRUCTOR visibility:public returnType:<root>.Point
         VALUE_PARAMETER kind:Regular name:other index:0 type:<root>.Point
         BLOCK_BODY
@@ -129,6 +111,24 @@ MODULE_FRAGMENT
                   ARG <this>: GET_VAR '<this>: <root>.Point declared in <root>.Point.<get-size>' type=<root>.Point origin=IMPLICIT_ARGUMENT
                 ARG other: CALL 'public final fun <get-y> (): kotlin.Int declared in <root>.Point' type=kotlin.Int origin=GET_PROPERTY
                   ARG <this>: GET_VAR '<this>: <root>.Point declared in <root>.Point.<get-size>' type=<root>.Point origin=IMPLICIT_ARGUMENT
+      PROPERTY name:x visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Point
+          correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Point'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: <root>.Point declared in <root>.Point.<get-x>' type=<root>.Point origin=null
+      PROPERTY name:y visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL returnType:kotlin.Int
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Point
+          correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Point'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: <root>.Point declared in <root>.Point.<get-y>' type=<root>.Point origin=null
     CLASS CLASS name:RegularResult modality:FINAL visibility:public superTypes:[<root>.Result]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.RegularResult
       PROPERTY name:size visibility:public modality:OPEN [val]

@@ -8,9 +8,6 @@ open class Base {
 }
 
 class TestInitBlock : Base {
-  val x: Int
-    get
-
   init {
     <this>.#x = 0
   }
@@ -31,6 +28,9 @@ class TestInitBlock : Base {
 
   }
 
+  val x: Int
+    get
+
 }
 
 class TestProperty : Base {
@@ -45,3 +45,4 @@ class TestProperty : Base {
   }
 
 }
+

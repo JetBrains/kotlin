@@ -94,15 +94,6 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) declared in <root>.A'
           ARG x: CONST Int type=kotlin.Int value=5
-    PROPERTY name:prop1 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop1> visibility:public modality:FINAL returnType:kotlin.String
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
-        correspondingProperty: PROPERTY name:prop1 visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-prop1> (): kotlin.String declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-prop1>' type=<root>.A origin=null
     PROPERTY name:prop2 visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:prop2 type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
@@ -220,3 +211,12 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
         correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [fake_override,val]
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
+    PROPERTY name:prop1 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-prop1> visibility:public modality:FINAL returnType:kotlin.String
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:prop1 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-prop1> (): kotlin.String declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:prop1 type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-prop1>' type=<root>.A origin=null

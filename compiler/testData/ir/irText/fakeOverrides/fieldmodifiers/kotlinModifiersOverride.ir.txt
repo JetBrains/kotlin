@@ -1,23 +1,6 @@
 FILE fqName:<root> fileName:/1.kt
   CLASS CLASS name:A modality:OPEN visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
-    PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
-      FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL returnType:kotlin.Number
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
-        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Number declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private' type=kotlin.Number origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Number
-        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
-        BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-b>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: kotlin.Number declared in <root>.A.<set-b>' type=kotlin.Number origin=null
     CLASS OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A.Companion
       CONSTRUCTOR visibility:private returnType:<root>.A.Companion [primary]
@@ -65,6 +48,23 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
+      FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL returnType:kotlin.Number
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.Number declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private' type=kotlin.Number origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-b> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Number
+        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [lateinit,var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Number visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-b>' type=<root>.A origin=null
+            value: GET_VAR '<set-?>: kotlin.Number declared in <root>.A.<set-b>' type=kotlin.Number origin=null
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.Java1]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]

@@ -20,15 +20,6 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
         public open fun toString (): kotlin.String declared in kotlin.Any
   CLASS CLASS name:TestInitBlock modality:FINAL visibility:public superTypes:[<root>.Base]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestInitBlock
-    PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitBlock
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitBlock'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.TestInitBlock declared in <root>.TestInitBlock.<get-x>' type=<root>.TestInitBlock origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
@@ -60,6 +51,15 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in <root>.Base
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitBlock
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitBlock'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestInitBlock declared in <root>.TestInitBlock.<get-x>' type=<root>.TestInitBlock origin=null
   CLASS CLASS name:TestProperty modality:FINAL visibility:public superTypes:[<root>.Base]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestProperty
     PROPERTY name:x visibility:public modality:FINAL [val]

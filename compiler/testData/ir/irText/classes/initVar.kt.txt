@@ -27,10 +27,6 @@ class TestInitVarInClass {
 }
 
 class TestInitVarInInitBlock {
-  var x: Int
-    get
-    set
-
   init {
     <this>.<set-x>(<set-?> = 0)
   }
@@ -40,6 +36,10 @@ class TestInitVarInInitBlock {
     /* <init>() */
 
   }
+
+  var x: Int
+    get
+    set
 
 }
 
@@ -58,3 +58,4 @@ class TestInitVarWithCustomSetter {
   }
 
 }
+

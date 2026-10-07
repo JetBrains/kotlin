@@ -1,7 +1,4 @@
 class A {
-  val b: String
-    get
-
   init {
     apply<String>(/* <this> = a(), */ block = local fun String.<anonymous>() {
       <this>.#b = $this$apply
@@ -14,6 +11,9 @@ class A {
     /* <init>() */
 
   }
+
+  val b: String
+    get
 
 }
 

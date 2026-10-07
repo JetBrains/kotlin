@@ -11,7 +11,7 @@
          FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
            VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-@@ -172,6 +176,10 @@
+@@ -163,6 +167,10 @@
        VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.A
        overridden:
          public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum

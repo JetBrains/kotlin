@@ -78,23 +78,6 @@ FILE fqName:<root> fileName:/initVar.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
   CLASS CLASS name:TestInitVarInInitBlock modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestInitVarInInitBlock
-    PROPERTY name:x visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarInInitBlock
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitVarInInitBlock'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock.<get-x>' type=<root>.TestInitVarInInitBlock origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarInInitBlock
-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
-        BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock.<set-x>' type=<root>.TestInitVarInInitBlock origin=null
-            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestInitVarInInitBlock.<set-x>' type=kotlin.Int origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         CALL 'public final fun <set-x> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.TestInitVarInInitBlock' type=kotlin.Unit origin=EQ
@@ -117,6 +100,23 @@ FILE fqName:<root> fileName:/initVar.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:x visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarInInitBlock
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitVarInInitBlock'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock.<get-x>' type=<root>.TestInitVarInInitBlock origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestInitVarInInitBlock
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.TestInitVarInInitBlock declared in <root>.TestInitVarInInitBlock.<set-x>' type=<root>.TestInitVarInInitBlock origin=null
+            value: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestInitVarInInitBlock.<set-x>' type=kotlin.Int origin=null
   CLASS CLASS name:TestInitVarWithCustomSetter modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestInitVarWithCustomSetter
     PROPERTY name:x visibility:public modality:FINAL [var]

@@ -1,10 +1,5 @@
 CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility:public superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]
   thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:kotlin.IntArray
-  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:public [final]
-    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL returnType:kotlin.Int
-      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.IntArray
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:kotlin.IntArray [primary]
     VALUE_PARAMETER kind:Regular name:size index:0 type:kotlin.Int
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:kotlin.IntArray
@@ -47,3 +42,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntArray modality:FINAL visibility
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.IntArray
     VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
     VALUE_PARAMETER kind:Regular name:value index:2 type:kotlin.Int
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:public [final]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL returnType:kotlin.Int
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.IntArray
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]

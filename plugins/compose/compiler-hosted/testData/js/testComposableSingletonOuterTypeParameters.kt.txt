@@ -114,6 +114,44 @@ class NoOpApplier : AbstractApplier<Unit> {
 }
 
 internal object ComposableSingletons$TestComposableSingletonOuterTypeParametersKt {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  internal val lambda$-1082454483: Function2<Composer, Int, Unit>?
+    internal get(): Function2<Composer, Int, Unit> {
+      when {
+        EQEQ(arg0 = <this>.#lambda$-1082454483, arg1 = null) -> <this>.#lambda$-1082454483 = Function2<Composer, Int, Unit>(
+          /* bound = */ [composableLambdaInstance(key = -1082454483, tracked = false, block =           @Composable
+          @FunctionKeyMeta(key = -1082454483, startOffset = 1020, endOffset = 1075)
+local fun <T : Any?> <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
+            var $composer: Composer? = $composer
+            sourceInformation(composer = $composer, sourceInformation = "C40@1026L47:testComposableSingletonOuterTypeParameters.kt")
+            when {
+              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+                when {
+                  isTraceInProgress() -> traceEventStart(key = -1082454483, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1082454483>.<anonymous> (testComposableSingletonOuterTypeParameters.kt:40)")
+                }
+                Consume<T>(content = ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1649290562>(), $composer = $composer, $changed = 6)
+                when {
+                  isTraceInProgress() -> traceEventEnd()
+                }
+              }
+              else -> $composer.skipToGroupEnd()
+            }
+          }
+)],
+          /* invoke = */          local fun(<this>: ComposableLambda, p0: Composer, p1: Int) {
+            return <this>.invoke(p1 = p0, p2 = p1) /*~> Unit */
+          }
+        )
+
+      }
+      return <this>.#lambda$-1082454483
+    }
+
   internal val lambda$-1264832409: Function3<List<Any?>, Composer, Int, Unit>?
     internal get(): Function3<List<Any?>, Composer, Int, Unit> {
       when {
@@ -144,38 +182,6 @@ local fun <T : Any?> <anonymous>(it: List<T>, /* var */ $composer: Composer?, $c
 
       }
       return <this>.#lambda$-1264832409
-    }
-
-  internal val lambda$1052876675: Function3<List<Pair<Any?, Any?>>, Composer, Int, Unit>?
-    internal get(): Function3<List<Pair<Any?, Any?>>, Composer, Int, Unit> {
-      when {
-        EQEQ(arg0 = <this>.#lambda$1052876675, arg1 = null) -> <this>.#lambda$1052876675 = Function3<List<Pair<Any?, Any?>>, Composer, Int, Unit>(
-          /* bound = */ [composableLambdaInstance(key = 1052876675, tracked = false, block =           @Composable
-          @FunctionKeyMeta(key = 1052876675, startOffset = 683, endOffset = 714)
-local fun <T : Any?, S : Any?> <anonymous>(it: List<Pair<S, T>>, /* var */ $composer: Composer?, $changed: Int) {
-            var $composer: Composer? = $composer
-            sourceInformation(composer = $composer, sourceInformation = "C:testComposableSingletonOuterTypeParameters.kt")
-            when {
-              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 17), arg1 = 16).not(), flags = $changed.and(other = 1)) -> { // BLOCK
-                when {
-                  isTraceInProgress() -> traceEventStart(key = 1052876675, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$1052876675>.<anonymous> (testComposableSingletonOuterTypeParameters.kt:19)")
-                }
-                plusAssign<String>(/* <this> = <get-log>(), */ element = "class and function")
-                when {
-                  isTraceInProgress() -> traceEventEnd()
-                }
-              }
-              else -> $composer.skipToGroupEnd()
-            }
-          }
-)],
-          /* invoke = */          local fun(<this>: ComposableLambda, p0: List<Pair<Any?, Any?>>, p1: Composer, p2: Int) {
-            return <this>.invoke(p1 = p0 /*as Any? */, p2 = p1, p3 = p2) /*~> Unit */
-          }
-        )
-
-      }
-      return <this>.#lambda$1052876675
     }
 
   internal val lambda$-1538714934: Function3<List<Any?>, Composer, Int, Unit>?
@@ -210,21 +216,21 @@ local fun <T : Any?> <anonymous>(it: List<T>, /* var */ $composer: Composer?, $c
       return <this>.#lambda$-1538714934
     }
 
-  internal val lambda$1558473979: Function2<Composer, Int, Unit>?
-    internal get(): Function2<Composer, Int, Unit> {
+  internal val lambda$-1649290562: Function3<List<Any?>, Composer, Int, Unit>?
+    internal get(): Function3<List<Any?>, Composer, Int, Unit> {
       when {
-        EQEQ(arg0 = <this>.#lambda$1558473979, arg1 = null) -> <this>.#lambda$1558473979 = Function2<Composer, Int, Unit>(
-          /* bound = */ [composableLambdaInstance(key = 1558473979, tracked = false, block =           @Composable
-          @FunctionKeyMeta(key = 1558473979, startOffset = 773, endOffset = 826)
-local fun <T : Any?> <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
+        EQEQ(arg0 = <this>.#lambda$-1649290562, arg1 = null) -> <this>.#lambda$-1649290562 = Function3<List<Any?>, Composer, Int, Unit>(
+          /* bound = */ [composableLambdaInstance(key = -1649290562, tracked = false, block =           @Composable
+          @FunctionKeyMeta(key = -1649290562, startOffset = 1037, endOffset = 1073)
+local fun <T : Any?> <anonymous>(it: List<T>, /* var */ $composer: Composer?, $changed: Int) {
             var $composer: Composer? = $composer
-            sourceInformation(composer = $composer, sourceInformation = "C26@783L37:testComposableSingletonOuterTypeParameters.kt")
+            sourceInformation(composer = $composer, sourceInformation = "C:testComposableSingletonOuterTypeParameters.kt")
             when {
-              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 17), arg1 = 16).not(), flags = $changed.and(other = 1)) -> { // BLOCK
                 when {
-                  isTraceInProgress() -> traceEventStart(key = 1558473979, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$1558473979>.<anonymous> (testComposableSingletonOuterTypeParameters.kt:26)")
+                  isTraceInProgress() -> traceEventStart(key = -1649290562, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1649290562>.<anonymous> (testComposableSingletonOuterTypeParameters.kt:40)")
                 }
-                Consume<T>(content = ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1538714934>(), $composer = $composer, $changed = 6)
+                plusAssign<String>(/* <this> = <get-log>(), */ element = "non-composable function")
                 when {
                   isTraceInProgress() -> traceEventEnd()
                 }
@@ -233,13 +239,45 @@ local fun <T : Any?> <anonymous>(/* var */ $composer: Composer?, $changed: Int) 
             }
           }
 )],
-          /* invoke = */          local fun(<this>: ComposableLambda, p0: Composer, p1: Int) {
-            return <this>.invoke(p1 = p0, p2 = p1) /*~> Unit */
+          /* invoke = */          local fun(<this>: ComposableLambda, p0: List<Any?>, p1: Composer, p2: Int) {
+            return <this>.invoke(p1 = p0 /*as Any? */, p2 = p1, p3 = p2) /*~> Unit */
           }
         )
 
       }
-      return <this>.#lambda$1558473979
+      return <this>.#lambda$-1649290562
+    }
+
+  internal val lambda$1052876675: Function3<List<Pair<Any?, Any?>>, Composer, Int, Unit>?
+    internal get(): Function3<List<Pair<Any?, Any?>>, Composer, Int, Unit> {
+      when {
+        EQEQ(arg0 = <this>.#lambda$1052876675, arg1 = null) -> <this>.#lambda$1052876675 = Function3<List<Pair<Any?, Any?>>, Composer, Int, Unit>(
+          /* bound = */ [composableLambdaInstance(key = 1052876675, tracked = false, block =           @Composable
+          @FunctionKeyMeta(key = 1052876675, startOffset = 683, endOffset = 714)
+local fun <T : Any?, S : Any?> <anonymous>(it: List<Pair<S, T>>, /* var */ $composer: Composer?, $changed: Int) {
+            var $composer: Composer? = $composer
+            sourceInformation(composer = $composer, sourceInformation = "C:testComposableSingletonOuterTypeParameters.kt")
+            when {
+              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 17), arg1 = 16).not(), flags = $changed.and(other = 1)) -> { // BLOCK
+                when {
+                  isTraceInProgress() -> traceEventStart(key = 1052876675, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$1052876675>.<anonymous> (testComposableSingletonOuterTypeParameters.kt:19)")
+                }
+                plusAssign<String>(/* <this> = <get-log>(), */ element = "class and function")
+                when {
+                  isTraceInProgress() -> traceEventEnd()
+                }
+              }
+              else -> $composer.skipToGroupEnd()
+            }
+          }
+)],
+          /* invoke = */          local fun(<this>: ComposableLambda, p0: List<Pair<Any?, Any?>>, p1: Composer, p2: Int) {
+            return <this>.invoke(p1 = p0 /*as Any? */, p2 = p1, p3 = p2) /*~> Unit */
+          }
+        )
+
+      }
+      return <this>.#lambda$1052876675
     }
 
   internal val lambda$1537598062: Function3<List<Any?>, Composer, Int, Unit>?
@@ -274,53 +312,21 @@ local fun <T : Any?> <anonymous>(it: List<T>, /* var */ $composer: Composer?, $c
       return <this>.#lambda$1537598062
     }
 
-  internal val lambda$-1649290562: Function3<List<Any?>, Composer, Int, Unit>?
-    internal get(): Function3<List<Any?>, Composer, Int, Unit> {
-      when {
-        EQEQ(arg0 = <this>.#lambda$-1649290562, arg1 = null) -> <this>.#lambda$-1649290562 = Function3<List<Any?>, Composer, Int, Unit>(
-          /* bound = */ [composableLambdaInstance(key = -1649290562, tracked = false, block =           @Composable
-          @FunctionKeyMeta(key = -1649290562, startOffset = 1037, endOffset = 1073)
-local fun <T : Any?> <anonymous>(it: List<T>, /* var */ $composer: Composer?, $changed: Int) {
-            var $composer: Composer? = $composer
-            sourceInformation(composer = $composer, sourceInformation = "C:testComposableSingletonOuterTypeParameters.kt")
-            when {
-              $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 17), arg1 = 16).not(), flags = $changed.and(other = 1)) -> { // BLOCK
-                when {
-                  isTraceInProgress() -> traceEventStart(key = -1649290562, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1649290562>.<anonymous> (testComposableSingletonOuterTypeParameters.kt:40)")
-                }
-                plusAssign<String>(/* <this> = <get-log>(), */ element = "non-composable function")
-                when {
-                  isTraceInProgress() -> traceEventEnd()
-                }
-              }
-              else -> $composer.skipToGroupEnd()
-            }
-          }
-)],
-          /* invoke = */          local fun(<this>: ComposableLambda, p0: List<Any?>, p1: Composer, p2: Int) {
-            return <this>.invoke(p1 = p0 /*as Any? */, p2 = p1, p3 = p2) /*~> Unit */
-          }
-        )
-
-      }
-      return <this>.#lambda$-1649290562
-    }
-
-  internal val lambda$-1082454483: Function2<Composer, Int, Unit>?
+  internal val lambda$1558473979: Function2<Composer, Int, Unit>?
     internal get(): Function2<Composer, Int, Unit> {
       when {
-        EQEQ(arg0 = <this>.#lambda$-1082454483, arg1 = null) -> <this>.#lambda$-1082454483 = Function2<Composer, Int, Unit>(
-          /* bound = */ [composableLambdaInstance(key = -1082454483, tracked = false, block =           @Composable
-          @FunctionKeyMeta(key = -1082454483, startOffset = 1020, endOffset = 1075)
+        EQEQ(arg0 = <this>.#lambda$1558473979, arg1 = null) -> <this>.#lambda$1558473979 = Function2<Composer, Int, Unit>(
+          /* bound = */ [composableLambdaInstance(key = 1558473979, tracked = false, block =           @Composable
+          @FunctionKeyMeta(key = 1558473979, startOffset = 773, endOffset = 826)
 local fun <T : Any?> <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
             var $composer: Composer? = $composer
-            sourceInformation(composer = $composer, sourceInformation = "C40@1026L47:testComposableSingletonOuterTypeParameters.kt")
+            sourceInformation(composer = $composer, sourceInformation = "C26@783L37:testComposableSingletonOuterTypeParameters.kt")
             when {
               $composer.shouldExecute(parametersChanged = EQEQ(arg0 = $changed.and(other = 3), arg1 = 2).not(), flags = $changed.and(other = 1)) -> { // BLOCK
                 when {
-                  isTraceInProgress() -> traceEventStart(key = -1082454483, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1082454483>.<anonymous> (testComposableSingletonOuterTypeParameters.kt:40)")
+                  isTraceInProgress() -> traceEventStart(key = 1558473979, dirty1 = $changed, dirty2 = -1, info = "ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$1558473979>.<anonymous> (testComposableSingletonOuterTypeParameters.kt:26)")
                 }
-                Consume<T>(content = ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1649290562>(), $composer = $composer, $changed = 6)
+                Consume<T>(content = ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1538714934>(), $composer = $composer, $changed = 6)
                 when {
                   isTraceInProgress() -> traceEventEnd()
                 }
@@ -335,7 +341,7 @@ local fun <T : Any?> <anonymous>(/* var */ $composer: Composer?, $changed: Int) 
         )
 
       }
-      return <this>.#lambda$-1082454483
+      return <this>.#lambda$1558473979
     }
 
   internal val lambda$658066565: Function3<List<List<*>>, Composer, Int, Unit>?
@@ -369,12 +375,6 @@ local fun <A : Any?, B : List<A>> <anonymous>(it: List<B>, /* var */ $composer: 
       }
       return <this>.#lambda$658066565
     }
-
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
 
 }
 
@@ -631,3 +631,4 @@ local fun <anonymous>(/* var */ $composer: Composer?, $changed: Int) {
 fun <T : Any?> nonComposable(): Function2<Composer, Int, Unit> {
   return ComposableSingletons$TestComposableSingletonOuterTypeParametersKt.<get-lambda$-1082454483>()
 }
+

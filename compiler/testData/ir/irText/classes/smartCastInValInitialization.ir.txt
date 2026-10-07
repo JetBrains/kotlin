@@ -1,15 +1,6 @@
 FILE fqName:<root> fileName:/smartCastInValInitialization.kt
   CLASS CLASS name:MessageBusImpl modality:OPEN visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.MessageBusImpl
-    PROPERTY name:parentBus visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:parentBus type:kotlin.Any? visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-parentBus> visibility:public modality:FINAL returnType:kotlin.Any?
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MessageBusImpl
-        correspondingProperty: PROPERTY name:parentBus visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-parentBus> (): kotlin.Any? declared in <root>.MessageBusImpl'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parentBus type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
-              receiver: GET_VAR '<this>: <root>.MessageBusImpl declared in <root>.MessageBusImpl.<get-parentBus>' type=<root>.MessageBusImpl origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -35,6 +26,15 @@ FILE fqName:<root> fileName:/smartCastInValInitialization.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:parentBus visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:parentBus type:kotlin.Any? visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-parentBus> visibility:public modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MessageBusImpl
+        correspondingProperty: PROPERTY name:parentBus visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-parentBus> (): kotlin.Any? declared in <root>.MessageBusImpl'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:parentBus type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.MessageBusImpl declared in <root>.MessageBusImpl.<get-parentBus>' type=<root>.MessageBusImpl origin=null
   CLASS CLASS name:RootBus modality:FINAL visibility:public superTypes:[<root>.MessageBusImpl]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.RootBus
     CONSTRUCTOR visibility:public returnType:<root>.RootBus [primary]

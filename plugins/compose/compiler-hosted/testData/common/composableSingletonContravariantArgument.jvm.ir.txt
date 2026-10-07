@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/composableSingletonContravariantArgument.kt
   CLASS OBJECT name:ComposableSingletons$ComposableSingletonContravariantArgumentKt modality:FINAL visibility:internal superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ComposableSingletons$ComposableSingletonContravariantArgumentKt
+    CONSTRUCTOR visibility:public returnType:<root>.ComposableSingletons$ComposableSingletonContravariantArgumentKt [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$ComposableSingletonContravariantArgumentKt modality:FINAL visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
     PROPERTY name:lambda$-1488744774 visibility:internal modality:FINAL [val]
       FIELD name:lambda$-1488744774 type:kotlin.Function3<java.util.Comparator<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private [static]
       FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:<get-lambda$-1488744774> visibility:internal modality:FINAL returnType:kotlin.Function3<java.util.Comparator<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
@@ -104,10 +108,6 @@ FILE fqName:<root> fileName:/composableSingletonContravariantArgument.kt
           RETURN type=kotlin.Nothing from='internal final fun <get-lambda$-1488744774> (): kotlin.Function3<java.util.Comparator<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>.ComposableSingletons$ComposableSingletonContravariantArgumentKt'
             GET_FIELD 'FIELD name:lambda$-1488744774 type:kotlin.Function3<java.util.Comparator<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private [static] declared in <root>.ComposableSingletons$ComposableSingletonContravariantArgumentKt' type=kotlin.Function3<java.util.Comparator<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? origin=null
               receiver: GET_VAR '<this>: <root>.ComposableSingletons$ComposableSingletonContravariantArgumentKt declared in <root>.ComposableSingletons$ComposableSingletonContravariantArgumentKt.<get-lambda$-1488744774>' type=<root>.ComposableSingletons$ComposableSingletonContravariantArgumentKt origin=null
-    CONSTRUCTOR visibility:public returnType:<root>.ComposableSingletons$ComposableSingletonContravariantArgumentKt [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$ComposableSingletonContravariantArgumentKt modality:FINAL visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:Effect visibility:public modality:FINAL returnType:kotlin.Unit
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER kind:Regular name:vm index:0 type:java.util.Comparator<S of <root>.Effect>

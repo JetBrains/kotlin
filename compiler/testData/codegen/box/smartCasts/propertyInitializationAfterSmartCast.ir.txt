@@ -1,24 +1,6 @@
 FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
   CLASS CLASS name:Base_1 modality:OPEN visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base_1
-    PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Any?
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base_1
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any? declared in <root>.Base_1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
-              receiver: GET_VAR '<this>: <root>.Base_1 declared in <root>.Base_1.<get-x>' type=<root>.Base_1 origin=null
-    PROPERTY name:y visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Any? visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL returnType:kotlin.Any?
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base_1
-        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Any? declared in <root>.Base_1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
-              receiver: GET_VAR '<this>: <root>.Base_1 declared in <root>.Base_1.<get-y>' type=<root>.Base_1 origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -47,26 +29,26 @@ FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-  CLASS CLASS name:Base_2 modality:OPEN visibility:public superTypes:[kotlin.Any]
-    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base_2
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Any?
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base_2
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base_1
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any? declared in <root>.Base_2'
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any? declared in <root>.Base_1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
-              receiver: GET_VAR '<this>: <root>.Base_2 declared in <root>.Base_2.<get-x>' type=<root>.Base_2 origin=null
+              receiver: GET_VAR '<this>: <root>.Base_1 declared in <root>.Base_1.<get-x>' type=<root>.Base_1 origin=null
     PROPERTY name:y visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Any? visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL returnType:kotlin.Any?
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base_2
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base_1
         correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Any? declared in <root>.Base_2'
+          RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Any? declared in <root>.Base_1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
-              receiver: GET_VAR '<this>: <root>.Base_2 declared in <root>.Base_2.<get-y>' type=<root>.Base_2 origin=null
+              receiver: GET_VAR '<this>: <root>.Base_1 declared in <root>.Base_1.<get-y>' type=<root>.Base_1 origin=null
+  CLASS CLASS name:Base_2 modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Base_2
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
@@ -95,6 +77,24 @@ FILE fqName:<root> fileName:/propertyInitializationAfterSmartCast.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:x visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base_2
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any? declared in <root>.Base_2'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.Base_2 declared in <root>.Base_2.<get-x>' type=<root>.Base_2 origin=null
+    PROPERTY name:y visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Any? visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL returnType:kotlin.Any?
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Base_2
+        correspondingProperty: PROPERTY name:y visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Any? declared in <root>.Base_2'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
+              receiver: GET_VAR '<this>: <root>.Base_2 declared in <root>.Base_2.<get-y>' type=<root>.Base_2 origin=null
   CLASS CLASS name:Derived_1 modality:FINAL visibility:public superTypes:[<root>.Base_1]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Derived_1
     CONSTRUCTOR visibility:public returnType:<root>.Derived_1 [primary]

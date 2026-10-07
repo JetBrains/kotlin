@@ -1,10 +1,6 @@
 package events
 
 open external class internal {
-  external var property: Int
-    external get
-    external set
-
   open external class EventEmitterP : internal {
     external constructor() /* primary */
 
@@ -42,6 +38,10 @@ open external class internal {
   external constructor() /* primary */
 
   external fun function(): String
+
+  external var property: Int
+    external get
+    external set
 
 }
 
