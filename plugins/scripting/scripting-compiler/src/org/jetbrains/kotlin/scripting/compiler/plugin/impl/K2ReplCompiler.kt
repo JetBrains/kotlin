@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.renderDiagnosticInternalName
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
-import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirReplSnippetSymbol
-import org.jetbrains.kotlin.jvm.environment.JvmClasspath
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -43,8 +40,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScript
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.FirReplHistoryProviderImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.isReplSnippetSource
-import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.nio.file.Path
@@ -136,25 +131,6 @@ class K2ReplCompiler(
                 add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
             }
 
-            val compilerConfiguration = compilerContext.environment.configuration
-            compilerConfiguration.add(
-                ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
-            )
-            val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
-            val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-            val scriptDefinitionProvider = CliScriptDefinitionProvider(
-                compilerConfiguration.disableStandardScriptDefinition
-            ).also {
-                it.setScriptDefinitionsSources(definitionSources)
-                it.setScriptDefinitions(definitions)
-            }
-            val hostConfigurationWithProvider = hostConfiguration.with {
-                scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
-                scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
-            }
-            val project = compilerContext.environment.project
-            val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
             val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
                 when (it) {
                     is JvmDependency -> it.classpath
@@ -171,58 +147,26 @@ class K2ReplCompiler(
                     else -> emptyList()
                 }
             }
-            compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
-            val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
-            val extensionRegistrars = compilerContext.environment.configuration.getCompilerExtensions(FirExtensionRegistrar)
-            val librariesClasspath = JvmClasspath.ProjectLibraries()
-
-            val moduleDataProvider = ReplModuleDataProvider(classpath.map(File::toPath))
-
-            val sessionFactoryContext = FirJvmSessionFactory.Context(
-                configuration = compilerContext.environment.configuration,
-                projectEnvironment = projectEnvironment,
-                librariesClasspath = librariesClasspath,
-                javaInterop = projectEnvironment.javaInterop(compilerContext.environment.configuration, withJavaSources = false),
-            )
-            val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
-                mainModuleName = moduleName,
-                extensionRegistrars = extensionRegistrars,
-                languageVersionSettings = languageVersionSettings,
-                context = sessionFactoryContext,
-            )
-
-            FirJvmSessionFactory.createLibrarySession(
-                sharedLibrarySession,
-                moduleDataProvider = moduleDataProvider,
-                extensionRegistrars = extensionRegistrars,
-                languageVersionSettings = languageVersionSettings,
-                context = sessionFactoryContext,
-            )
-
-            return K2ReplCompilationState(
-                scriptCompilationConfiguration,
-                hostConfigurationWithProvider,
-                projectEnvironment,
-                moduleDataProvider,
-                messageCollector,
-                compilerContext,
-                sharedLibrarySession,
-                sessionFactoryContext,
-            )
+            val shared = createScriptingSharedState(compilerContext, hostConfiguration, moduleName, classpath) {
+                ReplModuleDataProvider(it.map(File::toPath))
+            }
+            return K2ReplCompilationState(shared, scriptCompilationConfiguration, messageCollector, compilerContext)
         }
     }
 }
 
-class K2ReplCompilationState(
+class K2ReplCompilationState internal constructor(
+    shared: ScriptingSharedState<ReplModuleDataProvider>,
     internal val scriptCompilationConfiguration: ScriptCompilationConfiguration,
-    internal val hostConfiguration: ScriptingHostConfiguration,
-    internal val projectEnvironment: VfsBasedProjectEnvironment,
-    internal val moduleDataProvider: ReplModuleDataProvider,
     internal val messageCollector: ScriptDiagnosticsMessageCollector,
     internal val compilerContext: SharedScriptCompilationContext,
-    internal val sharedLibrarySession: FirSession,
-    internal val sessionFactoryContext: FirJvmSessionFactory.Context,
 ) {
+    internal val hostConfiguration: ScriptingHostConfiguration = shared.hostConfiguration
+    internal val moduleDataProvider: ReplModuleDataProvider = shared.moduleDataProvider
+    internal val projectEnvironment: VfsBasedProjectEnvironment = shared.librarySessions.projectEnvironment
+    internal val sharedLibrarySession: FirSession = shared.librarySessions.sharedLibrarySession
+    internal val sessionFactoryContext: FirJvmSessionFactory.Context = shared.librarySessions.sessionFactoryContext
+
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
 
     /**
