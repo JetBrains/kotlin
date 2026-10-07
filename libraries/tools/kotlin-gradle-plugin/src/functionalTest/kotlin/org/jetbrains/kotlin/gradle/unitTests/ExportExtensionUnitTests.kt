@@ -2341,6 +2341,16 @@ class ExportExtensionSwiftPackageIntegrationTests {
         assertEquals("${project.name}-cinterop-swiftPMImport", runTask.cinteropModuleName.get())
     }
 
+    @Test
+    fun `test the imported swift packages reach the generate task`() {
+        val project = swiftPMImportPackageProject()
+
+        // Declared in the exported manifest, so the consumer links what the Kotlin binary refers to.
+        val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
+        assertEquals(setOf("localSwiftPackage", "Lib"), generateTask.swiftPMDependencies.get().map { it.packageName }.toSet())
+        assertEquals(project.projectDir.resolve("iosApp/SharedPackage/Debug").absolutePath, generateTask.exportDirectoryPath.get())
+    }
+
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     private fun swiftPMImportPackageProject() = exportDslProject(multiplatform = { iosArm64(); iosSimulatorArm64() }) {
         multiplatformExtension.extensions.getByType(SwiftPMImportExtension::class.java).apply {

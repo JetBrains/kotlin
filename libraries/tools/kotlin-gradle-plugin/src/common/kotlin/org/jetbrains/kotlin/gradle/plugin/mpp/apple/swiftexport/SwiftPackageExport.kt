@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -15,6 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.configuration
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.AssembleSwiftPackageBinary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTargetOutput
@@ -76,13 +81,14 @@ internal fun Project.registerSwiftPackageExportPipeline(exportExtension: ExportE
         )
     }
 
+    val swiftPMDependencies = importedSwiftPMDependencies()
     NativeBuildType.entries.forEach { buildType ->
         val outputs = appleTargets.map { target ->
             target to registerSwiftExportRunAndBinary(
                 configurations.getValue(target), SwiftExportDSLConstants.TASK_GROUP, buildType, target, SwiftExportNames.SWIFT_PACKAGE
             )
         }
-        registerSwiftPackageExport(integration, buildType, outputs)
+        registerSwiftPackageExport(integration, buildType, outputs, swiftPMDependencies)
     }
 }
 
@@ -90,6 +96,7 @@ private fun Project.registerSwiftPackageExport(
     integration: SwiftExportSwiftPackageIntegrationConfiguration,
     buildType: NativeBuildType,
     outputs: List<Pair<KotlinNativeTarget, SwiftExportBuildOutputs>>,
+    swiftPMDependencies: Provider<Set<SwiftPMDependency>>,
 ) {
     val configuration = buildType.configuration
     val swiftApiModuleName = outputs.first().second.swiftApiModuleName
@@ -107,6 +114,8 @@ private fun Project.registerSwiftPackageExport(
         task.swiftLibraryName.set(swiftApiModuleName.map { it + "Library" })
         task.kotlinBinaryTargetName.set(kotlinBinaryTargetName)
         task.platforms.set(swiftPackagePlatforms(outputs.map { it.first.konanTarget.family }))
+        task.swiftPMDependencies.set(swiftPMDependencies)
+        task.exportDirectoryPath.set(integration.outputDirectory.map { it.dir(configuration).asFile.absolutePath })
         outputs.forEach { (target, output) ->
             task.targetOutputs.add(objects.SwiftExportTargetOutput(target, output.swiftExportTask))
         }
@@ -157,5 +166,16 @@ private fun Project.registerSwiftPackageSync(
         task.doLast { export ->
             export.logger.lifecycle("Exported the $configuration Swift package into ${(export as Sync).destinationDir}")
         }
+    }
+}
+
+/**
+ * The SwiftPM packages the project imports, directly and through its Kotlin dependencies, as declared.
+ */
+private fun Project.importedSwiftPMDependencies(): Provider<Set<SwiftPMDependency>> {
+    if (kotlinPropertiesProvider.disableSwiftPMImport) return provider { emptySet() }
+    val direct = locateOrRegisterSwiftPMDependenciesExtension().swiftPMDependencies
+    return transitiveSwiftPMMetadataProvider().map { transitive ->
+        (direct + transitive.metadataByDependencyIdentifier.values.flatMap { it.dependencies }).toSet()
     }
 }
