@@ -159,12 +159,20 @@ fun GCMResult.linearize(block: BlockEntry): List<Node> {
 
     // TODO optimize
     val graph = object : DiGraph<Node> {
+        // BlockEntry and Phi inputs come along incoming CFG edges, so they are not intra-block dependencies
+        // (otherwise a back edge or a loop-carried value originating in the same block forms a cycle).
+        private fun isIntraBlockDep(arg: Node, use: Node): Boolean = when (use) {
+            is BlockEntry -> false
+            is Phi -> arg == use.block
+            else -> true
+        }
+
         override fun preds(n: Node): Sequence<Node> {
-            return n.args.asSequence().filterNotNull().filter { it !is Unreachable && block(it) == block }
+            return n.args.asSequence().filterNotNull().filter { it !is Unreachable && block(it) == block && isIntraBlockDep(it, n) }
         }
 
         override fun succs(n: Node): Sequence<Node> {
-            val usesInBlock = n.uses.filter { block(it) == block }
+            val usesInBlock = n.uses.filter { block(it) == block && isIntraBlockDep(n, it) }
             if (n == blockEnd) {
                 return usesInBlock
             }
@@ -184,20 +192,5 @@ fun GCMResult.linearize(block: BlockEntry): List<Node> {
 
     val topSort = postOrder.toList().reversed()
 
-//    println("GCM")
-//    for ((n, b) in blocks) {
-//        println("$n block $b")
-//    }
-//    println()
-//    println("NODES")
-//    for (n in blockNodes) {
-//        println("$n preds: ${graph.preds(n).toList()} succs: ${graph.succs(n).toList()}")
-//    }
-//    println()
-//    println("TS")
-//    for (n in topSort) {
-//        println("$n preds: ${graph.preds(n).toList()} succs: ${graph.succs(n).toList()}")
-//    }
-//    println()
     return topSort
 }

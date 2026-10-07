@@ -3,9 +3,11 @@ package hair.transform
 import hair.ir.*
 import hair.ir.nodes.*
 import hair.sym.ArithmeticType
+import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.test.Cls
 import hair.test.Fld
+import hair.test.Fun
 import hair.test.Glb
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -67,5 +69,41 @@ class GCMTest : IrTest {
         assertTrue(storeIdx >= 0, "StoreGlobal must appear in the linearized order")
         assertTrue(loadIdx < storeIdx,
             "LoadGlobal (pos $loadIdx) must come before StoreGlobal (pos $storeIdx)")
+    }
+
+    @Test
+    fun testLoopPhiBackEdgeSelfLoop() = withTestSession {
+        lateinit var loop: BlockEntry
+
+        buildInitialIR {
+            loop = BlockEntry(Goto(), null) as BlockEntry
+            val phi = Phi(loop, Const(0), Param(2)) as Phi
+            val inc = Add(ArithmeticType.INT)(phi, Const(1))
+            val call = InvokeStatic(Fun("f", listOf(HairType.INT)))(callArgs = arrayOf(inc))
+            val masked = And(ArithmeticType.INT)(call, Const(255))
+            val next = Add(ArithmeticType.INT)(masked, Const(2))
+            phi.joinedValues[1] = next
+            val [trueExit, falseExit] = IfExits(Cmp(HairType.INT, CmpOp.S_LT)(next, Param(1)))
+            loop.preds[1] = trueExit
+
+            BlockEntry(falseExit)
+            Return(next)
+        }
+
+        val gcm = performGCM(this)
+        val order = gcm.linearOrder(loop)
+        for ([idx, n] in order.withIndex()) {
+            // BlockEntry and Phi value inputs arrive along CFG edges, so they impose no intra-block order
+            val deps = when (n) {
+                is BlockEntry -> emptyList()
+                is Phi -> listOf(n.block)
+                else -> n.args.filterNotNull()
+            }
+            for (arg in deps) {
+                if (gcm.blocks[arg] != loop) continue
+                val argIdx = order.indexOf(arg)
+                assertTrue(argIdx in 0..<idx, "$arg (pos $argIdx) must come before its use $n (pos $idx)")
+            }
+        }
     }
 }
