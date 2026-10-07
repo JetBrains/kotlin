@@ -195,7 +195,7 @@ public data class KaTypeToShortenInfo(val typeToShorten: SmartPsiElementPointer<
  * ```
  */
 @KaIdeApi
-public data class QualifierToShortenInfo(
+public data class KaQualifierToShortenInfo(
     val qualifierToShorten: SmartPsiElementPointer<KtDotQualifiedExpression>,
     val shortenedReference: String?,
 )
@@ -216,7 +216,7 @@ public interface ShortenCommand {
     public val importsToAdd: Set<FqName>
     public val starImportsToAdd: Set<FqName>
     public val listOfTypeToShortenInfo: List<KaTypeToShortenInfo>
-    public val listOfQualifierToShortenInfo: List<QualifierToShortenInfo>
+    public val listOfQualifierToShortenInfo: List<KaQualifierToShortenInfo>
     public val thisLabelsToShorten: List<ThisLabelToShortenInfo>
     public val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>>
 

@@ -152,7 +152,7 @@ internal class KaFirReferenceShortener(
             additionalImports.simpleImports,
             additionalImports.starImports,
             collector.typesToShorten.distinctBy { it.element }.map { KaTypeToShortenInfo(it.element.createSmartPointer(), it.shortenedRef) },
-            collector.qualifiersToShorten.distinctBy { it.element }.map { QualifierToShortenInfo(it.element.createSmartPointer(), it.shortenedRef) },
+            collector.qualifiersToShorten.distinctBy { it.element }.map { KaQualifierToShortenInfo(it.element.createSmartPointer(), it.shortenedRef) },
             collector.labelsToShorten.distinctBy { it.element }.map { ThisLabelToShortenInfo(it.element.createSmartPointer()) },
             kDocCollector.kDocQualifiersToShorten.distinctBy { it.element }.map { it.element.createSmartPointer() },
         )
@@ -1626,7 +1626,7 @@ private class ShortenCommandImpl(
     override val importsToAdd: Set<FqName>,
     override val starImportsToAdd: Set<FqName>,
     override val listOfTypeToShortenInfo: List<KaTypeToShortenInfo>,
-    override val listOfQualifierToShortenInfo: List<QualifierToShortenInfo>,
+    override val listOfQualifierToShortenInfo: List<KaQualifierToShortenInfo>,
     override val thisLabelsToShorten: List<ThisLabelToShortenInfo>,
     override val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>>,
 ) : ShortenCommand

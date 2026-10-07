@@ -192,6 +192,7 @@ org.jetbrains.kotlin.analysis.api.components.KaJavaInteroperabilityComponent.nam
 org.jetbrains.kotlin.analysis.api.components.KaKDocProvider
 org.jetbrains.kotlin.analysis.api.components.KaKDocProvider.findKDoc()
 org.jetbrains.kotlin.analysis.api.components.KaKDocProvider.findKDoc()
+org.jetbrains.kotlin.analysis.api.components.KaQualifierToShortenInfo
 org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener
 org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener.collectPossibleReferenceShortenings(KtFile, TextRange, KaShortenOptions, (KaClassLikeSymbol) -> KaShortenStrategy, (KaCallableSymbol) -> KaShortenStrategy)
 org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener.collectPossibleReferenceShorteningsInElement(KtElement, KaShortenOptions, (KaClassLikeSymbol) -> KaShortenStrategy, (KaCallableSymbol) -> KaShortenStrategy)
@@ -527,7 +528,6 @@ org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase.ExpectTypeCase.Ex
 org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase.NullCase
 org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase.TypeCase
 org.jetbrains.kotlin.analysis.api.components.KaWhenMissingCase.UnknownCase
-org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.importsToAdd
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.isEmpty
