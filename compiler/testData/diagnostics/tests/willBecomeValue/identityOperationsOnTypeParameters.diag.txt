@@ -1,7 +1,23 @@
 /identityOperationsOnTypeParameters.kt:13:10: warning: Type 'Wrapper' is final, so the value of the type parameter is predetermined.
 
+/identityOperationsOnTypeParameters.kt:13:41: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
+
+/identityOperationsOnTypeParameters.kt:13:47: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
+
+/identityOperationsOnTypeParameters.kt:15:48: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
+
+/identityOperationsOnTypeParameters.kt:15:54: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
+
+/identityOperationsOnTypeParameters.kt:17:57: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
+
 /identityOperationsOnTypeParameters.kt:17:63: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
 
 /identityOperationsOnTypeParameters.kt:19:10: warning: Type 'Wrapper' is final, so the value of the type parameter is predetermined.
 
+/identityOperationsOnTypeParameters.kt:19:45: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
+
 /identityOperationsOnTypeParameters.kt:21:15: warning: Type 'Wrapper' is final, so the value of the type parameter is predetermined.
+
+/identityOperationsOnTypeParameters.kt:22:33: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
+
+/identityOperationsOnTypeParameters.kt:22:39: warning: Identity-sensitive operation on 'Wrapper', which is annotated with '@WillBecomeValue'. It will be forbidden once the class becomes a value class.
