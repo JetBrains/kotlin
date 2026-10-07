@@ -162,7 +162,9 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
             namesField = irClass.addStaticArrayField(
                 NAMES_FIELD_NAME,
                 irBuiltIns.stringType,
-                enumEntries.map { it.name.identifier.toIrConst(irBuiltIns.stringType) }
+                enumEntries.map {
+                    JsIrBuilder.buildString(context.irBuiltIns.stringType, it.name.identifier)
+                }
             ).also { irClass.namesContainer = it }
 
             irClass.addStaticArrayField(
@@ -173,7 +175,7 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
                         .irCall(boxIntrinsic.owner, origin = BOXES_CREATION_ORIGIN)
                         .apply {
                             typeArguments[0] = irClass.defaultType
-                            arguments[0] = index.toIrConst(context.irBuiltIns.intType)
+                            arguments[0] = JsIrBuilder.buildInt(context.irBuiltIns.intType, index)
                         }
                 }
             ).also { irClass.boxesContainer = it }
