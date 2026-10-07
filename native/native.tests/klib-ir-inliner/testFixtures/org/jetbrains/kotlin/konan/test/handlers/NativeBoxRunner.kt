@@ -225,7 +225,7 @@ class PrettyResultsHandler(
         //   in grouped mode: `<long_test_name>.__launcher__Kt.runTest`
         @Suppress("RegExpRepeatedSpace")
         val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher__Kt.runTest""".toRegex()
-        val failedRegexWithTCLogger = """-\s+(.*)__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithTCLogger = """-\s+(.*)__launcher(.*)__Kt.runTest""".toRegex()
     }
 
     override fun handle() {
