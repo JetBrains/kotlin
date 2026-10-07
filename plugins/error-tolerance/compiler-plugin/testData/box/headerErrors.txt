@@ -1,0 +1,5 @@
+warning: 1:36: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'UnresolvedType'.
+warning: 5:33: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'UnresolvedReturnType'.
+warning: 9:37: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'UnresolvedMemberType'.
+warning: 12:33: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'UnresolvedBase'.
+warning: 16:41: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolvedCall'.

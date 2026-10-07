@@ -1,0 +1,5 @@
+warning: 2:23: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolvedInitializer'.
+warning: 7:9: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolvedInInit'.
+warning: 12:26: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolvedArgument'.
+warning: 17:32: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolvedDefault'.
+warning: 21:29: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolvedInGetter'.

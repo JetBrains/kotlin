@@ -45,4 +45,22 @@ class DiagnosticsCollectorImpl : BaseDiagnosticsCollector() {
             }
         }
     }
+
+    /**
+     * Removes all diagnostics with error severity from this collector and returns them as a separate collector.
+     * Used by the error-tolerant compilation mode, where errors don't stop the compilation pipeline.
+     */
+    fun extractErrors(): DiagnosticsCollectorImpl {
+        val errors = DiagnosticsCollectorImpl()
+        for ([file, diagnostics] in diagnosticsByFile) {
+            val fileErrors = diagnostics.filter { it.severity.isError }
+            if (fileErrors.isEmpty()) continue
+            diagnostics.removeAll { it.severity.isError }
+            errors.diagnosticsByFile.getOrPut(file) { mutableListOf() }.addAll(fileErrors)
+            errors.hasErrors = true
+        }
+        diagnosticsByFile.values.removeAll { it.isEmpty() }
+        hasErrors = false
+        return errors
+    }
 }

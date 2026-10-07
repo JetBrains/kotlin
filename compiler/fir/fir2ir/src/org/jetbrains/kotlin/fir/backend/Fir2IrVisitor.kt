@@ -491,9 +491,18 @@ class Fir2IrVisitor(
         val irAnonymousInitializer = declarationStorage.getIrAnonymousInitializer(anonymousInitializer)
         declarationStorage.enterScope(irAnonymousInitializer.symbol)
         conversionScope.withInitBlock(irAnonymousInitializer) {
+            val stubMessage = configuration.erroneousCodePlan?.getStubMessage(anonymousInitializer)
             irAnonymousInitializer.body =
-                if (configuration.skipBodies) IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                else convertToIrBlockBody(anonymousInitializer.body!!)
+                when {
+                    stubMessage != null -> IrFactoryImpl.createBlockBody(
+                        anonymousInitializer.source?.startOffset ?: UNDEFINED_OFFSET,
+                        anonymousInitializer.source?.endOffset ?: UNDEFINED_OFFSET,
+                    ).apply {
+                        statements += IrErrorExpressionImpl(startOffset, endOffset, builtins.nothingType, stubMessage)
+                    }
+                    configuration.skipBodies -> IrFactoryImpl.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
+                    else -> convertToIrBlockBody(anonymousInitializer.body!!)
+                }
         }
         declarationStorage.leaveScope(irAnonymousInitializer.symbol)
         cleaner.cleanAnonymousInitializer(anonymousInitializer)

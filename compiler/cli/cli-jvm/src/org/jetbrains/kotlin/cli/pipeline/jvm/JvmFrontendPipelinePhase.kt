@@ -173,7 +173,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         outputs.runPlatformCheckers(diagnosticsCollector)
 
         val frontendOutput = AllModulesFrontendOutput(outputs)
-        return JvmFrontendPipelineArtifact(frontendOutput, configuration, environment, allSources)
+        val resultConfiguration = tolerateFrontendErrorsIfNeeded(configuration, frontendOutput)
+        return JvmFrontendPipelineArtifact(frontendOutput, resultConfiguration, environment, allSources)
     }
 
     private data class EnvironmentAndSources(val environment: VfsBasedProjectEnvironment, val sources: () -> GroupedKtSources)

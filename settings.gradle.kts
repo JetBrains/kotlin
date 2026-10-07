@@ -505,6 +505,13 @@ include(
 )
 
 include(
+    ":plugins:error-tolerance:compiler-plugin",
+    ":plugins:error-tolerance:compiler-plugin:error-tolerance.k2",
+    ":plugins:error-tolerance:compiler-plugin:error-tolerance.backend",
+    ":plugins:error-tolerance:compiler-plugin:error-tolerance.cli"
+)
+
+include(
     ":compiler:fir",
     ":compiler:fir:cones",
     ":compiler:fir:tree",

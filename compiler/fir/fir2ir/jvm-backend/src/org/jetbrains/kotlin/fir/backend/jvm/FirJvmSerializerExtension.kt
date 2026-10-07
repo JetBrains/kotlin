@@ -57,6 +57,11 @@ open class FirJvmSerializerExtension(
     private val jvmDefaultMode: JvmDefaultMode,
     final override val stringTable: FirElementAwareStringTable,
     override val additionalMetadataProvider: FirAdditionalMetadataProvider?,
+    /**
+     * In the error-tolerant compilation mode (see [org.jetbrains.kotlin.fir.backend.FirErrorTolerantCompilationExtension]),
+     * signatures of declarations might contain error types.
+     */
+    private val allowErrorTypes: Boolean = false,
 ) : FirSerializerExtension() {
     private val signatureSerializer = FirJvmSignatureSerializer(stringTable)
 
@@ -81,7 +86,8 @@ open class FirJvmSerializerExtension(
         state.config.metadataVersion,
         state.config.jvmDefaultMode,
         stringTable,
-        components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider()
+        components.annotationsFromPluginRegistrar.createAdditionalMetadataProvider(),
+        allowErrorTypes = components.configuration.erroneousCodePlan != null,
     )
 
     override val localClassIdOracle: LocalClassIdOracle
@@ -357,7 +363,7 @@ open class FirJvmSerializerExtension(
     }
 
     override fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
-        if (classBuilderMode === ClassBuilderMode.KAPT3) {
+        if (classBuilderMode === ClassBuilderMode.KAPT3 || allowErrorTypes) {
             builder.className = stringTable.getStringIndex(NON_EXISTENT_CLASS_NAME)
             return
         }

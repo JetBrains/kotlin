@@ -116,6 +116,7 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         // used by Build Tools API in non-incremental compilations:
         lookupTracker = services[LookupTracker::class.java]
         importTracker = services[ImportTracker::class.java]
+        toleratedErrorsTracker = services[ToleratedErrorsTracker::class.java]
 
         if (!incrementalCompilationIsEnabled(arguments)) return
         expectActualTracker = services[ExpectActualTracker::class.java]

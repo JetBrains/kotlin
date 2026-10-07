@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.ToleratedErrorsTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
@@ -573,6 +574,8 @@ abstract class IncrementalCompilerRunner<
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
         val buildDirtyFqNames = HashSet<FqName>()
         val allDirtySources = HashSet<File>()
+        // Files compiled with errors in the error-tolerant mode, they must be recompiled during the next build
+        val sourcesWithToleratedErrors = LinkedHashSet<File>()
         val transaction = icContext.transaction
 
         var exitCode = ExitCode.OK
@@ -593,6 +596,7 @@ abstract class IncrementalCompilerRunner<
 
             val lookupTracker = LookupTrackerImpl(lookupTrackerDelegate)
             val expectActualTracker = ExpectActualTrackerImpl()
+            val toleratedErrorsTracker = ToleratedErrorsTrackerImpl()
 
             val outputItemsCollector = OutputItemsCollectorImpl()
             val forwardingOutputItemsCollector =
@@ -615,7 +619,9 @@ abstract class IncrementalCompilerRunner<
                 dirtySources.toSet(),
                 compilationMode is CompilationMode.Incremental,
                 compilationCanceledStatus ?: EmptyCompilationCanceledStatus
-            ).build()
+            ).apply {
+                register(ToleratedErrorsTracker::class.java, toleratedErrorsTracker)
+            }.build()
 
             args.reportOutputFiles = true
             val bufferingMessageCollector = BufferingMessageCollector()
@@ -664,7 +670,13 @@ abstract class IncrementalCompilerRunner<
 
             if (exitCode != ExitCode.OK) break
 
-            dirtyFilesProvider.cachedHistory.clear(withTransaction = transaction)
+            sourcesWithToleratedErrors.removeAll(sourcesToCompile.mapTo(HashSet()) { it.normalize() })
+            sourcesWithToleratedErrors.addAll(toleratedErrorsTracker.files)
+            if (sourcesWithToleratedErrors.isEmpty()) {
+                dirtyFilesProvider.cachedHistory.clear(withTransaction = transaction)
+            } else {
+                dirtyFilesProvider.cachedHistory.store(transaction, sourcesWithToleratedErrors)
+            }
 
             val changesCollector = ChangesCollector()
             reporter.measure(IC_UPDATE_CACHES) {

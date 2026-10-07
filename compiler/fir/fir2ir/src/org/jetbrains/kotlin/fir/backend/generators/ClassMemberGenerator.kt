@@ -138,7 +138,10 @@ internal class ClassMemberGenerator(
                 annotationGenerator.generate(irFunction, firFunction)
             }
             if (firFunction is FirConstructor && irFunction is IrConstructor && !firFunction.isExpect && !irFunction.isExternal) {
-                if (!configuration.skipBodies) {
+                val stubMessage = firFunction.getErroneousCodeStubMessage()
+                if (stubMessage != null) {
+                    irFunction.body = createErroneousBody(stubMessage)
+                } else if (!configuration.skipBodies) {
                     val body = factory.createBlockBody(startOffset, endOffset)
                     val delegatedConstructor = firFunction.delegatedConstructor
                     val irClass = parent as IrClass
@@ -207,8 +210,10 @@ internal class ClassMemberGenerator(
 
     private fun IrFunction.convertBody(firFunction: FirFunction?): IrBlockBody? {
         val firBody = firFunction?.body
+        val stubMessage = firFunction?.getErroneousCodeStubMessage()
         return when {
             firBody == null -> null
+            stubMessage != null -> createErroneousBody(stubMessage)
             configuration.skipBodies -> factory.createBlockBody(startOffset, endOffset).also { body ->
                 val expression =
                     IrErrorExpressionImpl(startOffset, endOffset, builtins.nothingType, SKIP_BODIES_ERROR_DESCRIPTION)
@@ -219,6 +224,15 @@ internal class ClassMemberGenerator(
             else -> visitor.convertToIrBlockBody(firBody, buildEqualityBoundPrologue(firFunction))
         }
     }
+
+    private fun FirDeclaration.getErroneousCodeStubMessage(): String? =
+        configuration.erroneousCodePlan?.getStubMessage(this)
+
+    private fun IrFunction.createErroneousBody(message: String): IrBlockBody =
+        factory.createBlockBody(startOffset, endOffset).also { body ->
+            val expression = IrErrorExpressionImpl(startOffset, endOffset, builtins.nothingType, message)
+            body.statements.add(IrReturnImpl(startOffset, endOffset, builtins.nothingType, symbol, expression))
+        }
 
     private fun IrFunction.buildEqualityBoundPrologue(firFunction: FirFunction?): List<IrStatement>? {
         if (firFunction == null || configuration.skipBodies || LanguageFeature.StrictEquals.isDisabled()) return null
@@ -328,8 +342,11 @@ internal class ClassMemberGenerator(
                 declarationStorage.enterScope(this@initializeBackingField.symbol)
                 // NB: initializer can be already converted
                 if (initializer == null && initializerExpression != null) {
+                    val stubMessage = property.getErroneousCodeStubMessage()
                     initializer = IrFactoryImpl.createExpressionBody(
-                        run {
+                        if (stubMessage != null) {
+                            IrErrorExpressionImpl(irField.startOffset, irField.endOffset, irField.type, stubMessage)
+                        } else run {
                             val isDelegate = property.delegate != null
                             visitor.convertToIrExpression(
                                 initializerExpression,
@@ -507,7 +524,10 @@ internal class ClassMemberGenerator(
 
         val firDefaultValue = firValueParameter.evaluatedInitializer?.resultOrNull<FirExpression>() ?: firValueParameter.defaultValue
         if (firDefaultValue != null) {
+            val stubMessage = firValueParameter.getErroneousCodeStubMessage()
             this.defaultValue = when {
+                stubMessage != null ->
+                    factory.createExpressionBody(IrErrorExpressionImpl(startOffset, endOffset, builtins.nothingType, stubMessage))
                 configuration.skipBodies && parent.isDataClassCopy ->
                     // Replicate K1 behavior, which removes default values of data class copy parameters in skipBodies (kapt) mode.
                     null

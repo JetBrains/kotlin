@@ -35,6 +35,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val FILE_MAPPING_TRACKER by key<ICFileMappingTracker>(throwOnNull = false)
     val ENUM_WHEN_TRACKER by key<EnumWhenTracker>(throwOnNull = false)
     val IMPORT_TRACKER by key<ImportTracker>(throwOnNull = false)
+    val TOLERATED_ERRORS_TRACKER by key<ToleratedErrorsTracker>(throwOnNull = false)
     val METADATA_VERSION by key<BinaryVersion>()
     val USE_FIR by key<Boolean>()
     val PARSER_MODE by key<ParserMode>(defaultValue = "ParserMode.Default")

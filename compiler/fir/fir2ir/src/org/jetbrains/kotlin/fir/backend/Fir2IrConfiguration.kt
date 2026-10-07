@@ -37,6 +37,7 @@ class Fir2IrConfiguration private constructor(
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
     val skipBodies: Boolean,
+    val erroneousCodePlan: FirErroneousCodePlan?,
     val irVerificationSettings: IrVerificationSettings,
     val carefulApproximationOfContravariantProjectionForSam: Boolean,
     val propagateLazyIrPrivateMembers: Boolean,
@@ -63,6 +64,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = compilerConfiguration.getBoolean(JVMConfigurationKeys.SKIP_BODIES),
+                erroneousCodePlan = compilerConfiguration[ERRONEOUS_CODE_PLAN],
                 irVerificationSettings = IrVerificationSettings(
                     mode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE),
                     disableIrCheckers = compilerConfiguration.disableIrCheckers,
@@ -84,6 +86,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = compilerConfiguration.getBoolean(JVMConfigurationKeys.SKIP_BODIES),
+                erroneousCodePlan = null,
                 irVerificationSettings = IrVerificationSettings(
                     mode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE),
                     disableIrCheckers = compilerConfiguration.disableIrCheckers,
@@ -105,6 +108,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = false,
+                erroneousCodePlan = null,
                 irVerificationSettings = IrVerificationSettings(
                     mode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE),
                     disableIrCheckers = compilerConfiguration.disableIrCheckers,
@@ -127,6 +131,7 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = true,
                 skipBodies = false,
+                erroneousCodePlan = null,
                 irVerificationSettings = IrVerificationSettings(
                     mode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE),
                     disableIrCheckers = compilerConfiguration.disableIrCheckers,

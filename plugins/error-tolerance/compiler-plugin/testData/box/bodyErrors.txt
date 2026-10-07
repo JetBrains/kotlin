@@ -1,0 +1,4 @@
+warning: 4:12: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolved'.
+warning: 7:27: Tolerated error: [RETURN_TYPE_MISMATCH] Return type mismatch: expected 'Int', actual 'String'.
+warning: 11:17: Tolerated error: [CANNOT_INFER_PARAMETER_TYPE] Cannot infer type for type parameter 'R'. Specify it explicitly.
+warning: 11:26: Tolerated error: [UNRESOLVED_REFERENCE] Unresolved reference 'unresolvedMember' on receiver of type 'Int'.
