@@ -506,6 +506,7 @@ include(
 
 include(
     ":plugins:error-tolerance:compiler-plugin",
+    ":plugins:error-tolerance:compiler-plugin-embeddable",
     ":plugins:error-tolerance:compiler-plugin:error-tolerance.k2",
     ":plugins:error-tolerance:compiler-plugin:error-tolerance.backend",
     ":plugins:error-tolerance:compiler-plugin:error-tolerance.cli"
@@ -653,6 +654,7 @@ include(
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-api-jps",
     ":compiler:build-tools:kotlin-build-tools-api-backports",
+    ":compiler:build-tools:kotlin-build-tools-continuous",
     ":compiler:build-tools:kotlin-build-tools-impl",
     ":compiler:build-tools:kotlin-build-tools-compat",
     ":compiler:build-tools:kotlin-build-tools-api-tests",
