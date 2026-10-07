@@ -50,18 +50,17 @@ import kotlin.script.experimental.jvm.util.toSourceCodePosition
  * Collects the file annotations of the [script] accepted by the `onAnnotations` refinement handlers of the [compilationConfiguration],
  * resolving them in the session provided by [getSessionForAnnotationResolution]. The session is expected to see the annotation classes.
  *
- * An accepted annotation that cannot be constructed fails the collecting, unless [tolerateInvalidAnnotations] is set. In this case it is
- * returned as [InvalidScriptResolverAnnotation] and reported as a warning instead. The PSI-based hosts rely on this contract.
- * TODO(KT-89766): revisit the accepted annotation criteria and synchronize LT and PSI behaviours, so the [tolerateInvalidAnnotations] is not needed
+ * An accepted annotation that cannot be constructed is returned as [InvalidScriptResolverAnnotation] and reported as a warning, so the
+ * refinement handlers and the IDE can process it. The compilers turn the invalid annotations left after the refinement into errors,
+ * see [refineAllViaFir].
  */
 @OptIn(SessionConfiguration::class, DirectDeclarationsAccess::class)
 internal fun collectAndResolveScriptAnnotationsViaFir(
     script: SourceCode,
     compilationConfiguration: ScriptCompilationConfiguration,
     baseHostConfiguration: ScriptingHostConfiguration,
-    getSessionForAnnotationResolution: (SourceCode, ScriptCompilationConfiguration) -> FirSession,
+    getSessionForAnnotationResolution: AnnotationResolutionSessionProvider,
     convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
-    tolerateInvalidAnnotations: Boolean = false,
 ): ResultWithDiagnostics<ScriptCollectedData> {
     val hostConfiguration = effectiveHostConfiguration(baseHostConfiguration, compilationConfiguration)
     val messageCollector = ScriptDiagnosticsMessageCollector(null)
@@ -106,13 +105,14 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
                 val error = IllegalArgumentException(reports.joinToString("; ") { it.message }, reports.firstNotNullOfOrNull { it.exception })
                 // the refinement handlers are invoked only if the annotations of their classes are found, so an invalid annotation
                 // alone would go unnoticed - therefore it is additionally reported as a warning
+                val annotation = InvalidScriptResolverAnnotation(name, null, error)
                 val warning = ScriptDiagnostic(
                     ScriptDiagnostic.unspecifiedError,
-                    "Unable to construct the annotation $name: ${error.message}",
+                    annotation.diagnosticMessage(),
                     ScriptDiagnostic.Severity.WARNING,
                     script.locationId,
                 )
-                InvalidScriptResolverAnnotation(name, null, error).asSuccess(listOf(warning))
+                annotation.asSuccess(listOf(warning))
             }
         }
 
@@ -122,7 +122,7 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
         val referencedName = annotationCall.referencedName()
         val annotation =
             annotationCall.toAnnotationObjectIfMatches(acceptedAnnotations, sessionForAnnotationResolution, firFile)
-                ?.let { if (tolerateInvalidAnnotations) it.toInvalidAnnotationIfFailed(referencedName ?: "<unknown>") else it }
+                ?.toInvalidAnnotationIfFailed(referencedName ?: "<unknown>")
                 ?: return ResultWithDiagnostics.Success(null)
         return annotation.onSuccess {
             val location = script.locationId
@@ -326,18 +326,8 @@ private fun FirLiteralExpression.toRuntimeValue(): Any? {
     }
 }
 
-/**
- * [refineAllForK2] with the annotations collected by [collectAndResolveScriptAnnotationsViaFir].
- */
-internal fun ScriptCompilationConfiguration.refineAllViaFir(
-    script: SourceCode,
-    hostConfiguration: ScriptingHostConfiguration,
-    getSessionForAnnotationResolution: (SourceCode, ScriptCompilationConfiguration) -> FirSession,
-    convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
-): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-    refineAllForK2(script, hostConfiguration) { source, configuration ->
-        collectAndResolveScriptAnnotationsViaFir(source, configuration, hostConfiguration, getSessionForAnnotationResolution, convertToFir)
-    }
+internal fun InvalidScriptResolverAnnotation.diagnosticMessage(): String =
+    "Unable to construct the annotation $name: ${error?.message}"
 
 // TODO: implement. Probably need to change SourceCode.Position to accept offsets and then remap them later on reporting
 private fun FirElement.getLocation(): SourceCode.Location? = null

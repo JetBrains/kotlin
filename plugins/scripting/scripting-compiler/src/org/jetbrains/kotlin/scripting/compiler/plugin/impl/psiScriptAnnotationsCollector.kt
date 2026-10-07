@@ -99,15 +99,15 @@ class PsiScriptAnnotationsCollector(
             hostConfiguration.withCompilationConfigurationProvider(SingleScriptCompilationConfigurationProvider(compilationConfiguration))
         val scriptHostConfiguration = effectiveHostConfiguration(baseHostConfiguration, compilationConfiguration)
         val classpath = classpathFor(getRegularClasspath(scriptFile), compilationConfiguration, scriptHostConfiguration)
+        val getAnnotationSession: AnnotationResolutionSessionProvider = { _, _ ->
+            createAnnotationResolutionSession(scriptFile.project, classpath, scriptHostConfiguration)
+        }
         return collectAndResolveScriptAnnotationsViaFir(
             KtFileScriptSource(scriptFile),
             compilationConfiguration,
             baseHostConfiguration,
-            getSessionForAnnotationResolution = { _, _ ->
-                createAnnotationResolutionSession(scriptFile.project, classpath, scriptHostConfiguration)
-            },
+            getAnnotationSession,
             convertToFir = SourceCode::convertToFirViaPsi,
-            tolerateInvalidAnnotations = true,
         )
     }
 }

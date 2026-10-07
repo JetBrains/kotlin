@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.resolvedImportScripts
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.FileBasedScriptSource
@@ -62,3 +67,46 @@ fun ScriptCompilationConfiguration.refineAllForK2(
                 resolvedImportScripts(resolvedScripts)
             }.asSuccess()
         }
+
+/**
+ * Provides the session in which the file annotations of the script are resolved, see [collectAndResolveScriptAnnotationsViaFir].
+ * It is the place where the Analysis API is expected to supply its own session (KT-89684).
+ */
+internal typealias AnnotationResolutionSessionProvider = (SourceCode, ScriptCompilationConfiguration) -> FirSession
+
+internal fun SourceCode.defaultFirConverter(): SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile =
+    if (this is KtFileScriptSource) SourceCode::convertToFirViaPsi else SourceCode::convertToFirViaLightTree
+
+/**
+ * [refineAllForK2] with the annotations collected by [collectAndResolveScriptAnnotationsViaFir]. The accepted annotations that cannot be
+ * constructed are passed to the refinement handlers as [InvalidScriptResolverAnnotation]s. If the refinement succeeds nevertheless,
+ * they are reported as errors in the [failOnInvalidAnnotations] (compiler) mode, and as warnings otherwise (IDE).
+ */
+internal fun ScriptCompilationConfiguration.refineAllViaFir(
+    script: SourceCode,
+    hostConfiguration: ScriptingHostConfiguration,
+    getAnnotationSession: AnnotationResolutionSessionProvider,
+    convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile = script.defaultFirConverter(),
+    failOnInvalidAnnotations: Boolean = true,
+): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    var invalidAnnotations: List<ScriptSourceAnnotation<*>> = emptyList()
+    val result = refineAllForK2(script, hostConfiguration) { source, configuration ->
+        collectAndResolveScriptAnnotationsViaFir(source, configuration, hostConfiguration, getAnnotationSession, convertToFir).also {
+            invalidAnnotations = it.valueOrNull()?.get(ScriptCollectedData.collectedAnnotations).orEmpty()
+                .filter { annotation -> annotation.annotation is InvalidScriptResolverAnnotation }
+        }
+    }
+    if (!failOnInvalidAnnotations || result !is ResultWithDiagnostics.Success || invalidAnnotations.isEmpty()) return result
+    val errors = invalidAnnotations.map {
+        ScriptDiagnostic(
+            ScriptDiagnostic.unspecifiedError,
+            (it.annotation as InvalidScriptResolverAnnotation).diagnosticMessage(),
+            ScriptDiagnostic.Severity.ERROR,
+            it.location?.codeLocationId ?: script.locationId,
+            it.location?.locationInText,
+        )
+    }
+    // the same messages were reported as warnings by the annotations collecting
+    val errorMessages = errors.mapTo(HashSet()) { it.message }
+    return ResultWithDiagnostics.Failure(result.reports.filterNot { it.message in errorMessages } + errors)
+}

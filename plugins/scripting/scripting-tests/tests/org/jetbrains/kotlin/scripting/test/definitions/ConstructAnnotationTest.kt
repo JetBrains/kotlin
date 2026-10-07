@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.scripting.test.definitions
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
-import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.config.useFir
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.PsiScriptAnnotationsCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createCompilationContextFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.getScriptKtFile
 import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
@@ -31,6 +31,7 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.util.classpathFromClass
@@ -154,16 +155,88 @@ class ConstructAnnotationTest {
         assertTrue(messages.any { "Error resolving annotation" in it && "typo" in it }, messages.toString())
     }
 
-    private fun annotations(filename: String, vararg classes: KClass<out Annotation>): ResultWithDiagnostics<List<Annotation>> {
-        val file = ForTestCompileRuntime.transformTestDataPath(testDataPath + File.separator + filename)
+    @Test
+    fun testInvalidAnnotationIsPassedToHandlersOnLightTreeAndPsi() {
+        val psiAnnotations = collectAnnotationsViaPsi(
+            invalidAnnotationScript, invalidAnnotationScriptConfiguration { it.compilationConfiguration.asSuccess() }
+        ).valueOrThrow()
+        val lightTreeAnnotations = mutableListOf<Annotation>()
+        val result = compileViaLightTree(
+            invalidAnnotationScript,
+            invalidAnnotationScriptConfiguration { context ->
+                lightTreeAnnotations.addAll(context.collectedData?.get(ScriptCollectedData.collectedAnnotations).orEmpty().map { it.annotation })
+                context.compilationConfiguration.asSuccess()
+            }
+        )
+
+        for (annotations in listOf(psiAnnotations, lightTreeAnnotations)) {
+            assertEquals(listOf("option"), annotations.filterIsInstance<TestAnnotation>().single().options.toList())
+            val invalid = annotations.filterIsInstance<InvalidScriptResolverAnnotation>().single()
+            assertEquals("AnnotationWithDefault", invalid.name)
+            assertTrue("typo" in invalid.error?.message.orEmpty(), invalid.error?.message)
+        }
+        assertIs<ResultWithDiagnostics.Failure>(result)
+        val errors = result.reports.filter { it.severity == ScriptDiagnostic.Severity.ERROR }.map { it.message }
+        assertTrue(errors.any { "Unable to construct the annotation AnnotationWithDefault" in it && "typo" in it }, errors.toString())
+        assertTrue(result.reports.none { it.severity == ScriptDiagnostic.Severity.WARNING && it.message in errors }, result.reports.toString())
+    }
+
+    @Test
+    fun testInvalidAnnotationHandledByRefinementIsNotReportedAgain() {
+        val result = compileViaLightTree(
+            invalidAnnotationScript,
+            invalidAnnotationScriptConfiguration { makeFailureResult("Invalid annotation handled".asErrorDiagnostics()) }
+        )
+
+        assertIs<ResultWithDiagnostics.Failure>(result)
+        val errors = result.reports.filter { it.severity == ScriptDiagnostic.Severity.ERROR }.map { it.message }
+        assertEquals(listOf("Invalid annotation handled"), errors)
+    }
+
+    private val invalidAnnotationScript =
+        "@file:TestAnnotation(\"option\")\n@file:AnnotationWithDefault(typo = \"requested\")\n".toScriptSource("invalidAnnotation.kts")
+
+    private fun invalidAnnotationScriptConfiguration(handler: RefineScriptCompilationConfigurationHandler) =
+        ScriptCompilationConfiguration {
+            defaultImports(TestAnnotation::class, AnnotationWithDefault::class)
+            dependencies(JvmDependency(classpathFromClass(TestAnnotation::class).orEmpty()))
+            refineConfiguration {
+                onAnnotations(TestAnnotation::class, AnnotationWithDefault::class) { handler(it) }
+            }
+        }
+
+    private fun compileViaLightTree(script: SourceCode, configuration: ScriptCompilationConfiguration): ResultWithDiagnostics<*> =
+        ScriptJvmK2CompilerIsolated(defaultJvmScriptingHostConfiguration).compile(script, configuration)
+
+    private fun collectAnnotationsViaPsi(
+        source: SourceCode,
+        configuration: ScriptCompilationConfiguration,
+        classpath: List<File> = classpathFromClass(TestAnnotation::class).orEmpty(),
+    ): ResultWithDiagnostics<List<Annotation>> {
         val compilationConfiguration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
             useFir = true
             updateWithBaseCompilerArguments()
-            addKotlinSourceRoot(file.path)
             // the annotations are resolved against the compilation classpath, so the annotation classes should be on it
-            addJvmClasspathRoots(classes.flatMap { classpathFromClass(it).orEmpty() })
+            addJvmClasspathRoots(classpath)
             loadScriptingPlugin(this, testRootDisposable)
         }
+        val messageCollector = ScriptDiagnosticsMessageCollector(null)
+        @OptIn(CoreEnvironmentDeprecation::class)
+        val environment = KotlinCoreEnvironment.createForTests(
+            testRootDisposable, compilationConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
+        val context = createCompilationContextFromEnvironment(configuration, environment, messageCollector)
+        val ktFile = getScriptKtFile(source, configuration, context.environment.project, messageCollector).valueOr { return it }
+        if (messageCollector.hasErrors()) {
+            return makeFailureResult(messageCollector.diagnostics)
+        }
+        return PsiScriptAnnotationsCollector { compilationConfiguration.jvmClasspathRoots }
+            .collectAnnotations(ktFile, configuration, defaultJvmScriptingHostConfiguration)
+            .onSuccess { data -> data[ScriptCollectedData.collectedAnnotations].orEmpty().map { it.annotation }.asSuccess() }
+    }
+
+    private fun annotations(filename: String, vararg classes: KClass<out Annotation>): ResultWithDiagnostics<List<Annotation>> {
+        val file = ForTestCompileRuntime.transformTestDataPath(testDataPath + File.separator + filename)
         val configuration = ScriptCompilationConfiguration {
             defaultImports(*classes)
             jvm {
@@ -174,30 +247,9 @@ class ConstructAnnotationTest {
                 }
             }
         }
-
-        val messageCollector = ScriptDiagnosticsMessageCollector(null)
-
-        @OptIn(CoreEnvironmentDeprecation::class)
-        val environment = KotlinCoreEnvironment.createForTests(
-            testRootDisposable, compilationConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
-        val context = createCompilationContextFromEnvironment(configuration, environment, messageCollector)
-        val source = file.toScriptSource()
-        val ktFile = getScriptKtFile(
-            source,
-            configuration,
-            context.environment.project,
-            messageCollector
+        val annotations = collectAnnotationsViaPsi(
+            file.toScriptSource(), configuration, classes.flatMap { classpathFromClass(it).orEmpty() }
         ).valueOr { return it }
-
-        if (messageCollector.hasErrors()) {
-            return makeFailureResult(messageCollector.diagnostics)
-        }
-
-        val data = PsiScriptAnnotationsCollector { compilationConfiguration.jvmClasspathRoots }
-            .collectAnnotations(ktFile, configuration, defaultJvmScriptingHostConfiguration)
-            .valueOr { return it }
-        val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: emptyList()
 
         annotations
             .filterIsInstance<InvalidScriptResolverAnnotation>()

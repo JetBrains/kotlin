@@ -272,10 +272,11 @@ private fun compileImpl(
     // so the incomplete snippet should be recognized here as well.
     var snippetRefinementRawFir: Pair<BaseDiagnosticsCollector, KtSourceFile?>? = null
     val refinedSnippetConfiguration = initialScriptCompilationConfiguration.refineAllViaFir(
-        snippet, state.hostConfiguration, { _, _ -> state.getOrCreateSessionForAnnotationResolution() }
-    ) { session, collector ->
-        convertToFir(session, collector).also { snippetRefinementRawFir = collector to it.sourceFile }
-    }.valueOr { failure ->
+        snippet, state.hostConfiguration, { _, _ -> state.getOrCreateSessionForAnnotationResolution() },
+        convertToFir = { session, collector ->
+            convertToFir(session, collector).also { snippetRefinementRawFir = collector to it.sourceFile }
+        }
+    ).valueOr { failure ->
         val [collector, snippetFile] = snippetRefinementRawFir ?: return failure
         if (!collector.isIncompleteSnippet(snippet, snippetFile)) return failure
         return ResultWithDiagnostics.Failure(listOf(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code")) + failure.reports)
