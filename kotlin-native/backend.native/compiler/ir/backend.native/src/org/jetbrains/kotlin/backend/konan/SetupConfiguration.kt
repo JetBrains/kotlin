@@ -262,6 +262,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     konanTarget = config.target.toString()
     put(DEBUG, config.debug)
     put(OPTIMIZATION, config.optimizationsEnabled)
+    put(ENABLE_ASSERTIONS, config.assertsEnabled)
     put(BinaryOptions.enableReleaseBinaryCache, config.enableReleaseBinaryCache)
     config.configuration.phaseConfig?.let { phaseConfig = it }
     setupPartialLinkageConfig(config.partialLinkageConfig)
