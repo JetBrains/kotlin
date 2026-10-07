@@ -111,7 +111,7 @@ At the same time, FIR resolution adheres to the principle of being side-effect-f
 To handle such diagnostics, the following mechanism is in place:
 - Certain FIR nodes, mostly those with the word `Error` in their name (e.g., [FirResolvedErrorReference](../tree/gen/org/jetbrains/kotlin/fir/references/FirResolvedErrorReference.kt)), include a property that contains a `ConeDiagnostic`.
 - [ConeDiagnostic](../cones/src/org/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic.kt) is an indicator that something went wrong during resolution.
-    - There are many types of `ConeDiagnostic` to represent different possible issues. Refer to [ConeDiagnostics.kt](../semantics/src/org/jetbrains/kotlin/fir/resolve/diagnostics/ConeDiagnostics.kt) for details.
+    - There are many types of `ConeDiagnostic` to represent different possible issues. Refer to [ConeDiagnostics.kt](../semantics.api/src/org/jetbrains/kotlin/fir/resolve/diagnostics/ConeDiagnostics.kt) for details.
 - `ConeDiagnostic` objects are stored in the FIR tree. The special checker component ([ErrorNodeDiagnosticCollectorComponent](./src/org/jetbrains/kotlin/fir/analysis/collectors/components/ErrorNodeDiagnosticCollectorComponent.kt)) scans all FIR nodes and reports the appropriate diagnostics based on the found `ConeDiagnostic`.
 
 ## Platform and Common checkers

@@ -82,7 +82,6 @@ class TowerElementsForClass(
         get() = staticScope != null || staticScopeOwnerSymbol != null
 }
 
-@ConsistentCopyVisibility
 data class FirTowerDataContext private constructor(
     val towerDataElements: PersistentList<FirTowerDataElement>,
     // These properties are effectively redundant, their content should be consistent with `towerDataElements`,

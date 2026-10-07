@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":core:deserialization.common"))
     implementation(project(":core:compiler.common"))
 
-    api(project(":compiler:fir:semantics"))
+    api(project(":compiler:fir:semantics.api"))
 
     compileOnly(intellijCore())
 }
