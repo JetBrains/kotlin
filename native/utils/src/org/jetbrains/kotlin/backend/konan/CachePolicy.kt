@@ -30,5 +30,5 @@ enum class CachePolicy {
     AFFECTS_CODEGEN,
 
     /** The caches can't be used when the option is set. */
-    INCOMPATIBLE_WITH_CACHES,
+    INCOMPATIBLE,
 }

@@ -25,7 +25,7 @@ private val flavorPrefixKeys = setOf(NativeConfigurationKeys.KONAN_TARGET, Nativ
 
 /** Returns a name of the first option which prevents using the caches, if any. */
 internal fun CompilerConfiguration.findOptionIncompatibleWithCaches(): String? = cachePolicies.entries
-        .filter { it.value == CachePolicy.INCOMPATIBLE_WITH_CACHES }
+        .filter { it.value == CachePolicy.INCOMPATIBLE }
         .map { it.key }
         .sortedBy { it.toString() }
         .firstOrNull { this[it] != null }?.toString()

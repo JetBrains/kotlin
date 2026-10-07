@@ -72,12 +72,12 @@ object NativeConfigurationKeysContainer : NativeKeysContainer("org.jetbrains.kot
     val KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO by key<String>(cachePolicy = NOT_PROPAGATED)
     val DEBUG_INFO_VERSION by key<Int>(cachePolicy = AFFECTS_CODEGEN)
     val OBJC_GENERICS by key<Boolean>("Write objc header with generics support.", cachePolicy = NOT_PROPAGATED)
-    // TODO: The prefix map affects the debug info in the caches, but its paths are specific to the build,
-    //  so making it a part of the cache flavor would prevent sharing the caches between the projects.
+    // The prefix map affects the debug info in the caches, but its paths are specific to the build,
+    // so making it a part of the cache flavor would prevent sharing the caches between the projects.
     val DEBUG_PREFIX_MAP by key<Map<String, String>>("Remap file source paths in debug info.", cachePolicy = NOT_PROPAGATED)
     val PRE_LINK_CACHES by key<Boolean>("Perform compiler caches pre-link.", cachePolicy = NOT_PROPAGATED)
     // May change the toolchain (and so, the generated code), but is commonly used to tweak the environment
-    // (e.g., to use a provisioned Xcode), so isn't a part of the cache flavor.
+    // (e.g., to use a provisioned Xcode, or locally built LLVM), so isn't a part of the cache flavor.
     val OVERRIDE_KONAN_PROPERTIES by key<Map<String, String>>("Override konan.properties values.", cachePolicy = PROPAGATED)
     val PROPERTY_LAZY_INITIALIZATION by key<Boolean>(cachePolicy = AFFECTS_CODEGEN)
     val EXTERNAL_DEPENDENCIES by key<String>("The file with the graph of dependencies (libraries) collected by the build system.", cachePolicy = PROPAGATED)

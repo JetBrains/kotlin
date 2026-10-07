@@ -89,7 +89,7 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val enableSafepointSignposts by booleanOption(CachePolicy.NOT_PROPAGATED)
 
-    val forceNativeThreadStateForFunctions by listOption(CachePolicy.INCOMPATIBLE_WITH_CACHES, StringValueParser)
+    val forceNativeThreadStateForFunctions by listOption(CachePolicy.INCOMPATIBLE, StringValueParser)
 
     val packFields by booleanOption(CachePolicy.AFFECTS_CODEGEN)
 
