@@ -10,9 +10,9 @@ import java.io.File
 
 /**
  * The arguments of the `.package(...)` entry declaring this package in a manifest. A local package is referenced
- * relative to [packageRoot].
+ * relative to [packageRoot], or by its absolute path when there is none.
  */
-internal fun SwiftPMDependency.packageArguments(packageRoot: File): List<String> = buildList {
+internal fun SwiftPMDependency.packageArguments(packageRoot: File?): List<String> = buildList {
     when (this@packageArguments) {
         is SwiftPMDependency.Remote -> {
             add(
@@ -32,7 +32,8 @@ internal fun SwiftPMDependency.packageArguments(packageRoot: File): List<String>
             )
         }
         is SwiftPMDependency.Local -> {
-            add("path: \"${absolutePath.normalizedAbsoluteFile().relativeTo(packageRoot).path}\"")
+            val path = absolutePath.normalizedAbsoluteFile()
+            add("path: \"${packageRoot?.let { path.relativeTo(it).path } ?: path.path}\"")
         }
     }
     if (traits.isNotEmpty()) {

@@ -1034,6 +1034,7 @@ data class SwiftPackageDescription(
 @Serializable
 data class SwiftPackageDependency(
     val identity: String,
+    val path: String? = null,
     val requirement: SwiftPackageDependencyRequirement? = null,
     val type: String,
     val url: String? = null,
