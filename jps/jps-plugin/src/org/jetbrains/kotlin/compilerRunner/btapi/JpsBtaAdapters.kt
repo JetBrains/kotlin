@@ -72,13 +72,12 @@ internal class JpsBtaMessageCollectorLogger(private val collector: MessageCollec
 
     override fun error(msg: String, throwable: Throwable?) {
         collector.report(CompilerMessageSeverity.ERROR, msg)
-        if (throwable != null) {
-            collector.report(CompilerMessageSeverity.LOGGING, throwable.stackTraceToString())
-        }
+        throwable?.reportStackTrace()
     }
 
     override fun warn(msg: String, throwable: Throwable?) {
         collector.report(CompilerMessageSeverity.WARNING, msg)
+        throwable?.reportStackTrace()
     }
 
     override fun info(msg: String) {
@@ -91,6 +90,10 @@ internal class JpsBtaMessageCollectorLogger(private val collector: MessageCollec
 
     override fun debug(msg: String) {
         collector.report(CompilerMessageSeverity.LOGGING, msg)
+    }
+
+    private fun Throwable.reportStackTrace() {
+        collector.report(CompilerMessageSeverity.LOGGING, stackTraceToString())
     }
 }
 
