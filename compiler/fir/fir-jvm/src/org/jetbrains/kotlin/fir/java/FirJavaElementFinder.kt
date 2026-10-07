@@ -165,6 +165,12 @@ class FirJavaElementFinder(
             )
         )
 
+        if (firClass.classKind == ClassKind.ENUM_CLASS) {
+            for (enumEntry in firClass.declarations.filterIsInstance<FirEnumEntry>()) {
+                buildFieldStubForEnumEntry(enumEntry, classId, stub)
+            }
+        }
+
         val classProperties = firClass.declarations.filterIsInstance<FirProperty>()
         // Note: we must store companion properties in outer clas because java resolver will not find it other way.
         val companionProperties = firClass.companionObjectSymbol?.declarationSymbols?.map { it.fir }?.filterIsInstance<FirProperty>() ?: emptyList()
@@ -208,6 +214,22 @@ class FirJavaElementFinder(
 
     private fun FirAnnotation.findTargets(): List<String> = buildList {
         forEachAnnotationTarget(session) { add(it.identifier) }
+    }
+
+    private fun buildFieldStubForEnumEntry(
+        firEnumEntry: FirEnumEntry,
+        enumClassId: ClassId,
+        classStub: PsiClassStubImpl<ClsClassImpl>,
+    ) {
+        val flags = PsiFieldStubImpl.packFlags(
+            /* isEnumConst = */ true,
+            /* isDeprecated = */ false,
+            /* hasDeprecatedAnnotation = */ false,
+            /* hasDocComment = */ false,
+        )
+        val typeInfo = TypeInfo.fromString(enumClassId.asSingleFqName().asString())
+        val psiField = PsiFieldStubImpl(classStub, firEnumEntry.name.identifier, typeInfo, null, flags)
+        PsiModifierListStubImpl(psiField, ModifierFlags.PUBLIC_MASK or ModifierFlags.FINAL_MASK or ModifierFlags.STATIC_MASK)
     }
 
     private fun buildFieldStubForConst(firProperty: FirProperty, classStub: PsiClassStubImpl<ClsClassImpl>) {

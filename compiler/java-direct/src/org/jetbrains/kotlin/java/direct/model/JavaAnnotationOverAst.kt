@@ -220,16 +220,21 @@ class JavaEnumValueAnnotationArgumentOverAst(
         get() {
             val className = className ?: return null
 
+            // Consult the model's resolver for the full JLS scope walk (local nested-class,
+            // inherited inner classes, same-package, single-type/static imports, java.lang,
+            // star imports). `resolve` returns null without a symbol provider (parsing-level
+            // unit fixtures), letting the no-symbol-provider fallbacks below take over.
+            with(resolutionContext) { resolve(className) }?.let { return it }
+
+            // No-symbol-provider fallback (parsing-level unit fixtures): `resolve` returned null
+            // because `tryResolve` is always `false` without a provider. The `ClassId.topLevel`
+            // split below misclassifies nested-class imports (`import a.b.C.D` → `ClassId(a.b.C, D)`
+            // rather than `ClassId(a.b, C.D)`); the provider-backed path above is the correct one
+            // for production code.
             val imported = with(resolutionContext) { getSimpleImport(className) }
             if (imported != null) {
                 return ClassId.topLevel(imported)
             }
-
-            // Consult the model's resolver for the full JLS scope walk (local nested-class,
-            // inherited inner classes, same-package, java.lang, star imports). `resolve` returns
-            // null without a symbol provider (parsing-level unit fixtures), letting the
-            // package+name heuristic below take over.
-            with(resolutionContext) { resolve(className) }?.let { return it }
 
             // Already-dotted className (qualified or static-import-resolved FQN) is treated
             // as a top-level FQN — mirrors `JavaAnnotationOverAst.classId`'s dotted-name
