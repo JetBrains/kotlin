@@ -23,7 +23,7 @@ dependencies {
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm.entrypoint"))
     implementation(project(":compiler:plugin-api"))
-    implementation(project(":compiler:fir:semantics"))
+    implementation(project(":compiler:fir:semantics.api"))
     implementation(project(":compiler:fir:fir-jvm"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":compiler:fir:fir2ir"))

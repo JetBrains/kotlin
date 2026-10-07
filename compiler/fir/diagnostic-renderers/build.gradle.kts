@@ -10,7 +10,7 @@ dependencies {
     api(project(":core:compiler.common"))
     api(project(":core:metadata"))
     api(project(":kotlin-stdlib"))
-    implementation(project(":compiler:fir:semantics"))
+    implementation(project(":compiler:fir:semantics.api"))
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":core:util.runtime"))
 }

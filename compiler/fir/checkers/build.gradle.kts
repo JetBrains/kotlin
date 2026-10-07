@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:semantics"))
+    api(project(":compiler:fir:semantics.api"))
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
     api(project(":compiler:fir:diagnostic-renderers"))
     implementation(project(":compiler:frontend.common"))

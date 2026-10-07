@@ -71,8 +71,7 @@ object CompilerModules {
      */
     val firCommonCompilerModules = arrayOf(
         ":compiler:fir:cones",
-        ":compiler:fir:providers",
-        ":compiler:fir:semantics",
+        ":compiler:fir:semantics.api",
         ":compiler:fir:resolve",
         ":compiler:fir:fir-serialization",
         ":compiler:fir:fir-deserialization",

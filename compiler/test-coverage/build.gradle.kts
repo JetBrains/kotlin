@@ -26,8 +26,7 @@ dependencies {
     // transitively — the report scope is declared explicitly and deterministically here.
     jacocoAggregation(project(":compiler:fir:cones"))
     jacocoAggregation(project(":compiler:fir:tree"))
-    jacocoAggregation(project(":compiler:fir:providers"))
-    jacocoAggregation(project(":compiler:fir:semantics"))
+    jacocoAggregation(project(":compiler:fir:semantics.api"))
     jacocoAggregation(project(":compiler:fir:resolve"))
     jacocoAggregation(project(":compiler:fir:plugin-utils"))
     jacocoAggregation(project(":compiler:fir:fir-serialization"))
