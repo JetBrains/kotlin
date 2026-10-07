@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,15 +25,16 @@ class BinaryJavaClassCache(private val index: BinaryClassFileIndex) {
     // Indexed by the two parts of the outermost class name as they already exist in a `ClassId`. An `FqName`
     // of that class would be a nicer single key, but building it costs a string concatenation, an `FqName`,
     // an `FqNameUnsafe`, a `pathSegments()` list and a hash of a fresh string on every lookup.
-    private val topLevelClassFiles: MutableMap<FqName, MutableMap<Name, Collection<BinaryClassFileHandle>>> = HashMap()
+    private val topLevelClassFiles: MutableMap<FqName, MutableMap<Name, Collection<BinaryClassFileHandle>>> =
+        Object2ObjectOpenHashMap()
 
-    private val classFileNamesInPackage: MutableMap<FqName, Set<String>> = HashMap()
+    private val classFileNamesInPackage: MutableMap<FqName, Set<String>> = Object2ObjectOpenHashMap()
 
     private var cachedClasspathVersion: Int = index.classpathVersion
 
     fun findTopLevelClassFiles(packageFqName: FqName, topLevelName: Name): Collection<BinaryClassFileHandle> {
         dropLookupsOfPreviousClasspath()
-        return topLevelClassFiles.getOrPut(packageFqName) { HashMap() }.getOrPut(topLevelName) {
+        return topLevelClassFiles.getOrPut(packageFqName) { Object2ObjectOpenHashMap() }.getOrPut(topLevelName) {
             index.findTopLevelClassFiles(ClassId(packageFqName, topLevelName))
         }
     }

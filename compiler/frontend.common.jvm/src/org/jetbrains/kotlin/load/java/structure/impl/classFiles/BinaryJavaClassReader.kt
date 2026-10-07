@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import org.jetbrains.kotlin.jvm.environment.JvmClasspathRootId
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
@@ -65,11 +66,11 @@ fun readBinaryJavaClass(
  * and the same [ClassId] may be declared by several classpath roots.
  */
 class BinaryJavaClasses {
-    private val classesByFile: MutableMap<BinaryClassFileHandle, MutableMap<ClassId, JavaClass?>> = HashMap()
+    private val classesByFile: MutableMap<BinaryClassFileHandle, MutableMap<ClassId, JavaClass?>> = Object2ObjectOpenHashMap()
 
     // A `null` is not remembered, so a class which was not found is looked for again on the next request.
     internal fun getOrPut(classFile: BinaryClassFileHandle, classId: ClassId, read: () -> JavaClass?): JavaClass? =
-        classesByFile.getOrPut(classFile) { HashMap() }.getOrPut(classId, read)
+        classesByFile.getOrPut(classFile) { Object2ObjectOpenHashMap(2) }.getOrPut(classId, read)
 }
 
 fun VirtualFile.asBinaryClassFileHandle(): BinaryClassFileHandle = VirtualFileBinaryClassFileHandle(this)
