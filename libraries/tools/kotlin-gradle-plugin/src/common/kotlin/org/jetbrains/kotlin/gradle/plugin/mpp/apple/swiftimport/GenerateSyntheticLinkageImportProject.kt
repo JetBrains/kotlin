@@ -341,32 +341,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
             buildString {
                 appendLine(".package(")
-                val dependencyArguments = mutableListOf<String>()
-                when (importedPackage) {
-                    is SwiftPMDependency.Remote -> {
-                        dependencyArguments += when (val repository = importedPackage.repository) {
-                            is SwiftPMDependency.Remote.Repository.Id -> "  id: \"${repository.value}\""
-                            is SwiftPMDependency.Remote.Repository.Url -> "  url: \"${repository.value}\""
-                        }
-                        dependencyArguments += when (val version = importedPackage.version) {
-                            is SwiftPMDependency.Remote.Version.Exact -> "  exact: \"${version.value}\""
-                            is SwiftPMDependency.Remote.Version.From -> "  from: \"${version.value}\""
-                            is SwiftPMDependency.Remote.Version.Range -> "  \"${version.from}\"...\"${version.through}\""
-                            is SwiftPMDependency.Remote.Version.Branch -> "  branch: \"${version.value}\""
-                            is SwiftPMDependency.Remote.Version.Revision -> "  revision: \"${version.value}\""
-                        }
-                    }
-                    is SwiftPMDependency.Local -> {
-                        val absolutePath = importedPackage.absolutePath
-                        val relativePath = absolutePath.normalizedAbsoluteFile().relativeTo(packageRoot)
-                        dependencyArguments += "  path: \"${relativePath.path}\""
-                    }
-                }
-                if (importedPackage.traits.isNotEmpty()) {
-                    val traitsString = importedPackage.traits.joinToString(", ") { "\"${it}\"" }
-                    dependencyArguments += "  traits: [${traitsString}]"
-                }
-                appendLine(dependencyArguments.joinToString(",\n"))
+                appendLine(importedPackage.packageArguments(packageRoot).joinToString(",\n") { "  $it" })
                 append(")")
             }
         } + transitiveSyntheticPackages.map {
@@ -376,24 +351,15 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         val umbrellaPlatforms: Set<SwiftPMDependency.Platform> = konanTargets.get().toSwiftPMPlatforms()
 
         val targetDependencies = (directlyImportedSwiftPMDependencies.flatMap { dependency ->
-            dependency.products.map { product -> product to dependency.packageName }
-        }.map { dependency ->
-            buildString {
-                appendLine(".product(")
-                val dependencyArguments = mutableListOf<String>()
-                dependencyArguments += "  name: \"${dependency.first.name}\""
-                dependencyArguments += "  package: \"${dependency.second}\""
-                val conditionPlatforms = conditionPlatforms(
-                    explicitPlatformConstraints = dependency.first.platformConstraints,
-                    implicitPlatformConstraints = implicitPlatformConstraints,
-                    umbrellaPlatforms = umbrellaPlatforms,
-                )
-                if (conditionPlatforms != null) {
-                    val platformsString = conditionPlatforms.joinToString(", ") { platform -> ".${platform.swiftEnumName}" }
-                    dependencyArguments += "  condition: .when(platforms: [${platformsString}])"
+            dependency.products.map { product ->
+                buildString {
+                    appendLine(".product(")
+                    appendLine(
+                        product.productArguments(dependency.packageName, implicitPlatformConstraints, umbrellaPlatforms)
+                            .joinToString(",\n") { "  $it" }
+                    )
+                    append(")")
                 }
-                appendLine(dependencyArguments.joinToString(",\n"))
-                append(")")
             }
         } + transitiveSyntheticPackages.map {
             ".product(name: \"${it.identifier}\", package: \"${it.identifier}\")"
