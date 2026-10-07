@@ -4,7 +4,4 @@ public abstract interface OnlyPrivateImplementations /* OnlyPrivateImplementatio
   private default void foo();//  foo()
 
   public abstract void baz();//  baz()
-
-  public static final class DefaultImpls /* OnlyPrivateImplementations.DefaultImpls*/ {
-  }
 }
