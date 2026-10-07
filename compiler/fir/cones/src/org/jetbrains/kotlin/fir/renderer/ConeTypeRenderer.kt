@@ -378,6 +378,7 @@ open class ConeTypeRenderer(
         builder.append("union(")
         type.primaryType.takeUnless { it.isNothing }?.let {
             builder.append("primary=")
+            if (it.classId?.isFunctionType() == true) it.renderNonCompilerAttributes()
             this.render(it)
             builder.append(", ")
         }
