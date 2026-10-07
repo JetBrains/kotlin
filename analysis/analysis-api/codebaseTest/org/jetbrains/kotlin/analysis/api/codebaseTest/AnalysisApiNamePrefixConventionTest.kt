@@ -47,7 +47,6 @@ class AnalysisApiNamePrefixConventionTest : AbstractAnalysisApiSurfaceCodebaseVa
          */
         private val ignoredFqNames = listOf(
             // KT-82440
-            "org.jetbrains.kotlin.analysis.api.components.TypeToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.ShortenCommand",

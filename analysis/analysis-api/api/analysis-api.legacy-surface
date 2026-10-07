@@ -506,6 +506,7 @@ org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf(C
 org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf(KaClassLikeSymbol, KaSubtypingErrorTypePolicy)
 org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.isSubtypeOf(KaType, KaSubtypingErrorTypePolicy)
 org.jetbrains.kotlin.analysis.api.components.KaTypeRelationChecker.semanticallyEquals(KaType, KaSubtypingErrorTypePolicy)
+org.jetbrains.kotlin.analysis.api.components.KaTypeToShortenInfo
 org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy
 org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy.ASSIGN_ALL
 org.jetbrains.kotlin.analysis.api.components.KaUnificationSubstitutorPolicy.ASSIGN_LEFT
@@ -537,7 +538,6 @@ org.jetbrains.kotlin.analysis.api.components.ShortenCommand.starImportsToAdd
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.targetFile
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.thisLabelsToShorten
 org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo
-org.jetbrains.kotlin.analysis.api.components.TypeToShortenInfo
 org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
 org.jetbrains.kotlin.analysis.api.components.allSupertypes
 org.jetbrains.kotlin.analysis.api.components.allSupertypes(Boolean)

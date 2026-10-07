@@ -182,7 +182,7 @@ public enum class KaShortenStrategy {
  * ```
  */
 @KaIdeApi
-public data class TypeToShortenInfo(val typeToShorten: SmartPsiElementPointer<KtUserType>, val shortenedReference: String?)
+public data class KaTypeToShortenInfo(val typeToShorten: SmartPsiElementPointer<KtUserType>, val shortenedReference: String?)
 
 /**
  * A class to keep a [KtDotQualifiedExpression] to shorten and what shape the shortened result has to be. [shortenedReference] is the
@@ -215,7 +215,7 @@ public interface ShortenCommand {
     public val targetFile: SmartPsiElementPointer<KtFile>
     public val importsToAdd: Set<FqName>
     public val starImportsToAdd: Set<FqName>
-    public val listOfTypeToShortenInfo: List<TypeToShortenInfo>
+    public val listOfTypeToShortenInfo: List<KaTypeToShortenInfo>
     public val listOfQualifierToShortenInfo: List<QualifierToShortenInfo>
     public val thisLabelsToShorten: List<ThisLabelToShortenInfo>
     public val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>>
