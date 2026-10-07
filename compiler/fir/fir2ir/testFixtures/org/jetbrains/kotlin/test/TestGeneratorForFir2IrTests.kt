@@ -50,11 +50,6 @@ fun main(args: Array<String>) {
                 model("boxJvm/reflection")
             }
 
-            testClass<AbstractReflectionK1MembersImplementationTest> {
-                model("box/reflection")
-                model("boxJvm/reflection")
-            }
-
             testClass<AbstractReflectionLoadMetadataDirectlyTest> {
                 model("box/reflection")
                 model("boxJvm/reflection")
