@@ -177,7 +177,7 @@ internal fun IrSimpleFunction.computeSymbolName(
         val cachedLibraries = context.config.cachedLibraries
         val isCachedLibrary = library != null &&
                 (library == context.config.libraryToCache?.klib || cachedLibraries.isLibraryCached(library))
-        if (isCachedLibrary)
+        if (isCachedLibrary && context.config.disambiguateLibrarySymbols)
             computeDisambiguatedSymbolName(cachedLibraries.getLibraryFingerprint(library))
         else
             computeSymbolName()

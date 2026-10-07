@@ -128,6 +128,11 @@ object BinaryOptions : BinaryOptionRegistry() {
     val perFileCacheForStdlib by booleanOption()
 
     /**
+     * Disambiguate cached library function symbols using the library fingerprint. Enabled by default.
+     */
+    val disambiguateLibrarySymbols by booleanOption()
+
+    /**
      * When `true`, llvm postprocessing will be done in Kotlin compiler;
      * when `false`, new custom llvm C++ passes will be used.
      * This option exists as a workaround, if new passes introduce regressions.

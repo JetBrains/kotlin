@@ -497,6 +497,8 @@ class NativeSecondStageCompilationConfig(
     // By default use the new C++ passes.
     val runLLVMPassesInCompiler = configuration.get(BinaryOptions.runLLVMPassesInCompiler) ?: false
 
+    val disambiguateLibrarySymbols = configuration.get(BinaryOptions.disambiguateLibrarySymbols) ?: true
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")
@@ -505,6 +507,8 @@ class NativeSecondStageCompilationConfig(
 
         if (perFileCacheForStdlib != defaultPerFileCacheForStdlib)
             append("-stdlib_cache${if (perFileCacheForStdlib) "PERFILE" else "MONOLITHIC"}")
+        if (!disambiguateLibrarySymbols)
+            append("-library_symbol_disambiguationDISABLE")
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
             append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
         if (sanitizer != null)
