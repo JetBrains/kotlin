@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jps
 
-import org.jetbrains.kotlin.buildtools.internal.KotlinLoggerMessageCollectorAdapter
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.daemon.client.CompilerCallbackServicesFacadeServer
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.Serializable
 
 internal class JpsManagedCompilerServicesWithResultsFacade(
-    private val loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    private val messageCollector: MessageCollectorWithDiagnosticId,
     incrementalCompilationComponents: IncrementalCompilationComponents? = null,
     lookupTracker: LookupTracker? = null,
     expectActualTracker: ExpectActualTracker? = null,
@@ -35,7 +35,7 @@ internal class JpsManagedCompilerServicesWithResultsFacade(
     icFileMappingTracker
 ) {
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
-        loggerAdapter.reportFromDaemon(
+        messageCollector.reportFromDaemon(
             null, category, severity, message, attachment
         )
     }

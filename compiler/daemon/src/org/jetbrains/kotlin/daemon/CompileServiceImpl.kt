@@ -1127,35 +1127,13 @@ class CompileServiceImpl(
                 reportMessage(LogLevel.LIFECYCLE, msg)
             }
         }
-        val lookupTracker = object : org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker {
-            override fun recordLookup(
-                filePath: String,
-                scopeFqName: String,
-                scopeKind: org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker.ScopeKind,
-                name: String,
-            ) {
-                callbackChannel.report(
-                    kotlinToolchains.protobuf.encodeToByteArray(
-                        PolymorphicSerializer(Messages::class),
-                        Messages.LookupMessage(filePath, scopeFqName, scopeKind, name)
-                    )
-                )
-            }
-
-            override fun clear() {
-                callbackChannel.report(
-                    kotlinToolchains.protobuf.encodeToByteArray(
-                        PolymorphicSerializer(Messages::class),
-                        Messages.LookupClear()
-                    )
-                )
-            }
+        buildOperation.afterSerialization(operationId) {
+            callbackChannel.report(
+                kotlinToolchains.protobuf.encodeToByteArray(PolymorphicSerializer(Messages::class), it)
+            )
         }
-        val finalOperation = (buildOperation as? BaseCompilationOperation)?.toBuilder()?.apply {
-            this[BaseCompilationOperation.LOOKUP_TRACKER] = lookupTracker
-        }?.build() ?: buildOperation
         val result = kotlinToolchains.createBuildSession().use { buildSession ->
-            buildSession.executeOperation(finalOperation, logger = logger)
+            buildSession.executeOperation(buildOperation, logger = logger)
         }
 
         @Suppress("UNCHECKED_CAST")

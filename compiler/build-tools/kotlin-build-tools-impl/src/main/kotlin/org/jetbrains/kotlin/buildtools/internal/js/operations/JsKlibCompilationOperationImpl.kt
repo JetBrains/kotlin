@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
 import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
@@ -41,6 +42,8 @@ import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalComp
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
@@ -206,7 +209,8 @@ internal class JsKlibCompilationOperationImpl(
 
     override fun compileIncrementallyInProcess(
         arguments: K2JSCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
@@ -233,7 +237,7 @@ internal class JsKlibCompilationOperationImpl(
         metricsReporter.startMeasureGc()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
-                kotlinLogger = loggerAdapter.kotlinLogger,
+                kotlinLogger = logger,
                 rootProjectDir = projectDir,
                 buildMetricsReporter = metricsReporter,
             ), buildMetricsReporter = metricsReporter
@@ -257,7 +261,7 @@ internal class JsKlibCompilationOperationImpl(
         )
 
         arguments.incrementalCompilation = true
-        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        logCompilerArguments(logger, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
@@ -265,7 +269,7 @@ internal class JsKlibCompilationOperationImpl(
         val compilationResult = incrementalCompiler.compile(
             kotlinSources,
             arguments,
-            loggerAdapter,
+            messageCollector,
             icConfiguration.sourcesChanges.asChangedFiles,
             fileLocations,
             makeConfigurationInputs(icConfiguration)

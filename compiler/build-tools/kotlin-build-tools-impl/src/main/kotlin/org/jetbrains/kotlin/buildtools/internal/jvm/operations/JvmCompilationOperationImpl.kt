@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSeri
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -93,7 +94,8 @@ internal class JvmCompilationOperationImpl(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmCompilationOperation.Option<V>): V = JvmCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
+    override fun <V> get(key: JvmCompilationOperation.Option<V>): V =
+        JvmCompilationOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
@@ -190,13 +192,16 @@ internal class JvmCompilationOperationImpl(
         }
     }
 
-    override fun createCompilerServicesFacade(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilerServicesFacadeBase {
+    override fun createCompilerServicesFacade(
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
+    ): CompilerServicesFacadeBase {
         val icConfiguration = get(INCREMENTAL_COMPILATION)
         if (icConfiguration is JvmClientManagedIncrementalCompilationConfiguration) {
-            return icConfiguration.createCompilerServicesFacadeBase(loggerAdapter, cancellationHandle)
+            return icConfiguration.createCompilerServicesFacadeBase(logger, messageCollector, cancellationHandle)
         }
 
-        return super.createCompilerServicesFacade(loggerAdapter)
+        return super.createCompilerServicesFacade(logger, messageCollector)
     }
 
     private fun getSnapshotBasedIncrementalCompilationOptions(
@@ -250,11 +255,12 @@ internal class JvmCompilationOperationImpl(
     }
 
     override fun compileInProcess(
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
         setupIdeaStandaloneExecution()
-        return super.compileInProcess(loggerAdapter, executionContext)
+        return super.compileInProcess(logger, messageCollector, executionContext)
     }
 
     override fun createCompiler(): CLICompiler<K2JVMCompilerArguments> {
@@ -267,7 +273,8 @@ internal class JvmCompilationOperationImpl(
 
     override fun compileIncrementallyInProcess(
         arguments: K2JVMCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
         val snapshotBasedIcOptionsAccessor = getIcOptionsAccessorOrNull() ?: error("Missing INCREMENTAL_COMPILATION option.")
@@ -285,7 +292,7 @@ internal class JvmCompilationOperationImpl(
         metricsReporter.startMeasureGc()
         val buildReporter = BuildReporter(
             icReporter = BuildToolsApiBuildICReporter(
-                kotlinLogger = loggerAdapter.kotlinLogger,
+                kotlinLogger = logger,
                 rootProjectDir = projectDir,
                 buildMetricsReporter = metricsReporter,
             ), buildMetricsReporter = metricsReporter
@@ -315,7 +322,7 @@ internal class JvmCompilationOperationImpl(
             )
         }
 
-        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        logCompilerArguments(logger, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
         val fileLocations = if (projectDir != null && buildDir != null) {
             FileLocations(projectDir, buildDir)
@@ -325,7 +332,7 @@ internal class JvmCompilationOperationImpl(
         val compilationResult = incrementalCompiler.compile(
             kotlinSources,
             arguments,
-            loggerAdapter,
+            messageCollector,
             snapshotBasedIcOptionsAccessor.sourcesChanges.asChangedFiles,
             fileLocations,
             configurationInputs,

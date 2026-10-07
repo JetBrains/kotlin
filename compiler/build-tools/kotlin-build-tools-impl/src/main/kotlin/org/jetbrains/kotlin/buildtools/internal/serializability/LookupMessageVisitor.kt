@@ -40,3 +40,18 @@ internal class LogLineVisitor(private val logger: KotlinLogger) : MessageVisitor
         else -> false
     }
 }
+
+internal class CompilerMessageVisitor(private val logger: KotlinLoggerMessageCollectorAdapter) : MessageVisitor {
+
+    override fun accept(message: Messages): Boolean = when (message) {
+        is Messages.CompilerMessageWithDiagnosticId -> {
+            logger.report(message.severity, message.message, message.location, message.diagnosticId)
+            true
+        }
+        is Messages.CompilerMessageClear -> {
+            logger.clear()
+            true
+        }
+        else -> false
+    }
+}

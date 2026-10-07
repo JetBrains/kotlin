@@ -118,6 +118,7 @@ public class KotlinToolchainsImpl : KotlinToolchains {
             executionPolicy: ExecutionPolicy,
             logger: KotlinLogger?,
         ): R {
+            val logger = logger ?: DefaultKotlinLogger
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
             val operationBody: Callable<R> = {
                 val classloadersCacheWithLogger =
@@ -141,14 +142,14 @@ public class KotlinToolchainsImpl : KotlinToolchains {
                 if (operation is BtaSerializable) {
                     val operationId = lastOperationId.incrementAndFetch()
                     val messageVisitors: List<MessageVisitor> =
-                        operation.prepareForSerialization(operationId) + LogLineVisitor(logger ?: DefaultKotlinLogger)
+                        operation.beforeSerialization(operationId, logger) + LogLineVisitor(logger)
                     val messageRenderer =
                         if (operation is BaseCompilationOperationImpl<*, *>) operation[BaseCompilationOperationImpl.COMPILER_MESSAGE_RENDERER] else DefaultCompilerMessageRenderer
                     val warningsAsError =
                         operation is BaseCompilationOperationImpl<*, *> && operation.compilerArguments[CommonToolArgumentsImpl.WERROR]
 
-                    val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, messageRenderer, warningsAsError)
-                    val daemon = daemonConnectionRegistry.getCompileServiceSession(executionPolicy, loggerAdapter)
+                    val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger, messageRenderer, warningsAsError)
+                    val daemon = daemonConnectionRegistry.getCompileServiceSession(executionPolicy, logger, loggerAdapter)
                         ?: error("Unable to get daemon connection")
 
                     val serializedOperation = protobuf.encodeToByteArray(operation as BtaSerializable)

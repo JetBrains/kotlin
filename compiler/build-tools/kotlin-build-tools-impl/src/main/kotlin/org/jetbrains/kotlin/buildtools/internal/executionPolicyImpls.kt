@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.buildtools.internal
 import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Compan
 import org.jetbrains.kotlin.buildtools.internal.DaemonExecutionPolicyImpl.Companion.SHUTDOWN_DELAY_MILLIS
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
@@ -182,15 +184,16 @@ public fun main() {
                 }
             }
         }
-    val lookupTrackerForOperation100 = jvmoperation.prepareForSerialization(1)
-    println(Json.encodeToString(jvmoperation))
+//    val lookupTrackerForOperation100 = jvmoperation.beforeSerialization(1)
+//    println(Json.encodeToString(jvmoperation))
 }
 
 private fun getCurrentClasspath() =
     (DaemonExecutionPolicyImpl::class.java.classLoader as URLClassLoader).urLs.map { transformUrlToFile(it) }
 
 internal fun DaemonExecutionPolicyImpl.createDaemonConnection(
-    loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    logger: KotlinLogger,
+    messageCollector: MessageCollectorWithDiagnosticId,
     sessionIsAliveFlagFile: Lazy<File>,
 ): CompileServiceSession? {
     val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
@@ -228,15 +231,15 @@ internal fun DaemonExecutionPolicyImpl.createDaemonConnection(
         compilerId,
         clientIsAliveFile,
         sessionIsAliveFlagFile.value,
-        loggerAdapter,
-        loggerAdapter.kotlinLogger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
+        messageCollector,
+        logger.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBooleanStrictOrNull() ?: true,
         daemonJVMOptions = jvmOptions,
         daemonOptions = daemonOptions,
         daemonLogOptions = daemonLogOptions,
     )?.also { compileServiceSession ->
-        if (loggerAdapter.kotlinLogger.isDebugEnabled) {
+        if (logger.isDebugEnabled) {
             compileServiceSession.compileService.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
-                loggerAdapter.kotlinLogger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
+                logger.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
             }
         }
     }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImp
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.Messages
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
@@ -26,6 +27,9 @@ import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
 import org.jetbrains.kotlin.config.Services
@@ -45,29 +49,29 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     abstract override val compilerArguments: BtaCompilerArgs
 
-    @kotlinx.serialization.Serializable
-    private class CompilerLookupTrackerPlaceholder(private val operationId: Int) : CompilerLookupTracker {
-        override fun recordLookup(
-            filePath: String,
-            scopeFqName: String,
-            scopeKind: CompilerLookupTracker.ScopeKind,
-            name: String,
-        ) {
-            error("Do not call directly")
-        }
-
-        override fun clear() {
-            error("Do not call directly")
-        }
-    }
-
     override fun getResultSerializer(): KSerializer<CompilationResult> {
         return CompilationResultSerializer
     }
 
-    override fun prepareForSerialization(operationId: Int): List<MessageVisitor> {
+    override fun afterSerialization(operationId: Int, messageReporter: (Messages) -> Unit) {
+        if (hasLookupTracker) {
+            lookupTracker = MessageReportingCompilerLookupTracker(messageReporter)
+            compilerMessageCollector = MessageReportingMessageCollectorWithDiagnosticId(messageReporter)
+        }
+    }
+
+    override fun beforeSerialization(operationId: Int, logger: KotlinLogger): List<MessageVisitor> {
         val messageVisitors = mutableListOf<MessageVisitor>()
         lookupTracker?.let { messageVisitors.add(LookupMessageVisitor(it)) }
+        messageVisitors.add(
+            CompilerMessageVisitor(
+                KotlinLoggerMessageCollectorAdapter(
+                    logger,
+                    compilerMessageRenderer,
+                    compilerArguments[WERROR]
+                )
+            )
+        )
         return messageVisitors
     }
 
@@ -83,13 +87,16 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     private var hasLookupTracker: Boolean = false
 
     @SerialName("COMPILER_ARGUMENTS_LOG_LEVEL")
-    internal var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = CompilerArgumentsLogLevel.DEBUG
+    internal var compilerArgumentsLogLevel: CompilerArgumentsLogLevel = DEBUG
 
     @SerialName("COMPILER_MESSAGE_RENDERER")
+    @Transient
     internal var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 
     @SerialName("GENERATE_COMPILER_REF_INDEX")
     internal var generateCompilerRefIndex: Boolean = false
+
+    private var compilerMessageCollector: MessageCollectorWithDiagnosticId? = null
 
     internal fun copyFrom(from: BaseCompilationOperationImpl<BtaCompilerArgs, CompilerArgs>) {
         super.copyFrom(from)
@@ -127,31 +134,33 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         logger: KotlinLogger?,
         executionContext: ExecutionContext,
     ): CompilationResult {
-        val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
         val kotlinLogger = logger ?: DefaultKotlinLogger
+        val messageCollector = compilerMessageCollector ?: run {
+            val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
+            KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
+        }
         compilerArguments.reportRestrictedViolations(kotlinLogger)
         if (compilerArguments.hasValidationErrors()) {
             compilerArguments.reportValidationErrors(kotlinLogger)
-            return CompilationResult.COMPILATION_ERROR
+            return COMPILATION_ERROR
         }
-        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
-        compilerArguments.reportArgumentParseWarnings(loggerAdapter, createAndPrepareCompilerArguments())
-        val hasArgumentParsingErrors = loggerAdapter.hasErrors()
+        compilerArguments.reportArgumentParseWarnings(messageCollector, createAndPrepareCompilerArguments())
+        val hasArgumentParsingErrors = messageCollector.hasErrors()
         val result = when (executionPolicy) {
             InProcessExecutionPolicyImpl -> {
-                compileInProcess(loggerAdapter, executionContext)
+                compileInProcess(kotlinLogger, messageCollector, executionContext)
             }
             is DaemonExecutionPolicyImpl -> {
-                compileWithDaemon(executionPolicy, loggerAdapter, executionContext)
+                compileWithDaemon(executionPolicy, kotlinLogger, messageCollector, executionContext)
             }
             else -> {
                 CompilationResult.COMPILATION_ERROR.also {
-                    loggerAdapter.kotlinLogger.error("Unknown execution mode: ${executionPolicy::class.qualifiedName}")
+                    kotlinLogger.error("Unknown execution mode: ${executionPolicy::class.qualifiedName}")
                 }
             }
         }
-        return if (hasArgumentParsingErrors && result == CompilationResult.COMPILATION_SUCCESS) {
-            CompilationResult.COMPILATION_ERROR
+        return if (hasArgumentParsingErrors && result == COMPILATION_SUCCESS) {
+            COMPILATION_ERROR
         } else {
             result
         }
@@ -191,7 +200,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         return getIcOptionsOrNull(reportCategories, reportSeverity, requestedCompilationResults, arguments)
             ?: CompilationOptions(
-                compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
+                compilerMode = NON_INCREMENTAL_COMPILER,
                 targetPlatform = targetPlatform,
                 reportCategories = reportCategories,
                 reportSeverity = reportSeverity,
@@ -203,13 +212,15 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     private fun compileWithDaemon(
         executionPolicy: DaemonExecutionPolicyImpl,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
-        loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
+        logger.debug("Compiling using the daemon strategy")
         (val daemon = compileService, val sessionId) = executionContext.daemonConnectionRegistry.getCompileServiceSession(
             executionPolicy,
-            loggerAdapter,
+            logger,
+            messageCollector,
         ) ?: return ExitCode.INTERNAL_ERROR.asCompilationResult
 
         onCancel {
@@ -218,11 +229,11 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
         val arguments = createAndPrepareCompilerArguments()
         arguments.addSources()
-        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        logCompilerArguments(logger, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
 
         val rootProjectDir = getRootProjectDir()
-        val daemonCompileOptions = toDaemonCompilationOptions(loggerAdapter.kotlinLogger.isDebugEnabled, arguments)
-        loggerAdapter.kotlinLogger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
+        val daemonCompileOptions = toDaemonCompilationOptions(logger.isDebugEnabled, arguments)
+        logger.info("Options for KOTLIN DAEMON: $daemonCompileOptions")
 
         val metricsReporter = getMetricsReporter()
         val memoryUsageBeforeBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
@@ -232,9 +243,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 sessionId,
                 arguments.toArgumentStrings(allowArgFileInValues = false).toTypedArray(),
                 daemonCompileOptions,
-                createCompilerServicesFacade(loggerAdapter),
+                createCompilerServicesFacade(logger, messageCollector),
                 DaemonCompilationResults(
-                    loggerAdapter.kotlinLogger, rootProjectDir?.toFile(), metricsReporter
+                    logger, rootProjectDir?.toFile(), metricsReporter
                 ),
                 compilationId
             ).get()
@@ -242,7 +253,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
             val memoryUsageAfterBuild = runCatching { daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get() }.getOrNull()
 
             if (memoryUsageAfterBuild == null || memoryUsageBeforeBuild == null) {
-                loggerAdapter.kotlinLogger.debug("Unable to calculate memory usage")
+                logger.debug("Unable to calculate memory usage")
             } else {
                 metricsReporter.addMetric(DAEMON_INCREASED_MEMORY, memoryUsageAfterBuild - memoryUsageBeforeBuild)
                 metricsReporter.addMetric(DAEMON_MEMORY_USAGE, memoryUsageAfterBuild)
@@ -258,8 +269,11 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         }
     }
 
-    protected open fun createCompilerServicesFacade(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilerServicesFacadeBase =
-        BaseCompilerServicesWithResultsFacade(loggerAdapter, get(LOOKUP_TRACKER))
+    protected open fun createCompilerServicesFacade(
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
+    ): CompilerServicesFacadeBase =
+        BaseCompilerServicesWithResultsFacade(messageCollector, get(LOOKUP_TRACKER))
 
     protected fun populateMetricsCollector(metricsReporter: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>) {
         if (this[XX_KGP_METRICS_COLLECTOR] && metricsReporter is BuildMetricsReporterImpl) {
@@ -276,22 +290,24 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     abstract fun shouldCompileIncrementally(): Boolean
 
     protected open fun compileInProcess(
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
-        loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
+        logger.debug("Compiling using the in-process strategy")
         val arguments = createAndPrepareCompilerArguments()
 
         return if (shouldCompileIncrementally()) {
-            compileIncrementallyInProcess(arguments, loggerAdapter, executionContext)
+            compileIncrementallyInProcess(arguments, logger, messageCollector, executionContext)
         } else {
-            compileInProcessWithoutIc(arguments, loggerAdapter, executionContext)
+            compileInProcessWithoutIc(arguments, logger, messageCollector, executionContext)
         }
     }
 
     abstract fun compileIncrementallyInProcess(
         arguments: CompilerArgs,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult
 
@@ -301,7 +317,8 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     private fun compileInProcessWithoutIc(
         arguments: CompilerArgs,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext,
     ): CompilationResult {
         val compiler = createCompiler()
@@ -312,12 +329,12 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
                 register(LookupTracker::class.java, LookupTrackerAdapter(tracker))
             }
             executionContext.classloadersCache?.let { register(PluginsLoader::class.java, it.asPluginsLoader()) }
-            registerPlatformServices(loggerAdapter.kotlinLogger)
+            registerPlatformServices(logger)
         }.build()
-        logCompilerArguments(loggerAdapter, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
+        logCompilerArguments(logger, arguments, get(COMPILER_ARGUMENTS_LOG_LEVEL))
         val metricsReporter = getMetricsReporter()
         metricsReporter.startMeasureGc()
-        val compilationResult = compiler.exec(loggerAdapter, services, arguments).asCompilationResult
+        val compilationResult = compiler.exec(messageCollector, services, arguments).asCompilationResult
         metricsReporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
         metricsReporter.addMetric(COMPILE_ITERATION, 1) // in non-IC case there's always 1 iteration
         metricsReporter.endMeasureGc()
@@ -331,20 +348,20 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     protected fun getLookupTrackerAdapter(): LookupTracker = this[LOOKUP_TRACKER]?.let { tracker ->
         LookupTrackerAdapter(tracker)
-    } ?: LookupTracker.DO_NOTHING
+    } ?: DO_NOTHING
 
     protected fun logCompilerArguments(
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
         arguments: CompilerArgs,
         argumentsLogLevel: CompilerArgumentsLogLevel,
     ) {
-        with(loggerAdapter.kotlinLogger) {
+        with(logger) {
             val message = "Kotlin compiler args: ${arguments.toArgumentStrings().joinToString(" ")}"
             when (argumentsLogLevel) {
-                CompilerArgumentsLogLevel.ERROR -> error(message)
-                CompilerArgumentsLogLevel.WARNING -> warn(message)
-                CompilerArgumentsLogLevel.INFO -> info(message)
-                CompilerArgumentsLogLevel.DEBUG -> debug(message)
+                ERROR -> error(message)
+                WARNING -> warn(message)
+                INFO -> info(message)
+                DEBUG -> debug(message)
             }
         }
     }
@@ -363,10 +380,49 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 }
 
+private class MessageReportingCompilerLookupTracker(private val messageReporter: (Messages) -> Unit) : CompilerLookupTracker {
+    override fun recordLookup(
+        filePath: String,
+        scopeFqName: String,
+        scopeKind: CompilerLookupTracker.ScopeKind,
+        name: String,
+    ) {
+        messageReporter(
+            Messages.LookupMessage(filePath, scopeFqName, scopeKind, name)
+        )
+    }
+
+    override fun clear() {
+        messageReporter(
+            Messages.LookupClear
+        )
+    }
+}
+
+private class MessageReportingMessageCollectorWithDiagnosticId(private val messageReporter: (Messages) -> Unit) :
+    MessageCollectorWithDiagnosticId {
+    override fun clear() {
+        messageReporter(Messages.CompilerMessageClear)
+    }
+
+    override fun hasErrors(): Boolean {
+        return false
+    }
+
+    override fun report(
+        severity: CompilerMessageSeverity,
+        message: String,
+        location: CompilerMessageSourceLocation?,
+        diagnosticId: String?,
+    ) {
+        messageReporter(Messages.CompilerMessageWithDiagnosticId(severity, message, location, diagnosticId))
+    }
+}
+
 private class BaseCompilerServicesWithResultsFacade(
-    loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    messageCollector: MessageCollectorWithDiagnosticId,
     val lookupTracker: CompilerLookupTracker? = null,
-) : BasicCompilerServicesWithResultsFacadeServer(loggerAdapter) {
+) : BasicCompilerServicesWithResultsFacadeServer(messageCollector) {
     override fun report(category: Int, severity: Int, message: String?, attachment: Serializable?) {
         when (category) {
             ReportCategory.COMPILER_LOOKUP.code -> {

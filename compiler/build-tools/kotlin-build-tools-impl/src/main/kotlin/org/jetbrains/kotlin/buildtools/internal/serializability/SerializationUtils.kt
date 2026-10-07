@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker.ScopeK
 import org.jetbrains.kotlin.buildtools.internal.LogLevel
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
@@ -72,21 +74,22 @@ public val btaSerializersModule: SerializersModule = SerializersModule {
     polymorphic(BtaSerializable::class) {
         subclass(JvmCompilationOperationImpl::class)
     }
-    polymorphic(Messages::class) {
-        subclass(Messages.LogLine::class)
-        subclass(Messages.LookupClear::class)
-        subclass(Messages.LookupMessage::class)
-    }
+//    polymorphic(Messages::class) {
+//        subclass(Messages.LogLine::class)
+//        subclass(Messages.LookupClear::class)
+//        subclass(Messages.LookupMessage::class)
+//    }
 }
 
-public interface Messages {
-    @Serializable
+@Serializable
+public sealed interface Messages {
+
     public data class LogLine(
         public val level: LogLevel,
         public val logLine: String,
     ) : Messages
 
-    @Serializable
+
     public class LookupMessage(
         public val filePath: String,
         public val scopeFqName: String,
@@ -94,6 +97,16 @@ public interface Messages {
         public val name: String,
     ) : Messages
 
-    @Serializable
-    public class LookupClear : Messages
+
+    public object LookupClear : Messages
+
+    public class CompilerMessageWithDiagnosticId(
+        public val severity: CompilerMessageSeverity,
+        public val message: String,
+        public val location: CompilerMessageSourceLocation? = null,
+        public val diagnosticId: String?,
+    ) : Messages
+
+    public object CompilerMessageClear : Messages
+
 }

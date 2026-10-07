@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.internal.js.operations
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithS
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
@@ -96,7 +98,8 @@ internal class JsLinkingOperationImpl(
 
     override fun compileIncrementallyInProcess(
         arguments: K2JSCompilerArguments,
-        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        logger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
         executionContext: ExecutionContext
     ): CompilationResult {
         error("Linking doesn't support incremental compilation")
