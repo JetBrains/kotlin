@@ -42,7 +42,7 @@ fun ClassId.constructClassLikeType(
 }
 
 fun FirClassifierSymbol<*>.constructType(
-    typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
+    typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
@@ -53,7 +53,7 @@ fun FirClassifierSymbol<*>.constructType(
 }
 
 fun FirClassLikeSymbol<*>.constructType(
-    typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
+    typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
