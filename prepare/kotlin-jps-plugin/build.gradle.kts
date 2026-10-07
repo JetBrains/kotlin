@@ -9,6 +9,7 @@ dependencies {
         .forEach { implementation(project(it)) }
 
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    implementation(libs.guava)
 }
 
 val embeddedDependencies = CompilerModules.kotlinJpsPluginEmbeddedDependencies
