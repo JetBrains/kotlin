@@ -129,7 +129,7 @@ class ScriptJvmK2CompilerImpl(
     private fun ScriptCompilationConfiguration.refineAll(
         script: SourceCode,
     ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-        refineAllViaFir(
+        refineAllWithFirAnnotationSession(
             script, state.hostConfiguration,
             { _, scriptCompilationConfiguration -> state.getOrCreateSessionForAnnotationResolution(scriptCompilationConfiguration) },
             convertToFir
