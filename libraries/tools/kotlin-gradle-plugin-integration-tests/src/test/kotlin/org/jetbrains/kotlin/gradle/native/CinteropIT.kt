@@ -128,25 +128,53 @@ class CinteropIT : KGPBaseTest() {
     @GradleTest
     fun cinteropStaticLibrariesUTDChecks(gradleVersion: GradleVersion) {
         nativeProject("KT-89558-cinterop-static-libraries-UTD-checks", gradleVersion = gradleVersion) {
-            build(":cinteropCinteropNative") {
-                assertTasksExecuted(":cinteropCinteropNative")
+            val withProjectDir = ":cinteropCinteropNative"
+            val withoutProjectDir = ":cinteropNoProjectDirNative"
+            build(withProjectDir, withoutProjectDir) {
+                assertTasksExecuted(withProjectDir, withoutProjectDir)
             }
-            build(":cinteropCinteropNative") {
+            build(withProjectDir, withoutProjectDir) {
                 assertConfigurationCacheReused()
-                assertTasksUpToDate(":cinteropCinteropNative")
+                assertTasksUpToDate(withProjectDir, withoutProjectDir)
             }
 
             // staticLibraries + libraryPaths from the .def file, and a comma-separated -staticLibrary from extraOpts
-            for (library in listOf("defLibs/libFromDefFile.a", "libs/libA.a", "libs/libB.a")) {
+            for (library in listOf("libs/libA.a", "libs/libB.a")) {
                 projectPath.resolve(library).toFile().appendText("v2\n")
-                build(":cinteropCinteropNative") {
+                build(withProjectDir, withoutProjectDir) {
                     assertConfigurationCacheReused()
-                    assertTasksExecuted(":cinteropCinteropNative")
+                    assertTasksExecuted(withProjectDir)
+                    assertTasksUpToDate(withoutProjectDir)
                 }
             }
+            // Relative library paths without -Xproject-dir
+            projectPath.resolve("libs/libC.a").toFile().appendText("v2\n")
+            build(withProjectDir, withoutProjectDir) {
+                assertConfigurationCacheReused()
+                assertTasksUpToDate(withProjectDir)
+                assertTasksExecuted(withoutProjectDir)
+            }
+            projectPath.resolve("defLibs/libFromDefFile.a").toFile().appendText("v2\n")
+            build(withProjectDir, withoutProjectDir) {
+                assertConfigurationCacheReused()
+                assertTasksExecuted(withProjectDir, withoutProjectDir)
+            }
 
-            build(":cinteropCinteropNative") {
-                assertTasksUpToDate(":cinteropCinteropNative")
+            // A library added to the .def file is tracked as well
+            projectPath.resolve("src/nativeInterop/cinterop/cinterop.def").replaceText(
+                "staticLibraries = libFromDefFile.a",
+                "staticLibraries = libFromDefFile.a libFromDefFile2.a",
+            )
+            build(withProjectDir) {
+                assertTasksExecuted(withProjectDir)
+            }
+            projectPath.resolve("defLibs/libFromDefFile2.a").toFile().appendText("v2\n")
+            build(withProjectDir) {
+                assertTasksExecuted(withProjectDir)
+            }
+
+            build(withProjectDir, withoutProjectDir) {
+                assertTasksUpToDate(withProjectDir, withoutProjectDir)
             }
         }
     }

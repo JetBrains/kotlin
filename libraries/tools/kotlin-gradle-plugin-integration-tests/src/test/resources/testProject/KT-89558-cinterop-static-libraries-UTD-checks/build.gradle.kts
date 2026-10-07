@@ -17,6 +17,11 @@ kotlin {
                     extraOpts("-libraryPath", "libs")
                     extraOpts("-staticLibrary", "libA.a,libB.a")
                 }
+                create("noProjectDir") {
+                    // Without -Xproject-dir, relative library paths are resolved against the working directory of the tool
+                    extraOpts("-libraryPath", "libs")
+                    extraOpts("-staticLibrary", "libC.a")
+                }
             }
         }
     }
