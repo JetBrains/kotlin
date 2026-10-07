@@ -53,7 +53,7 @@ internal fun Type.toKType(
     val base: SimpleKType = when (this) {
         is Class<*> -> {
             if (allTypeParameters().isNotEmpty() && !replaceNonArrayArgumentsWithStarProjections) {
-                return createRawJavaType(this, knownTypeParameters, isForAnnotationParameter)
+                return createRawJavaType(this, knownTypeParameters, isForAnnotationParameter, nullability, howThisTypeIsUsed)
             }
             if (isArray) {
                 val argumentType =
@@ -151,7 +151,11 @@ private fun createJavaSimpleType(
 )
 
 private fun createRawJavaType(
-    jClass: Class<*>, knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>, isForAnnotationParameter: Boolean,
+    jClass: Class<*>,
+    knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>,
+    isForAnnotationParameter: Boolean,
+    nullability: TypeNullability,
+    howThisTypeIsUsed: TypeUsage,
 ): KType {
     val kClass = jClass.convertJavaClass(isForAnnotationParameter)
     val kotlinTypeParameters = if (kClass is KClassImpl<*> && kClass.kmClass != null) kClass.allTypeParameters() else null
@@ -180,13 +184,19 @@ private fun createRawJavaType(
                 upperBound.toKType(knownTypeParameters, nullability, replaceNonArrayArgumentsWithStarProjections = true),
             )
         },
-        isMarkedNullable = false,
+        isMarkedNullable = nullability == TypeNullability.NULLABLE,
     ).let { type ->
         type.createMutableCollectionType(jClass) { type.arguments } ?: type
     }
     val upperBound = createJavaSimpleType(
-        jClass, kClass, jClass.allTypeParameters().map { KTypeProjection.STAR }, isMarkedNullable = true,
-    )
+        jClass,
+        kClass,
+        jClass.allTypeParameters().map { KTypeProjection.STAR },
+        isMarkedNullable = nullability != TypeNullability.NOT_NULL && !isForAnnotationParameter,
+    ).let { type ->
+        if (howThisTypeIsUsed == TypeUsage.SUPERTYPE) type.createMutableCollectionType(jClass) { type.arguments } ?: type
+        else type
+    }
     return FlexibleKType.create(lowerBound, upperBound, isRawType = true, lazyOf(jClass))
 }
 
