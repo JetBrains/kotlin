@@ -19,10 +19,6 @@ class MyClass {
   }
 
   open class MyClassBuilder {
-    private var aString: String
-      private get
-      private set
-
     companion object Companion {
       var myStaticField: Int
         field = 42
@@ -52,6 +48,10 @@ class MyClass {
       val tmp_0: String = <this>.#aString
       return MyClass(aString = tmp_0)
     }
+
+    private var aString: String
+      private get
+      private set
 
   }
 

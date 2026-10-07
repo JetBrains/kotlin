@@ -1,8 +1,5 @@
 @Data
 class OnlySecondary {
-  val x: Int
-    get
-
   constructor(x: Int) {
     super/*Any*/()
     /* <init>() */
@@ -33,6 +30,9 @@ class OnlySecondary {
   override fun toString(): String {
     return "OnlySecondary(" + "x=" + <this>.<get-x>() + ')'
   }
+
+  val x: Int
+    get
 
 }
 

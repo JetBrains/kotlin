@@ -1,11 +1,4 @@
 FILE fqName:<root> fileName:/firAggressivePruningOn.kt
-  PROPERTY name:privatePropertyReferencedByInline visibility:private modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByInline type:kotlin.String visibility:private [final,static]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-privatePropertyReferencedByInline> visibility:private modality:FINAL returnType:kotlin.String
-      correspondingProperty: PROPERTY name:privatePropertyReferencedByInline visibility:private modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun <get-privatePropertyReferencedByInline> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByInline type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
   FUN name:privateFunReferencedByInline visibility:private modality:FINAL returnType:kotlin.String
     BLOCK_BODY
   FUN name:publicInlineFun visibility:public modality:FINAL returnType:kotlin.String [inline]
@@ -16,3 +9,10 @@ FILE fqName:<root> fileName:/firAggressivePruningOn.kt
           ARG other: CALL 'private final fun <get-privatePropertyReferencedByInline> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
   FUN name:publicNonInlineFun visibility:public modality:FINAL returnType:kotlin.String
     BLOCK_BODY
+  PROPERTY name:privatePropertyReferencedByInline visibility:private modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByInline type:kotlin.String visibility:private [final,static]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-privatePropertyReferencedByInline> visibility:private modality:FINAL returnType:kotlin.String
+      correspondingProperty: PROPERTY name:privatePropertyReferencedByInline visibility:private modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun <get-privatePropertyReferencedByInline> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:privatePropertyReferencedByInline type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null

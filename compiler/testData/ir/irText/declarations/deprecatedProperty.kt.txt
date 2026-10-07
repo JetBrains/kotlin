@@ -33,15 +33,15 @@ var testVarWithExplicitDefaultGetSet: Int
   set
 
 @Deprecated(message = "")
-lateinit var testLateinitVar: Any
-  get
-  set
-
-@Deprecated(message = "")
 val Any.testExtVal: Int
   get(): Int {
     return 1
   }
+
+@Deprecated(message = "")
+lateinit var testLateinitVar: Any
+  get
+  set
 
 @Deprecated(message = "")
 val testValWithExplicitGet: Int

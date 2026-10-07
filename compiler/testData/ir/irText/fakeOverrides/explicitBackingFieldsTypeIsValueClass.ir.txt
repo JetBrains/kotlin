@@ -47,15 +47,6 @@ FILE fqName:<root> fileName:/explicitBackingFieldsTypeIsValueClass.kt
           RETURN type=kotlin.Nothing from='public final fun <get-p3> (): <root>.I declared in <root>.A'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p3 type:<root>.V visibility:private [final]' type=<root>.V origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p3>' type=<root>.A origin=null
-    PROPERTY name:p4 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:p4 type:<root>.V visibility:private [final]
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p4> visibility:public modality:FINAL returnType:<root>.I
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
-        correspondingProperty: PROPERTY name:p4 visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-p4> (): <root>.I declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p4 type:<root>.V visibility:private [final]' type=<root>.V origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p4>' type=<root>.A origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p4 type:<root>.V visibility:private [final]' type=kotlin.Unit origin=null
@@ -79,6 +70,15 @@ FILE fqName:<root> fileName:/explicitBackingFieldsTypeIsValueClass.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:p4 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:p4 type:<root>.V visibility:private [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p4> visibility:public modality:FINAL returnType:<root>.I
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:p4 visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-p4> (): <root>.I declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p4 type:<root>.V visibility:private [final]' type=<root>.V origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-p4>' type=<root>.A origin=null
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
     PROPERTY name:p visibility:public modality:FINAL [val]

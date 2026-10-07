@@ -1,4 +1,19 @@
 FILE fqName:<root> fileName:/propertyDeclaration.kt
+  PROPERTY name:h visibility:public modality:FINAL [delegated,val]
+    FIELD PROPERTY_DELEGATE name:h$delegate type:kotlin.Lazy<kotlin.String> visibility:private [final,static]
+      EXPRESSION_BODY
+        CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.String> origin=null
+          TYPE_ARG T: kotlin.String
+          ARG initializer: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.h$delegate'
+                  CONST String type=kotlin.String value="H"
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-h> visibility:public modality:FINAL returnType:kotlin.String
+      correspondingProperty: PROPERTY name:h visibility:public modality:FINAL [delegated,val]
+      BLOCK_BODY
+  FUN name:foo visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
   PROPERTY name:a visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private [final,static]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL returnType:kotlin.String
@@ -13,6 +28,10 @@ FILE fqName:<root> fileName:/propertyDeclaration.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-b> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
+  PROPERTY name:c visibility:public modality:FINAL [val]
+    FUN name:<get-c> visibility:public modality:FINAL returnType:kotlin.String
+      correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
+      BLOCK_BODY
   PROPERTY name:d visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Boolean visibility:private [final,static]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:FINAL returnType:kotlin.Boolean
@@ -38,19 +57,19 @@ FILE fqName:<root> fileName:/propertyDeclaration.kt
       VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Int
       correspondingProperty: PROPERTY name:f visibility:public modality:FINAL [var]
       BLOCK_BODY
-  PROPERTY name:h visibility:public modality:FINAL [delegated,val]
-    FIELD PROPERTY_DELEGATE name:h$delegate type:kotlin.Lazy<kotlin.String> visibility:private [final,static]
-      EXPRESSION_BODY
-        CALL 'public final fun lazy <T> (initializer: kotlin.Function0<T of kotlin.lazy>): kotlin.Lazy<T of kotlin.lazy> declared in kotlin' type=kotlin.Lazy<kotlin.String> origin=null
-          TYPE_ARG T: kotlin.String
-          ARG initializer: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.h$delegate'
-                  CONST String type=kotlin.String value="H"
-    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-h> visibility:public modality:FINAL returnType:kotlin.String
-      correspondingProperty: PROPERTY name:h visibility:public modality:FINAL [delegated,val]
+  PROPERTY name:g visibility:public modality:FINAL [val]
+    FUN name:<get-g> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:g visibility:public modality:FINAL [val]
       BLOCK_BODY
+  PROPERTY name:i visibility:public modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:public [final,static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=123
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> visibility:public modality:FINAL returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:i visibility:public modality:FINAL [const,val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-i> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
   PROPERTY name:j visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:j type:kotlin.Any visibility:private [final,static]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j> visibility:public modality:FINAL returnType:kotlin.Any
@@ -72,25 +91,6 @@ FILE fqName:<root> fileName:/propertyDeclaration.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-l> (): kotlin.Function1<kotlin.String, kotlin.String> declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:l type:kotlin.Function1<kotlin.String, kotlin.String> visibility:private [final,static]' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
-  FUN name:foo visibility:public modality:FINAL returnType:kotlin.String
-    BLOCK_BODY
-  PROPERTY name:c visibility:public modality:FINAL [val]
-    FUN name:<get-c> visibility:public modality:FINAL returnType:kotlin.String
-      correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
-      BLOCK_BODY
-  PROPERTY name:g visibility:public modality:FINAL [val]
-    FUN name:<get-g> visibility:public modality:FINAL returnType:kotlin.Int
-      correspondingProperty: PROPERTY name:g visibility:public modality:FINAL [val]
-      BLOCK_BODY
-  PROPERTY name:i visibility:public modality:FINAL [const,val]
-    FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:public [final,static]
-      EXPRESSION_BODY
-        CONST Int type=kotlin.Int value=123
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-i> visibility:public modality:FINAL returnType:kotlin.Int
-      correspondingProperty: PROPERTY name:i visibility:public modality:FINAL [const,val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-i> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
   PROPERTY name:m visibility:public modality:FINAL [val]
     FUN name:<get-m> visibility:public modality:FINAL returnType:kotlin.String [inline]
       correspondingProperty: PROPERTY name:m visibility:public modality:FINAL [val]

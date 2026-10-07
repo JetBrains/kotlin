@@ -8,9 +8,6 @@ abstract value class Base {
 }
 
 value class ElvisArgument : Base {
-  val x: Int?
-    get
-
   constructor(x: Int?) /* primary */ {
     val tmp_0: Int = { // BLOCK
       val tmp_1: Int? = x
@@ -47,12 +44,12 @@ value class ElvisArgument : Base {
     return "ElvisArgument(" + "x=" + <this>.#x + ")"
   }
 
+  val x: Int?
+    get
+
 }
 
 value class GenericArgument : GenericBase<Int> {
-  val x: Int
-    get
-
   constructor(x: Int) /* primary */ {
     val tmp_3: Any? = x /*as Any? */
     <this>.#x = x
@@ -80,6 +77,9 @@ value class GenericArgument : GenericBase<Int> {
     return "GenericArgument(" + "x=" + <this>.#x + ")"
   }
 
+  val x: Int
+    get
+
 }
 
 abstract value class GenericBase<T : Any?> {
@@ -92,9 +92,6 @@ abstract value class GenericBase<T : Any?> {
 }
 
 value class IfArgument : Base {
-  val x: Int
-    get
-
   constructor(x: Int) /* primary */ {
     val tmp_5: Int = when {
       greater(arg0 = x, arg1 = 0) -> 1
@@ -125,6 +122,9 @@ value class IfArgument : Base {
     return "IfArgument(" + "x=" + <this>.#x + ")"
   }
 
+  val x: Int
+    get
+
 }
 
 abstract value class PairBase {
@@ -137,9 +137,6 @@ abstract value class PairBase {
 }
 
 value class PlainArgument : Base {
-  val x: Int
-    get
-
   constructor(x: Int) /* primary */ {
     <this>.#x = x
     super/*Base*/(b = x)
@@ -166,12 +163,12 @@ value class PlainArgument : Base {
     return "PlainArgument(" + "x=" + <this>.#x + ")"
   }
 
-}
-
-value class ReorderedArguments : PairBase {
   val x: Int
     get
 
+}
+
+value class ReorderedArguments : PairBase {
   constructor(x: Int) /* primary */ {
     val tmp_8: Int = traced(value = x)
     val tmp_9: Int = traced(value = 3)
@@ -200,8 +197,12 @@ value class ReorderedArguments : PairBase {
     return "ReorderedArguments(" + "x=" + <this>.#x + ")"
   }
 
+  val x: Int
+    get
+
 }
 
 fun traced(value: Int): Int {
   return value
 }
+

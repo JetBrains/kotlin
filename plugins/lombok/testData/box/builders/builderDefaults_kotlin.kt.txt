@@ -9,22 +9,6 @@ class ChainedDefaults {
     get
 
   open class ChainedDefaultsBuilder {
-    private var a: Int
-      private get
-      private set
-
-    private var b: Int
-      private get
-      private set
-
-    private var a$set: Boolean
-      private get
-      private set
-
-    private var b$set: Boolean
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -54,6 +38,22 @@ class ChainedDefaults {
       }
       return ChainedDefaults(a = tmp_0, b = tmp_1)
     }
+
+    private var a: Int
+      private get
+      private set
+
+    private var a$set: Boolean
+      private get
+      private set
+
+    private var b: Int
+      private get
+      private set
+
+    private var b$set: Boolean
+      private get
+      private set
 
   }
 
@@ -86,14 +86,6 @@ class DefaultAnn {
     get
 
   open class DefaultAnnBuilder {
-    private var ann: String
-      private get
-      private set
-
-    private var ann$set: Boolean
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -113,6 +105,14 @@ class DefaultAnn {
       }
       return DefaultAnn(ann = tmp_2)
     }
+
+    private var ann: String
+      private get
+      private set
+
+    private var ann$set: Boolean
+      private get
+      private set
 
   }
 
@@ -149,18 +149,6 @@ class DefaultDependsOnPlain {
     get
 
   open class DefaultDependsOnPlainBuilder {
-    private var base: Int
-      private get
-      private set
-
-    private var derived: Int
-      private get
-      private set
-
-    private var derived$set: Boolean
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -186,6 +174,18 @@ class DefaultDependsOnPlain {
       <this>.#derived$set = true
       return <this>
     }
+
+    private var base: Int
+      private get
+      private set
+
+    private var derived: Int
+      private get
+      private set
+
+    private var derived$set: Boolean
+      private get
+      private set
 
   }
 
@@ -218,10 +218,6 @@ class NotNullable {
     get
 
   open class NotNullableBuilder {
-    private var notNullable: String
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -237,6 +233,10 @@ class NotNullable {
       <this>.#notNullable = notNullable
       return <this>
     }
+
+    private var notNullable: String
+      private get
+      private set
 
   }
 
@@ -285,26 +285,6 @@ class PrimitivesAndNullables {
     get
 
   open class PrimitivesAndNullablesBuilder {
-    private var boolean: Boolean
-      private get
-      private set
-
-    private var char: Char
-      private get
-      private set
-
-    private var int: Int
-      private get
-      private set
-
-    private var uint: UInt
-      private get
-      private set
-
-    private var nullable: String?
-      private get
-      private set
-
     internal constructor() /* primary */ {
       super/*Any*/()
       /* <init>() */
@@ -344,6 +324,26 @@ class PrimitivesAndNullables {
       <this>.#uint = uint
       return <this>
     }
+
+    private var boolean: Boolean
+      private get
+      private set
+
+    private var char: Char
+      private get
+      private set
+
+    private var int: Int
+      private get
+      private set
+
+    private var nullable: String?
+      private get
+      private set
+
+    private var uint: UInt
+      private get
+      private set
 
   }
 

@@ -30,15 +30,15 @@ class Fir2IrComponentsStorage : Fir2IrComponents {
     field = session
     override get
 
-  override lateinit var classifierStorage: Fir2IrClassifierStorage
-    override get
-    open set
-
   constructor(session: FirSession) /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
+
+  override lateinit var classifierStorage: Fir2IrClassifierStorage
+    override get
+    open set
 
 }
 

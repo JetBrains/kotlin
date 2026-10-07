@@ -1,7 +1,4 @@
 class TestInitValInLambdaCalledOnce {
-  val x: Int
-    get
-
   init {
     run<Int, Unit>(/* <this> = 1, */ block = local fun Int.<anonymous>() {
       <this>.#x = 0
@@ -14,6 +11,9 @@ class TestInitValInLambdaCalledOnce {
     /* <init>() */
 
   }
+
+  val x: Int
+    get
 
 }
 

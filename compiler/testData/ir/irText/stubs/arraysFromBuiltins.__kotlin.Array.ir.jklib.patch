@@ -1,11 +1,6 @@
 CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:public superTypes:[kotlin.Any; kotlin.Cloneable; java.io.Serializable]
   thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:kotlin.Array<T of kotlin.Array>
   TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
-  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:public [final]
-    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL returnType:kotlin.Int
-      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Array<T of kotlin.Array>
-      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]
   CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public returnType:kotlin.Array<T of kotlin.Array>
     VALUE_PARAMETER kind:Regular name:size index:0 type:kotlin.Int
     VALUE_PARAMETER kind:Regular name:init index:1 type:kotlin.Function1<kotlin.Int, T of kotlin.Array>
@@ -47,3 +42,8 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Array modality:FINAL visibility:pu
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Array<T of kotlin.Array>
     VALUE_PARAMETER kind:Regular name:index index:1 type:kotlin.Int
     VALUE_PARAMETER kind:Regular name:value index:2 type:T of kotlin.Array
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:size type:kotlin.Int visibility:public [final]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-size> visibility:public modality:FINAL returnType:kotlin.Int
+      VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:kotlin.Array<T of kotlin.Array>
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:size visibility:public modality:FINAL [val]

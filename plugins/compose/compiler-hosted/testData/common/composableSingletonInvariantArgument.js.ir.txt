@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/composableSingletonInvariantArgument.kt
   CLASS OBJECT name:ComposableSingletons$ComposableSingletonInvariantArgumentKt modality:FINAL visibility:internal superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ComposableSingletons$ComposableSingletonInvariantArgumentKt
+    CONSTRUCTOR visibility:public returnType:<root>.ComposableSingletons$ComposableSingletonInvariantArgumentKt [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$ComposableSingletonInvariantArgumentKt modality:FINAL visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
     PROPERTY name:lambda$-758404714 visibility:internal modality:FINAL [val]
       FIELD name:lambda$-758404714 type:kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private
       FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:<get-lambda$-758404714> visibility:internal modality:FINAL returnType:kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
@@ -122,10 +126,6 @@ FILE fqName:<root> fileName:/composableSingletonInvariantArgument.kt
           RETURN type=kotlin.Nothing from='internal final fun <get-lambda$-758404714> (): kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>.ComposableSingletons$ComposableSingletonInvariantArgumentKt'
             GET_FIELD 'FIELD name:lambda$-758404714 type:kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private declared in <root>.ComposableSingletons$ComposableSingletonInvariantArgumentKt' type=kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? origin=null
               receiver: GET_VAR '<this>: <root>.ComposableSingletons$ComposableSingletonInvariantArgumentKt declared in <root>.ComposableSingletons$ComposableSingletonInvariantArgumentKt.<get-lambda$-758404714>' type=<root>.ComposableSingletons$ComposableSingletonInvariantArgumentKt origin=null
-    CONSTRUCTOR visibility:public returnType:<root>.ComposableSingletons$ComposableSingletonInvariantArgumentKt [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$ComposableSingletonInvariantArgumentKt modality:FINAL visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
   FUN name:Effect visibility:public modality:FINAL returnType:kotlin.Unit
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
     VALUE_PARAMETER kind:Regular name:vm index:0 type:kotlin.collections.MutableList<S of <root>.Effect>
