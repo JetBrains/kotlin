@@ -271,12 +271,12 @@ internal fun writeLocalPackageSources(
     }
 }
 
-internal fun swiftSourceContent(): String = """
+internal fun swiftSourceContent(className: String = "LocalHelper"): String = """
     import Foundation
 
-    @objc public class LocalHelper: NSObject {
+    @objc public class ${className}: NSObject {
         @objc public static func greeting() -> String {
-            return "Hello from LocalHelper"
+            return "Hello from ${className}"
         }
         
         public static func invisible() -> String {
