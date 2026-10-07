@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components.bridges
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaReferenceShortener
-import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
+import org.jetbrains.kotlin.analysis.api.components.KaShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.KaShortenOptions
 import org.jetbrains.kotlin.analysis.api.components.KaShortenStrategy
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
@@ -28,7 +28,7 @@ internal class KaReferenceShortenerBridge(
         shortenOptions: KaShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy,
-    ): ShortenCommand =
+    ): KaShortenCommand =
         context(analysisSession) {
             collectPossibleReferenceShorteningsEndpoint(file, selection, shortenOptions, classShortenStrategy, callableShortenStrategy)
         }
@@ -38,7 +38,7 @@ internal class KaReferenceShortenerBridge(
         shortenOptions: KaShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy,
-    ): ShortenCommand =
+    ): KaShortenCommand =
         context(analysisSession) {
             collectPossibleReferenceShorteningsInElementEndpoint(element, shortenOptions, classShortenStrategy, callableShortenStrategy)
         }

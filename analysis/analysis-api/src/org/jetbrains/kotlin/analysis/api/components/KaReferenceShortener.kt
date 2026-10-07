@@ -40,7 +40,7 @@ public interface KaReferenceShortener : KaSessionComponent {
         shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
         classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = defaultClassShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = defaultCallableShortenStrategy
-    ): ShortenCommand
+    ): KaShortenCommand
 
     /**
      * Collects possible references to shorten in [element]s text range.
@@ -56,15 +56,15 @@ public interface KaReferenceShortener : KaSessionComponent {
         shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
         classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = defaultClassShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = defaultCallableShortenStrategy
-    ): ShortenCommand
+    ): KaShortenCommand
 }
 
 /**
  * @property removeThis If set to `true`, reference shortener will detect redundant `this` qualifiers
- * and will collect them to [ShortenCommand.listOfQualifierToShortenInfo].
+ * and will collect them to [KaShortenCommand.listOfQualifierToShortenInfo].
  *
  * @property removeThisLabels If set to `true`, reference shortener will detect redundant labels on `this` expressions,
- * and will collect them to [ShortenCommand.thisLabelsToShorten]
+ * and will collect them to [KaShortenCommand.thisLabelsToShorten]
  *
  * @property removeContextSensitiveResolutionQualifiers If set to `true`, the reference shortener will detect removable qualifiers
  * on references that rely on context-sensitive resolution (e.g., enum entries and sealed class subobjects that can be resolved
@@ -211,7 +211,7 @@ public data class KaThisLabelToShortenInfo(
 
 @KaIdeApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface ShortenCommand {
+public interface KaShortenCommand {
     public val targetFile: SmartPsiElementPointer<KtFile>
     public val importsToAdd: Set<FqName>
     public val starImportsToAdd: Set<FqName>
@@ -243,7 +243,7 @@ public fun collectPossibleReferenceShortenings(
     shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
     classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = defaultClassShortenStrategy,
     callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = defaultCallableShortenStrategy
-): ShortenCommand {
+): KaShortenCommand {
     @OptIn(KaImplementationDetail::class)
     return internals.referenceShortener.collectPossibleReferenceShortenings(
         file, selection, shortenOptions, classShortenStrategy, callableShortenStrategy,
@@ -265,7 +265,7 @@ public fun collectPossibleReferenceShorteningsInElement(
     shortenOptions: KaShortenOptions = KaShortenOptions.DEFAULT,
     classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy = defaultClassShortenStrategy,
     callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy = defaultCallableShortenStrategy
-): ShortenCommand {
+): KaShortenCommand {
     @OptIn(KaImplementationDetail::class)
     return internals.referenceShortener.collectPossibleReferenceShorteningsInElement(
         element, shortenOptions, classShortenStrategy, callableShortenStrategy,

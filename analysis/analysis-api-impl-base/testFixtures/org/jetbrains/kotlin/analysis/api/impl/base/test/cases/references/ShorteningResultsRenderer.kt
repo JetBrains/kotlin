@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
-import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
+import org.jetbrains.kotlin.analysis.api.components.KaShortenCommand
 
 internal object ShorteningResultsRenderer {
-    fun StringBuilder.renderShorteningResults(shortening: ShortenCommand) {
+    fun StringBuilder.renderShorteningResults(shortening: KaShortenCommand) {
         if (shortening.isEmpty) {
             appendLine("EMPTY_SHORTENINGS")
             return

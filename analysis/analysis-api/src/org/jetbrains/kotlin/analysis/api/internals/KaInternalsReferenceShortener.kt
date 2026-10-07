@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.internals
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
+import org.jetbrains.kotlin.analysis.api.components.KaShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.KaShortenOptions
 import org.jetbrains.kotlin.analysis.api.components.KaShortenStrategy
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -26,12 +26,12 @@ public interface KaInternalsReferenceShortener {
         shortenOptions: KaShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy,
-    ): ShortenCommand
+    ): KaShortenCommand
 
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
         shortenOptions: KaShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy,
-    ): ShortenCommand
+    ): KaShortenCommand
 }

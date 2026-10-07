@@ -81,7 +81,7 @@ internal class KaFirReferenceShortener(
         shortenOptions: KaShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy
-    ): ShortenCommand = withPsiValidityAssertion(element) {
+    ): KaShortenCommand = withPsiValidityAssertion(element) {
         collectPossibleReferenceShortenings(
             element.containingKtFile,
             element.textRange,
@@ -97,13 +97,13 @@ internal class KaFirReferenceShortener(
         shortenOptions: KaShortenOptions,
         classShortenStrategy: (KaClassLikeSymbol) -> KaShortenStrategy,
         callableShortenStrategy: (KaCallableSymbol) -> KaShortenStrategy
-    ): ShortenCommand = withPsiValidityAssertion(file) {
+    ): KaShortenCommand = withPsiValidityAssertion(file) {
         require(!file.isCompiled) { "No sense to collect references for shortening in compiled file $file" }
 
         val declarationToVisit = file.findSmallestElementOfTypeContainingSelection<KtDeclaration>(selection)
             ?: file
 
-        val firDeclaration = declarationToVisit.getCorrespondingFirElement() ?: return ShortenCommandImpl(
+        val firDeclaration = declarationToVisit.getCorrespondingFirElement() ?: return KaShortenCommandImpl(
             file.createSmartPointer(),
             importsToAdd = emptySet(),
             starImportsToAdd = emptySet(),
@@ -147,7 +147,7 @@ internal class KaFirReferenceShortener(
         )
         kDocCollector.visitElement(declarationToVisit)
 
-        return ShortenCommandImpl(
+        return KaShortenCommandImpl(
             file.createSmartPointer(),
             additionalImports.simpleImports,
             additionalImports.starImports,
@@ -1621,7 +1621,7 @@ private class KDocQualifiersToShortenCollector(
     }
 }
 
-private class ShortenCommandImpl(
+private class KaShortenCommandImpl(
     override val targetFile: SmartPsiElementPointer<KtFile>,
     override val importsToAdd: Set<FqName>,
     override val starImportsToAdd: Set<FqName>,
@@ -1629,7 +1629,7 @@ private class ShortenCommandImpl(
     override val listOfQualifierToShortenInfo: List<KaQualifierToShortenInfo>,
     override val thisLabelsToShorten: List<KaThisLabelToShortenInfo>,
     override val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>>,
-) : ShortenCommand
+) : KaShortenCommand
 
 private fun KtUserType.hasFakeRootPrefix(): Boolean =
     qualifier?.referencedName == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
