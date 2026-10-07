@@ -3,7 +3,7 @@
 // OPT_IN: kotlin.ExperimentalValueClassesApi
 
 class Outer {
-    @WillBecomeValue
+    <!WILL_BECOME_VALUE_NOT_APPLICABLE!>@WillBecomeValue<!>
     companion object {
         override fun toString(): String = "Companion"
     }

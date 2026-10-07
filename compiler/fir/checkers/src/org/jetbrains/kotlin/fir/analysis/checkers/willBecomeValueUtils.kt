@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirWillBecomeValue
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -38,7 +39,7 @@ private fun FirClassSymbol<*>.hasWillBecomeValueAnnotation(session: FirSession):
  * The presentable name of the target '@WillBecomeValue' cannot be applied to, or 'null' if it can be applied.
  *
  * A value class already has value semantics, interfaces are common for identity and value classes,
- * and neither enums nor 'open' classes are going to become value classes.
+ * and neither enums, 'open' classes nor companion objects are going to become value classes.
  */
 fun FirRegularClassSymbol.willBecomeValueInapplicableTarget(): String? = when {
     isInlineOrValue -> "a value class"
@@ -46,6 +47,7 @@ fun FirRegularClassSymbol.willBecomeValueInapplicableTarget(): String? = when {
     classKind == ClassKind.ANNOTATION_CLASS -> "an annotation class"
     classKind == ClassKind.ENUM_CLASS -> "an enum class"
     modality == Modality.OPEN -> "an open class"
+    isCompanion -> "a companion object"
     else -> null
 }
 
