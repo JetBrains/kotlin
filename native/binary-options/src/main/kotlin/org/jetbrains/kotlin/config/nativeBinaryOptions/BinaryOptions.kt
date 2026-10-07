@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.config.nativeBinaryOptions
 
+import org.jetbrains.kotlin.backend.konan.CachePolicy
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty

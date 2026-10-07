@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.config.nativeBinaryOptions
+package org.jetbrains.kotlin.backend.konan
 
 /**
  * Describes how a compiler option interacts with the Kotlin/Native compiler caches.

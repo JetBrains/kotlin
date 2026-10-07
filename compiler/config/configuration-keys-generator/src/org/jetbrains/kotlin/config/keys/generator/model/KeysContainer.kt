@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.config.keys.generator.model
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
@@ -134,6 +135,13 @@ abstract class KeysContainer(val packageName: String, val className: String) {
 
     @OptIn(PrivateForInline::class)
     val keys: List<Key> = _keys
+
+    /** The types used by [generateAdditionalMembers]. */
+    open val additionalImportableTypes: List<KType>
+        get() = emptyList()
+
+    /** Generates the container-specific members of the keys object (after the keys). */
+    open fun SmartPrinter.generateAdditionalMembers() {}
 
     @OptIn(PrivateForInline::class)
     inline fun <reified T : Any> key(

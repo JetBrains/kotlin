@@ -7,4 +7,5 @@ plugins {
 dependencies {
     compileOnly(kotlinStdlib())
     implementation(project(":compiler:config"))
+    api(project(":native:kotlin-native-utils"))
 }

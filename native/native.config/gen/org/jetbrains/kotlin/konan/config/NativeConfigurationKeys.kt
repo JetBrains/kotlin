@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.konan.config
  */
 
 import org.jetbrains.kotlin.backend.konan.AllocationMode
+import org.jetbrains.kotlin.backend.konan.CachePolicy
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -277,6 +278,83 @@ object NativeConfigurationKeys {
     @JvmField
     val SERIALIZED_KLIB_DAG = CompilerConfigurationKey.create<SerializedKlibDAG>("SERIALIZED_KLIB_DAG")
 
+    // How the options interact with the compiler caches.
+    @JvmField
+    val cachePolicies: Map<CompilerConfigurationKey<*>, CachePolicy> = mapOf(
+        CHECK_DEPENDENCIES to CachePolicy.NOT_PROPAGATED,
+        DEBUG to CachePolicy.AFFECTS_CODEGEN,
+        EMIT_LAZY_OBJC_HEADER_FILE to CachePolicy.NOT_PROPAGATED,
+        ENABLE_ASSERTIONS to CachePolicy.AFFECTS_CODEGEN,
+        KONAN_ENTRY_POINT to CachePolicy.NOT_PROPAGATED,
+        EXPORTED_LIBRARIES to CachePolicy.NOT_PROPAGATED,
+        FULL_EXPORTED_NAME_PREFIX to CachePolicy.NOT_PROPAGATED,
+        KONAN_LIBRARY_TO_ADD_TO_CACHE to CachePolicy.NOT_PROPAGATED,
+        CACHE_DIRECTORIES to CachePolicy.NOT_PROPAGATED,
+        AUTO_CACHEABLE_FROM to CachePolicy.NOT_PROPAGATED,
+        AUTO_CACHE_DIR to CachePolicy.NOT_PROPAGATED,
+        INCREMENTAL_CACHE_DIR to CachePolicy.NOT_PROPAGATED,
+        DUMP_BUILT_CACHES_TO to CachePolicy.NOT_PROPAGATED,
+        CACHED_LIBRARIES to CachePolicy.NOT_PROPAGATED,
+        FILES_TO_CACHE to CachePolicy.NOT_PROPAGATED,
+        MAKE_PER_FILE_CACHE to CachePolicy.NOT_PROPAGATED,
+        CACHED_LIBRARY_DEPENDENCIES_FINGERPRINT to CachePolicy.NOT_PROPAGATED,
+        FRAMEWORK_IMPORT_HEADERS to CachePolicy.NOT_PROPAGATED,
+        KONAN_FRIEND_LIBRARIES to CachePolicy.NOT_PROPAGATED,
+        KONAN_REFINES_MODULES to CachePolicy.NOT_PROPAGATED,
+        GENERATE_TEST_RUNNER to CachePolicy.NOT_PROPAGATED,
+        KONAN_INCLUDED_BINARIES to CachePolicy.NOT_PROPAGATED,
+        KONAN_HOME to CachePolicy.NOT_PROPAGATED,
+        KONAN_LIBRARIES to CachePolicy.NOT_PROPAGATED,
+        LIGHT_DEBUG to CachePolicy.AFFECTS_CODEGEN,
+        GENERATE_DEBUG_TRAMPOLINE to CachePolicy.AFFECTS_CODEGEN,
+        LINKER_ARGS to CachePolicy.NOT_PROPAGATED,
+        LIST_TARGETS to CachePolicy.NOT_PROPAGATED,
+        KONAN_MANIFEST_ADDEND to CachePolicy.NOT_PROPAGATED,
+        KONAN_GENERATED_HEADER_KLIB_PATH to CachePolicy.NOT_PROPAGATED,
+        KONAN_NATIVE_LIBRARIES to CachePolicy.NOT_PROPAGATED,
+        KONAN_NO_DEFAULT_LIBS to CachePolicy.NOT_PROPAGATED,
+        NOMAIN to CachePolicy.NOT_PROPAGATED,
+        KONAN_NO_STDLIB to CachePolicy.NOT_PROPAGATED,
+        KONAN_DONT_COMPRESS_KLIB to CachePolicy.NOT_PROPAGATED,
+        OPTIMIZATION to CachePolicy.AFFECTS_CODEGEN,
+        KONAN_OUTPUT_PATH to CachePolicy.NOT_PROPAGATED,
+        OVERRIDE_CLANG_OPTIONS to CachePolicy.AFFECTS_CODEGEN,
+        ALLOCATION_MODE to CachePolicy.AFFECTS_RUNTIME,
+        KONAN_PRINT_BITCODE to CachePolicy.NOT_PROPAGATED,
+        KONAN_PRINT_IR to CachePolicy.NOT_PROPAGATED,
+        KONAN_PRINT_FILES to CachePolicy.NOT_PROPAGATED,
+        KONAN_PRODUCED_ARTIFACT_KIND to CachePolicy.NOT_PROPAGATED,
+        RUNTIME_FILE to CachePolicy.AFFECTS_RUNTIME,
+        KONAN_INCLUDED_LIBRARIES to CachePolicy.NOT_PROPAGATED,
+        KONAN_SHORT_MODULE_NAME to CachePolicy.NOT_PROPAGATED,
+        STATIC_FRAMEWORK to CachePolicy.NOT_PROPAGATED,
+        KONAN_TARGET to CachePolicy.AFFECTS_CODEGEN,
+        TEMPORARY_FILES_DIR to CachePolicy.NOT_PROPAGATED,
+        SAVE_LLVM_IR to CachePolicy.NOT_PROPAGATED,
+        VERIFY_BITCODE to CachePolicy.PROPAGATED,
+        VERIFY_COMPILER to CachePolicy.PROPAGATED,
+        KONAN_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO to CachePolicy.NOT_PROPAGATED,
+        DEBUG_INFO_VERSION to CachePolicy.AFFECTS_CODEGEN,
+        OBJC_GENERICS to CachePolicy.NOT_PROPAGATED,
+        DEBUG_PREFIX_MAP to CachePolicy.NOT_PROPAGATED,
+        PRE_LINK_CACHES to CachePolicy.NOT_PROPAGATED,
+        OVERRIDE_KONAN_PROPERTIES to CachePolicy.PROPAGATED,
+        PROPERTY_LAZY_INITIALIZATION to CachePolicy.AFFECTS_CODEGEN,
+        EXTERNAL_DEPENDENCIES to CachePolicy.PROPAGATED,
+        LLVM_VARIANT to CachePolicy.PROPAGATED,
+        RUNTIME_LOGS to CachePolicy.AFFECTS_RUNTIME,
+        TEST_DUMP_OUTPUT_PATH to CachePolicy.NOT_PROPAGATED,
+        OMIT_FRAMEWORK_BINARY to CachePolicy.NOT_PROPAGATED,
+        COMPILE_FROM_BITCODE to CachePolicy.NOT_PROPAGATED,
+        SERIALIZED_DEPENDENCIES to CachePolicy.NOT_PROPAGATED,
+        SAVE_DEPENDENCIES_PATH to CachePolicy.NOT_PROPAGATED,
+        SAVE_LLVM_IR_DIRECTORY to CachePolicy.NOT_PROPAGATED,
+        KONAN_DATA_DIR to CachePolicy.PROPAGATED,
+        KONAN_MANIFEST_NATIVE_TARGETS to CachePolicy.NOT_PROPAGATED,
+        LLVM_MODULE_PASSES to CachePolicy.AFFECTS_CODEGEN,
+        LLVM_LTO_PASSES to CachePolicy.AFFECTS_CODEGEN,
+        SERIALIZED_KLIB_DAG to CachePolicy.NOT_PROPAGATED,
+    )
 }
 
 var CompilerConfiguration.checkDependencies: Boolean

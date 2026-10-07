@@ -10,14 +10,11 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.create
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
-import org.jetbrains.kotlin.config.nativeBinaryOptions.CachePolicy
 import org.jetbrains.kotlin.config.nativeBinaryOptions.GC
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
-import java.lang.reflect.Modifier
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -25,19 +22,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class CachePoliciesTest {
-    @Test
-    fun everyNativeConfigurationKeyHasCachePolicy() {
-        val keys = NativeConfigurationKeys::class.java.declaredFields
-                .filter { Modifier.isStatic(it.modifiers) && CompilerConfigurationKey::class.java.isAssignableFrom(it.type) }
-                .associateBy({ it.get(null) as CompilerConfigurationKey<*> }, { it.name })
-        assertTrue(keys.isNotEmpty())
-
-        val unclassified = keys.filterKeys { it !in nativeConfigurationKeysCachePolicies }.values.sorted()
-        assertTrue(unclassified.isEmpty(), "Specify the cache policy for $unclassified in `nativeConfigurationKeysCachePolicies`")
-        val unknown = nativeConfigurationKeysCachePolicies.keys.filter { it !in keys }
-        assertTrue(unknown.isEmpty(), "`nativeConfigurationKeysCachePolicies` lists unknown keys: $unknown")
-    }
-
     // The cache flavor shouldn't change for the default compiler arguments: otherwise, the caches shipped with the distribution
     // wouldn't be used. So the options the compiler always sets have to be declared with their defaults in
     // `NativeSecondStageCompilationConfig.cacheBuildOptions` (or be a part of the flavor prefix).

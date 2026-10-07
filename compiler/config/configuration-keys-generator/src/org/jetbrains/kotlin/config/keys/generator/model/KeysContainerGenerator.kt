@@ -41,7 +41,7 @@ object KeysContainerGenerator {
         val annotationTypes = container.keys.flatMap { key -> key.annotations.map { it.annotationClass.starProjectedType } }
         printImports(
             container.packageName,
-            importableTypes = regularTypes + optInTypes + annotationTypes,
+            importableTypes = regularTypes + optInTypes + annotationTypes + container.additionalImportableTypes,
             simpleImports = defaultImports + container.keys.flatMap { it.importsToAdd },
             starImports = emptyList(),
         )
@@ -59,6 +59,7 @@ object KeysContainerGenerator {
                 }
                 println()
             }
+            with(container) { generateAdditionalMembers() }
         }
         println()
     }
