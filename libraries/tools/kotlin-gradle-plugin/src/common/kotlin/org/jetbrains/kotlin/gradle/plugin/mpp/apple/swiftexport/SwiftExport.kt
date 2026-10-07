@@ -363,6 +363,7 @@ private fun Project.registerPackageGeneration(
         task.kotlinRuntime.set(swiftExportKotlinRuntime)
 
         task.swiftModulesFile.set(swiftExportTask.flatMap { it.parameters.swiftModulesFile })
+        task.swiftExportFiles.from(swiftExportTask.flatMap { it.parameters.outputDirectory })
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.swiftApiModuleName.set(swiftApiModuleName)
 

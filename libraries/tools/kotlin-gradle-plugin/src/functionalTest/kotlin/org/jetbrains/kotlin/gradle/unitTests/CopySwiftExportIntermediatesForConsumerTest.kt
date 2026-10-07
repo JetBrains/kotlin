@@ -33,7 +33,7 @@ class CopySwiftExportIntermediatesForConsumerTest {
         }
         val modulesFile = project.projectDir.resolve("modules.json").apply {
             val shared = GradleSwiftExportModule.SwiftOnly(File("/Shared.swift"), "Shared", emptyList())
-            writeText(SerializationTools.writeToJson(GradleSwiftExportModules(listOf(shared), 0)))
+            writeText(SerializationTools.writeToJson(GradleSwiftExportModules(listOf(shared))))
         }
 
         val task = project.tasks.register("copyDebugSPMIntermediates", CopySwiftExportIntermediatesForConsumer::class.java) { task ->

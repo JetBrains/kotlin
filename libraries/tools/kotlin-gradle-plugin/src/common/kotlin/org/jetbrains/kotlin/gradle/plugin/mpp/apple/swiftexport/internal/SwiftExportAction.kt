@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleExportMode
-import java.time.Instant
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -55,8 +54,7 @@ internal abstract class SwiftExportAction : WorkAction<SwiftExportAction.SwiftEx
         }.get()
 
         val modules = GradleSwiftExportModules(
-            runSwiftExport(exportModules, createSwiftExportConfig()).getOrThrow().toPlainList(),
-            Instant.now().toEpochMilli()
+            runSwiftExport(exportModules, createSwiftExportConfig()).getOrThrow().toPlainList()
         )
 
         val json = SerializationTools.writeToJson(modules)

@@ -113,6 +113,11 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val swiftModulesFile: RegularFileProperty
 
+    /** The generated files [swiftModulesFile] points at: it lists their paths, not their content. Xcode flow only. */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val swiftExportFiles: ConfigurableFileCollection
+
     @get:Input
     val swiftPMImportHasDependencies: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 

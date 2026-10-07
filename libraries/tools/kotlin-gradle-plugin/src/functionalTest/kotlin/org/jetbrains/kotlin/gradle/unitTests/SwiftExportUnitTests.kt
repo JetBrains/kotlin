@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExten
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
@@ -152,6 +153,17 @@ class SwiftExportUnitTests {
         // Check generateSPMPackage task dependencies
         val generateSPMPackageTaskDependencies = generateSPMPackageTask.taskDependencies.getDependencies(null)
         assert(generateSPMPackageTaskDependencies.contains(swiftExportTask))
+    }
+
+    @Test
+    fun `test swift export embed and sign package generation tracks the generated files`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.getByName("iosSimulatorArm64SwiftExport") as SwiftExportTask
+        val generateTask = project.tasks.getByName("iosSimulatorArm64DebugGenerateSPMPackage") as GenerateSPMPackageFromSwiftExport
+
+        assertEquals(setOf(swiftExportTask.parameters.outputDirectory.get().asFile), generateTask.swiftExportFiles.files)
     }
 
     @Test

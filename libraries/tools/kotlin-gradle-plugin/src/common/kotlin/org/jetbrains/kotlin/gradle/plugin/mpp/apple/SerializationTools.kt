@@ -159,29 +159,25 @@ internal object GradleSwiftExportModulesSerializer : KSerializer<GradleSwiftExpo
 
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("GradleSwiftExportModules") {
         element<String>("modules")
-        element<Long>("timestamp")
     }
 
     override fun serialize(encoder: Encoder, value: GradleSwiftExportModules) {
         encoder.encodeStructure(descriptor) {
             encodeSerializableElement(descriptor, 0, moduleListSerializer, value.modules)
-            encodeLongElement(descriptor, 1, value.timestamp)
         }
     }
 
     override fun deserialize(decoder: Decoder): GradleSwiftExportModules {
         return decoder.decodeStructure(descriptor) {
             var modules: List<GradleSwiftExportModule> = emptyList()
-            var timestamp = 0L
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
                     0 -> modules = decodeSerializableElement(descriptor, 0, moduleListSerializer)
-                    1 -> timestamp = decodeLongElement(descriptor, 1)
                     CompositeDecoder.DECODE_DONE -> break
                     else -> error("Unexpected index: $index")
                 }
             }
-            GradleSwiftExportModules(modules, timestamp)
+            GradleSwiftExportModules(modules)
         }
     }
 }
