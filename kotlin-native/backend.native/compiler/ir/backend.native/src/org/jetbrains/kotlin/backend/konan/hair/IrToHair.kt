@@ -220,6 +220,7 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                                         ArrayOp.SET_UNCHECKED -> {
                                             val elementType = function.parameters.last().type.asHairType()
                                             StoreArrayElement(elementType)(args[0], args[1], args[2])
+                                            unitConst
                                         }
                                         ArrayOp.SIZE -> ArraySize(args[0])
                                     }
@@ -484,13 +485,14 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         val field = expression.symbol.owner
                         if (field.hasAnnotation(KonanFqNames.volatile)) notImplemented(HairTODO.VOLATILE)
                         val value = expression.value.accept(this, Unit)
-                        return if (field.isStatic) {
+                        if (field.isStatic) {
                             // FIXME global vs field?
                             StoreGlobal(HairGlobalImpl(field))(value)
                         } else {
                             val obj = expression.receiver!!.accept(this, Unit)
                             StoreField(HairFieldImpl(field))(obj, value)
                         }
+                        return unitConst
                     }
 
                     override fun visitTry(aTry: IrTry, data: Unit): Node {

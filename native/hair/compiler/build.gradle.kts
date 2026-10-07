@@ -1,6 +1,7 @@
 plugins {
     kotlin("multiplatform")
     id("common-configuration")
+    id("test-inputs-check")
 }
 
 kotlin {
@@ -24,4 +25,8 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
     }
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }

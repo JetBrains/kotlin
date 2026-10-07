@@ -10,7 +10,7 @@ object RuntimeInterface {
         override fun toString(): String = "RTFun($name)"
     }
 
-    val isSubtype = RTFun("isSubtype", HairType.INT)
+    val isSubtype = RTFun("isSubtype", HairType.BOOLEAN)
 
     val throwArrayIndexOutOfBounds = RTFun("ThrowArrayIndexOutOfBoundsException", HairType.NOTHING)
 }

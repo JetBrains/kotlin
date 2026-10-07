@@ -754,7 +754,7 @@ internal class CodeGeneratorVisitor(
             val field = it.owner
             require(field.type.binaryTypeIsReference())
             require(field.isStatic)
-            call(llvm.registerGlobalFunction, listOf(staticFieldPtr(field, functionGenerationContext)))
+            call(llvm.registerGlobalFunction, listOf(staticFieldPtr(field)))
         }
     }
 

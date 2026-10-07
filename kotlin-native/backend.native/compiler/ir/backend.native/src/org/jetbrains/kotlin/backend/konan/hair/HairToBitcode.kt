@@ -208,7 +208,10 @@ internal class HairToBitcode(
             else LLVMBuildFRem(builder, node.lhs.value(), node.rhs.value(), "")!!
         }
 
-        override fun visitNeg(node: Neg): LLVMValueRef = emit { LLVMBuildNeg(builder, node.value(), "")!! }
+        override fun visitNeg(node: Neg): LLVMValueRef = emit {
+            if (node.valueType.isIntegral) sub(makeConstOfType(0, node.valueType.asLLVMType()), node.operand.value())
+            else fneg(node.operand.value())
+        }
 
         override fun visitAnd(node: And): LLVMValueRef = emit { and(node.lhs.value(), node.rhs.value()) }
         override fun visitOr(node: Or): LLVMValueRef = emit { or(node.lhs.value(), node.rhs.value()) }
@@ -218,7 +221,10 @@ internal class HairToBitcode(
         override fun visitShr(node: Shr): LLVMValueRef = emit { shift(LLVMOpcode.LLVMAShr, node.lhs.value(), node.rhs.value()) }
         override fun visitUshr(node: Ushr): LLVMValueRef = emit { shift(LLVMOpcode.LLVMLShr, node.lhs.value(), node.rhs.value()) }
 
-        override fun visitInv(node: Inv): LLVMValueRef = emit { xor(node.value(), makeConstOfType(-1, node.value().type), "") }
+        override fun visitInv(node: Inv): LLVMValueRef = emit {
+            val operand = node.operand.value()
+            xor(operand, makeConstOfType(-1, operand.type))
+        }
 
         override fun visitNot(node: Not): LLVMValueRef =
                 emit { not(node.operand.value()) }
@@ -276,10 +282,10 @@ internal class HairToBitcode(
         override fun visitInvokeStatic(node: InvokeStatic): LLVMValueRef {
             val hairTarget = node.function
             val llvmTarget = when (hairTarget) {
-                is HairFunctionImpl -> codegen.llvmFunction(hairTarget.irFunction)
+                is HairFunctionImpl -> codegen.getLlvmFunctionFrom(hairTarget.irFunction)
                 RuntimeInterface.isSubtype -> llvm.isSubtypeFunction
                 RuntimeInterface.throwArrayIndexOutOfBounds ->
-                    codegen.llvmFunction(context.symbols.throwArrayIndexOutOfBoundsException.owner)
+                    codegen.getLlvmFunctionFrom(context.symbols.throwArrayIndexOutOfBoundsException.owner)
                 else -> error("Unexpected function $hairTarget")
             }
             // FIXME derive param types from the Hair type system, not from IrFunction
