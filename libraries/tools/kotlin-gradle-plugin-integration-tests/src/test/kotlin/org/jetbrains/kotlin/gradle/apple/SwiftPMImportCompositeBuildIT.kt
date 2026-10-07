@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.OsCondition
 import org.jetbrains.kotlin.gradle.testbase.SwiftPMImportGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
-import org.jetbrains.kotlin.gradle.testbase.assertTasksFailed
+import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
 import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.compileSource
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.writeText
+import kotlin.test.assertEquals
 
 @OsCondition(
     supportedOn = [OS.MAC],
@@ -138,12 +138,17 @@ class SwiftPMImportCompositeBuildIT : KGPBaseTest() {
             includeBuild(left) { name = "left" }
             includeBuild(right) { name = "right" }
 
-            buildAndFail("linkDebugFrameworkIosArm64") {
-                assertTasksFailed(":linkDebugFrameworkIosArm64")
-                assertOutputContains(
-                    """(?m)^\h*"_OBJC_CLASS_\${'$'}__TtC(?:4Left4Left|5Right5Right)", referenced from:\h*$""".toRegex(),
-                )
-            }
+            // Check that we see symbols from left and right at link time
+            build("linkDebugFrameworkIosArm64")
+
+            assertEquals(
+                listOf("_"),
+                describeSwiftPackage(left.projectPath.resolve(".swiftpm-locks/default/swiftImport")).dependencies.map { it.identity },
+            )
+            assertEquals(
+                listOf("_", "_left", "_right"),
+                describeSwiftPackage(projectPath.resolve(".swiftpm-locks/default/swiftImport")).dependencies.map { it.identity },
+            )
         }
     }
 }
