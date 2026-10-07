@@ -140,6 +140,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirPropertyInitializationChecker,
         FirCompanionBlockChecker,
         FirRichErrorSuperTypeChecker,
+        FirWillBecomeValueDeclarationChecker,
     )
 
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
@@ -162,7 +163,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirNestedClassChecker,
         FirValueClassDeclarationChecker.Regular,
         FirValueClassDeclarationChecker.ForExpectClass,
-        FirWillBecomeValueDeclarationChecker,
         FirOuterClassArgumentsRequiredChecker,
         FirFiniteBoundRestrictionChecker,
         FirNonExpansiveInheritanceRestrictionChecker,

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.checkers.willBecomeValueInapplicableTarget
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.isMethodOfAny
@@ -29,7 +31,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * The remaining value class declaration checks are shared with real value classes and are performed by
  * [FirValueClassDeclarationChecker].
  */
-object FirWillBecomeValueDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+object FirWillBecomeValueDeclarationChecker : FirClassChecker(MppCheckerKind.Common) {
     private val identityBasedMemberNames = listOf(
         OperatorNameConventions.EQUALS,
         OperatorNameConventions.HASH_CODE,
@@ -39,16 +41,19 @@ object FirWillBecomeValueDeclarationChecker : FirRegularClassChecker(MppCheckerK
     private val identityBasedObjectMemberNames = listOf(OperatorNameConventions.TO_STRING)
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirRegularClass) {
+    override fun check(declaration: FirClass) {
         val annotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.WillBecomeValue, context.session) ?: return
 
-        val inapplicableTarget = declaration.symbol.willBecomeValueInapplicableTarget()
+        val inapplicableTarget = when (declaration) {
+            is FirAnonymousObject -> "an anonymous object"
+            is FirRegularClass -> declaration.symbol.willBecomeValueInapplicableTarget()
+        }
         if (inapplicableTarget != null) {
             reporter.reportOn(annotation.source, FirErrors.WILL_BECOME_VALUE_NOT_APPLICABLE, inapplicableTarget)
             return
         }
 
-        checkIdentityBasedMembers(declaration)
+        if (declaration is FirRegularClass) checkIdentityBasedMembers(declaration)
     }
 
     /**
