@@ -90,7 +90,7 @@ public interface WasmLinkingOperation : BaseCompilationOperation, CancellableBui
     /**
      * Returns a [Builder] initialized with the values of this [WasmLinkingOperation].
      */
-    public fun toBuilder(): Builder
+    public override fun toBuilder(): Builder
 
     /**
      * An option for configuring a [WasmLinkingOperation].

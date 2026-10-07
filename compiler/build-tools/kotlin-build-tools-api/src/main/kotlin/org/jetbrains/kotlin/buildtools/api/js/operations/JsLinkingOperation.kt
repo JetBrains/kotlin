@@ -91,7 +91,7 @@ public interface JsLinkingOperation : BaseCompilationOperation, CancellableBuild
     /**
      * Returns a [Builder] initialized with the values of this [JsLinkingOperation].
      */
-    public fun toBuilder(): Builder
+    public override fun toBuilder(): Builder
 
     /**
      * An option for configuring a [JsLinkingOperation].

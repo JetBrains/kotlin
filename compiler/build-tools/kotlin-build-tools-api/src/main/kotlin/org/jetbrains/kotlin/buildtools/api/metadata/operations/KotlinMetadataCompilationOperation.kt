@@ -81,7 +81,7 @@ public interface KotlinMetadataKlibCompilationOperation : BaseCompilationOperati
     /**
      * Returns a [Builder] initialized with the values of this [KotlinMetadataKlibCompilationOperation].
      */
-    public fun toBuilder(): Builder
+    public override fun toBuilder(): Builder
 
     /**
      * An option for configuring a [KotlinMetadataKlibCompilationOperation].

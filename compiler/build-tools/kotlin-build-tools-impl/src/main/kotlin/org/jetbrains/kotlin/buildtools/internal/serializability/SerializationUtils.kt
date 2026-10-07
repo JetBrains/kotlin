@@ -17,6 +17,9 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker.ScopeKind
+import org.jetbrains.kotlin.buildtools.internal.LogLevel
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import java.nio.file.Path
@@ -71,10 +74,26 @@ public val btaSerializersModule: SerializersModule = SerializersModule {
     }
     polymorphic(Messages::class) {
         subclass(Messages.LogLine::class)
+        subclass(Messages.LookupClear::class)
+        subclass(Messages.LookupMessage::class)
     }
 }
 
 public interface Messages {
     @Serializable
-    public data class LogLine(public val logLine: String) : Messages
+    public data class LogLine(
+        public val level: LogLevel,
+        public val logLine: String,
+    ) : Messages
+
+    @Serializable
+    public class LookupMessage(
+        public val filePath: String,
+        public val scopeFqName: String,
+        public val scopeKind: ScopeKind,
+        public val name: String,
+    ) : Messages
+
+    @Serializable
+    public class LookupClear : Messages
 }

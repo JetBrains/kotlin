@@ -152,7 +152,7 @@ public interface JvmCompilationOperation : BaseCompilationOperation, Cancellable
      *
      * @since 2.3.20
      */
-    public fun toBuilder(): Builder
+    public override fun toBuilder(): Builder
 
     /**
      * An option for configuring a [JvmCompilationOperation].

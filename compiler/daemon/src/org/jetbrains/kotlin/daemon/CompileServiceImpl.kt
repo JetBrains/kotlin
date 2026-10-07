@@ -13,7 +13,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.PolymorphicSerializer
 import kotlinx.serialization.decodeFromByteArray
-import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
@@ -23,6 +22,8 @@ import org.jetbrains.kotlin.build.report.RemoteReporter
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl
+import org.jetbrains.kotlin.buildtools.internal.LogLevel
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.Messages
 import org.jetbrains.kotlin.buildtools.internal.serializability.btaSerializersModule
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import org.jetbrains.kotlin.util.getLinesPerSecond
 import java.io.File
+import java.net.URLClassLoader
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -257,7 +259,7 @@ abstract class CompileServiceImplBase(
 
     @Volatile
     protected var _lastUsedSeconds = nowSeconds()
-    abstract protected val lastUsedSeconds: Long
+    protected abstract val lastUsedSeconds: Long
 
     protected var runFile: File
 
@@ -1086,26 +1088,81 @@ class CompileServiceImpl(
         callbackChannel: DaemonCallbackChannel,
     ): CompileService.CallResult<ByteArray> {
         val kotlinToolchains = KotlinToolchains.loadImplementation(
-            System.getProperty("java.class.path").split(File.pathSeparator).map { Path(it) }
-        )
-        val protobuf = ProtoBuf {
-            serializersModule = btaSerializersModule
-        }
-        val buildOperation = protobuf.decodeFromByteArray<BtaSerializable>(operation) as BuildOperation<*>
+            URLClassLoader(System.getProperty("java.class.path").split(File.pathSeparator).map { Path(it).toUri().toURL() }.toTypedArray())
+        ) as KotlinToolchainsImpl
+
+        val buildOperation = kotlinToolchains.deserializeOperation(operation)
         log.info("Received operation: $buildOperation")
         buildOperation as BtaSerializable
+        val logger = object : KotlinLogger {
+            override val isDebugEnabled: Boolean
+                get() = true // TODO
 
-        callbackChannel.report(
-            protobuf.encodeToByteArray(
-                PolymorphicSerializer(Messages::class),
-                Messages.LogLine("HELLO FROM DAEMON!")
-            )
-        )
+            private fun reportMessage(level: LogLevel, message: String) {
+                callbackChannel.report(
+                    kotlinToolchains.protobuf.encodeToByteArray(
+                        PolymorphicSerializer(Messages::class),
+                        Messages.LogLine(level, message)
+                    )
+                )
+            }
+
+            override fun error(msg: String, throwable: Throwable?) {
+                reportMessage(LogLevel.ERROR, msg) // TODO exception
+            }
+
+            override fun warn(msg: String, throwable: Throwable?) {
+                reportMessage(LogLevel.WARN, msg)  // TODO exception
+            }
+
+            override fun info(msg: String) {
+                reportMessage(LogLevel.INFO, msg)
+            }
+
+            override fun debug(msg: String) {
+                reportMessage(LogLevel.DEBUG, msg)
+            }
+
+            override fun lifecycle(msg: String) {
+                reportMessage(LogLevel.LIFECYCLE, msg)
+            }
+        }
+        val lookupTracker = object : org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker {
+            override fun recordLookup(
+                filePath: String,
+                scopeFqName: String,
+                scopeKind: org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker.ScopeKind,
+                name: String,
+            ) {
+                callbackChannel.report(
+                    kotlinToolchains.protobuf.encodeToByteArray(
+                        PolymorphicSerializer(Messages::class),
+                        Messages.LookupMessage(filePath, scopeFqName, scopeKind, name)
+                    )
+                )
+            }
+
+            override fun clear() {
+                callbackChannel.report(
+                    kotlinToolchains.protobuf.encodeToByteArray(
+                        PolymorphicSerializer(Messages::class),
+                        Messages.LookupClear()
+                    )
+                )
+            }
+        }
+        val finalOperation = (buildOperation as? BaseCompilationOperation)?.toBuilder()?.apply {
+            this[BaseCompilationOperation.LOOKUP_TRACKER] = lookupTracker
+        }?.build() ?: buildOperation
+        val result = kotlinToolchains.createBuildSession().use { buildSession ->
+            buildSession.executeOperation(finalOperation, logger = logger)
+        }
+
         @Suppress("UNCHECKED_CAST")
         return CompileService.CallResult.Good(
             ProtoBuf.encodeToByteArray(
-                buildOperation.getResultSerializer() as KSerializer<CompilationResult>,
-                CompilationResult.COMPILATION_SUCCESS
+                buildOperation.getResultSerializer() as KSerializer<Any?>,
+                result
             )
         )
     }
@@ -1381,7 +1438,7 @@ class CompileServiceImpl(
 }
 
 @PublishedApi
-internal class RunningCompilations() {
+internal class RunningCompilations {
     private val compilations = ConcurrentSkipListSet<Int>()
 
     fun remove(compilationId: Int) {

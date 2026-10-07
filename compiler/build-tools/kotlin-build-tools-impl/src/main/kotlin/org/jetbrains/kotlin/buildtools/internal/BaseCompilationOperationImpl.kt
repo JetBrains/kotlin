@@ -67,13 +67,13 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     override fun prepareForSerialization(operationId: Int): List<MessageVisitor> {
         val messageVisitors = mutableListOf<MessageVisitor>()
-        lookupTracker?.let { messageVisitors.add(LookupMessageVisitor(it, operationId)) }
+        lookupTracker?.let { messageVisitors.add(LookupMessageVisitor(it)) }
         return messageVisitors
     }
 
     @Transient
     @SerialName("LOOKUP_TRACKER")
-    internal var lookupTracker: CompilerLookupTracker? = null
+    var lookupTracker: CompilerLookupTracker? = null
         set(value) {
             hasLookupTracker = value != null
             field = value

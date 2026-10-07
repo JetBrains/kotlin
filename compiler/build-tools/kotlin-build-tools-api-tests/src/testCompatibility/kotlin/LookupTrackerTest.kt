@@ -66,7 +66,7 @@ class LookupTrackerTest : BaseCompilationTest() {
                 }
 
             }
-            module1.compile(compilationConfigAction = { builder: BaseCompilationOperation.Builder ->
+            module1.compile(forceOutput = LogLevel.INFO, compilationConfigAction = { builder: BaseCompilationOperation.Builder ->
                 builder[BaseCompilationOperation.LOOKUP_TRACKER] = lookupTracker
             }) {
                 assertTrue(lookupRecorded) { "Lookup tracker didn't produce any output" }

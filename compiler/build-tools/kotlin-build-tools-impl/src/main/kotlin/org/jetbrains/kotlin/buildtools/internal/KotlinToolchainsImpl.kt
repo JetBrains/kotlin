@@ -42,12 +42,15 @@ import kotlin.concurrent.atomics.incrementAndFetch
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
 
-internal class KotlinToolchainsImpl() : KotlinToolchains {
-    val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
-    val classloadersCache = LruClassLoadersCache(
+@OptIn(ExperimentalSerializationApi::class)
+public class KotlinToolchainsImpl : KotlinToolchains {
+    public val toolchains: ConcurrentHashMap<Class<*>, KotlinToolchains.Toolchain> = ConcurrentHashMap()
+    private val classloadersCache = LruClassLoadersCache(
         System.getProperty(PROPERTY_CLASSLOADERS_CACHE_SIZE)?.toIntOrNull() ?: DEFAULT_CLASSLOADERS_CACHE_SIZE,
         this::class.java.classLoader
     )
+
+    public val protobuf: ProtoBuf = KotlinToolchainsImpl.protobuf
 
     override fun <T : KotlinToolchains.Toolchain> getToolchain(type: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
@@ -71,7 +74,7 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         replaceWith = ReplaceWith("jvmCompilationOperationBuilder(sources, destinationDirectory)"),
         level = DeprecationLevel.HIDDEN
     )
-    fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
+    public fun createDaemonExecutionPolicy(): ExecutionPolicy.WithDaemon = DaemonExecutionPolicyImpl()
 
     override fun daemonExecutionPolicyBuilder(): ExecutionPolicy.WithDaemon.Builder = DaemonExecutionPolicyImpl()
 
@@ -110,7 +113,6 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
             return executeOperation(operation, logger = null)
         }
 
-        @OptIn(ExperimentalSerializationApi::class)
         override fun <R> executeOperation(
             operation: BuildOperation<R>,
             executionPolicy: ExecutionPolicy,
@@ -138,7 +140,8 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                 executionPolicy as DaemonExecutionPolicyImpl
                 if (operation is BtaSerializable) {
                     val operationId = lastOperationId.incrementAndFetch()
-                    val trackers: List<MessageVisitor> = operation.prepareForSerialization(operationId)
+                    val messageVisitors: List<MessageVisitor> =
+                        operation.prepareForSerialization(operationId) + LogLineVisitor(logger ?: DefaultKotlinLogger)
                     val messageRenderer =
                         if (operation is BaseCompilationOperationImpl<*, *>) operation[BaseCompilationOperationImpl.COMPILER_MESSAGE_RENDERER] else DefaultCompilerMessageRenderer
                     val warningsAsError =
@@ -147,11 +150,9 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
                     val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger ?: DefaultKotlinLogger, messageRenderer, warningsAsError)
                     val daemon = daemonConnectionRegistry.getCompileServiceSession(executionPolicy, loggerAdapter)
                         ?: error("Unable to get daemon connection")
-                    val protobuf = ProtoBuf {
-                        serializersModule = btaSerializersModule
-                    }
+
                     val serializedOperation = protobuf.encodeToByteArray(operation as BtaSerializable)
-                    val callbackChannel = BtaCallbackChannel(protobuf)
+                    val callbackChannel = BtaCallbackChannel(protobuf, messageVisitors)
                     val result = daemon.compileService.execute(serializedOperation, operationId, callbackChannel).get()
                     @Suppress("UNCHECKED_CAST")
                     protobuf.decodeFromByteArray(operation.getResultSerializer(), result) as R
@@ -187,11 +188,20 @@ internal class KotlinToolchainsImpl() : KotlinToolchains {
         }
     }
 
-    companion object {
+    public fun deserializeOperation(operationProtoBuf: ByteArray): BuildOperation<*> {
+        return protobuf.decodeFromByteArray<BtaSerializable>(operationProtoBuf) as BuildOperation<*>
+    }
+
+
+    public companion object {
         internal fun getBtaApiVersion(): BtaApiVersion = try {
             BtaApiVersion.Exact(KotlinToolingVersion(KotlinToolchains.getVersion()))
         } catch (_: NoSuchMethodError) {
             BtaApiVersion.Before2_4_20
+        }
+
+        public val protobuf: ProtoBuf = ProtoBuf {
+            serializersModule = btaSerializersModule
         }
     }
 }
@@ -210,10 +220,11 @@ internal class ExecutionContext(
 @OptIn(ExperimentalSerializationApi::class)
 internal class BtaCallbackChannel(
     val protoBuf: ProtoBuf,
+    val messageVisitors: List<MessageVisitor>,
     port: Int = SOCKET_ANY_FREE_PORT,
 ) : DaemonCallbackChannel,
     UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) {
     override fun report(message: ByteArray) {
-        println(protoBuf.decodeFromByteArray<Messages>(message))
+        val _ = messageVisitors.any { it.accept(protoBuf.decodeFromByteArray<Messages>(message)) }
     }
 }

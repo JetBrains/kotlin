@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.buildtools.internal.serializability.Messages
+
 public interface MessageVisitor {
-    public fun accept(message: Any): Boolean
+    public fun accept(message: Messages): Boolean
 }

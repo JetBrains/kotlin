@@ -68,6 +68,8 @@ public interface BaseCompilationOperation : BuildOperation<CompilationResult> {
         public fun build(): BaseCompilationOperation
     }
 
+    public fun toBuilder(): Builder
+
     public companion object {
         /**
          * Adds a tracker that will be informed whenever the compiler makes lookups for references.

@@ -99,7 +99,7 @@ public interface WasmKlibCompilationOperation : BaseCompilationOperation, Cancel
     /**
      * Returns a [Builder] initialized with the values of this [WasmKlibCompilationOperation].
      */
-    public fun toBuilder(): Builder
+    public override fun toBuilder(): Builder
 
     /**
      * An option for configuring a [WasmKlibCompilationOperation].

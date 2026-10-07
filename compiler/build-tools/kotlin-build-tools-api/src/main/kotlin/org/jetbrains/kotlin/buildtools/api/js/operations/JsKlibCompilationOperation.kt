@@ -100,7 +100,7 @@ public interface JsKlibCompilationOperation : BaseCompilationOperation, Cancella
     /**
      * Returns a [Builder] initialized with the values of this [JsKlibCompilationOperation].
      */
-    public fun toBuilder(): Builder
+    public override fun toBuilder(): Builder
 
     /**
      * An option for configuring a [JsKlibCompilationOperation].
