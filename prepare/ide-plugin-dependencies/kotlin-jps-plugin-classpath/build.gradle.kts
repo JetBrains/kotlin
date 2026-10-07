@@ -12,6 +12,11 @@ idePluginPublishingLatch {
 
     publishProjectJars(
         embeddedDependencies + mavenDependencies + otherProjects,
-        libraryDependencies = listOf(commonDependency("org.jetbrains.kotlin:kotlin-reflect"), protobufFull())
+        libraryDependencies = listOf(
+            commonDependency("org.jetbrains.kotlin:kotlin-reflect"),
+            protobufFull(),
+            "com.google.guava:guava:${libs.versions.guava.get()}",
+            "com.google.guava:failureaccess:${libs.versions.failureaccess.get()}",
+        )
     )
 }
