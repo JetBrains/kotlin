@@ -6,12 +6,20 @@
 package org.jetbrains.ring
 
 import kotlinx.benchmark.*
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.ThreadLocal
+import kotlin.native.identityHashCode
 import kotlin.repeat
 
+@OptIn(ExperimentalNativeApi::class)
 @State(Scope.Benchmark)
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
 class ThreadLocalBenchmark {
+    @Setup
+    fun setUp() {
+        println(Counter.identityHashCode())
+    }
+
     @Benchmark
     fun primitiveReadingAndWriting(blackhole: Blackhole) {
         repeat(BENCHMARK_SIZE) {
