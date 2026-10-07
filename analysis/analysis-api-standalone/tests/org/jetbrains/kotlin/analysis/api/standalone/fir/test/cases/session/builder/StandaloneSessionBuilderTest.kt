@@ -721,10 +721,8 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
             assertTrue(parts.all { "CollectionsKt__" in it.name!! }, parts.map { it.name }.toString())
 
             val decompiledFiles = (listOf(abstractList, collectionsKt) + parts).map { findDecompiledFile(it) }
-
-            // KT-89902: the decompiled files should have neither stubs nor ASTs
-            assertEquals(listOf("AbstractList.class", "CollectionsKt.class"), decompiledFiles.filter { it.isStubLoaded }.map { it.name })
-            assertEquals(parts.map { "${it.name}.class" }, decompiledFiles.filter { it.isContentsLoaded }.map { it.name })
+            assertEquals(emptyList(), decompiledFiles.filter { it.isStubLoaded }.map { it.name })
+            assertEquals(emptyList(), decompiledFiles.filter { it.isContentsLoaded }.map { it.name })
 
             // The navigation element of the class file is computed on demand
             assertEquals(findDecompiledFile(abstractList), abstractList.containingFile.navigationElement)
