@@ -77,7 +77,6 @@ internal open class SymbolLightSimpleMethod protected constructor(
             ifInlineOnly { return modifiersForInlineOnlyCase() }
             val modality = when {
                 isTopLevel -> PsiModifier.FINAL
-                containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
                 this is SymbolLightMethodForMappedKotlinCollectionMethod -> if (this.isFinal) PsiModifier.FINAL else null
                 else -> withFunctionSymbol { computeMethodModality(it, containingClass) }
             }
