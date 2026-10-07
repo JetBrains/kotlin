@@ -11,19 +11,43 @@ import kotlin.script.experimental.host.FileBasedScriptSource
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
+import kotlin.script.experimental.host.getScriptingClass
+import kotlin.script.experimental.host.with
 import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
+import kotlin.script.experimental.jvm.baseClassLoader
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
+
+/**
+ * [explicit] is the host's actual configuration, so it wins over the one from [configuration],
+ * except for the keys describing where the definition's classes are loaded from.
+ */
+internal fun effectiveHostConfiguration(
+    explicit: ScriptingHostConfiguration,
+    configuration: ScriptCompilationConfiguration,
+): ScriptingHostConfiguration {
+    val fromConfiguration = configuration[ScriptCompilationConfiguration.hostConfiguration]
+        ?: return explicit.withDefaultsFrom(defaultJvmScriptingHostConfiguration)
+    return explicit.withDefaultsFrom(fromConfiguration).with {
+        fromConfiguration.getNoDefault(ScriptingHostConfiguration.configurationDependencies)?.let { configurationDependencies(it) }
+        fromConfiguration.getNoDefault(ScriptingHostConfiguration.jvm.baseClassLoader)?.let { jvm.baseClassLoader(it) }
+        fromConfiguration.getNoDefault(ScriptingHostConfiguration.getScriptingClass)?.let { getScriptingClass(it) }
+    }
+}
 
 fun ScriptCompilationConfiguration.refineAllForK2(
     script: SourceCode,
     hostConfiguration: ScriptingHostConfiguration,
     collectAnnotationData: (SourceCode, ScriptCompilationConfiguration) -> ResultWithDiagnostics<ScriptCollectedData>?
 ): ResultWithDiagnostics<ScriptCompilationConfiguration> =
-    with {
-        this@with.hostConfiguration.update { it.withDefaultsFrom(hostConfiguration) }
-        updateClasspath(hostConfiguration[ScriptingHostConfiguration.configurationDependencies]?.toClassPathOrEmpty())
+    effectiveHostConfiguration(hostConfiguration, this).let { effectiveHostConfig ->
+        with {
+            this@with.hostConfiguration(effectiveHostConfig)
+            updateClasspath(effectiveHostConfig[ScriptingHostConfiguration.configurationDependencies]?.toClassPathOrEmpty())
+        }
     }
         .refineBeforeParsing(script)
         .onSuccess {
@@ -51,4 +75,3 @@ fun ScriptCompilationConfiguration.refineAllForK2(
                 resolvedImportScripts(resolvedScripts)
             }.asSuccess()
         }
-

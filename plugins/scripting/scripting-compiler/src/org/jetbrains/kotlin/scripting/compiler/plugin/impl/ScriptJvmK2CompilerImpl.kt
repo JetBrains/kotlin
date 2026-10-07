@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScript
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.impl._languageVersion
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.toClassPathOrEmpty
@@ -55,11 +54,17 @@ class ScriptJvmK2CompilerIsolated(val hostConfiguration: ScriptingHostConfigurat
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> =
         withMessageCollector { messageCollector ->
-            withScriptCompilationCache(script, scriptCompilationConfiguration, messageCollector) {
+            val configWithEffectiveHost = scriptCompilationConfiguration.with {
+                hostConfiguration(
+                    effectiveHostConfiguration(
+                        this@ScriptJvmK2CompilerIsolated.hostConfiguration,
+                        scriptCompilationConfiguration,
+                    )
+                )
+            }
+            withScriptCompilationCache(script, configWithEffectiveHost, messageCollector) {
                 withK2ScriptCompilerWithLightTree(
-                    scriptCompilationConfiguration.with {
-                        hostConfiguration(this@ScriptJvmK2CompilerIsolated.hostConfiguration)
-                    },
+                    configWithEffectiveHost,
                     messageCollector
                 ) {
                     if (messageCollector.hasErrors()) failure(messageCollector)
@@ -78,10 +83,11 @@ class ScriptJvmK2CompilerFromEnvironment(
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<CompiledScript> =
         withMessageCollector(script = script) { messageCollector ->
-            val configWithUpdatedHost = scriptCompilationConfiguration.updateWithHostConfiguration(hostConfiguration)
-            withScriptCompilationCache(script, configWithUpdatedHost, messageCollector) {
+            val effectiveHostConfig = effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration)
+            val configWithEffectiveHost = scriptCompilationConfiguration.with { hostConfiguration(effectiveHostConfig) }
+            withScriptCompilationCache(script, configWithEffectiveHost, messageCollector) {
                 val compiler = ScriptJvmK2CompilerImpl(
-                    createCompilerStateFromEnvironment(environment, messageCollector, configWithUpdatedHost, hostConfiguration),
+                    createCompilerStateFromEnvironment(environment, messageCollector, configWithEffectiveHost, effectiveHostConfig),
                     SourceCode::convertToFirViaLightTree
                 )
                 if (messageCollector.hasErrors()) failure(messageCollector)
@@ -89,14 +95,6 @@ class ScriptJvmK2CompilerFromEnvironment(
             }
         }
 }
-
-fun ScriptCompilationConfiguration.updateWithHostConfiguration(hostConfiguration: ScriptingHostConfiguration) =
-    with {
-        val providedHostConfiguration = this[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
-        hostConfiguration(
-            hostConfiguration.withDefaultsFrom(providedHostConfiguration)
-        )
-    }
 
 class ScriptJvmK2CompilerImpl(
     state: ScriptCompilerState,
@@ -301,4 +299,3 @@ private fun ScriptCompilerStateInternal.getOrCreateSessionForAnnotationResolutio
         hostConfiguration,
     ).also { dummySessionForAnnotationResolution = it }
 }
-
