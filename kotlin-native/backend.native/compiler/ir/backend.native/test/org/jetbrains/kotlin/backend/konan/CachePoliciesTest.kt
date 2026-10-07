@@ -53,7 +53,7 @@ class CachePoliciesTest {
             Disposer.dispose(disposable)
         }
 
-        val flavor = CacheBuildOptions(configuration).flavor(setOf(CachePolicy.AFFECTS_RUNTIME, CachePolicy.AFFECTS_CODEGEN))
+        val flavor = CacheBuildOptions(configuration).flavor(CachePolicy.AFFECTS_RUNTIME, CachePolicy.AFFECTS_CODEGEN)
         val optionsSetByDefault = Regex("-(\\w+)=").findAll(flavor).map { it.groupValues[1] }.toSet()
         val declaredWithDefaults = setOf(
                 NativeConfigurationKeys.KONAN_TARGET,
@@ -70,7 +70,7 @@ class CachePoliciesTest {
     @Test
     fun flavorOfOptionsPassedAsIs() {
         fun flavor(setup: CompilerConfiguration.() -> Unit) =
-                CacheBuildOptions(CompilerConfiguration.create().apply(setup)).flavor(setOf(CachePolicy.AFFECTS_CODEGEN))
+                CacheBuildOptions(CompilerConfiguration.create().apply(setup)).flavor(CachePolicy.AFFECTS_CODEGEN)
 
         assertEquals("-packFields=true", flavor { put(BinaryOptions.packFields, true) })
         assertEquals("-packFields=false", flavor { put(BinaryOptions.packFields, false) })
@@ -98,8 +98,8 @@ class CachePoliciesTest {
         }
 
         assertEquals("-gc=STOP_THE_WORLD_MARK_AND_SWEEP-packFields=false",
-                options.flavor(setOf(CachePolicy.AFFECTS_RUNTIME, CachePolicy.AFFECTS_CODEGEN)))
-        assertEquals("-packFields=false", options.flavor(setOf(CachePolicy.AFFECTS_CODEGEN)))
+                options.flavor(CachePolicy.AFFECTS_RUNTIME, CachePolicy.AFFECTS_CODEGEN))
+        assertEquals("-packFields=false", options.flavor(CachePolicy.AFFECTS_CODEGEN))
 
         val cacheBuildConfiguration = CompilerConfiguration.create()
         options.setUp(cacheBuildConfiguration)
