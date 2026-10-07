@@ -7,9 +7,9 @@ KaJavaInteroperabilityComponent: org.jetbrains.kotlin.analysis.api.components.as
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.KaQualifierToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.KaShortenOptions
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.KaShortenStrategy
+KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.KaThisLabelToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.KaTypeToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ShortenCommand
-KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShortenings(KtFile, TextRange, KaShortenOptions, (KaClassLikeSymbol) -> KaShortenStrategy, (KaCallableSymbol) -> KaShortenStrategy)
 KaReferenceShortener: org.jetbrains.kotlin.analysis.api.components.collectPossibleReferenceShorteningsInElement(KtElement, KaShortenOptions, (KaClassLikeSymbol) -> KaShortenStrategy, (KaCallableSymbol) -> KaShortenStrategy)
 KaScopeProvider: org.jetbrains.kotlin.analysis.api.components.KaImplicitReceiver

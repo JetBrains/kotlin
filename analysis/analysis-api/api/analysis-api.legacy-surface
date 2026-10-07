@@ -420,6 +420,7 @@ org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.isSubClass
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.originalConstructorIfTypeAliased
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.samConstructor
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider.sealedClassInheritors
+org.jetbrains.kotlin.analysis.api.components.KaThisLabelToShortenInfo
 org.jetbrains.kotlin.analysis.api.components.KaTypeBuilder
 org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
 org.jetbrains.kotlin.analysis.api.components.KaTypeCreator.buildArrayType(KaType, KaArrayTypeBuilder.() -> Unit)
@@ -537,7 +538,6 @@ org.jetbrains.kotlin.analysis.api.components.ShortenCommand.listOfTypeToShortenI
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.starImportsToAdd
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.targetFile
 org.jetbrains.kotlin.analysis.api.components.ShortenCommand.thisLabelsToShorten
-org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo
 org.jetbrains.kotlin.analysis.api.components.allOverriddenSymbols
 org.jetbrains.kotlin.analysis.api.components.allSupertypes
 org.jetbrains.kotlin.analysis.api.components.allSupertypes(Boolean)
