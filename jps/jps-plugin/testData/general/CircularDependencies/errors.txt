@@ -1,0 +1,1 @@
+Circular dependencies are not supported when compiling through the Build Tools API. The following modules depend on each other: kotlinProject and 1 more. at line -1, column -1
