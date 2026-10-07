@@ -11,10 +11,16 @@ public class JavaConstructors {
 
 // FILE: box.kt
 import kotlin.reflect.KClass
+import kotlin.reflect.KCallable
 import kotlin.reflect.KFunction
+import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
 import kotlin.reflect.KVisibility
+import kotlin.reflect.full.IllegalCallableAccessException
+import kotlin.reflect.full.declaredMemberFunctions
+import kotlin.reflect.jvm.isAccessible
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 open class Foo<in T> {
     public fun publicFun() {}
@@ -46,6 +52,57 @@ open class Foo<in T> {
 public var publicVarPrivateSetter = Unit
     private set
 
+private fun privateTopLevelFun() = "privateTopLevelFun"
+internal fun internalTopLevelFun() = "internalTopLevelFun"
+@PublishedApi internal fun publishedApiFun() = "publishedApiFun"
+private val privateTopLevelVal = "privateTopLevelVal"
+internal val internalTopLevelVal = "internalTopLevelVal"
+
+interface WithPrivateFun {
+    private fun privateFun() = "WithPrivateFun.privateFun"
+}
+
+class WithPrivateFunImpl : WithPrivateFun
+
+class Setters {
+    var protectedSetter = "initial"
+        protected set
+    var internalSetter = "initial"
+        internal set
+}
+
+object Obj {
+    private fun privateFun() = "Obj.privateFun"
+    internal fun internalFun() = "Obj.internalFun"
+}
+
+class WithCompanion {
+    companion object {
+        private fun privateFun() = "WithCompanion.privateFun"
+        internal fun internalFun() = "WithCompanion.internalFun"
+    }
+}
+
+open class Base {
+    protected open fun protectedFun() = "Base.protectedFun"
+    internal open fun internalFun() = "Base.internalFun"
+}
+
+class Widened : Base() {
+    public override fun protectedFun() = "Widened.protectedFun"
+}
+
+class FakeOverrides : Base()
+
+private fun KClass<*>.member(name: String): KCallable<*> = members.single { it.name == name }
+
+// Private and protected callables are not accessible by default, and can only be called after `isAccessible = true`.
+private fun checkCallRequiresAccess(expected: Any?, callable: KCallable<*>, vararg args: Any?) {
+    assertFailsWith<IllegalCallableAccessException> { callable.call(*args) }
+    callable.isAccessible = true
+    assertEquals(expected, callable.call(*args))
+}
+
 class Constructors {
     public constructor(public: Int)
     protected constructor(protected: String)
@@ -75,6 +132,76 @@ fun box(): String {
     assertEquals(KVisibility.PUBLIC, ::publicVarPrivateSetter.visibility)
     assertEquals(KVisibility.PUBLIC, ::publicVarPrivateSetter.getter.visibility)
     assertEquals(KVisibility.PRIVATE, ::publicVarPrivateSetter.setter.visibility)
+
+    ::privateTopLevelFun.let {
+        assertEquals(KVisibility.PRIVATE, it.visibility)
+        checkCallRequiresAccess("privateTopLevelFun", it)
+    }
+    ::internalTopLevelFun.let {
+        assertEquals(KVisibility.INTERNAL, it.visibility)
+        assertEquals("internalTopLevelFun", it.call())
+    }
+    ::publishedApiFun.let {
+        assertEquals(KVisibility.INTERNAL, it.visibility)
+        assertEquals("publishedApiFun", it.call())
+    }
+    ::privateTopLevelVal.let {
+        assertEquals(KVisibility.PRIVATE, it.visibility)
+        checkCallRequiresAccess("privateTopLevelVal", it)
+    }
+    ::internalTopLevelVal.let {
+        assertEquals(KVisibility.INTERNAL, it.visibility)
+        assertEquals("internalTopLevelVal", it.call())
+    }
+    WithPrivateFun::class.declaredMemberFunctions.single().let {
+        assertEquals(KVisibility.PRIVATE, it.visibility)
+        checkCallRequiresAccess("WithPrivateFun.privateFun", it, WithPrivateFunImpl())
+    }
+
+    (Setters::class.member("protectedSetter") as KMutableProperty<*>).let {
+        assertEquals(KVisibility.PUBLIC, it.visibility)
+        assertEquals(KVisibility.PROTECTED, it.setter.visibility)
+        val instance = Setters()
+        checkCallRequiresAccess(Unit, it.setter, instance, "protected")
+        assertEquals("protected", it.getter.call(instance))
+    }
+    (Setters::class.member("internalSetter") as KMutableProperty<*>).let {
+        assertEquals(KVisibility.PUBLIC, it.visibility)
+        assertEquals(KVisibility.INTERNAL, it.setter.visibility)
+        val instance = Setters()
+        it.setter.call(instance, "internal")
+        assertEquals("internal", it.getter.call(instance))
+    }
+
+    Obj::class.member("privateFun").let {
+        assertEquals(KVisibility.PRIVATE, it.visibility)
+        checkCallRequiresAccess("Obj.privateFun", it, Obj)
+    }
+    Obj::class.member("internalFun").let {
+        assertEquals(KVisibility.INTERNAL, it.visibility)
+        assertEquals("Obj.internalFun", it.call(Obj))
+    }
+    WithCompanion.Companion::class.member("privateFun").let {
+        assertEquals(KVisibility.PRIVATE, it.visibility)
+        checkCallRequiresAccess("WithCompanion.privateFun", it, WithCompanion.Companion)
+    }
+    WithCompanion.Companion::class.member("internalFun").let {
+        assertEquals(KVisibility.INTERNAL, it.visibility)
+        assertEquals("WithCompanion.internalFun", it.call(WithCompanion.Companion))
+    }
+
+    Widened::class.member("protectedFun").let {
+        assertEquals(KVisibility.PUBLIC, it.visibility)
+        assertEquals("Widened.protectedFun", it.call(Widened()))
+    }
+    FakeOverrides::class.member("protectedFun").let {
+        assertEquals(KVisibility.PROTECTED, it.visibility)
+        checkCallRequiresAccess("Base.protectedFun", it, FakeOverrides())
+    }
+    FakeOverrides::class.member("internalFun").let {
+        assertEquals(KVisibility.INTERNAL, it.visibility)
+        assertEquals("Base.internalFun", it.call(FakeOverrides()))
+    }
 
     fun KClass<*>.ctor(visibility: String) = constructors.single { it.parameters.single().name == visibility }
 
