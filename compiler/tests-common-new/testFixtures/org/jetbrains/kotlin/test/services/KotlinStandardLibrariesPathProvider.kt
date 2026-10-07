@@ -28,16 +28,10 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         private var reflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         @Volatile
-        private var reflectWithNewFakeOverridesJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
-
-        @Volatile
         private var reflectWithLoadMetadataDirectlyClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         @Volatile
         private var k1ReflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
-
-        @Volatile
-        private var k1MembersReflectJarClassLoader: SoftReference<ClassLoader?> = SoftReference(null)
 
         private fun createClassLoader(vararg files: File): ClassLoader {
             val urls: MutableList<URL> = ArrayList(2)
@@ -137,14 +131,10 @@ interface KotlinStandardLibrariesPathProvider : TestService {
         getOrCreateClassLoader(::reflectJarClassLoader).also { loader ->
             val systemProperties = loader.loadClass("kotlin.reflect.jvm.internal.SystemPropertiesKt")
             check(systemProperties.getMethod("getUseK1Implementation").invoke(null) == false)
-            check(systemProperties.getMethod("getUseK1ImplementationForMembers").invoke(null) == false)
         }
 
     fun getRuntimeAndK1ReflectJarClassLoader(): ClassLoader =
         getOrCreateClassLoader(::k1ReflectJarClassLoader, "useK1Implementation")
-
-    fun getRuntimeAndK1MembersReflectJarClassLoader(): ClassLoader =
-        getOrCreateClassLoader(::k1MembersReflectJarClassLoader, "useK1ImplementationForMembers")
 
     fun getRuntimeAndReflectWithLoadMetadataDirectlyClassLoader(): ClassLoader =
         getOrCreateClassLoader(::reflectWithLoadMetadataDirectlyClassLoader, "loadMetadataDirectly")
