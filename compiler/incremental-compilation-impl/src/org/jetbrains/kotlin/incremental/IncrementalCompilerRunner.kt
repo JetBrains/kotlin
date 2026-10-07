@@ -222,19 +222,21 @@ abstract class IncrementalCompilerRunner<
      * Entry point into incremental compilation for JVM, JS and Wasm.
      *
      * Invariants:
-     * - Three IC results:
+     * - Four IC results:
      *      - [ICResult.Completed]. It includes successful compilations, compilation errors, and even that nothing was compiled (e.g. empty dirty set).
      *          This is a semantic equivalent of "we reached the compilation stage".
-     *      - [ICResult.RequiresRebuild]. No previous compilation results, so full rebuild is required first
-     *      - [ICResult.Failed]. An exception in IC machinery itself like IC persisted cache, checksums etc. Triggers full rebuild.
+     *      - [ICResult.RequiresRebuild]. No previous compilation results or IC-incompatible changes, so full rebuild is required first.
+     *      - [ICResult.Failed]. An exception in IC machinery itself like IC persisted cache, checksums etc.
+     *             Triggers full rebuild.
+     *      - An exception where we did not expect it (e.g. FS corruption)
      *
      * - All successful builds produce [last-build.bin][LAST_BUILD_INFO_FILE_NAME] as a marker of a previous build.
-     * - Rebuild ([compile]) cleans outputs and IC state and recompile all sources via [compileNonIncrementally]. Nothing is preserved.
+     * - Rebuild ([compile]) cleans outputs and IC state and recompile all sources via [compileNonIncrementally].
      *
      * - [changedFiles] are loosely-defined. It is not guaranteed that they are relative to the last preserved IC state:
      *      - [ChangedFiles.DeterminableFiles.ToBeComputed] to hint us to compute it here
      *      - [ChangedFiles.DeterminableFiles.Known] to hint us that it comes from a build tool. It might be unsound,
-     *          we trust it (e.g. Gradle's `@Output` precision), and it might be the source of various IC bugs.
+     *          we trust it (e.g. Gradle's fingerprinting]), and it might be the source of various IC bugs.
      *          If a caller crafts [ChangedFiles.DeterminableFiles.Known] manually, its soundness won't be checked at all.
      *      - Specific compiler backend implementation still can decide to fall back to a full rebuild (e.g. because it detected some IC-incompatible change)
      *
@@ -262,6 +264,9 @@ abstract class IncrementalCompilerRunner<
         }
         changedFiles as? DeterminableFiles ?: error("Expected $changedFiles to be an instance of DeterminableFiles")
 
+        if (!lastBuildInfoFile.exists()) { // Perf optimization: short-circuit early
+            return ICResult.RequiresRebuild(UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
+        }
         val fragmentContext = if (!icFeatures.enableUnsafeIncrementalCompilationForMultiplatform) { //see KT-62686
             FragmentContext.fromCompilerArguments(args)
         } else {
