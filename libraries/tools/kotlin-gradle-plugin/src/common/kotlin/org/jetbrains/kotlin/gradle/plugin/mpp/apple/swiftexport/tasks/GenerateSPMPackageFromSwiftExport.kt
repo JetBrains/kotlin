@@ -10,6 +10,7 @@ import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.TaskProvider
@@ -19,6 +20,10 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnosti
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ModuleMapGenerator
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.SerializationTools
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftImportFingerprintedCoordinationService
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependency
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.packageArguments
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.productArguments
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.toSwiftPMPlatforms
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.sharedPackageRootFor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftPackagePlatform
@@ -31,6 +36,7 @@ import org.jetbrains.kotlin.gradle.utils.commaSeparatedEntries
 import org.jetbrains.kotlin.gradle.utils.emitListItems
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -135,6 +141,22 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     @get:Internal
     abstract val swiftPMImportCoordinationService: Property<SwiftImportFingerprintedCoordinationService>
+
+    /**
+     * The packages of the SwiftPM import, declared in the manifest as the project declares them, so the consumer
+     * of the package resolves and links them. Empty in the Xcode flow, which links them through the synthetic
+     * package in [swiftPMImportPackageRoot] instead.
+     */
+    @get:Input
+    abstract val swiftPMDependencies: SetProperty<SwiftPMDependency>
+
+    /**
+     * Where the package is exported to, if it is: the local packages of [swiftPMDependencies] are referenced
+     * relative to it, so the exported package stays valid when the project moves.
+     */
+    @get:Optional
+    @get:Input
+    abstract val exportDirectoryPath: Property<String>
 
     @get:OutputDirectory
     abstract val packagePath: DirectoryProperty
@@ -288,7 +310,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         val manifest = packagePath.getFile().resolve("Package.swift")
         val content = SPMManifestGenerator.generateManifest(
             swiftApiModule, swiftLibrary, kotlinRuntimeModule, modules,
-            listOfNotNull(syntheticPackageDependency()),
+            listOfNotNull(syntheticPackageDependency()) + importedPackageDependencies(),
             kotlinBinaryTargetName.orNull,
             platforms.get()
         )
@@ -306,6 +328,23 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
             packageDeclaration = ".package(path: \"${root.absolutePath}\")",
             productDeclarations = listOf(".product(name: \"${swiftPMImportProductName.get()}\", package: \"${root.name}\")"),
         )
+    }
+
+    /**
+     * A package declared more than once, by the project and by its dependencies, is declared the first way with
+     * the products of every declaration.
+     */
+    private fun importedPackageDependencies(): List<SwiftPackageDependency> {
+        val umbrellaPlatforms = targetOutputs.get().map { it.target.get() }.toSet().toSwiftPMPlatforms()
+        val packageRoot = exportDirectoryPath.orNull?.let { File(it).normalizedAbsoluteFile() }
+        return swiftPMDependencies.get().groupBy { it.packageName }.toSortedMap().map { (packageName, declarations) ->
+            SwiftPackageDependency(
+                packageDeclaration = ".package(${declarations.first().packageArguments(packageRoot).joinToString(", ")})",
+                productDeclarations = declarations.flatMap { it.products }.distinctBy { it.name }.map { product ->
+                    ".product(${product.productArguments(packageName, null, umbrellaPlatforms).joinToString(", ")})"
+                },
+            )
+        }
     }
 
     private fun appendToOtherIncludes(name: String, path: File) {
