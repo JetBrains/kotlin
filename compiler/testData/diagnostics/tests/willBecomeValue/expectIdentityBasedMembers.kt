@@ -5,13 +5,13 @@
 // MODULE: common
 
 @WillBecomeValue
-expect <!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>class Overridden<!>
+expect class Overridden
 
 @WillBecomeValue
-expect <!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>object OverriddenObject<!>
+expect object OverriddenObject
 
 @WillBecomeValue
-expect <!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>class NotOverridden<!>
+expect class NotOverridden
 
 // MODULE: platform()()(common)
 
