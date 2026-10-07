@@ -141,7 +141,7 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
     fun testFromOtherFile() {
         val point = SourceFile("Point.kt", "value class Point(val x: Int, val y: Int)")
         val irModule = compileToIr(listOf(point, SourceFile("Holder.kt", "class Holder(val point: Point)")))
-        assertStabilityOfHolder(irModule, "Stable")
+        assertStabilityOfHolder(irModule, "Runtime(Point)")
     }
 
     // Regression test for KT-89995
@@ -158,19 +158,19 @@ class FullValueClassStabilityTests : AbstractIrTransformTest() {
             withCompose = true,
             toAbiJar = true,
         )
-        assertStabilityOfLibraryHolder("Stable")
+        assertStabilityOfLibraryHolder("Runtime(Point)")
     }
 
     @Test
     fun testFromLibraryCompiledWithCompose() {
         compileLibrary("value class Point(val x: Int, val y: Int)", withCompose = true, toAbiJar = false)
-        assertStabilityOfLibraryHolder("Stable")
+        assertStabilityOfLibraryHolder("Runtime(Point)")
     }
 
     @Test
     fun testFromLibraryCompiledWithoutCompose() {
         compileLibrary("value class Point(val x: Int, val y: Int)", withCompose = false, toAbiJar = false)
-        assertStabilityOfLibraryHolder("Stable")
+        assertStabilityOfLibraryHolder("Unstable")
     }
 
     @OptIn(ExperimentalCompilerApi::class)
