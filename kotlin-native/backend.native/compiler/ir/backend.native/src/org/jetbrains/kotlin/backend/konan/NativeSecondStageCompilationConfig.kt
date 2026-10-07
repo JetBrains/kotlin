@@ -244,8 +244,9 @@ class NativeSecondStageCompilationConfig(
     val fixedBlockPageSize: UInt
         get() = configuration.get(BinaryOptions.fixedBlockPageSize) ?: defaultFixedBlockPageSize
 
+    private val defaultConcurrentWeakSweep = true
     val concurrentWeakSweep: Boolean
-        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: true
+        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: defaultConcurrentWeakSweep
 
     val concurrentMarkMaxIterations: UInt
         get() = configuration.get(BinaryOptions.concurrentMarkMaxIterations) ?: 100U
@@ -554,6 +555,8 @@ class NativeSecondStageCompilationConfig(
             append("-fixed_block_page_size$fixedBlockPageSize")
         if (pagedAllocator != defaultPagedAllocator)
             append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
+        if (concurrentWeakSweep != defaultConcurrentWeakSweep)
+            append("-concurrent_weak_sweep${if (concurrentWeakSweep) "TRUE" else "FALSE"}")
         if (minidumpLocation != null)
             append("-with_crash_dumps")
         if (runtimeLogsEnabled)
