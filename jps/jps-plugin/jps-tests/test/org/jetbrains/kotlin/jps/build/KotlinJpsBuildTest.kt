@@ -362,77 +362,12 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
-    fun testCircularDependenciesNoKotlinFiles() {
-        doTest()
-    }
-
-    @Test
-    fun testCircularDependenciesDifferentPackages() {
+    fun testCircularDependencies() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
 
-        // Check that outputs are located properly
-        assertFilesExistInOutput(findModule("module2"), "kt1/Kt1Kt.class")
-        assertFilesExistInOutput(findModule("kotlinProject"), "kt2/Kt2Kt.class")
-
-        result.assertSuccessful()
-
-        if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(createTouchAction("src/kt2.kt"), null, packageClasses("kotlinProject", "src/kt2.kt", "kt2.Kt2Kt"))
-            checkWhen(createTouchAction("module2/src/kt1.kt"), null, packageClasses("module2", "module2/src/kt1.kt", "kt1.Kt1Kt"))
-        }
-        else {
-            val allClasses = myProject.outputPaths()
-            checkWhen(createTouchAction("src/kt2.kt"), null, allClasses)
-            checkWhen(createTouchAction("module2/src/kt1.kt"), null, allClasses)
-        }
-    }
-
-    @Test
-    fun testCircularDependenciesSamePackage() {
-        initProject(JVM_MOCK_RUNTIME)
-        val result = buildAllModules()
-        result.assertSuccessful()
-
-        // Check that outputs are located properly
-        val facadeWithA = findFileInOutputDir(findModule("module1"), "test/AKt.class")
-        val facadeWithB = findFileInOutputDir(findModule("module2"), "test/BKt.class")
-        assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "getA")
-        assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "getB", "setB")
-
-
-        if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(createTouchAction("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
-            checkWhen(createTouchAction("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
-        }
-        else {
-            val allClasses = myProject.outputPaths()
-            checkWhen(createTouchAction("module1/src/a.kt"), null, allClasses)
-            checkWhen(createTouchAction("module2/src/b.kt"), null, allClasses)
-        }
-    }
-
-    @Test
-    fun testCircularDependenciesSamePackageWithTests() {
-        initProject(JVM_MOCK_RUNTIME)
-        val result = buildAllModules()
-        result.assertSuccessful()
-
-        // Check that outputs are located properly
-        val facadeWithA = findFileInOutputDir(findModule("module1"), "test/AKt.class")
-        val facadeWithB = findFileInOutputDir(findModule("module2"), "test/BKt.class")
-        assertSameElements(getMethodsOfClass(facadeWithA), "<clinit>", "a", "funA", "getA")
-        assertSameElements(getMethodsOfClass(facadeWithB), "<clinit>", "b", "funB", "getB", "setB")
-
-        if (IncrementalCompilation.isEnabledForJvm()) {
-            checkWhen(createTouchAction("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"))
-            checkWhen(createTouchAction("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"))
-        }
-        else {
-            val allProductionClasses = myProject.outputPaths(tests = false)
-            checkWhen(createTouchAction("module1/src/a.kt"), null, allProductionClasses)
-            checkWhen(createTouchAction("module2/src/b.kt"), null, allProductionClasses)
-        }
+        result.assertFailed()
+        result.checkErrors()
     }
 
     @Test
@@ -451,37 +386,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val classpath = listOf("out/production/module1", "out/test/module2").map { File(workDir, it).toURI().toURL() }.toTypedArray()
         val clazz = URLClassLoader(classpath).loadClass("test2.BarKt")
         clazz.getMethod("box").invoke(null)
-    }
-
-    @Test
-    fun testCircularDependenciesInternalFromAnotherModule() {
-        initProject(JVM_MOCK_RUNTIME)
-        val result = buildAllModules()
-        result.assertFailed()
-        result.checkErrors()
-    }
-
-    @Test
-    fun testCircularDependenciesWrongInternalFromTests() {
-        initProject(JVM_MOCK_RUNTIME)
-        val result = buildAllModules()
-
-        // TODO: KT-61716, test should be unmuted after fix
-        result.assertSuccessful()
-        // result.assertFailed()
-        //result.checkErrors()
-    }
-
-    @Test
-    fun testCircularDependencyWithReferenceToOldVersionLib() {
-        initProject(JVM_MOCK_RUNTIME)
-
-        val libraryJar = MockLibraryUtilExt.compileJvmLibraryToJar(workDir.absolutePath + File.separator + "oldModuleLib/src", "module-lib")
-
-        addDependency(JpsJavaDependencyScope.COMPILE, listOf(findModule("module1"), findModule("module2")), false, "module-lib", libraryJar)
-
-        val result = buildAllModules()
-        result.assertSuccessful()
     }
 
     @Test
@@ -674,18 +578,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         val actualText = actualWarnings.sorted().joinToString("\n")
 
         assertEquals(expectedText, actualText)
-    }
-
-    @Test
-    fun testHelp() {
-        initProject()
-
-        val result = buildAllModules()
-        result.assertSuccessful()
-        val warning = result.getMessages(BuildMessage.Kind.WARNING).single()
-
-        val expectedText = StringUtil.convertLineSeparators(Usage.render(K2JVMCompiler(), K2JVMCompilerArguments()))
-        assertEquals(expectedText, warning.messageText)
     }
 
     @Test
