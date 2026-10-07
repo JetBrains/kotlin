@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirWillBecomeValueDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.types.withNullability
 import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
@@ -77,10 +80,14 @@ fun FirRegularClassSymbol.willBecomeKotlinOrJdkValueClass(session: FirSession): 
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun reportIdentitySensitiveOperationOnWillBecomeValueClass(source: KtSourceElement?, type: ConeKotlinType) {
-    val classSymbol = type.toRegularClassSymbol(context.session)?.takeIf { it.hasWillBecomeValueAnnotation(context.session) } ?: return
+    // A type parameter or an intersection type is checked by its upper bounds, and the annotated one is reported.
+    val [annotatedType, classSymbol] = type.collectUpperBounds(context.session.typeContext).firstNotNullOfOrNull { bound ->
+        val classSymbol = bound.toRegularClassSymbol(context.session)?.takeIf { it.hasWillBecomeValueAnnotation(context.session) }
+        classSymbol?.let { bound.withNullability(nullable = false, context.session.typeContext) to it }
+    } ?: return
     if (classSymbol in context.containingDeclarations) {
-        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS, type)
+        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS, annotatedType)
     } else {
-        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS, type)
+        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS, annotatedType)
     }
 }
