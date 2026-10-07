@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmExposeBoxedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterface
 import org.jetbrains.kotlin.light.classes.symbol.classes.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.utils.computeSimpleModality
@@ -26,8 +27,9 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
  *   the JVM backend moves such an implementation to the `DefaultImpls` class and leaves an abstract method in the interface, the
  *   same way as for a member without a body. Otherwise, the implementation is compiled to a `default` method, see
  *   [SymbolLightMemberModifierList]. Static members of an interface (`@JvmStatic` members of its companion object and members of
- *   its companion block) keep their implementation in the interface class in any mode, so they are not affected. This mirrors
- *   `org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault`.
+ *   its companion block) keep their implementation in the interface class in any mode, so they are not affected. A private member
+ *   leaves no method in the interface with `-jvm-default=disable`, so [SymbolLightClassForInterface.getOwnMethods] excludes it.
+ *   This mirrors `org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault`.
  * - `final` is suppressed for interface members and generated enum members.
  */
 context(_: KaSession)

@@ -1,6 +1,4 @@
 public abstract interface I /* I*/ {
-  private abstract void privateMember();//  privateMember()
-
   private static void privateCompanionBlockMember();//  privateCompanionBlockMember()
 
   public abstract void publicMember();//  publicMember()

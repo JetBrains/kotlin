@@ -1,10 +1,4 @@
 public abstract interface Foo /* Foo*/ {
-  private abstract int getPrivateProperty();//  getPrivateProperty()
-
-  private abstract void foo();//  foo()
-
-  private abstract void setPrivateProperty(int);//  setPrivateProperty(int)
-
   public abstract void bar();//  bar()
 
   public static final class DefaultImpls /* Foo.DefaultImpls*/ {
