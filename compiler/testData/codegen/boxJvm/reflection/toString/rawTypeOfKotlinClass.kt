@@ -35,17 +35,22 @@ fun box(): String {
     val useK1 = Class.forName("kotlin.reflect.jvm.internal.SystemPropertiesKt").getMethod("getUseK1Implementation").invoke(null) == true
 
     val parameterTypes = J::class.declaredFunctions.associate { it.name to it.parameters[1].type.toString() }
-    assertEquals("test.Inv<(raw) kotlin.Any?>", parameterTypes["inv"])
-    assertEquals("test.InvNumber<(raw) kotlin.Number>", parameterTypes["invNumber"])
-    assertEquals("test.InvNullableNumber<(raw) kotlin.Number?>", parameterTypes["invNullableNumber"])
-    // The legacy implementation incorrectly erases the self-referencing bound to a star projection.
-    assertEquals(if (useK1) "test.InvRecursive<(raw) *>" else "test.InvRecursive<(raw) test.Inv<*>>", parameterTypes["invRecursive"])
-    assertEquals("test.InvDependent<(raw) kotlin.CharSequence, (raw) kotlin.CharSequence>", parameterTypes["invDependent"])
+    assertEquals("test.Inv<(raw) kotlin.Any?>!", parameterTypes["inv"])
+    assertEquals("test.InvNumber<(raw) kotlin.Number>!", parameterTypes["invNumber"])
+    assertEquals("test.InvNullableNumber<(raw) kotlin.Number?>!", parameterTypes["invNullableNumber"])
+    // K1 implementation erases a type parameter with a recursive bound to `*` (see `JavaTypeResolver.computeRawTypeArguments`).
+    // New implementation behaves like K2 and erases it to the bound with `*` inside (see `FirTypeParameter.eraseToUpperBound`).
+    assertEquals(
+        if (useK1) "test.InvRecursive<(raw) *>!"
+        else "test.InvRecursive<(raw) test.Inv<*>>!",
+        parameterTypes["invRecursive"]
+    )
+    assertEquals("test.InvDependent<(raw) kotlin.CharSequence, (raw) kotlin.CharSequence>!", parameterTypes["invDependent"])
     // Note that the second type argument below is non-null which is how it was loaded in K1. K2 loads it as nullable, which is probably
     // more correct, but we're keeping kotlin-reflect behavior closer to K1 for now.
-    assertEquals("test.InvDependentWithNullable<(raw) kotlin.CharSequence, (raw) kotlin.CharSequence>", parameterTypes["invDependentWithNullable"])
-    assertEquals("test.InOut<(raw) kotlin.Number, (raw) kotlin.Any>", parameterTypes["inOut"])
-    assertEquals("kotlin.collections.MutableList<(raw) kotlin.Any?>", parameterTypes["list"])
-    assertEquals("kotlin.Comparable<(raw) kotlin.Any?>", parameterTypes["comparable"])
+    assertEquals("test.InvDependentWithNullable<(raw) kotlin.CharSequence, (raw) kotlin.CharSequence>!", parameterTypes["invDependentWithNullable"])
+    assertEquals("test.InOut<(raw) kotlin.Number, (raw) kotlin.Any>!", parameterTypes["inOut"])
+    assertEquals("kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!", parameterTypes["list"])
+    assertEquals("kotlin.Comparable<(raw) kotlin.Any?>!", parameterTypes["comparable"])
     return "OK"
 }
