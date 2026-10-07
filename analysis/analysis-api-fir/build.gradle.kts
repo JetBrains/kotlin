@@ -10,7 +10,12 @@ plugins {
     id("test-inputs-check")
 }
 
+val jvmAbiGenPlugin = configurations.create("jvmAbiGenPlugin") {
+    isTransitive = false
+}
+
 dependencies {
+    jvmAbiGenPlugin(project(":plugins:jvm-abi-gen"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:language.targets.jvm"))
     implementation(project(":compiler:backend.common.jvm"))
@@ -77,6 +82,8 @@ projectTests {
                 includeAutoSamples(percentage = 3)
             }
         }
+
+        addClasspathProperty(jvmAbiGenPlugin, "kotlin.jvm.abi.jar.path")
     }
 
     testGenerator("org.jetbrains.kotlin.analysis.api.fir.test.TestGeneratorKt")

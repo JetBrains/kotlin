@@ -58,6 +58,12 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
   }
 
   @Test
+  @TestMetadata("fullValueClassPrivateConstructorWithoutFeatureInApp")
+  public void testFullValueClassPrivateConstructorWithoutFeatureInApp() {
+    runTest("plugins/jvm-abi-gen/testData/compile/fullValueClassPrivateConstructorWithoutFeatureInApp/");
+  }
+
+  @Test
   @TestMetadata("inlineAnnotationInstantiation")
   public void testInlineAnnotationInstantiation() {
     runTest("plugins/jvm-abi-gen/testData/compile/inlineAnnotationInstantiation/");

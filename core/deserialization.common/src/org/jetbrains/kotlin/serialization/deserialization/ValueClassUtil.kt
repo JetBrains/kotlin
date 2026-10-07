@@ -30,7 +30,9 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
         val fields = if (isAbstractOrSealed) {
             null
         } else {
-            val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
+            // jvm-abi-gen strips a private primary constructor, and its parameters aren't needed outside the class anyway.
+            val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) }
+                ?: return FullValueClassRepresentation(emptyList())
             primaryConstructor.valueParameterList.map {
                 nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
             }
