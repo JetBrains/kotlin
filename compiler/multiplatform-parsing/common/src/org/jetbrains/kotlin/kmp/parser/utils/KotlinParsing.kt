@@ -2383,7 +2383,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         allowSimpleIntersectionTypes: Boolean,
         allowUnionTypes: Boolean,
     ): SyntaxTreeBuilder.Marker {
-        val typeRefMarker = mark()
+        var typeRefMarker = mark()
 
         parseTypeModifierList()
 
@@ -2469,9 +2469,9 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         var wasUnion = false
         if (allowUnionTypes && at(KtTokens.OR)) {
-            val firstTypeRef = typeElementMarker
+            val firstTypeRef = typeRefMarker
 
-            typeElementMarker = typeElementMarker.precede()
+            typeRefMarker = typeRefMarker.precede()
             val unionType = firstTypeRef.precede()
 
             firstTypeRef.done(KtNodeTypes.TYPE_REFERENCE)

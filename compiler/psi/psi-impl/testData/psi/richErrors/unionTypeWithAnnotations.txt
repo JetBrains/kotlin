@@ -49,17 +49,17 @@ KtFile: unionTypeWithAnnotations.kt
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-      PsiWhiteSpace(' ')
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('String')
@@ -101,17 +101,17 @@ KtFile: unionTypeWithAnnotations.kt
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-      PsiWhiteSpace(' ')
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
           INTERSECTION_TYPE
             TYPE_REFERENCE
               USER_TYPE
@@ -148,17 +148,17 @@ KtFile: unionTypeWithAnnotations.kt
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-      PsiWhiteSpace(' ')
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
           PsiElement(LPAR)('(')
           MODIFIER_LIST
             PsiElement(suspend)('suspend')
@@ -212,17 +212,17 @@ KtFile: unionTypeWithAnnotations.kt
                   PsiElement(IDENTIFIER)('Ann')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-      PsiWhiteSpace(' ')
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
           USER_TYPE
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('String')
@@ -284,17 +284,17 @@ KtFile: unionTypeWithAnnotations.kt
                   PsiElement(IDENTIFIER)('Ann')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-      PsiWhiteSpace(' ')
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
           INTERSECTION_TYPE
             TYPE_REFERENCE
               USER_TYPE
@@ -341,17 +341,17 @@ KtFile: unionTypeWithAnnotations.kt
                   PsiElement(IDENTIFIER)('Ann')
       PsiWhiteSpace(' ')
       PsiElement(LPAR)('(')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          PsiElement(AT)('@')
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('Ann')
-      PsiWhiteSpace(' ')
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
           PsiElement(LPAR)('(')
           MODIFIER_LIST
             PsiElement(suspend)('suspend')

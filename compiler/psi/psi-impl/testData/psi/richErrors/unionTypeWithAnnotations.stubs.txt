@@ -20,14 +20,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionTypeWithAnnotationsKt]]
   FUNCTION[fqName=foo1, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Ann]
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
         TYPE_REFERENCE
@@ -43,14 +43,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionTypeWithAnnotationsKt]]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]
     TYPE_REFERENCE
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Ann]
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
           INTERSECTION_TYPE
             TYPE_REFERENCE
               USER_TYPE
@@ -65,14 +65,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionTypeWithAnnotationsKt]]
   FUNCTION[fqName=foo3, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo3]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Ann]
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
           MODIFIER_LIST[suspend]
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
@@ -91,14 +91,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionTypeWithAnnotationsKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Ann]
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=String]
         TYPE_REFERENCE
@@ -125,14 +125,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionTypeWithAnnotationsKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Ann]
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
           INTERSECTION_TYPE
             TYPE_REFERENCE
               USER_TYPE
@@ -153,14 +153,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnionTypeWithAnnotationsKt]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Ann]
-      MODIFIER_LIST[]
-        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=Ann]
       UNION_TYPE
         TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=Ann]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Ann]
           MODIFIER_LIST[suspend]
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST

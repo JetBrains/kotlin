@@ -2329,9 +2329,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         boolean wasUnion = false;
         if (allowUnionTypes && at(OR)) {
-            PsiBuilder.Marker firstTypeRef = typeElementMarker;
+            PsiBuilder.Marker firstTypeRef = typeRefMarker;
 
-            typeElementMarker = typeElementMarker.precede();
+            typeRefMarker = typeRefMarker.precede();
             PsiBuilder.Marker unionType = firstTypeRef.precede();
 
             firstTypeRef.done(TYPE_REFERENCE);
