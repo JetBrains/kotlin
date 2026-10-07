@@ -57,10 +57,9 @@ interface I {
 
     companion {
         fun blockFun() {}
-// TODO: uncomment when KT-85853 is fixed
-//        val blockVal = ""
-//        var blockVar = 0
-//        val blockDelegated by DelegateExposeContainer()
+        val blockVal = ""
+        var blockVar = 0
+        val blockDelegated by DelegateExposeContainer()
     }
 
     companion object {
@@ -117,11 +116,10 @@ fun box(): String {
     assertEquals(I::class, I::memberVal.container)
     assertEquals(I::class, I::memberVar.container)
     assertEquals(I::class, I::blockFun.container)
-// TODO: uncomment when KT-85853 is fixed
-//    assertEquals(I::class, I::blockVal.container)
-//    assertEquals(I::class, I::blockVar.container)
-//    assertEquals(I::class, I::blockDelegated.container)
-//    assertEquals(I::class, I.blockDelegated)
+    assertEquals(I::class, I::blockVal.container)
+    assertEquals(I::class, I::blockVar.container)
+    assertEquals(I::class, I::blockDelegated.container)
+    assertEquals(I::class, I.blockDelegated)
     assertEquals(I.Companion::class, I::companionObjectFun.container)
     assertEquals(I.Companion::class, I::companionObjectVal.container)
     assertEquals(I.Companion::class, I::companionObjectVar.container)
