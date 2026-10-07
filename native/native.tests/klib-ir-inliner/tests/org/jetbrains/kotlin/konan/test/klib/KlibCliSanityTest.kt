@@ -490,12 +490,6 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
         assertTrue(libraries.any { it.isNativeStdlib })
 
         for (library in libraries) {
-            if (library.isNativeStdlib) {
-                // TODO: please remove this exception for stdlib after advancing the bootstrap compiler!
-                assertNull(library.signatureIndex)
-                continue
-            }
-
             val signatureIndex = library.signatureIndex ?: fail("No signature index in library: ${library.canonicalPath}")
 
             if (signatureIndex.exportedTopLevelSignatures.isEmpty()) {
