@@ -115,73 +115,75 @@ PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(Kotlin_getExceptionObject, void* h
 }
 
 namespace {
-    class TerminateHandlersRegistry : kotlin::Pinned {
-    public:
-        static TerminateHandlersRegistry& instance() {
-            [[clang::no_destroy]] static TerminateHandlersRegistry instance;
-            return instance;
-        }
-        
-        void installKotlinHandler() {
-            pushHandler(kotlinHandler);
-        }
 
-    private:
-        RUNTIME_NORETURN static void kotlinHandler() {
-            if (auto currentException = std::current_exception()) {
-                try {
-                    std::rethrow_exception(currentException);
-                } catch (ExceptionObjHolder& e) {
-                    // Both thread states are allowed here because there is no guarantee that
-                    // C++ runtime will unwind the stack for an unhandled exception. Thus there
-                    // is no guarantee that state switches made on interop borders will be rolled back.
+class TerminateHandlersRegistry : kotlin::Pinned {
+public:
+    static TerminateHandlersRegistry& instance() {
+        [[clang::no_destroy]] static TerminateHandlersRegistry instance;
+        return instance;
+    }
 
-                    // Moreover, a native code can catch an exception thrown by a Kotlin callback,
-                    // store it to a global and then re-throw it in another thread which is not attached
-                    // to the Kotlin runtime. To handle this case, use the CalledFromNativeGuard.
-                    // TODO: Forbid throwing Kotlin exceptions through the interop border to get rid of this case.
-                    kotlin::CalledFromNativeGuard guard(/* reentrant = */ true);
-                    processUnhandledException(e.GetExceptionObject());
-                    terminateWithUnhandledException(e.GetExceptionObject());
-                } catch (...) {
-                    // Not a Kotlin exception - call default handler
-                    kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-                    queuedHandler();
-                }
-            }
-            // Come here in case of direct terminate() call or unknown exception - go to default terminate handler.
-            kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-            queuedHandler();
-        }
+    void installKotlinHandler() {
+        pushHandler(kotlinHandler);
+    }
 
-        RUNTIME_NORETURN static void queuedHandler() {
-            concurrentTerminateWrapper([]() {
+private:
+    RUNTIME_NORETURN static void kotlinHandler() {
+        if (auto currentException = std::current_exception()) {
+            try {
+                std::rethrow_exception(currentException);
+            } catch (ExceptionObjHolder& e) {
+                // Both thread states are allowed here because there is no guarantee that
+                // C++ runtime will unwind the stack for an unhandled exception. Thus there
+                // is no guarantee that state switches made on interop borders will be rolled back.
+
+                // Moreover, a native code can catch an exception thrown by a Kotlin callback,
+                // store it to a global and then re-throw it in another thread which is not attached
+                // to the Kotlin runtime. To handle this case, use the CalledFromNativeGuard.
+                // TODO: Forbid throwing Kotlin exceptions through the interop border to get rid of this case.
+                kotlin::CalledFromNativeGuard guard(/* reentrant = */ true);
+                processUnhandledException(e.GetExceptionObject());
+                terminateWithUnhandledException(e.GetExceptionObject());
+            } catch (...) {
                 // Not a Kotlin exception - call default handler
-                if (auto handler = instance().popHandler()) {
-                    handler();
-                }
-            });
+                kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
+                queuedHandler();
+            }
         }
+        // Come here in case of direct terminate() call or unknown exception - go to default terminate handler.
+        kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
+        queuedHandler();
+    }
 
-        TerminateHandlersRegistry() = default;
+    RUNTIME_NORETURN static void queuedHandler() {
+        concurrentTerminateWrapper([]() {
+            // Not a Kotlin exception - call default handler
+            if (auto handler = instance().popHandler()) {
+                handler();
+            }
+        });
+    }
 
-        void pushHandler(std::terminate_handler newHandler) {
-            std::lock_guard lock(handlersMutex_);
-            auto previousHandler = std::set_terminate(newHandler);
-            previousHandlers_.push_back(previousHandler);
-        }
+    TerminateHandlersRegistry() = default;
 
-        std::terminate_handler popHandler() {
-            std::lock_guard lock(handlersMutex_);
-            if (previousHandlers_.empty()) return nullptr;
-            auto handler = previousHandlers_.back();
-            previousHandlers_.pop_back();
-            return handler;
-        }
+    void pushHandler(std::terminate_handler newHandler) {
+        std::lock_guard lock(handlersMutex_);
+        auto previousHandler = std::set_terminate(newHandler);
+        previousHandlers_.push_back(previousHandler);
+    }
 
-        std::mutex handlersMutex_{};
-        std::vector<std::terminate_handler> previousHandlers_{};
-    };
+    std::terminate_handler popHandler() {
+        std::lock_guard lock(handlersMutex_);
+        if (previousHandlers_.empty()) return nullptr;
+        auto handler = previousHandlers_.back();
+        previousHandlers_.pop_back();
+        return handler;
+    }
+
+    std::mutex handlersMutex_{};
+    std::vector<std::terminate_handler> previousHandlers_{};
+};
+
 } // anon namespace
 
 void SetKonanTerminateHandler() {

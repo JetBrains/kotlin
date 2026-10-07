@@ -515,7 +515,7 @@ TEST(SetKonanTerminateHandlerDeathTest, ChainedMockHandlers_CalledInLIFOOrder) {
         setupMocks();
 
         // First native handler
-        prevHandlerA = std::set_terminate(+[]() noexcept {
+        prevHandlerA = std::set_terminate([]() noexcept {
             log("Extra native handler A");
             if (prevHandlerA) prevHandlerA();
             std::abort();
@@ -525,7 +525,7 @@ TEST(SetKonanTerminateHandlerDeathTest, ChainedMockHandlers_CalledInLIFOOrder) {
         SetKonanTerminateHandler();
 
         // Second native handler
-        prevHandlerB = std::set_terminate(+[]() noexcept {
+        prevHandlerB = std::set_terminate([]() noexcept {
             log("Extra native handler B");
             if (prevHandlerB) prevHandlerB();
             std::abort();
