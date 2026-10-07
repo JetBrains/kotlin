@@ -1,12 +1,3 @@
-private val unusedPrivateProperty: String
-  private get
-
-private val privatePropertyReferencedByNonInline: String
-  private get
-
-private val privatePropertyReferencedByInline: String
-  private get
-
 private fun privateFunReferencedByInline(): String {
 }
 
@@ -22,3 +13,13 @@ fun publicNonInlineFun(): String {
 
 private fun unusedPrivateFun(): String {
 }
+
+private val privatePropertyReferencedByInline: String
+  private get
+
+private val privatePropertyReferencedByNonInline: String
+  private get
+
+private val unusedPrivateProperty: String
+  private get
+

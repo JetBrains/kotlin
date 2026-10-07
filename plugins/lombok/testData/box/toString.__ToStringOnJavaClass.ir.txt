@@ -2,10 +2,6 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:ToStringOnJavaClass modality:
   annotations:
     ToString(includeFieldNames = <null>, exclude = <null>, of = <null>, callSuper = <null>, doNotUseGetters = <null>, onlyExplicitlyIncluded = <null>)
   thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ToStringOnJavaClass
-  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:name visibility:public modality:FINAL [var]
-    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:name type:@[FlexibleNullability] kotlin.String? visibility:public
-  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:age visibility:public modality:FINAL [var]
-    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:age type:kotlin.Int visibility:public
   CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public returnType:<root>.ToStringOnJavaClass
     VALUE_PARAMETER kind:Regular name:name index:0 type:@[FlexibleNullability] kotlin.String?
     VALUE_PARAMETER kind:Regular name:age index:1 type:kotlin.Int
@@ -22,3 +18,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:ToStringOnJavaClass modality:
     VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB kind:DispatchReceiver name:<this> index:0 type:<root>.ToStringOnJavaClass
     overridden:
       public open fun toString (): kotlin.String declared in kotlin.Any
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:age visibility:public modality:FINAL [var]
+    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:age type:kotlin.Int visibility:public
+  PROPERTY IR_EXTERNAL_JAVA_DECLARATION_STUB name:name visibility:public modality:FINAL [var]
+    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:name type:@[FlexibleNullability] kotlin.String? visibility:public

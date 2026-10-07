@@ -1,4 +1,6 @@
 FILE fqName:<root> fileName:/anonymousObjects.kt
+  FUN name:useAnonObject visibility:public modality:FINAL returnType:kotlin.String
+    BLOCK_BODY
   PROPERTY name:publicRefToChained visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:publicRefToChained type:kotlin.String visibility:private [final,static]
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-publicRefToChained> visibility:public modality:FINAL returnType:kotlin.String
@@ -13,5 +15,3 @@ FILE fqName:<root> fileName:/anonymousObjects.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-publicRefToNested> (): kotlin.String declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:publicRefToNested type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
-  FUN name:useAnonObject visibility:public modality:FINAL returnType:kotlin.String
-    BLOCK_BODY

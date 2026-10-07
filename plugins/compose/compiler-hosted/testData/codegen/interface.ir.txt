@@ -4,23 +4,6 @@ MODULE_FRAGMENT
       annotations:
         StabilityInferred(parameters = 0)
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:home.MainActivity
-      PROPERTY name:userNewsResourceRepository visibility:public modality:FINAL [lateinit,var]
-        FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:private
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-userNewsResourceRepository> visibility:public modality:FINAL returnType:core.data.UserNewsResourceRepository
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:home.MainActivity
-          correspondingProperty: PROPERTY name:userNewsResourceRepository visibility:public modality:FINAL [lateinit,var]
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-userNewsResourceRepository> (): core.data.UserNewsResourceRepository declared in home.MainActivity'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:private' type=core.data.UserNewsResourceRepository origin=null
-                receiver: GET_VAR '<this>: home.MainActivity declared in home.MainActivity.<get-userNewsResourceRepository>' type=home.MainActivity origin=null
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-userNewsResourceRepository> visibility:public modality:FINAL returnType:kotlin.Unit
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:home.MainActivity
-          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:core.data.UserNewsResourceRepository
-          correspondingProperty: PROPERTY name:userNewsResourceRepository visibility:public modality:FINAL [lateinit,var]
-          BLOCK_BODY
-            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:private' type=kotlin.Unit origin=null
-              receiver: GET_VAR '<this>: home.MainActivity declared in home.MainActivity.<set-userNewsResourceRepository>' type=home.MainActivity origin=null
-              value: GET_VAR '<set-?>: core.data.UserNewsResourceRepository declared in home.MainActivity.<set-userNewsResourceRepository>' type=core.data.UserNewsResourceRepository origin=null
       PROPERTY name:$stable visibility:public modality:FINAL [val]
         FIELD name:$stable type:kotlin.Int visibility:public [final,static]
           annotations:
@@ -49,3 +32,20 @@ MODULE_FRAGMENT
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
+      PROPERTY name:userNewsResourceRepository visibility:public modality:FINAL [lateinit,var]
+        FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:private
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-userNewsResourceRepository> visibility:public modality:FINAL returnType:core.data.UserNewsResourceRepository
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:home.MainActivity
+          correspondingProperty: PROPERTY name:userNewsResourceRepository visibility:public modality:FINAL [lateinit,var]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-userNewsResourceRepository> (): core.data.UserNewsResourceRepository declared in home.MainActivity'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:private' type=core.data.UserNewsResourceRepository origin=null
+                receiver: GET_VAR '<this>: home.MainActivity declared in home.MainActivity.<get-userNewsResourceRepository>' type=home.MainActivity origin=null
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<set-userNewsResourceRepository> visibility:public modality:FINAL returnType:kotlin.Unit
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:home.MainActivity
+          VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:core.data.UserNewsResourceRepository
+          correspondingProperty: PROPERTY name:userNewsResourceRepository visibility:public modality:FINAL [lateinit,var]
+          BLOCK_BODY
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:userNewsResourceRepository type:core.data.UserNewsResourceRepository visibility:private' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: home.MainActivity declared in home.MainActivity.<set-userNewsResourceRepository>' type=home.MainActivity origin=null
+              value: GET_VAR '<set-?>: core.data.UserNewsResourceRepository declared in home.MainActivity.<set-userNewsResourceRepository>' type=core.data.UserNewsResourceRepository origin=null

@@ -17,9 +17,6 @@ open enum class A : Enum<A> {
 
   Z = A(x = 5)
 
-  val prop1: String
-    get
-
   val prop2: String
     field = "const2"
     get
@@ -59,6 +56,9 @@ open enum class A : Enum<A> {
 
   companion val entries: EnumEntries<A>
     companion get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
+
+  val prop1: String
+    get
 
 }
 

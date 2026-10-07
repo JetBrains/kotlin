@@ -25,9 +25,6 @@ class TestInitValInClass {
 }
 
 class TestInitValInInitBlock {
-  val x: Int
-    get
-
   init {
     <this>.#x = 0
   }
@@ -38,4 +35,8 @@ class TestInitValInInitBlock {
 
   }
 
+  val x: Int
+    get
+
 }
+

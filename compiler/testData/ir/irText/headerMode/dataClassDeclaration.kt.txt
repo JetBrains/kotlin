@@ -1,10 +1,4 @@
 data class User {
-  val name: String
-    get
-
-  val age: Int
-    get
-
   constructor(name: String, age: Int) /* primary */
 
   operator fun component1(): String {
@@ -46,4 +40,11 @@ data class User {
     return "User(" + "name=" + <this>.#name + ", " + "age=" + <this>.#age + ")"
   }
 
+  val age: Int
+    get
+
+  val name: String
+    get
+
 }
+

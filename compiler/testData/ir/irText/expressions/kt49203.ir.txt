@@ -1,23 +1,6 @@
 FILE fqName:<root> fileName:/kt49203.kt
   CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
-    PROPERTY name:x visibility:public modality:FINAL [lateinit,var]
-      FIELD PROPERTY_BACKING_FIELD name:x type:<root>.X visibility:private
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:<root>.X
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [lateinit,var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-x> (): <root>.X declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.X visibility:private' type=<root>.X origin=null
-              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-x>' type=<root>.A origin=null
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:private modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
-        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:<root>.X
-        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [lateinit,var]
-        BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.X visibility:private' type=kotlin.Unit origin=null
-            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-x>' type=<root>.A origin=null
-            value: GET_VAR '<set-?>: <root>.X declared in <root>.A.<set-x>' type=<root>.X origin=null
     PROPERTY name:y visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:y type:<root>.X visibility:private
         EXPRESSION_BODY
@@ -54,6 +37,23 @@ FILE fqName:<root> fileName:/kt49203.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY name:x visibility:public modality:FINAL [lateinit,var]
+      FIELD PROPERTY_BACKING_FIELD name:x type:<root>.X visibility:private
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL returnType:<root>.X
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [lateinit,var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-x> (): <root>.X declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.X visibility:private' type=<root>.X origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-x>' type=<root>.A origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:private modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        VALUE_PARAMETER kind:Regular name:<set-?> index:1 type:<root>.X
+        correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [lateinit,var]
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:<root>.X visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<set-x>' type=<root>.A origin=null
+            value: GET_VAR '<set-?>: <root>.X declared in <root>.A.<set-x>' type=<root>.X origin=null
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.B
     CONSTRUCTOR visibility:public returnType:<root>.B [primary]

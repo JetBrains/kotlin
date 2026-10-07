@@ -1,21 +1,4 @@
 class TestClass {
-  val publicProperty: String
-    get
-
-  var publicBackingField: String
-    get
-    set
-
-  private val usedPropertyByInline: String
-    private get
-
-  private var usedBackingFieldByInline: Int
-    private get
-    private set
-
-  val aliasUser: String
-    get
-
   private class InlineChain {
     constructor() /* primary */
 
@@ -126,6 +109,23 @@ class TestClass {
   inline fun witnessForProperty() {
     val x: String = <this>.<get-usedPropertyByInline>()
   }
+
+  val aliasUser: String
+    get
+
+  var publicBackingField: String
+    get
+    set
+
+  val publicProperty: String
+    get
+
+  private var usedBackingFieldByInline: Int
+    private get
+    private set
+
+  private val usedPropertyByInline: String
+    private get
 
 }
 

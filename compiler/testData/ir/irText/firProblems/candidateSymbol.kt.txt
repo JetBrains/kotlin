@@ -1,13 +1,13 @@
 abstract class AbstractFirBasedSymbol<E> where E : FirDeclaration, E : FirSymbolOwner<E> {
-  lateinit var fir: E
-    get
-    set
-
   constructor() /* primary */ {
     super/*Any*/()
     /* <init>() */
 
   }
+
+  lateinit var fir: E
+    get
+    set
 
 }
 

@@ -86,6 +86,24 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
           RETURN type=kotlin.Nothing from='public open fun <get-session> (): <root>.FirSession declared in <root>.Fir2IrComponentsStorage'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:session type:<root>.FirSession visibility:private [final]' type=<root>.FirSession origin=null
               receiver: GET_VAR '<this>: <root>.Fir2IrComponentsStorage declared in <root>.Fir2IrComponentsStorage.<get-session>' type=<root>.Fir2IrComponentsStorage origin=null
+    CONSTRUCTOR visibility:public returnType:<root>.Fir2IrComponentsStorage [primary]
+      VALUE_PARAMETER kind:Regular name:session index:0 type:<root>.FirSession
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Fir2IrComponentsStorage modality:FINAL visibility:public superTypes:[<root>.Fir2IrComponents]' type=kotlin.Unit
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Fir2IrComponents
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in <root>.Fir2IrComponents
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in <root>.Fir2IrComponents
     PROPERTY name:classifierStorage visibility:public modality:OPEN [lateinit,var]
       overridden:
         public abstract classifierStorage: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponents
@@ -107,24 +125,6 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:classifierStorage type:<root>.Fir2IrClassifierStorage visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Fir2IrComponentsStorage declared in <root>.Fir2IrComponentsStorage.<set-classifierStorage>' type=<root>.Fir2IrComponentsStorage origin=null
             value: GET_VAR '<set-?>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponentsStorage.<set-classifierStorage>' type=<root>.Fir2IrClassifierStorage origin=null
-    CONSTRUCTOR visibility:public returnType:<root>.Fir2IrComponentsStorage [primary]
-      VALUE_PARAMETER kind:Regular name:session index:0 type:<root>.FirSession
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Fir2IrComponentsStorage modality:FINAL visibility:public superTypes:[<root>.Fir2IrComponents]' type=kotlin.Unit
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
-      overridden:
-        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Fir2IrComponents
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in <root>.Fir2IrComponents
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
-      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
-      overridden:
-        public open fun toString (): kotlin.String declared in <root>.Fir2IrComponents
   CLASS CLASS name:FirSession modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.FirSession
     PROPERTY name:name visibility:public modality:FINAL [val]

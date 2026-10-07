@@ -318,15 +318,6 @@ FILE fqName:<root> fileName:/enum.kt
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.TestEnum4.TEST2'
       class: CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:private superTypes:[<root>.TestEnum4]
         thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.TestEnum4.TEST2
-        PROPERTY name:z visibility:public modality:FINAL [val]
-          FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]
-          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL returnType:kotlin.Int
-            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestEnum4.TEST2
-            correspondingProperty: PROPERTY name:z visibility:public modality:FINAL [val]
-            BLOCK_BODY
-              RETURN type=kotlin.Nothing from='public final fun <get-z> (): kotlin.Int declared in <root>.TestEnum4.TEST2'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-                  receiver: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2.<get-z>' type=<root>.TestEnum4.TEST2 origin=null
         ANONYMOUS_INITIALIZER isStatic=false
           BLOCK_BODY
             SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
@@ -389,6 +380,15 @@ FILE fqName:<root> fileName:/enum.kt
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
             overridden:
               public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum4
+        PROPERTY name:z visibility:public modality:FINAL [val]
+          FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]
+          FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL returnType:kotlin.Int
+            VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.TestEnum4.TEST2
+            correspondingProperty: PROPERTY name:z visibility:public modality:FINAL [val]
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='public final fun <get-z> (): kotlin.Int declared in <root>.TestEnum4.TEST2'
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                  receiver: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2.<get-z>' type=<root>.TestEnum4.TEST2 origin=null
     CONSTRUCTOR visibility:private returnType:<root>.TestEnum4 [primary]
       VALUE_PARAMETER kind:Regular name:x index:0 type:kotlin.Int
       BLOCK_BODY

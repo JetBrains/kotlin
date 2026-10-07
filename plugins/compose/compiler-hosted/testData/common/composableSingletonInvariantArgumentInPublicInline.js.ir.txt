@@ -1,6 +1,10 @@
 FILE fqName:<root> fileName:/composableSingletonInvariantArgumentInPublicInline.kt
   CLASS OBJECT name:ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt modality:FINAL visibility:internal superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt
+    CONSTRUCTOR visibility:public returnType:<root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt modality:FINAL visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
     PROPERTY name:lambda$1767442261 visibility:internal modality:FINAL [val]
       FIELD name:lambda$1767442261 type:kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private
       FUN GENERATED[androidx.compose.compiler.plugins.kotlin.lower.ComposeCompilerKey] name:<get-lambda$1767442261> visibility:internal modality:FINAL returnType:kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
@@ -165,10 +169,6 @@ FILE fqName:<root> fileName:/composableSingletonInvariantArgumentInPublicInline.
           RETURN type=kotlin.Nothing from='internal final fun <get-lambda$961517183> (): kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> declared in <root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt'
             GET_FIELD 'FIELD name:lambda$961517183 type:kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? visibility:private declared in <root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt' type=kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>? origin=null
               receiver: GET_VAR '<this>: <root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt declared in <root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt.<get-lambda$961517183>' type=<root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt origin=null
-    CONSTRUCTOR visibility:public returnType:<root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt [primary]
-      BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt modality:FINAL visibility:internal superTypes:[kotlin.Any]' type=kotlin.Unit
     PROPERTY name:lambda-1 visibility:internal modality:FINAL [val]
       FUN name:<get-lambda-1> visibility:internal modality:FINAL returnType:kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
         VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.ComposableSingletons$ComposableSingletonInvariantArgumentInPublicInlineKt

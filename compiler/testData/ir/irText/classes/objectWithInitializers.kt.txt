@@ -12,9 +12,6 @@ object Test : Base {
     field = 1
     get
 
-  val y: Int
-    get
-
   init {
     <this>.#y = <this>.<get-x>()
   }
@@ -25,4 +22,8 @@ object Test : Base {
 
   }
 
+  val y: Int
+    get
+
 }
+
