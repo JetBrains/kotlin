@@ -219,10 +219,35 @@ abstract class IncrementalCompilerRunner<
     }
 
     /**
-     * Attempts to compile incrementally and returns either [ICResult.Completed], [ICResult.RequiresRebuild], or [ICResult.Failed].
+     * Entry point into incremental compilation for JVM, JS and Wasm.
      *
-     * Note that parts of this function may still throw exceptions that are not caught and wrapped by [ICResult.Failed] because they are not
-     * meant to be caught.
+     * Invariants:
+     * - Three IC results:
+     *      - [ICResult.Completed]. It includes successful compilations, compilation errors, and even that nothing was compiled (e.g. empty dirty set).
+     *          This is a semantic equivalent of "we reached the compilation stage".
+     *      - [ICResult.RequiresRebuild]. No previous compilation results, so full rebuild is required first
+     *      - [ICResult.Failed]. An exception in IC machinery itself like IC persisted cache, checksums etc. Triggers full rebuild.
+     *
+     * - All successful builds produce [last-build.bin][LAST_BUILD_INFO_FILE_NAME] as a marker of a previous build.
+     * - Rebuild ([compile]) cleans outputs and IC state and recompile all sources via [compileNonIncrementally]. Nothing is preserved.
+     *
+     * - [changedFiles] are loosely-defined. It is not guaranteed that they are relative to the last preserved IC state:
+     *      - [ChangedFiles.DeterminableFiles.ToBeComputed] to hint us to compute it here
+     *      - [ChangedFiles.DeterminableFiles.Known] to hint us that it comes from a build tool. It might be unsound,
+     *          we trust it (e.g. Gradle's `@Output` precision), and it might be the source of various IC bugs.
+     *          If a caller crafts [ChangedFiles.DeterminableFiles.Known] manually, its soundness won't be checked at all.
+     *      - Specific compiler backend implementation still can decide to fall back to a full rebuild (e.g. because it detected some IC-incompatible change)
+     *
+     * - This function manages the IC state on its own, transactionally:
+     *     - If the compilation is successful, the whole IC state is properly preserved
+     *     - If it's not, the state can be rolled back to pre-compilation state (unless full rebuild is triggered, then it's a full clean)
+     *         - For Gradle+BTA, it's a recoverable transaction that rolls back on an error
+     *         - For standalone BTA, it's partially bookkeep'ed, and at this point I am too afraid to ask
+     *
+     * In a rough outline, the implementation goes as following:
+     * - Detect or compute all the required state: classpath snapshot, build history, tracked dependencies etc.
+     * - Load the previous state (e.g. lookups aka "where X was used from" to do a transitive closure)
+     * - Start IC rounds (compile -> evaluate new changes -> compile again etc.)
      */
     private fun tryCompileIncrementally(
         allSourceFiles: List<File>,
