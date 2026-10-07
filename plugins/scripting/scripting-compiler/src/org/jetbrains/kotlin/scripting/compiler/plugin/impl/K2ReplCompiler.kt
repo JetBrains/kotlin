@@ -127,19 +127,21 @@ class K2ReplCompiler(
         ): ReplCompilerState {
 
             val moduleName = Name.special("<REPL>")
+            val effectiveHostConfig =
+                effectiveHostConfiguration(hostConfiguration, scriptCompilationConfiguration.withoutReplSessionHostProperties())
             val compilerContext = createIsolatedCompilationContext(
                 scriptCompilationConfiguration,
-                hostConfiguration,
+                effectiveHostConfig,
                 messageCollector,
                 rootDisposable
             ) {
-                add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(hostConfiguration))
+                add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, ReplCompilerPluginRegistrar(effectiveHostConfig))
             }
 
             val compilerConfiguration = compilerContext.environment.configuration
             compilerConfiguration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
-                ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
+                ScriptDefinition.FromConfigurations(effectiveHostConfig, scriptCompilationConfiguration, null)
             )
             val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
             val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
@@ -149,7 +151,7 @@ class K2ReplCompiler(
                 it.setScriptDefinitionsSources(definitionSources)
                 it.setScriptDefinitions(definitions)
             }
-            val hostConfigurationWithProvider = hostConfiguration.with {
+            val hostConfigurationWithProvider = effectiveHostConfig.with {
                 scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
                 scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
             }
@@ -494,3 +496,16 @@ internal fun selectJvmTarget(configuration: ScriptCompilationConfiguration, mess
     }
     return jvmTargetFromOptions ?: jvmTargetFromBlock ?: JvmTarget.DEFAULT
 }
+
+/** The configuration of a snippet from another REPL may carry the session-bound properties of its host. */
+private fun ScriptCompilationConfiguration.withoutReplSessionHostProperties(): ScriptCompilationConfiguration =
+    with {
+        hostConfiguration.update {
+            it?.let { embeddedHostConfiguration ->
+                ScriptingHostConfiguration(embeddedHostConfiguration) {
+                    reset(ScriptingHostConfiguration.repl.firReplHistoryProvider)
+                    reset(ScriptingHostConfiguration.repl.isReplSnippetSource)
+                }
+            }
+        }
+    }

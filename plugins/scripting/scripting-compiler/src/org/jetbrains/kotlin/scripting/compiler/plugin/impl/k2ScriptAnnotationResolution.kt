@@ -41,7 +41,6 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.getScriptingClass
 import kotlin.script.experimental.host.with
-import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.GetScriptingClassByClassLoader
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
@@ -64,8 +63,7 @@ internal fun collectAndResolveScriptAnnotationsViaFir(
     convertToFir: SourceCode.(FirSession, BaseDiagnosticsCollector) -> FirFile,
     tolerateInvalidAnnotations: Boolean = false,
 ): ResultWithDiagnostics<ScriptCollectedData> {
-    val hostConfiguration =
-        compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration].withDefaultsFrom(baseHostConfiguration)
+    val hostConfiguration = effectiveHostConfiguration(baseHostConfiguration, compilationConfiguration)
     val messageCollector = ScriptDiagnosticsMessageCollector(null)
     val acceptedAnnotations = loadAcceptedAnnotationClasses(compilationConfiguration, hostConfiguration) { ann, e ->
         messageCollector.report(e.asDiagnostics(customMessage = "Failed to load annotation class ${ann.typeName}"))

@@ -11,6 +11,7 @@ import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.createScriptDefinitionFromTemplate
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
@@ -124,8 +125,13 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         private val baseHostConfiguration: ScriptingHostConfiguration,
         private val definition: kotlin.script.experimental.host.ScriptDefinition,
     ) : FromConfigurationsBase() {
-        override val hostConfiguration: ScriptingHostConfiguration
-            get() = definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: baseHostConfiguration
+        /**
+         * The definition wins over [baseHostConfiguration], which is only a discovery-time default,
+         * unlike the explicit host configuration of a compiler (see `effectiveHostConfiguration`).
+         */
+        override val hostConfiguration: ScriptingHostConfiguration by lazy {
+            definition.compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration].withDefaultsFrom(baseHostConfiguration)
+        }
 
         override val compilationConfiguration: ScriptCompilationConfiguration get() = definition.compilationConfiguration
         override val evaluationConfiguration: ScriptEvaluationConfiguration get() = definition.evaluationConfiguration
