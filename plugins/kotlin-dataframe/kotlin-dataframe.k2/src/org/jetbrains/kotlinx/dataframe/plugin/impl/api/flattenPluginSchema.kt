@@ -12,7 +12,6 @@ fun PluginDataFrameSchema.flatten(includeFrames: Boolean): List<ColumnWithPathAp
 }
 
 fun flattenImpl(columns: List<SimpleCol>, path: List<String>, flatList: MutableList<ColumnWithPathApproximation>, includeFrames: Boolean) {
-    // TODO: includeFrames parameter does nothing
     columns.forEach { column ->
         val fullPath = path + listOf(column.name)
         when (column) {
