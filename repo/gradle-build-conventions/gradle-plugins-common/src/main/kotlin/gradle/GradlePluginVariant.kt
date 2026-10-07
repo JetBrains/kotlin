@@ -42,7 +42,7 @@ enum class GradlePluginVariant(
         // While Gradle 8.14 official LV is 1.8 - it uses Kotlin compiler version 2.0.21
         // which should be able to read Kotlin metadata from LV 2.1
         const val COMPILE_KOTLIN_VERSION = "2.1"
-        const val GRADLE_COMMON_COMPILE_API_VERSION = "9.7.0"
+        const val GRADLE_COMMON_COMPILE_API_VERSION = "9.8.0"
 
         val MIDDLE_GRADLE_VARIANT_FOR_TESTS = GradlePluginVariant.values().run { this[size / 2] }
         val MAXIMUM_SUPPORTED_GRADLE_VARIANT = GradlePluginVariant.values().last()
