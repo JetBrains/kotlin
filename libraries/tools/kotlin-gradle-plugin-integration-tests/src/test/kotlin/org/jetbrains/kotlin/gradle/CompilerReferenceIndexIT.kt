@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.params.ParameterizedTest
 import kotlin.io.path.div
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.io.path.readBytes
@@ -65,6 +66,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
     )
 
     @GradleTest
+    @ParameterizedTest(name = "{0} - {1}: {displayName}")
     @DisplayName("Smoke test for Gradle / CRI data generation and deserialization")
     @GradleTestExtraStringArguments("in-process", "daemon")
     fun smokeTestCriDataGeneration(gradleVersion: GradleVersion, strategy: String) {
