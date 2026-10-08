@@ -6,7 +6,7 @@
 // IGNORE_NATIVE: optimizationMode=OPT && cacheMode=STATIC_EVERYWHERE
 import kotlin.native.NoInline
 
-// CHECK-OPT-NOT: define ptr @"kfun:#foo(){}kotlin.String"
+// CHECK-OPT-NOT: define {{.*}}@"kfun:#foo(){}kotlin.String"
 fun foo(): String {
     return "O"
 }
@@ -22,7 +22,7 @@ fun bar(): String {
 // CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 @NoInline
 fun box(): String {
-    // CHECK-NOT: {call|invoke} ptr @"kfun:#foo(){}kotlin.String"
+    // CHECK-OPT-NOT: {{call|invoke}} {{.*}}@"kfun:#foo(){}kotlin.String"
     // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#bar(){}kotlin.String"
     // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#bar(){}kotlin.String"
     return foo() + bar()
