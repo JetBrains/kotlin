@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
@@ -50,10 +49,10 @@ object KonanBinaryInterface {
 
     val IrFunction.functionName: String get() = mangler.run { signatureString(compatibleMode = true) }
 
-    fun IrFunction.symbolName(libraryFingerprint: FingerprintHash?): String {
+    fun IrFunction.symbolName(libraryUniqueName: String?): String {
         require(isExported(this)) { "Asked for symbol name for a private function ${render()}" }
 
-        return funSymbolNameImpl(null, libraryFingerprint)
+        return funSymbolNameImpl(null, libraryUniqueName)
     }
 
     val IrField.symbolName: String get() = withPrefix(MANGLE_FIELD_PREFIX, fieldSymbolNameImpl())
@@ -74,7 +73,7 @@ object KonanBinaryInterface {
         this.annotations.findAnnotation(RuntimeNames.exportForCppRuntime)
                 ?: this.annotations.findAnnotation(RuntimeNames.exportedBridge)
 
-    private fun IrFunction.funSymbolNameImpl(containerName: String?, libraryFingerprint: FingerprintHash? = null): String {
+    private fun IrFunction.funSymbolNameImpl(containerName: String?, libraryUniqueName: String? = null): String {
         if (isExternal) {
             this.externalSymbolOrThrow()?.let {
                 return it
@@ -89,10 +88,10 @@ object KonanBinaryInterface {
 
         val mangle = mangler.run { mangleString(compatibleMode = true) }
         // Different libraries can declare functions with the same mangled signature (KT-81760),
-        // so the library fingerprint is used to tell them apart.
-        // This is only a workaround: proper solution waits for KT-81761.
+        // so the library unique name is used to tell them apart. Unlike a content fingerprint,
+        // it remains stable when the library changes and dependent incremental caches are reused.
         val name = containerName?.plus(".$mangle")
-                ?: libraryFingerprint?.let { "$mangle[$it]" }
+                ?: libraryUniqueName?.let { "$mangle[$it]" }
                 ?: mangle
         return withPrefix(MANGLE_FUN_PREFIX, name)
     }
@@ -146,11 +145,11 @@ fun IrFunction.computeFunctionName() = with(KonanBinaryInterface) { functionName
 
 fun IrFunction.computeFullName() = parent.fqNameForIrSerialization.child(Name.identifier(computeFunctionName())).asString()
 
-fun IrFunction.computeDisambiguatedSymbolName(libraryFingerprint: FingerprintHash) =
-        with(KonanBinaryInterface) { symbolName(libraryFingerprint) }.replaceSpecialSymbols()
+fun IrFunction.computeDisambiguatedSymbolName(libraryUniqueName: String) =
+        with(KonanBinaryInterface) { symbolName(libraryUniqueName) }.replaceSpecialSymbols()
 
 fun IrFunction.computeSymbolName() =
-        with(KonanBinaryInterface) { symbolName(libraryFingerprint = null) }.replaceSpecialSymbols()
+        with(KonanBinaryInterface) { symbolName(libraryUniqueName = null) }.replaceSpecialSymbols()
 
 fun IrFunction.computePrivateSymbolName(containerName: String) = with(KonanBinaryInterface) { privateSymbolName(containerName) }.replaceSpecialSymbols()
 
@@ -178,7 +177,7 @@ internal fun IrSimpleFunction.computeSymbolName(
         val isCachedLibrary = library != null &&
                 (library == context.config.libraryToCache?.klib || cachedLibraries.isLibraryCached(library))
         if (isCachedLibrary && context.config.disambiguateLibrarySymbols)
-            computeDisambiguatedSymbolName(cachedLibraries.getLibraryFingerprint(library))
+            computeDisambiguatedSymbolName(library.uniqueName)
         else
             computeSymbolName()
     } else {

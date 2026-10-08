@@ -82,12 +82,12 @@ abstract class LLDBSessionSpec {
             val angledInlineBreakpointOffset = Regex("""<\+\d+>( \[inlined])""")
             val targetStoppedLine = Regex("""Target \d+: .* stopped\.\n""")
             val setFormatLine = Regex("""\(lldb\) settings set .*-format .*\n""")
-            // Kotlin function symbols from cached libraries end with a library fingerprint, which depends on the library contents:
-            // `kfun:#foo(){}kotlin.String[1x2y3z.4a5b6c]` -> `kfun:#foo(){}kotlin.String`.
-            val functionLibraryFingerprint = Regex("""(kfun:.*?}[^ \n\[]*)\[[0-9a-z]+\.[0-9a-z]+]""")
+            // Kotlin function symbols from cached libraries end with the library unique name:
+            // `kfun:#foo(){}kotlin.String[my-library]` -> `kfun:#foo(){}kotlin.String`.
+            val functionLibraryUniqueName = Regex("""(kfun:.*?}[^ \n\[]*)\[[^\]\r\n]+]""")
 
             return lldbOutput
-                .replace(functionLibraryFingerprint, "$1")
+                .replace(functionLibraryUniqueName, "$1")
                 .replace(executablePathRegexp, "<path to executable>")
                 .replace(lldbScriptPath, "<path to lldb script>")
                 .replace(testHelperImportLine, "")
@@ -246,17 +246,15 @@ internal class SteppingLLDBSessionSpec(
 
     override fun generateCLIArguments(prettyPrinters: File): List<String> = buildList {
         addAll(super.generateCLIArguments(prettyPrinters))
-        // TODO (KT-84864): Can't use `-r` here, because sometimes LLDB treats them wrong
-        //     Feel free to add you variant if the test data changes.
-        //     Revert to `-r` variant once the issue is resolved.
+        // Match symbols with any library suffix. Escape regex metacharacters in the mangled names.
         this += "-o"
-        this += "b kfun:#box(){}"
+        this += "b -r \"kfun:#box\\(\\)\\{\\}.*\""
         this += "-o"
-        this += "b kfun:#box(){}kotlin.Int"
+        this += "b -r \"kfun:#box\\(\\)\\{\\}kotlin\\.Int.*\""
         this += "-o"
-        this += "b kfun:#box(){}kotlin.String"
+        this += "b -r \"kfun:#box\\(\\)\\{\\}kotlin\\.String.*\""
         this += "-o"
-        this += "b kfun:#box#suspend(kotlin.coroutines.Continuation<kotlin.Unit>){}kotlin.Any"
+        this += "b -r \"kfun:#box#suspend\\(kotlin\\.coroutines\\.Continuation<kotlin\\.Unit>\\)\\{\\}kotlin\\.Any.*\""
         this += "-o"
         this += "r"
         this += "-o"
