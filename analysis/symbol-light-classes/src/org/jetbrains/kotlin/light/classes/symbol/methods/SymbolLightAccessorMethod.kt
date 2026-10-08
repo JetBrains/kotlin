@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.*
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
-import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterForDefaultImplsReceiver
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightSetterParameter
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
@@ -282,7 +281,7 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration.hashCode()
 
     private val _parametersList by lazyPub {
-        val baseParameterPopulator: (LightParameterListBuilder) -> Unit = if (!isGetter) {
+        val parameterPopulator: (LightParameterListBuilder) -> Unit = if (!isGetter) {
             { builder ->
                 withAccessorSymbol { accessorSymbol ->
                     val setterParameter = (accessorSymbol as? KaPropertySetterSymbol)?.parameter ?: return@withAccessorSymbol
@@ -297,13 +296,6 @@ internal class SymbolLightAccessorMethod private constructor(
             }
         } else {
             { }
-        }
-
-        val parameterPopulator: (LightParameterListBuilder) -> Unit = { builder ->
-            if (containingClass is SymbolLightClassForInterfaceDefaultImpls) {
-                builder.addParameter(SymbolLightParameterForDefaultImplsReceiver(this@SymbolLightAccessorMethod))
-            }
-            baseParameterPopulator(builder)
         }
 
         SymbolLightParameterList(
