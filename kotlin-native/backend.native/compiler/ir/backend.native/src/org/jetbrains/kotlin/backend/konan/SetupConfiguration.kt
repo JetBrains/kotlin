@@ -263,7 +263,6 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(config: NativeSec
     put(DEBUG, config.debug)
     put(OPTIMIZATION, config.optimizationsEnabled)
     put(ENABLE_ASSERTIONS, config.assertsEnabled)
-// TODO    putIfNotNull(DEBUG_PREFIX_MAP, config.configuration[DEBUG_PREFIX_MAP])
     put(BinaryOptions.enableReleaseBinaryCache, config.enableReleaseBinaryCache)
     config.configuration.phaseConfig?.let { phaseConfig = it }
     setupPartialLinkageConfig(config.partialLinkageConfig)
