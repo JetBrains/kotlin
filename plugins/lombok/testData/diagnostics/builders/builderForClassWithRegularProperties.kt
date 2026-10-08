@@ -8,7 +8,7 @@ class Mutable {
 
     fun test() {
         val ex = builder()
-            .<!UNRESOLVED_REFERENCE!>x<!>(42)
+            .x(42)
             .build()
     }
 }
