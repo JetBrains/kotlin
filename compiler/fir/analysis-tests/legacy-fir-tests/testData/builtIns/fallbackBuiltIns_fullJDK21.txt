@@ -128,6 +128,8 @@ public final class BooleanArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/
 
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Boolean|): R|kotlin/BooleanArray|
 
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static operator fun of(vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray|
+
 }
 
 public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R|java/io/Serializable| {
@@ -296,6 +298,8 @@ public final class ByteArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
 
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Byte|): R|kotlin/ByteArray|
 
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static operator fun of(vararg elements: R|kotlin/ByteArray|): R|kotlin/ByteArray|
+
 }
 
 public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializable| {
@@ -401,6 +405,8 @@ public final class CharArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
     public constructor(size: R|kotlin/Int|): R|kotlin/CharArray|
 
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Char|): R|kotlin/CharArray|
+
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static operator fun of(vararg elements: R|kotlin/CharArray|): R|kotlin/CharArray|
 
 }
 
@@ -708,6 +714,8 @@ public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/S
 
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Double|): R|kotlin/DoubleArray|
 
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static operator fun of(vararg elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray|
+
 }
 
 @R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
@@ -976,6 +984,8 @@ public final class FloatArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Float|): R|kotlin/FloatArray|
 
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static operator fun of(vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray|
+
 }
 
 public abstract interface Function<out R> : R|kotlin/Any| {
@@ -1178,6 +1188,8 @@ public final class IntArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Seri
 
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Int|): R|kotlin/IntArray|
 
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static operator fun of(vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray|
+
 }
 
 public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R|java/io/Serializable| {
@@ -1359,6 +1371,8 @@ public final class LongArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
     public constructor(size: R|kotlin/Int|): R|kotlin/LongArray|
 
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Long|): R|kotlin/LongArray|
+
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static operator fun of(vararg elements: R|kotlin/LongArray|): R|kotlin/LongArray|
 
 }
 
@@ -1689,6 +1703,8 @@ public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
     public constructor(size: R|kotlin/Int|): R|kotlin/ShortArray|
 
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Short|): R|kotlin/ShortArray|
+
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static operator fun of(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
 
 }
 
