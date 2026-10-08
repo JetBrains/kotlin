@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.common.*
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isOverridable
@@ -438,7 +440,15 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                     }
 
                     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Unit): Node {
-                        val cls = expression.typeOperand.type.getClass()?.let { HairClassImpl(it) }
+                        // Type checks against ObjC types are not Kotlin subtype checks: e.g. external ObjC classes
+                        // have no Kotlin TypeInfo (no `kclass:` symbol), and the check has to go through the ObjC runtime
+                        // (see IrToBitcode.genInstanceOfObjC). Lowering emits `isSubtype` with a ConstTypeInfo,
+                        // which would reference a nonexistent symbol, so fall back to the old codegen for now.
+                        if (expression.operator in setOf(IrTypeOperator.CAST, IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF)
+                                && expression.typeOperand.type.getClass()?.defaultType?.isObjCObjectType() == true) {
+                            notImplemented(HairTODO.OBJC_TYPE_CHECK)
+                        }
+                        val cls =expression.typeOperand.type.getClass()?.let { HairClassImpl(it) }
                         val arg = expression.argument.accept(this, Unit)
                         return when (expression.operator) {
                             IrTypeOperator.CAST -> {
@@ -459,7 +469,7 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                             IrTypeOperator.INSTANCEOF -> IsInstanceOf(cls!!)(arg)
                             IrTypeOperator.NOT_INSTANCEOF -> Not(IsInstanceOf(cls!!)(arg))
 
-                            IrTypeOperator.SAFE_CAST -> error("Should have beed lowered ${expression.operator}")
+                            IrTypeOperator.SAFE_CAST -> error("Should have been lowered ${expression.operator}")
 
                             IrTypeOperator.SAM_CONVERSION -> error("Should not be here ${expression.operator}")
                             IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> error("Should not be here ${expression.operator}")

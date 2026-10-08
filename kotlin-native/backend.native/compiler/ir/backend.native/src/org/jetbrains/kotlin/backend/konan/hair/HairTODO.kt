@@ -14,6 +14,7 @@ enum class HairTODO {
     FLOAT_TRUNCATE,
     VOLATILE,
     CAST,
+    OBJC_TYPE_CHECK,
 }
 
 data class HairNotImplementedYet(val what: HairTODO) : Exception(what.toString())
