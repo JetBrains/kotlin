@@ -50,11 +50,6 @@ object ComposeConfiguration {
         CompilerConfigurationKey<String>("Directory to save compose build metrics")
     val REPORTS_DESTINATION_KEY =
         CompilerConfigurationKey<String>("Directory to save compose build reports")
-    // TODO(b/485865131): This key must be deleted once `com.android.tools.compose.aa` no longer
-    //  relies on it.
-    @Suppress("unused")
-    val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY =
-        CompilerConfigurationKey<Boolean>("Enable optimization to treat remember as an intrinsic")
     val NON_SKIPPING_GROUP_OPTIMIZATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>(
             "Enabled optimization to remove groups around non-skipping functions"
@@ -64,11 +59,6 @@ object ComposeConfiguration {
     )
     val DECOYS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Generate decoy methods in IR transform")
-    // TODO(b/485865131): This key must be deleted once `com.android.tools.compose.aa` no longer
-    //  relies on it.
-    @Suppress("unused")
-    val STRONG_SKIPPING_ENABLED_KEY =
-        CompilerConfigurationKey<Boolean>("Enable strong skipping mode")
     val STABILITY_CONFIG_PATH_KEY =
         CompilerConfigurationKey<List<String>>(
             "Path to stability configuration file"
