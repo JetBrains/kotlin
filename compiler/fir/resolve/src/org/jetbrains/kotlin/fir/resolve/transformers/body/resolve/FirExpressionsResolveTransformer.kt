@@ -1472,6 +1472,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             else -> error("Unknown type operator: ${resolved.operation}")
         }
         dataFlowAnalyzer.exitTypeOperatorCall(resolved, divergedNewType)
+        if (divergedNewType != null) {
+            typeOperatorCall.replaceNonFatalDiagnostics(typeOperatorCall.nonFatalDiagnostics + DivergingBareInference(divergedNewType))
+        }
         return resolved
     }
 

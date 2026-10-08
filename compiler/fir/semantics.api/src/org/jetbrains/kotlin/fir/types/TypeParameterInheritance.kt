@@ -84,7 +84,7 @@ fun FirSession.staticallyKnownTypeArgumentsByTypeParameterInheritance(
         if (position >= originalTypeParameters.size || position >= originalArguments.size) break
         val supertypeArgument = supertypeWithParameters.typeArguments[position]
         if (supertypeArgument.kind != ProjectionKind.INVARIANT) continue
-        val supertypeArgumentType = supertypeArgument.type as? ConeTypeParameterType ?: continue
+        val supertypeArgumentType = supertypeArgument.type?.lowerBoundIfFlexible() as? ConeTypeParameterType ?: continue
         if (supertypeArgumentType.isMarkedNullable) continue
         val castTypeParameter = supertypeArgumentType.lookupTag.typeParameterSymbol
         val index = castTypeParameters.indexOf(castTypeParameter)

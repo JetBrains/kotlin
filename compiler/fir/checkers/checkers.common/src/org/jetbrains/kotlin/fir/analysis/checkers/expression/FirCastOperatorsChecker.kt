@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.createOn
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.analysis.checkers.firPlatformSpecificCastChecker
+import org.jetbrains.kotlin.fir.diagnostics.DivergingBareInference
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
@@ -89,7 +90,12 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         }
 
         val oldErased = isCastErased(lhsType, r)
-        val newErased = isCastErasedByTypeParameterInheritance(lhsType, r)
+        val divergingInference = expression.nonFatalDiagnostics.find { it is DivergingBareInference } as DivergingBareInference?
+        val newErased = if (divergingInference != null) {
+            isCastErasedByTypeParameterInheritance(lhsType, divergingInference.newType)
+        } else {
+            isCastErasedByTypeParameterInheritance(lhsType, r)
+        }
 
         when {
             oldErased == newErased -> {}
@@ -108,7 +114,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
 
     // checks applicability with no platform-specific rules
     context(context: CheckerContext)
-    fun checkGeneralApplicability(expression: FirTypeOperatorCall, l: TypeInfo, r: TypeInfo) : Applicability = when (expression.operation) {
+    fun checkGeneralApplicability(expression: FirTypeOperatorCall, l: TypeInfo, r: TypeInfo): Applicability = when (expression.operation) {
         FirOperation.IS, FirOperation.NOT_IS -> checkIsApplicability(l, r, expression)
         FirOperation.AS, FirOperation.SAFE_AS -> checkAsApplicability(l, r, expression)
         else -> error("Invalid operator of FirTypeOperatorCall")
@@ -276,7 +282,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
     private fun reportUselessCastDiagnosticIfNeeded(
         l: ArgumentInfo,
         rType: ConeKotlinType,
-        expression: FirTypeOperatorCall
+        expression: FirTypeOperatorCall,
     ): KtDiagnostic? = when {
         LanguageFeature.EnableDfaWarningsInK2.isDisabled() -> null
         l.argument.hasIntegerLiteralTypeAmbiguity() -> FirErrors.INTEGER_LITERAL_CAST_INSTEAD_OF_TO_CALL
