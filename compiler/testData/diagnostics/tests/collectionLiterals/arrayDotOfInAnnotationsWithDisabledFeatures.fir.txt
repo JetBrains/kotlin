@@ -13,7 +13,7 @@ FILE: arrayDotOfInAnnotationsWithDisabledFeatures.kt
 
     }
     public final annotation class Anno : R|kotlin/Annotation| {
-        public constructor(uint: R|kotlin/UIntArray| = <collectionLiteralCall>(), ulong: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42))), ushort: R|kotlin/UShortArray|, ubyte: R|kotlin/UByteArray|, nested: R|NestedAnno| = R|/NestedAnno.NestedAnno|(vararg(*Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|(vararg(UInt(42)))), <collectionLiteralCall>()), int: R|kotlin/IntArray| = Q|kotlin/IntArray|.R|kotlin/IntArray.of*s|(vararg(Int(1), Int(2))), char: R|kotlin/CharArray| = <collectionLiteralCall>(), float: R|kotlin/FloatArray|, boolean: R|kotlin/BooleanArray|): R|Anno| {
+        public constructor(uint: R|kotlin/UIntArray| = <collectionLiteralCall>(), ulong: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42))), ushort: R|kotlin/UShortArray|, ubyte: R|kotlin/UByteArray|, nested: R|NestedAnno| = R|/NestedAnno.NestedAnno|(vararg(*Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|(vararg(UInt(42)))), <collectionLiteralCall>()), int: R|kotlin/IntArray| = Q|kotlin/IntArray|.R|kotlin/IntArray.of*s|(vararg(Int(1), Int(2))), char: R|kotlin/CharArray| = <collectionLiteralCall>(), float: R|kotlin/FloatArray|, boolean: R|kotlin/BooleanArray|, strings: R|kotlin/Array<kotlin/String>| = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/String|>(vararg(String(a))), classes: R|kotlin/Array<kotlin/reflect/KClass<*>>|): R|Anno| {
             super<R|kotlin/Any|>()
         }
 
@@ -44,7 +44,13 @@ FILE: arrayDotOfInAnnotationsWithDisabledFeatures.kt
         public final val boolean: R|kotlin/BooleanArray| = R|<local>/boolean|
             public get(): R|kotlin/BooleanArray|
 
+        public final val strings: R|kotlin/Array<kotlin/String>| = R|<local>/strings|
+            public get(): R|kotlin/Array<kotlin/String>|
+
+        public final val classes: R|kotlin/Array<kotlin/reflect/KClass<*>>| = R|<local>/classes|
+            public get(): R|kotlin/Array<kotlin/reflect/KClass<*>>|
+
     }
-    @R|Anno|(ushort = <collectionLiteralCall>(UShort(42)) [evaluated = <collectionLiteralCall>(UShort(42))], ubyte = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|() [evaluated = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|()], nested = R|/NestedAnno.NestedAnno|(vararg(*<collectionLiteralCall>()), Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42)))) [evaluated = R|/NestedAnno.NestedAnno|(vararg(*<collectionLiteralCall>()), Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42))))], float = Q|kotlin/FloatArray|.R|kotlin/FloatArray.of*s|() [evaluated = Q|kotlin/FloatArray|.R|kotlin/FloatArray.of*s|()], boolean = <collectionLiteralCall>(Boolean(true)) [evaluated = <collectionLiteralCall>(Boolean(true))]) public final fun target(): R|kotlin/Unit| {
+    @R|Anno|(ushort = <collectionLiteralCall>(UShort(42)) [evaluated = <collectionLiteralCall>(UShort(42))], ubyte = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|() [evaluated = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|()], nested = R|/NestedAnno.NestedAnno|(vararg(*<collectionLiteralCall>()), Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42)))) [evaluated = R|/NestedAnno.NestedAnno|(vararg(*<collectionLiteralCall>()), Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42))))], float = Q|kotlin/FloatArray|.R|kotlin/FloatArray.of*s|() [evaluated = Q|kotlin/FloatArray|.R|kotlin/FloatArray.of*s|()], boolean = <collectionLiteralCall>(Boolean(true)) [evaluated = <collectionLiteralCall>(Boolean(true))], classes = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/reflect/KClass<*>|>(vararg(<getClass>(Q|kotlin/Int|))) [evaluated = Q|kotlin/Array|.R|kotlin/Array.of*s|<R|kotlin/reflect/KClass<*>|>(vararg(<getClass>(Q|kotlin/Int|)))], strings = <collectionLiteralCall>(String(b)) [evaluated = <collectionLiteralCall>(String(b))]) public final fun target(): R|kotlin/Unit| {
         ^target Q|kotlin/Unit|
     }

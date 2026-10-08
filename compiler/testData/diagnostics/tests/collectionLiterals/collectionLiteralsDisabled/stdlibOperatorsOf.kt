@@ -26,6 +26,10 @@ fun test() {
     val d = DoubleArray.<!OPT_IN_USAGE_ERROR!>of<!>(1.0, 2.0)
     val c: CharArray = CharArray.<!OPT_IN_USAGE_ERROR!>of<!>()
     val z = BooleanArray.<!OPT_IN_USAGE_ERROR!>of<!>(true, false, true)
+
+    val strings = Array.<!OPT_IN_USAGE_ERROR!>of<!>("a", "b", "c")
+    val nullables = Array.<!OPT_IN_USAGE_ERROR!>of<!>(1, null, 3)
+    val anys: Array<Any> = Array.<!OPT_IN_USAGE_ERROR!>of<!>(Any())
 }
 
 @OptIn(ExperimentalCollectionLiteralsApi::class)
@@ -51,6 +55,10 @@ fun testWithOptIn() {
     val d = DoubleArray.of(1.0, 2.0)
     val c: CharArray = CharArray.of()
     val z = BooleanArray.of(true, false, true)
+
+    val strings = Array.of("a", "b", "c")
+    val nullables = Array.of(1, null, 3)
+    val anys: Array<Any> = Array.of(Any())
 }
 
 /* GENERATED_FIR_TAGS: annotationUseSiteTargetFile, classReference, functionDeclaration, integerLiteral, localProperty,

@@ -2328,6 +2328,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCandidatesTestGenerated 
     }
 
     @Test
+    @TestMetadata("arrayOperator.kt")
+    public void testArrayOperator() {
+      run("arrayOperator.kt");
+    }
+
+    @Test
     @TestMetadata("companionBlockOf.kt")
     public void testCompanionBlockOf() {
       run("companionBlockOf.kt");

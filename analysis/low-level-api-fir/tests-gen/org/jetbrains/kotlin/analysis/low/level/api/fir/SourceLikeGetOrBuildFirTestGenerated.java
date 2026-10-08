@@ -1512,6 +1512,12 @@ public class SourceLikeGetOrBuildFirTestGenerated extends AbstractSourceLikeGetO
     }
 
     @Test
+    @TestMetadata("stdlibArrayOperator.kt")
+    public void testStdlibArrayOperator() {
+      run("stdlibArrayOperator.kt");
+    }
+
+    @Test
     @TestMetadata("stdlibDoubleArrayOperator.kt")
     public void testStdlibDoubleArrayOperator() {
       run("stdlibDoubleArrayOperator.kt");

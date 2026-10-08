@@ -68,6 +68,12 @@ class ArraysTest {
         assertContentEquals(booleanArrayOf(true, false, true), BooleanArray.of(true, false, true))
     }
 
+    @Test fun arrayOperatorOf() {
+        assertContentEquals(arrayOf("a", "b", "c"), Array.of("a", "b", "c"))
+        assertContentEquals(arrayOf<Any?>(null, 42), Array.of<Any?>(null, 42))
+        assertContentEquals(arrayOf(1), Array.of(1))
+    }
+
     @Test fun arrayLastIndex() {
         val arr1 = intArrayOf(0, 1, 2, 3, 4)
         assertEquals(4, arr1.lastIndex)
