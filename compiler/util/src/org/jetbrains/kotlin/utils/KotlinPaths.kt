@@ -104,6 +104,8 @@ interface KotlinPaths {
         LombokPlugin(PathUtil.LOMBOK_PLUGIN_NAME),
         SamWithReceiver(PathUtil.SAM_WITH_RECEIVER_PLUGIN_NAME),
         SerializationPlugin(PathUtil.SERIALIZATION_PLUGIN_NAME),
+        PowerAssertPlugin(PathUtil.POWER_ASSERT_PLUGIN_NAME),
+        AssignmentPlugin(PathUtil.ASSIGNMENT_PLUGIN_NAME),
         Compiler(PathUtil.KOTLIN_COMPILER_NAME),
         ScriptingPlugin(PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME),
         ScriptingImpl(PathUtil.KOTLIN_SCRIPTING_COMPILER_IMPL_NAME),

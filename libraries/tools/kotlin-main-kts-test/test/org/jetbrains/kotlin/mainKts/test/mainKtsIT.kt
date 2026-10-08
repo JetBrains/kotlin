@@ -205,6 +205,155 @@ class MainKtsIT {
     }
 
     @Test
+    fun testHelloSerializationViaAnnotation() {
+        val paths = PathUtil.kotlinPathsForDistDirectory
+        runWithKotlinc(
+            arrayOf(
+                "-cp", paths.jar(KotlinPaths.Jar.MainKts).absolutePath,
+                "-script", File("$TEST_DATA_ROOT/hello-kotlinx-serialization-annotation.main.kts").absolutePath
+            ),
+            listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)")
+        )
+    }
+
+    @Test
+    fun testHelloSerializationWithPowerAssertPlugin() {
+        val paths = PathUtil.kotlinPathsForDistDirectory
+        val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
+        val powerAssertPlugin = paths.jar(KotlinPaths.Jar.PowerAssertPlugin)
+        withTempDir("mainKtsMultipleCompilerPlugins") { tempDir ->
+            val script = File(tempDir, "hello-kotlinx-serialization.main.kts").apply {
+                writeText(
+                    """@file:CompilerPlugin("${serializationPlugin.platformIndependentPathString()}")
+                        |@file:CompilerPlugin("${powerAssertPlugin.platformIndependentPathString()}", "function=kotlin.require")
+                        |${File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").readText()}
+                        |require(true)""".trimMargin()
+                )
+            }
+            runWithKotlincAndMainKts(
+                script.absolutePath,
+                listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)"),
+            )
+        }
+    }
+
+    @Test
+    fun testHelloSerializationViaRefinedXplugin() {
+        val paths = PathUtil.kotlinPathsForDistDirectory
+        val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
+        withTempDir("mainKtsSerializationPlugin") { tempDir ->
+            val script = File(tempDir, "hello-kotlinx-serialization.main.kts")
+            script.writeText(
+                """@file:CompilerOptions("-Xplugin=${serializationPlugin.platformIndependentPathString()}")
+                    |${File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").readText()}""".trimMargin()
+            )
+            runWithKotlinc(
+                arrayOf(
+                    "-cp", paths.jar(KotlinPaths.Jar.MainKts).absolutePath,
+                    "-script", script.absolutePath,
+                ),
+                listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)")
+            )
+        }
+    }
+
+    @Test
+    fun testCacheWithCompilerPluginOptionsInImportedScript() {
+        withTempDir("mainKtsCompilerPluginCache") { tempDir ->
+            val cache = File(tempDir, "cache").apply { mkdir() }.toPath()
+            val helper = File(tempDir, "helper.main.kts")
+            fun writeHelper(pluginAnnotation: String) = helper.writeText(
+                """$pluginAnnotation
+                    |
+                    |@kotlinx.serialization.Serializable
+                    |data class User(val firstName: String, val lastName: String)
+                    |""".trimMargin()
+            )
+            val script = File(tempDir, "main.main.kts").apply {
+                writeText(
+                    """@file:DependsOn("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                        |@file:Import("helper.main.kts")
+                        |
+                        |import kotlinx.serialization.*
+                        |import kotlinx.serialization.json.*
+                        |
+                        |println(Json.encodeToString(User("James", "Bond")))
+                        |""".trimMargin()
+                )
+            }
+            val expectedOut = listOf("""\{"firstName":"James","lastName":"Bond"\}""")
+
+            writeHelper("@file:CompilerPlugin(\"serialization\")")
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            val cacheFile = cache.listDirectoryEntries("*.jar").single().toFile()
+            val cacheFileTimestamp = cacheFile.lastModified()
+
+            // this run should use the cached script
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            Assertions.assertEquals(listOf(cacheFile), cache.listDirectoryEntries("*.jar").map { it.toFile() })
+            Assertions.assertEquals(cacheFileTimestamp, cacheFile.lastModified())
+
+            // changed plugin options in the imported script should invalidate the cached script
+            writeHelper("@file:CompilerPlugin(\"serialization\", \"noSuchOption=true\")")
+            runWithKotlincAndMainKts(
+                script.absolutePath,
+                expectedErrPatterns = listOf(".*unsupported plugin option: .*noSuchOption=true"),
+                expectedExitCode = 1,
+                cacheDir = cache,
+            )
+            Assertions.assertTrue(cache.listDirectoryEntries("*.jar").isEmpty())
+        }
+    }
+
+    @Test
+    fun testCacheWithCompilerPluginOptions() {
+        withTempDir("mainKtsCompilerPluginOptionsCache") { tempDir ->
+            val cache = File(tempDir, "cache").apply { mkdir() }.toPath()
+            val script = File(tempDir, "hello-kotlinx-serialization.main.kts")
+            val scriptBody = File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").readText()
+            val serializationPlugin =
+                PathUtil.kotlinPathsForDistDirectory.jar(KotlinPaths.Jar.SerializationPlugin).platformIndependentPathString()
+            fun writeScript(pluginAnnotations: String) = script.writeText("$pluginAnnotations\n$scriptBody")
+            fun cachedJars() = cache.listDirectoryEntries("*.jar").map { it.toFile() }.toSet()
+            val expectedOut = listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)")
+
+            writeScript("@file:CompilerPlugin(\"serialization\", \"disableIntrinsic=true\")")
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            val annotationOptionsJar = cachedJars().single()
+            val annotationOptionsJarTimestamp = annotationOptionsJar.lastModified()
+
+            // the same options are passed via the refined `-Xcompiler-plugin` instead, so the script text and cache key differ
+            writeScript(
+                """@file:CompilerOptions("-Xcompiler-plugin=$serializationPlugin=disableIntrinsic=true")"""
+            )
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            val refinedOptionsJar = (cachedJars() - annotationOptionsJar).single()
+
+            // changed plugin options should produce a separate cache entry
+            writeScript("@file:CompilerPlugin(\"serialization\", \"disableIntrinsic=false\")")
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            Assertions.assertEquals(3, cachedJars().size)
+
+            // the original options should reuse the first cache entry
+            writeScript("@file:CompilerPlugin(\"serialization\", \"disableIntrinsic=true\")")
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            Assertions.assertEquals(3, cachedJars().size)
+            Assertions.assertEquals(annotationOptionsJarTimestamp, annotationOptionsJar.lastModified())
+            Assertions.assertTrue(refinedOptionsJar.exists())
+
+            // invalid plugin options should fail without creating a cache entry
+            writeScript("@file:CompilerPlugin(\"serialization\", \"noSuchOption=true\")")
+            runWithKotlincAndMainKts(
+                script.absolutePath,
+                expectedErrPatterns = listOf(".*unsupported plugin option: .*noSuchOption=true"),
+                expectedExitCode = 1,
+                cacheDir = cache,
+            )
+            Assertions.assertEquals(3, cachedJars().size)
+        }
+    }
+
+    @Test
     fun testUtf8Bom() {
         val scriptPath = "$TEST_DATA_ROOT/utf8bom.main.kts"
         Assertions.assertTrue(File(scriptPath).readText().startsWith(UTF8_BOM), "Expect file '$scriptPath' to start with UTF-8 BOM")
@@ -307,7 +456,7 @@ class MainKtsIT {
 
 }
 
-private fun File.platformIndependentPathString(): String = path.replace(File.separatorChar, '/')
+internal fun File.platformIndependentPathString(): String = path.replace(File.separatorChar, '/')
 
 internal fun <R> withTempDir(keyName: String = "tmp", body: (File) -> R): R {
     val tempDir = Files.createTempDirectory(keyName).toFile()
