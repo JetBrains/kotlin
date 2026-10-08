@@ -2364,6 +2364,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallTestGenerated extend
     }
 
     @Test
+    @TestMetadata("doubleArrayOperator.kt")
+    public void testDoubleArrayOperator() {
+      run("doubleArrayOperator.kt");
+    }
+
+    @Test
     @TestMetadata("intArray.kt")
     public void testIntArray() {
       run("intArray.kt");

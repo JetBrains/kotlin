@@ -1,0 +1,43 @@
+KtCollectionLiteralExpression(38,48): '[1.0, 2.0]'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = [1.0, 2.0]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.DoubleArray
+        symbol = kotlin/DoubleArray.of(vararg elements: kotlin.Double): kotlin.DoubleArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.Double
+            symbol = vararg elements: kotlin.Double
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/DoubleArray.of
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1.0 -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = vararg elements: kotlin.Double
+          contextParameters = []
+          callableId = null),
+        2.0 -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.Double
+          symbol = vararg elements: kotlin.Double
+          contextParameters = []
+          callableId = null)
+      }
+    isInBestCandidates = true

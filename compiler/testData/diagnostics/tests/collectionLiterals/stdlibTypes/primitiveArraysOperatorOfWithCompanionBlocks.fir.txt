@@ -1,0 +1,60 @@
+Module: anno
+FILE: Anno.kt
+    @R|kotlin/annotation/Repeatable|() public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(int: R|kotlin/IntArray|, char: R|kotlin/CharArray|, double: R|kotlin/DoubleArray|, vararg boolean: R|kotlin/BooleanArray|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val int: R|kotlin/IntArray| = R|<local>/int|
+            public get(): R|kotlin/IntArray|
+
+        public final val char: R|kotlin/CharArray| = R|<local>/char|
+            public get(): R|kotlin/CharArray|
+
+        public final val double: R|kotlin/DoubleArray| = R|<local>/double|
+            public get(): R|kotlin/DoubleArray|
+
+        public final val boolean: R|kotlin/BooleanArray| = R|<local>/boolean|
+            public get(): R|kotlin/BooleanArray|
+
+    }
+Module: companionsOn
+FILE: withCompanions.kt
+    @R|Anno|(int = Q|kotlin/IntArray|.R|kotlin/IntArray.of*s|() [evaluated = <collectionLiteralCall>()], char = Q|kotlin/CharArray|.R|kotlin/CharArray.of*s|() [evaluated = <collectionLiteralCall>()], double = Q|kotlin/DoubleArray|.R|kotlin/DoubleArray.of*s|(vararg(Double(42.0))) [evaluated = <collectionLiteralCall>(Double(42.0))], boolean = vararg(*Q|kotlin/BooleanArray|.R|kotlin/BooleanArray.of*s|(vararg(Boolean(true), Boolean(false), Boolean(true)))) [evaluated = vararg(Boolean(true), Boolean(false), Boolean(true))]) public final fun testOn(): R|kotlin/Unit| {
+        lval a: R|kotlin/ByteArray| = Q|kotlin/ByteArray|.R|kotlin/ByteArray.of*s|(vararg(Byte(1), Byte(2)))
+        lval b: R|kotlin/ShortArray| = Q|kotlin/ShortArray|.R|kotlin/ShortArray.of*s|()
+        lval c: R|kotlin/IntArray| = Q|kotlin/IntArray|.R|kotlin/IntArray.of*s|(vararg(Int(1)))
+        lval d: R|kotlin/LongArray| = Q|kotlin/LongArray|.R|kotlin/LongArray.of*s|(vararg(Long(1), Long(2)))
+        lval e: R|kotlin/FloatArray| = Q|kotlin/FloatArray|.R|kotlin/FloatArray.of*s|(vararg(Float(1.0)))
+        lval f: R|kotlin/DoubleArray| = Q|kotlin/DoubleArray|.R|kotlin/DoubleArray.of*s|(vararg(Double(1.0), Double(2.0), Double(3.0)))
+        lval g: R|kotlin/CharArray| = Q|kotlin/CharArray|.R|kotlin/CharArray.of*s|()
+        lval h: R|kotlin/BooleanArray| = Q|kotlin/BooleanArray|.R|kotlin/BooleanArray.of*s|(vararg(Boolean(true), Boolean(false), Boolean(true)))
+        lval ab: R|kotlin/ByteArray| = Q|kotlin/ByteArray|.R|kotlin/ByteArray.of*s|(vararg(Byte(1), Byte(2), Byte(3)))
+        lval bb: R|kotlin/ShortArray| = Q|kotlin/ShortArray|.R|kotlin/ShortArray.of*s|(vararg(Short(1)))
+        lval cb: R|kotlin/IntArray| = Q|kotlin/IntArray|.R|kotlin/IntArray.of*s|(vararg(Int(1)))
+        lval db: R|kotlin/LongArray| = Q|kotlin/LongArray|.R|kotlin/LongArray.of*s|()
+        lval eb: R|kotlin/FloatArray| = Q|kotlin/FloatArray|.R|kotlin/FloatArray.of*s|()
+        lval fb: R|kotlin/DoubleArray| = Q|kotlin/DoubleArray|.R|kotlin/DoubleArray.of*s|(vararg(Double(1.0)))
+        lval gb: R|kotlin/CharArray| = Q|kotlin/CharArray|.R|kotlin/CharArray.of*s|()
+        lval hb: R|kotlin/BooleanArray| = Q|kotlin/BooleanArray|.R|kotlin/BooleanArray.of*s|()
+    }
+Module: companionsOff
+FILE: withoutCompanions.kt
+    @R|Anno|(int = Q|kotlin|.R|kotlin/intArrayOf|(vararg(Int(1), Int(2), Int(3))) [evaluated = <collectionLiteralCall>(Int(1), Int(2), Int(3))], char = Q|kotlin/CharArray|.R|kotlin/CharArray.of*s<Inapplicable(INAPPLICABLE): kotlin/CharArray.of>#|(vararg(Char(a))) [evaluated = <collectionLiteralCall>(Char(a))], double = Q|kotlin/DoubleArray|.R|kotlin/DoubleArray.of*s<Inapplicable(INAPPLICABLE): kotlin/DoubleArray.of>#|() [evaluated = <collectionLiteralCall>()], boolean = vararg(*Q|kotlin|.R|kotlin/booleanArrayOf|()) [evaluated = vararg()]) public final fun testOff(): R|kotlin/Unit| {
+        lval a: R|kotlin/ByteArray| = Q|kotlin/ByteArray|.R|kotlin/ByteArray.of*s<Inapplicable(INAPPLICABLE): kotlin/ByteArray.of>#|(vararg(Byte(1), Byte(2)))
+        lval b: R|kotlin/ShortArray| = Q|kotlin/ShortArray|.R|kotlin/ShortArray.of*s<Inapplicable(INAPPLICABLE): kotlin/ShortArray.of>#|()
+        lval c: R|kotlin/IntArray| = Q|kotlin/IntArray|.R|kotlin/IntArray.of*s<Inapplicable(INAPPLICABLE): kotlin/IntArray.of>#|(vararg(Int(1)))
+        lval d: R|kotlin/LongArray| = Q|kotlin/LongArray|.R|kotlin/LongArray.of*s<Inapplicable(INAPPLICABLE): kotlin/LongArray.of>#|(vararg(Long(1), Long(2)))
+        lval e: R|kotlin/FloatArray| = Q|kotlin/FloatArray|.R|kotlin/FloatArray.of*s<Inapplicable(INAPPLICABLE): kotlin/FloatArray.of>#|(vararg(Float(1.0)))
+        lval f: R|kotlin/DoubleArray| = Q|kotlin/DoubleArray|.R|kotlin/DoubleArray.of*s<Inapplicable(INAPPLICABLE): kotlin/DoubleArray.of>#|(vararg(Double(1.0), Double(2.0), Double(3.0)))
+        lval g: R|kotlin/CharArray| = Q|kotlin/CharArray|.R|kotlin/CharArray.of*s<Inapplicable(INAPPLICABLE): kotlin/CharArray.of>#|()
+        lval h: R|kotlin/BooleanArray| = Q|kotlin/BooleanArray|.R|kotlin/BooleanArray.of*s<Inapplicable(INAPPLICABLE): kotlin/BooleanArray.of>#|(vararg(Boolean(true), Boolean(false), Boolean(true)))
+        lval ab: R|kotlin/ByteArray| = Q|kotlin|.R|kotlin/byteArrayOf|(vararg(Byte(1), Byte(2), Byte(3)))
+        lval bb: R|kotlin/ShortArray| = Q|kotlin|.R|kotlin/shortArrayOf|(vararg(Short(1)))
+        lval cb: R|kotlin/IntArray| = Q|kotlin|.R|kotlin/intArrayOf|(vararg(Int(1)))
+        lval db: R|kotlin/LongArray| = Q|kotlin|.R|kotlin/longArrayOf|()
+        lval eb: R|kotlin/FloatArray| = Q|kotlin|.R|kotlin/floatArrayOf|()
+        lval fb: R|kotlin/DoubleArray| = Q|kotlin|.R|kotlin/doubleArrayOf|(vararg(Double(1.0)))
+        lval gb: R|kotlin/CharArray| = Q|kotlin|.R|kotlin/charArrayOf|()
+        lval hb: R|kotlin/BooleanArray| = Q|kotlin|.R|kotlin/booleanArrayOf|()
+    }
