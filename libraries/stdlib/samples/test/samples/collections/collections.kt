@@ -1385,13 +1385,13 @@ class Collections {
         fun contains() {
             val array = arrayOf("apples", "oranges", "lime")
 
-            assertPrints(array.contains("oranges"), "true")
-            assertPrints(array.contains("banana"), "false")
+            assertPrints("oranges" in array, "true")
+            assertPrints("banana" !in array, "true")
 
             val numbers = intArrayOf(1, 2, 3)
 
-            assertPrints(numbers.contains(2), "true")
-            assertPrints(numbers.contains(4), "false")
+            assertPrints(2 in numbers, "true")
+            assertPrints(4 !in numbers, "true")
         }
 
         @Sample
