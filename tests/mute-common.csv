@@ -12,5 +12,3 @@ org.jetbrains.kotlin.native.interop.gen.ObjCMethodSignaturesTest.ObjC Direct,KT-
 org.jetbrains.kotlin.native.interop.gen.ExternalSourceSymbolTests.KT49455 category marked generated_declaration - is indexed - without visitChildren pass,KT-89568,STABLE
 org.jetbrains.kotlin.konan.test.blackbox.NativeLldbTestGenerated.testKt42208WithInlinedFunInKlib,KT-88349,FLAKY
 org.jetbrains.kotlin.konan.test.blackbox.NativeLldbTestGenerated.testKt42208WithInlinedFunInKlibWithCache,KT-88349,FLAKY
-
-org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportWithResultValidationTest.testStdlibTypes,KTI-3716,FLAKY
