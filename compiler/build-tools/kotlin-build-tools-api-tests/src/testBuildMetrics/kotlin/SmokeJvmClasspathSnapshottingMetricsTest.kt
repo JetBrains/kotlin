@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.buildtools.tests
 
 import org.jetbrains.kotlin.buildtools.api.BuildOperation.Companion.METRICS_COLLECTOR
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
+import org.jetbrains.kotlin.buildtools.tests.SmokeCompilationMetricsTest.Companion.Jvm.daemonMetricNames
 import org.jetbrains.kotlin.buildtools.tests.compilation.BaseCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.currentKotlinStdlibLocation
@@ -27,7 +29,7 @@ class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
             it.executeOperation(snapshottingOperation.build(), executionPolicy)
         }
         val actualNames = metricsCollector.all().map { it.name }.toSet()
-        val expectedNames = baseExpectedMetricNames + parseInlineLocalClassMetricNames
+        val expectedNames = baseExpectedMetricNames + parseInlineLocalClassMetricNames + if (executionPolicy is ExecutionPolicy.WithDaemon) daemonMetricNames else emptySet()
         assertEquals(expectedNames, actualNames) {
             "Unexpected set of metric names for stdlib classpath snapshot.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
         }
@@ -46,7 +48,7 @@ class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
             it.executeOperation(snapshottingOperation.build(), executionPolicy)
         }
         val actualNames = metricsCollector.all().map { it.name }.toSet()
-        val expectedNames = baseExpectedMetricNames
+        val expectedNames = baseExpectedMetricNames + if (executionPolicy is ExecutionPolicy.WithDaemon) daemonMetricNames else emptySet()
         assertEquals(expectedNames, actualNames) {
             "Unexpected set of metric names for stdlib classpath snapshot.\n\nMissing: ${expectedNames - actualNames}\nUnexpected: ${actualNames - expectedNames}"
         }

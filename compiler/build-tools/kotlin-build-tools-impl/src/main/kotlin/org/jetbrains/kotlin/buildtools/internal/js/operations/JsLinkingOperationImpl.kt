@@ -2,11 +2,13 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.buildtools.api.js.operations.JsLinkingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.CLICompiler

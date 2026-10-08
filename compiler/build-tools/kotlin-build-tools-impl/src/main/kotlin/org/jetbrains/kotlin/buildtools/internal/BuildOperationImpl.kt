@@ -10,7 +10,6 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import org.jetbrains.kotlin.build.report.metrics.DAEMON_INCREASED_MEMORY
 import org.jetbrains.kotlin.build.report.metrics.DAEMON_MEMORY_USAGE
@@ -62,7 +61,8 @@ public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.
     @Transient
     private val executionStarted = AtomicBoolean(false)
 
-    public open val warningsAsError: Boolean = false
+    public open val warningsAsError: Boolean
+        get() = false
 
     public open val compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 

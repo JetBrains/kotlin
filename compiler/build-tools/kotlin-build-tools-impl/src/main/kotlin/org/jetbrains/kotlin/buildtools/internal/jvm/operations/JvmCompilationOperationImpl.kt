@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
+import org.jetbrains.kotlin.buildtools.internal.serializability.JvmSnapshotBasedIncrementalCompilationConfigurationImplSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.ListOfPathsAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
@@ -69,7 +70,6 @@ internal class JvmCompilationOperationImpl(
     override val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val compilerVersion: String,
-    @Transient // TODO
     @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: JvmIncrementalCompilationConfiguration? = null,
     @SerialName("KOTLINSCRIPT_EXTENSIONS") internal var kotlinScriptExtensions: Array<String>? = null,
 ) : BaseCompilationOperationImpl<JvmCompilerArgumentsImpl, @Contextual K2JVMCompilerArguments>(),

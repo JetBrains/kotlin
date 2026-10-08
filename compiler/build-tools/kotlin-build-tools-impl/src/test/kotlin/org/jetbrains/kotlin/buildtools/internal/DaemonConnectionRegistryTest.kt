@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.io.deleteOnExitRecursively
 import org.junit.jupiter.api.Assertions.*
@@ -35,18 +37,20 @@ class DaemonConnectionRegistryTest {
     }
 }
 
+@OptIn(DelicateBuildToolsApi::class, UseFromImplModuleRestricted::class)
 @Suppress("unused") // used in the test above
 class DaemonConnectionTestImpl {
     fun run() {
         val runDir = Files.createTempDirectory("test-daemon-files").also { it.deleteOnExitRecursively() }
         val registry = DaemonConnectionRegistry(lazy { createSessionIsAliveFlagFile() })
         try {
-            val logger = KotlinLoggerMessageCollectorAdapter(DefaultKotlinLogger, DefaultCompilerMessageRenderer, false)
+            val logger = DefaultKotlinLogger
+            val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger, DefaultCompilerMessageRenderer, false)
             val policy1 = DaemonExecutionPolicyImpl().apply {
-                set(DaemonExecutionPolicyImpl.DAEMON_RUN_DIR_PATH, runDir)
-                set(DaemonExecutionPolicyImpl.SHUTDOWN_DELAY_MILLIS, 0)
+                set(ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH, runDir)
+                set(ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS, 0L)
             }
-            val daemonInfo = registry.getCompileServiceSession(policy1, logger).let { session ->
+            val daemonInfo = registry.getCompileServiceSession(policy1, logger, loggerAdapter).let { session ->
                 assertNotNull(session)
                 val daemonInfo = session?.compileService?.getDaemonInfo()?.get() ?: ""
                 assertTrue("Kotlin daemon on port" in daemonInfo)
@@ -56,7 +60,7 @@ class DaemonConnectionTestImpl {
                 daemonInfo
             }
 
-            registry.getCompileServiceSession(policy1, logger).let { session ->
+            registry.getCompileServiceSession(policy1, logger, loggerAdapter).let { session ->
                 assertNotNull(session)
                 val daemonInfo2 = session?.compileService?.getDaemonInfo()?.get() ?: ""
                 assertTrue("Kotlin daemon on port" in daemonInfo2)

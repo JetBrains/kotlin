@@ -61,7 +61,6 @@ internal class WasmKlibCompilationOperationImpl(
     override val destination: Path,
     override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
     private val compilerVersion: String,
-    @Transient // TODO
     @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: WasmIncrementalCompilationConfiguration? = null,
 ) : BaseCompilationOperationImpl<WasmArgumentsImpl, @Contextual KotlinWasmCompilerArguments>(),
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
@@ -73,7 +72,9 @@ internal class WasmKlibCompilationOperationImpl(
         sourcesChanges: SourcesChanges,
         modulesInformation: List<IncrementalModule>,
     ): WasmHistoryBasedIncrementalCompilationConfiguration.Builder {
-        return WasmHistoryBasedIncrementalCompilationConfigurationImpl(rootProjectDir, workingDirectory, sourcesChanges, modulesInformation)
+        return WasmHistoryBasedIncrementalCompilationConfigurationImpl(workingDirectory, sourcesChanges, modulesInformation).also {
+            it.rootProjectDir = rootProjectDir
+        }
     }
 
     override fun toBuilder(): WasmKlibCompilationOperation.Builder = deepCopy()

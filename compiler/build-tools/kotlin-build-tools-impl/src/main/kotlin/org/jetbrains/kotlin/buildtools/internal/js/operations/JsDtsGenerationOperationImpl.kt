@@ -4,12 +4,14 @@
  */
 
 @file:Suppress("EnumValuesSoftDeprecate")
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.JsDtsCompilationStrategy
@@ -22,6 +24,8 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentValueAdapter
 import org.jetbrains.kotlin.buildtools.internal.arguments.JsArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsEcmaVersion
 import org.jetbrains.kotlin.buildtools.internal.arguments.enums.JsModuleKind
+import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -95,7 +99,7 @@ internal class JsDtsGenerationOperationImpl(
     }
 
     override fun getResultSerializer(): KSerializer<CompilationResult> {
-        TODO("Not yet implemented")
+        return CompilationResultSerializer
     }
 
     override val usesApplicationEnvironment: Boolean

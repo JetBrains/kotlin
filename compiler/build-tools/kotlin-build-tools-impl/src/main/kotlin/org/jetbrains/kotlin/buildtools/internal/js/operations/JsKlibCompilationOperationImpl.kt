@@ -62,7 +62,6 @@ internal class JsKlibCompilationOperationImpl(
     override val destination: Path,
     override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
     private val compilerVersion: String,
-    @Transient // TODO
     @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: JsIncrementalCompilationConfiguration? = null,
 ) : BaseCompilationOperationImpl<JsArgumentsImpl, @Contextual K2JSCompilerArguments>(),
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
@@ -74,7 +73,9 @@ internal class JsKlibCompilationOperationImpl(
         sourcesChanges: SourcesChanges,
         modulesInformation: List<IncrementalModule>,
     ): JsHistoryBasedIncrementalCompilationConfiguration.Builder {
-        return JsHistoryBasedIncrementalCompilationConfigurationImpl(rootProjectDir, workingDirectory, sourcesChanges, modulesInformation)
+        return JsHistoryBasedIncrementalCompilationConfigurationImpl(workingDirectory, sourcesChanges, modulesInformation).also {
+            it.rootProjectDir = rootProjectDir
+        }
     }
 
     override fun toBuilder(): JsKlibCompilationOperation.Builder = deepCopy()

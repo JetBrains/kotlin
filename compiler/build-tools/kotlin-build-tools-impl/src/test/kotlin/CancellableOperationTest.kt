@@ -1,3 +1,5 @@
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.serializer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -37,6 +39,8 @@ private class ExampleCancellableOperation :
 
     override val usesApplicationEnvironment: Boolean
         get() = false
+
+    override fun getResultSerializer(): KSerializer<Unit> = Unit.serializer()
 }
 
 

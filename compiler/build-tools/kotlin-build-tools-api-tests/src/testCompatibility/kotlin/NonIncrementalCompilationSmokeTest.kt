@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputsContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.*
 import org.jetbrains.kotlin.test.TestMetadata
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
