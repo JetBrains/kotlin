@@ -375,6 +375,7 @@ internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActu
     var isOperator: Boolean = false
 
     var methodName: String? = null
+    val typeParameters: MutableList<String> = mutableListOf()
     private val parameters: MutableList<MethodParameterBuilder> = mutableListOf()
     var returnType: String? = null
 
@@ -390,6 +391,10 @@ internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActu
         return argBuilder
     }
 
+    fun typeParam(name: String) {
+        typeParameters += name
+    }
+
     override fun build(): String {
         throwIfWasNotInitialized(methodName, "methodName", "MethodSignatureBuilder")
         throwIfWasNotInitialized(returnType, "returnType", "MethodSignatureBuilder")
@@ -402,7 +407,11 @@ internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActu
             if (isInline) append("inline ")
             if (isInfix) append("infix ")
             if (isOperator) append("operator ")
-            append("fun $methodName(${parameters.joinToString { it.build() }}): $returnType")
+            append("fun ")
+            if (typeParameters.isNotEmpty()) {
+                typeParameters.joinTo(this, prefix = "<", postfix = "> ")
+            }
+            append("$methodName(${parameters.joinToString { it.build() }}): $returnType")
         }
     }
 }

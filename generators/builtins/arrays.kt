@@ -72,7 +72,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                 generateGetSet()
                 generateSize()
                 generateIterator()
-                if (kind != null) generateOfOperators()
+                generateOfOperators()
 
             }.modifyGeneratedClass()
             modifyGeneratedFileAfterClass()
@@ -205,6 +205,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                     methodName = "of"
                     isOperator = true
                     isInline = true
+                    if (kind == null) typeParam("T")
                     parameter {
                         name = "elements"
                         vararg = true
@@ -212,7 +213,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                     }
                     returnType = arrayTypeName
                 }
-                "elements".setAsExpressionBody()
+                ("elements" + if (kind == null) " as Array<T>" else "").setAsExpressionBody()
             }.modifyOfOperator()
         }
 
@@ -228,7 +229,14 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
 
         protected fun MethodBuilder.declareOfOperatorWithoutBody() {
             annotations.remove(NOTHING_TO_INLINE_SUPPRESSION)
-            modifySignature { isInline = false }
+            if (kind == null) {
+                modifySignature {
+                    typeParameters.clear()
+                    typeParam("reified T")
+                }
+            } else {
+                modifySignature { isInline = false }
+            }
             noBody()
         }
 
@@ -297,6 +305,9 @@ class GenerateJvmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Generat
 
 class GenerateJsArrays(writer: PrintWriter, primitiveArrays: Boolean) : GenerateArrays(writer, primitiveArrays) {
     override fun FileBuilder.modifyGeneratedFile() {
+        if (!primitiveArrays) {
+            import("kotlin.js.*")
+        }
         suppress("UNUSED_PARAMETER")
     }
 
@@ -322,6 +333,12 @@ class GenerateJsArrays(writer: PrintWriter, primitiveArrays: Boolean) : Generate
 
         override fun MethodBuilder.modifyIterator() {
             annotations += """Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")"""
+        }
+
+        override fun MethodBuilder.modifyOfOperator() {
+            if (kind == null) {
+                "elements.unsafeCast<Array<T>>()".setAsExpressionBody()
+            }
         }
     }
 }
@@ -429,6 +446,13 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
             "$arrayIteratorImplClassName(this)".setAsExpressionBody()
         }
 
+        override fun MethodBuilder.modifyOfOperator() {
+            if (kind == null) {
+                annotations.removeAll { it.startsWith("Suppress") }
+                annotations += """Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")"""
+            }
+        }
+
         override fun FileBuilder.modifyGeneratedFileAfterClass() {
             generateArrayIteratorClass()
             if (kind == PrimitiveType.BOOLEAN) {
@@ -534,6 +558,14 @@ class GenerateNativeArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
 
         override fun MethodBuilder.modifyIterator() {
             "$arrayIteratorImplClassName(this)".setAsExpressionBody()
+        }
+
+        override fun MethodBuilder.modifyOfOperator() {
+            if (kind == null) {
+                annotations += """TypedIntrinsic(IntrinsicType.IDENTITY)"""
+                modifySignature { isExternal = true }
+                noBody()
+            }
         }
     }
 }

@@ -56,6 +56,12 @@ public final class Array<T> {
     public final operator fun set(index: kotlin.Int, value: T): kotlin.Unit { /* compiled code */ }
 
     public final operator fun iterator(): kotlin.collections.Iterator<T> { /* compiled code */ }
+
+    companion {
+        @kotlin.SinceKotlin(version = "2.5")
+        @kotlin.ExperimentalCollectionLiteralsApi
+        public final inline operator fun <reified T> of(vararg elements: T): kotlin.Array<T> { /* compiled code */ }
+    }
 }
 
 public final class Boolean private constructor() : kotlin.Comparable<kotlin.Boolean> {

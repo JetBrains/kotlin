@@ -72,6 +72,8 @@ public final class Array<T> : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Seri
 
     public constructor<T>(size: R|kotlin/Int|, init: R|(kotlin/Int) -> T|): R|kotlin/Array<T>|
 
+    @R|kotlin/SinceKotlin|(version = String(2.5)) @R|kotlin/ExperimentalCollectionLiteralsApi|() public final static inline operator fun <reified T> of(vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>|
+
 }
 
 public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>|, R|java/io/Serializable| {

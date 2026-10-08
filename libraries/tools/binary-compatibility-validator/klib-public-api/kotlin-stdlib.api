@@ -1530,6 +1530,7 @@ final class <#A: kotlin/Any?> kotlin/Array { // kotlin/Array|null[0]
     final fun get(kotlin/Int): #A // kotlin/Array.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/Iterator<#A> // kotlin/Array.iterator|iterator(){}[0]
     final fun set(kotlin/Int, #A) // kotlin/Array.set|set(kotlin.Int;1:0){}[0]
+    final inline fun <#A1: kotlin/Any?> of(kotlin/Array<out #A1>...): kotlin/Array<#A1> // kotlin/Array.of|of#static(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
 
     // Targets: [native, wasmJs, wasmWasi]
     constructor <init>(kotlin/Int) // kotlin/Array.<init>|<init>(kotlin.Int){}[0]

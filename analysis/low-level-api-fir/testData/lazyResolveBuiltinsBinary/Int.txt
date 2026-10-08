@@ -2060,7 +2060,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class Array<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class Array<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Array] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] init: R|(kotlin/Int) -> T|): R|kotlin/Array<T>| {
             super<R|kotlin/Any|>()
         }
@@ -2075,6 +2075,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/Iterator<T>| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static inline operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Array] fun <reified [ResolvedTo(BODY_RESOLVE)] T> of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/Array<out T>|): R|kotlin/Array<T>| {
         }
 
     }
