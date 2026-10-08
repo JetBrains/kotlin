@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=lib, facadeFqName=lib.LibKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=lib]
   IMPORT_LIST
-  CLASS[classId=lib/Retained, fqName=lib.Retained, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Retained, superNames=[]]
+  CLASS[classId=lib/Retained, fqName=lib.Retained, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Retained, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         CONSTRUCTOR_CALLEE
@@ -30,7 +30,7 @@ FILE[kind=Facade[packageFqName=lib, facadeFqName=lib.LibKt]]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=PROPERTY_SETTER]
-  CLASS[classId=lib/SourceOnly, fqName=lib.SourceOnly, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SourceOnly, superNames=[]]
+  CLASS[classId=lib/SourceOnly, fqName=lib.SourceOnly, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=SourceOnly, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         CONSTRUCTOR_CALLEE

@@ -102,7 +102,7 @@ Retained.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=lib]
     IMPORT_LIST
-    CLASS[classId=lib/Retained, fqName=lib.Retained, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Retained, superNames=[Annotation]]
+    CLASS[classId=lib/Retained, fqName=lib.Retained, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Retained, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
           valueArguments: [ value -> AnnotationRetention.BINARY ]
@@ -175,7 +175,7 @@ SourceOnly.class:
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=lib]
     IMPORT_LIST
-    CLASS[classId=lib/SourceOnly, fqName=lib.SourceOnly, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SourceOnly, superNames=[Annotation]]
+    CLASS[classId=lib/SourceOnly, fqName=lib.SourceOnly, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=SourceOnly, superNames=[Annotation]]
       MODIFIER_LIST[public final annotation]
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
           valueArguments: [ value -> AnnotationRetention.SOURCE ]

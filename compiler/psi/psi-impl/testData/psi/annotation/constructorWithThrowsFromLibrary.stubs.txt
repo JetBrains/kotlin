@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=lib]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=lib]
   IMPORT_LIST
-  CLASS[classId=lib/Retained, fqName=lib.Retained, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=Retained, superNames=[]]
+  CLASS[classId=lib/Retained, fqName=lib.Retained, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Retained, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         CONSTRUCTOR_CALLEE
@@ -24,7 +24,7 @@ FILE[kind=File[packageFqName=lib]]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]
-  CLASS[classId=lib/SourceOnly, fqName=lib.SourceOnly, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=SourceOnly, superNames=[]]
+  CLASS[classId=lib/SourceOnly, fqName=lib.SourceOnly, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=SourceOnly, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
         CONSTRUCTOR_CALLEE
@@ -46,7 +46,7 @@ FILE[kind=File[packageFqName=lib]]
             DOT_QUALIFIED_EXPRESSION
               REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
               REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]
-  CLASS[classId=lib/WithThrows, fqName=lib.WithThrows, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithThrows, superNames=[]]
+  CLASS[classId=lib/WithThrows, fqName=lib.WithThrows, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithThrows, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithThrows]
       MODIFIER_LIST[]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retained]
