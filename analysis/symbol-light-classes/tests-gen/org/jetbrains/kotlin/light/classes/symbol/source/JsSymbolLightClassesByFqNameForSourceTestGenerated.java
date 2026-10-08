@@ -185,6 +185,12 @@ public class JsSymbolLightClassesByFqNameForSourceTestGenerated extends Abstract
   }
 
   @Test
+  @TestMetadata("DefaultImplsWithExtensionMembers.kt")
+  public void testDefaultImplsWithExtensionMembers() {
+    run("DefaultImplsWithExtensionMembers.kt");
+  }
+
+  @Test
   @TestMetadata("DefaultImplsWithTypeParameters.kt")
   public void testDefaultImplsWithTypeParameters() {
     run("DefaultImplsWithTypeParameters.kt");

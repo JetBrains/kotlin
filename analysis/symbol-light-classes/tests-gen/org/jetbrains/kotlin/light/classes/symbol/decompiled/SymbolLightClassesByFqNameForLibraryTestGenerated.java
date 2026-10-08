@@ -185,6 +185,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
   }
 
   @Test
+  @TestMetadata("DefaultImplsWithExtensionMembers.kt")
+  public void testDefaultImplsWithExtensionMembers() {
+    run("DefaultImplsWithExtensionMembers.kt");
+  }
+
+  @Test
   @TestMetadata("DefaultImplsWithTypeParameters.kt")
   public void testDefaultImplsWithTypeParameters() {
     run("DefaultImplsWithTypeParameters.kt");
