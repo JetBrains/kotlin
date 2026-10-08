@@ -71,116 +71,147 @@ class SerializableIrGenerator(
             val thiz = irClass.thisReceiver!!
             val serializableProperties = properties.serializableProperties
 
-            val serialDescs = serializableProperties.map { it.ir }.toSet()
-
             val propertyByParamReplacer: (IrValueParameterSymbol) -> IrExpression? =
                 createPropertyByParamReplacer(irClass, serializableProperties, thiz)
 
             val initializerAdapter: (IrExpressionBody) -> IrExpression = createInitializerAdapter(irClass, propertyByParamReplacer)
 
-
-            var current: IrProperty? = null
-            val statementsAfterSerializableProperty: MutableMap<IrProperty?, MutableList<IrStatement>> = mutableMapOf()
-            irClass.declarations.asSequence().forEach {
-                when {
-                    // only properties with backing field
-                    it is IrProperty && it.isNonStaticWithField -> {
-                        if (it in serialDescs) {
-                            current = it
-                        } else if (it.backingField?.initializer != null &&
-                            !(it.isJvmOptimizableDelegate() && compilerContext.platform.isJvm())
-                        ) {
-                            // skip transient lateinit or deferred properties (with null initializer) and optimized delegations
-                            val expression = initializerAdapter(it.backingField!!.initializer!!)
-
-                            statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
-                                .add(irSetField(irGet(thiz), it.backingField!!, expression))
-                        }
-                    }
-                    it is IrAnonymousInitializer -> {
-                        val statements = it.body.deepCopyWithoutPatchingParents().statements
-                        statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
-                            .addAll(statements)
-                    }
-                }
-            }
+            val statementsAfterSerializableProperty = collectStatementsAfterSerializableProperties(thiz, initializerAdapter)
 
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
             val seenVars = (0 until seenVarsOffset).map { ctor.parameters[it] }
 
-
             val superClass = irClass.getSuperClassOrAny()
-            var startPropOffset: Int = 0
-
+            val startPropOffset =
+                if (superClass.shouldHaveGeneratedMethods()) serializablePropertiesForIrBackend(superClass).serializableProperties.size else 0
 
             if (!irClass.isAbstractOrSealedSerializableClass) {
-                val getDescriptorExpr = if (irClass.isStaticSerializable) {
-                    getStaticSerialDescriptorExprForConstructor()
-                } else {
-                    // synthetic constructor is created only for internally serializable classes - so companion definitely exists
-                    val companionObject = irClass.companionObject()!!
-                    getParametrizedSerialDescriptorExpr(companionObject, createCachedDescriptorProperty(companionObject))
-                }
-                generateGoldenMaskCheck(seenVars, properties, getDescriptorExpr)
+                generateGoldenMaskCheck(seenVars, properties, getSerialDescriptorExprForConstructor())
             }
-            when {
-                superClass.symbol == compilerContext.irBuiltIns.anyClass -> generateAnySuperConstructorCall(toBuilder = this@addFunctionBody)
-                superClass.shouldHaveGeneratedMethods() -> {
-                    startPropOffset = generateSuperSerializableCall(superClass, ctor.parameters, seenVarsOffset)
-                }
-                else -> generateSuperNonSerializableCall(superClass)
+
+            val propertyAssignments = (startPropOffset until serializableProperties.size).associate { index ->
+                serializableProperties[index].ir to generatePropertyAssignment(thiz, index, ctor.parameters, seenVars, initializerAdapter)
             }
+
+            generateSuperConstructorCall(superClass, ctor.parameters, seenVarsOffset)
 
             statementsAfterSerializableProperty[null]?.forEach { +it }
-            for (index in startPropOffset until serializableProperties.size) {
-                val prop = serializableProperties[index]
-                val paramRef = ctor.parameters[index + seenVarsOffset]
-                // Assign this.a = a in else branch
-                // Set field directly w/o setter to match behavior of old backend plugin
-                val backingFieldToAssign = prop.ir.backingField!!
-                val assignParamExpr = irSetField(irGet(thiz), backingFieldToAssign, irGet(paramRef))
-
-                val ifNotSeenExpr: IrExpression = if (prop.optional) {
-                    val initializerBody =
-                        requireNotNull(initializerAdapter(prop.ir.backingField?.initializer!!)) { "Optional value without an initializer" } // todo: filter abstract here
-                    irSetField(irGet(thiz), backingFieldToAssign, initializerBody)
-                } else {
-                    // property required
-                    // field definitely not empty as it's checked before - no need another IF, only assign property from param
-                    +assignParamExpr
-                    statementsAfterSerializableProperty[prop.ir]?.forEach { +it }
-                    continue
-                }
-
-                val propNotSeenTest =
-                    irEquals(
-                        irInt(0),
-                        irBinOp(
-                            OperatorNameConventions.AND,
-                            irGet(seenVars[bitMaskSlotAt(index)]),
-                            irInt(1 shl (index % 32))
-                        )
-                    )
-
-                +irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)
-
-                statementsAfterSerializableProperty[prop.ir]?.forEach { +it }
+            for ([property, assignment] in propertyAssignments) {
+                +assignment
+                statementsAfterSerializableProperty[property]?.forEach { +it }
             }
 
-            // Handle function-intialized interface delegates
-            irClass.declarations
-                .filterIsInstance<IrField>()
-                .filter { it.origin == IrDeclarationOrigin.DELEGATE }
-                .forEach {
-                    val receiver = if (!it.isStatic) irGet(thiz) else null
-                    +irSetField(
-                        receiver,
-                        it,
-                        initializerAdapter(it.initializer!!),
-                        IrStatementOrigin.INITIALIZE_FIELD
-                    )
-                }
+            generateDelegateFieldInitializers(thiz, initializerAdapter)
         }
+
+    private fun IrBlockBodyBuilder.collectStatementsAfterSerializableProperties(
+        thiz: IrValueParameter,
+        initializerAdapter: (IrExpressionBody) -> IrExpression,
+    ): Map<IrProperty?, List<IrStatement>> {
+        val serialDescs = properties.serializableProperties.map { it.ir }.toSet()
+        var current: IrProperty? = null
+        val statementsAfterSerializableProperty: MutableMap<IrProperty?, MutableList<IrStatement>> = mutableMapOf()
+        irClass.declarations.asSequence().forEach {
+            when {
+                // only properties with backing field
+                it is IrProperty && it.isNonStaticWithField -> {
+                    if (it in serialDescs) {
+                        current = it
+                    } else if (it.backingField?.initializer != null &&
+                        !(it.isJvmOptimizableDelegate() && compilerContext.platform.isJvm())
+                    ) {
+                        // skip transient lateinit or deferred properties (with null initializer) and optimized delegations
+                        val expression = initializerAdapter(it.backingField!!.initializer!!)
+
+                        statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
+                            .add(irSetField(irGet(thiz), it.backingField!!, expression))
+                    }
+                }
+                it is IrAnonymousInitializer -> {
+                    val statements = it.body.deepCopyWithoutPatchingParents().statements
+                    statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
+                        .addAll(statements)
+                }
+            }
+        }
+        return statementsAfterSerializableProperty
+    }
+
+    private fun IrBlockBodyBuilder.getSerialDescriptorExprForConstructor(): IrExpression =
+        if (irClass.isStaticSerializable) {
+            getStaticSerialDescriptorExprForConstructor()
+        } else {
+            // synthetic constructor is created only for internally serializable classes - so companion definitely exists
+            val companionObject = irClass.companionObject()!!
+            getParametrizedSerialDescriptorExpr(companionObject, createCachedDescriptorProperty(companionObject))
+        }
+
+    private fun IrBlockBodyBuilder.propertyNotSeenTest(seenVars: List<IrValueParameter>, index: Int): IrExpression =
+        irEquals(
+            irInt(0),
+            irBinOp(
+                OperatorNameConventions.AND,
+                irGet(seenVars[bitMaskSlotAt(index)]),
+                irInt(1 shl (index % 32))
+            )
+        )
+
+    private fun defaultValueOf(prop: IrSerializableProperty, initializerAdapter: (IrExpressionBody) -> IrExpression): IrExpression =
+        requireNotNull(initializerAdapter(prop.ir.backingField?.initializer!!)) { "Optional value without an initializer" } // todo: filter abstract here
+
+    private fun IrBlockBodyBuilder.generatePropertyAssignment(
+        thiz: IrValueParameter,
+        index: Int,
+        parameters: List<IrValueParameter>,
+        seenVars: List<IrValueParameter>,
+        initializerAdapter: (IrExpressionBody) -> IrExpression,
+    ): IrExpression {
+        val prop = properties.serializableProperties[index]
+        val paramRef = parameters[index + seenVars.size]
+        // Assign this.a = a in else branch
+        // Set field directly w/o setter to match behavior of old backend plugin
+        val backingFieldToAssign = prop.ir.backingField!!
+        val assignParamExpr = irSetField(irGet(thiz), backingFieldToAssign, irGet(paramRef))
+
+        if (!prop.optional) {
+            // property required
+            // field definitely not empty as it's checked before - no need another IF, only assign property from param
+            return assignParamExpr
+        }
+        val ifNotSeenExpr = irSetField(irGet(thiz), backingFieldToAssign, defaultValueOf(prop, initializerAdapter))
+        return irIfThenElse(compilerContext.irBuiltIns.unitType, propertyNotSeenTest(seenVars, index), ifNotSeenExpr, assignParamExpr)
+    }
+
+    private fun IrBlockBodyBuilder.generateSuperConstructorCall(
+        superClass: IrClass,
+        allValueParameters: List<IrValueParameter>,
+        seenVarsOffset: Int,
+    ) {
+        when {
+            superClass.symbol == compilerContext.irBuiltIns.anyClass -> generateAnySuperConstructorCall(toBuilder = this)
+            superClass.shouldHaveGeneratedMethods() -> generateSuperSerializableCall(superClass, allValueParameters, seenVarsOffset)
+            else -> generateSuperNonSerializableCall(superClass)
+        }
+    }
+
+    // Handle function-intialized interface delegates
+    private fun IrBlockBodyBuilder.generateDelegateFieldInitializers(
+        thiz: IrValueParameter,
+        initializerAdapter: (IrExpressionBody) -> IrExpression,
+    ) {
+        irClass.declarations
+            .filterIsInstance<IrField>()
+            .filter { it.origin == IrDeclarationOrigin.DELEGATE }
+            .forEach {
+                val receiver = if (!it.isStatic) irGet(thiz) else null
+                +irSetField(
+                    receiver,
+                    it,
+                    initializerAdapter(it.initializer!!),
+                    IrStatementOrigin.INITIALIZE_FIELD
+                )
+            }
+    }
 
     private fun IrBlockBodyBuilder.getStaticSerialDescriptorExprForConstructor(): IrExpression {
         val serializerIrClass = if (!irClass.hasKeepGeneratedSerializerAnnotation) {
@@ -271,7 +302,7 @@ class SerializableIrGenerator(
         superClass: IrClass,
         allValueParameters: List<IrValueParameter>,
         propertiesStart: Int
-    ): Int {
+    ) {
         check(superClass.shouldHaveGeneratedMethods())
         val superCtorRef = superClass.findSerializableSyntheticConstructor()
             ?: error("Class serializable internally should have special constructor with marker")
@@ -289,7 +320,6 @@ class SerializableIrGenerator(
         call.arguments.assignFrom(arguments) { irGet(it) }
         call.insertTypeArgumentsForSuperClass(superClass)
         +call
-        return superProperties.size
     }
 
     fun generateWriteSelfMethod(methodDescriptor: IrSimpleFunction) {
