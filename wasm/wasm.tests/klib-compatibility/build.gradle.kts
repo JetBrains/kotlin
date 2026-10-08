@@ -88,7 +88,8 @@ fun Project.customFirstStageTest(rawVersion: String): TaskProvider<out Task> {
     return customCompilerTest(
         version = version,
         taskName = "testCustomFirstStage_$version",
-        tag = "custom-first-stage"
+        tag = "custom-first-stage",
+        enableGroupingTestEngine = true,
     )
 }
 
@@ -110,6 +111,7 @@ fun Project.customStagesAggregateTest(rawVersion: String): TaskProvider<out Task
         version = version,
         taskName = "testMinimalInAggregate",
         tag = "aggregate",
+        enableGroupingTestEngine = true,
     )
 }
 

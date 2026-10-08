@@ -34,7 +34,7 @@ open class WasmCompilationSetsGroupingStageBoxRunner(
         get() = testServices.groupingStageInputs.first().testServices
     open val wasmBoxRunner: WasmBoxRunner
         get() = WasmBoxRunner(firstNonGroupingTestServices, executeWithV8Only = false)
-    private val wasiBoxRunner: WasiBoxRunner
+    protected open val wasiBoxRunner: WasiBoxRunner
         get() = WasiBoxRunner(firstNonGroupingTestServices)
 
     // The target is detected from the module target platforms rather than from a compiler
