@@ -496,6 +496,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
         test<AbstractIsPrimitiveBackedTest> {
             model(it, "isPrimitiveBacked")
         }
+
+        test<AbstractIsCompiledInJvmDefaultModeTest> {
+            model(it, "isCompiledInJvmDefaultMode")
+        }
     }
 
     component("resolveExtensionInfoProvider") {

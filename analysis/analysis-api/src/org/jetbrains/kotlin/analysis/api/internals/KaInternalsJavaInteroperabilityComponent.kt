@@ -61,4 +61,6 @@ public interface KaInternalsJavaInteroperabilityComponent {
     public fun javaSetterName(symbol: KaPropertySymbol): Name?
 
     public fun javaMethodName(function: KaFunctionSymbol): String?
+
+    public fun isCompiledInJvmDefaultMode(classSymbol: KaNamedClassSymbol): Boolean
 }

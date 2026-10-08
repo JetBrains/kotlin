@@ -1,0 +1,5 @@
+Class:
+/JavaInterface
+
+isCompiledInJvmDefaultMode:
+false
