@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
@@ -86,7 +87,11 @@ class WasmInProcessSecondStageFacade {
                 launcherModule,
                 listOf(batchLauncherFile.originalFile),
                 launcherKlibFile,
-                languageVersion = settings.maxLanguageVersion,
+                // launcher klib is compiled by the current version of 1st stage, which will be fed to current version of 2nd stage.
+                // So even for backward-compatibility tests this languageVersion should not be lower than the latest stable one, to avoid:
+                // - already unsupported language versions like 1.9.20
+                // - export to previous ABI versions, which is unsupported for two major versions back or more.
+                languageVersion = maxOf(settings.maxLanguageVersion, LanguageVersion.LATEST_STABLE),
                 customOptIns = settings.allOptIns,
                 allowKotlinPackage = settings.allAllowKotlinPackage,
                 cleanedRegularDependencies + perTestKlibPaths,

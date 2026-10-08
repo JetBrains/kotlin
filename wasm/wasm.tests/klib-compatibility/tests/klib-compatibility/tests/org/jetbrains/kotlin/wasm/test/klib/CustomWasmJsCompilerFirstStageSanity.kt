@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.wasm.test.klib
 
 import org.jetbrains.kotlin.js.test.klib.customWasmJsCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.defaultLanguageVersion
+import org.jetbrains.kotlin.test.grouping.runTest
 import org.jetbrains.kotlin.wasm.test.handlers.WasmVMException
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test

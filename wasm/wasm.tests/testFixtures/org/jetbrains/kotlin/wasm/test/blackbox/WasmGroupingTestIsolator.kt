@@ -45,6 +45,8 @@ class WasmGroupingTestIsolator(testServices: TestServices) : GroupingTestIsolato
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE,
             CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE,
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_STAGE,
+            CustomKlibCompilerTestDirectives.IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE,
             WasmEnvironmentConfigurationDirectives.WASM_IGNORE_FOR,
             // other isolation reasons
             WasmEnvironmentConfigurationDirectives.WASM_STANDALONE,
