@@ -130,6 +130,12 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup(testRoot, "compiler/testData/diagnostics") {
+            testClass<AbstractPhasedPipelineCheckerTest> {
+                model("phasedPipelineChecker", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+        }
+
         testGroup(testRoot, "compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType") {
             testClass<AbstractPhasedJvmDiagnosticPsiWithContextSensitiveEnabledTest> {
                 model("ideHint", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
