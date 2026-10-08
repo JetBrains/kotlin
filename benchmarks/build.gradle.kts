@@ -1,4 +1,3 @@
-import kotlinx.benchmark.gradle.JmhBytecodeGeneratorTask
 import kotlinx.benchmark.gradle.benchmark
 
 plugins {
@@ -143,12 +142,6 @@ afterEvaluate {
         // unconditionally and fails on a missing property. They are built for this module anyway.
         addJarPathProperty(TestCompilePaths.KOTLIN_SCRIPT_RUNTIME_PATH, ":kotlin-script-runtime")
         addJarPathProperty(TestCompilePaths.KOTLIN_TEST_JAR_PATH, ":kotlin-test")
-    }
-}
-
-tasks.withType<JmhBytecodeGeneratorTask>().configureEach {
-    outputs.cacheIf("Disabled because of https://github.com/Kotlin/kotlinx-benchmark/issues/364 (remove after version upgrading)") {
-        false
     }
 }
 
