@@ -79,7 +79,11 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
 
                 Opcodes.SWAP -> {
                     val prev2 = prev.previousMeaningful() ?: continue
-                    if (prev.isPurePushOfSize1() && prev2.isPurePushOfSize1()) {
+                    if (prev.isPurePushOfSize1() &&
+                        prev2.isPurePushOfSize1() &&
+                        !prev.isReifiedOperationPlaceholderConstant() &&
+                        !prev2.isReifiedOperationPlaceholderConstant()
+                    ) {
                         instructions.set(insn, InsnNode(Opcodes.NOP))
                         instructions.set(prev, prev2.clone(emptyMap()))
                         instructions.set(prev2, prev.clone(emptyMap()))
