@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -44,6 +47,8 @@ internal val BOXES_CREATION_ORIGIN by IrStatementOriginImpl
 var IrClass.isLoweredTrivialEnum: Boolean by irFlag(copyByDefault = true)
 var IrClass.namesContainer: IrField? by irAttribute(copyByDefault = true)
 var IrClass.boxesContainer: IrField? by irAttribute(copyByDefault = true)
+
+var IrClass.getBoxedFunction: IrSimpleFunction? by irAttribute(copyByDefault = true)
 /**
  * Optimization: represents trivial enum classes as inline classes over their ordinal.
  *
@@ -96,6 +101,7 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
     companion object {
         private const val NAMES_FIELD_NAME = "names"
         private const val BOXES_FIELD_NAME = "boxes"
+        private const val BOXED_FUNCTION_NAME = "asBoxed"
         private const val PROPERTY_VALUES_FIELD_SUFFIX = "\$values"
     }
 
@@ -167,7 +173,7 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
                 }
             ).also { irClass.namesContainer = it }
 
-            irClass.addStaticArrayField(
+            val boxesField = irClass.addStaticArrayField(
                 BOXES_FIELD_NAME,
                 irClass.defaultType,
                 List(enumEntries.size) { index ->
@@ -179,6 +185,9 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
                         }
                 }
             ).also { irClass.boxesContainer = it }
+
+            irClass.addAsBoxedStaticFunction(boxesField)
+                .also { irClass.getBoxedFunction = it }
 
             otherPropertiesWithBackingFields.forEach(::transformOtherPropertiesWithBackingFields)
 
@@ -257,6 +266,59 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
                 ).also { it.patchDeclarationParents(this) }
                 declarations += this
             }
+        }
+
+        // We proxy getting boxes via this function for the static_init call
+        // With the optimizations, if static_init doesn't have effects, it should be removed
+        // and the function should be inlined
+        private fun IrClass.addAsBoxedStaticFunction(boxesContainer: IrField): IrSimpleFunction {
+            val returnType = context.irBuiltIns.enumClass.typeWith(irClass.defaultType)
+            return context.irFactory.createSimpleFunction(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                origin = IrDeclarationOrigin.DEFINED,
+                name = Name.identifier(BOXED_FUNCTION_NAME),
+                visibility = DescriptorVisibilities.PRIVATE,
+                isInline = false,
+                isExpect = false,
+                returnType = returnType,
+                modality = Modality.FINAL,
+                symbol = IrSimpleFunctionSymbolImpl(),
+                isTailrec = false,
+                isSuspend = false,
+                isOperator = false,
+                isInfix = false,
+                isExternal = false,
+            ).apply {
+                parent = this@addAsBoxedStaticFunction
+                val enumEntryParameter = context.irFactory.createValueParameter(
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = IrDeclarationOrigin.DEFINED,
+                    name = Name.identifier("entry"),
+                    type = irClass.defaultType,
+                    kind = IrParameterKind.Regular,
+                    isAssignable = false,
+                    symbol = IrValueParameterSymbolImpl(),
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false
+                )
+
+                parameters += enumEntryParameter
+                body = context.createIrBuilder(symbol).irBlockBody {
+                    +irReturn(
+                        irArrayGet(
+                            boxesContainer,
+                            irGetField(irGet(enumEntryParameter), ordinalField),
+                            returnType
+                        )
+                    )
+                }
+
+                declarations += this
+            }.also { it.patchDeclarationParents(this) }
         }
 
         private fun IrProperty.overrideDeclarationWithFollowingReturn(buildGetterResult: IrBuilderWithScope.(IrSimpleFunction) -> IrExpression) {

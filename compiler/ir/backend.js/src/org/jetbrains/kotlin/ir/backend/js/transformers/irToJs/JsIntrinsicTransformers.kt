@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.ES6ConstructorLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6PrimaryConstructorOptimizationLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.boxesContainer
 import org.jetbrains.kotlin.ir.backend.js.lower.exportedInlineClassBoxFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.getBoxedFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -229,21 +230,18 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 val inlineClass = call.typeArguments[0]?.let { icUtils.getRuntimeClassFor(it) }
                     ?: compilationException("Unexpected type argument in box intrinsic", call)
 
-                inlineClass.exportedInlineClassBoxFunction?.let {
+                val getBoxedFunction = inlineClass.getBoxedFunction.takeUnless {
+                    call.origin == BOXES_CREATION_ORIGIN
+                }
+
+                (getBoxedFunction ?: inlineClass.exportedInlineClassBoxFunction)?.let {
                     return@add JsInvocation(context.getNameForStaticFunction(it).makeRef(), arg)
                         .apply { isInlineClassBoxing = true }
                 }
 
-                val boxesContainer = inlineClass.boxesContainer
-
-                if (boxesContainer != null && call.origin != BOXES_CREATION_ORIGIN) {
-                    val fieldName = context.getNameForField(boxesContainer)
-                    JsArrayAccess(fieldName.makeRef(), arg)
-                } else {
-                    val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
-                    JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
-                        .apply { isInlineClassBoxing = true }
-                }
+                val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
+                JsNew(constructor.getConstructorRef(context.staticContext), listOf(arg))
+                    .apply { isInlineClassBoxing = true }
             }
 
             add(symbols.jsUnboxIntrinsic) { call, context ->

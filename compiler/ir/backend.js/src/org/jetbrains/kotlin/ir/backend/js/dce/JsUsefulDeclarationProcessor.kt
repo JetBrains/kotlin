@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.ir.backend.js.BackendJsSymbols.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
+import org.jetbrains.kotlin.ir.backend.js.lower.BOXES_CREATION_ORIGIN
 import org.jetbrains.kotlin.ir.backend.js.lower.exportedInlineClassBoxFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.getBoxedFunction
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
@@ -54,6 +56,7 @@ internal class JsUsefulDeclarationProcessor(
                     } ?: compilationException("Unexpected type argument in box intrinsic", expression)
 
                     val boxFunction = inlineClass.exportedInlineClassBoxFunction
+                        ?: inlineClass.getBoxedFunction.takeUnless { expression.origin == BOXES_CREATION_ORIGIN }
                         ?: inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
 
                     boxFunction.enqueue(data, "intrinsic: jsBoxIntrinsic")
