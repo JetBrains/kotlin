@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/simple.kt
+-d
+$TEMP_DIR$
+-Xcompile-ir
+-no-stdlib
+-Xklib=$STDLIB_JKLIB$
+-module-name
+test_module

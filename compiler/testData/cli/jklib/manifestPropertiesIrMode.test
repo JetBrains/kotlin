@@ -1,0 +1,4 @@
+// EXISTS: default/manifest
+// CONTAINS: default/manifest, customKey=customValue
+// CONTAINS: default/manifest, is_header=false
+// NOT_CONTAINS: default/manifest, is_header=true

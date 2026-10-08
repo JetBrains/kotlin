@@ -1,0 +1,5 @@
+// EXISTS: header.klib!default/manifest
+// CONTAINS: header.klib!default/manifest, customKey=customValue
+// CONTAINS: header.klib!default/manifest, is_header=true
+// CONTAINS: header.klib!default/manifest, complexKey=a\=b\=c
+// NOT_CONTAINS: header.klib!default/manifest, is_header=false
