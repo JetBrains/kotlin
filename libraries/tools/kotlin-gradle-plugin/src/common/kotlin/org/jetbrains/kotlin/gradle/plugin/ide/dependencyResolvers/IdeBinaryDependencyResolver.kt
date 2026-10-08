@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifier
+import org.gradle.internal.component.local.model.OpaqueComponentIdentifier
 import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.uklibViewAttribute
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import java.io.File
 
 /**
  * Dependency resolver for [IdeaKotlinBinaryDependency] instances:
@@ -241,28 +244,10 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
                     )
                 }
 
-                is OpaqueComponentArtifactIdentifier -> {
-                    /* Files within the build directory still require a custom resolver */
-                    if (
-                        artifact.file.absoluteFile.startsWith(
-                            sourceSet.project.layout.buildDirectory.get().asFile.absoluteFile
-                        )
-                    ) {
-                        return@mapNotNull null
-                    }
+                is OpaqueComponentArtifactIdentifier -> createOpaqueFileDependency(sourceSet, artifact, componentId.file)
 
-                    IdeaKotlinResolvedBinaryDependency(
-                        binaryType = binaryType, coordinates = IdeaKotlinBinaryCoordinates(
-                            group = "<file>",
-                            module = artifact.file.relativeOrAbsolute(sourceSet.project.rootDir),
-                            version = null,
-                            sourceSetName = null
-                        ),
-                        classpath = IdeaKotlinClasspath(componentId.file)
-                    ).also { dependency ->
-                        dependency.isOpaqueFileDependency = true
-                    }
-                }
+                // Gradle uses this identifier for gradleApi(), gradleTestKit(), localGroovy(), and gradleKotlinDsl()
+                is OpaqueComponentIdentifier -> createOpaqueFileDependency(sourceSet, artifact, artifact.file)
 
                 else -> {
                     logWarning("Unhandled componentId: ${componentId.javaClass}")
@@ -274,6 +259,27 @@ class IdeBinaryDependencyResolver @JvmOverloads internal constructor(
         }.toSet()
 
         return resolvedDependencies + unresolvedDependencies
+    }
+
+    private fun createOpaqueFileDependency(
+        sourceSet: KotlinSourceSet,
+        artifact: ResolvedArtifactResult,
+        classpathFile: File,
+    ): IdeaKotlinResolvedBinaryDependency? {
+        /* Files within the build directory still require a custom resolver */
+        val buildDir = sourceSet.project.layout.buildDirectory.get().asFile.absoluteFile
+        if (artifact.file.absoluteFile.startsWith(buildDir)) return null
+
+        return IdeaKotlinResolvedBinaryDependency(
+            binaryType = binaryType,
+            coordinates = IdeaKotlinBinaryCoordinates(
+                group = "<file>",
+                module = artifact.file.relativeOrAbsolute(sourceSet.project.rootDir),
+                version = null,
+                sourceSetName = null,
+            ),
+            classpath = IdeaKotlinClasspath(classpathFile),
+        ).also { it.isOpaqueFileDependency = true }
     }
 
     private fun ArtifactResolutionStrategy.createArtifactView(sourceSet: InternalKotlinSourceSet): ArtifactView? {
