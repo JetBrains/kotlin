@@ -9,14 +9,11 @@ import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlineBodyResolvableExpressionChecker
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -28,9 +25,9 @@ class MutableCheckerContext private constructor(
     override val annotationContainers: MutableList<FirAnnotationContainer>,
     override val containingElements: MutableList<FirElement>,
     override var isContractBody: Boolean,
-    override var inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
-    override var inlinableParameterContext: FirInlineBodyResolvableExpressionChecker.InlinableParameterContext?,
-    override var lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
+    override var inlineFunctionBodyContext: InlineFunctionBodyContext?,
+    override var inlinableParameterContext: InlinableParameterContext?,
+    override var lambdaBodyContext: LambdaBodyContext?,
     override var containingFileSymbol: FirFileSymbol?,
     sessionHolder: SessionAndScopeSessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
@@ -143,17 +140,17 @@ class MutableCheckerContext private constructor(
         return this
     }
 
-    override fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext?): CheckerContextForProvider {
+    override fun setInlineFunctionBodyContext(context: InlineFunctionBodyContext?): CheckerContextForProvider {
         inlineFunctionBodyContext = context
         return this
     }
 
-    override fun setInlinableParameterContext(context: FirInlineBodyResolvableExpressionChecker.InlinableParameterContext?): CheckerContextForProvider {
+    override fun setInlinableParameterContext(context: InlinableParameterContext?): CheckerContextForProvider {
         inlinableParameterContext = context
         return this
     }
 
-    override fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext?): CheckerContextForProvider {
+    override fun setLambdaBodyContext(context: LambdaBodyContext?): CheckerContextForProvider {
         lambdaBodyContext = context
         return this
     }
