@@ -11,9 +11,9 @@ class Child(val x: Int) : Base() {
     override fun hashCode(): Int = x
     override fun toString(): String = "Child($x)"
 
-    fun isSameBase(other: Base) = <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>this<!> === <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>other<!>
-    fun areSameBases(a: Base, b: Base) = <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>a<!> === <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>b<!>
-    fun areSameUnrelated(a: Unrelated, b: Unrelated) = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a<!> === <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>b<!>
+    fun isSameBase(other: Base) = <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>this === other<!>
+    fun areSameBases(a: Base, b: Base) = <!IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS!>a === b<!>
+    fun areSameUnrelated(a: Unrelated, b: Unrelated) = <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>a === b<!>
 }
 
 @WillBecomeValue

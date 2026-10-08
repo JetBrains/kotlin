@@ -85,18 +85,40 @@ fun FirRegularClassSymbol.willBecomeKotlinOrJdkValueClass(session: FirSession): 
  */
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun reportIdentitySensitiveOperationOnWillBecomeValueClass(source: KtSourceElement?, type: ConeKotlinType) {
+    reportIdentitySensitiveOperation(source, willBecomeValueOperandOf(type) ?: return)
+}
+
+/**
+ * Reports an identity-sensitive operation on several [types] at once, like 'a === b', if any of them is annotated with
+ * '@WillBecomeValue'. It is reported as an error if it is one for any of the types.
+ */
+context(context: CheckerContext, reporter: DiagnosticReporter)
+fun reportIdentitySensitiveOperationOnWillBecomeValueClasses(source: KtSourceElement?, types: List<ConeKotlinType>) {
+    val operands = types.mapNotNull { willBecomeValueOperandOf(it) }
+    reportIdentitySensitiveOperation(source, operands.firstOrNull { it.isInside } ?: operands.firstOrNull() ?: return)
+}
+
+private class WillBecomeValueOperand(val annotatedType: ConeKotlinType, val isInside: Boolean)
+
+context(context: CheckerContext)
+private fun willBecomeValueOperandOf(type: ConeKotlinType): WillBecomeValueOperand? {
     // A type parameter or an intersection type is checked by its upper bounds, and the annotated one is reported.
     val [annotatedType, classSymbol] = type.collectUpperBounds(context.session.typeContext).firstNotNullOfOrNull { bound ->
         val classSymbol = bound.toRegularClassSymbol(context.session)?.takeIf { it.hasWillBecomeValueAnnotation(context.session) }
         classSymbol?.let { bound.withNullability(nullable = false, context.session.typeContext) to it }
-    } ?: return
+    } ?: return null
     // A subclass migrates together with its '@WillBecomeValue' superclass, so it is bound by the same commitment.
     val isInside = context.containingDeclarations.any {
         it is FirClassSymbol<*> && it.isSubclassOf(classSymbol.toLookupTag(), context.session, isStrict = false, lookupInterfaces = false)
     }
-    if (isInside) {
-        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS, annotatedType)
+    return WillBecomeValueOperand(annotatedType, isInside)
+}
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun reportIdentitySensitiveOperation(source: KtSourceElement?, operand: WillBecomeValueOperand) {
+    if (operand.isInside) {
+        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_INSIDE_WILL_BECOME_VALUE_CLASS, operand.annotatedType)
     } else {
-        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS, annotatedType)
+        reporter.reportOn(source, FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS, operand.annotatedType)
     }
 }
