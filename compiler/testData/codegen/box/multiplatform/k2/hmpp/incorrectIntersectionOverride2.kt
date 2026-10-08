@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-89461
-// IGNORE_HMPP: ANY
 // MODULE: lib-common
 interface Base<A> {
     fun foo(x: A) {}
