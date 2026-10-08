@@ -188,7 +188,7 @@ class UnstableSmartCast(val argument: FirSmartCastExpression, val targetType: Co
 class UnstableSmartCastDueToOldBareInference(
     val argument: FirSmartCastExpression,
     val targetType: ConeKotlinType,
-) : ResolutionDiagnostic(RESOLVED)
+) : ResolutionDiagnostic(UNSTABLE_SMARTCAST)
 
 class ArgumentTypeMismatch(
     val expectedType: ConeKotlinType,
