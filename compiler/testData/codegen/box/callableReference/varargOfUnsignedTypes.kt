@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.4
 
 fun uints(vararg xs: UInt): UInt = xs.sum()
 fun ulongs(vararg xs: ULong): ULong = xs.sum()

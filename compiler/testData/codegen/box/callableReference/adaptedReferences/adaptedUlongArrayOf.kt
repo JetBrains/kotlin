@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.4
 // ISSUE: KT-89920
 @file:OptIn(ExperimentalUnsignedTypes::class)
 
