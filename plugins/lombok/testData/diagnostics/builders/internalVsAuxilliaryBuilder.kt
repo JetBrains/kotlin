@@ -1,4 +1,5 @@
 // ISSUE: KT-83329
+// USE_PSI_JAVA_FACADE: false
 // FIR_DUMP
 // FILE: test/java/TestJava.java
 
@@ -104,10 +105,10 @@ fun bar() {
     val fullyQualifiedBuilder = Owner.TestJava.fullyQualifiedBuilder(1)
 }
 
-// All errors should fade away when we switch to Java direct
-fun unsupported() {
-    val builderArray = TestJava.<!MISSING_DEPENDENCY_CLASS!>builderArray<!>()
-    val builder = Other.<!MISSING_DEPENDENCY_CLASS!>builder<!>(1)
-    val qualifiedBuilder = Other.<!MISSING_DEPENDENCY_CLASS!>qualifiedBuilder<!>(1)
-    val fullyQualifiedBuilder = Other.<!MISSING_DEPENDENCY_CLASS!>fullyQualifiedBuilder<!>(1)
+// Supported with java-direct only: the PSI Java facade reports MISSING_DEPENDENCY_CLASS for these calls
+fun baz() {
+    val builderArray = TestJava.builderArray()
+    val builder = Other.builder(1)
+    val qualifiedBuilder = Other.qualifiedBuilder(1)
+    val fullyQualifiedBuilder = Other.fullyQualifiedBuilder(1)
 }

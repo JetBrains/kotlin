@@ -8,10 +8,16 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.findInnerClassFromSupertypes
+import org.jetbrains.kotlin.java.direct.resolution.resolve
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.classId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -139,6 +145,63 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
     }
 
     @Test
+    @OptIn(SessionConfiguration::class)
+    fun testMemberTypeKnownOnlyToSymbolProviderResolves() {
+        // KT-90074: `Generated` stands for a nested class that a compiler plugin adds to `Outer`.
+        val source = """
+            package test;
+            class User extends Outer {
+                Outer.Generated qualified;
+                test.Outer.Generated fullyQualified;
+                Generated simple;
+            }
+            class Outer {}
+        """.trimIndent()
+        val outer = ClassId(FqName("test"), Name.identifier("Outer"))
+        val generated = outer.createNestedClassId(Name.identifier("Generated"))
+        val known = setOf(outer, generated)
+        val session = createDummyFirSessionForTests()
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { if (it in known) libraryClassSymbol(it) else null })
+        val user = parseFirstClass(source, session)
+
+        for (fieldName in listOf("qualified", "fullyQualified", "simple")) {
+            val type = user.fields.first { it.name.asString() == fieldName }.type as JavaClassifierType
+            val classifier = type.classifier
+            assertNotNull(classifier) { "$fieldName should resolve through the symbol provider" }
+            assertEquals(generated, (classifier as JavaClass).classId, fieldName)
+        }
+    }
+
+    @Test
+    @OptIn(SessionConfiguration::class)
+    fun testInheritedMemberTypeKnownOnlyToSymbolProviderResolves() {
+        val source = """
+            package test;
+            import library.Outer;
+            class User {
+                Outer.Inner.Deep inherited;
+            }
+        """.trimIndent()
+        val outer = ClassId(FqName("library"), Name.identifier("Outer"))
+        val inner = outer.createNestedClassId(Name.identifier("Inner"))
+        val baseInner = outer.createNestedClassId(Name.identifier("BaseInner"))
+        val deep = baseInner.createNestedClassId(Name.identifier("Deep"))
+        val known = mapOf(
+            outer to libraryClassSymbol(outer),
+            inner to libraryClassSymbol(inner, baseInner),
+            baseInner to libraryClassSymbol(baseInner),
+            deep to libraryClassSymbol(deep),
+        )
+        val session = createDummyFirSessionForTests()
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { known[it] })
+        val user = parseFirstClass(source, session)
+
+        val type = user.fields.single().type as JavaClassifierType
+        val classifier = type.classifier
+        assertNotNull(classifier) { "Inherited member type should resolve through the symbol provider" }
+        assertEquals(deep, (classifier as JavaClass).classId)
+    }
+
     fun testImportExtraction() {
         val source = """
             package test;
@@ -221,7 +284,11 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
                 public Inner.Deep field4;
             }
         """.trimIndent()
-        val javaClass = parseFirstClass(source)
+        val outer = ClassId(FqName.ROOT, Name.identifier("Outer"))
+        val inner = outer.createNestedClassId(Name.identifier("Inner"))
+        val deep = inner.createNestedClassId(Name.identifier("Deep"))
+        val javaClass = parseFirstClassWithSymbols(source, outer, inner, deep)
+        assertEquals(inner, resolve("Outer.Inner", c = javaClass.resolutionContext))
 
         val field1 = javaClass.fields.first { it.name.asString() == "field1" }
         val type1 = field1.type as JavaClassifierType
@@ -281,7 +348,12 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             }
         """.trimIndent()
 
-        val parsed2 = parseSource(source2)
+        val classAId = ClassId(FqName.ROOT, Name.identifier("a"))
+        val nestedBId = classAId.createNestedClassId(Name.identifier("b"))
+        val parsed2 = parseSourceWithSymbols(
+            source2,
+            mapOf(classAId to libraryClassSymbol(classAId), nestedBId to libraryClassSymbol(nestedBId)),
+        )
         val root2 = parsed2.root
         val tree2 = parsed2.tree
         val context2 = parsed2.context
@@ -358,7 +430,21 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
                 }
             }
         """.trimIndent()
-        val outerClass = parseFirstClass(source)
+        val outerId = ClassId(FqName.ROOT, Name.identifier("TestInheritedInner"))
+        val functionDescriptorId = outerId.createNestedClassId(Name.identifier("FunctionDescriptor"))
+        val copyBuilderId = functionDescriptorId.createNestedClassId(Name.identifier("CopyBuilder"))
+        val simpleFunctionDescriptorId = outerId.createNestedClassId(Name.identifier("SimpleFunctionDescriptor"))
+        val functionDescriptorImplId = outerId.createNestedClassId(Name.identifier("FunctionDescriptorImpl"))
+        val copyConfigurationId = functionDescriptorImplId.createNestedClassId(Name.identifier("CopyConfiguration"))
+        val symbols = mapOf(
+            outerId to libraryClassSymbol(outerId),
+            functionDescriptorId to libraryClassSymbol(functionDescriptorId),
+            copyBuilderId to libraryClassSymbol(copyBuilderId),
+            simpleFunctionDescriptorId to libraryClassSymbol(simpleFunctionDescriptorId, functionDescriptorId),
+            functionDescriptorImplId to libraryClassSymbol(functionDescriptorImplId, functionDescriptorId),
+            copyConfigurationId to libraryClassSymbol(copyConfigurationId),
+        )
+        val outerClass = parseFirstClassWithSymbols(source, symbols)
 
         // Find FunctionDescriptorImpl
         val implClass = outerClass.findInnerClass(Name.identifier("FunctionDescriptorImpl"))
@@ -367,6 +453,10 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         // Find CopyConfiguration
         val copyConfig = implClass.findInnerClass(Name.identifier("CopyConfiguration"))
         assertNotNull(copyConfig) { "Expected to find CopyConfiguration" }
+        assertEquals(
+            copyBuilderId,
+            resolve("SimpleFunctionDescriptor.CopyBuilder", c = (copyConfig as JavaClassOverAst).resolutionContext),
+        )
 
         // CopyConfiguration should have SimpleFunctionDescriptor.CopyBuilder as a supertype
         val supertypes = copyConfig.supertypes.toList()
