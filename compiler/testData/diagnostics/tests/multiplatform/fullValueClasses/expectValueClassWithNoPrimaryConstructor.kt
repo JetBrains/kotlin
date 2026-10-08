@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +AllowExpectValueClassesWithNoPrimaryConstructor, +FullValueClasses
 // LANGUAGE: -StrictEquals
 //  ^^^ KT-88389

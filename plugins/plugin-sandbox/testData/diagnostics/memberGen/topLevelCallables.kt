@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FIR2IR
+// RUN_PIPELINE_TILL: CODEGEN
 package foo
 
 import org.jetbrains.kotlin.plugin.sandbox.DummyFunction
