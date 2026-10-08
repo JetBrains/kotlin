@@ -26,12 +26,13 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
+import org.jetbrains.kotlin.test.klib.isolateReflectionPackageNameDependentTestsIfNeeded
 import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
+import org.jetbrains.kotlin.test.klib.useReflectionPackageNameAnnotationIfSupported
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.KotlinStandardLibrariesPathProvider
-import org.jetbrains.kotlin.test.services.ReflectionPackageNameAnnotation
 import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import org.jetbrains.kotlin.test.services.configuration.UnsupportedFeaturesTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmSecondStageEnvironmentConfigurator
@@ -100,22 +101,11 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
             }
 
             useConfigurators(::WasmSecondStageEnvironmentConfigurator.bind(WasmTarget.JS))
-            // The first stage compiles against the custom compiler's own stdlib whenever its language version is
-            // below the latest stable one (see `createKotlinStandardLibrariesPathProvider`), and the annotation the
-            // batching package inserter adds exists in the stdlib only since Kotlin 2.5. Registering it against an
-            // older stdlib made every batched test fail its first stage with an unresolved reference, which the
-            // suppressor then muted into a silent skip.
-            if (customWasmJsCompilerSettings.defaultLanguageVersion >= REFLECTION_PACKAGE_NAME_SINCE) {
-                useAdditionalService { ReflectionPackageNameAnnotation }
-            }
+            useReflectionPackageNameAnnotationIfSupported(customWasmJsCompilerSettings.defaultLanguageVersion)
         }
         nonGroupingStage {
             useGroupingTestIsolators(::WasmGroupingTestIsolator)
-            if (customWasmJsCompilerSettings.defaultLanguageVersion < REFLECTION_PACKAGE_NAME_SINCE) {
-                // The released backend that links the second stage does not know `kotlin.internal.ReflectionPackageName`,
-                // so a renamed test cannot keep its reflective package names: such tests must not be renamed at all.
-                useGroupingTestIsolators(::ReflectionPackageNameDependentTestIsolator)
-            }
+            isolateReflectionPackageNameDependentTestsIfNeeded(customWasmJsCompilerSettings.defaultLanguageVersion)
             useAdditionalSourceProviders(::WasmJsLauncherAdditionalSourceProvider)
             commonCodegenConfiguration()
 
@@ -170,5 +160,3 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
         }
     }
 }
-
-private val REFLECTION_PACKAGE_NAME_SINCE = LanguageVersion.KOTLIN_2_5

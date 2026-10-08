@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.test.impl.shouldIsolateTestInGroupingConfiguration
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.grouping.GroupedTestsResultProtocol
 import org.jetbrains.kotlin.test.isSingleTestBatch
+import org.jetbrains.kotlin.test.klib.ReflectionPackageNameHelperModuleTransformer
+import org.jetbrains.kotlin.test.klib.getTransitivesAndFriendsWithoutReflectionPackageNameHelper
 import org.jetbrains.kotlin.test.model.AbstractGroupingStageTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -72,7 +74,8 @@ abstract class AbstractWasmSecondStageGroupingFacade(
      *
      * Modules whose failures are ignored (e.g. via `IGNORE_BACKEND`) or that do not have a
      * KLib artifact (e.g. because their Stage-1 compilation failed in an expected way) are
-     * silently skipped.
+     * silently skipped, and so is the [ReflectionPackageNameHelperModuleTransformer] helper module,
+     * which must never be linked (see [getTransitivesAndFriendsWithoutReflectionPackageNameHelper]).
      */
     fun collectFilteredOutputs(
         inputArtifact: GroupingStageInputArtifact,
@@ -81,6 +84,7 @@ abstract class AbstractWasmSecondStageGroupingFacade(
         for (output in inputArtifact.nonGroupingStageOutputs) {
             val services = output.testServices
             for (module in services.moduleStructure.modules) {
+                if (ReflectionPackageNameHelperModuleTransformer.isHelperModule(module)) continue
                 if (!services.codegenSuppressionChecker.failuresInModuleAreIgnored(module)) {
                     val artifact = try {
                         services.artifactsProvider.getArtifact(module, ArtifactKinds.KLib)
