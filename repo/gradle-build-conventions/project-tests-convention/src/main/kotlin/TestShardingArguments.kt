@@ -9,15 +9,15 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.process.CommandLineArgumentProvider
 
-internal const val CURRENT_TEST_SHARD_KEY = "tests.currentShard"
-internal const val TOTAL_TEST_SHARDS_KEY = "tests.totalShards"
-internal const val TEST_SHARD_SEED_KEY = "tests.shardSeed"
+internal const val TEST_SHARD_INDEX_KEY = "kotlin.build.test.shard.index"
+internal const val TEST_SHARD_COUNT_KEY = "kotlin.build.test.shard.count"
+internal const val TEST_SHARD_SEED_KEY = "kotlin.build.test.shard.seed"
 
 internal val Project.testShardingArguments: TestShardingArguments
     get() {
         val arguments = objects.newInstance(TestShardingArguments::class.java)
-        arguments.currentShard.set(project.providers.gradleProperty(CURRENT_TEST_SHARD_KEY).map { it.toInt() })
-        arguments.totalShards.set(project.providers.gradleProperty(TOTAL_TEST_SHARDS_KEY).map { it.toInt() })
+        arguments.shardIndex.set(project.providers.gradleProperty(TEST_SHARD_INDEX_KEY).map { it.toInt() })
+        arguments.shardCount.set(project.providers.gradleProperty(TEST_SHARD_COUNT_KEY).map { it.toInt() })
         arguments.shardSeed.set(project.providers.gradleProperty(TEST_SHARD_SEED_KEY).map { it.toInt() })
         return arguments
     }
@@ -26,39 +26,35 @@ abstract class TestShardingArguments : CommandLineArgumentProvider {
 
     @get:Input
     @get:Optional
-    abstract val currentShard: Property<Int>
+    abstract val shardIndex: Property<Int>
 
     @get:Input
     @get:Optional
-    abstract val totalShards: Property<Int>
+    abstract val shardCount: Property<Int>
 
     @get:Input
     @get:Optional
     abstract val shardSeed: Property<Int>
 
     override fun asArguments(): Iterable<String> {
-        if (!currentShard.isPresent && !totalShards.isPresent) {
+        if (!shardIndex.isPresent && !shardCount.isPresent) {
             return emptyList()
         }
 
-        val currentShard = currentShard.get()
-        val totalShards = totalShards.get()
+        val shardIndex = shardIndex.get()
+        val shardCount = shardCount.get()
 
-        require(totalShards > 0) {
-            "Expected 'totalShards' to be a positive integer. Found: '$totalShards'"
+        require(shardCount > 0) {
+            "Expected '$TEST_SHARD_COUNT_KEY' to be a positive integer. Found: '$shardCount'"
         }
 
-        require(currentShard > 0) {
-            "Expected 'currentShard' to be a positive integer. Found: '$currentShard'"
-        }
-
-        require(currentShard <= totalShards) {
-            "Expected 'currentShard' to not exceed 'totalShards'. Found 'currentShard=$currentShard', totalShards=$totalShards"
+        require(shardIndex in 0 until shardCount) {
+            "Expected '$TEST_SHARD_INDEX_KEY' to be in 0 until $shardCount. Found: '$shardIndex'"
         }
 
         return listOfNotNull(
-            "-D$CURRENT_TEST_SHARD_KEY=${currentShard}",
-            "-D$TOTAL_TEST_SHARDS_KEY=${totalShards}",
+            "-D$TEST_SHARD_INDEX_KEY=${shardIndex}",
+            "-D$TEST_SHARD_COUNT_KEY=${shardCount}",
             if (shardSeed.isPresent) "-D$TEST_SHARD_SEED_KEY=${shardSeed.get()}" else null,
         )
     }

@@ -15,12 +15,14 @@ internal fun Project.configureTestSharding() {
         jvmArgumentProviders.add(testShardingArguments)
 
         doFirst {
-            if (testShardingArguments.currentShard.isPresent) {
+            if (testShardingArguments.shardIndex.isPresent) {
                 if (testFramework.options !is JUnitPlatformOptions) {
                     error("Test sharding is only supported on 'Junit5'")
                 }
 
-                logger.quiet("Running tests in shard ${testShardingArguments.currentShard.get()}/${testShardingArguments.totalShards.get()}")
+                logger.quiet(
+                    "Running tests in shard index ${testShardingArguments.shardIndex.get()} (shard count: ${testShardingArguments.shardCount.get()})"
+                )
             }
         }
     }

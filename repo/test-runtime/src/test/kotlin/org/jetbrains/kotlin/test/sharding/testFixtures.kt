@@ -23,7 +23,7 @@ internal const val testFixtureTag = "tests.fixture"
 
 /**
  * Executes [testClasses] on the shard described by [configuration], expecting no failures, and returns the succeeded tests.
- * The sharding filter is registered explicitly with the [configuration], instead of the one of this JVM (see 'tests.currentShard').
+ * The sharding filter is registered explicitly with the [configuration], instead of the one of this JVM (see 'kotlin.build.test.shard.index').
  */
 internal fun executeTests(configuration: TestShardingConfiguration, vararg testClasses: Class<*>): List<TestIdentifier> {
     val succeeded = mutableListOf<TestIdentifier>()
@@ -59,7 +59,7 @@ internal val TestIdentifier.className: String
 internal fun checkShardDistribution(all: List<TestIdentifier>, vararg shards: List<TestIdentifier>) {
     /* Test is suspicious if a shard has no tests */
     shards.forEachIndexed { index, shard ->
-        if (shard.isEmpty()) fail("Shard ${index + 1} does not contain any tests")
+        if (shard.isEmpty()) fail("Shard $index does not contain any tests")
     }
 
     /* Test shards should not have overlapping tests */
@@ -67,7 +67,7 @@ internal fun checkShardDistribution(all: List<TestIdentifier>, vararg shards: Li
         for (b in a + 1 until shards.size) {
             val intersection = shards[a].map { it.uniqueId }.intersect(shards[b].map { it.uniqueId }.toSet())
             if (intersection.isNotEmpty()) {
-                fail("Shard ${a + 1} and ${b + 1} have ${intersection.size} tests in common: ${intersection.joinToString(", ")}")
+                fail("Shard $a and $b have ${intersection.size} tests in common: ${intersection.joinToString(", ")}")
             }
         }
     }

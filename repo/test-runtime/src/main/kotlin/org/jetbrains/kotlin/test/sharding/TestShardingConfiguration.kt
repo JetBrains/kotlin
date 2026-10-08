@@ -10,9 +10,9 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * The sharding of a test run:
- * - [currentShard]: the 1-based shard to run (`tests.currentShard`), or `-1` to run all tests,
- * - [totalShards]: the number of shards (`tests.totalShards`), or `-1` when sharding is disabled,
- * - [shardSeed]: reshuffles the assignment of tests to shards (`tests.shardSeed`),
+ * - [shardIndex]: the zero-based shard index to run (`kotlin.build.test.shard.index`), or `-1` to run all tests,
+ * - [shardCount]: the number of shards (`kotlin.build.test.shard.count`), or `-1` when sharding is disabled,
+ * - [shardSeed]: reshuffles the assignment of tests to shards (`kotlin.build.test.shard.seed`),
  * - [shardByMethod]: applies [ShardByMethod] to all test classes (`tests.shardByMethod`).
  *
  * This only holds the settings: the assignment of tests to shards is implemented by [calculateTestShard].
@@ -21,30 +21,30 @@ import kotlin.jvm.optionals.getOrNull
  * (see [readTestShardingConfiguration]), so that tests can run several shards within one JVM.
  */
 internal data class TestShardingConfiguration(
-    val currentShard: Int = -1,
-    val totalShards: Int = -1,
+    val shardIndex: Int = -1,
+    val shardCount: Int = -1,
     val shardSeed: Int = 0,
     val shardByMethod: Boolean = false,
 ) {
     /* Check inputs */
     init {
-        if (currentShard != -1 && currentShard !in 1..totalShards) {
-            error("Invalid 'currentShard': $currentShard; Expected 1..$totalShards")
+        if (shardIndex != -1 && shardIndex !in 0 until shardCount) {
+            error("Invalid 'shardIndex': $shardIndex; Expected 0 until $shardCount")
         }
 
-        if (totalShards != -1 && totalShards < 1) {
-            error("Invalid 'totalShards': $totalShards; Expected >= 1")
+        if (shardCount != -1 && shardCount < 1) {
+            error("Invalid 'shardCount': $shardCount; Expected >= 1")
         }
     }
 }
 
-private const val currentShardKey = "tests.currentShard"
-private const val totalShardsKey = "tests.totalShards"
-private const val shardSeedKey = "tests.shardSeed"
+private const val shardIndexKey = "kotlin.build.test.shard.index"
+private const val shardCountKey = "kotlin.build.test.shard.count"
+private const val shardSeedKey = "kotlin.build.test.shard.seed"
 private const val shardByMethodKey = "tests.shardByMethod"
 
 internal val TestShardingConfiguration.isShardingEnabled: Boolean
-    get() = currentShard != -1 && totalShards != -1
+    get() = shardIndex != -1 && shardCount != -1
 
 internal fun readTestShardingConfigurationFromSystemProperties(): TestShardingConfiguration =
     readTestShardingConfiguration(System::getProperty)
@@ -54,16 +54,16 @@ internal fun readTestShardingConfiguration(context: ExtensionContext): TestShard
     readTestShardingConfiguration { key -> context.getConfigurationParameter(key).getOrNull() }
 
 private fun readTestShardingConfiguration(value: (key: String) -> String?): TestShardingConfiguration = TestShardingConfiguration(
-    currentShard = value(currentShardKey)?.toIntOrNull() ?: -1,
-    totalShards = value(totalShardsKey)?.toIntOrNull() ?: -1,
+    shardIndex = value(shardIndexKey)?.toIntOrNull() ?: -1,
+    shardCount = value(shardCountKey)?.toIntOrNull() ?: -1,
     shardSeed = value(shardSeedKey)?.toIntOrNull() ?: 0,
     shardByMethod = value(shardByMethodKey) == "true",
 )
 
 /** All settings as JUnit configuration parameters (e.g., for a `LauncherDiscoveryRequestBuilder`), including the disabled ones. */
 internal fun TestShardingConfiguration.toConfigurationParameters(): Map<String, String> = mapOf(
-    currentShardKey to currentShard.toString(),
-    totalShardsKey to totalShards.toString(),
+    shardIndexKey to shardIndex.toString(),
+    shardCountKey to shardCount.toString(),
     shardSeedKey to shardSeed.toString(),
     shardByMethodKey to shardByMethod.toString(),
 )

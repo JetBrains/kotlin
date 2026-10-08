@@ -29,12 +29,12 @@ class TestShardingPostDiscoveryFilterTest {
         assertEquals(8, allTests.size)
 
         val singleShard = executeTests(
-            TestShardingConfiguration(currentShard = 1, totalShards = 1, shardByMethod = true), PlainTest::class.java
+            TestShardingConfiguration(shardIndex = 0, shardCount = 1, shardByMethod = true), PlainTest::class.java
         )
         checkShardDistribution(allTests, singleShard)
 
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3, shardByMethod = true), PlainTest::class.java)
+        val shards = (0 until 3).map { shard ->
+            executeTests(TestShardingConfiguration(shardIndex = shard, shardCount = 3, shardByMethod = true), PlainTest::class.java)
         }
         checkShardDistribution(allTests, *shards.toTypedArray())
     }
@@ -44,8 +44,8 @@ class TestShardingPostDiscoveryFilterTest {
         val allTests = executeTests(TestShardingConfiguration(), *plainTestClasses)
         assertEquals(12, allTests.size)
 
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), *plainTestClasses)
+        val shards = (0 until 3).map { shard ->
+            executeTests(TestShardingConfiguration(shardIndex = shard, shardCount = 3), *plainTestClasses)
         }
         checkShardDistribution(allTests, *shards.toTypedArray())
         checkClassesAreNotSplit(allTests, *shards.toTypedArray())
@@ -56,8 +56,8 @@ class TestShardingPostDiscoveryFilterTest {
         val allTests = executeTests(TestShardingConfiguration(shardByMethod = true), TestFactoryTest::class.java)
         assertEquals(21, allTests.size)
 
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3, shardByMethod = true), TestFactoryTest::class.java)
+        val shards = (0 until 3).map { shard ->
+            executeTests(TestShardingConfiguration(shardIndex = shard, shardCount = 3, shardByMethod = true), TestFactoryTest::class.java)
         }
         checkShardDistribution(allTests, *shards.toTypedArray())
     }
@@ -67,8 +67,8 @@ class TestShardingPostDiscoveryFilterTest {
         val allTests = executeTests(TestShardingConfiguration(shardByMethod = true), TestTemplateTest::class.java)
         assertEquals(21, allTests.size)
 
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3, shardByMethod = true), TestTemplateTest::class.java)
+        val shards = (0 until 3).map { shard ->
+            executeTests(TestShardingConfiguration(shardIndex = shard, shardCount = 3, shardByMethod = true), TestTemplateTest::class.java)
         }
         checkShardDistribution(allTests, *shards.toTypedArray())
     }
@@ -76,10 +76,12 @@ class TestShardingPostDiscoveryFilterTest {
     @Test
     fun `parameterized tests - shard by method`() {
         val allTests = executeTests(TestShardingConfiguration(shardByMethod = true), ParameterizedTests::class.java)
-        assertEquals(21, allTests.size)
+        assertEquals(48, allTests.size)
 
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3, shardByMethod = true), ParameterizedTests::class.java)
+        val shards = (0 until 3).map { shard ->
+            executeTests(
+                TestShardingConfiguration(shardIndex = shard, shardCount = 3, shardByMethod = true), ParameterizedTests::class.java
+            )
         }
         checkShardDistribution(allTests, *shards.toTypedArray())
     }
@@ -89,8 +91,8 @@ class TestShardingPostDiscoveryFilterTest {
         val allTests = executeTests(TestShardingConfiguration(), *testFactoryClasses)
         assertEquals(36, allTests.size)
 
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), *testFactoryClasses)
+        val shards = (0 until 3).map { shard ->
+            executeTests(TestShardingConfiguration(shardIndex = shard, shardCount = 3), *testFactoryClasses)
         }
         checkShardDistribution(allTests, *shards.toTypedArray())
         checkClassesAreNotSplit(allTests, *shards.toTypedArray())
@@ -101,8 +103,8 @@ class TestShardingPostDiscoveryFilterTest {
         val allTests = executeTests(TestShardingConfiguration(), *parameterizedTestClasses)
         assertEquals(36, allTests.size)
 
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), *parameterizedTestClasses)
+        val shards = (0 until 3).map { shard ->
+            executeTests(TestShardingConfiguration(shardIndex = shard, shardCount = 3), *parameterizedTestClasses)
         }
         checkShardDistribution(allTests, *shards.toTypedArray())
         checkClassesAreNotSplit(allTests, *shards.toTypedArray())
@@ -114,8 +116,8 @@ class TestShardingPostDiscoveryFilterTest {
         val allTests = executeTests(TestShardingConfiguration(), *testClasses)
         assertEquals(28, allTests.size)
 
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), *testClasses)
+        val shards = (0 until 3).map { shard ->
+            executeTests(TestShardingConfiguration(shardIndex = shard, shardCount = 3), *testClasses)
         }
         checkShardDistribution(allTests, *shards.toTypedArray())
 
@@ -123,7 +125,7 @@ class TestShardingPostDiscoveryFilterTest {
         shards.forEachIndexed { index, shard ->
             assertTrue(
                 shard.any { it.className == ShardByMethodTest::class.java.name },
-                "Expected shard ${index + 1} to contain tests of 'ShardByMethodTest'"
+                "Expected shard $index to contain tests of 'ShardByMethodTest'"
             )
         }
 
@@ -134,16 +136,16 @@ class TestShardingPostDiscoveryFilterTest {
     @Test
     fun `removing a shard preserves the remaining shards`() {
         val keys = (0 until 64).map { "test$it".encodeToByteArray() }
-        val threeShards = keys.map { key -> calculateTestShard(key, totalShards = 3, shardSeed = 0) }
-        val twoShards = keys.map { key -> calculateTestShard(key, totalShards = 2, shardSeed = 0) }
-        val oneShard = keys.map { key -> calculateTestShard(key, totalShards = 1, shardSeed = 0) }
+        val threeShards = keys.map { key -> calculateTestShard(key, shardCount = 3, shardSeed = 0) }
+        val twoShards = keys.map { key -> calculateTestShard(key, shardCount = 2, shardSeed = 0) }
+        val oneShard = keys.map { key -> calculateTestShard(key, shardCount = 1, shardSeed = 0) }
 
-        assertEquals(setOf(1, 2, 3), threeShards.toSet())
-        assertEquals(setOf(1, 2), twoShards.toSet())
-        assertEquals(setOf(1), oneShard.toSet())
+        assertEquals(setOf(0, 1, 2), threeShards.toSet())
+        assertEquals(setOf(0, 1), twoShards.toSet())
+        assertEquals(setOf(0), oneShard.toSet())
 
         keys.indices.forEach { index ->
-            if (threeShards[index] <= 2) {
+            if (threeShards[index] < 2) {
                 assertEquals(threeShards[index], twoShards[index], "Expected key $index to remain on shard ${threeShards[index]}")
             }
         }
@@ -307,6 +309,15 @@ class TestShardingPostDiscoveryFilterTest {
         @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun e(@Suppress("unused") value: String) = Unit
         @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun f(@Suppress("unused") value: String) = Unit
         @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun g(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun h(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun i(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun j(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun k(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun l(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun m(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun n(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun o(@Suppress("unused") value: String) = Unit
+        @ParameterizedTest @ValueSource(strings = ["1", "2", "3"]) fun p(@Suppress("unused") value: String) = Unit
     }
 
     @Tag(testFixtureTag)

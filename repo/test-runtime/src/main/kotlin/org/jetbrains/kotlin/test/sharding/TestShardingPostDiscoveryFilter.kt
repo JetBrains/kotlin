@@ -50,13 +50,13 @@ internal class TestShardingPostDiscoveryFilter(
         if (!isTestMethod) return included("Classes/Containers are always enabled")
         if (testsShardParameterizedTag in test.tags) return included("Test invocations are sharded by parameters")
 
-        val currentShard = configuration.currentShard
+        val shardIndex = configuration.shardIndex
         val distributionKey = test.shardingDistributionKey(configuration).encodeToByteArray()
-        val thisTestShard = calculateTestShard(distributionKey, configuration.totalShards, configuration.shardSeed)
-        return if (thisTestShard == currentShard) {
-            included("Current shard: '$currentShard'. Test shard: '$thisTestShard'")
+        val thisTestShard = calculateTestShard(distributionKey, configuration.shardCount, configuration.shardSeed)
+        return if (thisTestShard == shardIndex) {
+            included("Current shard index: '$shardIndex'. Test shard index: '$thisTestShard'")
         } else {
-            excluded("Current shard: '$currentShard'. Test shard: '$thisTestShard'")
+            excluded("Current shard index: '$shardIndex'. Test shard index: '$thisTestShard'")
         }
     }
 }
@@ -118,19 +118,19 @@ private val hashing: ThreadLocal<MessageDigest> = ThreadLocal.withInitial {
 
 /**
  * Uses [rendezvous hashing](https://en.wikipedia.org/wiki/Rendezvous_hashing): give each shard a deterministic,
- * random-looking score for this test's key, then choose the shard with the highest score.
+ * random-looking score for this test's key, then return the zero-based index of the shard with the highest score.
  *
  * With the same seed and key, each shard keeps its score regardless of the total number of shards.
- * Increasing totalShards only moves tests that a new shard wins. Decreasing it only moves tests whose shard was removed.
+ * Increasing shardCount only moves tests that a new shard wins. Decreasing it only moves tests whose shard was removed.
  * This relies on keeping the remaining shard IDs unchanged.
  *
  * Scores spread keys across shards, but do not guarantee equal test counts or running times.
  */
-internal fun calculateTestShard(distributionKey: ByteArray, totalShards: Int, shardSeed: Int): Int {
-    var selectedShard = 1
+internal fun calculateTestShard(distributionKey: ByteArray, shardCount: Int, shardSeed: Int): Int {
+    var selectedShard = 0
     var highestWeight = ULong.MIN_VALUE
 
-    for (shard in 1..totalShards) {
+    for (shard in 0 until shardCount) {
         val score = calculateShardScore(shard, distributionKey, shardSeed)
 
         // On equal scores, keep the lower shard ID, since shards are visited in ascending order.
@@ -158,7 +158,7 @@ internal fun calculateShardScore(shard: Int, key: ByteArray, seed: Int): ULong {
 }
 
 /**
- * Calculates a hash which is seeded by the [seed] (`tests.shardSeed`)
+ * Calculates a hash which is seeded by the [seed] (`kotlin.build.test.shard.seed`)
  */
 internal fun calculateHash(value: ByteArray, seed: Int): ULong {
     val hash = hashing.get()

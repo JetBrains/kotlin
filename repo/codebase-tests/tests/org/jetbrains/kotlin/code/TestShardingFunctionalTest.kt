@@ -19,12 +19,13 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 /**
  * End-to-end check of the test sharding with nested Gradle builds:
- * the `-Ptests.*` properties reach the test JVM, the sharding filter is registered by the service loader,
+ * the `-Pkotlin.build.test.shard.*` properties reach the test JVM, the sharding filter is registered by the service loader,
  * and `tests.shardByMethod` is passed through.
  * The detailed sharding behaviour is tested by the fast tests in `repo/test-runtime/src/test`.
  */
@@ -52,12 +53,12 @@ class TestShardingFunctionalTest {
         val runner = createGradleRunner()
         val allTestsResult = runner.runTests(shardByMethod = true).parseExecutedTests()
         assertEquals(8, allTestsResult.size)
-        val singleShardResult = runner.runTests(currentShard = 1, totalShards = 1, shardByMethod = true).parseExecutedTests()
+        val singleShardResult = runner.runTests(shardIndex = 0, shardCount = 1, shardByMethod = true).parseExecutedTests()
         checkShardDistribution(allTestsResult, singleShardResult)
-        val shard1Result = runner.runTests(currentShard = 1, totalShards = 3, shardByMethod = true).parseExecutedTests()
-        val shard2Result = runner.runTests(currentShard = 2, totalShards = 3, shardByMethod = true).parseExecutedTests()
-        val shard3Result = runner.runTests(currentShard = 3, totalShards = 3, shardByMethod = true).parseExecutedTests()
-        checkShardDistribution(allTestsResult, shard1Result, shard2Result, shard3Result)
+        val shard0Result = runner.runTests(shardIndex = 0, shardCount = 3, shardByMethod = true).parseExecutedTests()
+        val shard1Result = runner.runTests(shardIndex = 1, shardCount = 3, shardByMethod = true).parseExecutedTests()
+        val shard2Result = runner.runTests(shardIndex = 2, shardCount = 3, shardByMethod = true).parseExecutedTests()
+        checkShardDistribution(allTestsResult, shard0Result, shard1Result, shard2Result)
     }
 
     @Test
@@ -84,16 +85,61 @@ class TestShardingFunctionalTest {
         val runner = createGradleRunner()
         val allTests = runner.runTests().parseExecutedTests()
         assertEquals(80, allTests.size)
-        val singleShard = runner.runTests(currentShard = 1, totalShards = 1).parseExecutedTests()
+        val singleShard = runner.runTests(shardIndex = 0, shardCount = 1).parseExecutedTests()
         checkShardDistribution(allTests, singleShard)
 
-        val shards = (1..3).map { shard ->
-            runner.runTests(currentShard = shard, totalShards = 3).parseExecutedTests()
+        val shards = (0 until 3).map { shard ->
+            runner.runTests(shardIndex = shard, shardCount = 3).parseExecutedTests()
         }
 
         checkShardDistribution(allTests, *shards.toTypedArray())
         assertEquals(allTests.size, shards.flatten().size)
         checkClassesAreNotSplit(allTests, *shards.toTypedArray())
+    }
+
+    @Test
+    fun `gradle sharding properties are passed to the runtime`() {
+        junit5SourcesDirectory.resolve("Test.kt").writeCode(
+            """
+            import kotlin.test.Test
+            import kotlin.test.assertEquals
+
+            class MyTest {
+                @Test fun configuration() {
+                    assertEquals("0", System.getProperty("kotlin.build.test.shard.index"))
+                    assertEquals("1", System.getProperty("kotlin.build.test.shard.count"))
+                    assertEquals("42", System.getProperty("kotlin.build.test.shard.seed"))
+                }
+            }
+            """.trimIndent()
+        )
+
+        val result = createGradleRunner().runTests(shardIndex = 0, shardCount = 1, shardSeed = 42)
+        assertEquals(1, result.parseExecutedTests().size)
+        assertContains(result.output, "Running tests in shard index 0 (shard count: 1)")
+    }
+
+    @Test
+    fun `invalid shard indices and counts are rejected`() {
+        junit5SourcesDirectory.resolve("Test.kt").writeCode(
+            """
+            import kotlin.test.Test
+
+            class MyTest {
+                @Test fun test() = Unit
+            }
+            """.trimIndent()
+        )
+
+        val runner = createGradleRunner()
+        for (shardIndex in listOf(-1, 3)) {
+            val result = runner.runTests(shardIndex = shardIndex, shardCount = 3, expectFailure = true)
+            assertContains(result.output, "kotlin.build.test.shard.index")
+        }
+        for (shardCount in listOf(0, -1)) {
+            val result = runner.runTests(shardIndex = 0, shardCount = shardCount, expectFailure = true)
+            assertContains(result.output, "kotlin.build.test.shard.count")
+        }
     }
 
     /* Test Framework Code */
@@ -114,17 +160,20 @@ class TestShardingFunctionalTest {
     )
 
     /**
+     * @param shardIndex the zero-based index of the shard to run
      * @param shardByMethod shards all test classes by their methods instead of keeping classes together
      */
     private fun GradleRunner.runTests(
-        currentShard: Int? = null, totalShards: Int? = null, shardByMethod: Boolean = false,
+        shardIndex: Int? = null, shardCount: Int? = null, shardByMethod: Boolean = false,
+        shardSeed: Int? = null, expectFailure: Boolean = false,
     ): BuildResult {
-        return withArguments(
+        withArguments(
             *listOfNotNull(
                 "$targetProjectPath:junit5Tests",
                 "--no-build-cache",
-                if (currentShard != null) "-Ptests.currentShard=$currentShard" else null,
-                if (totalShards != null) "-Ptests.totalShards=$totalShards" else null,
+                if (shardIndex != null) "-Pkotlin.build.test.shard.index=$shardIndex" else null,
+                if (shardCount != null) "-Pkotlin.build.test.shard.count=$shardCount" else null,
+                if (shardSeed != null) "-Pkotlin.build.test.shard.seed=$shardSeed" else null,
                 if (shardByMethod) "-Ptests.shardByMethod=true" else null,
 
                 /* Allow debugging of test Gradle process */
@@ -134,7 +183,8 @@ class TestShardingFunctionalTest {
                 if (ideaDebuggerDispatchPort != null) "-Ptests.additionalJvmArgument=" +
                         issueNewDebugSessionJvmArguments("Nested Test Execution").joinToString(" ") else null
             ).toTypedArray()
-        ).build()
+        )
+        return if (expectFailure) buildAndFail() else build()
     }
 
     private fun Path.writeCode(@Language("kotlin") code: String) {
@@ -157,7 +207,7 @@ class TestShardingFunctionalTest {
     private fun checkShardDistribution(all: List<TestResult>, vararg shards: List<TestResult>) {
         /* Test is suspicious if a shard has no tests */
         shards.forEachIndexed { index, shard ->
-            if (shard.isEmpty()) fail("Shard ${index.plus(1)} does not contain any tests")
+            if (shard.isEmpty()) fail("Shard $index does not contain any tests")
         }
 
         /* Test shards should not have overlapping tests */
@@ -168,7 +218,7 @@ class TestShardingFunctionalTest {
             val intersection = aTests.intersect(bTests.toSet())
             if (intersection.isNotEmpty()) {
                 fail(buildString {
-                    appendLine("Shard ${a.index.plus(1)} and ${b.index.plus(1)} have ${intersection.size} tests in common")
+                    appendLine("Shard ${a.index} and ${b.index} have ${intersection.size} tests in common")
                     appendLine("    Common tests: ${intersection.joinToString(", ") { it.testName }}")
                 })
             }
