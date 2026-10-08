@@ -7,13 +7,27 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.java.JavaScopeProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.getFirstStarImportCandidate
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaLiteralAnnotationArgument
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -22,6 +36,23 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
 
 class JavaParsingAnnotationsTest : JavaParsingTestBase() {
+
+    /** Parses [source] with a symbol provider that knows exactly one library enum class, [enumClassId]. */
+    @OptIn(SessionConfiguration::class)
+    private fun parseFirstClassWithEnum(source: String, enumClassId: ClassId): JavaClassOverAst {
+        val session = createDummyFirSessionForTests()
+        val enumSymbol = buildRegularClass {
+            moduleData = FirBinaryDependenciesModuleData(Name.special("<test>"))
+            origin = FirDeclarationOrigin.Library
+            name = enumClassId.shortClassName
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+            classKind = ClassKind.ENUM_CLASS
+            scopeProvider = JavaScopeProvider
+            symbol = FirRegularClassSymbol(enumClassId)
+        }.symbol
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { if (it == enumClassId) enumSymbol else null })
+        return parseFirstClass(source, session)
+    }
 
     @Test
     fun testAnnotations() {
@@ -402,7 +433,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     @Test
     fun testEnumValueArgumentQualifiedWithImport() {
         // Qualified reference `RetentionPolicy.RUNTIME` with the class directly imported —
-        // enumClassId is built from the import, so isResolved must be true.
+        // enumClassId is resolved from the imported symbol, so isResolved must be true.
         val source = """
             package com.example;
 
@@ -412,7 +443,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             @Retention(RetentionPolicy.RUNTIME)
             public @interface MyAnno {}
         """.trimIndent()
-        val javaClass = parseFirstClass(source)
+        val enumClassId = ClassId.topLevel(FqName("java.lang.annotation.RetentionPolicy"))
+        val javaClass = parseFirstClassWithEnum(source, enumClassId)
 
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as JavaEnumValueAnnotationArgument
@@ -424,33 +456,26 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     @Test
     fun testEnumValueArgumentQualifiedWithoutImport() {
         // Qualified reference `MyEnum.A` where the outer class has NO import.
-        // the model itself owns resolution and `enumClassId` is reliable for every reference.
-        // Here the parsing-level fixture has no symbol provider wired, so the unimported same-
-        // package fallback hits the package+className heuristic — which gives the correct answer.
+        // The model resolves the same-package enum class through the symbol provider.
         val source = """
             package com.example;
 
             @AnnoOf(MyEnum.A)
             public class Host {}
         """.trimIndent()
-        val javaClass = parseFirstClass(source)
+        val enumClassId = ClassId(FqName("com.example"), Name.identifier("MyEnum"))
+        val javaClass = parseFirstClassWithEnum(source, enumClassId)
 
         val anno = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "AnnoOf" }
         val arg = anno.arguments.first() as JavaEnumValueAnnotationArgument
 
-        // the assertion below covered the model-internal heuristic gate. Surrounding `enumClassId` /
-        // `entryName` checks cover the user-visible invariants.
-        assertEquals("com.example.MyEnum", arg.enumClassId?.asSingleFqName()?.asString()) { "Expected the same-package heuristic to kick in" }
+        assertEquals("com.example.MyEnum", arg.enumClassId?.asSingleFqName()?.asString())
         assertEquals("A", arg.entryName?.asString())
     }
 
     @Test
     fun testEnumValueArgumentBareWithStaticImport() {
         // Bare identifier `RUNTIME` resolved via a static import.
-        //
-        // the model owns resolution; in this parsing-level fixture (no symbol
-        // provider wired) the model still records the dotted className verbatim, which the
-        // top-level-`ClassId` fallback maps to the correct FQN.
         val source = """
             package com.example;
 
@@ -460,7 +485,8 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             @Retention(RUNTIME)
             public @interface MyAnno {}
         """.trimIndent()
-        val javaClass = parseFirstClass(source)
+        val enumClassId = ClassId.topLevel(FqName("java.lang.annotation.RetentionPolicy"))
+        val javaClass = parseFirstClassWithEnum(source, enumClassId)
 
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as JavaEnumValueAnnotationArgument
