@@ -100,3 +100,6 @@ val KonanTarget.supportsGrandCentralDispatch
 
 val KonanTarget.supportsSignposts
     get() = family.isAppleFamily
+
+fun KonanTarget.supportsDeltaMainStackMaps(): Boolean =
+    family.isAppleFamily && architecture == Architecture.ARM64 && this != KonanTarget.WATCHOS_ARM64

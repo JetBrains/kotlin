@@ -139,10 +139,17 @@ class NativeSecondStageCompilationConfig(
         get() = configuration.get(BinaryOptions.gc) ?: defaultGC
     private val defaultGCStackMapScheme get() = GCStackMapScheme.SHADOW_STACK
     val gcStackMapScheme: GCStackMapScheme = (configuration.get(BinaryOptions.gcStackMapScheme) ?: defaultGCStackMapScheme).also {
-        if (it == GCStackMapScheme.DELTA_MAIN && target.architecture != Architecture.ARM64) {
-            configuration.reportCompilationErrorAndThrow(
-                    "delta-main GC stack maps are not supported on ${target.architecture} (target ${target.visibleName}). " +
-                            "Use the default shadow-stack scheme, or target an ARM64 platform.")
+        if (it == GCStackMapScheme.DELTA_MAIN) {
+            if (!target.supportsDeltaMainStackMaps()) {
+                configuration.reportCompilationErrorAndThrow(
+                        "delta-main GC stack maps are not supported on ${target.visibleName}. " +
+                                "Use the default shadow-stack scheme, or target a 64-bit Apple ARM64 platform (not watchos_arm64)")
+            }
+            if (gc != GC.CONCURRENT_MARK_AND_SWEEP) {
+                configuration.reportCompilationErrorAndThrow(
+                        "delta-main GC stack maps are not supported with ${gc.name} collector. " +
+                                "Use the default shadow-stack scheme, or CMS collector.")
+            }
         }
     }
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
