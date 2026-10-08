@@ -10,12 +10,13 @@ package kotlin.test
 import kotlin.js.*
 
 // Using 'globalThis.arguments' because 'arguments' can refer to current JS function arguments
-@JsFun("() => globalThis.arguments?.join?.(' ') ?? ''")
-private external fun d8Arguments(): String
-@JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2).join(' ') : ''")
-private external fun nodeArguments(): String
+@JsFun("() => globalThis.arguments")
+private external fun globalThisArguments(): JsArray<JsString>?
+@JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2) : null")
+private external fun nodeArguments(): JsArray<JsString>?
 
-internal actual fun getArguments(): List<String> = (d8Arguments().ifEmpty { nodeArguments() }).split(' ')
+internal actual fun getArguments(): List<String> = (globalThisArguments() ?: nodeArguments())
+    ?.toList()?.map { it.toString() } ?: emptyList()
 
 internal class TeamcityAdapterWithPromiseSupport : TeamcityAdapter() {
     private var scheduleNextTaskAfter: Promise<JsAny?>? = null
