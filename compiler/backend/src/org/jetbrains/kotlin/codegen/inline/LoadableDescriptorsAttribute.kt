@@ -52,3 +52,15 @@ class LoadableDescriptorsAttribute(val descriptors: List<String>) :
  * shared array is safe to reuse across concurrent class rewrites.
  */
 val LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES: Array<Attribute> = arrayOf(LoadableDescriptorsAttribute(emptyList()))
+
+fun readLoadableDescriptors(classBytes: ByteArray): List<String> {
+    var descriptors = emptyList<String>()
+    ClassReader(classBytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+        override fun visitAttribute(attribute: Attribute) {
+            if (attribute is LoadableDescriptorsAttribute) {
+                descriptors = attribute.descriptors
+            }
+        }
+    }, LOADABLE_DESCRIPTORS_ATTRIBUTE_PROTOTYPES, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+    return descriptors
+}
