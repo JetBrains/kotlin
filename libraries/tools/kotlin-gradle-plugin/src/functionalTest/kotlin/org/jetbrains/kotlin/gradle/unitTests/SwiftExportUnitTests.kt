@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import com.android.build.api.variant.impl.capitalizeFirstChar
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -166,6 +167,11 @@ class SwiftExportUnitTests {
 
         assertEquals(setOf(swiftExportTask.parameters.outputDirectory.get().asFile), generateTask.swiftExportFiles.files)
         assertTrue(swiftExportTask in generateTask.taskDependencies.getDependencies(null))
+    }
+
+    @Test
+    fun `test swift export task is cacheable`() {
+        assertNotNull(SwiftExportTask::class.java.getAnnotation(CacheableTask::class.java))
     }
 
     @Test
