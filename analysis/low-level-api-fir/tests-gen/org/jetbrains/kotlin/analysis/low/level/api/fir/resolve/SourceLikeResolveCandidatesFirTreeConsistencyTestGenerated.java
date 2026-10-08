@@ -2400,6 +2400,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     public void testUintArrayAnnotation() {
       run("uintArrayAnnotation.kt");
     }
+
+    @Test
+    @TestMetadata("ulongArrayOperator.kt")
+    public void testUlongArrayOperator() {
+      run("ulongArrayOperator.kt");
+    }
   }
 
   @Nested

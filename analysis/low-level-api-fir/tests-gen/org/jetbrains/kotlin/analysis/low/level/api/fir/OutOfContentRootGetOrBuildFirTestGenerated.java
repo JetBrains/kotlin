@@ -1216,6 +1216,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     public void testStdlibSetWithoutStdlib() {
       run("stdlibSetWithoutStdlib.kt");
     }
+
+    @Test
+    @TestMetadata("stdlibULongArrayOperator.kt")
+    public void testStdlibULongArrayOperator() {
+      run("stdlibULongArrayOperator.kt");
+    }
   }
 
   @Nested

@@ -2422,6 +2422,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveSymbolTestGenerated exte
     public void testUintArrayAnnotation() {
       run("uintArrayAnnotation.kt");
     }
+
+    @Test
+    @TestMetadata("ulongArrayOperator.kt")
+    public void testUlongArrayOperator() {
+      run("ulongArrayOperator.kt");
+    }
   }
 
   @Nested
