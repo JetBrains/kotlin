@@ -1,5 +1,6 @@
 // KT-89919
 // WITH_STDLIB
+// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: JS:2.4
 
 fun box(): String {
     val fn = ::uintArrayOf
