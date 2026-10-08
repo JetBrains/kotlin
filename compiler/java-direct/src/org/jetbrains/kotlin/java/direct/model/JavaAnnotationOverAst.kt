@@ -220,30 +220,15 @@ class JavaEnumValueAnnotationArgumentOverAst(
         get() {
             val className = className ?: return null
 
-            val imported = with(resolutionContext) { getSimpleImport(className) }
-            if (imported != null) {
-                return ClassId.topLevel(imported)
-            }
-
             // Consult the model's resolver for the full JLS scope walk (local nested-class,
-            // inherited inner classes, same-package, java.lang, star imports). `resolve` returns
-            // null without a symbol provider (parsing-level unit fixtures), letting the
-            // package+name heuristic below take over.
-            with(resolutionContext) { resolve(className) }?.let { return it }
+            // inherited inner classes, imports, same-package, java.lang, star imports).
+            resolve(className, c = resolutionContext)?.let { return it }
 
-            // Already-dotted className (qualified or static-import-resolved FQN) is treated
-            // as a top-level FQN — mirrors `JavaAnnotationOverAst.classId`'s dotted-name
-            // shortcut, and avoids prefixing it with the file's package.
-            if (className.contains('.')) {
-                return ClassId.topLevel(FqName(className))
-            }
+            // A static import that does not resolve gives no class to point at (PSI: `resolve()` is null, no qualifier).
+            if (!tree.getText(refNode).contains('.')) return null
 
-            val packageFqName = resolutionContext.packageFqName
-            return if (packageFqName.isRoot) {
-                ClassId.topLevel(FqName(className))
-            } else {
-                ClassId.topLevel(FqName("${packageFqName.asString()}.$className"))
-            }
+            // Unresolved qualifier: take it as written, like PSI's `JavaEnumValueAnnotationArgumentImpl`.
+            return ClassId.topLevel(FqName(className))
         }
 
     override val entryName: Name
