@@ -17,18 +17,18 @@ class Wrapper(val x: Int) {
 }
 
 fun atomics(stamped: AtomicStampedReference<Wrapper>, markable: AtomicMarkableReference<Wrapper>, w: Wrapper, v: Wrapper) {
-    stamped.compareAndSet(w, v, 0, 1)
-    stamped.weakCompareAndSet(w, v, 0, 1)
-    stamped.attemptStamp(w, 1)
-    markable.compareAndSet(w, v, false, true)
-    markable.weakCompareAndSet(w, v, false, true)
-    markable.attemptMark(w, true)
+    stamped.compareAndSet(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>, 0, 1)
+    stamped.weakCompareAndSet(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>, 0, 1)
+    stamped.attemptStamp(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, 1)
+    markable.compareAndSet(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>, false, true)
+    markable.weakCompareAndSet(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>, false, true)
+    markable.attemptMark(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, true)
 }
 
 fun references(weak: WeakReference<Wrapper>, soft: SoftReference<Wrapper>, phantom: PhantomReference<Wrapper>, w: Wrapper) {
-    weak.refersTo(w)
-    soft.refersTo(w)
-    phantom.refersTo(w)
+    weak.refersTo(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>)
+    soft.refersTo(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>)
+    phantom.refersTo(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>)
     weak.refersTo(null)
 }
 

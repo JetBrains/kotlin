@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.isPrimitive
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -57,8 +58,13 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
         }
     }
 
-    // Field updaters and variable handles compare the expected value with the current one by identity.
+    // Field updaters, variable handles and stamped or markable references compare the expected value with the current one by identity.
     private val compareAndSetCallableIds = buildSet {
+        for (className in listOf("AtomicStampedReference", "AtomicMarkableReference")) {
+            for (name in listOf("compareAndSet", "weakCompareAndSet", "attemptStamp", "attemptMark")) {
+                add(CallableId(FqName("java.util.concurrent.atomic"), FqName(className), Name.identifier(name)))
+            }
+        }
         for (name in listOf("compareAndSet", "weakCompareAndSet")) {
             add(CallableId(FqName("java.util.concurrent.atomic"), FqName("AtomicReferenceFieldUpdater"), Name.identifier(name)))
         }
@@ -70,12 +76,20 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
         }
     }
 
+    // 'refersTo' is declared in 'Reference' and inherited by its subclasses, so it is matched by its original declaration.
+    private val refersToCallableId = CallableId(FqName("java.lang.ref"), FqName("Reference"), Name.identifier("refersTo"))
+
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {
         val function = expression.calleeReference.toResolvedCallableSymbol() ?: return
+        if (function.unwrapFakeOverrides().callableId == refersToCallableId) {
+            val argument = expression.arguments.firstOrNull() ?: return
+            reportIdentitySensitiveOperationOnWillBecomeValueClass(argument.source, argument.resolvedType)
+            return
+        }
         when (function.callableId) {
             synchronizedCallableId -> checkSynchronizedCall(expression)
 
