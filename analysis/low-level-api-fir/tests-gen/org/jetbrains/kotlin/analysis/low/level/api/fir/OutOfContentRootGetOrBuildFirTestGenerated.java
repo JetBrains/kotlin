@@ -1200,6 +1200,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("stdlibDoubleArrayOperator.kt")
+    public void testStdlibDoubleArrayOperator() {
+      run("stdlibDoubleArrayOperator.kt");
+    }
+
+    @Test
     @TestMetadata("stdlibSequenceOperator.kt")
     public void testStdlibSequenceOperator() {
       run("stdlibSequenceOperator.kt");

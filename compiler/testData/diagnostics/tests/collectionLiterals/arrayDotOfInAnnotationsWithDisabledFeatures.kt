@@ -17,13 +17,19 @@ annotation class Anno(
     val ulong: ULongArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>ULongArray.of(42u)<!>,
     val ushort: UShortArray,
     val ubyte: UByteArray,
-    val nested: NestedAnno = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>NestedAnno(*UIntArray.of(42u), ulong = [])<!>
+    val nested: NestedAnno = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>NestedAnno(*UIntArray.of(42u), ulong = [])<!>,
+    val int: IntArray = <!ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT!>IntArray.of(1, 2)<!>,
+    val char: CharArray = [],
+    val float: FloatArray,
+    val boolean: BooleanArray,
 )
 
 @Anno(
     ushort = [42u],
     ubyte = <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>UByteArray.of()<!>,
-    nested = NestedAnno(uint = <!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>*<!>[], ulong = <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>ULongArray.of(42u)<!>)
+    nested = NestedAnno(uint = <!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION!>*<!>[], ulong = <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>ULongArray.of(42u)<!>),
+    float = <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>FloatArray.of()<!>,
+    boolean = [true],
 )
 fun target() = Unit
 
