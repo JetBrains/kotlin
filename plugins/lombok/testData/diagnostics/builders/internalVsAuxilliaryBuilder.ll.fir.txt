@@ -14,8 +14,8 @@ FILE: test.kt
         lval fullyQualifiedBuilder: R|test/java/Owner.TestJava.TestJavaBuilder!| = Q|test/java/Owner.TestJava|.R|test/java/Owner.TestJava.fullyQualifiedBuilder*s|(Int(1))
     }
     public final fun baz(): R|kotlin/Unit| {
-        lval builderArray: R|ft<kotlin/Array<test/java/TestJava.TestJavaBuilder!>, kotlin/Array<out test/java/TestJava.TestJavaBuilder!>?>| = Q|test/java/TestJava|.R|test/java/TestJava.builderArray*s|()
-        lval builder: R|test/java/TestJava.TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.builder*s|(Int(1))
-        lval qualifiedBuilder: R|test/java/TestJava.TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.qualifiedBuilder*s|(Int(1))
-        lval fullyQualifiedBuilder: R|test/java/TestJava.TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.fullyQualifiedBuilder*s|(Int(1))
+        lval builderArray: R|ft<kotlin/Array<TestJavaBuilder!>, kotlin/Array<out TestJavaBuilder!>?>| = Q|test/java/TestJava|.R|test/java/TestJava.builderArray*s|()
+        lval builder: R|TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.builder*s|(Int(1))
+        lval qualifiedBuilder: R|TestJava/TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.qualifiedBuilder*s|(Int(1))
+        lval fullyQualifiedBuilder: R|test/java/TestJava/TestJavaBuilder!| = Q|test/other/Other|.R|test/other/Other.fullyQualifiedBuilder*s|(Int(1))
     }

@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// The Analysis API still uses the PSI Java facade, which cannot resolve the plugin-generated builder types in `baz` (KT-90074)
+// LL_FIR_DIVERGENCE
 // ISSUE: KT-83329
 // FIR_DUMP
 // FILE: test/java/TestJava.java
@@ -106,8 +109,8 @@ fun bar() {
 
 // Supported with java-direct only: the PSI Java facade reports MISSING_DEPENDENCY_CLASS for these calls
 fun baz() {
-    val builderArray = TestJava.builderArray()
-    val builder = Other.builder(1)
-    val qualifiedBuilder = Other.qualifiedBuilder(1)
-    val fullyQualifiedBuilder = Other.fullyQualifiedBuilder(1)
+    val builderArray = TestJava.<!MISSING_DEPENDENCY_CLASS!>builderArray<!>()
+    val builder = Other.<!MISSING_DEPENDENCY_CLASS!>builder<!>(1)
+    val qualifiedBuilder = Other.<!MISSING_DEPENDENCY_CLASS!>qualifiedBuilder<!>(1)
+    val fullyQualifiedBuilder = Other.<!MISSING_DEPENDENCY_CLASS!>fullyQualifiedBuilder<!>(1)
 }
