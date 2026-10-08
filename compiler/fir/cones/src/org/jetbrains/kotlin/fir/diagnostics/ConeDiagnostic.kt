@@ -5,10 +5,16 @@
 
 package org.jetbrains.kotlin.fir.diagnostics
 
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+
 interface ConeDiagnostic {
     val reason: String
 
     val readableDescriptionAsTypeConstructor: String get() = reason
+}
+
+class DivergingBareInference(val newType: ConeKotlinType) : ConeDiagnostic {
+    override val reason: String = "Diverging bare inference"
 }
 
 /**
