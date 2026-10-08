@@ -154,7 +154,7 @@ object FirLombokBuilderChecker : FirRegularClassChecker(MppCheckerKind.Platform)
             val property = symbol as? FirPropertySymbol ?: return@processAllDeclarations
             // A promoted property *is* a primary constructor value parameter, and so is a builder field - the
             // one shape both annotations are for. `checkPrimaryConstructorParameters` validates those.
-            if (property.fromPrimaryConstructor) return@processAllDeclarations
+            if (property.fromPrimaryConstructor || property.isVar) return@processAllDeclarations
 
             for (annotationClassId in BUILDER_FIELD_ANNOTATION_IDS) {
                 val annotation = property.findAnnotationOnPropertyOrField(annotationClassId) ?: continue
