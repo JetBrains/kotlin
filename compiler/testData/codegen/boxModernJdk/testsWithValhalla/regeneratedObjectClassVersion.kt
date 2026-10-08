@@ -1,5 +1,4 @@
 // ISSUE: KT-89992
-// IGNORE_BACKEND: JVM
 // WITH_STDLIB
 
 import kotlin.coroutines.*
