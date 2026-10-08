@@ -9,7 +9,6 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.util.JavaPsiRecordUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.config.isValhallaSupportEnabled
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -210,7 +209,7 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
                 this.isJavaRecord = true
             }
 
-            if (session.languageVersionSettings.isValhallaSupportEnabled() && javaClass.isValue) {
+            if (javaClass.isValue) {
                 this.isJavaValueClass = true
             }
 
