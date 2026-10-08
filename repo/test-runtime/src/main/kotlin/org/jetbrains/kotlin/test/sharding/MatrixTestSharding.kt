@@ -9,20 +9,20 @@ package org.jetbrains.kotlin.test.sharding
  * Assigns the rows of a test matrix (one row per invocation, one value per argument) to shards,
  * assuming that every invocation takes the same time.
  *
- * The rows are sorted by their values, column by column (see [compareKeys]), and laid out next to each other on the line `[0, totalShards)`,
- * each row taking an equal part of it. Shard `s` covers `[s - 1, s)` of the line.
+ * The rows are sorted by their values, column by column (see [compareKeys]), and laid out next to each other on the line `[0, shardCount)`,
+ * each row taking an equal part of it. Shard `s` covers `[s, s + 1)` of the line.
  * Every row is placed at the same relative offset within its part, and the offset is derived from [salt].
  *
- * - Balance: each shard receives `floor(rows / totalShards)` or `ceil(rows / totalShards)` rows.
+ * - Balance: each shard receives `floor(rows / shardCount)` or `ceil(rows / shardCount)` rows.
  * - Locality: rows sharing their leading values (e.g., the same first value) are adjacent, so they occupy neighbouring shards.
- *   The same set of rows is placed on the same range of shards in every matrix with the same [totalShards],
+ *   The same set of rows is placed on the same range of shards in every matrix with the same [shardCount],
  *   and on the very same shards in every matrix with the same [salt] as well.
  * - Different salts (e.g., different test classes, or different test templates when sharding by method) shift the rows within their parts,
  *   so matrices with fewer rows than shards still reach all shards of their range.
  *
  * The shard of a row depends on its values, not on its position in the matrix (identical rows are placed next to each other).
  * The values must therefore be identical on all shards: either [Comparable] or with a stable `toString()`.
- * Changing [totalShards] moves most of the rows.
+ * Changing [shardCount] moves most of the rows.
  *
  * Example: 4 rows `(A, x)`, `(A, y)`, `(B, x)`, `(B, y)` on 3 shards.
  * Each row takes a part of length `3 / 4` of the line `[0, 3)`:
@@ -30,32 +30,32 @@ package org.jetbrains.kotlin.test.sharding
  * ```
  *   rows:   0        0.75     1.5      2.25     3
  *           |  A/x   |  A/y   |  B/x   |  B/y   |
- *   shards: |     1     |     2     |     3     |
+ *   shards: |     0     |     1     |     2     |
  *           0           1           2           3
  * ```
  *
  * With an offset of `0.5` (half of each part), the points are `0.375`, `1.125`, `1.875` and `2.625`,
- * so the rows land on the shards 1, 2, 2 and 3. The rows with the first value `A` stay on the shards 1 and 2,
- * the rows with `B` on the shards 2 and 3: only shard 2, at the border of both groups, receives both.
- * Another salt shifts all four points by the same amount, e.g., an offset of `0.1` gives the shards 1, 1, 2 and 3.
+ * so the rows land on the shards 0, 1, 1 and 2. The rows with the first value `A` stay on the shards 0 and 1,
+ * the rows with `B` on the shards 1 and 2: only shard 1, at the border of both groups, receives both.
+ * Another salt shifts all four points by the same amount, e.g., an offset of `0.1` gives the shards 0, 0, 1 and 2.
  */
 internal class MatrixTestSharding(
     matrix: List<List<Any?>>,
     salt: ByteArray = byteArrayOf(),
-    totalShards: Int,
+    shardCount: Int,
     shardSeed: Int = 0,
 ) {
 
     val rows = matrix.size
 
     init {
-        if (totalShards < 1) error("Invalid 'totalShards': $totalShards; Expected >= 1")
+        if (shardCount < 1) error("Invalid 'shardCount': $shardCount; Expected >= 1")
         if (rows == 0) error("Matrix should have at least one row")
         /*
          * The placement below uses fixed-point numbers with 32 fractional bits in a Long.
-         * Keeping rows * totalShards below 2^31 keeps all intermediate values below 2^63, so they cannot overflow.
+         * Keeping rows * shardCount below 2^31 keeps all intermediate values below 2^63, so they cannot overflow.
          */
-        if (rows.toLong() * totalShards > Int.MAX_VALUE) error("Matrix is too large: $rows rows on $totalShards shards")
+        if (rows.toLong() * shardCount > Int.MAX_VALUE) error("Matrix is too large: $rows rows on $shardCount shards")
     }
 
     val columns = matrix[0].size
@@ -67,7 +67,7 @@ internal class MatrixTestSharding(
         }
     }
 
-    /* Shard (1-based) of each row, in the order of the given matrix */
+    /* Shard (zero-based) of each row, in the order of the given matrix */
     private val rowShards = IntArray(rows)
 
     init {
@@ -77,7 +77,7 @@ internal class MatrixTestSharding(
          * shifting all points by the same amount keeps them equally spaced, which is what keeps the shards balanced.
          * A random offset per row would instead let points pile up on one shard.
          * The upper 32 bits of the hash are used as a uniformly distributed fraction.
-         * calculateHash includes the seed ('tests.shardSeed'), so changing the seed shifts the rows as well.
+         * calculateHash includes the seed ('kotlin.build.test.shard.seed'), so changing the seed shifts the rows as well.
          */
         val offset = (calculateHash(salt, shardSeed) shr 32).toLong()
 
@@ -92,33 +92,33 @@ internal class MatrixTestSharding(
 
         sortedRows.forEachIndexed { position, row ->
             /*
-             * The row at 'position' covers the part [position, position + 1) * totalShards / rows of the line [0, totalShards).
+             * The row at 'position' covers the part [position, position + 1) * shardCount / rows of the line [0, shardCount).
              * Its point is at the offset within that part:
-             *     point = (position + offset / 2^32) * totalShards / rows
-             * Shard s covers [s - 1, s), so the (1-based) shard of the point is floor(point) + 1.
+             *     point = (position + offset / 2^32) * shardCount / rows
+             * Shard s covers [s, s + 1), so the zero-based shard of the point is floor(point).
              *
              * To stay in integer arithmetic, the numerator is computed with 32 fractional bits:
-             *     numerator   = (position * 2^32 + offset) * totalShards
+             *     numerator   = (position * 2^32 + offset) * shardCount
              *     denominator = rows * 2^32
-             * Both are below 2^63 because rows * totalShards < 2^31 (see the check above).
+             * Both are below 2^63 because rows * shardCount < 2^31 (see the check above).
              * Integer division rounds down, which gives floor(point) without any floating-point rounding issues.
              */
-            val numerator = ((position.toLong() * totalShards) shl 32) + (offset * totalShards)
+            val numerator = ((position.toLong() * shardCount) shl 32) + (offset * shardCount)
             val denominator = rows.toLong() shl 32
-            rowShards[row] = (numerator / denominator).toInt() + 1
+            rowShards[row] = (numerator / denominator).toInt()
         }
 
         /*
-         * Why this is balanced: consecutive points are exactly totalShards / rows apart,
+         * Why this is balanced: consecutive points are exactly shardCount / rows apart,
          * and every shard is a part of length 1 of the line.
-         * A part of length 1 contains either floor(rows / totalShards) or ceil(rows / totalShards) of such equally spaced points.
+         * A part of length 1 contains either floor(rows / shardCount) or ceil(rows / shardCount) of such equally spaced points.
          */
     }
 
     /**
-     * Returns the shard (1-based) of the row at index [row] of the matrix passed to the constructor.
+     * Returns the zero-based shard index of the row at index [row] of the matrix passed to the constructor.
      */
-    fun getShardOfRow(row: Int): Int {
+    fun shardFor(row: Int): Int {
         return rowShards[row]
     }
 

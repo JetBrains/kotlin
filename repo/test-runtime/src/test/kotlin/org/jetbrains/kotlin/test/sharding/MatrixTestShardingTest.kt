@@ -16,7 +16,7 @@ class MatrixTestShardingTest {
     @Test
     fun `empty matrix is rejected`() {
         val exception = assertFailsWith<IllegalStateException> {
-            MatrixTestSharding(emptyList(), totalShards = 2)
+            MatrixTestSharding(emptyList(), shardCount = 2)
         }
         assertEquals("Matrix should have at least one row", exception.message)
     }
@@ -24,7 +24,7 @@ class MatrixTestShardingTest {
     @Test
     fun `matrix without columns is rejected`() {
         val exception = assertFailsWith<IllegalStateException> {
-            MatrixTestSharding(listOf(emptyList()), totalShards = 2)
+            MatrixTestSharding(listOf(emptyList()), shardCount = 2)
         }
         assertEquals("Matrix should have at least one column", exception.message)
     }
@@ -37,7 +37,7 @@ class MatrixTestShardingTest {
                     listOf("a", "b"),
                     listOf("c"),
                 ),
-                totalShards = 2,
+                shardCount = 2,
             )
         }
         assertEquals("Matrix should have only size of 2 columns", exception.message)
@@ -51,7 +51,7 @@ class MatrixTestShardingTest {
                     listOf("a"),
                     listOf("b", "c"),
                 ),
-                totalShards = 2,
+                shardCount = 2,
             )
         }
         assertEquals("Matrix should have only size of 1 columns", exception.message)
@@ -60,9 +60,9 @@ class MatrixTestShardingTest {
     @Test
     fun `zero shards are rejected`() {
         val exception = assertFailsWith<IllegalStateException> {
-            MatrixTestSharding(listOf(listOf("a")), totalShards = 0)
+            MatrixTestSharding(listOf(listOf("a")), shardCount = 0)
         }
-        assertEquals("Invalid 'totalShards': 0; Expected >= 1", exception.message)
+        assertEquals("Invalid 'shardCount': 0; Expected >= 1", exception.message)
     }
 
     @Test
@@ -73,7 +73,7 @@ class MatrixTestShardingTest {
         }
 
         val exception = assertFailsWith<IllegalStateException> {
-            MatrixTestSharding(matrix, totalShards = 50_000)
+            MatrixTestSharding(matrix, shardCount = 50_000)
         }
         assertEquals("Matrix is too large: 50000 rows on 50000 shards", exception.message)
     }
@@ -85,7 +85,7 @@ class MatrixTestShardingTest {
                 listOf("a", "b", "c"),
                 listOf("d", "e", "f"),
             ),
-            totalShards = 2,
+            shardCount = 2,
         )
         assertEquals(2, sharding.rows)
         assertEquals(3, sharding.columns)
@@ -100,12 +100,12 @@ class MatrixTestShardingTest {
                 listOf("b", "x"),
                 listOf("b", "y"),
             ),
-            totalShards = 1,
+            shardCount = 1,
         )
-        assertEquals(1, sharding.getShardOfRow(0))
-        assertEquals(1, sharding.getShardOfRow(1))
-        assertEquals(1, sharding.getShardOfRow(2))
-        assertEquals(1, sharding.getShardOfRow(3))
+        assertEquals(0, sharding.shardFor(0))
+        assertEquals(0, sharding.shardFor(1))
+        assertEquals(0, sharding.shardFor(2))
+        assertEquals(0, sharding.shardFor(3))
     }
 
     @Test
@@ -116,12 +116,12 @@ class MatrixTestShardingTest {
 
         val usedShards = mutableSetOf<Int>()
         for (i in 0 until 40) {
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 4)
-            val shard = sharding.getShardOfRow(0)
-            assertTrue(shard in 1..4, "Got shard $shard")
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 4)
+            val shard = sharding.shardFor(0)
+            assertTrue(shard in 0 until 4, "Got shard $shard")
             usedShards.add(shard)
         }
-        assertEquals(setOf(1, 2, 3, 4), usedShards)
+        assertEquals(setOf(0, 1, 2, 3), usedShards)
     }
 
     @Test
@@ -131,11 +131,11 @@ class MatrixTestShardingTest {
             matrix.add(listOf("group-${i % 3}", "item-$i"))
         }
 
-        for (totalShards in 1..7) {
-            val sharding = MatrixTestSharding(matrix, totalShards = totalShards)
+        for (shardCount in 1..7) {
+            val sharding = MatrixTestSharding(matrix, shardCount = shardCount)
             for (row in 0 until sharding.rows) {
-                val shard = sharding.getShardOfRow(row)
-                assertTrue(shard in 1..totalShards, "Row $row got shard $shard; totalShards=$totalShards")
+                val shard = sharding.shardFor(row)
+                assertTrue(shard in 0 until shardCount, "Row $row got shard $shard; shardCount=$shardCount")
             }
         }
     }
@@ -150,14 +150,14 @@ class MatrixTestShardingTest {
         )
 
         for (i in 0 until 10) {
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 4)
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 4)
             val usedShards = setOf(
-                sharding.getShardOfRow(0),
-                sharding.getShardOfRow(1),
-                sharding.getShardOfRow(2),
-                sharding.getShardOfRow(3),
+                sharding.shardFor(0),
+                sharding.shardFor(1),
+                sharding.shardFor(2),
+                sharding.shardFor(3),
             )
-            assertEquals(setOf(1, 2, 3, 4), usedShards, "Salt 'template-$i'")
+            assertEquals(setOf(0, 1, 2, 3), usedShards, "Salt 'template-$i'")
         }
     }
 
@@ -169,11 +169,11 @@ class MatrixTestShardingTest {
         }
 
         for (i in 0 until 10) {
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 3)
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 3)
 
             val rowsPerShard = IntArray(3)
             for (row in 0 until 10) {
-                rowsPerShard[sharding.getShardOfRow(row) - 1]++
+                rowsPerShard[sharding.shardFor(row)]++
             }
 
             /* 10 rows on 3 shards: 3 or 4 rows each */
@@ -190,9 +190,9 @@ class MatrixTestShardingTest {
 
         val rowsPerShard = IntArray(3)
         for (i in 0 until 300) {
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 3)
-            rowsPerShard[sharding.getShardOfRow(0) - 1]++
-            rowsPerShard[sharding.getShardOfRow(1) - 1]++
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 3)
+            rowsPerShard[sharding.shardFor(0)]++
+            rowsPerShard[sharding.shardFor(1)]++
         }
 
         /* 600 rows on 3 shards: 200 each would be perfect */
@@ -206,11 +206,11 @@ class MatrixTestShardingTest {
             matrix.add(listOf("group-${i % 4}", "item-$i"))
         }
 
-        val first = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), totalShards = 5)
-        val second = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), totalShards = 5)
+        val first = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), shardCount = 5)
+        val second = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), shardCount = 5)
 
         for (row in 0 until 20) {
-            assertEquals(first.getShardOfRow(row), second.getShardOfRow(row), "Row $row")
+            assertEquals(first.shardFor(row), second.shardFor(row), "Row $row")
         }
     }
 
@@ -225,14 +225,14 @@ class MatrixTestShardingTest {
         )
         val reversedMatrix = matrix.reversed()
 
-        val sharding = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), totalShards = 3)
-        val reversedSharding = MatrixTestSharding(reversedMatrix, salt = "template".encodeToByteArray(), totalShards = 3)
+        val sharding = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), shardCount = 3)
+        val reversedSharding = MatrixTestSharding(reversedMatrix, salt = "template".encodeToByteArray(), shardCount = 3)
 
-        assertEquals(sharding.getShardOfRow(0), reversedSharding.getShardOfRow(4))
-        assertEquals(sharding.getShardOfRow(1), reversedSharding.getShardOfRow(3))
-        assertEquals(sharding.getShardOfRow(2), reversedSharding.getShardOfRow(2))
-        assertEquals(sharding.getShardOfRow(3), reversedSharding.getShardOfRow(1))
-        assertEquals(sharding.getShardOfRow(4), reversedSharding.getShardOfRow(0))
+        assertEquals(sharding.shardFor(0), reversedSharding.shardFor(4))
+        assertEquals(sharding.shardFor(1), reversedSharding.shardFor(3))
+        assertEquals(sharding.shardFor(2), reversedSharding.shardFor(2))
+        assertEquals(sharding.shardFor(3), reversedSharding.shardFor(1))
+        assertEquals(sharding.shardFor(4), reversedSharding.shardFor(0))
     }
 
     @Test
@@ -242,9 +242,9 @@ class MatrixTestShardingTest {
                 listOf("a", "x"),
                 listOf("a", "x"),
             ),
-            totalShards = 2,
+            shardCount = 2,
         )
-        assertEquals(setOf(1, 2), setOf(sharding.getShardOfRow(0), sharding.getShardOfRow(1)))
+        assertEquals(setOf(0, 1), setOf(sharding.shardFor(0), sharding.shardFor(1)))
     }
 
     @Test
@@ -259,19 +259,19 @@ class MatrixTestShardingTest {
         }
 
         for (i in 0 until 10) {
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 4)
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 4)
 
             val shardsOfB = mutableSetOf<Int>()
             for (row in 0 until 20) {
-                shardsOfB.add(sharding.getShardOfRow(row))
+                shardsOfB.add(sharding.shardFor(row))
             }
-            assertEquals(setOf(3, 4), shardsOfB, "Salt 'template-$i'")
+            assertEquals(setOf(2, 3), shardsOfB, "Salt 'template-$i'")
 
             val shardsOfA = mutableSetOf<Int>()
             for (row in 20 until 40) {
-                shardsOfA.add(sharding.getShardOfRow(row))
+                shardsOfA.add(sharding.shardFor(row))
             }
-            assertEquals(setOf(1, 2), shardsOfA, "Salt 'template-$i'")
+            assertEquals(setOf(0, 1), shardsOfA, "Salt 'template-$i'")
         }
     }
 
@@ -285,14 +285,14 @@ class MatrixTestShardingTest {
         val shardsOfMin = mutableSetOf<Int>()
         val shardsOfMax = mutableSetOf<Int>()
         for (i in 0 until 40) {
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 4)
-            shardsOfMin.add(sharding.getShardOfRow(0))
-            shardsOfMax.add(sharding.getShardOfRow(1))
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 4)
+            shardsOfMin.add(sharding.shardFor(0))
+            shardsOfMax.add(sharding.shardFor(1))
         }
 
         /* Two rows on four shards: each row owns two shards, the salt picks one of them */
-        assertEquals(setOf(1, 2), shardsOfMin)
-        assertEquals(setOf(3, 4), shardsOfMax)
+        assertEquals(setOf(0, 1), shardsOfMin)
+        assertEquals(setOf(2, 3), shardsOfMax)
     }
 
     @Test
@@ -305,11 +305,11 @@ class MatrixTestShardingTest {
         )
 
         for (i in 0 until 10) {
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 2)
-            assertEquals(1, sharding.getShardOfRow(0), "Salt 'template-$i'")
-            assertEquals(2, sharding.getShardOfRow(1), "Salt 'template-$i'")
-            assertEquals(1, sharding.getShardOfRow(2), "Salt 'template-$i'")
-            assertEquals(2, sharding.getShardOfRow(3), "Salt 'template-$i'")
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 2)
+            assertEquals(0, sharding.shardFor(0), "Salt 'template-$i'")
+            assertEquals(1, sharding.shardFor(1), "Salt 'template-$i'")
+            assertEquals(0, sharding.shardFor(2), "Salt 'template-$i'")
+            assertEquals(1, sharding.shardFor(3), "Salt 'template-$i'")
         }
     }
 
@@ -321,13 +321,13 @@ class MatrixTestShardingTest {
             listOf("c"),
         )
 
-        val shardingA = MatrixTestSharding(matrix, salt = "salt_A".encodeToByteArray(), totalShards = 10)
-        val shardingB = MatrixTestSharding(matrix, salt = "salt_B".encodeToByteArray(), totalShards = 10)
-        val shardingC = MatrixTestSharding(matrix, salt = "salt_C".encodeToByteArray(), totalShards = 10)
+        val shardingA = MatrixTestSharding(matrix, salt = "salt_A".encodeToByteArray(), shardCount = 10)
+        val shardingB = MatrixTestSharding(matrix, salt = "salt_B".encodeToByteArray(), shardCount = 10)
+        val shardingC = MatrixTestSharding(matrix, salt = "salt_C".encodeToByteArray(), shardCount = 10)
 
         listOf(shardingA, shardingB, shardingC).forEach { sharding ->
-            assertTrue(sharding.getShardOfRow(0) < sharding.getShardOfRow(1))
-            assertTrue(sharding.getShardOfRow(1) < sharding.getShardOfRow(2))
+            assertTrue(sharding.shardFor(0) < sharding.shardFor(1))
+            assertTrue(sharding.shardFor(1) < sharding.shardFor(2))
         }
     }
 
@@ -342,10 +342,10 @@ class MatrixTestShardingTest {
 
         for (i in 0 until 10) {
             /* As many rows as shards: the n-th row (in sorted order) lands on the n-th shard, independent of the salt */
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 3)
-            assertEquals(3, sharding.getShardOfRow(0), "Salt 'template-$i'")
-            assertEquals(1, sharding.getShardOfRow(1), "Salt 'template-$i'")
-            assertEquals(2, sharding.getShardOfRow(2), "Salt 'template-$i'")
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 3)
+            assertEquals(2, sharding.shardFor(0), "Salt 'template-$i'")
+            assertEquals(0, sharding.shardFor(1), "Salt 'template-$i'")
+            assertEquals(1, sharding.shardFor(2), "Salt 'template-$i'")
         }
     }
 
@@ -357,10 +357,10 @@ class MatrixTestShardingTest {
             listOf(Priority.Medium),
         )
 
-        val sharding = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), totalShards = 3)
-        assertEquals(3, sharding.getShardOfRow(0))
-        assertEquals(1, sharding.getShardOfRow(1))
-        assertEquals(2, sharding.getShardOfRow(2))
+        val sharding = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), shardCount = 3)
+        assertEquals(2, sharding.shardFor(0))
+        assertEquals(0, sharding.shardFor(1))
+        assertEquals(1, sharding.shardFor(2))
     }
 
     @Test
@@ -370,9 +370,9 @@ class MatrixTestShardingTest {
 
         for (permutation in stages.permutations()) {
             /* As many rows as shards: the n-th stage (by ordinal) lands on the n-th shard, independent of the order of the rows */
-            val sharding = MatrixTestSharding(permutation.map { listOf(it) }, salt = "template".encodeToByteArray(), totalShards = 3)
+            val sharding = MatrixTestSharding(permutation.map { listOf(it) }, salt = "template".encodeToByteArray(), shardCount = 3)
             permutation.forEachIndexed { row, stage ->
-                assertEquals(stage.ordinal + 1, sharding.getShardOfRow(row), "$stage in $permutation")
+                assertEquals(stage.ordinal, sharding.shardFor(row), "$stage in $permutation")
             }
         }
     }
@@ -384,12 +384,12 @@ class MatrixTestShardingTest {
         for (i in 0 until 10) {
             /* The order in which the rows are provided must not matter */
             val shuffledMatrix = matrix.shuffled(Random(i))
-            val sharding = MatrixTestSharding(shuffledMatrix, salt = "template-$i".encodeToByteArray(), totalShards = 3)
+            val sharding = MatrixTestSharding(shuffledMatrix, salt = "template-$i".encodeToByteArray(), shardCount = 3)
 
             /* Each stage takes exactly a third of the rows: the n-th stage (by ordinal) fills the n-th shard */
             shuffledMatrix.forEachIndexed { row, values ->
                 val stage = values.first() as Stage
-                assertEquals(stage.ordinal + 1, sharding.getShardOfRow(row), "$values with seed $i")
+                assertEquals(stage.ordinal, sharding.shardFor(row), "$values with seed $i")
             }
         }
     }
@@ -402,10 +402,10 @@ class MatrixTestShardingTest {
             listOf(Version("a")),
         )
 
-        val sharding = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), totalShards = 3)
-        assertEquals(2, sharding.getShardOfRow(0))
-        assertEquals(3, sharding.getShardOfRow(1))
-        assertEquals(1, sharding.getShardOfRow(2))
+        val sharding = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), shardCount = 3)
+        assertEquals(1, sharding.shardFor(0))
+        assertEquals(2, sharding.shardFor(1))
+        assertEquals(0, sharding.shardFor(2))
     }
 
     @Test
@@ -420,9 +420,9 @@ class MatrixTestShardingTest {
         }
 
         for (i in 0 until 10) {
-            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), totalShards = 4)
-            assertEquals(setOf(3, 4), (0 until 20).map { sharding.getShardOfRow(it) }.toSet(), "Salt 'template-$i'")
-            assertEquals(setOf(1, 2), (20 until 40).map { sharding.getShardOfRow(it) }.toSet(), "Salt 'template-$i'")
+            val sharding = MatrixTestSharding(matrix, salt = "template-$i".encodeToByteArray(), shardCount = 4)
+            assertEquals(setOf(2, 3), (0 until 20).map { sharding.shardFor(it) }.toSet(), "Salt 'template-$i'")
+            assertEquals(setOf(0, 1), (20 until 40).map { sharding.shardFor(it) }.toSet(), "Salt 'template-$i'")
         }
     }
 
@@ -437,11 +437,11 @@ class MatrixTestShardingTest {
         )
         val reversedMatrix = matrix.reversed()
 
-        val sharding = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), totalShards = 3)
-        val reversedSharding = MatrixTestSharding(reversedMatrix, salt = "template".encodeToByteArray(), totalShards = 3)
+        val sharding = MatrixTestSharding(matrix, salt = "template".encodeToByteArray(), shardCount = 3)
+        val reversedSharding = MatrixTestSharding(reversedMatrix, salt = "template".encodeToByteArray(), shardCount = 3)
 
         for (row in matrix.indices) {
-            assertEquals(sharding.getShardOfRow(row), reversedSharding.getShardOfRow(matrix.lastIndex - row), "Row $row")
+            assertEquals(sharding.shardFor(row), reversedSharding.shardFor(matrix.lastIndex - row), "Row $row")
         }
     }
 
