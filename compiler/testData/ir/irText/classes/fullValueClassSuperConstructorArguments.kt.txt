@@ -1,0 +1,206 @@
+abstract value class Base {
+  constructor(b: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+value class ElvisArgument : Base {
+  val x: Int?
+    get
+
+  constructor(x: Int?) /* primary */ {
+    <this>.#x = x
+    super/*Base*/(b = { // BLOCK
+      val tmp_0: Int? = x
+      when {
+        EQEQ(arg0 = tmp_0, arg1 = null) -> 0
+        else -> tmp_0
+      }
+    })
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is ElvisArgument -> return false
+    }
+    val tmp_1: ElvisArgument = other /*as ElvisArgument */
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_1.#x).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
+      else -> <this>.#x.hashCode()
+    }
+  }
+
+  override fun toString(): String {
+    return "ElvisArgument(" + "x=" + <this>.#x + ")"
+  }
+
+}
+
+value class GenericArgument : GenericBase<Int> {
+  val x: Int
+    get
+
+  constructor(x: Int) /* primary */ {
+    <this>.#x = x
+    super/*GenericBase*/<Int>(t = x)
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is GenericArgument -> return false
+    }
+    val tmp_2: GenericArgument = other /*as GenericArgument */
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_2.#x).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "GenericArgument(" + "x=" + <this>.#x + ")"
+  }
+
+}
+
+abstract value class GenericBase<T : Any?> {
+  constructor(t: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+value class IfArgument : Base {
+  val x: Int
+    get
+
+  constructor(x: Int) /* primary */ {
+    <this>.#x = x
+    super/*Base*/(b = when {
+      greater(arg0 = x, arg1 = 0) -> 1
+      else -> 2
+    })
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is IfArgument -> return false
+    }
+    val tmp_3: IfArgument = other /*as IfArgument */
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_3.#x).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "IfArgument(" + "x=" + <this>.#x + ")"
+  }
+
+}
+
+abstract value class PairBase {
+  constructor(a: Int, b: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+value class PlainArgument : Base {
+  val x: Int
+    get
+
+  constructor(x: Int) /* primary */ {
+    <this>.#x = x
+    super/*Base*/(b = x)
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is PlainArgument -> return false
+    }
+    val tmp_4: PlainArgument = other /*as PlainArgument */
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_4.#x).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "PlainArgument(" + "x=" + <this>.#x + ")"
+  }
+
+}
+
+value class ReorderedArguments : PairBase {
+  val x: Int
+    get
+
+  constructor(x: Int) /* primary */ {
+    <this>.#x = x
+    { // BLOCK
+      val tmp_5: Int = traced(value = x)
+      val tmp_6: Int = traced(value = 3)
+      super/*PairBase*/(a = tmp_6, b = tmp_5)
+    }
+    /* <init>() */
+
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is ReorderedArguments -> return false
+    }
+    val tmp_7: ReorderedArguments = other /*as ReorderedArguments */
+    when {
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_7.#x).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
+  override fun toString(): String {
+    return "ReorderedArguments(" + "x=" + <this>.#x + ")"
+  }
+
+}
+
+fun traced(value: Int): Int {
+  return value
+}
