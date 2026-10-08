@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.wasm.test.blackbox.WasmGroupingTestIsolator
 import org.jetbrains.kotlin.wasm.test.converters.WasmInProcessSecondStageFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmCompilationSetsGroupingStageBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmJsCoroutinesStackSwitchingBoxRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmWasiCoroutinesStackSwitchingBoxRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 
@@ -172,6 +173,19 @@ abstract class AbstractWasmJsTranslatorTest : AbstractWasmJsCodegenBoxTest("js/j
 
 abstract class AbstractWasmJsCodegenCoroutinesStackSwitchingTest : AbstractWasmJsCodegenBoxTest() {
     override val wasmCompilationSetsBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> = ::WasmJsCoroutinesStackSwitchingBoxRunner
+
+    override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
+        super.configure(this)
+        commonConfiguration {
+            defaultDirectives {
+                +WasmEnvironmentConfigurationDirectives.USE_STACK_SWITCHING_PROPOSAL
+            }
+        }
+    }
+}
+
+abstract class AbstractWasmWasiCodegenCoroutinesStackSwitchingTest : AbstractWasmWasiCodegenBoxTest() {
+    override val wasmCompilationSetsBoxRunner: Constructor<GroupingStageHandler<BinaryArtifacts.Wasm>> = ::WasmWasiCoroutinesStackSwitchingBoxRunner
 
     override fun configure(builder: TwoStageTestConfigurationBuilder): Unit = with(builder) {
         super.configure(this)

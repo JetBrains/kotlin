@@ -123,7 +123,7 @@ internal sealed class WasmVM(
             tool.run(
                 *toolArgs.toTypedArray(),
                 "-W",
-                "gc,function-references,exceptions",
+                if (useStackSwitching) "gc,function-references,exceptions,stack-switching" else "gc,function-references,exceptions",
                 "--invoke",
                 wasiEntryExport,
                 entryFile,
