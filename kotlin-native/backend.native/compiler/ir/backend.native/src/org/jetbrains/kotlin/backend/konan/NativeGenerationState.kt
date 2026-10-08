@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.backend.konan.llvm.objc.BoundAbstractClassTables
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -102,6 +103,8 @@ internal class NativeGenerationState(
 
     val bindClassToObjCNameClassAdapters = mutableMapOf<String, ConstPointer>()
     val bindClassToObjCNameInterfaceAdapters = mutableMapOf<String, ConstPointer>()
+    // Filled by the RTTI phase, used by the codegen phase, see [BoundAbstractClassTables].
+    val bindClassToObjCNameAbstractClassTables = mutableMapOf<IrClass, BoundAbstractClassTables>()
 
     lateinit var objCExport: ObjCExport
 

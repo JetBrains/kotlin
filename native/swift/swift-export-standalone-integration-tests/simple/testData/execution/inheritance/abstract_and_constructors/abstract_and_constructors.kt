@@ -54,3 +54,19 @@ abstract class AbstractCounter(val start: Int) {
 }
 
 fun callTotal(c: AbstractCounter): Int = c.total()
+
+// Interfaces through abstract Kotlin ancestry. The type info of an abstract class has no interface table and no
+// vtable, so its type adapter has to carry them for the runtime to build the type info of a direct Swift subclass.
+
+interface Labeled {
+    fun label(): String
+}
+
+fun callLabel(value: Labeled): String = value.label()
+fun isLabeled(value: AbstractRoot): Boolean = value is Labeled
+
+// The abstract class implements the interface itself.
+abstract class AbstractLabeled : Labeled {
+    abstract fun kind(): String
+    override fun label(): String = "labeled:" + kind()
+}

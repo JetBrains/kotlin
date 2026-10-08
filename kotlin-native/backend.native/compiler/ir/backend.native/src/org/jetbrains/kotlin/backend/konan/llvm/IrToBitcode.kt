@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.emitBindClassToObjCNameAdaptersFromCaches
+import org.jetbrains.kotlin.backend.konan.llvm.objc.generateBoundAbstractClassTables
 import org.jetbrains.kotlin.backend.konan.llvm.objc.processBindClassToObjCNameAnnotations
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.ReifiedFunctionLowering.Companion.isReifiedInline
@@ -97,6 +98,11 @@ internal class RTTIGeneratorVisitor(generationState: NativeGenerationState, refe
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
+    }
+
+    override fun visitFile(declaration: IrFile) {
+        super.visitFile(declaration)
+        generator.generateBoundAbstractClassTables(declaration)
     }
 
     override fun visitClass(declaration: IrClass) {

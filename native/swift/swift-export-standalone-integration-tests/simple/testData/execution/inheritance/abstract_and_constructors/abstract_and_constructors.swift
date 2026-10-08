@@ -40,6 +40,36 @@ func directSwiftSubclassOfAbstractKotlinClass() throws {
     }
 
     #expect(callAbstractValue(value: DirectSwiftAbstractLeaf()) == "swift-direct-abstract")
+    // A Kotlin type check against an interface reads the interface table of the Swift subclass.
+    #expect(!isLabeled(value: DirectSwiftAbstractLeaf()))
+}
+
+@Test
+func directSwiftSubclassOfAbstractKotlinClassImplementingInterface() throws {
+    // The abstract Kotlin class implements the interface: Kotlin-side interface dispatch has to reach
+    // the inherited Kotlin implementation, which in turn reaches the Swift override of the abstract member.
+    class SwiftLabeled: AbstractLabeled {
+        override func kind() -> String { "swift" }
+    }
+    let value = SwiftLabeled()
+
+    #expect(value.label() == "labeled:swift")
+    #expect(callLabel(value: value) == "labeled:swift")
+}
+
+@Test
+func directSwiftSubclassOfAbstractKotlinClassAdoptsInterface() throws {
+    // The abstract Kotlin class does not implement the interface, the Swift subclass adopts it itself:
+    // Kotlin-side type checks and interface dispatch have to see the Swift implementation.
+    class SwiftAdoptingLeaf: AbstractRoot, Labeled {
+        override func abstractValue() -> String { "swift-adopting" }
+        func label() -> String { "swift-label" }
+    }
+    let value = SwiftAdoptingLeaf()
+
+    #expect(isLabeled(value: value))
+    #expect(callLabel(value: value) == "swift-label")
+    #expect(callAbstractValue(value: value) == "swift-adopting")
 }
 
 @Test

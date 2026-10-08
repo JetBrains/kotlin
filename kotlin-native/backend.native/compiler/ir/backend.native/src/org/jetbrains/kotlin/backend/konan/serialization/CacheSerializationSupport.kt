@@ -549,11 +549,14 @@ class SerializedObjCAdapter(
         val typeInfoSymbolName: String,
         val vtableSize: Int,
         val itableSize: Int,
+        // Whether the cache exports the vtable and the interface table of the (abstract) bound class, see `BoundAbstractClassTables`.
+        val hasAbstractClassTables: Boolean,
         val reverseBridges: List<SerializedObjCReverseBridge>,
 ) : FileAwareSerializedData(file)
 
 internal object ObjCAdapterSerializer {
     private const val FLAG_IS_INTERFACE = 1
+    private const val FLAG_HAS_ABSTRACT_CLASS_TABLES = 2
 
     private val SerializedObjCAdapter.payloadSize: Int
         get() = Int.SIZE_BYTES * (8 + 6 * reverseBridges.size)
@@ -578,7 +581,8 @@ internal object ObjCAdapterSerializer {
                 writeInt(stringTable.indices[adapter.file.fqName]!!)
                 writeInt(stringTable.indices[adapter.file.path]!!)
                 writeInt(stringTable.indices[adapter.objCName]!!)
-                writeInt(if (adapter.isInterface) FLAG_IS_INTERFACE else 0)
+                writeInt((if (adapter.isInterface) FLAG_IS_INTERFACE else 0) or
+                        (if (adapter.hasAbstractClassTables) FLAG_HAS_ABSTRACT_CLASS_TABLES else 0))
                 writeInt(stringTable.indices[adapter.typeInfoSymbolName]!!)
                 writeInt(adapter.vtableSize)
                 writeInt(adapter.itableSize)
@@ -601,13 +605,17 @@ internal object ObjCAdapterSerializer {
         val stringTable = StringTable.deserialize(stream)
         while (stream.hasData()) {
             with(stream) {
+                val file = SerializedFileReference(stringTable[readInt()], stringTable[readInt()])
+                val objCName = stringTable[readInt()]
+                val flags = readInt()
                 result.add(SerializedObjCAdapter(
-                        file = SerializedFileReference(stringTable[readInt()], stringTable[readInt()]),
-                        objCName = stringTable[readInt()],
-                        isInterface = readInt() and FLAG_IS_INTERFACE != 0,
+                        file = file,
+                        objCName = objCName,
+                        isInterface = flags and FLAG_IS_INTERFACE != 0,
                         typeInfoSymbolName = stringTable[readInt()],
                         vtableSize = readInt(),
                         itableSize = readInt(),
+                        hasAbstractClassTables = flags and FLAG_HAS_ABSTRACT_CLASS_TABLES != 0,
                         reverseBridges = List(readInt()) {
                             SerializedObjCReverseBridge(
                                     selector = stringTable[readInt()],
