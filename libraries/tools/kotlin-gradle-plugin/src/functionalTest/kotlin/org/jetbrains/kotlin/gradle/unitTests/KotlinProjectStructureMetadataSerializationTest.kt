@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout.METADATA
 import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -47,6 +49,14 @@ class KotlinProjectStructureMetadataSerializationTest {
         assertEquals(sampleMetadata, deserialized)
     }
 
+    /** stdlib and kotlin.test compare this output with checked-in files, so the format must not drift. */
+    @Test
+    fun `json output format is stable`() {
+        val expected = File("src/functionalTest/resources/kotlin-project-structure-metadata.golden.json")
+            .absoluteFile.readText()
+        assertEquals(expected.trim(), sampleMetadata.toJson().trim())
+    }
+
     @Test
     fun `serialize and deserialize - xml`() {
         val xml = sampleMetadata.toXmlDocument()
@@ -72,4 +82,128 @@ class KotlinProjectStructureMetadataSerializationTest {
         )
     }
 
+    /** Files older than format 0.3.1 have no `isPublishedAsRoot`. */
+    @Test
+    fun `deserialize - missing isPublishedAsRoot defaults to false`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": []
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertFalse(deserialized.isPublishedAsRoot)
+    }
+
+    @Test
+    fun `deserialize - unquoted booleans are accepted`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "isPublishedAsRoot": true,
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": [],
+                    "hostSpecific": true
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.hostSpecificSourceSets)
+    }
+
+    @Test
+    fun `deserialize - lenient input and a leading BOM are accepted`() {
+        val lenient = """
+            {
+              // comment
+              projectStructure: {
+                formatVersion: 0.3.3,
+                isPublishedAsRoot: true,
+                variants: [],
+                sourceSets: [
+                  {
+                    name: commonMain,
+                    dependsOn: [],
+                    moduleDependency: []
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson("\uFEFF" + lenient)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.sourceSetNames)
+    }
+
+    @Test
+    fun `deserialize - malformed module dependency is reported`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "isPublishedAsRoot": "false",
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": ["no-separator-here"]
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val message = assertFailsWith<IllegalStateException> { parseKotlinSourceSetMetadataFromJson(json) }.message
+        assertEquals(
+            "Malformed module dependency 'no-separator-here' in project structure metadata, expected '<groupId>:<moduleId>'",
+            message
+        )
+    }
+
+    @Test
+    fun `deserialize - unknown keys are ignored`() {
+        val json = """
+            {
+              "projectStructure": {
+                "formatVersion": "0.3.3",
+                "isPublishedAsRoot": "true",
+                "someFutureKey": { "nested": [1, 2] },
+                "variants": [],
+                "sourceSets": [
+                  {
+                    "name": "commonMain",
+                    "dependsOn": [],
+                    "moduleDependency": [],
+                    "someFutureFlag": "true"
+                  }
+                ]
+              }
+            }
+        """.trimIndent()
+
+        val deserialized = parseKotlinSourceSetMetadataFromJson(json)
+        assertTrue(deserialized.isPublishedAsRoot)
+        assertEquals(setOf("commonMain"), deserialized.sourceSetNames)
+    }
 }
