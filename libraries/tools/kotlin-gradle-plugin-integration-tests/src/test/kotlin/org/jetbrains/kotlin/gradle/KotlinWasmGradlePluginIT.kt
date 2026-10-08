@@ -1633,4 +1633,116 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("d8 test with space in a test name")
+    @GradleTest
+    fun testD8TestWithSpaceInTestName(gradleVersion: GradleVersion) {
+        val testProject = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        d8()
+                    }
+                }
+
+                kotlinMultiplatform.sourceSets.getByName("wasmJsTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test")
+                }
+            }
+        }
+
+        testProject.projectPath.resolve("src/wasmJsTest/kotlin/test.kt")
+            .also {
+                it.parent.createDirectories()
+            }
+            .writeText(
+                """
+                package org
+                
+                import kotlin.test.Test
+                import kotlin.test.assertEquals
+                import kotlin.test.assertTrue
+                
+                class TestClient {
+                    @Test
+                    fun test() {
+                        assertTrue(false)
+                    }
+                    
+                    @Test
+                    fun `test 1`() {
+                        assertEquals(1, 2)
+                    }
+                }
+                """.trimIndent()
+            )
+
+        testProject.buildAndFail(":wasmJsD8Test", "--tests", "org.TestClient.test 1") {
+            assertTasksFailed(":wasmJsD8Test")
+        }
+        testProject.assertExecutedTestCases(
+            ":wasmJsD8Test",
+            "org.TestClient#test 1",
+        )
+    }
+
+    @DisplayName("Node test with space in a test name")
+    @GradleTest
+    fun testNodeTestWithSpaceInTestName(gradleVersion: GradleVersion) {
+        val testProject = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    wasmJs {
+                        nodejs()
+                    }
+                }
+
+                kotlinMultiplatform.sourceSets.getByName("wasmJsTest").dependencies {
+                    implementation("org.jetbrains.kotlin:kotlin-test")
+                }
+            }
+        }
+
+        testProject.projectPath.resolve("src/wasmJsTest/kotlin/test.kt")
+            .also {
+                it.parent.createDirectories()
+            }
+            .writeText(
+                """
+                package org
+                
+                import kotlin.test.Test
+                import kotlin.test.assertEquals
+                import kotlin.test.assertTrue
+                
+                class TestClient {
+                    @Test
+                    fun test() {
+                        assertTrue(false)
+                    }
+                
+                    @Test
+                    fun `test 1`() {
+                        assertEquals(1, 2)
+                    }
+                }
+                """.trimIndent()
+            )
+
+        testProject.buildAndFail(":wasmJsNodeTest", "--tests", "org.TestClient.test 1") {
+            assertTasksFailed(":wasmJsNodeTest")
+        }
+        testProject.assertExecutedTestCases(
+            ":wasmJsNodeTest",
+            "org.TestClient#test 1",
+        )
+    }
 }
