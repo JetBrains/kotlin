@@ -102,10 +102,11 @@ sealed class LlvmFunction(
             returnsObjectType: Boolean,
             llvmValue: LLVMValueRef,
             attributeProvider: LlvmFunctionAttributeProvider,
+            val hasReturnSlot: Boolean,
     ) : LlvmFunction(functionType, returnsObjectType, llvmValue, attributeProvider) {
 
         internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature) :
-                this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature)
+                this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature, signature.hasReturnSlot)
 
         fun addBasicBlock(context: LLVMContextRef, name: String = "") =
                 LLVMAppendBasicBlockInContext(context, llvmValue, name)!!
