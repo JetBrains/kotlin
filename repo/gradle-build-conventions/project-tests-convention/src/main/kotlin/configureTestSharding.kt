@@ -6,6 +6,7 @@
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.junitplatform.JUnitPlatformTestFramework
 import org.gradle.api.tasks.testing.Test
+import org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions
 import org.gradle.kotlin.dsl.withType
 
 internal fun Project.configureTestSharding() {
@@ -15,7 +16,7 @@ internal fun Project.configureTestSharding() {
 
         doFirst {
             if (testShardingArguments.currentShard.isPresent) {
-                if (testFramework !is JUnitPlatformTestFramework) {
+                if (testFramework.options !is JUnitPlatformOptions) {
                     error("Test sharding is only supported on 'Junit5'")
                 }
 
