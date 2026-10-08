@@ -21,23 +21,23 @@ class Holder {
 }
 
 fun test(ref: AtomicReference<Wrapper>, array: AtomicReferenceArray<Wrapper>, w: Wrapper, v: Wrapper) {
-    ref.updateAndGet { it }
-    ref.getAndUpdate { it }
-    ref.accumulateAndGet(w) { a, _ -> a }
-    ref.getAndAccumulate(w) { a, _ -> a }
-    array.updateAndGet(0) { it }
-    array.getAndUpdate(0) { it }
-    array.accumulateAndGet(0, w) { a, _ -> a }
-    array.getAndAccumulate(0, w) { a, _ -> a }
+    ref.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>updateAndGet<!> { it }
+    ref.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>getAndUpdate<!> { it }
+    ref.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>accumulateAndGet<!>(w) { a, _ -> a }
+    ref.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>getAndAccumulate<!>(w) { a, _ -> a }
+    array.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>updateAndGet<!>(0) { it }
+    array.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>getAndUpdate<!>(0) { it }
+    array.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>accumulateAndGet<!>(0, w) { a, _ -> a }
+    array.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>getAndAccumulate<!>(0, w) { a, _ -> a }
 
     val updater = AtomicReferenceFieldUpdater.newUpdater(Holder::class.java, Wrapper::class.java, "wrapper")
-    updater.compareAndSet(Holder(), w, v)
-    updater.weakCompareAndSet(Holder(), w, v)
+    updater.compareAndSet(Holder(), <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>)
+    updater.weakCompareAndSet(Holder(), <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>)
 
     val handle = MethodHandles.lookup().findVarHandle(Holder::class.java, "wrapper", Wrapper::class.java)
-    handle.compareAndSet(Holder(), w, v)
-    handle.weakCompareAndSet(Holder(), w, v)
-    handle.compareAndExchange(Holder(), w, v)
+    handle.compareAndSet(Holder(), <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>)
+    handle.weakCompareAndSet(Holder(), <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>)
+    handle.compareAndExchange(Holder(), <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>v<!>)
 }
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, classReference, equalityExpression, flexibleType,

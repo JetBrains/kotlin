@@ -13,12 +13,12 @@ class Wrapper(val x: Int) {
 }
 
 fun test(ref: AtomicReference<Wrapper>, array: AtomicArray<Wrapper>, notWrapper: AtomicReference<String>) {
-    ref.update { it }
-    ref.fetchAndUpdate { it }
-    ref.updateAndFetch { it }
-    array.updateAt(0) { it }
-    array.fetchAndUpdateAt(0) { it }
-    array.updateAndFetchAt(0) { it }
+    ref.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>update<!> { it }
+    ref.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>fetchAndUpdate<!> { it }
+    ref.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>updateAndFetch<!> { it }
+    array.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>updateAt<!>(0) { it }
+    array.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>fetchAndUpdateAt<!>(0) { it }
+    array.<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>updateAndFetchAt<!>(0) { it }
     notWrapper.update { it }
 }
 

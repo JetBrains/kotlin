@@ -81,6 +81,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirParenthesizedLhsSetOperatorChecker,
         FirCommonAtomicReferenceToPrimitiveCallChecker,
         FirCommonAtomicArrayToPrimitiveCallChecker,
+        FirAtomicUpdateOnWillBecomeValueClassChecker,
         FirGenericQualifierOnConstructorCallChecker,
         FirVarargWithNonTrivialUpperBoundInferredToNothingChecker,
         PlatformClassMappedToKotlinConstructorCallChecker,

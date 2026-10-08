@@ -18,13 +18,16 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE
 import org.jetbrains.kotlin.fir.enableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isPrimitive
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
@@ -47,6 +50,26 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
         CallableId(FqName("java.util"), FqName("WeakHashMap"), Name.identifier("WeakHashMap")),
     )
 
+    // Updates compare the current value with the one they have read by identity.
+    private val updatesOfReceiverTypeArgCallableIds = listOf("AtomicReference", "AtomicReferenceArray").flatMapTo(mutableSetOf()) { className ->
+        listOf("updateAndGet", "getAndUpdate", "accumulateAndGet", "getAndAccumulate").map { name ->
+            CallableId(FqName("java.util.concurrent.atomic"), FqName(className), Name.identifier(name))
+        }
+    }
+
+    // Field updaters and variable handles compare the expected value with the current one by identity.
+    private val compareAndSetCallableIds = buildSet {
+        for (name in listOf("compareAndSet", "weakCompareAndSet")) {
+            add(CallableId(FqName("java.util.concurrent.atomic"), FqName("AtomicReferenceFieldUpdater"), Name.identifier(name)))
+        }
+        for (name in listOf(
+            "compareAndSet", "compareAndExchange", "compareAndExchangeAcquire", "compareAndExchangeRelease",
+            "weakCompareAndSet", "weakCompareAndSetPlain", "weakCompareAndSetAcquire", "weakCompareAndSetRelease",
+        )) {
+            add(CallableId(FqName("java.lang.invoke"), FqName("VarHandle"), Name.identifier(name)))
+        }
+    }
+
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
@@ -65,6 +88,18 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
                     )
                 }
                 reportIdentitySensitiveOperationOnWillBecomeValueClass(argument.source, type)
+            }
+
+            in updatesOfReceiverTypeArgCallableIds -> {
+                val valueType = expression.dispatchReceiver?.resolvedType?.fullyExpandedType()?.typeArguments?.firstOrNull()?.type ?: return
+                reportIdentitySensitiveOperationOnWillBecomeValueClass(expression.calleeReference.source, valueType)
+            }
+
+            in compareAndSetCallableIds -> {
+                // The arguments of a 'VarHandle' method are passed as varargs.
+                for (argument in expression.arguments.flatMap { (it as? FirVarargArgumentsExpression)?.arguments ?: listOf(it) }) {
+                    reportIdentitySensitiveOperationOnWillBecomeValueClass(argument.source, argument.resolvedType)
+                }
             }
 
             in operationsToCheckFirstTypeArgCallableIds -> {
