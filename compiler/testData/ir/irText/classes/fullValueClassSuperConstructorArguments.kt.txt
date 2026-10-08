@@ -12,14 +12,15 @@ value class ElvisArgument : Base {
     get
 
   constructor(x: Int?) /* primary */ {
-    <this>.#x = x
-    super/*Base*/(b = { // BLOCK
-      val tmp_0: Int? = x
+    val tmp_0: Int = { // BLOCK
+      val tmp_1: Int? = x
       when {
-        EQEQ(arg0 = tmp_0, arg1 = null) -> 0
-        else -> tmp_0
+        EQEQ(arg0 = tmp_1, arg1 = null) -> 0
+        else -> tmp_1
       }
-    })
+    }
+    <this>.#x = x
+    super/*Base*/(b = tmp_0)
     /* <init>() */
 
   }
@@ -28,9 +29,9 @@ value class ElvisArgument : Base {
     when {
       other !is ElvisArgument -> return false
     }
-    val tmp_1: ElvisArgument = other /*as ElvisArgument */
+    val tmp_2: ElvisArgument = other /*as ElvisArgument */
     when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp_1.#x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_2.#x).not() -> return false
     }
     return true
   }
@@ -53,8 +54,9 @@ value class GenericArgument : GenericBase<Int> {
     get
 
   constructor(x: Int) /* primary */ {
+    val tmp_3: Any? = x /*as Any? */
     <this>.#x = x
-    super/*GenericBase*/<Int>(t = x)
+    super/*GenericBase*/<Int>(t = tmp_3)
     /* <init>() */
 
   }
@@ -63,9 +65,9 @@ value class GenericArgument : GenericBase<Int> {
     when {
       other !is GenericArgument -> return false
     }
-    val tmp_2: GenericArgument = other /*as GenericArgument */
+    val tmp_4: GenericArgument = other /*as GenericArgument */
     when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp_2.#x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_4.#x).not() -> return false
     }
     return true
   }
@@ -94,11 +96,12 @@ value class IfArgument : Base {
     get
 
   constructor(x: Int) /* primary */ {
-    <this>.#x = x
-    super/*Base*/(b = when {
+    val tmp_5: Int = when {
       greater(arg0 = x, arg1 = 0) -> 1
       else -> 2
-    })
+    }
+    <this>.#x = x
+    super/*Base*/(b = tmp_5)
     /* <init>() */
 
   }
@@ -107,9 +110,9 @@ value class IfArgument : Base {
     when {
       other !is IfArgument -> return false
     }
-    val tmp_3: IfArgument = other /*as IfArgument */
+    val tmp_6: IfArgument = other /*as IfArgument */
     when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp_3.#x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_6.#x).not() -> return false
     }
     return true
   }
@@ -148,9 +151,9 @@ value class PlainArgument : Base {
     when {
       other !is PlainArgument -> return false
     }
-    val tmp_4: PlainArgument = other /*as PlainArgument */
+    val tmp_7: PlainArgument = other /*as PlainArgument */
     when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp_4.#x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_7.#x).not() -> return false
     }
     return true
   }
@@ -170,12 +173,10 @@ value class ReorderedArguments : PairBase {
     get
 
   constructor(x: Int) /* primary */ {
+    val tmp_8: Int = traced(value = x)
+    val tmp_9: Int = traced(value = 3)
     <this>.#x = x
-    { // BLOCK
-      val tmp_5: Int = traced(value = x)
-      val tmp_6: Int = traced(value = 3)
-      super/*PairBase*/(a = tmp_6, b = tmp_5)
-    }
+    super/*PairBase*/(a = tmp_9, b = tmp_8)
     /* <init>() */
 
   }
@@ -184,9 +185,9 @@ value class ReorderedArguments : PairBase {
     when {
       other !is ReorderedArguments -> return false
     }
-    val tmp_7: ReorderedArguments = other /*as ReorderedArguments */
+    val tmp_10: ReorderedArguments = other /*as ReorderedArguments */
     when {
-      EQEQ(arg0 = <this>.#x, arg1 = tmp_7.#x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp_10.#x).not() -> return false
     }
     return true
   }
