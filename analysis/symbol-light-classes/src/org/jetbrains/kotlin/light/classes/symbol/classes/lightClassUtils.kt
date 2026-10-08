@@ -38,14 +38,14 @@ internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(containingModule: KaMo
         return true
     }
 
-    val classOrObjectPsi = sourcePsiSafe<KtClassOrObject>()
-    if (isLocal && classOrObjectPsi != null) {
-        if ((containingFile?.realPsi as? KtFile)?.originalFile?.virtualFile == null) return true
-        if (hasParseErrorsAround(classOrObjectPsi) || PsiUtilCore.hasErrorElementChild(classOrObjectPsi)) return true
-        if (classDeclaredInUnexpectedPosition(classOrObjectPsi)) return true
+    if (!isLocal) {
+        return false
     }
 
-    return false
+    val classOrObjectPsi = realPsi as? KtClassOrObject ?: return false
+    if ((containingFile?.realPsi as? KtFile)?.originalFile?.virtualFile == null) return true
+    if (hasParseErrorsAround(classOrObjectPsi) || PsiUtilCore.hasErrorElementChild(classOrObjectPsi)) return true
+    return classDeclaredInUnexpectedPosition(classOrObjectPsi)
 }
 
 /**
