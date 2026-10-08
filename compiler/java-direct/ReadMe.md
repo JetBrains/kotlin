@@ -153,15 +153,10 @@ A single left-to-right pass mirroring javac's PackageOrTypeName classification (
    previous one — declared, or inherited from its supertypes (`findInheritedNestedClass`,
    supertype walk + finder).
 
-We resolve qualified names like javac: once a segment resolves to a type, we commit to that reading 
-and never backtrack. If a later segment turns out not to be a real nested class, we don't retry the 
-name as a package — we report the missing nested name, and everything after it stays unresolved.
-
-The consequence: when a package and a type share a name (JLS 6.1), the type shadows the package. 
-That matches javac and differs from the PSI Java model, which falls back to the package reading.
-
-Tests live in the java-direct-owned `testData/diagnostics` root: `qualifiedNamePackageClassClash.kt` 
-and `PackageVsClass2.kt` (KT-87813).
+Once a segment resolves to a type, we commit to that reading: a type obscures a package with the same
+name (JLS 6.4.2). If a later segment is not a member type, the name stays unresolved, and its `ClassId`
+keeps the boundary after the resolved prefix (`test/Outer.Missing`), so the diagnostic names the right
+class.
 
 Corner cases: `Map.Entry`-style inherited nested classes.
 

@@ -90,7 +90,8 @@ class JavaClassifierTypeOverAst(
     resolutionContext: JavaResolutionContext,
     extraAnnotations: Collection<JavaAnnotation> = emptyList(),
     memberAnnotations: Collection<JavaAnnotation> = emptyList(),
-) : JavaTypeOverAst(node, tree, resolutionContext, extraAnnotations, memberAnnotations), JavaClassifierType {
+) : JavaTypeOverAst(node, tree, resolutionContext, extraAnnotations, memberAnnotations), JavaClassifierType,
+    JavaClassifierTypeWithRecordedClassId {
 
     private val rawTypeNameParts: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         tree.extractReferenceNameParts(node)
@@ -103,6 +104,15 @@ class JavaClassifierTypeOverAst(
         }
 
     override val classifier: JavaClassifier? by lazy(LazyThreadSafetyMode.PUBLICATION) { computeClassifier() }
+
+    override val recordedClassId: ClassId? by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        if (classifier != null) return@lazy null
+        val parts = rawTypeNameParts
+        if (parts.size <= 1) null
+        else with(resolutionContext) {
+            resolveQualifiedNameToClassIdFromParts(parts, fullResolution = true, allowDanglingMemberClassId = true)
+        }
+    }
 
     private fun computeClassifier(): JavaClassifier? {
         val parts = rawTypeNameParts

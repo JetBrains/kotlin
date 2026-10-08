@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.java.direct.resolution.findInnerClassFromSupertypes
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.classId
+import org.jetbrains.kotlin.load.java.structure.classifierClassId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -169,6 +170,38 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
             assertNotNull(classifier) { "$fieldName should resolve through the symbol provider" }
             assertEquals(generated, (classifier as JavaClass).classId, fieldName)
         }
+    }
+
+    @Test
+    @OptIn(SessionConfiguration::class)
+    fun testUnresolvedMemberTypeKeepsClassIdBoundary() {
+        val source = """
+            package test;
+            class User {
+                Outer.Missing qualified;
+                test.Outer.Missing fullyQualified;
+                Outer.Inner.Missing deep;
+            }
+            class Outer {
+                class Inner {}
+            }
+        """.trimIndent()
+        val outer = ClassId(FqName("test"), Name.identifier("Outer"))
+        val known = setOf(outer, outer.createNestedClassId(Name.identifier("Inner")))
+        val session = createDummyFirSessionForTests()
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { if (it in known) libraryClassSymbol(it) else null })
+        val user = parseFirstClass(source, session)
+
+        fun recordedClassIdOf(fieldName: String): ClassId? {
+            val type = user.fields.first { it.name.asString() == fieldName }.type as JavaClassifierType
+            assertNull(type.classifier) { "$fieldName should stay unresolved" }
+            return type.classifierClassId
+        }
+
+        val missing = ClassId(FqName("test"), FqName("Outer.Missing"), isLocal = false)
+        assertEquals(missing, recordedClassIdOf("qualified"))
+        assertEquals(missing, recordedClassIdOf("fullyQualified"))
+        assertEquals(ClassId(FqName("test"), FqName("Outer.Inner.Missing"), isLocal = false), recordedClassIdOf("deep"))
     }
 
     @Test
