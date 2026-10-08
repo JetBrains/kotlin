@@ -37,9 +37,21 @@ val compilationWarmupsParam = providers.gradleProperty("compilationWarmups").orN
 val compilationIterationsParam = providers.gradleProperty("compilationIterations").orNull
 val compilationIncludeParam = providers.gradleProperty("compilationInclude").orNull
 val compilationSizeParam = providers.gradleProperty("compilationSize").orNull
+val reflectionIncludeParam = providers.gradleProperty("reflectionInclude").orNull
+val reflectionImplementationParam = providers.gradleProperty("reflectionImplementation").orNull
 
 val compilationBenchmarks = "org.jetbrains.kotlin.benchmarks.jmh.compilation.*"
-val reflectionBenchmarks = "org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection.*"
+val reflectionPackage = "org.jetbrains.kotlin.benchmarks.jmh.jvm.reflection"
+val reflectionBenchmarks = "$reflectionPackage.*"
+
+// `reflectionInclude` is `<class>.<method>`, or `<class>.*` for all methods of the class.
+// Examples: `KClassMembersHierarchyBenchmark.kotlinHierarchy`, `KClassMembersHierarchyBenchmark.*`
+val reflectionIncludePattern = reflectionIncludeParam?.let { value ->
+    val (className, methodName) = Regex("""(\w+)\.(\w+|\*)""").matchEntire(value)?.destructured
+        ?: error("Invalid reflectionInclude '$value': expected '<class>.<method>' or '<class>.*'")
+    val methodPattern = if (methodName == "*") ".*" else methodName
+    "^$reflectionPackage\\.$className\\.$methodPattern$"
+}
 
 benchmark {
     configurations {
@@ -78,7 +90,13 @@ benchmark {
         // The reflection benchmarks carry their own JMH settings: they are single-shot and select the
         // reflection implementation through a `reflectImplementation` param
         register("reflection") {
-            include(reflectionBenchmarks)
+            include(reflectionIncludePattern ?: reflectionBenchmarks)
+
+            when (reflectionImplementationParam) {
+                null -> {} // If not passed, use both values from the `@Param` annotation
+                "new", "k1" -> param("reflectImplementation", reflectionImplementationParam)
+                else -> error("Unknown reflectionImplementation '$reflectionImplementationParam': expected 'new' or 'k1'")
+            }
 
             iterationTime = 1 // Required param
             iterationTimeUnit = "sec" // Required param
