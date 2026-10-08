@@ -13,9 +13,9 @@ class Wrapper(val x: Int) {
 }
 
 fun test(ref: AtomicReference<Wrapper>, javaRef: java.util.concurrent.atomic.AtomicReference<Wrapper>, w: Wrapper) {
-    ref.compareAndSet(w, w)
-    ref.compareAndExchange(w, w)
-    javaRef.compareAndSet(w, w)
+    ref.compareAndSet(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>)
+    ref.compareAndExchange(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>)
+    javaRef.compareAndSet(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>w<!>)
 }
 
 /* GENERATED_FIR_TAGS: andExpression, classDeclaration, equalityExpression, functionDeclaration, isExpression,

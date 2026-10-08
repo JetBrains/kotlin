@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkAtomicCallReceiverForStableIdentity
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasStableIdentityForAtomicOperations
+import org.jetbrains.kotlin.fir.analysis.checkers.reportIdentitySensitiveOperationOnWillBecomeValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.arguments
@@ -47,16 +48,15 @@ abstract class AbstractAtomicReferenceToPrimitiveCallChecker(
             )
 
             for ([argument, parameter] in expression.arguments.zip(callable.valueParameterSymbols)) {
-                if (
-                    !argument.resolvedType.hasStableIdentityForAtomicOperations &&
-                    isDangerousAtomicCallParameterNameWithin(callable, parameter.name)
-                ) {
+                if (!isDangerousAtomicCallParameterNameWithin(callable, parameter.name)) continue
+                if (!argument.resolvedType.hasStableIdentityForAtomicOperations) {
                     reporter.reportOn(
                         source = argument.source,
                         factory = FirErrors.ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY,
                         argument.resolvedType,
                     )
                 }
+                reportIdentitySensitiveOperationOnWillBecomeValueClass(argument.source, argument.resolvedType)
             }
         }
     }
