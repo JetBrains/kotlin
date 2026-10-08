@@ -553,6 +553,18 @@ class Arrays {
         }
 
         @Sample
+        fun arrayLiteralSample() {
+            val emptyArray: Array<Any> = []
+            assertPrints(emptyArray.contentToString(), "[]")
+
+            val strings: Array<String> = ["Hello", "world"]
+            assertPrints(strings.contentToString(), "[Hello, world]")
+
+            val numbers: Array<Number> = [3.14, 42L, 0.123f]
+            assertPrints(numbers.contentToString(), "[3.14, 42, 0.123]")
+        }
+
+        @Sample
         fun doubleArrayOfSample() {
             val emptyDoubleArray = doubleArrayOf()
             assertPrints(emptyDoubleArray.contentToString(), "[]")
