@@ -26,4 +26,5 @@ fun box(): String {
     return "OK"
 }
 
+// @MainKt.class:
 // 0 CHECKCAST
