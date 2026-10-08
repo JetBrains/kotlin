@@ -217,8 +217,10 @@ internal fun getWasmAbiVersion(): Int =
 // Internal interface for producing Wasm branch hint annotations
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
-internal fun likely(cond: Boolean): Boolean = cond
+internal fun likely(cond: Boolean): Boolean =
+    implementedAsIntrinsic
 
 @ExcludedFromCodegen
 @UsedFromCompilerGeneratedCode
-internal fun unlikely(cond: Boolean): Boolean = cond
+internal fun unlikely(cond: Boolean): Boolean =
+    implementedAsIntrinsic
