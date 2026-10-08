@@ -1,0 +1,4 @@
+Please specify the test phase in `// RUN_PIPELINE_TILL` directive: missingDirectiveWithFrontendErrors.kt
++ // RUN_PIPELINE_TILL: FRONTEND
+
+UNRESOLVED_REFERENCE: Unresolved reference 'nonExistingFunction'. at missingDirectiveWithFrontendErrors.kt:(17,36)
