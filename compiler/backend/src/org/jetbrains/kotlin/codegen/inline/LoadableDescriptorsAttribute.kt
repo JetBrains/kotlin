@@ -11,9 +11,10 @@ import org.jetbrains.org.objectweb.asm.util.TextifierSupport
 const val LOADABLE_DESCRIPTORS_ATTRIBUTE_NAME = "LoadableDescriptors"
 
 /**
- * The `LoadableDescriptors` class-file attribute (JEP 401), listing field descriptors of value-class field types so the JVM may
- * eagerly load them and flatten their storage. Layout: `u2 number_of_descriptors; u2 descriptors[number_of_descriptors]`, where
- * each entry is a constant-pool index of a `CONSTANT_Utf8` holding a field descriptor.
+ * The `LoadableDescriptors` class-file attribute (JEP 401), listing the field descriptors of the value classes mentioned by field and
+ * method signatures so the JVM may eagerly load them to flatten fields and scalarize method parameters. Layout:
+ * `u2 number_of_descriptors; u2 descriptors[number_of_descriptors]`, where each entry is a constant-pool index of a `CONSTANT_Utf8`
+ * holding a field descriptor.
  */
 class LoadableDescriptorsAttribute(val descriptors: List<String>) :
     Attribute(LOADABLE_DESCRIPTORS_ATTRIBUTE_NAME), TextifierSupport {
