@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KaConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KaConstantValueForAnnotation
@@ -281,28 +280,23 @@ internal class SymbolLightAccessorMethod private constructor(
     override fun hashCode(): Int = propertyAccessorDeclaration?.hashCode() ?: containingPropertyDeclaration.hashCode()
 
     private val _parametersList by lazyPub {
-        val parameterPopulator: (LightParameterListBuilder) -> Unit = if (!isGetter) {
-            { builder ->
-                withAccessorSymbol { accessorSymbol ->
-                    val setterParameter = (accessorSymbol as? KaPropertySetterSymbol)?.parameter ?: return@withAccessorSymbol
-                    builder.addParameter(
-                        SymbolLightSetterParameter(
-                            containingPropertySymbolPointer = containingPropertySymbolPointer,
-                            parameterSymbol = setterParameter,
-                            containingMethod = this@SymbolLightAccessorMethod,
-                        )
-                    )
-                }
-            }
-        } else {
-            { }
-        }
-
         SymbolLightParameterList(
             parent = this@SymbolLightAccessorMethod,
             correspondingCallablePointer = containingPropertySymbolPointer,
-            parameterPopulator = parameterPopulator,
-        )
+        ) { builder ->
+            if (isGetter) return@SymbolLightParameterList
+
+            withAccessorSymbol { accessorSymbol ->
+                val setterParameter = (accessorSymbol as? KaPropertySetterSymbol)?.parameter ?: return@withAccessorSymbol
+                builder.addParameter(
+                    SymbolLightSetterParameter(
+                        containingPropertySymbolPointer = containingPropertySymbolPointer,
+                        parameterSymbol = setterParameter,
+                        containingMethod = this@SymbolLightAccessorMethod,
+                    )
+                )
+            }
+        }
     }
 
     override fun getParameterList(): PsiParameterList = _parametersList
