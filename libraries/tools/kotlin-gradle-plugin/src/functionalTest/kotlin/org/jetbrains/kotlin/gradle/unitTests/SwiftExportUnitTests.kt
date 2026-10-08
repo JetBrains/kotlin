@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSP
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
@@ -164,6 +165,19 @@ class SwiftExportUnitTests {
         val generateTask = project.tasks.getByName("iosSimulatorArm64DebugGenerateSPMPackage") as GenerateSPMPackageFromSwiftExport
 
         assertEquals(setOf(swiftExportTask.parameters.outputDirectory.get().asFile), generateTask.swiftExportFiles.files)
+        assertTrue(swiftExportTask in generateTask.taskDependencies.getDependencies(null))
+    }
+
+    @Test
+    fun `test swift export takes the main klib from its compile task`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.getByName("iosSimulatorArm64SwiftExport") as SwiftExportTask
+        val compileTask = project.tasks.getByName("compileKotlinIosSimulatorArm64") as KotlinNativeCompile
+
+        assertEquals(compileTask.outputFile.get(), swiftExportTask.mainModuleInput.artifact.get().asFile)
+        assertTrue(compileTask in swiftExportTask.taskDependencies.getDependencies(null))
     }
 
     @Test
@@ -625,6 +639,8 @@ class SwiftExportUnitTests {
 
         assertEquals(listOf("-XX:+UseG1GC", "-Dfoo=bar"), swiftExportTask.customJvmArgs.get())
         assertEquals(listOf("-XX:+UseG1GC", "-Dfoo=bar", "-Xmx1g"), swiftExportTask.workerJvmArgs)
+        // Only the `-D` entries are an input: the heap size doesn't change the translation, a system property might.
+        assertEquals(listOf("-Dfoo=bar"), swiftExportTask.trackedWorkerJvmArgs)
     }
 
     @Test

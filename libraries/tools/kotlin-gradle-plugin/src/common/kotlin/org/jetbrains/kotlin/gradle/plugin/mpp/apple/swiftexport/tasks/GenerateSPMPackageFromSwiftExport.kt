@@ -49,11 +49,11 @@ internal abstract class SwiftExportTargetOutput {
     @get:Input
     abstract val target: Property<KonanTarget>
 
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    /** The modules file of the run. [files] already contains it, so it isn't tracked separately. */
+    @get:Internal
     abstract val swiftModulesFile: RegularFileProperty
 
-    /** The generated files. [swiftModulesFile] has their paths, but not their content. */
+    /** The output directory of the run, with [swiftModulesFile] and the generated files it lists. */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val files: ConfigurableFileCollection
@@ -108,12 +108,11 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val kotlinRuntime: DirectoryProperty
 
-    @get:InputFile
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    /** The modules file of the run, Xcode flow only. [swiftExportFiles] already contains it, so it isn't tracked separately. */
+    @get:Internal
     abstract val swiftModulesFile: RegularFileProperty
 
-    /** The generated files [swiftModulesFile] points at: it lists their paths, not their content. Xcode flow only. */
+    /** The output directory of the run, with [swiftModulesFile] and the generated files it lists. Xcode flow only. */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val swiftExportFiles: ConfigurableFileCollection

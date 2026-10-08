@@ -56,6 +56,7 @@ internal abstract class SwiftExportTask @Inject constructor(
         @get:Optional
         abstract val flattenPackage: Property<String>
 
+        /** The klib to translate. Wired from the compile task, so the dependency on it comes with the file. */
         @get:InputFiles
         @get:PathSensitive(PathSensitivity.RELATIVE)
         abstract val artifact: RegularFileProperty
@@ -200,20 +201,22 @@ internal abstract class SwiftExportTask @Inject constructor(
             }
             .sorted()
 
-    /**
-     * Tracks the output files of the main compilation as task inputs.
-     */
-    @get:InputFiles
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val mainCompilationOutputFiles: ConfigurableFileCollection
-
     @get:Internal
     abstract val ignoreExperimentalDiagnostic: Property<Boolean>
 
-    @get:Input
+    /**
+     * The JVM arguments of the worker process. Tracked through [trackedWorkerJvmArgs]: the heap size and the other
+     * `-X` flags don't change what the translation produces, a `-D` property read by the tool might.
+     */
+    @get:Internal
     internal val customJvmArgs: ListProperty<String> = objectFactory
         .listProperty<String>()
         .chainedFinalizeValueOnRead()
+
+    /** The entries of [customJvmArgs] that aren't `-X` flags. */
+    @get:Input
+    internal val trackedWorkerJvmArgs: List<String>
+        get() = customJvmArgs.get().filterNot { it.startsWith("-X") }
 
     /**
      * [customJvmArgs] with `-Xmx1g` appended unless they already set `-Xmx`.
