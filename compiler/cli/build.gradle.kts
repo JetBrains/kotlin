@@ -23,7 +23,7 @@ dependencies {
     api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":compiler:fir:fir2ir"))
-    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:checkers:checkers.common"))
     api(project(":kotlin-util-io"))
     implementation(project(":js:js.config"))
     implementation(project(":native:native.config"))
