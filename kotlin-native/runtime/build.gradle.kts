@@ -491,12 +491,12 @@ bitcode {
 
         testsGroup("cms_gc_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "legacy_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "legacy_alloc", "manual_gcScheduler", "objc", "noop_crashHandler", "delta_main_stackmap")
         }
 
         testsGroup("cms_gc_custom_test") {
             testedModules.addAll("concurrent_ms_gc")
-            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "custom_alloc", "manual_gcScheduler", "objc", "noop_crashHandler")
+            testSupportModules.addAll("runtime", "noop_externalCallsChecker", "custom_alloc", "manual_gcScheduler", "objc", "noop_crashHandler", "delta_main_stackmap")
         }
 
         module("delta_main_stackmap") {

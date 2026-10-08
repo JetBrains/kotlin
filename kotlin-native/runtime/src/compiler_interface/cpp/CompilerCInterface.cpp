@@ -70,10 +70,14 @@ touchFunction(Kotlin_initRuntimeIfNeeded)
 
 touchFunction(Kotlin_mm_switchThreadStateNative)
 touchFunction(Kotlin_mm_switchThreadStateNative_debug)
+#ifdef __aarch64__
 touchFunction(Kotlin_mm_switchThreadStateNative_delta_main)
+#endif
 touchFunction(Kotlin_mm_switchThreadStateRunnable)
 touchFunction(Kotlin_mm_switchThreadStateRunnable_debug)
+#ifdef __aarch64__
 touchFunction(Kotlin_mm_switchThreadStateRunnable_delta_main)
+#endif
 touchFunction(Kotlin_mm_safePointFunctionPrologue)
 touchFunction(Kotlin_mm_safePointWhileLoopBody)
 

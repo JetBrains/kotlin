@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+#include "CompilerConstants.hpp"
 #include "TestSupportCompilerGenerated.hpp"
 
 #include "Logging.hpp"
@@ -99,6 +100,8 @@ extern const TypeInfo* theThrowableTypeInfo = theThrowableTypeInfoHolder.typeInf
 extern const TypeInfo* theUnitTypeInfo = theUnitTypeInfoHolder.typeInfo();
 extern const TypeInfo* theCleanerImplTypeInfo = theCleanerImplTypeInfoHolder.typeInfo();
 extern const TypeInfo* theRegularWeakReferenceImplTypeInfo = theRegularWeakReferenceImplTypeInfoHolder.typeInfo();
+
+extern const char* Kotlin_gcStackMapScheme = kotlin::compiler::SHADOW_STACK;
 
 extern const ArrayHeader theEmptyArray = {theArrayTypeInfoHolder.typeInfo(), /* element count */ 0};
 
