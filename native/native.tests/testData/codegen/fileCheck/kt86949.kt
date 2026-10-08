@@ -23,7 +23,7 @@ fun foo(): Boolean {
         count++
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // On the second iteration `x` is an Any(), so the `if` expression is not always an `A`;
 // its type must not be rewritten to `A`, which would coerce the `Any()` to `A` with an unsafe downcast.
         last = (if (bar()) x else a) is A
@@ -33,7 +33,8 @@ fun foo(): Boolean {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     return if (foo()) "fail" else "OK"
 }

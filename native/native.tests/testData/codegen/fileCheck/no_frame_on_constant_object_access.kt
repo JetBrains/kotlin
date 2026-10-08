@@ -16,20 +16,21 @@ object C {
 }
 
 // CHECK-LABEL: define i32 @"kfun:#f(){}kotlin.Int"()
-// CHECK-NOT: EnterFrame
+// CHECK-EAGER_SHADOW_STACK-NOT: EnterFrame
 fun f() = A.x + B.y
 // CHECK: {{^}}epilogue:
 
 // test that assumption on how EnterFrame looks like is not broken
 // CHECK-LABEL: define void @"kfun:#g(){}"()
-// CHECK: EnterFrame
+// CHECK-EAGER_SHADOW_STACK: EnterFrame
 fun g() {
     val x = C.x
 }
 // CHECK: {{^}}epilogue:
 
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val f = f()
     if (f != 12)

@@ -15,7 +15,8 @@ fun ieee754(a: Float, b: Float): Boolean {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val x = and(1, 2)
     val y = ieee754(0.0f, 1.0f)

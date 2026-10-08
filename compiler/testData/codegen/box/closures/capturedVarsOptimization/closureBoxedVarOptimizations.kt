@@ -130,39 +130,48 @@ value class BooleanWrapper(val v: Boolean)
 
 // CHECK-LABEL: define void @"kfun:#captureValueClassVar(){}"
 fun captureValueClassVar() {
-    // CHECK: call ptr @"kfun:#<AnyWrapper-box>(AnyWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<AnyWrapper-box>(AnyWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<AnyWrapper-box>(AnyWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var any = AnyWrapper(Any())
 
-    // CHECK: call ptr @"kfun:#<ByteWrapper-box>(ByteWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<ByteWrapper-box>(ByteWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<ByteWrapper-box>(ByteWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var byte = ByteWrapper(1.toByte())
 
-    // CHECK: call ptr @"kfun:#<ShortWrapper-box>(ShortWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<ShortWrapper-box>(ShortWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<ShortWrapper-box>(ShortWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var short = ShortWrapper(2.toShort())
 
-    // CHECK: call ptr @"kfun:#<IntWrapper-box>(IntWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<IntWrapper-box>(IntWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<IntWrapper-box>(IntWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var int = IntWrapper(3)
 
-    // CHECK: call ptr @"kfun:#<LongWrapper-box>(LongWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<LongWrapper-box>(LongWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<LongWrapper-box>(LongWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var long = LongWrapper(4L)
 
-    // CHECK: call ptr @"kfun:#<FloatWrapper-box>(FloatWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<FloatWrapper-box>(FloatWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<FloatWrapper-box>(FloatWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var float = FloatWrapper(5.0f)
 
-    // CHECK: call ptr @"kfun:#<DoubleWrapper-box>(DoubleWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<DoubleWrapper-box>(DoubleWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<DoubleWrapper-box>(DoubleWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var double = DoubleWrapper(6.0)
 
-    // CHECK: call ptr @"kfun:#<CharWrapper-box>(CharWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<CharWrapper-box>(CharWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<CharWrapper-box>(CharWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var char = CharWrapper('a')
 
-    // CHECK: call ptr @"kfun:#<BooleanWrapper-box>(BooleanWrapper){}kotlin.Any"
+    // CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#<BooleanWrapper-box>(BooleanWrapper){}kotlin.Any"
+    // CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#<BooleanWrapper-box>(BooleanWrapper){}kotlin.Any"
     // CHECK: call void @"kfun:kotlin.internal.SharedVariableBox#<init>(1:0){}"
     var boolean = BooleanWrapper(true)
     run2 {

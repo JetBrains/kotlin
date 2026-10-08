@@ -6,15 +6,21 @@
 package codegen.stringConcatenationTypeNarrowing.kt53119_append_generated
 import kotlin.test.*
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeAny
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeAny
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeAny
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
 // CHECK: ret ptr
@@ -23,12 +29,17 @@ fun maybeAnyMaybeAny(maybeAny1: Any?, maybeAny2: Any?): String {
     return "$maybeAny1,$maybeAny2"
 }
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeString
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeString
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeString
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
@@ -38,12 +49,17 @@ fun maybeAnyMaybeString(maybeAny1: Any?, maybeString2: String?): String {
     return "$maybeAny1,$maybeString2"
 }
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyString
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyString
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyString
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
@@ -55,15 +71,21 @@ fun maybeAnyString(maybeAny1: Any?, string: String): String {
 
 data class Foo(val bar: Int)
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyFoo
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyFoo
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyFoo
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
@@ -72,14 +94,20 @@ data class Foo(val bar: Int)
 fun maybeAnyFoo(maybeAny: Any?, foo: Foo): String {
     return "$maybeAny,$foo"
 }
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeFoo
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeFoo
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated#maybeAnyMaybeFoo
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
-// CHECK-OPT: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_append_generated.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-EAGER_SHADOW_STACK: ptr @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
+// CHECK-OPT-LATE_SHADOW_STACK: ptr addrspace(1) @"kfun:kotlin.text.StringBuilder#append(kotlin.String?)
 // CHECK-OPT-NOT: ptr @"kfun:kotlin.text.StringBuilder#append
 
 

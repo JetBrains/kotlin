@@ -6,14 +6,14 @@
 
 class SimpleData(val value: Int, var next: SimpleData? = null)
 
-// CHECK-LABEL: define {{.*}}i32 @"kfun:#leafComputation(kotlin.Int;kotlin.Int){}kotlin.Int"(i32 %0, i32 %1)
-// CHECK-NOT: EnterFrame
-// CHECK-NOT: LeaveFrame
+// CHECK-DEBUG-LABEL: define {{.*}}i32 @"kfun:#leafComputation(kotlin.Int;kotlin.Int){}kotlin.Int"(i32 %0, i32 %1)
+// CHECK-DEBUG-NOT: EnterFrame
+// CHECK-DEBUG-NOT: LeaveFrame
 fun leafComputation(a: Int, b: Int): Int {
     return (a * 31) xor (b + 17)
 }
 
-// CHECK-LABEL: define {{.*}}ptr @"kfun:#allocatingFunction(kotlin.Int){}SimpleData"(i32 %0)
+// CHECK-LABEL: define {{.*}}ptr @"kfun:#allocatingFunction(kotlin.Int){}SimpleData"(i32 {{.*}}%0)
 // CHECK: call void @llvm.memset
 // CHECK-DEBUG: call void @EnterFrame(ptr %{{.*}}, i32 0, i32 {{.*}})
 // CHECK-DEBUG: call void @LeaveFrame(ptr %{{.*}}, i32 0, i32 {{.*}})

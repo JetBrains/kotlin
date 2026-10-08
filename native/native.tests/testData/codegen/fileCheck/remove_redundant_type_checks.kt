@@ -19,7 +19,7 @@ fun test1(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if (o is A)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -33,7 +33,7 @@ fun test1(o: Any): Int {
 fun test2(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -47,7 +47,7 @@ fun test3(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if (o as? A != null)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -62,7 +62,7 @@ fun test4(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     val temp = when (o) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -100,7 +100,8 @@ fun baz(a: A) = a.x == 3
 
 // CHECK-LABEL: define i32 @"kfun:#test6(kotlin.Int;kotlin.Any){}kotlin.Int
 fun test6(x: Int, o: Any): Int {
-// CHECK-DEBUG: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:kotlin.native.internal#downcast
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     val result = if (x == 42 || baz(o as A))
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
@@ -109,7 +110,7 @@ fun test6(x: Int, o: Any): Int {
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
         (o as? A)?.x ?: 0
     else
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -121,7 +122,8 @@ fun test6(x: Int, o: Any): Int {
 
 // CHECK-LABEL: define i32 @"kfun:#test7(kotlin.Int;kotlin.Any){}kotlin.Int
 fun test7(x: Int, o: Any): Int {
-// CHECK-DEBUG: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:kotlin.native.internal#downcast
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     if (x == 42 || baz(o as A))
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
@@ -129,7 +131,7 @@ fun test7(x: Int, o: Any): Int {
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
         return (o as? A)?.x ?: 0
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -143,7 +145,7 @@ fun test8(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if ((o as? A)?.s?.length == 5)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -155,13 +157,13 @@ fun test8(o: Any): Int {
 
 // CHECK-LABEL: define i32 @"kfun:#test9(A?){}kotlin.Int
 fun test9(s: A?): Int {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
     return if (s?.x == 5)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -178,7 +180,7 @@ fun test10(x: Int, o: Any): Int {
     val a = o as? A
     val y = x + x
     return if (a != null)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -195,7 +197,7 @@ fun test11(x: Int, o: Any): Int {
     val f = o is A
     val y = x + x
     return if (f)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -215,7 +217,7 @@ fun test12(x: Int, o: Any): Int {
     val a = mutO as? A
     val y = x + x
     val z = if (a != null)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -223,7 +225,8 @@ fun test12(x: Int, o: Any): Int {
         (mutO as A).x
     else y
 
-// CHECK: call ptr @"kfun:#getAny(){}kotlin.Any
+// CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#getAny(){}kotlin.Any
+// CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#getAny(){}kotlin.Any
     mutO = getAny()
     return if (a != null)
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
@@ -242,7 +245,7 @@ fun test13(x: Int, o: Any): Int {
     var a = o as? A
     val y = x + x
     val z = if (a != null)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -270,7 +273,7 @@ fun test14(x: Int, o: Any): Int {
     val f = mutO is A
     val y = x + x
     val z = if (f)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -278,7 +281,8 @@ fun test14(x: Int, o: Any): Int {
         (mutO as A).x
     else y
 
-// CHECK: call ptr @"kfun:#getAny(){}kotlin.Any
+// CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:#getAny(){}kotlin.Any
+// CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:#getAny(){}kotlin.Any
     mutO = getAny()
     return if (f)
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
@@ -297,7 +301,7 @@ fun test15(x: Int, o: Any): Int {
     var f = o is A
     val y = x + x
     val z = if (f)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -327,7 +331,7 @@ fun test16(x: Int, a: Any, b: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -357,13 +361,13 @@ fun test17(x: Int, a: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
         o.x +
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -382,13 +386,13 @@ fun test18(x: Int, a: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if (a is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
         a.x +
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -406,7 +410,7 @@ fun test19(x: Int, a: Any, b: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -440,7 +444,7 @@ fun test20(x: Int, a: Any, b: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -471,13 +475,13 @@ fun test21(x: Int, a: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
         o.x +
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -497,13 +501,13 @@ fun test22(x: Int, a: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if (a is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
         a.x +
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -515,12 +519,13 @@ fun test22(x: Int, a: Any): Int {
 
 // CHECK-LABEL: define i32 @"kfun:#test23(kotlin.Int;kotlin.Any){}kotlin.Int
 fun test23(x: Int, a: Any): Int {
-// CHECK-DEBUG: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:kotlin.native.internal#downcast
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
     val f = (a as A).x > x
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -536,7 +541,7 @@ fun test24(x: Int, a: Any, b: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -563,13 +568,13 @@ fun test25(x: Int, a: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
         o.x +
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -585,13 +590,13 @@ fun test26(x: Int, a: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if (a is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
         a.x +
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-y>(){}kotlin.Int
@@ -612,7 +617,7 @@ fun test27(list: List<Any>): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     } while (o !is A)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -651,7 +656,7 @@ fun test29(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
         if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -676,7 +681,7 @@ fun test30(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
         if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -685,7 +690,7 @@ fun test30(o: Any): Int {
             break
         }
     } while (true)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -701,7 +706,7 @@ fun test31(o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
         if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -722,7 +727,8 @@ fun test31(o: Any): Int {
 fun test32(o: Any, x: Int): Int {
     var result = x
     while (result < 10) {
-// CHECK-DEBUG: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:kotlin.native.internal#downcast
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
         result = (o as A).x
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -739,7 +745,8 @@ fun test32(o: Any, x: Int): Int {
 // CHECK-LABEL: define i32 @"kfun:#test33(kotlin.Any;kotlin.Any;kotlin.Int){}kotlin.Int"
 fun test33(o1: Any, o2: Any, x: Int): Int {
     var result = x
-// CHECK-DEBUG: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:kotlin.native.internal#downcast
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     var o: Any = o1 as A
     while (result < 10) {
@@ -765,7 +772,7 @@ fun test34(o: Any, x: Int): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
         if (o is A) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: invoke i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -785,15 +792,17 @@ fun test34(o: Any, x: Int): Int {
 
 // CHECK-LABEL: define i32 @"kfun:#test35(B){}kotlin.Int
 fun test35(b: B): Int {
-// CHECK-DEBUG: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:B#<get-o>(){}kotlin.Any
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:B#internal
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if ((b.o as? A)?.s?.length == 5)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
-// CHECK-DEBUG: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:B#<get-o>(){}kotlin.Any
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:B#internal
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
@@ -804,15 +813,17 @@ fun test35(b: B): Int {
 
 // CHECK-LABEL: define i32 @"kfun:#test36(B;kotlin.Int){}kotlin.Int
 fun test36(b: B, z: Int): Int {
-// CHECK-DEBUG: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:B#<get-o>(){}kotlin.Any
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:B#internal
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     return if ((b.o as? A)?.sum(z) == 5)
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
-// CHECK-DEBUG: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:B#<get-o>(){}kotlin.Any
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:B#internal
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
@@ -823,16 +834,18 @@ fun test36(b: B, z: Int): Int {
 
 // CHECK-LABEL: define i32 @"kfun:#test37(kotlin.Int;B){}kotlin.Int
 fun test37(x: Int, b: B): Int {
-// CHECK-DEBUG: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:B#<get-o>(){}kotlin.Any
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:B#internal
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     var a = b.o as? A
     val y = x + x
     val z = if (a != null)
-// CHECK-DEBUG: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:B#<get-o>(){}kotlin.Any
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:B#internal
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -843,7 +856,8 @@ fun test37(x: Int, b: B): Int {
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     a = getAny() as? A
     return if (a != null)
-// CHECK-DEBUG: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-EAGER_SHADOW_STACK: call ptr @"kfun:B#<get-o>(){}kotlin.Any
+// CHECK-DEBUG-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:B#<get-o>(){}kotlin.Any
 // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:B#internal
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
@@ -864,7 +878,7 @@ fun test38(a: Any): Int {
     if (a is A) {
         println("a is A")
     } else returnsNothing()
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -879,7 +893,7 @@ fun test39(a: Any): Int {
     if (a is A) {
         println("a is A")
     } else inlineReturnsNothing { "a is not A" }
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -898,7 +912,7 @@ object Test40 {
     // CHECK: call void @"kfun:A#<init>(kotlin.String;kotlin.Int;kotlin.Int){}"
     // CHECK: call i32 @"kfun:#test39(kotlin.Any){}kotlin.Int
     // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
-    // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+    // CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
     // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
     // CHECK: getelementptr inbounds nuw %"kclassbody:Test40#internal"
     val z1 = test39(A("zzz", 42, 117)) // To deny possibility of placing into static data.
@@ -906,20 +920,20 @@ object Test40 {
     // CHECK: call void @"kfun:IntWrapper#<constructor>#static(kotlin.Int){}"
     // CHECK: call i32 @"kfun:#test40(IntWrapper?){}kotlin.Int
     // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
-    // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+    // CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
     // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
     // CHECK: getelementptr inbounds nuw %"kclassbody:Test40#internal"
     val z2 = test40(IntWrapper(42)) // To deny possibility of placing into static data.
 
     // CHECK: call i32 @"kfun:#test40(IntWrapper?){}kotlin.Int
     // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
-    // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+    // CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
     // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
     // CHECK: getelementptr inbounds nuw %"kclassbody:Test40#internal"
     val z3 = test40(kotlin.native.internal.createUninitializedInstance<IntWrapper>()) // To deny possibility of placing into static data.
 
     // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
-    // CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+    // CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
     // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
     // CHECK: getelementptr inbounds nuw %"kclassbody:Test40#internal"
     val z4: IntWrapper = kotlin.native.internal.createUninitializedInstance<IntWrapper>() // To deny possibility of placing into static data.
@@ -934,7 +948,7 @@ fun test41(b: B?, o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
                 && o is A -> {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -951,7 +965,7 @@ fun test42(c: C?, o: Any): Int {
 // CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
         c?.o is A -> {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -962,12 +976,14 @@ fun test42(c: C?, o: Any): Int {
     }
 }
 
-// CHECK-LABEL: define ptr @"kfun:#test43(kotlin.collections.List<0:0>){0\C2\A7<kotlin.Any>}kotlin.String
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#test43(kotlin.collections.List<0:0>){0\C2\A7<kotlin.Any>}kotlin.String
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#test43(kotlin.collections.List<0:0>){0\C2\A7<kotlin.Any>}kotlin.String
 fun <T: Any> test43(list: List<T>): String {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
-// CHECK: call ptr @"kfun:kotlin.Any#toString
+// CHECK-EAGER_SHADOW_STACK: call ptr @"kfun:kotlin.Any#toString
+// CHECK-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:kotlin.Any#toString
     val x = list[0]
     return x.toString()
 }
@@ -1052,7 +1068,7 @@ fun test47(a: A, o: Any): Int {
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     if (s || o is A) {
         if (!s) {
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
 // CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
@@ -1076,7 +1092,7 @@ fun test48a(o: Any): Int {
 // CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
     if (o is A) return -1
 // CHECK: call void @"kfun:#sideEffect
-// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: call {{.*}}@"kfun:kotlin.native.internal#downcast
 // CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
 // CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
     val alwaysNull = run {
@@ -1123,7 +1139,8 @@ fun test48c(o: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val a = A("zzz", 42, 117)
     val b = B(a)

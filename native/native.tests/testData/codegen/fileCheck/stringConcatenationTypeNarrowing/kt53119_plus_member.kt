@@ -6,12 +6,15 @@
 package codegen.stringConcatenationTypeNarrowing.kt53119_plus_member
 import kotlin.test.*
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberAny
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberAny
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"Kotlin_String_plusImpl$adapter"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret ptr
@@ -19,25 +22,30 @@ import kotlin.test.*
 fun manualPlusMemberAny(str: String, maybeAny: kotlin.Any?): kotlin.String =
     str + maybeAny
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberString
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberString
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberString
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"Kotlin_String_plusImpl$adapter"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call {{.*}}@"kfun:kotlin.String#toString(){}kotlin.String"
 
 // CHECK: ret ptr
 
 fun manualPlusMemberString(str1: String, str2: String): kotlin.String =
         str1 + str2
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberAny
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberAny
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberAny
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"Kotlin_String_plusImpl$adapter"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret ptr
@@ -46,13 +54,15 @@ fun generatedPlusMemberAny(str: String, maybeAny: Any?): String {
     return "$str$maybeAny"
 }
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberString
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberString
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#generatedPlusMemberString
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"Kotlin_String_plusImpl$adapter"
 // CHECK-OPT-NOT: call ptr @Kotlin_String_plusImpl
 
-// CHECK-OPT-NOT: call ptr @"kfun:kotlin.String#toString(){}kotlin.String"
+// CHECK-OPT-NOT: call {{.*}}@"kfun:kotlin.String#toString(){}kotlin.String"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
 // CHECK: ret ptr
@@ -63,12 +73,15 @@ fun generatedPlusMemberString(str1: String, str2: String): String {
 
 data class Foo(val bar: Int)
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberFoo
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberFoo
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT Foo#toString(){}kotlin.String
 
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"Kotlin_String_plusImpl$adapter"
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 
@@ -76,13 +89,16 @@ data class Foo(val bar: Int)
 fun manualPlusMemberFoo(str1: String, foo: Foo): kotlin.String =
         str1 + foo
 
-// CHECK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberMaybeFoo
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberMaybeFoo
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member#manualPlusMemberMaybeFoo
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
-// CHECK-OPT: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"kfun:codegen.stringConcatenationTypeNarrowing.kt53119_plus_member.Foo#toString(){}kotlin.String"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String
 // CHECK-OPT-NOT: kfun:kotlin.String#plus(kotlin.Any?)
 
-// CHECK-OPT: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-EAGER_SHADOW_STACK: call ptr @Kotlin_String_plusImpl
+// CHECK-OPT-LATE_SHADOW_STACK: call ptr addrspace(1) @"Kotlin_String_plusImpl$adapter"
 // CHECK-OPT-NOT: Foo#toString(){}kotlin.String"
 
 // CHECK: ret ptr
