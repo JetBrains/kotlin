@@ -193,15 +193,128 @@ class MainKtsIT {
     @Test
     fun testHelloSerialization() {
         val paths = PathUtil.kotlinPathsForDistDirectory
-        val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
         runWithKotlinc(
             arrayOf(
-                "-Xplugin=${serializationPlugin.absolutePath}",
                 "-cp", paths.jar(KotlinPaths.Jar.MainKts).absolutePath,
-                "-script", File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").absolutePath
+                "-script", File("$TEST_DATA_ROOT/hello-kotlinx-serialization-annotation.main.kts").absolutePath
             ),
             listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)")
         )
+    }
+
+    @Test
+    fun testHelloSerializationViaRefinedXplugin() {
+        val paths = PathUtil.kotlinPathsForDistDirectory
+        val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
+        withTempDir("mainKtsSerializationPlugin") { tempDir ->
+            val script = File(tempDir, "hello-kotlinx-serialization.main.kts")
+            script.writeText(
+                """@file:CompilerOptions("-Xplugin=${serializationPlugin.absolutePath}")
+                    |${File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").readText()}""".trimMargin()
+            )
+            runWithKotlinc(
+                arrayOf(
+                    "-cp", paths.jar(KotlinPaths.Jar.MainKts).absolutePath,
+                    "-script", script.absolutePath,
+                ),
+                listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)")
+            )
+        }
+    }
+
+    @Test
+    fun testCacheWithCompilerPluginOptionsInImportedScript() {
+        withTempDir("mainKtsCompilerPluginCache") { tempDir ->
+            val cache = File(tempDir, "cache").apply { mkdir() }.toPath()
+            val helper = File(tempDir, "helper.main.kts")
+            fun writeHelper(pluginAnnotation: String) = helper.writeText(
+                """$pluginAnnotation
+                    |
+                    |@kotlinx.serialization.Serializable
+                    |data class User(val firstName: String, val lastName: String)
+                    |""".trimMargin()
+            )
+            val script = File(tempDir, "main.main.kts").apply {
+                writeText(
+                    """@file:DependsOn("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+                        |@file:Import("helper.main.kts")
+                        |
+                        |import kotlinx.serialization.*
+                        |import kotlinx.serialization.json.*
+                        |
+                        |println(Json.encodeToString(User("James", "Bond")))
+                        |""".trimMargin()
+                )
+            }
+            val expectedOut = listOf("""\{"firstName":"James","lastName":"Bond"\}""")
+
+            writeHelper("@file:CompilerPlugin(\"serialization\")")
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            val cacheFile = cache.listDirectoryEntries("*.jar").single().toFile()
+            val cacheFileTimestamp = cacheFile.lastModified()
+
+            // this run should use the cached script
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            Assertions.assertEquals(listOf(cacheFile), cache.listDirectoryEntries("*.jar").map { it.toFile() })
+            Assertions.assertEquals(cacheFileTimestamp, cacheFile.lastModified())
+
+            // changed plugin options in the imported script should invalidate the cached script
+            writeHelper("@file:CompilerPlugin(\"serialization\", \"noSuchOption=true\")")
+            runWithKotlincAndMainKts(
+                script.absolutePath,
+                expectedErrPatterns = listOf(".*unsupported plugin option: .*noSuchOption=true"),
+                expectedExitCode = 1,
+                cacheDir = cache,
+            )
+            Assertions.assertTrue(cache.listDirectoryEntries("*.jar").isEmpty())
+        }
+    }
+
+    @Test
+    fun testCacheWithCompilerPluginOptions() {
+        withTempDir("mainKtsCompilerPluginOptionsCache") { tempDir ->
+            val cache = File(tempDir, "cache").apply { mkdir() }.toPath()
+            val script = File(tempDir, "hello-kotlinx-serialization.main.kts")
+            val scriptBody = File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts").readText()
+            fun writeScript(pluginAnnotations: String) = script.writeText("$pluginAnnotations\n$scriptBody")
+            fun cachedJars() = cache.listDirectoryEntries("*.jar").map { it.toFile() }.toSet()
+            val expectedOut = listOf("""\{"firstName":"James","lastName":"Bond"\}""", "User\\(firstName=James, lastName=Bond\\)")
+
+            writeScript("@file:CompilerPlugin(\"serialization\", \"disableIntrinsic=true\")")
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            val annotationOptionsJar = cachedJars().single()
+            val annotationOptionsJarTimestamp = annotationOptionsJar.lastModified()
+
+            // the same options are passed via the refined `-P` instead, so the script text and the cache key differ
+            writeScript(
+                """@file:CompilerPlugin("serialization")
+                    |@file:CompilerOptions("-P", "plugin:org.jetbrains.kotlinx.serialization:disableIntrinsic=true")""".trimMargin()
+            )
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            val refinedOptionsJar = (cachedJars() - annotationOptionsJar).single()
+
+            // changed plugin options should produce a separate cache entry
+            writeScript("@file:CompilerPlugin(\"serialization\", \"disableIntrinsic=false\")")
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            Assertions.assertEquals(3, cachedJars().size)
+
+            // the original options should reuse the first cache entry
+            writeScript("@file:CompilerPlugin(\"serialization\", \"disableIntrinsic=true\")")
+            runWithKotlincAndMainKts(script.absolutePath, expectedOut, cacheDir = cache)
+            Assertions.assertEquals(3, cachedJars().size)
+            Assertions.assertEquals(annotationOptionsJarTimestamp, annotationOptionsJar.lastModified())
+            Assertions.assertTrue(refinedOptionsJar.exists())
+
+            // invalid plugin options should fail without creating a cache entry
+            writeScript("@file:CompilerPlugin(\"serialization\", \"noSuchOption=true\")")
+            runWithKotlincAndMainKts(
+                script.absolutePath,
+                expectedErrPatterns = listOf(".*unsupported plugin option: .*noSuchOption=true"),
+                expectedExitCode = 1,
+                cacheDir = cache,
+            )
+            Assertions.assertEquals(3, cachedJars().size)
+        }
     }
 
     @Test

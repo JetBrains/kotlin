@@ -304,6 +304,18 @@ private fun compileImpl(
     compilerConfiguration.applyRefinedCompilerOptions(state.compilerContext, allSourceFiles, messageCollector, ::getRefinedConfiguration)
     state.updateContext(compilerConfiguration)
 
+    val scriptCompilerPlugins = collectScriptCompilerPlugins(
+        state.compilerContext.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions].orEmpty(),
+        allSourceFiles,
+        ::getRefinedConfiguration,
+        messageCollector,
+    )
+    if (scriptCompilerPlugins.isNotEmpty()) {
+        val message = "Compiler plugins from script configuration are not supported in REPL yet."
+        messageCollector.report(CompilerMessageSeverity.ERROR, message)
+        return ResultWithDiagnostics.Failure(listOf(ScriptDiagnostic(ScriptDiagnostic.unspecifiedError, message)))
+    }
+
     val [libModuleData, newClassPath] = state.moduleDataProvider.addNewLibraryModuleDataIfNeeded(classpath.map(File::toPath))
 
     if (newClassPath.isNotEmpty()) {
