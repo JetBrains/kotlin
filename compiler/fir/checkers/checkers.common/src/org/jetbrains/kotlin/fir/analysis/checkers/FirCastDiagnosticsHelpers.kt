@@ -100,7 +100,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType): Boolean {
 context(context: CheckerContext)
 fun findStaticallyKnownSubtype(
     supertype: ConeKotlinType,
-    subTypeClassSymbol: FirRegularClassSymbol
+    subTypeClassSymbol: FirRegularClassSymbol,
 ): ConeKotlinType {
     assert(!supertype.isMarkedNullable) { "This method only makes sense for non-nullable types" }
 
@@ -274,7 +274,9 @@ private fun findStaticallyKnownSubtypeByTypeParameterInheritance(
     // let's put ConeStubType instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
     val arguments = Array(subTypeClassSymbol.typeParameterSymbols.size) { index ->
         when (val argument = knownArguments?.get(index)) {
-            null, is ConeStarProjection ->
+            null ->
+                subTypeClassSymbol.defaultType().typeArguments[index]
+            is ConeStarProjection ->
                 ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", null), isMarkedNullable = true)
             else -> argument
         }
