@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleS
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.CopySwiftExportIntermediatesForConsumer
 import org.jetbrains.kotlin.gradle.util.buildProject
-import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,8 +31,8 @@ class CopySwiftExportIntermediatesForConsumerTest {
             resolve("SharedBridge/module.modulemap").writeText("")
         }
         val modulesFile = project.projectDir.resolve("modules.json").apply {
-            val shared = GradleSwiftExportModule.SwiftOnly(File("/Shared.swift"), "Shared", emptyList())
-            writeText(SerializationTools.writeToJson(GradleSwiftExportModules(listOf(shared))))
+            val shared = GradleSwiftExportModule.SwiftOnly(parentFile.resolve("files/Shared/Shared.swift"), "Shared", emptyList())
+            writeText(SerializationTools.writeToJson(GradleSwiftExportModules(listOf(shared)), baseDirectory = parentFile))
         }
 
         val task = project.tasks.register("copyDebugSPMIntermediates", CopySwiftExportIntermediatesForConsumer::class.java) { task ->

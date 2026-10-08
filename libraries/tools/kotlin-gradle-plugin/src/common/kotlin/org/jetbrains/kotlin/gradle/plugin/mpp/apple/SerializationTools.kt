@@ -8,15 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
 import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
@@ -24,37 +19,37 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleS
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModules
 import java.io.File
 
+/**
+ * Reads and writes the Swift Export modules file. Paths in the file are relative to the directory the file is in,
+ * which lets the output of a run be moved around. [GradleSwiftExportModules] still gets absolute files.
+ */
 internal object SerializationTools {
 
-    private val json: Json by lazy {
-        Json(KgpJson.prettyPrinted) {
-            serializersModule = SerializersModule {
-                contextual(FileSerializer)
-                contextual(GradleSwiftExportModuleSerializer)
-            }
+    /** Writes [modules] with their paths relative to [baseDirectory]. Every file has to be inside it. */
+    fun writeToJson(modules: GradleSwiftExportModules, baseDirectory: File): String =
+        KgpJson.prettyPrinted.encodeToString(GradleSwiftExportModulesSerializer(RelativePaths(baseDirectory)), modules)
+
+    /** Reads modules written by [writeToJson], resolving their paths against [baseDirectory]. */
+    fun readFromJson(json: String, baseDirectory: File): GradleSwiftExportModules =
+        KgpJson.prettyPrinted.decodeFromString(GradleSwiftExportModulesSerializer(RelativePaths(baseDirectory)), json)
+}
+
+/** Converts the paths of the modules file to and from paths relative to [baseDirectory], with `/` separators. */
+private class RelativePaths(baseDirectory: File) {
+    private val baseDirectory = baseDirectory.absoluteFile.normalize()
+
+    fun relativize(file: File): String {
+        val relative = file.absoluteFile.normalize().relativeToOrNull(baseDirectory)?.invariantSeparatorsPath
+        require(relative != null && relative != ".." && !relative.startsWith("../")) {
+            "Swift Export file $file is outside of $baseDirectory, so the modules file can't refer to it"
         }
+        return relative
     }
 
-    fun writeToJson(objects: GradleSwiftExportModules): String =
-        json.encodeToString(GradleSwiftExportModulesSerializer, objects)
-
-    fun readFromJson(jsonString: String): GradleSwiftExportModules =
-        json.decodeFromString(GradleSwiftExportModulesSerializer, jsonString)
+    fun resolve(path: String): File = baseDirectory.resolve(path)
 }
 
-internal object FileSerializer : KSerializer<File> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("File", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: File) {
-        encoder.encodeString(value.path)
-    }
-
-    override fun deserialize(decoder: Decoder): File {
-        return File(decoder.decodeString())
-    }
-}
-
-internal object GradleSwiftExportFilesSerializer : KSerializer<GradleSwiftExportFiles> {
+private class GradleSwiftExportFilesSerializer(private val paths: RelativePaths) : KSerializer<GradleSwiftExportFiles> {
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("GradleSwiftExportFiles") {
         element<String>("swiftApi")
         element<String>("kotlinBridges")
@@ -63,9 +58,9 @@ internal object GradleSwiftExportFilesSerializer : KSerializer<GradleSwiftExport
 
     override fun serialize(encoder: Encoder, value: GradleSwiftExportFiles) {
         encoder.encodeStructure(descriptor) {
-            encodeStringElement(descriptor, 0, value.swiftApi.path)
-            encodeStringElement(descriptor, 1, value.kotlinBridges.path)
-            encodeStringElement(descriptor, 2, value.cHeaderBridges.path)
+            encodeStringElement(descriptor, 0, paths.relativize(value.swiftApi))
+            encodeStringElement(descriptor, 1, paths.relativize(value.kotlinBridges))
+            encodeStringElement(descriptor, 2, paths.relativize(value.cHeaderBridges))
         }
     }
 
@@ -83,13 +78,14 @@ internal object GradleSwiftExportFilesSerializer : KSerializer<GradleSwiftExport
                     else -> error("Unexpected index: $index")
                 }
             }
-            GradleSwiftExportFiles(File(swiftApi), File(kotlinBridges), File(cHeaderBridges))
+            GradleSwiftExportFiles(paths.resolve(swiftApi), paths.resolve(kotlinBridges), paths.resolve(cHeaderBridges))
         }
     }
 }
 
-internal object GradleSwiftExportModuleSerializer : KSerializer<GradleSwiftExportModule> {
+private class GradleSwiftExportModuleSerializer(private val paths: RelativePaths) : KSerializer<GradleSwiftExportModule> {
     private val stringListSerializer = ListSerializer(String.serializer())
+    private val filesSerializer = GradleSwiftExportFilesSerializer(paths)
 
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("GradleSwiftExportModule") {
         element<String>("files", isOptional = true)
@@ -104,11 +100,11 @@ internal object GradleSwiftExportModuleSerializer : KSerializer<GradleSwiftExpor
         val composite = encoder.beginStructure(descriptor)
         when (value) {
             is GradleSwiftExportModule.BridgesToKotlin -> {
-                composite.encodeSerializableElement(descriptor, 0, GradleSwiftExportFilesSerializer, value.files)
+                composite.encodeSerializableElement(descriptor, 0, filesSerializer, value.files)
                 composite.encodeStringElement(descriptor, 1, value.bridgeName)
             }
             is GradleSwiftExportModule.SwiftOnly -> {
-                composite.encodeStringElement(descriptor, 2, value.swiftApi.path)
+                composite.encodeStringElement(descriptor, 2, paths.relativize(value.swiftApi))
             }
         }
         composite.encodeStringElement(descriptor, 3, value.name)
@@ -127,7 +123,7 @@ internal object GradleSwiftExportModuleSerializer : KSerializer<GradleSwiftExpor
             var dependencies: List<String> = emptyList()
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {
-                    0 -> files = decodeSerializableElement(descriptor, 0, GradleSwiftExportFilesSerializer)
+                    0 -> files = decodeSerializableElement(descriptor, 0, filesSerializer)
                     1 -> bridgeName = decodeStringElement(descriptor, 1)
                     2 -> swiftApi = decodeStringElement(descriptor, 2)
                     3 -> name = decodeStringElement(descriptor, 3)
@@ -139,7 +135,7 @@ internal object GradleSwiftExportModuleSerializer : KSerializer<GradleSwiftExpor
             }
             when (GradleSwiftExportModuleType.valueOf(type)) {
                 GradleSwiftExportModuleType.SWIFT_ONLY -> GradleSwiftExportModule.SwiftOnly(
-                    File(swiftApi ?: error("swiftApi is required for SWIFT_ONLY")),
+                    paths.resolve(swiftApi ?: error("swiftApi is required for SWIFT_ONLY")),
                     name,
                     dependencies
                 )
@@ -154,8 +150,8 @@ internal object GradleSwiftExportModuleSerializer : KSerializer<GradleSwiftExpor
     }
 }
 
-internal object GradleSwiftExportModulesSerializer : KSerializer<GradleSwiftExportModules> {
-    private val moduleListSerializer = ListSerializer(GradleSwiftExportModuleSerializer)
+private class GradleSwiftExportModulesSerializer(paths: RelativePaths) : KSerializer<GradleSwiftExportModules> {
+    private val moduleListSerializer = ListSerializer(GradleSwiftExportModuleSerializer(paths))
 
     override val descriptor: SerialDescriptor = buildClassSerialDescriptor("GradleSwiftExportModules") {
         element<String>("modules")

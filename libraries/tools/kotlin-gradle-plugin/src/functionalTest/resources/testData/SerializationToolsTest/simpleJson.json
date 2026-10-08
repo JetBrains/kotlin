@@ -2,9 +2,9 @@
     "modules": [
         {
             "files": {
-                "swiftApi": "/A/SwiftFile.swift",
-                "kotlinBridges": "/A/KotlinBridge.kt",
-                "cHeaderBridges": "/A/Header.h"
+                "swiftApi": "files/A/SwiftFile.swift",
+                "kotlinBridges": "files/A/KotlinBridge.kt",
+                "cHeaderBridges": "files/A/Header.h"
             },
             "bridgeName": "Bridge_A",
             "name": "Module_A",
