@@ -9,12 +9,14 @@ enum class COLOR {
     BLUE
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     for (i in COLOR.values()) {
         // CHECK-DEBUG: = call i32 @"kfun:kotlin.Enum#<get-ordinal>(){}kotlin.Int"(
         // We inline .ordinal property access in case of opt build, so check direct field load instead.
-        // CHECK-OPT: getelementptr inbounds nuw %"kclassbody:kotlin.Enum#internal", ptr %{{[0-9a-z]*}}, i32 0, i32 2
+        // CHECK-OPT-EAGER_SHADOW_STACK: getelementptr inbounds nuw %"kclassbody:kotlin.Enum#internal", ptr %{{[0-9a-z]*}}, i32 0, i32 2
+        // CHECK-OPT-LATE_SHADOW_STACK: getelementptr inbounds nuw %"kclassbody:kotlin.Enum#internal", ptr addrspace(1) %{{[0-9a-z]*}}, i32 0, i32 2
         print(when (i) {
             // we can't check the register is same, because it can be saved on stack and loaded back
             // CHECK: icmp eq i32 %{{[0-9a-z]*}}, 0

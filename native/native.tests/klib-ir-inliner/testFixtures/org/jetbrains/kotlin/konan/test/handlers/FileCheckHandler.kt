@@ -122,7 +122,12 @@ class FileCheckHandler(testServices: TestServices) : GroupingStageHandler<Binary
         val checkPrefixesWithOptMode = checkPrefixes.map { "$it-$optMode" }
         val cacheMode = settings.get<CacheMode>().alias
         val checkPrefixesWithCacheMode = checkPrefixes.map { "$it-CACHE_$cacheMode" }
-        return (checkPrefixes + checkPrefixesWithOptMode + checkPrefixesWithCacheMode).joinToString(",")
+        val allPrefixes = checkPrefixes + checkPrefixesWithOptMode + checkPrefixesWithCacheMode
+        val shadowStack = if (settings.get<ExplicitBinaryOptions>().getOrNull<Boolean>(BinaryOptions.lateShadowStack) == true)
+            "LATE_SHADOW_STACK"
+        else
+            "EAGER_SHADOW_STACK"
+        return (allPrefixes + allPrefixes.map { "$it-$shadowStack" }).joinToString(",")
     }
 
     private val KonanTarget.abiInfoString: String

@@ -36,7 +36,8 @@ class Bar3 : Foo3<Nothing>(), I3
 // CHECK-LABEL: define void @"kfun:Bar3#$<bridge-DN>foo(){}kotlin.Nothing(){}kotlin.Nothing
 // CHECK-LABEL: epilogue:
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val i1: I1 = C1()
     try {
