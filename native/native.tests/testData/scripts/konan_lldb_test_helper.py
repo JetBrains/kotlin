@@ -147,10 +147,22 @@ def get_native_func_type(debugger, command, ctx, result, internal_dict):
 
     target = debugger.GetSelectedTarget()
     matches = target.FindFunctions(symbol_name, lldb.eFunctionNameTypeFull)
-    if matches.GetSize() != 1:
-        raise AssertionError(f"Expected exactly 1 match for {symbol_name!r}, got {matches.GetSize()}")
+    functions = [matches.GetContextAtIndex(i).GetFunction() for i in range(matches.GetSize())]
+    if not functions:
+        # Cached Kotlin symbols append the owning library's unique name, while callers of this
+        # helper use the ordinary mangled name. Find the cached variant by its stable prefix.
+        for module in target.module_iter():
+            for index in range(module.GetNumSymbols()):
+                symbol = module.GetSymbolAtIndex(index)
+                if (symbol.GetName() or "").startswith(symbol_name + "["):
+                    function = symbol.GetStartAddress().GetFunction()
+                    if function.IsValid():
+                        functions.append(function)
 
-    function = matches.GetContextAtIndex(0).GetFunction()
+    if len(functions) != 1:
+        raise AssertionError(f"Expected exactly 1 match for {symbol_name!r}, got {len(functions)}")
+
+    function = functions[0]
     if not function.IsValid():
         raise AssertionError(f"Matched context for {symbol_name!r} does not contain a function")
 
