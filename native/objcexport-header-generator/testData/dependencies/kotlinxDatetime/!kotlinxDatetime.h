@@ -1231,23 +1231,23 @@ __attribute__((objc_subclassing_restricted))
 - (id<KotlinTimeMark>)plusDuration:(int64_t)duration __attribute__((swift_name("plus(duration:)")));
 @end
 
-@interface DatePeriod (Extensions)
+@interface DatePeriod (org_jetbrains_kotlinx_kotlinx_datetime)
 - (DatePeriod *)plusOther:(DatePeriod *)other __attribute__((swift_name("plus(other:)")));
 @end
 
-@interface DateTimeComponentsCompanion (Extensions)
+@interface DateTimeComponentsCompanion (org_jetbrains_kotlinx_kotlinx_datetime)
 - (DateTimeComponents *)parseInput:(id)input format:(id<DateTimeFormat>)format __attribute__((swift_name("parse(input:format:)")));
 @end
 
-@interface DateTimePeriod (Extensions)
+@interface DateTimePeriod (org_jetbrains_kotlinx_kotlinx_datetime)
 - (DateTimePeriod *)plusOther_:(DateTimePeriod *)other __attribute__((swift_name("plus(other_:)")));
 @end
 
-@interface DayOfWeek (Extensions)
+@interface DayOfWeek (org_jetbrains_kotlinx_kotlinx_datetime)
 @property (readonly) int32_t isoDayNumber __attribute__((swift_name("isoDayNumber")));
 @end
 
-@interface Instant (Extensions)
+@interface Instant (org_jetbrains_kotlinx_kotlinx_datetime)
 - (int32_t)daysUntilOther:(Instant *)other timeZone:(TimeZone *)timeZone __attribute__((swift_name("daysUntil(other:timeZone:)")));
 - (NSString *)formatFormat:(id<DateTimeFormat>)format offset:(UtcOffset *)offset __attribute__((swift_name("format(format:offset:)")));
 - (Instant *)minusUnit:(DateTimeUnitTimeBased *)unit __attribute__((swift_name("minus(unit:)"))) __attribute__((deprecated("Use the minus overload with an explicit number of units")));
@@ -1279,7 +1279,7 @@ __attribute__((objc_subclassing_restricted))
 @property (readonly) BOOL isDistantPast __attribute__((swift_name("isDistantPast")));
 @end
 
-@interface LocalDate (Extensions)
+@interface LocalDate (org_jetbrains_kotlinx_kotlinx_datetime)
 - (Instant *)atStartOfDayInTimeZone:(TimeZone *)timeZone __attribute__((swift_name("atStartOfDayIn(timeZone:)")));
 - (LocalDateTime *)atTimeTime:(LocalTime *)time __attribute__((swift_name("atTime(time:)")));
 - (LocalDateTime *)atTimeHour:(int32_t)hour minute:(int32_t)minute second:(int32_t)second nanosecond:(int32_t)nanosecond __attribute__((swift_name("atTime(hour:minute:second:nanosecond:)")));
@@ -1301,38 +1301,38 @@ __attribute__((objc_subclassing_restricted))
 - (int32_t)yearsUntilOther:(LocalDate *)other __attribute__((swift_name("yearsUntil(other:)")));
 @end
 
-@interface LocalDateTime (Extensions)
+@interface LocalDateTime (org_jetbrains_kotlinx_kotlinx_datetime)
 - (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
 - (Instant *)toInstantTimeZone:(TimeZone *)timeZone __attribute__((swift_name("toInstant(timeZone:)")));
 - (Instant *)toInstantOffset:(UtcOffset *)offset __attribute__((swift_name("toInstant(offset:)")));
 - (NSDateComponents *)toNSDateComponents __attribute__((swift_name("toNSDateComponents()")));
 @end
 
-@interface LocalTime (Extensions)
+@interface LocalTime (org_jetbrains_kotlinx_kotlinx_datetime)
 - (LocalDateTime *)atDateDate:(LocalDate *)date __attribute__((swift_name("atDate(date:)")));
 - (LocalDateTime *)atDateYear:(int32_t)year monthNumber:(int32_t)monthNumber dayOfMonth:(int32_t)dayOfMonth __attribute__((swift_name("atDate(year:monthNumber:dayOfMonth:)")));
 - (LocalDateTime *)atDateYear:(int32_t)year month:(Month *)month dayOfMonth:(int32_t)dayOfMonth __attribute__((swift_name("atDate(year:month:dayOfMonth:)")));
 - (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
 @end
 
-@interface Month (Extensions)
+@interface Month (org_jetbrains_kotlinx_kotlinx_datetime)
 @property (readonly) int32_t number __attribute__((swift_name("number")));
 @end
 
-@interface NSDate (Extensions)
+@interface NSDate (org_jetbrains_kotlinx_kotlinx_datetime)
 - (Instant *)toKotlinInstant __attribute__((swift_name("toKotlinInstant()")));
 @end
 
-@interface NSTimeZone (Extensions)
+@interface NSTimeZone (org_jetbrains_kotlinx_kotlinx_datetime)
 - (TimeZone *)toKotlinTimeZone __attribute__((swift_name("toKotlinTimeZone()")));
 @end
 
-@interface TimeZone (Extensions)
+@interface TimeZone (org_jetbrains_kotlinx_kotlinx_datetime)
 - (UtcOffset *)offsetAtInstant:(Instant *)instant __attribute__((swift_name("offsetAt(instant:)")));
 - (NSTimeZone *)toNSTimeZone __attribute__((swift_name("toNSTimeZone()")));
 @end
 
-@interface UtcOffset (Extensions)
+@interface UtcOffset (org_jetbrains_kotlinx_kotlinx_datetime)
 - (FixedOffsetTimeZone *)asTimeZone __attribute__((swift_name("asTimeZone()")));
 - (NSString *)formatFormat:(id<DateTimeFormat>)format __attribute__((swift_name("format(format:)")));
 @end

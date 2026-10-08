@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
@@ -13,6 +14,11 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
+import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
@@ -22,6 +28,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     val objcGenerics: Boolean,
     val objcExportBlockExplicitParameterNames: Boolean,
     problemCollector: ObjCExportProblemCollector,
+    private val compilationUnitModules: Set<ModuleDescriptor> = emptySet(),
 ) {
     private val stubs = mutableListOf<ObjCExportStub>()
 
@@ -145,7 +152,11 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
         classesToTranslate.makeClassesOrderStable().forEach { translateClass(it) }
 
         extensions.makeCategoriesOrderStable().forEach { [classDescriptor, declarations] ->
-            generateExtensions(classDescriptor, declarations)
+            declarations.groupBy { extensionsCategoryName(it.module) }
+                .toSortedMap()
+                .forEach { [categoryName, categoryDeclarations] ->
+                    generateExtensions(classDescriptor, categoryDeclarations, categoryName)
+                }
         }
 
         topLevel.makeFilesOrderStable().forEach { [sourceFile, declarations] ->
@@ -182,8 +193,23 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
         stubs.add(translator.translateFile(sourceFile, declarations))
     }
 
-    private fun generateExtensions(classDescriptor: ClassDescriptor, declarations: List<CallableMemberDescriptor>) {
-        stubs.add(translator.translateExtensions(classDescriptor, declarations))
+    private fun generateExtensions(
+        classDescriptor: ClassDescriptor,
+        declarations: List<CallableMemberDescriptor>,
+        categoryName: String,
+    ) {
+        stubs.add(translator.translateExtensions(classDescriptor, declarations, categoryName))
+    }
+
+    @OptIn(K1Deprecation::class)
+    private fun ModuleDescriptor.isInCompilationUnit(): Boolean =
+        this in compilationUnitModules || klibModuleOrigin == CurrentKlibModuleOrigin
+
+    @OptIn(K1Deprecation::class)
+    private fun extensionsCategoryName(module: ModuleDescriptor): String {
+        if (module.isInCompilationUnit()) return DEFAULT_EXTENSIONS_CATEGORY_NAME
+        val name = (module.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library?.uniqueName ?: module.name.asString()
+        return name.replace(nonIdentifierCharacter, "_").let { if (it.first().isDigit()) "_$it" else it }
     }
 
     protected open fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean = true
@@ -249,6 +275,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             objcExportBlockExplicitParameterNames: Boolean,
             shouldExportKDoc: Boolean,
             additionalImports: List<String>,
+            compilationUnitModules: Set<ModuleDescriptor> = emptySet(),
         ): ObjCExportHeaderGenerator = ObjCExportHeaderGeneratorImpl(
             moduleDescriptors,
             mapper,
@@ -257,7 +284,10 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             objcGenerics,
             objcExportBlockExplicitParameterNames,
             shouldExportKDoc,
-            additionalImports
+            additionalImports,
+            compilationUnitModules,
         )
     }
 }
+
+private val nonIdentifierCharacter = Regex("[^A-Za-z0-9_]")

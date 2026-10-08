@@ -28,6 +28,9 @@ __attribute__((objc_subclassing_restricted))
 
 @interface Foo (Extensions)
 - (void)bar __attribute__((swift_name("bar()")));
+@end
+
+@interface Foo (org_jetbrains_kotlin_testExtensionsLibrary)
 - (void)extensionA __attribute__((swift_name("extensionA()")));
 - (void)extensionB __attribute__((swift_name("extensionB()")));
 @end

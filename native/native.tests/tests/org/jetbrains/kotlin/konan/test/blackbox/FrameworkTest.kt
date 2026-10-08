@@ -488,6 +488,47 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testExtensionCategories() {
+        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+        val testName = "extensionCategories"
+        val testDir = testSuiteDir.resolve(testName)
+        fun library(name: String, dependencies: List<TestCompilationArtifact.KLIB>) = compileToLibrary(
+            testDir.resolve(name),
+            buildDir.resolve(name),
+            TestCompilerArgs("-module-name", name),
+            dependencies.map { it.asLibraryDependency() },
+        )
+        val receivers = library("receivers", emptyList())
+        val alphaBeta = library("exportedAlphaBeta", listOf(receivers))
+        val anotherBuild = library("exportedAnotherBuild", listOf(receivers))
+        val included = library("included", listOf(receivers))
+
+        val moduleName = "ExtensionCategories"
+        val testCase = generateObjCFrameworkTestCase(
+            TestKind.STANDALONE_NO_TR, extras, moduleName,
+            listOf(testDir.resolve("$testName.kt")),
+            TestCompilerArgs("-module-name", moduleName, "-Xbinary=bundleId=$testName"),
+            givenDependencies = setOf(receivers, alphaBeta, anotherBuild).map { TestModule.Given(it.klibFile) }.toSet(),
+        )
+        val success = testCompilationFactory
+            .testCaseToObjCFrameworkCompilation(
+                testCase, testRunSettings,
+                exportedLibraries = listOf(receivers, alphaBeta, anotherBuild),
+                includedLibraries = listOf(included),
+            )
+            .result.assertSuccess()
+
+        val categories = Regex("""^@interface $moduleName\w* \(\w+\)$.*?^@end$""", setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
+            .findAll(success.resultingArtifact.mainHeader.readText())
+            .map { it.value }
+            .sorted()
+            .joinToString("\n\n", postfix = "\n")
+        assertEqualsToFile(testDir.resolve("categories.h"), categories)
+
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun objCExportTest() {
         objCExportTestImpl("", emptyList(), emptyList(), false)
     }

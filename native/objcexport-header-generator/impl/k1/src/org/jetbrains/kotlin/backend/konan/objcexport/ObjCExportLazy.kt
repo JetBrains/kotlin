@@ -373,7 +373,8 @@ class ObjCExportLazyImpl(
             classDescriptor,
             declarations.mapNotNull { declaration ->
                 lazy.resolve(declaration).takeIf { lazy.mapper.shouldBeExposed(it) }
-            }
+            },
+            DEFAULT_EXTENSIONS_CATEGORY_NAME,
         )
     }
 }

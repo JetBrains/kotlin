@@ -1982,7 +1982,7 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 @property (readonly) KotlinKTypeProjection *STAR __attribute__((swift_name("STAR")));
 @end
 
-@interface AbstractPolymorphicSerializer (Extensions)
+@interface AbstractPolymorphicSerializer (org_jetbrains_kotlinx_kotlinx_serialization_core)
 
 /**
  * @note annotations
@@ -1997,76 +1997,76 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 - (id<SerializationStrategy>)findPolymorphicSerializerEncoder:(id<Encoder>)encoder value:(id)value __attribute__((swift_name("findPolymorphicSerializer(encoder:value:)")));
 @end
 
-@interface ClassSerialDescriptorBuilder (Extensions)
+@interface ClassSerialDescriptorBuilder (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (void)elementElementName:(NSString *)elementName annotations:(NSArray<id<KotlinAnnotation>> *)annotations isOptional:(BOOL)isOptional __attribute__((swift_name("element(elementName:annotations:isOptional:)")));
 @end
 
-@interface KotlinBooleanCompanion (Extensions)
+@interface KotlinBooleanCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinByteCompanion (Extensions)
+@interface KotlinByteCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinCharCompanion (Extensions)
+@interface KotlinCharCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinDoubleCompanion (Extensions)
+@interface KotlinDoubleCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinDurationCompanion (Extensions)
+@interface KotlinDurationCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinFloatCompanion (Extensions)
+@interface KotlinFloatCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinIntCompanion (Extensions)
+@interface KotlinIntCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinLongCompanion (Extensions)
+@interface KotlinLongCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinShortCompanion (Extensions)
+@interface KotlinShortCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinStringCompanion (Extensions)
+@interface KotlinStringCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinUByteCompanion (Extensions)
+@interface KotlinUByteCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinUIntCompanion (Extensions)
+@interface KotlinUIntCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinULongCompanion (Extensions)
+@interface KotlinULongCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinUShortCompanion (Extensions)
+@interface KotlinUShortCompanion (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface KotlinUnit (Extensions)
+@interface KotlinUnit (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (id<KSerializer>)serializer __attribute__((swift_name("serializer()")));
 @end
 
-@interface PolymorphicModuleBuilder (Extensions)
+@interface PolymorphicModuleBuilder (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (void)subclassClazz:(id<KotlinKClass>)clazz __attribute__((swift_name("subclass(clazz:)")));
 - (void)subclassSerializer:(id<KSerializer>)serializer __attribute__((swift_name("subclass(serializer:)")));
 @end
 
-@interface SerializersModule (Extensions)
+@interface SerializersModule (org_jetbrains_kotlinx_kotlinx_serialization_core)
 
 /**
  * @note annotations
@@ -2092,7 +2092,7 @@ __attribute__((swift_name("KotlinKTypeProjection.Companion")))
 - (id<KSerializer> _Nullable)serializerOrNullType:(id<KotlinKType>)type __attribute__((swift_name("serializerOrNull(type:)")));
 @end
 
-@interface SerializersModuleBuilder (Extensions)
+@interface SerializersModuleBuilder (org_jetbrains_kotlinx_kotlinx_serialization_core)
 - (void)contextualSerializer:(id<KSerializer>)serializer __attribute__((swift_name("contextual(serializer:)")));
 - (void)polymorphicBaseClass:(id<KotlinKClass>)baseClass baseSerializer:(id<KSerializer> _Nullable)baseSerializer builderAction:(void (^)(PolymorphicModuleBuilder<id> *))builderAction __attribute__((swift_name("polymorphic(baseClass:baseSerializer:builderAction:)")));
 @end
