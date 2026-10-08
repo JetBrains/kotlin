@@ -32,7 +32,7 @@ public final class JWithOverrides {
 
 // FILE: platform.kt
 
-actual typealias WithoutOverrides = JWithoutOverrides
+actual typealias <!IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS, IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS!>WithoutOverrides<!> = JWithoutOverrides
 
 actual typealias WithOverrides = JWithOverrides
 
