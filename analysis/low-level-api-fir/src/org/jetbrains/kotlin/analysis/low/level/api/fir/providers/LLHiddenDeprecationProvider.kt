@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 internal class LLHiddenDeprecationProvider(session: FirSession) : FirHiddenDeprecationProvider(session) {
     override fun isDeprecationLevelHidden(symbol: FirBasedSymbol<*>): Boolean {
         val fir = symbol.fir
-        if (fir is FirJavaClass && fir.origin.fromSource) {
+        if (fir is FirJavaClass && (fir.origin.fromSource || fir.origin.generated)) {
             return false
         }
 

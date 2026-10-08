@@ -470,7 +470,7 @@ internal class KaFirSymbolRelationProvider(
      */
     private fun getSyntheticJavaPropertyAccessor(functionSymbol: KaNamedFunctionSymbol): KaPropertyAccessorSymbol? {
         val origin = functionSymbol.origin
-        if (origin != KaSymbolOrigin.JAVA_SOURCE && origin != KaSymbolOrigin.JAVA_LIBRARY) return null
+        if (!origin.isFromJava()) return null
 
         return with(analysisSession) {
             val containingClass = functionSymbol.containingDeclaration as? KaClassSymbol ?: return null

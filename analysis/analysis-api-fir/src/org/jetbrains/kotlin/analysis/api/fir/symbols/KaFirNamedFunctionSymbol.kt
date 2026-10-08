@@ -267,7 +267,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
             return KaFirDynamicFunctionSymbolPointer(name, this)
         }
 
-        if (origin == KaSymbolOrigin.JAVA_SOURCE || origin == KaSymbolOrigin.JAVA_LIBRARY) {
+        if (origin.isFromJava()) {
             createJavaSyntheticPropertyAccessorPointerIfApplicable()?.let { return it }
         }
 
