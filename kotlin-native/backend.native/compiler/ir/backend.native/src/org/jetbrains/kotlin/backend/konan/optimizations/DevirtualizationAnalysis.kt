@@ -1077,6 +1077,11 @@ internal object DevirtualizationAnalysis {
             // numberOfNodes + 1 for convenience.
             directEdgesCount.reserve(numberOfNodes + 1)
             reversedEdgesCount.reserve(numberOfNodes + 1)
+            for (index in 0 ..< bagOfEdges.size) {
+                val edge = bagOfEdges.get(index)
+                directEdgesCount[edge.toInt()]++
+                reversedEdgesCount[(edge ushr 32).toInt()]++
+            }
             var edgesArraySize = numberOfNodes + 1
             for (v in 0 until numberOfNodes)
                 edgesArraySize += directEdgesCount[v]
@@ -1143,11 +1148,6 @@ internal object DevirtualizationAnalysis {
                 if (!localBagOfEdges.add(value)) return
 
                 bagOfEdges.add(value)
-
-                directEdgesCount.reserve(fromId + 1)
-                directEdgesCount[fromId]++
-                reversedEdgesCount.reserve(toId + 1)
-                reversedEdgesCount[toId]++
             }
 
             private fun concreteType(type: DataFlowIR.Type): Int {
