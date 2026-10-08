@@ -523,6 +523,10 @@ class NativeSecondStageCompilationConfig(
             append("-stack_protector${stackProtectorMode.name}")
         if (genericSafeCasts != defaultGenericSafeCasts)
             append("-generic_safe_casts${if (genericSafeCasts) "ENABLE" else "DISABLE"}")
+        // The scheme changes the code generated for every klib (address space of objects, frames, anchors),
+        // so both system and user caches must be separated by it.
+        if (gcStackMapScheme != defaultGCStackMapScheme)
+            append("-gc_stack_map_scheme${gcStackMapScheme.name}")
         // Ideally, we would like to use targetTriple instead, but this requires a lot of changes in our test infrastructure.
         if (macabi) {
             append("-macabi")
