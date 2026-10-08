@@ -315,7 +315,7 @@ class FirTypeIntersectionScopeContext(
         )
         val aSubtypesB = AbstractTypeChecker.isSubtypeOf(typeCheckerState, aReturnType, bReturnType)
         val bSubtypesA = AbstractTypeChecker.isSubtypeOf(typeCheckerState, bReturnType, aReturnType)
-        val byVisibilityAndType = when {
+        var result = when {
             // Could be that one of them is flexible, in which case the types are not equal but still subtypes of one another;
             // make the inflexible one more specific.
             aSubtypesB && bSubtypesA -> merge(aReturnType !is ConeFlexibleType, bReturnType !is ConeFlexibleType, byVisibility)
@@ -326,7 +326,7 @@ class FirTypeIntersectionScopeContext(
             else -> return null // unorderable by types, or visibility disagrees
         }
 
-        return when (aFir) {
+        result = when (aFir) {
             is FirNamedFunction -> {
                 require(bFir is FirNamedFunction) { "b is " + bFir.javaClass }
 
@@ -334,10 +334,10 @@ class FirTypeIntersectionScopeContext(
                     OperatorNameConventions.EQUALS if session.languageVersionSettings.supportsFeature(LanguageFeature.StrictEquals) -> {
                         when (val byEqualityBound = typeCheckerState.compareByEqualityBoundType(aFir, bFir)) {
                             null -> null
-                            else -> merge(byEqualityBound >= 0, byEqualityBound <= 0, byVisibilityAndType)
+                            else -> merge(byEqualityBound >= 0, byEqualityBound <= 0, result)
                         }
                     }
-                    else -> byVisibilityAndType
+                    else -> result
                 }
             }
 
@@ -353,13 +353,50 @@ class FirTypeIntersectionScopeContext(
                 val byExplicitBackingField = merge(
                     preferA = aFir is FirProperty && aFir.hasExplicitBackingField,
                     preferB = bFir is FirProperty && bFir.hasExplicitBackingField,
-                    previous = byVisibilityAndType,
+                    previous = result,
                 ) ?: return null
 
                 merge(aFir.isVar, bFir.isVar, byExplicitBackingField)
             }
 
             else -> throw IllegalArgumentException("Unexpected callable: " + aFir.javaClass)
+        } ?: return null
+
+        if (result != 0) return result
+
+        if (aFir.unwrapSubstitutionOverrides<FirCallableDeclaration>() == bFir.unwrapSubstitutionOverrides<FirCallableDeclaration>()) {
+            val aLookupTag = aFir.containingClassLookupTagOfBase()
+            val bLookupTag = bFir.containingClassLookupTagOfBase()
+
+            if (aLookupTag == bLookupTag) return 0
+
+            if (aLookupTag != null && bLookupTag != null) {
+                return if (AbstractTypeChecker.isSubtypeOfClass(typeCheckerState, aLookupTag, bLookupTag)) {
+                    1
+                } else {
+                    -1
+                }
+            }
+        }
+
+        return 0
+    }
+
+    /**
+     * When we compare two fake overrides of the same original function, we want to check if the containing class of the one
+     * is from a superclass of the other.
+     *
+     * If the containing class is generic, we'll get a substitution override from the supertypes scope with the dispatch receiver type
+     * being equal to [FirTypeIntersectionScopeContext.dispatchReceiverType].
+     * If this is true, we unwrap the substitution override **once** and return the containing class lookup tag of the result.
+     * Otherwise, we just return the containing class lookup tag of [this].
+     */
+    private fun FirCallableDeclaration.containingClassLookupTagOfBase(): ConeClassLikeLookupTag? {
+        val containingClassLookupTag = containingClassLookupTag()
+        return if (isSubstitutionOverride && containingClassLookupTag == this@FirTypeIntersectionScopeContext.dispatchReceiverType.lookupTagIfAny) {
+            originalForSubstitutionOverride!!.containingClassLookupTag()
+        } else {
+            containingClassLookupTag
         }
     }
 
