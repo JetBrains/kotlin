@@ -96,7 +96,11 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             objectBodyType,
             immutable = true
     )
-    val functionSig = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)))
+    val functionSig = LlvmFunctionSignature(
+            codegen.kObjHeaderPtrReturnType,
+            listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)),
+            hasReturnSlot = true,
+    )
     return functionGenerator(
             functionSig.toProto("convertBlock${bridge.nameSuffix}", null, LLVMLinkage.LLVMInternalLinkage)
     ).generate {

@@ -1406,11 +1406,11 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun prologue() {
+        val hasReturnSlot = if (useLateShadowStack) function.hasReturnSlot else function.returnsObjectType
+        if (hasReturnSlot) {
+            returnSlot = function.param(function.numParams - 1)
+        }
         if (!useLateShadowStack) {
-            if (function.returnsObjectType) {
-                returnSlot = function.param(function.numParams - 1)
-            }
-
             positionAtEnd(localsInitBb)
             slotsPhi = phi(llvm.pointerType)
         }
@@ -1508,17 +1508,15 @@ internal abstract class FunctionGenerationContext(
         processReturns()
 
         vars.clear()
-        if (!useLateShadowStack) {
-            returnSlot = null
-            slotsPhi = null
-        }
+        returnSlot = null
+        slotsPhi = null
     }
 
     protected abstract fun processReturns()
 
     protected fun retValue(value: LLVMValueRef): LLVMValueRef {
         val returnValue = castBetweenRefAndPointer(function.returnType, value)
-        if (!useLateShadowStack && returnSlot != null) {
+        if (returnSlot != null) {
             updateReturnRef(returnValue, returnSlot!!)
         }
         onReturn()
@@ -1530,9 +1528,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     protected fun retVoid(): LLVMValueRef {
-        if (!useLateShadowStack) {
-            check(returnSlot == null)
-        }
+        check(returnSlot == null)
         onReturn()
         return LLVMBuildRetVoid(builder)!!.also {
             currentPositionHolder.setAfterTerminator()

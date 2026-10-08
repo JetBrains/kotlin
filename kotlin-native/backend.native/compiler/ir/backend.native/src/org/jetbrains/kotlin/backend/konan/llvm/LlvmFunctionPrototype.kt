@@ -146,7 +146,8 @@ internal fun LlvmFunctionSignature(
 
     require(!irFunction.isSuspend) { "Suspend functions should be lowered out at this point" }
 
-    val needsReturnSlot = !contextUtils.generationState.config.lateShadowStack && returnType.isObjectType
+    val needsReturnSlot = returnType.isObjectType &&
+            (!contextUtils.generationState.config.lateShadowStack || irFunction.isCalledWithObjGetterConvention())
     if (needsReturnSlot)
         parameterTypes.add(LlvmParamType(contextUtils.llvm.pointerType))
 
@@ -155,8 +156,12 @@ internal fun LlvmFunctionSignature(
             parameterTypes = parameterTypes,
             functionAttributes = inferFunctionAttributes(contextUtils, irFunction),
             isVararg = false,
+            hasReturnSlot = needsReturnSlot,
     )
 }
+
+private fun IrSimpleFunction.isCalledWithObjGetterConvention() =
+        !isExternal && annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)
 
 /**
  * LLVM function's signature, enriched with attributes.
@@ -166,6 +171,7 @@ internal open class LlvmFunctionSignature(
         val parameterTypes: List<LlvmParamType> = emptyList(),
         val isVararg: Boolean = false,
         val functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
+        val hasReturnSlot: Boolean = false,
 ) : LlvmFunctionAttributeProvider {
 
     val returnsObjectType: Boolean get() = returnType.isObjectType
