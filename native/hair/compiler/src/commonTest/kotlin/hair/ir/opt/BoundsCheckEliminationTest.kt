@@ -137,6 +137,42 @@ class BoundsCheckEliminationTest : BceTest {
         assertEquals(1, fc.checks.size)
     }
 
+    /** `if (i >= 0) { val k = i + 1; if (k < a.size) a[k] }` = i = MAX_VALUE makes k negative */
+    @Test
+    fun incrementThatCanWrapIsKept() {
+        val fc = bceIR(INT, REFERENCE) {
+            val i = Param(0)
+            val a = Param(1)
+
+            branch(Cmp(INT, CmpOp.S_LT)(i, Const(0)), {}, {
+                val k = Add(ArithmeticType.INT)(i, Const(1))
+                branch(Cmp(INT, CmpOp.S_LT)(k, ArraySize(a)), { ArrayIndexCheck(a, k) }, {})
+            })
+            ReturnVoid()
+        }
+        fc.runBce()
+        assertEquals(1, fc.checks.size)
+    }
+
+    /** `if (i >= 0) { if (i < a.size - 1) a[i + 1] }` */
+    @Test
+    fun incrementBoundedByLengthIsRedundant() {
+        val fc = bceIR(INT, REFERENCE) {
+            val i = Param(0)
+            val a = Param(1)
+
+            branch(Cmp(INT, CmpOp.S_LT)(i, Const(0)), {}, {
+                val last = Add(ArithmeticType.INT)(ArraySize(a), Const(-1))
+                branch(Cmp(INT, CmpOp.S_LT)(i, last), {
+                    ArrayIndexCheck(a, Add(ArithmeticType.INT)(i, Const(1)))
+                }, {})
+            })
+            ReturnVoid()
+        }
+        fc.runBce()
+        assertTrue(fc.checks.isEmpty())
+    }
+
     /**
      * Bidirectional bubble sort
      * ```
@@ -173,5 +209,71 @@ class BoundsCheckEliminationTest : BceTest {
         }
         fc.runBce()
         assertTrue(fc.checks.isEmpty())
+    }
+
+    /**
+     * ```
+     * var a = Param(0)
+     * var i = 0
+     * while (i < a.size) {
+     *     a = IntArray(1)
+     *     a[i]
+     *     i++
+     * }
+     * ```
+     */
+    @Test
+    fun reassignedArraySizeChangeKeepsCheck() {
+        val fc = bceIR(REFERENCE) {
+            val initialArray = Param(0)
+            val aVar = Var.nextNumbered()
+            val iVar = Var.nextNumbered()
+
+            AssignVar(aVar)(initialArray)
+            AssignVar(iVar)(Const(0))
+            whileLoopWithHeader({
+                                    Cmp(INT, CmpOp.S_LT)(ReadVar(iVar), ArraySize(ReadVar(aVar)))
+                                }) {
+                val newArr = NewArray(Cls("IntArray"))(Const(1))
+                AssignVar(aVar)(newArr)
+
+                ArrayIndexCheck(ReadVar(aVar), ReadVar(iVar))
+
+                AssignVar(iVar)(Add(ArithmeticType.INT)(ReadVar(iVar), Const(1)))
+            }
+            ReturnVoid()
+        }
+        fc.runBce()
+        assertEquals(1, fc.checks.size)
+    }
+
+    /**
+     * ```
+     * var a = Param(0)
+     * if (i >= 0 && i < a.size) {
+     *     a = IntArray(2)
+     *     a[i]
+     * }
+     * ```
+     */
+    @Test
+    fun branchReassignmentKeepsCheck() {
+        val fc = bceIR(INT, REFERENCE) {
+            val i = Param(0)
+            val initialArray = Param(1)
+            val aVar = Var.nextNumbered()
+
+            AssignVar(aVar)(initialArray)
+            branch(Cmp(INT, CmpOp.S_LT)(i, Const(0)), {}, {
+                branch(Cmp(INT, CmpOp.S_LT)(i, ArraySize(ReadVar(aVar))), {
+                    val resized = NewArray(Cls("IntArray"))(Const(2))
+                    AssignVar(aVar)(resized)
+                    ArrayIndexCheck(ReadVar(aVar), i)
+                }, {})
+            })
+            ReturnVoid()
+        }
+        fc.runBce()
+        assertEquals(1, fc.checks.size)
     }
 }
