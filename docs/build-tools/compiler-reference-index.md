@@ -58,14 +58,52 @@ serialized to Protobuf by the [`kotlin-build-tools-cri-impl`](../../compiler/bui
 Each compilation writes its own files. A rebuild replaces them, while an incremental build appends to them, so they can contain stale
 entries until the next rebuild.
 
-### Consumption
+### Consuming the index in IntelliJ IDEA
 
-In IntelliJ IDEA, `BtaKotlinCompilerReferenceIndexStorageProvider` reads the files from the Gradle and Maven build directories,
+`BtaKotlinCompilerReferenceIndexStorageProvider` reads the files from the Gradle and Maven build directories,
 deserializes them through `CriToolchain`, and merges them across modules. Lookup and subtype data are kept in `BtaLookupInMemoryStorage`
 and `BtaSubtypeInMemoryStorage`.
 
 `BtaFileWatcher` polls the files for changes, so the index also refreshes after command-line builds, not only after builds started from the
 IDE. The IDE tracks modules whose index is out of date and excludes their stale index data from scope narrowing.
+
+### Reading the index in other systems
+
+Other tools can read the index through the same public API that IntelliJ IDEA uses. Load BTA with `KotlinToolchains.loadImplementation`.
+`CriToolchain` creates one deserialization operation per file, and each operation returns typed entries: `LookupEntry`, `SubtypeEntry`, or
+`FileIdToPathEntry`. Pass the whole file content to the operation instead of parsing the length-prefixed Protobuf records yourself.
+
+To interpret the entries:
+
+* `fqNameHashCode` is the `String.hashCode()` of the dotted fully qualified name, such as `"com.example.Foo".hashCode()`. Hash the
+  symbol's name the same way to find its entries.
+* `fileIds` resolve to source paths through the `FileIdToPathEntry` data. Gradle passes `ROOT_PROJECT_DIR` to BTA, so its paths are
+  relative to the root project directory and use `/` as the separator. Maven does not, so its paths are the absolute source paths that
+  the compiler received.
+* `subtypes` lists the fully qualified names of direct subtypes. To collect the whole hierarchy, repeat the lookup for each subtype.
+* An incremental build appends entries, so the same hash can appear more than once. Merge these entries, and expect stale data until the
+  next rebuild.
+
+> **Warning:** `fqNameHashCode` is a 32-bit hash, so different names can collide. Treat the results as candidates, not confirmed usages
+> or subtypes.
+
+For example, to find the source files that may reference `com.example.Foo`, where `criDir` is one of the `cri/` directories listed in
+[Output layout](#output-layout):
+
+```kotlin
+val toolchains = KotlinToolchains.loadImplementation(btaImplementationClasspath)
+val lookupData = criDir.resolve(CriToolchain.LOOKUPS_FILENAME).readBytes()
+val fileIdToPathData = criDir.resolve(CriToolchain.FILE_IDS_TO_PATHS_FILENAME).readBytes()
+
+val candidatePaths = toolchains.createBuildSession().use { session ->
+    val lookups = session.executeOperation(toolchains.cri.createCriLookupDataDeserializationOperation(lookupData))
+    val fileIdsToPaths = session.executeOperation(toolchains.cri.createCriFileIdToPathDataDeserializationOperation(fileIdToPathData))
+
+    val fooHash = "com.example.Foo".hashCode()
+    val fileIds = lookups.filter { it.fqNameHashCode == fooHash }.flatMapTo(mutableSetOf()) { it.fileIds }
+    fileIdsToPaths.filter { it.fileId in fileIds }.mapNotNullTo(mutableSetOf()) { it.path }
+}
+```
 
 ### Design decisions
 
