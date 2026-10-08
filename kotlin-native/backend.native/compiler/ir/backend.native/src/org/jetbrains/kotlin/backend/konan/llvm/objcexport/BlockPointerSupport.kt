@@ -27,7 +27,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
 
     val objectBodyType = if (useSeparateHolder) {
         ObjectBodyType(
-                llvm.structType(codegen.kObjHeader, llvm.pointerType),
+                llvm.structType(codegen.kObjHeader, llvm.kotlinObjectPtrType),
                 objectFieldIndices = listOf(1)
         )
     } else {
@@ -47,7 +47,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     ).generate {
         val thisRef = param(0)
         val associatedObjectHolder = if (useSeparateHolder) {
-            loadSlot(llvm.pointerType, true, structGep(bodyType, thisRef, 1), isVar = false)
+            loadSlot(llvm.kotlinObjectPtrType, true, structGep(bodyType, thisRef, 1), isVar = false)
         } else {
             thisRef
         }
