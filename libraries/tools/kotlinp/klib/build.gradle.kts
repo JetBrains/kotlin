@@ -19,6 +19,7 @@ dependencies {
     testImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(project(":kotlinx-metadata-klib"))
+    testRuntimeOnly(project(":kotlin-metadata"))
 }
 
 sourceSets {

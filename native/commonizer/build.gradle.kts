@@ -23,12 +23,10 @@ dependencies {
     embedded(project(":native:kotlin-klib-commonizer-api")) { isTransitive = false }
     embedded(project(":kotlin-tooling-core")) { isTransitive = false }
 
-    // N.B. The order of "kotlinx-metadata*" dependencies makes sense for runtime classpath
-    // of the "runCommonizer" task. Please, don't mix them up.
-    compileOnly(project(":kotlinx-metadata-klib")) { isTransitive = false }
-    compileOnly(project(":kotlin-metadata")) { isTransitive = false }
-    compileOnly(project(":native:kotlin-klib-commonizer-api")) { isTransitive = false }
-    compileOnly(project(":kotlin-tooling-core")) { isTransitive = false }
+    compileOnly(project(":kotlinx-metadata-klib"))
+    compileOnly(project(":kotlin-metadata"))
+    compileOnly(project(":native:kotlin-klib-commonizer-api"))
+    compileOnly(project(":kotlin-tooling-core"))
     compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:ir.serialization.common"))
     compileOnly(project(":core:compiler.common.native"))
@@ -50,8 +48,8 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":kotlin-util-klib")))
-    testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
-    testImplementation(project(":kotlin-metadata")) { isTransitive = false }
+    testImplementation(project(":kotlinx-metadata-klib"))
+    testImplementation(project(":kotlin-metadata"))
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
     testImplementation(project(":kotlin-tooling-core"))
     testImplementation(project(":native:native.config"))

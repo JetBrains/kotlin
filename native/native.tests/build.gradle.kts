@@ -34,6 +34,7 @@ dependencies {
     testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(project(":kotlinx-metadata-klib"))
+    testImplementation(project(":kotlin-metadata"))
     testFixturesImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     testFixturesApi(project(":compiler:cli:cli-native-klib"))
