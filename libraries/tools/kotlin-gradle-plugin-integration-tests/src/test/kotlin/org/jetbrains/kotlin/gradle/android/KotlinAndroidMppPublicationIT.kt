@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AgpCompatibilityMatrix
 import org.jetbrains.kotlin.gradle.util.replaceText
-import org.jetbrains.kotlin.test.sharding.DynamicTestSharding
-import org.jetbrains.kotlin.test.sharding.DynamicTestShardingContext
-import org.jetbrains.kotlin.test.sharding.shardBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.DynamicContainer
 import org.junit.jupiter.api.DynamicContainer.dynamicContainer
@@ -503,12 +500,9 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
 
     /**
      * Publishes with the min and max supported AGP versions and consumes the publication with older AGP versions.
-     * The consumer tests are spread across shards, see [DynamicTestSharding].
      */
     @DisplayName("produced artifacts are consumable by projects with various AGP versions")
     @TestFactory
-    @DynamicTestSharding
-    context(_: DynamicTestShardingContext)
     fun testAndroidMultiplatformPublicationAGPCompatibility(
         @TempDir tempDir: Path,
     ): List<DynamicContainer> {
@@ -521,9 +515,6 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
             .filter { agp ->
                 AgpCompatibilityMatrix.fromVersion(agp.version) < AgpCompatibilityMatrix.fromVersion(TestVersions.AGP.MAX_SUPPORTED)
             }
-            .shardBy { agp -> agp.version }
-
-        if (checkedConsumerAGPVersions.isEmpty()) return emptyList()
 
         return producerVersions.map { agpVersion ->
             val producerAgpVersion = AgpCompatibilityMatrix.fromVersion(agpVersion)

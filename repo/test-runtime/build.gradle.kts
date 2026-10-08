@@ -32,7 +32,7 @@ kotlin.sourceSets.main.configure {
 kotlin.target.compilations.all {
     compileTaskProvider.configure {
         compilerOptions {
-            freeCompilerArgs.addAll("-Xsuppress-version-warnings", "-Xcontext-parameters")
+            freeCompilerArgs.add("-Xsuppress-version-warnings")
             languageVersion.set(KotlinVersion.KOTLIN_2_2)
             apiVersion.set(KotlinVersion.KOTLIN_2_2)
         }
@@ -100,7 +100,7 @@ dependencies {
 run {
     val junit5TestCompilation = kotlin.target.compilations.create("junit5Tests")
 
-    /* Synthetic tests may use the APIs of this module (e.g. 'DynamicTestSharding') */
+    /* Synthetic tests may use the APIs of this module (e.g. 'ParameterizedTestSharding') */
     junit5TestCompilation.associateWith(kotlin.target.compilations.getByName("main"))
 
     tasks.register<Test>("junit5Tests") {

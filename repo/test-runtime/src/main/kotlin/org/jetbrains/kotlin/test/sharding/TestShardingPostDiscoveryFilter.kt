@@ -18,8 +18,8 @@ import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.jvm.optionals.getOrNull
 
-internal const val testsShardDynamicTagKey = "tests.shard.dynamic"
-internal val testsShardDynamicTag = TestTag.create(testsShardDynamicTagKey)
+internal const val testsShardParameterizedTagKey = "tests.shard.parameterized"
+internal val testsShardParameterizedTag = TestTag.create(testsShardParameterizedTagKey)
 
 internal const val testsShardByMethodTagKey = "tests.shard.byMethod"
 internal val testsShardByMethodTag = TestTag.create(testsShardByMethodTagKey)
@@ -28,8 +28,8 @@ internal val testsShardByMethodTag = TestTag.create(testsShardByMethodTagKey)
  * Spreads the test methods of this class across shards.
  * By default, all tests of a class run on the same shard.
  *
- * A `@TestFactory` or `@TestTemplate` still runs on a single shard,
- * unless it uses [DynamicTestSharding] or [ParameterizedTestSharding].
+ * A `@TestFactory` still runs on a single shard.
+ * A `@TestTemplate` also runs on a single shard, unless it uses [ParameterizedTestSharding].
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
@@ -48,7 +48,7 @@ internal class TestShardingPostDiscoveryFilter(
         if (!configuration.isShardingEnabled) return included("No shards configured")
         val isTestMethod = test.type == TestDescriptor.Type.TEST || test.mayRegisterTests()
         if (!isTestMethod) return included("Classes/Containers are always enabled")
-        if (testsShardDynamicTag in test.tags) return included("Test is sharded dynamically")
+        if (testsShardParameterizedTag in test.tags) return included("Test invocations are sharded by parameters")
 
         val currentShard = configuration.currentShard
         val distributionKey = test.shardingDistributionKey(configuration).encodeToByteArray()
@@ -59,12 +59,6 @@ internal class TestShardingPostDiscoveryFilter(
             excluded("Current shard: '$currentShard'. Test shard: '$thisTestShard'")
         }
     }
-}
-
-/** Whether the test with [distributionKey] runs on the current shard of [configuration]; always `true` when sharding is disabled. */
-internal fun isCurrentShard(distributionKey: ByteArray, configuration: TestShardingConfiguration): Boolean {
-    if (!configuration.isShardingEnabled) return true
-    return calculateTestShard(distributionKey, configuration.totalShards, configuration.shardSeed) == configuration.currentShard
 }
 
 /**

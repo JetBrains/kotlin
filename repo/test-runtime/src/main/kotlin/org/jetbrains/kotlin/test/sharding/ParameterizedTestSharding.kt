@@ -38,7 +38,7 @@ import kotlin.jvm.optionals.getOrNull
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @ExtendWith(ParameterizedTestShardingExtension::class)
-@Tag(testsShardDynamicTagKey)
+@Tag(testsShardParameterizedTagKey)
 annotation class ParameterizedTestSharding
 
 /**
@@ -54,7 +54,7 @@ annotation class ParameterizedTestSharding
  */
 fun Iterable<Arguments>.shard(context: ExtensionContext): Iterable<Arguments> {
     /* Not annotated with @ParameterizedTestSharding: the discovery-time sharding already assigned the whole template to this shard */
-    if (testsShardDynamicTagKey !in context.tags) return this
+    if (testsShardParameterizedTagKey !in context.tags) return this
 
     /*
      * Mark the template as sharded, so that ParameterizedTestShardingExtension lets its invocations run.

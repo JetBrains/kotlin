@@ -38,7 +38,6 @@ kotlin {
         )
         // Avoid having to use JvmSerializableLambda in build script injections
         freeCompilerArgs.add("-Xlambdas=class")
-        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }
 
