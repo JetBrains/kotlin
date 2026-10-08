@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
 /**
- * Adds a source of the `kotlin.internal.ReflectionPackageName` annotation to every test module, for KLIB backward
+ * Adds a source of the `kotlin.internal.ReflectionPackageName` annotation to the first test module, for KLIB backward
  * compatibility tests whose first stage compiles against a stdlib older than 2.5, where the annotation does not exist yet.
  * `BatchingPackageInserter` annotates every file of a grouped test with it, so the first-stage compiler must resolve it.
  *
- * [ReflectionPackageNameHelperModuleTransformer] then moves the added sources into a dedicated helper module.
+ * [ReflectionPackageNameHelperModuleTransformer] then moves the added source into a dedicated helper module and makes
+ * every test module depend on it, so a single copy of the source is enough, whichever module it is attached to.
  */
 class ReflectionPackageNameAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(
@@ -28,6 +29,7 @@ class ReflectionPackageNameAdditionalSourceProvider(testServices: TestServices) 
     ): List<TestFile> {
         // An isolated test keeps its original packages (see `BatchingPackageInserter`), so it never references the annotation.
         if (testServices.shouldIsolateTestInGroupingConfiguration(testModuleStructure, fileGenerationPhase = true)) return emptyList()
+        if (module != testModuleStructure.modules.first()) return emptyList()
 
         val classLoader = this::class.java.classLoader
         return listOf(classLoader.getResource("klib/klib-compatibility/helpers/ReflectionPackageName.kt")!!.toTestFile())

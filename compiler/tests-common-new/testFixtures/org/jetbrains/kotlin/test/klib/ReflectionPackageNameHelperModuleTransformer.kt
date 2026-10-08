@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
 import org.jetbrains.kotlin.test.testInfraError
 
 /**
- * Extracts helper files added by [ReflectionPackageNameAdditionalSourceProvider] from each test
- * module and places them into a single dedicated module named [HELPERS_MODULE_NAME].
+ * Extracts the helper file added by [ReflectionPackageNameAdditionalSourceProvider] from the test
+ * module it was attached to and places it into a dedicated module named [HELPERS_MODULE_NAME].
  *
- * The original test modules then get a regular `DependencyKind.Binary` dependency on the new
- * helpers module instead of carrying the helper sources themselves.
+ * Every original test module then gets a regular `DependencyKind.Binary` dependency on the new
+ * helpers module, as `BatchingPackageInserter` annotates the files of all of them.
  *
  * This allows `BatchingPackageInserter` to annotate grouped backward compatibility tests
  * with the annotation `kotlin.internal.ReflectionPackageName` without it present in stdlib older than v2.5.
@@ -39,23 +39,13 @@ object ReflectionPackageNameHelperModuleTransformer : ModuleStructureTransformer
         defaultsProvider: DefaultsProvider
     ): TestModuleStructure {
         val originalModules = moduleStructure.modules
-        if (originalModules.isEmpty()) return moduleStructure
 
-        // We only act when at least one module has actual helpers files attached.
-        val hasHelperFile = originalModules.any { module ->
-            module.files.any { isReflectionPackageNameHelperFile(it) }
-        }
-        if (!hasHelperFile) return moduleStructure
-
-        // 1. Collect all helper files from all modules (deduplicated by relative path).
-        val helperFilesByPath = linkedMapOf<String, TestFile>()
-        originalModules.forEach { module ->
-            module.files.forEach { file ->
-                if (isReflectionPackageNameHelperFile(file)) {
-                    helperFilesByPath.putIfAbsent(file.relativePath, file)
-                }
-            }
-        }
+        // 1. Find the helper file. [ReflectionPackageNameAdditionalSourceProvider] attaches it to a single module,
+        //    and only when the test is going to be grouped, so its absence means there is nothing to do.
+        val helperFiles = originalModules.flatMap { module -> module.files.filter { isReflectionPackageNameHelperFile(it) } }
+        if (helperFiles.isEmpty()) return moduleStructure
+        val helperFile = helperFiles.singleOrNull()
+            ?: testInfraError("Expected a single ReflectionPackageName helper file, got ${helperFiles.size}")
 
         // 2. Build the new helpers module.
         //    - Uses the same language version settings as the first original module.
@@ -63,7 +53,7 @@ object ReflectionPackageNameHelperModuleTransformer : ModuleStructureTransformer
         val firstModule = originalModules.first()
         val helpersModule = TestModule(
             name = HELPERS_MODULE_NAME,
-            files = helperFilesByPath.values.toList(),
+            files = listOf(helperFile),
             allDependencies = emptyList(),
             directives = firstModule.directives,
             languageVersionSettings = firstModule.languageVersionSettings,
