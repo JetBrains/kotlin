@@ -189,32 +189,45 @@ fun List<ChangeInfo>.getChangedAndImpactedSymbols(
     for (change in this) {
         reporter.debug { "Process $change" }
 
+        val producedSymbols = HashSet<LookupSymbol>()
+        val producedClasses = HashSet<FqName>()
+        val producedSealed = HashSet<FqName>()
+
         if (change is ChangeInfo.SignatureChanged) {
             val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
-            dirtyClassesFqNames.addAll(fqNames)
+            producedClasses.addAll(fqNames)
 
             for (classFqName in fqNames) {
                 assert(!classFqName.isRoot) { "$classFqName is root when processing $change" }
 
                 val scope = classFqName.parent().asString()
                 val name = classFqName.shortName().identifier
-                dirtyLookupSymbols.add(LookupSymbol(name, scope))
+                producedSymbols.add(LookupSymbol(name, scope))
             }
         } else if (change is ChangeInfo.MembersChanged) {
             val fqNames = withSubtypes(change.fqName, caches)
             // need to recompile subtypes because changed member might break override
-            dirtyClassesFqNames.addAll(fqNames)
+            producedClasses.addAll(fqNames)
 
             for (name in change.names) {
-                fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(name, it.asString()) }
+                fqNames.mapTo(producedSymbols) { LookupSymbol(name, it.asString()) }
             }
 
-            fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(SAM_LOOKUP_NAME.asString(), it.asString()) }
+            fqNames.mapTo(producedSymbols) { LookupSymbol(SAM_LOOKUP_NAME.asString(), it.asString()) }
         } else if (change is ChangeInfo.ParentsChanged) {
             change.parentsChanged.forEach { parent ->
-                sealedParents.addAll(findSealedSupertypes(parent, caches))
+                producedSealed.addAll(findSealedSupertypes(parent, caches))
             }
         }
+        dirtyLookupSymbols.addAll(producedSymbols)
+        dirtyClassesFqNames.addAll(producedClasses)
+        sealedParents.addAll(producedSealed)
+
+        reporter.reportProcessedChanges(
+            change,
+            producedSymbols.map { Pair(it.scope, it.name) },
+            (producedClasses + producedSealed).map { it.asString() }
+        )
     }
     return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, sealedParents)
 }

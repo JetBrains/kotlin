@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.CompilationTransaction
 import org.jetbrains.kotlin.incremental.IncrementalCachesManager
@@ -51,9 +52,9 @@ internal class DirtyFilesProvider(
         changedFiles: DeterminableFiles.Known
     ): DirtyFilesContainer {
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFileExtensions)
-        dirtyFiles.add(changedFiles.modified, "was modified since last time")
-        dirtyFiles.add(changedFiles.removed, "was removed since last time")
-        dirtyFiles.add(cachedHistory.read(), "was not compiled last time")
+        dirtyFiles.add(changedFiles.modified, ScopeExpansionReason.SOURCE_FILE_CHANGED)
+        dirtyFiles.add(changedFiles.removed, ScopeExpansionReason.SOURCE_FILE_REMOVED)
+        dirtyFiles.add(cachedHistory.read(), ScopeExpansionReason.PENDING_FROM_PREVIOUS_BUILD)
         return dirtyFiles
     }
 }

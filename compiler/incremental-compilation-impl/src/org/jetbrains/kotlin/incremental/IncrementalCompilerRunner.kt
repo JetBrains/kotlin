@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.events.IcEventImpl
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
+import org.jetbrains.kotlin.build.report.reportMarkDirty
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -154,28 +155,12 @@ abstract class IncrementalCompilerRunner<
             "Source changes: $changedFiles"
         }
 
-        val known = changedFiles as? DeterminableFiles.Known
-
-        reporter.reportIcEvent(
-            IcEventImpl.SourceChanges(
-                changedFiles.javaClass.simpleName,
-                known?.modified?.map { it.path }.orEmpty(),
-                known?.removed?.map { it.path }.orEmpty(),
-            )
-        )
-
         if (configurationInputs != null) {
             reporter.debug {
                 "Configuration inputs: $configurationInputs"
             }
         }
 
-        reporter.reportIcEvent(
-            IcEventImpl.ConfigInputs(
-                configurationInputs?.icConfigurationInputsSnapshot.orEmpty(),
-                configurationInputs?.compilerArgumentsInputsSnapshot.orEmpty(),
-            )
-        )
 
         val hashedConfigurationInputs = configurationInputs?.computeHashedConfigurationInputs()
         val trackChangedFiles = changedFiles is DeterminableFiles.ToBeComputed
@@ -366,11 +351,6 @@ abstract class IncrementalCompilerRunner<
 
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
 
-            reporter.reportIcEvent(
-                IcEventImpl.CleaningOutputDirs(
-                    outputDirsToClean.map { it.path }.toList(),
-                )
-            )
             cleanOrCreateDirectories(outputDirsToClean)
         }
         val icContext = createIncrementalCompilationContext(
@@ -588,6 +568,10 @@ abstract class IncrementalCompilerRunner<
             is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableLinkedSet()
             is CompilationMode.Rebuild -> LinkedHashSet(allKotlinSources)
         }
+        when (compilationMode) {
+            is CompilationMode.Incremental -> reporter.reportCompilationStart(true, null)
+            is CompilationMode.Rebuild -> reporter.reportCompilationStart(false, compilationMode.reason.readableString)
+        }
 
         val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis(), abiSnapshotData?.classpathAbiSnapshot ?: emptyMap())
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
@@ -603,8 +587,17 @@ abstract class IncrementalCompilerRunner<
 
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
+            reporter.reportMarkDirty(complementaryFiles, ScopeExpansionReason.EXPECT_ACTUAL_COUNTERPART)
             dirtySources.addAll(complementaryFiles)
+            reporter.reportMarkDirty(
+                caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins(),
+                ScopeExpansionReason.REFERENCED_BY_COMPILER_PLUGIN
+            )
             dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
+            reporter.reportMarkDirty(
+                caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins(),
+                ScopeExpansionReason.GENERATED_BY_COMPILER_PLUGIN
+            )
             dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesGeneratedByPlugins())
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
@@ -667,6 +660,7 @@ abstract class IncrementalCompilerRunner<
                 val dirtySourcesSet = dirtySources.toHashSet()
                 val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
+                    reporter.reportMarkDirty(additionalDirtyFiles, ScopeExpansionReason.CLASS_NAME_CLASH)
                     dirtySources.addAll(additionalDirtyFiles)
                     generatedFiles.forEach { transaction.deleteFile(it.outputFile.toPath()) }
                     continue
@@ -712,7 +706,14 @@ abstract class IncrementalCompilerRunner<
             val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
             with(dirtySources) {
                 clear()
-                addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
+                addAll(
+                    mapLookupSymbolsToFiles(
+                        caches.lookupCache,
+                        dirtyLookupSymbols,
+                        reporter,
+                        excludes = compiledInThisIterationSet
+                    )
+                )
                 addAll(
                     mapClassesFqNamesToFiles(
                         listOf(caches.platformCache),
@@ -726,6 +727,7 @@ abstract class IncrementalCompilerRunner<
                 }
                 if (icFeatures.enableMonotonousIncrementalCompileSetExpansion) {
                     if (dirtySources.isNotEmpty()) {
+                        reporter.reportMarkDirty(compiledInThisIterationSet, ScopeExpansionReason.FOR_CONSISTENCY)
                         // At this point we have determined that some new source files need to be recompiled,
                         // and we can add previously compiled files to the dirtySources set for logical consistency.
                         // (Take note that outer loop triggers compilation steps while there are not-yet-recompiled affected files.)

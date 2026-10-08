@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
 import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.build.report.events.IcEventImpl
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.incremental.ChangeInfo
 import java.io.File
 
 internal class CompositeICReporter(private val reporters: Iterable<RemoteICReporter>) : RemoteICReporter {
@@ -18,6 +19,14 @@ internal class CompositeICReporter(private val reporters: Iterable<RemoteICRepor
 
     override fun reportIcEvent(event: IcEventImpl) {
         reporters.forEach { it.reportIcEvent(event) }
+    }
+
+    override fun reportCompilationStart(isIncremental: Boolean, reason: String?) {
+        reporters.forEach { it.reportCompilationStart(isIncremental, reason) }
+    }
+
+    override fun reportProcessedChanges(change: ChangeInfo, symbols: Iterable<Pair<String, String>>, fqnames: Iterable<String>) {
+        reporters.forEach { it.reportProcessedChanges(change, symbols, fqnames) }
     }
 
     override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {

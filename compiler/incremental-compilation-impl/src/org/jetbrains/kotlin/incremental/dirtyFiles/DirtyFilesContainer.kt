@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.ICReporter
+import org.jetbrains.kotlin.build.report.events.ScopeExpansionReason
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -22,25 +23,23 @@ class DirtyFilesContainer(
     fun toMutableLinkedSet(): LinkedHashSet<File> =
         LinkedHashSet(myDirtyFiles)
 
-    fun add(files: Iterable<File>, reason: String?) {
+    fun add(files: Iterable<File>, reason: ScopeExpansionReason) {
         val existingKotlinFiles = files.filter { it.isKotlinFile(sourceFilesExtensions) }
         if (existingKotlinFiles.isNotEmpty()) {
             myDirtyFiles.addAll(existingKotlinFiles)
-            if (reason != null) {
-                reporter.reportMarkDirty(existingKotlinFiles, reason)
-            }
+            reporter.reportMarkDirty(existingKotlinFiles, reason.readableString)
         }
     }
 
-    fun addByDirtySymbols(lookupSymbols: Collection<LookupSymbol>) {
+    fun addByDirtySymbols(lookupSymbols: Collection<LookupSymbol>, reason: ScopeExpansionReason = ScopeExpansionReason.UNKNOWN) {
         if (lookupSymbols.isEmpty()) return
 
         val dirtyFilesFromLookups = mapLookupSymbolsToFiles(caches.lookupCache, lookupSymbols, reporter)
         // reason is null, because files are reported in mapLookupSymbolsToFiles
-        add(dirtyFilesFromLookups, reason = null)
+        add(dirtyFilesFromLookups, reason = reason)
     }
 
-    fun addByDirtyClasses(dirtyClassesFqNames: Collection<FqName>) {
+    fun addByDirtyClasses(dirtyClassesFqNames: Collection<FqName>, reason: ScopeExpansionReason = ScopeExpansionReason.UNKNOWN) {
         if (dirtyClassesFqNames.isEmpty()) return
 
         val fqNamesWithSubtypes = dirtyClassesFqNames.flatMap {
@@ -52,6 +51,6 @@ class DirtyFilesContainer(
         val dirtyFilesFromFqNames =
             mapClassesFqNamesToFiles(listOf(caches.platformCache), fqNamesWithSubtypes, reporter)
         // reason is null, because files are reported in mapClassesFqNamesToFiles
-        add(dirtyFilesFromFqNames, reason = null)
+        add(dirtyFilesFromFqNames, reason = reason)
     }
 }
