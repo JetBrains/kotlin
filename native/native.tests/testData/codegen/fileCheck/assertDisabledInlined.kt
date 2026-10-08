@@ -7,7 +7,8 @@
 
 inline fun foo(x: Boolean) = assert(x)
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 // CHECK-NOT: call void @"kfun:kotlin.AssertionError#<init>(kotlin.Any?){}"
 fun box(): String {
     foo(false)

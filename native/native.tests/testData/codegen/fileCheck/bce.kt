@@ -137,7 +137,8 @@ fun forWithIndex() {
 
     // CHECK: {{^}}while_loop{{.*}}:
     for ((index, value) in array.withIndex()) {
-        // CHECK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-EAGER_SHADOW_STACK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-LATE_SHADOW_STACK: {{call|invoke}} ptr addrspace(1) @"Kotlin_Array_get_without_BoundCheck$adapter"
         array[index] = 6
     }
 }
@@ -174,7 +175,8 @@ fun forEachCall() {
     var sum = 0
     // CHECK: {{^}}while_loop{{.*}}:
     array.forEach {
-        // CHECK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-EAGER_SHADOW_STACK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-LATE_SHADOW_STACK: {{call|invoke}} ptr addrspace(1) @"Kotlin_Array_get_without_BoundCheck$adapter"
         sum += it
     }
 }
@@ -186,7 +188,8 @@ fun forLoop() {
     var sum = 0
     // CHECK: {{^}}while_loop{{.*}}:
     for (it in array) {
-        // CHECK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-EAGER_SHADOW_STACK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-LATE_SHADOW_STACK: {{call|invoke}} ptr addrspace(1) @"Kotlin_Array_get_without_BoundCheck$adapter"
         sum += it
     }
 }
@@ -199,7 +202,8 @@ fun innerLoop() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0 until array.size) {
-        // CHECK-DAG: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-EAGER_SHADOW_STACK-DAG: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-LATE_SHADOW_STACK-DAG: {{call|invoke}} ptr addrspace(1) @"Kotlin_Array_get_without_BoundCheck$adapter"
         array[i] = 7
         // CHECK-DAG: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         // CHECK-DAG: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
@@ -219,8 +223,10 @@ fun argsInFunctionCall() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0..size1) {
-        // CHECK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
-        // CHECK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-EAGER_SHADOW_STACK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-LATE_SHADOW_STACK: {{call|invoke}} ptr addrspace(1) @"Kotlin_Array_get_without_BoundCheck$adapter"
+        // CHECK-EAGER_SHADOW_STACK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-LATE_SHADOW_STACK: {{call|invoke}} ptr addrspace(1) @"Kotlin_Array_get_without_BoundCheck$adapter"
         // CHECK: {{call|invoke}} i32 @"kfun:#foo(kotlin.Int;kotlin.Int){}kotlin.Int"
         foo(array[i], array[i])
     }
@@ -233,7 +239,8 @@ fun smallLoop() {
 
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in 0..array.size - 2) {
-        // CHECK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-EAGER_SHADOW_STACK: {{call|invoke}} ptr @Kotlin_Array_get_without_BoundCheck
+        // CHECK-LATE_SHADOW_STACK: {{call|invoke}} ptr addrspace(1) @"Kotlin_Array_get_without_BoundCheck$adapter"
         array[i+1] = array[i]
     }
 }
@@ -308,7 +315,8 @@ fun chainedReceivers() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 @ExperimentalStdlibApi
 fun box(): String {
     forEachIndicies()

@@ -14,10 +14,12 @@ open class EmptyContinuation(override val context: CoroutineContext = EmptyCorou
 suspend fun suspendForever(): Int = suspendCoroutineUninterceptedOrReturn {
     COROUTINE_SUSPENDED
 }
-// CHECK-LABEL: define internal ptr @"kfun:$fooCOROUTINE
+// CHECK-EAGER_SHADOW_STACK-LABEL: define internal ptr @"kfun:$fooCOROUTINE
+// CHECK-LATE_SHADOW_STACK-LABEL: define internal ptr addrspace(1) @"kfun:$fooCOROUTINE
 
 // CHECK-NOT: ; Function Attrs: {{.*}}noreturn
-// CHECK-LABEL: define ptr @"kfun:#foo#suspend(kotlin.coroutines.Continuation<kotlin.Nothing>){}kotlin.Any"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#foo#suspend(kotlin.coroutines.Continuation<kotlin.Nothing>){}kotlin.Any"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#foo#suspend(kotlin.coroutines.Continuation<kotlin.Nothing>){}kotlin.Any"
 suspend fun foo(): Nothing {
     suspendForever()
     throw Error()
@@ -31,7 +33,8 @@ fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     builder {
         bar()

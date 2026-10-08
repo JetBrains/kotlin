@@ -5,13 +5,15 @@
 // FILE: A.kt
 class A {
 
-    // CHECK-DEBUG: define ptr @"kfun:A#internalInlineMethod(kotlin.Any?){}kotlin.String"
+    // CHECK-DEBUG-EAGER_SHADOW_STACK: define ptr @"kfun:A#internalInlineMethod(kotlin.Any?){}kotlin.String"
+    // CHECK-DEBUG-LATE_SHADOW_STACK: define ptr addrspace(1) @"kfun:A#internalInlineMethod(kotlin.Any?){}kotlin.String"
     // CHECK-DEBUG: call void @"kfun:A.A$internalInlineMethod$1.<init>#internal"
     internal inline fun internalInlineMethod(random: Any?) = object {
         fun run() = "OK"
     }.run()
 
-    // CHECK: define ptr @"kfun:A#publicMethod(){}kotlin.String"
+    // CHECK-EAGER_SHADOW_STACK: define ptr @"kfun:A#publicMethod(){}kotlin.String"
+    // CHECK-LATE_SHADOW_STACK: define ptr addrspace(1) @"kfun:A#publicMethod(){}kotlin.String"
     // CHECK: call void @"kfun:A.A$publicMethod$$inlined$internalInlineMethod$1.<init>#internal"
     // CHECK: call void @"kfun:A.A$publicMethod$$inlined$internalInlineMethod$2.<init>#internal"
     fun publicMethod() = internalInlineMethod(1) + internalInlineMethod(2)
@@ -20,7 +22,8 @@ class A {
 // MODULE: main()(lib)
 // FILE: main.kt
 
-// CHECK: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     // Test that the local class is not extracted and not reused in each inline function call site
     // CHECK: call void @"kfun:box$$inlined$internalInlineMethod$1.<init>#internal"
