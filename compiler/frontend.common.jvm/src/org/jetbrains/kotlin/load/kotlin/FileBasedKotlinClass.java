@@ -28,7 +28,7 @@ import static org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION;
 
 public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
     private final ClassId classId;
-    private final int classVersion;
+    private final JvmClassFileVersion classVersion;
     private final KotlinClassHeader classHeader;
     private final InnerClassesInfo innerClasses;
 
@@ -39,7 +39,7 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
             @NotNull InnerClassesInfo innerClasses
     ) {
         this.classId = classId;
-        this.classVersion = classVersion;
+        this.classVersion = JvmClassFileVersion.fromAsmVersion(classVersion);
         this.classHeader = classHeader;
         this.innerClasses = innerClasses;
     }
@@ -123,7 +123,8 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
         return classId;
     }
 
-    public int getClassVersion() {
+    @NotNull
+    public JvmClassFileVersion getClassVersion() {
         return classVersion;
     }
 

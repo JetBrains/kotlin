@@ -69,8 +69,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
             containerSource.knownJvmBinaryClass
         }
 
-        // The upper 16 bits hold the minor version, which is 0xFFFF in a class file that uses preview features.
-        val inlinedVersion = (binaryClass as? FileBasedKotlinClass)?.classVersion?.and(0xFFFF) ?: return
+        val inlinedVersion = (binaryClass as? FileBasedKotlinClass)?.classVersion?.major ?: return
         val currentVersion = currentJvmTarget.majorVersion
 
         if (currentVersion < inlinedVersion) {
