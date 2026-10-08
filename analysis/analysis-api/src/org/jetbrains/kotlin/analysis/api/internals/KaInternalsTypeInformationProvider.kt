@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.internals
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaBuiltinFunctionTypeFamilies
@@ -20,7 +19,6 @@ public interface KaInternalsTypeInformationProvider {
 
     public fun isFunctionalInterface(type: KaType): Boolean
 
-    @KaExperimentalApi
     public fun functionTypeFamily(type: KaType): KaFunctionTypeFamily?
 
     public fun isFunctionType(type: KaType): Boolean
@@ -47,7 +45,6 @@ public interface KaInternalsTypeInformationProvider {
 
     public fun defaultInitializer(type: KaType): String?
 
-    @KaExperimentalApi
     public fun builtinFunctionTypeFamilies(): KaBuiltinFunctionTypeFamilies
 
     public fun classId(type: KaType): ClassId?
