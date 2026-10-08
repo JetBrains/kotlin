@@ -75,7 +75,7 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget) : CallChecker
                     else -> null
                 } as? FileBasedKotlinClass ?: return null
 
-            return binaryClass.classVersion
+            return binaryClass.classVersion.major
         }
 
         private fun CallableMemberDescriptor.getConcreteDeclarationForInline(): CallableMemberDescriptor {
