@@ -145,10 +145,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Int?
       overridden:
         public open fun offerLast (p0: @[FlexibleNullability] E of java.util.LinkedList?): kotlin.Boolean declared in java.util.LinkedList
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.LinkedList?> declared in java.util.LinkedList
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of kotlin.collections.MutableCollection> declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:peek visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
@@ -220,9 +220,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeFirstOccurrence (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in java.util.LinkedList
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.LinkedList?>): kotlin.Boolean declared in java.util.LinkedList
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of kotlin.collections.MutableCollection>): kotlin.Boolean declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
@@ -266,10 +266,10 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.LinkedList?> declared in java.util.LinkedList
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of kotlin.collections.MutableCollection?> declared in kotlin.collections.MutableCollection
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.LinkedList?> declared in java.util.LinkedList
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of kotlin.collections.MutableCollection> declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractList<@[FlexibleNullability] kotlin.Int?>
@@ -439,10 +439,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Int?
       overridden:
         public open fun offerLast (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Boolean declared in <root>.A
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> declared in <root>.A
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> declared in <root>.A
     FUN FAKE_OVERRIDE name:peek visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
       overridden:
@@ -501,9 +501,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeFirstOccurrence (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.A
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>): kotlin.Boolean declared in <root>.A
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>): kotlin.Boolean declared in <root>.A
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
       overridden:
@@ -544,10 +544,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
       overridden:
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Int?> declared in <root>.A
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> declared in <root>.A
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> declared in <root>.A
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractList<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
@@ -734,10 +734,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Int?
       overridden:
         public open fun offerLast (p0: @[FlexibleNullability] E of java.util.LinkedList?): kotlin.Boolean declared in java.util.LinkedList
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.LinkedList?> declared in java.util.LinkedList
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
         public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of kotlin.collections.MutableCollection> declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:peek visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
@@ -809,9 +809,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeFirstOccurrence (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in java.util.LinkedList
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] @[FlexibleNullability] E of java.util.LinkedList?>): kotlin.Boolean declared in java.util.LinkedList
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of java.util.LinkedList>): kotlin.Boolean declared in java.util.LinkedList
         public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] E of kotlin.collections.MutableCollection>): kotlin.Boolean declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
@@ -855,10 +855,10 @@ FILE fqName:<root> fileName:/1.kt
       overridden:
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of java.util.LinkedList?> declared in java.util.LinkedList
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of kotlin.collections.MutableCollection?> declared in kotlin.collections.MutableCollection
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] @[FlexibleNullability] E of java.util.LinkedList?> declared in java.util.LinkedList
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of java.util.LinkedList> declared in java.util.LinkedList
         public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of kotlin.collections.MutableCollection> declared in kotlin.collections.MutableCollection
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractList<@[FlexibleNullability] kotlin.Int?>
@@ -1028,10 +1028,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] kotlin.Int?
       overridden:
         public open fun offerLast (p0: @[FlexibleNullability] kotlin.Int?): kotlin.Boolean declared in <root>.C
-    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> declared in <root>.C
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> declared in <root>.C
     FUN FAKE_OVERRIDE name:peek visibility:public modality:OPEN returnType:@[FlexibleNullability] kotlin.Int? [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
       overridden:
@@ -1090,9 +1090,9 @@ FILE fqName:<root> fileName:/1.kt
         public open fun removeFirstOccurrence (p0: @[FlexibleNullability] kotlin.Any?): kotlin.Boolean declared in <root>.C
     FUN FAKE_OVERRIDE name:removeIf visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.MutableCollection<kotlin.Int>
-      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>
       overridden:
-        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[FlexibleNullability] @[EnhancedNullability] kotlin.Int?>): kotlin.Boolean declared in <root>.C
+        public open fun removeIf (p0: @[EnhancedNullability] java.util.function.Predicate<in @[EnhancedNullability] kotlin.Int>): kotlin.Boolean declared in <root>.C
     FUN FAKE_OVERRIDE name:removeLast visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
       overridden:
@@ -1133,10 +1133,10 @@ FILE fqName:<root> fileName:/1.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.LinkedList<kotlin.Int>
       overridden:
         public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.Int?> declared in <root>.C
-    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> [fake_override]
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.Int>
       overridden:
-        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[FlexibleNullability] @[EnhancedNullability] kotlin.Int?> declared in <root>.C
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.Int> declared in <root>.C
     FUN FAKE_OVERRIDE name:subList visibility:public modality:OPEN returnType:@[EnhancedNullability] kotlin.collections.MutableList<@[EnhancedNullability] kotlin.Int> [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:java.util.AbstractList<@[FlexibleNullability] kotlin.Int?>
       VALUE_PARAMETER kind:Regular name:p0 index:1 type:kotlin.Int
