@@ -1,86 +1,147 @@
 # Test Federation Operations Guide
 
-This document describes monitoring responsibilities and incident-response rules for teams working with our federated build.
-For an overview of Test Federation concepts and configuration, see the [Test Federation guide](./TEST-FEDERATION.md).
+This guide defines who monitors which builds, and the fixed workflow to follow when a build turns red.
+For Test Federation concepts and configuration, see the [Test Federation guide](./TEST-FEDERATION.md).
 
-## Monitoring
+## Table of contents
 
-### Aggregate (master)
+- [Ownership and channels](#ownership-and-channels)
+- [Monitoring setup](#monitoring-setup)
+- [Response workflow](#response-workflow)
+- [Message templates](#message-templates)
+- [Playbooks](#playbooks)
 
-[Aggregate (master)](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate) combines domain builds.
-There is no separate active monitoring of this aggregate by the infrastructure team: domain owners monitor their builds as described below.
+## Ownership and channels
 
-The infrastructure team monitors TeamCity agent health, build queues, and resource usage across the build infrastructure,
-and responds to infrastructure issues escalated by domain owners or developers.
+| Build                                                                                                          | Owner                                | Automated notifications                 |
+|----------------------------------------------------------------------------------------------------------------|--------------------------------------|-----------------------------------------|
+| [Aggregate (smoke)](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate_smoke) | Infrastructure engineer on duty      | `#kotlin-bots`                          |
+| Domain builds, e.g. [Domain (Js)](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Domain_Js) | Domain team[^migration]              | `#kotlin-bots` and the team's channel   |
+| [Aggregate (master)](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate)      | Nobody directly: it combines the domain builds | `#kotlin-bots`                |
+| TeamCity agents, queues, resources                                                                             | Infrastructure team                  | Internal infrastructure monitoring      |
 
-### Aggregate (smoke)
+| Channel            | Use for                                                                                  |
+|--------------------|------------------------------------------------------------------------------------------|
+| `#kotlin-bots`     | Automated TeamCity notifications only. Do not discuss incidents here.                   |
+| `#kotlin-build`    | **All incident communication**: one thread per incident, using the [templates](#message-templates). |
+| Team channel       | Automated notifications for the team's domain build and internal team discussions.      |
 
-[Aggregate (smoke)](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Aggregate_smoke) detects problems that
-block safe-merge for all commits, such as dependency resolution failures, cross-pushes that break compilation, or failing smoke tests.
-The infrastructure team monitors this build and leads the response to failures.
+Reach the infrastructure engineer on duty with `@kotlin-infrastructure-duty` in `#kotlin-build`.
 
-**The monitoring includes:**
+## Monitoring setup
 
-- TeamCity agent health
-- Build and test-bucket duration and status
-- All test failures, including flaky and slow tests
+Each domain team must have:
 
-### Domain builds
+1. **Slack notifications for its domain build in the team's channel.** Configure them in the build DSL
+   (`kotlin-teamcity-build`, `.teamcity/common/buildtypes/domains.kt`), as `CoreLibs` and `Native` already do:
 
-Each domain build, such as [Domain JS](https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_KotlinDev_Domain_Js),
-runs the tests associated with that domain.[^migration] The corresponding development team owns and monitors the build.
+   ```kotlin
+   features {
+       slackNotifications(JetbrainsSlackChannel.KotlinLibTeam) {
+           firstFailureAfterSuccess = true
+           newBuildProblemOccurred = true
+           firstSuccessAfterFailure = true
+       }
+   }
+   ```
 
-**The monitoring includes:**
+   Add the team's channel to `JetbrainsSlackChannel` in `.teamcity/common/notifications.kt` if it does not exist yet.
+2. **A named monitor** for each week, who reacts to these notifications: stable failures, flaky tests, and slow tests.
+   This person owns the [response workflow](#response-workflow) for the domain.
+3. **A target build duration.** The monitor checks it weekly and opens an issue for the team if the build is consistently slower.
 
-- Build and test-bucket duration and status
-- All build failures, including stable failures and flaky or slow tests
+Domain teams do not monitor agents, queues, or resource usage. If a failure is not explained by your domain's changes or tests,
+[escalate](#escalation-message) without diagnosing the root cause first.
 
-Domain owners should define acceptable build durations for their domains and investigate overruns.
-Domain owners are not expected to monitor agent health, build queues, or infrastructure resource usage; the infrastructure team monitors these centrally.
-If you encounter unexpected build or safe-merge problems that are not explained by your domain’s changes, test failures, or build durations,
-flag them to the infrastructure engineer on duty in `#kotlin-build`. You do not need to diagnose an infrastructure root cause before asking for help.
+## Response workflow
 
-## Incident Guide
+Follow these steps for every red build that you own:
 
-All investigation coordination and communication must take place in the `#kotlin-build` Slack channel.
-Infrastructure duty involvement is not required for domain test failures.
-Escalate infrastructure problems to the infrastructure engineer on duty.
+| Step           | What to do                                                                                                      | When                                                |
+|----------------|-----------------------------------------------------------------------------------------------------------------|-----------------------------------------------------|
+| 1. Acknowledge | Start a thread in `#kotlin-build` with the [incident message](#incident-message). Assign the TeamCity investigation to yourself. | Within 1 working hour (smoke: immediately)          |
+| 2. Triage      | Find the breaking change (TeamCity *Changes* tab, *Build Log*, test history). Mention the change author in the thread. If it is not a domain problem, [escalate](#escalation-message). | Right after acknowledging |
+| 3. Restore     | Pick the first option that applies: **mute** if the failure is test-only and safe to ignore temporarily, **fix** if a fix can land within a few hours, **revert** otherwise. Post an [update](#update-message). | Same working day (smoke: as fast as possible) |
+| 4. Close       | When the build is green, post the [resolution](#resolved-message) and resolve the TeamCity investigation.       | When green                                          |
 
-### Single Red Domain
+Rules:
 
-The domain owner investigates and resolves the failure. Commits that require the failing tests cannot pass safe-merge until the failure
-is resolved or the tests are muted. Commits that do not require those tests can still pass safe-merge.
-The infrastructure team does not need to mute the broken domain to unblock unrelated commits.
+- One incident, one thread. Keep all updates in the thread, not in DMs.
+- Every mute needs a YouTrack issue that is assigned to the test owner and linked in the TeamCity mute.
+- A revert does not need the author's approval if the author does not respond within 1 working hour.
 
-### Many Red Domains
+## Message templates
 
-The affected domain owners coordinate the investigation and response. Prioritize failures that newly block safe-merge across domains.
-Multiple red domains alone do not transfer ownership to the infrastructure team; involve infrastructure duty if the problem is
-infrastructure-related or also breaks the smoke aggregate.
+Copy these into `#kotlin-build`.
 
-For domain failures, the responders choose how to restore safe-merge:
+### Incident message
 
-1. Identify the scope and contact the relevant owners or change author.
-2. Mute failing tests only if it is safe to allow further commits while investigating. Otherwise, keep safe-merge blocked for affected changes.
-3. Land a fix promptly if feasible. Otherwise, consider reverting the breaking change, especially if leaving it in place would make recovery harder.
+```
+🔴 <Domain name | Smoke> is red: <TeamCity build link>
+Failure: <failing test or build problem>
+Blocks safe-merge for: <changes in <domain> | all commits>
+Suspected change: <commit/MR link | unknown>
+Owner: @<you>
+Next step: <investigating | muting | fixing | reverting>
+```
 
-Reverting disrupts the original change, but is appropriate when a timely fix or safe workaround is not available.
+### Update message
 
-### Red Smoke Aggregate
+```
+Update: <mute | fix | revert> in progress: <MR/commit/YouTrack link>. ETA: <time>.
+```
 
-A failing smoke aggregate blocks safe-merge for all commits and requires an urgent response.
-The infrastructure engineer on duty leads the response and involves the relevant domain owners or change author for code or test fixes.
-While muting a test is the most desired option, reverting the breaking change is reasonable as well to restore safe-merge quickly.
+### Resolved message
 
-### Broken Contract / Missing `@MustRunOnChangesInXYZ`
+```
+✅ Resolved by <mute | fix | revert>: <link>. Follow-up: <YouTrack issue | none>
+```
 
-If a commit passes safe-merge but later breaks another domain because relevant tests were not run, the domain owners investigate
-the missing test requirement together and adjust the Test Federation configuration:
+### Escalation message
 
-- If an existing test explicitly checks the required behavior, add `@MustRunOnChangesInXYZ`, where `XYZ` is the domain whose changes must require the test to run and pass.
-- If the test relies on that behavior only implicitly, create a dedicated contract test with the corresponding annotation.
+```
+@kotlin-infrastructure-duty <TeamCity build link> fails for a reason that is not caused by the domain.
+Symptom: <agent failure | dependency resolution | timeout | stuck in queue | other>
+Blocks: <changes in <domain> | all commits>
+```
 
-Both teams must approve changes to the contract tests and their annotations; see [Running individual tests on changes in another domain](./TEST-FEDERATION.md#running-individual-tests-on-changes-in-another-domain)
-and [Extra: Contract tests](./TEST-FEDERATION.md#extra-contract-tests).
+## Playbooks
 
-[^migration]: During migration, some builds contain tests from multiple domains, so a domain aggregate may include tests owned by another domain.
+### Single red domain
+
+- **Lead:** the domain monitor.
+- **Impact:** only commits that require the failing tests are blocked. Unrelated commits still pass safe-merge, so infra does not need to mute anything.
+- **Action:** follow the [response workflow](#response-workflow).
+
+### Many red domains
+
+- **Lead:** the monitor of the domain that owns the breaking change. If that is unclear, the first monitor to acknowledge leads.
+- **Action:** post **one** incident thread. The other monitors reply in that thread instead of starting new ones.
+- Prioritize failures that block safe-merge across domains. Reverting is preferred when many domains are affected.
+- Many red domains do not make it an infra incident. Escalate only if the cause is infrastructure or Aggregate (smoke) is red too.
+
+### Red smoke aggregate
+
+- **Lead:** the infrastructure engineer on duty. **Impact:** safe-merge is blocked for **all** commits.
+- **Action:** follow the [response workflow](#response-workflow) immediately. Mention the relevant domain monitor and change author in the thread.
+- Mute the test if it is safe. Otherwise, revert the breaking change. Do not wait for a fix.
+
+### Infrastructure problem
+
+- **Symptoms:** agent failures, dependency resolution errors, timeouts, stuck queues, or failures that cannot be reproduced locally or linked to a change.
+- **Action:** post the [escalation message](#escalation-message) in the incident thread. The infrastructure engineer on duty takes over the lead.
+  The domain monitor stays in the thread to confirm when the domain build is green again.
+
+### Broken contract / missing `@MustRunOnChangesInXYZ`
+
+A commit passed safe-merge but broke another domain because the relevant tests were not required.
+
+1. Restore the build with the [response workflow](#response-workflow).
+2. The monitor of the broken domain opens a YouTrack issue for the missing test requirement and assigns it to both teams.
+3. Adjust the Test Federation configuration:
+   - If an existing test checks the behavior explicitly, add `@MustRunOnChangesInXYZ`, where `XYZ` is the domain whose changes must run the test.
+   - If the behavior is only covered implicitly, add a dedicated contract test with that annotation.
+4. Both teams approve the change. See [Running individual tests on changes in another domain](./TEST-FEDERATION.md#running-individual-tests-on-changes-in-another-domain)
+   and [Extra: Contract tests](./TEST-FEDERATION.md#extra-contract-tests).
+
+[^migration]: During migration, some builds contain tests from multiple domains, so a domain build may include tests owned by another domain.
