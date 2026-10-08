@@ -150,10 +150,10 @@ fun Test.forwardProperties() {
 
 projectTests {
     val swcTag = "swc"
-    val swcEnabledLocally = kotlinBuildProperties.booleanProperty("kotlin.js.enable.swc.tests").get()
+    val swcEnabledLocally = kotlinBuildProperties.booleanProperty("kotlin.js.enable.swc.tests")
 
     jsTestTask {
-        if (swcEnabledLocally) {
+        if (swcEnabledLocally.get()) {
             with(swcKotlinBuild) { setupSwc() }
         } else {
             useJUnitPlatform { excludeTags(swcTag) }
