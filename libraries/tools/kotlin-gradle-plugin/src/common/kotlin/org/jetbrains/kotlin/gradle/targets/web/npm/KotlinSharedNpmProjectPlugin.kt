@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.web.npm
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.JsPlatformDisambiguator
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmPlatformDisambiguator
@@ -24,6 +25,9 @@ class KotlinSharedNpmProjectPlugin : Plugin<Project> {
         check(project.path == Project.PATH_SEPARATOR) {
             "${this::class.simpleName} can only be applied to the root project of a build, but was applied to '${project.path}'."
         }
+
+        // `clean` task.
+        project.plugins.apply(BasePlugin::class.java)
 
         setupSharedNpmProject(project, JsPlatformDisambiguator, rootDirectoryName = JsPlatformDisambiguator.jsPlatform)
         setupSharedNpmProject(project, WasmPlatformDisambiguator, rootDirectoryName = WasmPlatformDisambiguator.platformDisambiguator)
