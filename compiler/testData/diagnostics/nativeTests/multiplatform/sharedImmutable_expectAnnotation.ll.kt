@@ -1,7 +1,7 @@
 // LL_FIR_DIVERGENCE
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +MultiPlatformProjects
 // DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION_ERROR
 // IGNORE_FIR_DIAGNOSTICS

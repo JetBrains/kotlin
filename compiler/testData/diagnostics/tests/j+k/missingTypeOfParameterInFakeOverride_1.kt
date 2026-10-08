@@ -1,5 +1,5 @@
 // ISSUE: KT-87507
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // MODULE: a
 // FILE: a/b/c/Some.kt
 package a.b.c

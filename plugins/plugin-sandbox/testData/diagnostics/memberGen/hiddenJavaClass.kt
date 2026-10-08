@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 // FILE: JavaClass.java
 @org.jetbrains.kotlin.plugin.sandbox.JavaClassWithHiddenNested
 public class JavaClass {

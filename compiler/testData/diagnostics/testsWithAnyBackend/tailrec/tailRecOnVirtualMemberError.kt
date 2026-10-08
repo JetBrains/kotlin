@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: LOWERINGS
+// DISABLE_NEXT_PHASE_SUGGESTION: fails at LOWERINGS on JVM only
 
 open class A {
     <!TAILREC_ON_VIRTUAL_MEMBER_ERROR!>tailrec<!> open fun foo(x: Int) {
