@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.grouping.AbstractTwoStageKotlinCompilerWasmTest
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageTestSuppressor
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerTestSuppressor
-import org.jetbrains.kotlin.test.klib.REFLECTION_PACKAGE_NAME_SINCE
+import org.jetbrains.kotlin.test.klib.isolateReflectionPackageNameDependentTestsIfNeeded
 import org.jetbrains.kotlin.test.klib.setupCustomLVForKlibForwardCompatibilityTest
 import org.jetbrains.kotlin.test.klib.useReflectionPackageNameAnnotationIfSupported
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -105,11 +105,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
         }
         nonGroupingStage {
             useGroupingTestIsolators(::WasmGroupingTestIsolator)
-            if (customWasmJsCompilerSettings.defaultLanguageVersion < REFLECTION_PACKAGE_NAME_SINCE) {
-                // The released backend that links the second stage does not know `kotlin.internal.ReflectionPackageName`,
-                // so a renamed test cannot keep its reflective package names: such tests must not be renamed at all.
-                useGroupingTestIsolators(::ReflectionPackageNameDependentTestIsolator)
-            }
+            isolateReflectionPackageNameDependentTestsIfNeeded(customWasmJsCompilerSettings.defaultLanguageVersion)
             useAdditionalSourceProviders(::WasmJsLauncherAdditionalSourceProvider)
             commonCodegenConfiguration()
 

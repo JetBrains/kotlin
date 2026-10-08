@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
-import org.jetbrains.kotlin.test.frontend.fir.getTransitivesAndFriends
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerSecondStageFacade
+import org.jetbrains.kotlin.test.klib.getTransitivesAndFriendsWithoutReflectionPackageNameHelper
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.model.WasmFolderBinaryArtifact
@@ -226,7 +226,8 @@ class CustomWasmSecondStageFacade internal constructor(
             testServices: TestServices,
             compilationStage: CompilationStage,
         ): DependencyPaths {
-            val [transitiveLibraries: List<File>, friendLibraries: List<File>] = getTransitivesAndFriends(module = this, testServices)
+            val [transitiveLibraries: List<File>, friendLibraries: List<File>] =
+                getTransitivesAndFriendsWithoutReflectionPackageNameHelper(testServices)
 
             val regularDependencies: Set<String> = buildSet {
                 val wasmTarget = (targetPlatform(testServices).single() as WasmPlatformWithTarget).target
