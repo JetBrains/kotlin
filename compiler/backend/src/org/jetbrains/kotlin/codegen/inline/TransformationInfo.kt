@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 interface TransformationInfo {
@@ -25,6 +26,9 @@ interface TransformationInfo {
         get() = nameGenerator.generatorClass
 
     val nameGenerator: NameGenerator
+
+    val wasAlreadyRegenerated: Boolean
+        get() = false
 
     fun shouldRegenerate(sameModule: Boolean): Boolean
 
@@ -39,7 +43,6 @@ class WhenMappingTransformationInfo(
     private val alreadyRegenerated: Boolean,
     val fieldNode: FieldInsnNode
 ) : TransformationInfo {
-
     override val nameGenerator by lazy {
         parentNameGenerator.subGenerator(false, oldClassName.substringAfterLast("/").substringAfterLast(TRANSFORMED_WHEN_MAPPING_MARKER))
     }
@@ -72,6 +75,12 @@ class AnonymousObjectTransformationInfo internal constructor(
     private val capturesAnonymousObjectThatMustBeRegenerated: Boolean = false
 ) : TransformationInfo {
 
+    private var lambdaTransformedIntoSingletonDecider: (() -> Boolean)? = null
+
+    val isLambdaTransformedIntoSingleton: Boolean by lazy {
+        lambdaTransformedIntoSingletonDecider?.invoke() ?: false
+    }
+
     override val nameGenerator by lazy {
         parentNameGenerator.subGenerator(true, null)
     }
@@ -82,13 +91,37 @@ class AnonymousObjectTransformationInfo internal constructor(
 
     lateinit var capturedLambdasToInline: Map<String, LambdaInfo>
 
+    override val wasAlreadyRegenerated: Boolean
+        get() = alreadyRegenerated
+
+    fun notLambdaTransformedIntoSingleton() {
+        lambdaTransformedIntoSingletonDecider = { false }
+    }
+
+    fun inheritLambdaTransformedIntoSingleton(info: AnonymousObjectTransformationInfo) {
+        if (lambdaTransformedIntoSingletonDecider == null) {
+            lambdaTransformedIntoSingletonDecider = { info.isLambdaTransformedIntoSingleton }
+        }
+    }
+
+    fun computeLambdaTransformedIntoSingleton() {
+        lambdaTransformedIntoSingletonDecider = {
+            !wasSingletonOriginally && Type.getArgumentTypes(newConstructorDescriptor).isEmpty()
+        }
+    }
+
+    private val wasSingletonOriginally: Boolean
+        get() = constructorDesc == null
+
     constructor(
         ownerInternalName: String,
         needReification: Boolean,
         alreadyRegenerated: Boolean,
         isStaticOrigin: Boolean,
         nameGenerator: NameGenerator
-    ) : this(ownerInternalName, needReification, hashMapOf(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator)
+    ) : this(ownerInternalName, needReification, hashMapOf(), false, alreadyRegenerated, null, isStaticOrigin, nameGenerator) {
+        notLambdaTransformedIntoSingleton()
+    }
 
     // TODO: unconditionally regenerating an object if it has previously been regenerated is a hack that works around
     //   the fact that TypeRemapper cannot differentiate between different references to the same object. See the test
