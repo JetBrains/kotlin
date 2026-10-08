@@ -12,16 +12,16 @@ public abstract interface A /* A*/ {
   public default void withContextParameter(double, long);//  withContextParameter(double, long)
 
   public static final class DefaultImpls /* A.DefaultImpls*/ {
-    public static int getExtensionProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A);//  getExtensionProperty(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() A)
+    public static int getExtensionProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String);//  getExtensionProperty(@org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String)
 
-    public static int getExtensionPropertyWithContextParameter(double, char, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A);//  getExtensionPropertyWithContextParameter(double, char, @org.jetbrains.annotations.NotNull() A)
+    public static int getExtensionPropertyWithContextParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, double, char);//  getExtensionPropertyWithContextParameter(@org.jetbrains.annotations.NotNull() A, double, char)
 
-    public static void extension(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, long);//  extension(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() A, long)
+    public static void extension(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, long);//  extension(@org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String, long)
 
-    public static void extensionWithContextParameter(double, char, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, long);//  extensionWithContextParameter(double, char, @org.jetbrains.annotations.NotNull() A, long)
+    public static void extensionWithContextParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, double, char, long);//  extensionWithContextParameter(@org.jetbrains.annotations.NotNull() A, double, char, long)
 
-    public static void setExtensionProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, int);//  setExtensionProperty(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() A, int)
+    public static void setExtensionProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() java.lang.String, int);//  setExtensionProperty(@org.jetbrains.annotations.NotNull() A, @org.jetbrains.annotations.NotNull() java.lang.String, int)
 
-    public static void withContextParameter(double, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, long);//  withContextParameter(double, @org.jetbrains.annotations.NotNull() A, long)
+    public static void withContextParameter(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() A, double, long);//  withContextParameter(@org.jetbrains.annotations.NotNull() A, double, long)
   }
 }
