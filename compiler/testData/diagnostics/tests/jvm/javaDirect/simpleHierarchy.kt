@@ -1,3 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
 
 // FILE: foo/Base.java
 package foo;

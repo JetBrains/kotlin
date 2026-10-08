@@ -1,5 +1,5 @@
 // ISSUE: KT-89982
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +FullValueClasses
 @file:OptIn(ExperimentalNativeApi::class)
 

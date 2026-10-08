@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-89822
 // LANGUAGE: +CompanionBlocks +CompanionExtensions
 // FILE: b.kt

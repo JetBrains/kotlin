@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: LOWERINGS
+// RUN_PIPELINE_TILL: CODEGEN
 // LANGUAGE: +CustomEqualsInValueClasses +FullValueClasses
 // WITH_STDLIB
 // OPT_IN: kotlin.ExperimentalValueClassesApi
