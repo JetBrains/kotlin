@@ -1,5 +1,4 @@
 // ISSUE: KT-89985
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +FullValueClasses
 // CHECK_BYTECODE_TEXT
 
@@ -43,17 +42,17 @@ fun box(): String {
     return "OK"
 }
 
-// 3 public final static INNERCLASS A\$B A B
-// 3 public static INNERCLASS A\$C A C
-// 3 public static abstract INNERCLASS A\$D A D
-// 3 public final INNERCLASS A\$E A E
+// 3 public final static synchronized INNERCLASS A\$B A B
+// 3 public static synchronized INNERCLASS A\$C A C
+// 3 public static synchronized abstract INNERCLASS A\$D A D
+// 3 public final synchronized INNERCLASS A\$E A E
 // 3 public static abstract INNERCLASS A\$F A F
-// 3 public final static enum INNERCLASS A\$H A H
-// 3 public final static INNERCLASS A\$I A I
-// 3 public final static INNERCLASS A\$O A O
-// 3 public final static INNERCLASS A\$Companion A Companion
-// 2 public final static INNERCLASS TestKt\$box\$identityObjects\$1 null null
-// 2 public final static INNERCLASS TestKt\$box\$identityObjects\$2 null null
-// 2 public final static INNERCLASS TestKt\$box\$Local null Local
+// 3 public final static synchronized enum INNERCLASS A\$H A H
+// 3 public final static synchronized INNERCLASS A\$I A I
+// 3 public final static synchronized INNERCLASS A\$O A O
+// 3 public final static synchronized INNERCLASS A\$Companion A Companion
+// 2 public final static synchronized INNERCLASS TestKt\$box\$identityObjects\$1 null null
+// 2 public final static synchronized INNERCLASS TestKt\$box\$identityObjects\$2 null null
+// 2 public final static synchronized INNERCLASS TestKt\$box\$Local null Local
 // 1 public final static INNERCLASS Outer\$V Outer V
-// 1 public final static INNERCLASS Outer\$NV Outer NV
+// 1 public final static synchronized INNERCLASS Outer\$NV Outer NV
