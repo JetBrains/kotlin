@@ -82,13 +82,13 @@ fun Iterable<Arguments>.shard(context: ExtensionContext): Iterable<Arguments> {
     val matrix = MatrixTestSharding(
         matrix = list.map { it.get().toList() },
         salt = templateContext.shardingDistributionKey(configuration).encodeToByteArray(),
-        totalShards = configuration.totalShards,
+        shardCount = configuration.shardCount,
         shardSeed = configuration.shardSeed,
     )
 
     /* Keep only the invocations of this shard, in their original order */
     return list.filterIndexed { row, _ ->
-        matrix.getShardOfRow(row) == configuration.currentShard
+        matrix.shardFor(row) == configuration.shardIndex
     }
 }
 

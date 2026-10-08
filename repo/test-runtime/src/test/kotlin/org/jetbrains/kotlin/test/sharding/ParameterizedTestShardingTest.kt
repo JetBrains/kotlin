@@ -40,8 +40,13 @@ class ParameterizedTestShardingTest {
         val allTests = executeTests(TestShardingConfiguration(), ShardedParameterizedTest::class.java)
         assertEquals(listOf("test: a", "test: b", "test: c"), invocations(allTests))
 
-        val shards = (1..3).map { shard ->
-            invocations(executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), ShardedParameterizedTest::class.java))
+        val shards = (0 until 3).map { shardIndex ->
+            invocations(
+                executeTests(
+                    TestShardingConfiguration(shardIndex = shardIndex, shardCount = 3),
+                    ShardedParameterizedTest::class.java
+                )
+            )
         }
         /* 3 invocations on 3 shards: one invocation per shard */
         shards.forEach { shard -> assertEquals(1, shard.size, "Expected one invocation per shard: $shards") }
@@ -49,35 +54,59 @@ class ParameterizedTestShardingTest {
     }
 
     @Test
+    fun `single zero indexed shard runs all invocations`() {
+        val tests = executeTests(TestShardingConfiguration(shardIndex = 0, shardCount = 1), ShardedParameterizedTest::class.java)
+        assertEquals(listOf("test: a", "test: b", "test: c"), invocations(tests))
+    }
+
+    @Test
     fun `sharding works with composed annotations`() {
-        val shards = (1..3).map { shard ->
-            invocations(executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), ComposedShardedParameterizedTest::class.java))
+        val shards = (0 until 3).map { shardIndex ->
+            invocations(
+                executeTests(
+                    TestShardingConfiguration(shardIndex = shardIndex, shardCount = 3),
+                    ComposedShardedParameterizedTest::class.java
+                )
+            )
         }
         assertEquals(listOf("test: a", "test: b", "test: c"), shards.flatten().sorted())
     }
 
     @Test
     fun `sharding by method distributes all invocations`() {
-        val shards = (1..3).map { shard ->
-            invocations(executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), ShardByMethodParameterizedTest::class.java))
+        val shards = (0 until 3).map { shardIndex ->
+            invocations(
+                executeTests(
+                    TestShardingConfiguration(shardIndex = shardIndex, shardCount = 3),
+                    ShardByMethodParameterizedTest::class.java
+                )
+            )
         }
         assertEquals(listOf("test: a", "test: b", "test: c"), shards.flatten().sorted())
     }
 
     @Test
     fun `templates of a class with the same arguments run the same invocations`() {
-        (1..3).forEach { shard ->
-            val tests = executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), MultipleShardedParameterizedTest::class.java)
+        (0 until 3).forEach { shardIndex ->
+            val tests = executeTests(
+                TestShardingConfiguration(shardIndex = shardIndex, shardCount = 3),
+                MultipleShardedParameterizedTest::class.java
+            )
             val first = invocations(tests).filter { it.startsWith("first: ") }.map { it.removePrefix("first: ") }
             val second = invocations(tests).filter { it.startsWith("second: ") }.map { it.removePrefix("second: ") }
-            assertEquals(first, second, "Expected the same invocations of 'first' and 'second' on shard $shard")
+            assertEquals(first, second, "Expected the same invocations of 'first' and 'second' on shard $shardIndex")
         }
     }
 
     @Test
     fun `sharding without annotation keeps all invocations on one shard`() {
-        val shards = (1..3).map { shard ->
-            invocations(executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), NotAnnotatedParameterizedTest::class.java))
+        val shards = (0 until 3).map { shardIndex ->
+            invocations(
+                executeTests(
+                    TestShardingConfiguration(shardIndex = shardIndex, shardCount = 3),
+                    NotAnnotatedParameterizedTest::class.java
+                )
+            )
         }
         assertEquals(1, shards.count { it.isNotEmpty() }, "Expected the template to run on exactly one shard: $shards")
         assertEquals(listOf("test: a", "test: b", "test: c"), shards.flatten().sorted())
@@ -96,8 +125,8 @@ class ParameterizedTestShardingTest {
         assertEquals(25, allTests.size)
 
         /* Shards without any invocation of the 'single' template do not fail (see 'executeTests') */
-        val shards = (1..3).map { shard ->
-            executeTests(TestShardingConfiguration(currentShard = shard, totalShards = 3), VersionsParameterizedTest::class.java)
+        val shards = (0 until 3).map { shardIndex ->
+            executeTests(TestShardingConfiguration(shardIndex = shardIndex, shardCount = 3), VersionsParameterizedTest::class.java)
         }
         assertEquals(invocations(allTests), shards.flatMap { invocations(it) }.sorted())
 
@@ -223,7 +252,7 @@ class ParameterizedTestShardingTest {
         "${template.methodName}: ${test.displayName}"
     }.sorted()
 
-    /** Executes [testClass] without sharding, independently of the shard of this JVM (see 'tests.currentShard') */
+    /** Executes [testClass] without sharding, independently of the shard of this JVM (see 'kotlin.build.test.shard.index') */
     private fun execute(testClass: Class<*>): TestExecutionSummary {
         val listener = SummaryGeneratingListener()
         val launcher = LauncherFactory.create(LauncherConfig.builder().enablePostDiscoveryFilterAutoRegistration(false).build())
