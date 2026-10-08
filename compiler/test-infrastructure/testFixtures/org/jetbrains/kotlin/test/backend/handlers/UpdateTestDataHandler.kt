@@ -51,15 +51,21 @@ class UpdateTestDataHandler(
     testServices: TestServices
 ) : TestFailureSuppressor(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        if (updateTestData) {
-            failedAssertions.forEach {
-                it.cause.tryUpdateTestData()
-            }
-        }
+        updateTestDataIfNeeded(failedAssertions.map { it.cause })
         return failedAssertions
     }
 
     override fun checkIfTestShouldBeUnmuted() {}
+}
+
+/**
+ * [UpdateTestDataHandler] is not called for tests without failures, so this function may be used
+ * to apply test data changes proposed by [TestFailureSuppressor.checkIfTestShouldBeUnmuted].
+ */
+fun updateTestDataIfNeeded(failures: List<Throwable>) {
+    if (updateTestData) {
+        failures.forEach { it.tryUpdateTestData() }
+    }
 }
 
 private fun Throwable.tryUpdateTestData() {

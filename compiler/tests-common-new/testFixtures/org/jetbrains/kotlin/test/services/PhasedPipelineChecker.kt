@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.backend.handlers.updateTestDataIfNeeded
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.DISABLE_NEXT_PHASE_SUGGESTION
 import org.jetbrains.kotlin.test.directives.TestPhaseDirectives.LATEST_PHASE_IN_PIPELINE
@@ -25,22 +26,40 @@ class PhasedPipelineChecker(
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(TestPhaseDirectives)
 
+    companion object {
+        /**
+         * If a file with this extension exists next to the test data file, the problem reported by [PhasedPipelineChecker]
+         * is compared with its content instead of being reported (and the test data is never updated).
+         * Exists for testing the checker itself.
+         */
+        const val PHASED_FAILURE_EXTENSION = ".phased-failure.txt"
+    }
+
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        latestPhaseDirectiveOr { return failedAssertions + it }
+        latestPhaseDirectiveOr { return failedAssertions + it.withFailFileCheck() }
         val targetedPhase = getTargetedPhase()
         if (targetedPhase == null) {
-            return failedAssertions + reportMissingDirective(failedAssertions)
+            return failedAssertions + reportMissingDirective(failedAssertions).withFailFileCheck()
         }
 
         val (suppressibleFailures, nonSuppressibleFailures, hasFailuresInNonLeafModule, hasNonSuppressibleFailuresFromFacade) = sortFailures(failedAssertions)
 
-        return nonSuppressibleFailures + when {
+        val problem = when {
             suppressibleFailures.isEmpty() && !hasNonSuppressibleFailuresFromFacade && !hasFailuresInNonLeafModule -> checkPhaseConsistency()
-            else -> emptyList()
+            else -> null
         }
+        return nonSuppressibleFailures + problem.withFailFileCheck()
     }
 
-    override fun checkIfTestShouldBeUnmuted() {}
+    /**
+     * The test passed with no failures, but the phase directives still have to be checked,
+     * e.g., the test might be promoted to a further phase.
+     */
+    override fun checkIfTestShouldBeUnmuted() {
+        val failures = suppressIfNeeded(emptyList()).map { it.cause }
+        updateTestDataIfNeeded(failures)
+        testServices.assertions.failAll(failures)
+    }
 
     private fun getTargetedPhase(): TestPhase? {
         return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].lastOrNull() ?: defaultRunPipelineTill
@@ -83,30 +102,29 @@ class PhasedPipelineChecker(
         return artifactKind.toPhase()
     }
 
-    private inline fun latestPhaseDirectiveOr(otherwise: (WrappedException) -> Nothing): TestPhase {
+    private inline fun latestPhaseDirectiveOr(otherwise: (Problem) -> Nothing): TestPhase {
         val latestPhases = testServices.moduleStructure.allDirectives[LATEST_PHASE_IN_PIPELINE].distinct()
         val message = when (latestPhases.size) {
             1 -> return latestPhases[0]
             0 -> "LATEST_PHASE_IN_PIPELINE directive is not specified for the test"
             else -> "LATEST_PHASE_IN_PIPELINE directive defined multiple times: $latestPhases"
         }
-        otherwise(WrappedException.FromAfterAnalysisChecker(IllegalStateException(message)))
+        otherwise(Problem(message))
     }
 
-    private fun checkPhaseConsistency(): List<WrappedException> {
+    private fun checkPhaseConsistency(): Problem? {
         val directives = testServices.moduleStructure.allDirectives
-        if (DISABLE_NEXT_PHASE_SUGGESTION in directives) return emptyList()
+        if (DISABLE_NEXT_PHASE_SUGGESTION in directives) return null
         val expectedLastPhase = directives[LATEST_PHASE_IN_PIPELINE].first()
         val targetedPhase = getTargetedPhase()
         if (targetedPhase == expectedLastPhase) {
-            return emptyList()
+            return null
         }
         if (targetedPhase != null && targetedPhase > expectedLastPhase) {
-            val message = "RUN_PIPELINE_TILL ($targetedPhase) cannot be greater than $LATEST_PHASE_IN_PIPELINE ($expectedLastPhase)"
-            return listOf(WrappedException.FromAfterAnalysisChecker(IllegalStateException(message)))
+            return Problem("RUN_PIPELINE_TILL ($targetedPhase) cannot be greater than $LATEST_PHASE_IN_PIPELINE ($expectedLastPhase)")
         }
 
-        return createDiffsForAllTestDataFiles("Phase $targetedPhase could be promoted to $expectedLastPhase") {
+        return Problem("Phase $targetedPhase could be promoted to $expectedLastPhase") {
             val proposedDirectiveDeclaration = when (targetedPhase) {
                 defaultRunPipelineTill -> ""
                 else -> "// RUN_PIPELINE_TILL: $expectedLastPhase"
@@ -115,8 +133,8 @@ class PhasedPipelineChecker(
         }
     }
 
-    private fun reportMissingDirective(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val expectedLastPhase = latestPhaseDirectiveOr { return failedAssertions + it }
+    private fun reportMissingDirective(failedAssertions: List<WrappedException>): Problem {
+        val expectedLastPhase = latestPhaseDirectiveOr { return it }
         val proposedPhase = failedAssertions.mapNotNull {
             when (it) {
                 is WrappedException.FromFacade -> it.facade.outputKind
@@ -125,9 +143,35 @@ class PhasedPipelineChecker(
             }?.toPhase()
         }.minOrNull() ?: expectedLastPhase
 
-        return createDiffsForAllTestDataFiles("Please specify the test phase in `// RUN_PIPELINE_TILL` directive") {
+        return Problem("Please specify the test phase in `// RUN_PIPELINE_TILL` directive, e.g. `// RUN_PIPELINE_TILL: $proposedPhase`") {
             @Suppress("ConvertToStringTemplate")
             "// RUN_PIPELINE_TILL: $proposedPhase\n" + it
+        }
+    }
+
+    /**
+     * @param newContent if not null, the problem is reported as a difference between the current test data and the
+     * one transformed by [newContent]; otherwise, as a plain error.
+     */
+    private class Problem(val message: String, val newContent: ((String) -> String)? = null)
+
+    private fun Problem?.withFailFileCheck(): List<WrappedException> {
+        val failFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile
+            .withExtension(PHASED_FAILURE_EXTENSION)
+
+        return when {
+            failFile.exists() -> when (this) {
+                null -> listOf(IllegalStateException("There's no error from ${PhasedPipelineChecker::class.simpleName}. Please remove `${failFile.name}`").wrap())
+                else -> try {
+                    testServices.assertions.assertEqualsToFile(failFile, message)
+                    emptyList()
+                } catch (e: AssertionError) {
+                    listOf(e.wrap())
+                }
+            }
+            this == null -> emptyList()
+            newContent == null -> listOf(IllegalStateException(message).wrap())
+            else -> createDiffsForAllTestDataFiles(message, newContent)
         }
     }
 

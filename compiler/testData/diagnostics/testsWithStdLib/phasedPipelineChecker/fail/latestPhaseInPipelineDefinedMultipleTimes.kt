@@ -1,0 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
+// LATEST_PHASE_IN_PIPELINE: FIR2IR
+
+fun everythingPasses() {}

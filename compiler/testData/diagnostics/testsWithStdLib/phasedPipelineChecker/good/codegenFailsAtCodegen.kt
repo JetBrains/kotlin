@@ -1,0 +1,4 @@
+// RUN_PIPELINE_TILL: CODEGEN
+
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(vararg x: Int)<!> {}
+<!CONFLICTING_JVM_DECLARATIONS!>fun foo(x: IntArray)<!> {}

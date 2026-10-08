@@ -1,0 +1,4 @@
+// LATEST_PHASE_IN_PIPELINE: FIR2IR
+// RUN_PIPELINE_TILL: FRONTEND
+
+fun everythingPasses() {}

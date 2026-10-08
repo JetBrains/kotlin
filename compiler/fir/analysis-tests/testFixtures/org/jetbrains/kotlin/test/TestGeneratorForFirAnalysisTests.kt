@@ -128,6 +128,9 @@ fun main(args: Array<String>) {
             testClass<AbstractPhasedJvmDiagnosticPsiTest> {
                 phasedModel(allowKts = true)
             }
+            testClass<AbstractPhasedJvmDiagnosticWithCustomLatestPhaseTest> {
+                model("testData/diagnostics/testsWithCustomLatestPhase", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
         }
 
         testGroup(testRoot, "compiler/testData/diagnostics/tests/contextSensitiveResolutionUsingExpectedType") {

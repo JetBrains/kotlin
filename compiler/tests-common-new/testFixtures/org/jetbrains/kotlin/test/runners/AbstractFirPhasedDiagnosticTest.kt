@@ -76,6 +76,19 @@ open class AbstractPhasedJvmDiagnosticKmpTreeTest : AbstractFirPhasedDiagnosticT
 open class AbstractPhasedJvmDiagnosticLightTreeTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree)
 open class AbstractPhasedJvmDiagnosticPsiTest : AbstractFirPhasedDiagnosticTest(FirParser.Psi)
 
+/**
+ * Doesn't define [LATEST_PHASE_IN_PIPELINE] by default, so the tests have to specify it themselves.
+ * Used for testing how [PhasedPipelineChecker] handles various [LATEST_PHASE_IN_PIPELINE] values.
+ */
+open class AbstractPhasedJvmDiagnosticWithCustomLatestPhaseTest : AbstractFirPhasedDiagnosticTest(FirParser.LightTree) {
+    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
+        super.configure(builder)
+        defaultDirectives {
+            -LATEST_PHASE_IN_PIPELINE
+        }
+    }
+}
+
 open class AbstractPhasedJvmDiagnosticPsiWithContextSensitiveEnabledTest : AbstractFirPhasedDiagnosticTest(FirParser.Psi) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
