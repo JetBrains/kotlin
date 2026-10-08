@@ -14,6 +14,12 @@
  * limitations under the License.
  */
 
+#if !(__has_builtin(__builtin_roundeven) && (defined(__aarch64__) || defined(__SSE4_1__)))
+#include <cstring>
+#endif
+#if !defined(__arm__) || !(__has_builtin(__builtin_roundeven) && (defined(__aarch64__) || defined(__SSE4_1__)))
+#include <fenv.h>
+#endif
 #include <float.h>
 #include <math.h>
 #include <stdlib.h>
@@ -143,7 +149,60 @@ KDouble Kotlin_math_ln1p(KDouble x) { return log1p(x); }
 
 KDouble Kotlin_math_ceil(KDouble x) { return ceil(x); }
 KDouble Kotlin_math_floor(KDouble x) { return floor(x); }
-KDouble Kotlin_math_round(KDouble x) { return rint(x); }
+KDouble Kotlin_math_round(KDouble x) {
+#if __has_builtin(__builtin_roundeven) && (defined(__aarch64__) || defined(__SSE4_1__))
+    // On aarch64 and on x86 with SSE 4.1, LLVM emits this directly as instructions, on other targets it emits a call
+    // to the actual roundeven function, which is not present in the glib version(s) that Kotlin runtime currently
+    // depends on Linux and Windows, leading to linking errors on those platforms, hence the fallback path.
+    //
+    // Once all platforms have roundeven available, the fallback path can be removed.
+    return __builtin_roundeven(x);
+#else
+    static_assert(sizeof(double) == sizeof(std::uint64_t));
+    static_assert(std::numeric_limits<double>::is_iec559 &&
+                  std::numeric_limits<double>::digits == 53 &&
+                  std::numeric_limits<double>::max_exponent == 1024);
+
+    std::uint64_t bits;
+    std::memcpy(&bits, &x, sizeof(bits));
+
+    constexpr std::uint64_t signMask = UINT64_C(1) << 63;
+    constexpr std::uint64_t oneBits  = UINT64_C(1023) << 52;
+    constexpr std::uint64_t halfBits = UINT64_C(1022) << 52;
+
+    const auto sign = bits & signMask;
+    const auto magnitude = bits & ~signMask;
+    const int exponent = static_cast<int>(magnitude >> 52) - 1023;
+
+    if (exponent >= 52) {
+        // Already integral, infinity, or NaN.
+        return x;
+    }
+
+    if (exponent < 0) {
+        // |x| <= 0.5 -> signed zero; 0.5 < |x| < 1 -> signed one.
+        bits = sign | (magnitude > halfBits ? oneBits : 0);
+    } else {
+        // The bit corresponding to an increment of 1.0.
+        const auto unit = UINT64_C(1) << (52 - exponent);
+        const auto fractionMask = unit - 1;
+        const auto fraction = magnitude & fractionMask;
+        auto rounded = magnitude & ~fractionMask;
+
+        const auto halfway = unit >> 1;
+        const bool odd = (rounded & unit) != 0;
+
+        if (fraction > halfway || (fraction == halfway && odd)) {
+            rounded += unit;
+        }
+
+        bits = sign | rounded;
+    }
+
+    std::memcpy(&x, &bits, sizeof(x));
+    return x;
+#endif
+}
 
 KDouble Kotlin_math_abs(KDouble x) { return fabs(x); }
 
@@ -221,7 +280,24 @@ KFloat Kotlin_math_ln1pf(KFloat x) { return log1pf(x); }
 
 KFloat Kotlin_math_ceilf(KFloat x) { return ceilf(x); }
 KFloat Kotlin_math_floorf(KFloat x) { return floorf(x); }
-KFloat Kotlin_math_roundf(KFloat x) { return rintf(x); }
+KFloat Kotlin_math_roundf(KFloat x) {
+// See the comment in Kotlin_math_round
+#if __has_builtin(__builtin_roundevenf) && (defined(__aarch64__) || defined(__SSE4_1__))
+    return __builtin_roundevenf(x);
+#elif !defined(__arm__)
+#pragma STDC FENV_ACCESS ON
+    const int previous = fegetround();
+    const bool differentRounding = previous != FE_TONEAREST;
+    if (differentRounding) fesetround(FE_TONEAREST);
+
+    KFloat result = rintf(x);
+
+    if (differentRounding) fesetround(previous);
+    return result;
+#else
+    return rintf(x);
+#endif
+}
 
 KFloat Kotlin_math_absf(KFloat x) { return fabsf(x); }
 
