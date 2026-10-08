@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.InaccessibleClassSnapshot
 
+@Serializable
 internal class AccessibleClassSnapshotImpl(override val classAbiHash: Long) : AccessibleClassSnapshot {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -20,6 +22,7 @@ internal class AccessibleClassSnapshotImpl(override val classAbiHash: Long) : Ac
     override fun toString(): String = "AccessibleClassSnapshot(classAbiHash=$classAbiHash)"
 }
 
+@Serializable
 internal object InaccessibleClassSnapshotImpl : InaccessibleClassSnapshot {
     override fun equals(other: Any?): Boolean = other is InaccessibleClassSnapshot
     override fun hashCode(): Int = 0

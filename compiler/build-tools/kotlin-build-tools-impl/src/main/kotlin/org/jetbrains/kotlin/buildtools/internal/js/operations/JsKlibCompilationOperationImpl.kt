@@ -3,13 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalCompilerArgument::class)
+@file:UseSerializers(PathAsStringSerializer::class, ListOfPathsAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
@@ -17,7 +19,6 @@ import org.jetbrains.kotlin.build.report.metrics.startMeasureGc
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsHistoryBasedIncrementalCompilationConfiguration
@@ -39,10 +40,11 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrTh
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.HISTORY_FILE_DIR
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl.Companion.ROOT_PROJECT_BUILD_DIR
+import org.jetbrains.kotlin.buildtools.internal.serializability.ListOfPathsAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.daemon.common.CompileService
@@ -60,6 +62,7 @@ internal class JsKlibCompilationOperationImpl(
     override val destination: Path,
     override val compilerArguments: JsArgumentsImpl = JsArgumentsImpl(),
     private val compilerVersion: String,
+    @Transient // TODO
     @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: JsIncrementalCompilationConfiguration? = null,
 ) : BaseCompilationOperationImpl<JsArgumentsImpl, @Contextual K2JSCompilerArguments>(),
     JsKlibCompilationOperation, JsKlibCompilationOperation.Builder,
@@ -77,12 +80,13 @@ internal class JsKlibCompilationOperationImpl(
     override fun toBuilder(): JsKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): JsKlibCompilationOperationImpl {
+        @Suppress("UNCHECKED_CAST")
         return JsKlibCompilationOperationImpl(
             sources,
             destination,
             compilerArguments.deepCopy(),
             compilerVersion,
-            incrementalCompilation, // TODO deepcopy? maybe not needed
+            (incrementalCompilation as? DeepCopyable<JsIncrementalCompilationConfiguration>)?.deepCopy() ?: incrementalCompilation,
         ).also { it.copyFrom(this) }
     }
 

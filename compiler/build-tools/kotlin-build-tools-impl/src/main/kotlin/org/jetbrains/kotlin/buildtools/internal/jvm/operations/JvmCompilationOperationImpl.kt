@@ -83,12 +83,14 @@ internal class JvmCompilationOperationImpl(
 
     // TODO handle new way without options - use serialization?
     override fun deepCopy(): JvmCompilationOperationImpl {
+        @Suppress("UNCHECKED_CAST")
         return JvmCompilationOperationImpl(
             sources = sources,
             destinationDirectory = destinationDirectory,
             compilerArguments = compilerArguments.deepCopy(),
             compilerVersion = compilerVersion,
-            incrementalCompilation = incrementalCompilation, // todo deepcopy?
+            incrementalCompilation = (incrementalCompilation as? DeepCopyable<JvmIncrementalCompilationConfiguration>)?.deepCopy()
+                ?: incrementalCompilation,
             kotlinScriptExtensions = kotlinScriptExtensions?.copyOf()
         ).also { it.copyFrom(this) }
     }

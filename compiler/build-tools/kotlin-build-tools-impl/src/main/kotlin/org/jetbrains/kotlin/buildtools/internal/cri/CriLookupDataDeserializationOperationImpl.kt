@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.cri
 
+import kotlinx.serialization.KSerializer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -27,5 +28,9 @@ internal class CriLookupDataDeserializationOperationImpl(
         executionContext: ExecutionContext,
     ): Iterable<LookupEntry> {
         return deserializer.deserializeLookupData(data)
+    }
+
+    override fun getResultSerializer(): KSerializer<Iterable<LookupEntry>> {
+        TODO("Not yet implemented")
     }
 }

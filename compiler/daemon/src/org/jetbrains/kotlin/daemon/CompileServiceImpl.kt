@@ -11,8 +11,7 @@ import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.PolymorphicSerializer
-import kotlinx.serialization.decodeFromByteArray
+import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import org.jetbrains.kotlin.CoreEnvironmentDeprecation
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
@@ -22,11 +21,11 @@ import org.jetbrains.kotlin.build.report.RemoteReporter
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl
 import org.jetbrains.kotlin.buildtools.internal.LogLevel
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
-import org.jetbrains.kotlin.buildtools.internal.serializability.Messages
-import org.jetbrains.kotlin.buildtools.internal.serializability.btaSerializersModule
+import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -1091,18 +1090,16 @@ class CompileServiceImpl(
             URLClassLoader(System.getProperty("java.class.path").split(File.pathSeparator).map { Path(it).toUri().toURL() }.toTypedArray())
         ) as KotlinToolchainsImpl
 
-        val buildOperation = kotlinToolchains.deserializeOperation(operation)
+        val buildOperation = kotlinToolchains.deserializeOperation(operation) as BuildOperationImpl<*>
         log.info("Received operation: $buildOperation")
-        buildOperation as BtaSerializable
         val logger = object : KotlinLogger {
             override val isDebugEnabled: Boolean
                 get() = true // TODO
 
             private fun reportMessage(level: LogLevel, message: String) {
                 callbackChannel.report(
-                    kotlinToolchains.protobuf.encodeToByteArray(
-                        PolymorphicSerializer(Messages::class),
-                        Messages.LogLine(level, message)
+                    kotlinToolchains.protobuf.encodeToByteArray<Message>(
+                        Message.LogLine(level, message)
                     )
                 )
             }
@@ -1127,12 +1124,12 @@ class CompileServiceImpl(
                 reportMessage(LogLevel.LIFECYCLE, msg)
             }
         }
-        buildOperation.afterSerialization(operationId) {
+        buildOperation.afterSerialization { message ->
             callbackChannel.report(
-                kotlinToolchains.protobuf.encodeToByteArray(PolymorphicSerializer(Messages::class), it)
+                kotlinToolchains.protobuf.encodeToByteArray<Message>(message)
             )
         }
-        val result = kotlinToolchains.createBuildSession().use { buildSession ->
+        val result: Any? = kotlinToolchains.createBuildSession().use { buildSession ->
             buildSession.executeOperation(buildOperation, logger = logger)
         }
 

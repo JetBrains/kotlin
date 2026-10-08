@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.buildtools.internal.js.JsPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.KotlinMetadataPlatformToolchainImpl
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
-import org.jetbrains.kotlin.buildtools.internal.serializability.Messages
+import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.btaSerializersModule
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmPlatformToolchainImpl
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -37,7 +37,6 @@ import java.rmi.server.UnicastRemoteObject
 import java.util.concurrent.*
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.concurrent.atomics.incrementAndFetch
 
 private const val DEFAULT_CLASSLOADERS_CACHE_SIZE = 10
 private const val PROPERTY_CLASSLOADERS_CACHE_SIZE = "kotlin.buildtools.classloaders.cache.size"
@@ -120,14 +119,16 @@ public class KotlinToolchainsImpl : KotlinToolchains {
         ): R {
             val logger = logger ?: DefaultKotlinLogger
             check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
+            val classloadersCacheWithLogger =
+                classloadersCache.takeIf { operation[BuildOperationImpl.ENABLE_CLASSLOADER_CACHE] }?.withLogger(logger)
+            val executionContext = ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
+
             val operationBody: Callable<R> = {
-                val classloadersCacheWithLogger =
-                    classloadersCache.takeIf { operation[BuildOperationImpl.ENABLE_CLASSLOADER_CACHE] }?.withLogger(logger)
                 operation.execute(
                     projectId,
                     executionPolicy,
                     logger,
-                    ExecutionContext(classloadersCacheWithLogger, daemonConnectionRegistry)
+                    executionContext
                 )
             }
             return if (executionPolicy is ExecutionPolicy.InProcess) {
@@ -138,28 +139,29 @@ public class KotlinToolchainsImpl : KotlinToolchains {
                 }
                 unwrapExecutionException(executor.submit(operationBody))
             } else {
-                executionPolicy as DaemonExecutionPolicyImpl
-                if (operation is BtaSerializable) {
-                    val operationId = lastOperationId.incrementAndFetch()
-                    val messageVisitors: List<MessageVisitor> =
-                        operation.beforeSerialization(operationId, logger) + LogLineVisitor(logger)
-                    val messageRenderer =
-                        if (operation is BaseCompilationOperationImpl<*, *>) operation[BaseCompilationOperationImpl.COMPILER_MESSAGE_RENDERER] else DefaultCompilerMessageRenderer
-                    val warningsAsError =
-                        operation is BaseCompilationOperationImpl<*, *> && operation.compilerArguments[CommonToolArgumentsImpl.WERROR]
-
-                    val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger, messageRenderer, warningsAsError)
-                    val daemon = daemonConnectionRegistry.getCompileServiceSession(executionPolicy, logger, loggerAdapter)
-                        ?: error("Unable to get daemon connection")
-
-                    val serializedOperation = protobuf.encodeToByteArray(operation as BtaSerializable)
-                    val callbackChannel = BtaCallbackChannel(protobuf, messageVisitors)
-                    val result = daemon.compileService.execute(serializedOperation, operationId, callbackChannel).get()
-                    @Suppress("UNCHECKED_CAST")
-                    protobuf.decodeFromByteArray(operation.getResultSerializer(), result) as R
-                } else {
-                    operationBody.call()
-                }
+                require(executionPolicy is DaemonExecutionPolicyImpl)
+                operation.executeInDaemon(projectId, executionPolicy, logger, executionContext)
+//                operationBody.call()
+//                executionPolicy as DaemonExecutionPolicyImpl
+//                if (operation is BtaSerializable) {
+//                    val messageVisitors: List<MessageVisitor> = operation.beforeSerialization(logger) + LogLineVisitor(logger)
+//                    val messageRenderer =
+//                        if (operation is BaseCompilationOperationImpl<*, *>) operation[BaseCompilationOperationImpl.COMPILER_MESSAGE_RENDERER] else DefaultCompilerMessageRenderer
+//                    val warningsAsError =
+//                        operation is BaseCompilationOperationImpl<*, *> && operation.compilerArguments[CommonToolArgumentsImpl.WERROR]
+//
+//                    val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger, messageRenderer, warningsAsError)
+//                    val daemon = daemonConnectionRegistry.getCompileServiceSession(executionPolicy, logger, loggerAdapter)
+//                        ?: error("Unable to get daemon connection")
+//
+//                    val serializedOperation = protobuf.encodeToByteArray(operation as BtaSerializable)
+//                    val callbackChannel = BtaCallbackChannel(protobuf, messageVisitors)
+//                    val result = daemon.compileService.execute(serializedOperation, 0, callbackChannel).get()
+//                    @Suppress("UNCHECKED_CAST")
+//                    protobuf.decodeFromByteArray(operation.getResultSerializer(), result) as R
+//                } else {
+//                    operationBody.call()
+//                }
             }
         }
 
@@ -226,6 +228,8 @@ internal class BtaCallbackChannel(
 ) : DaemonCallbackChannel,
     UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) {
     override fun report(message: ByteArray) {
-        val _ = messageVisitors.any { it.accept(protoBuf.decodeFromByteArray<Messages>(message)) }
+        val message = protoBuf.decodeFromByteArray<Message>(message)
+        println(message)
+        val _ = messageVisitors.any { it.accept(message) }
     }
 }

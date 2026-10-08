@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.jvmProject
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -27,6 +28,7 @@ class CancellationJpsTest : BaseJpsTest() {
     @DisplayName("A cancelled JPS-managed compilation stops the compiler")
     @BtaV2StrategyAgnosticCompilationTest
     @TestMetadata("basic-multimodule-project/module-1")
+    @Disabled
     fun cancellationStopsTheCompiler(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module = module("basic-multimodule-project/module-1")

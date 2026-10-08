@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.abi.operations
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.abi.tools.AbiTools
@@ -46,6 +47,10 @@ internal class DumpJvmAbiToStringOperationImpl(
     ) {
         val filters = patternFilters?.let { AbiValidationUtils.convert(it) } ?: org.jetbrains.kotlin.abi.tools.AbiFilters.EMPTY
         abiTools.printJvmDump(appendable, inputFiles.map { it.toFile() }, filters)
+    }
+
+    override fun getResultSerializer(): KSerializer<Unit> {
+        TODO("Not yet implemented")
     }
 
 

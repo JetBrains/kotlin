@@ -48,6 +48,7 @@ private fun jsr305mode(mode: String, fullEntry: String) = Jsr305Impl.Mode.values
 public sealed class Jsr305Impl {
     public abstract val mode: Mode
 
+    @Serializable
     public class Global(override val mode: Mode) : Jsr305Impl() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -60,6 +61,7 @@ public sealed class Jsr305Impl {
         override fun toString(): String = "Global(mode=$mode)"
     }
 
+    @Serializable
     public class UnderMigration(override val mode: Mode) : Jsr305Impl() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
@@ -72,6 +74,7 @@ public sealed class Jsr305Impl {
         override fun toString(): String = "UnderMigration(mode=$mode)"
     }
 
+    @Serializable
     public class SpecificAnnotation(public val fqName: String, override val mode: Mode) : Jsr305Impl() {
         public val annotationFqName: String = "@$fqName"
 
@@ -91,6 +94,7 @@ public sealed class Jsr305Impl {
         override fun toString(): String = "SpecificAnnotation(fqName=$fqName, mode=$mode)"
     }
 
+    @Serializable
     public enum class Mode(
         public val stringValue: String,
     ) {

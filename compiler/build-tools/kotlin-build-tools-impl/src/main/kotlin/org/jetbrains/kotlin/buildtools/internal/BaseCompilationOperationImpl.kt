@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImp
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
-import org.jetbrains.kotlin.buildtools.internal.serializability.Messages
+import org.jetbrains.kotlin.buildtools.internal.serializability.Message
+import org.jetbrains.kotlin.buildtools.internal.serializability.beforeSerialization
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
@@ -45,7 +46,7 @@ import java.nio.file.Path
 
 @kotlinx.serialization.Serializable
 internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCompilerArgumentsImpl, CompilerArgs : CommonCompilerArguments>() :
-    CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder, BtaSerializable {
+    CancellableBuildOperationImpl<CompilationResult>(), BaseCompilationOperation, BaseCompilationOperation.Builder {
 
     abstract override val compilerArguments: BtaCompilerArgs
 
@@ -53,15 +54,16 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         return CompilationResultSerializer
     }
 
-    override fun afterSerialization(operationId: Int, messageReporter: (Messages) -> Unit) {
+    override fun afterSerialization(messageReporter: (Message) -> Unit) {
+        super.afterSerialization(messageReporter)
         if (hasLookupTracker) {
             lookupTracker = MessageReportingCompilerLookupTracker(messageReporter)
-            compilerMessageCollector = MessageReportingMessageCollectorWithDiagnosticId(messageReporter)
         }
+        compilerMessageCollector = MessageReportingMessageCollectorWithDiagnosticId(messageReporter)
     }
 
-    override fun beforeSerialization(operationId: Int, logger: KotlinLogger): List<MessageVisitor> {
-        val messageVisitors = mutableListOf<MessageVisitor>()
+    override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
+        val messageVisitors = super.beforeSerialization(logger).toMutableList()
         lookupTracker?.let { messageVisitors.add(LookupMessageVisitor(it)) }
         messageVisitors.add(
             CompilerMessageVisitor(
@@ -91,11 +93,15 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     @SerialName("COMPILER_MESSAGE_RENDERER")
     @Transient
-    internal var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
+    override var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 
     @SerialName("GENERATE_COMPILER_REF_INDEX")
     internal var generateCompilerRefIndex: Boolean = false
 
+    override val warningsAsError: Boolean
+        get() = compilerArguments[WERROR]
+
+    @Transient
     private var compilerMessageCollector: MessageCollectorWithDiagnosticId? = null
 
     internal fun copyFrom(from: BaseCompilationOperationImpl<BtaCompilerArgs, CompilerArgs>) {
@@ -128,6 +134,24 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
 
     class Option<V>(id: String) : BaseOption<V>(id)
 
+
+    override fun executeInDaemon(
+        projectId: ProjectId,
+        executionPolicy: DaemonExecutionPolicyImpl,
+        logger: KotlinLogger,
+        executionContext: ExecutionContext
+    ): CompilationResult {
+        val messageCollector = createMessageCollector(logger)
+        if (reportArgumentWarningsAndErrors(logger, messageCollector)) return COMPILATION_ERROR
+        val hasArgumentParsingErrors = messageCollector.hasErrors()
+        val result = super.executeInDaemon(projectId, executionPolicy, logger, executionContext)
+        return if (hasArgumentParsingErrors && result == COMPILATION_SUCCESS) {
+            COMPILATION_ERROR
+        } else {
+            result
+        }
+    }
+
     override fun executeCancellableImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
@@ -135,16 +159,9 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         executionContext: ExecutionContext,
     ): CompilationResult {
         val kotlinLogger = logger ?: DefaultKotlinLogger
-        val messageCollector = compilerMessageCollector ?: run {
-            val compilerMessageRenderer = this[COMPILER_MESSAGE_RENDERER]
-            KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
-        }
-        compilerArguments.reportRestrictedViolations(kotlinLogger)
-        if (compilerArguments.hasValidationErrors()) {
-            compilerArguments.reportValidationErrors(kotlinLogger)
-            return COMPILATION_ERROR
-        }
-        compilerArguments.reportArgumentParseWarnings(messageCollector, createAndPrepareCompilerArguments())
+        val messageCollector = compilerMessageCollector ?: createMessageCollector(kotlinLogger)
+
+        if (reportArgumentWarningsAndErrors(kotlinLogger, messageCollector)) return COMPILATION_ERROR
         val hasArgumentParsingErrors = messageCollector.hasErrors()
         val result = when (executionPolicy) {
             InProcessExecutionPolicyImpl -> {
@@ -164,6 +181,22 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         } else {
             result
         }
+    }
+
+    private fun createMessageCollector(kotlinLogger: KotlinLogger): KotlinLoggerMessageCollectorAdapter =
+        KotlinLoggerMessageCollectorAdapter(kotlinLogger, compilerMessageRenderer, compilerArguments[WERROR])
+
+    private fun reportArgumentWarningsAndErrors(
+        kotlinLogger: KotlinLogger,
+        messageCollector: MessageCollectorWithDiagnosticId,
+    ): Boolean {
+        compilerArguments.reportRestrictedViolations(kotlinLogger)
+        if (compilerArguments.hasValidationErrors()) {
+            compilerArguments.reportValidationErrors(kotlinLogger)
+            return true
+        }
+        compilerArguments.reportArgumentParseWarnings(messageCollector, createAndPrepareCompilerArguments())
+        return false
     }
 
     abstract val targetPlatform: CompileService.TargetPlatform
@@ -380,7 +413,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 }
 
-private class MessageReportingCompilerLookupTracker(private val messageReporter: (Messages) -> Unit) : CompilerLookupTracker {
+private class MessageReportingCompilerLookupTracker(private val messageReporter: (Message) -> Unit) : CompilerLookupTracker {
     override fun recordLookup(
         filePath: String,
         scopeFqName: String,
@@ -388,25 +421,29 @@ private class MessageReportingCompilerLookupTracker(private val messageReporter:
         name: String,
     ) {
         messageReporter(
-            Messages.LookupMessage(filePath, scopeFqName, scopeKind, name)
+            Message.LookupMessage(filePath, scopeFqName, scopeKind, name)
         )
     }
 
     override fun clear() {
         messageReporter(
-            Messages.LookupClear
+            Message.LookupClear
         )
     }
 }
 
-private class MessageReportingMessageCollectorWithDiagnosticId(private val messageReporter: (Messages) -> Unit) :
+private class MessageReportingMessageCollectorWithDiagnosticId(private val messageReporter: (Message) -> Unit) :
     MessageCollectorWithDiagnosticId {
     override fun clear() {
-        messageReporter(Messages.CompilerMessageClear)
+        messageReporter(Message.CompilerMessageClear)
     }
 
     override fun hasErrors(): Boolean {
         return false
+    }
+
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+        messageReporter(Message.CompilerMessageWithDiagnosticId(severity, message, location?.beforeSerialization(), diagnosticId = null))
     }
 
     override fun report(
@@ -415,7 +452,7 @@ private class MessageReportingMessageCollectorWithDiagnosticId(private val messa
         location: CompilerMessageSourceLocation?,
         diagnosticId: String?,
     ) {
-        messageReporter(Messages.CompilerMessageWithDiagnosticId(severity, message, location, diagnosticId))
+        messageReporter(Message.CompilerMessageWithDiagnosticId(severity, message, location?.beforeSerialization(), diagnosticId))
     }
 }
 

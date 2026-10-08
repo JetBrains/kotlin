@@ -2,12 +2,15 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:UseSerializers(PathAsStringSerializer::class, ListOfPathsAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.wasm.operations
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.endMeasureGc
@@ -33,6 +36,8 @@ import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfig
 import org.jetbrains.kotlin.buildtools.internal.BaseIncrementalCompilationConfigurationImpl.Companion.UNSAFE_INCREMENTAL_COMPILATION_FOR_MULTIPLATFORM
 import org.jetbrains.kotlin.buildtools.internal.arguments.WasmArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.arguments.absolutePathStringOrThrow
+import org.jetbrains.kotlin.buildtools.internal.serializability.ListOfPathsAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.wasm.WasmHistoryBasedIncrementalCompilationConfigurationImpl.Companion.HISTORY_FILE_DIR
@@ -56,6 +61,7 @@ internal class WasmKlibCompilationOperationImpl(
     override val destination: Path,
     override val compilerArguments: WasmArgumentsImpl = WasmArgumentsImpl(),
     private val compilerVersion: String,
+    @Transient // TODO
     @SerialName("INCREMENTAL_COMPILATION") internal var incrementalCompilation: WasmIncrementalCompilationConfiguration? = null,
 ) : BaseCompilationOperationImpl<WasmArgumentsImpl, @Contextual KotlinWasmCompilerArguments>(),
     WasmKlibCompilationOperation, WasmKlibCompilationOperation.Builder,
@@ -73,12 +79,13 @@ internal class WasmKlibCompilationOperationImpl(
     override fun toBuilder(): WasmKlibCompilationOperation.Builder = deepCopy()
 
     override fun deepCopy(): WasmKlibCompilationOperationImpl {
+        @Suppress("UNCHECKED_CAST")
         return WasmKlibCompilationOperationImpl(
             sources,
             destination,
             compilerArguments.deepCopy(),
             compilerVersion,
-            (incrementalCompilation as? DeepCopyable<*>)?.deepCopy() as WasmIncrementalCompilationConfiguration?,
+            (incrementalCompilation as? DeepCopyable<WasmIncrementalCompilationConfiguration>)?.deepCopy() ?: incrementalCompilation,
         ).also { it.copyFrom(this) }
     }
 

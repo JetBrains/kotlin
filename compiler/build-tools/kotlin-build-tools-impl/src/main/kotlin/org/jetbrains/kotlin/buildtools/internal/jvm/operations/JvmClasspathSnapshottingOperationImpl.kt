@@ -3,10 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:UseSerializers(PathAsStringSerializer::class)
+
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -15,6 +19,9 @@ import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
+import org.jetbrains.kotlin.buildtools.internal.serializability.ClasspathEntrySnapshotSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
@@ -28,7 +35,7 @@ internal class JvmClasspathSnapshottingOperationImpl(
     @SerialName("PARSE_INLINED_LOCAL_CLASSES") internal var parseInlinedLocalClasses: Boolean = true,
     @SerialName("EXPAND_TYPE_ALIASES") internal var expandTypeAliases: Boolean = false,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation, JvmClasspathSnapshottingOperation.Builder,
-    DeepCopyable<JvmClasspathSnapshottingOperation> {
+    DeepCopyable<JvmClasspathSnapshottingOperation>, BtaSerializable {
 
     override fun toBuilder(): JvmClasspathSnapshottingOperation.Builder = deepCopy()
 
@@ -74,6 +81,10 @@ internal class JvmClasspathSnapshottingOperationImpl(
 
     operator fun <V> set(key: Option<V>, value: V) {
         JvmClasspathSnapshottingOperationImpl::class.setPropertyWithSerialNameValue(this, key.id, value)
+    }
+
+    override fun getResultSerializer(): KSerializer<ClasspathEntrySnapshot> {
+        return ClasspathEntrySnapshotSerializer
     }
 
     class Option<V>(id: String) : BaseOption<V>(id)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
@@ -24,7 +25,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 @Serializable
 internal class DiscoverScriptExtensionsOperationImpl(
     override val classpath: List<Path>,
-    @SerialName("COMPILER_MESSAGE_RENDERER") internal var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer,
+    @SerialName("COMPILER_MESSAGE_RENDERER") override var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer,
 ) : BuildOperationImpl<Collection<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
     DeepCopyable<DiscoverScriptExtensionsOperation> {
 
@@ -46,6 +47,10 @@ internal class DiscoverScriptExtensionsOperationImpl(
         ).definitions
 
         return definitions.mapTo(arrayListOf()) { it.fileExtension }
+    }
+
+    override fun getResultSerializer(): KSerializer<Collection<String>> {
+        TODO("Not yet implemented")
     }
 
     override fun toBuilder(): DiscoverScriptExtensionsOperation.Builder = deepCopy()

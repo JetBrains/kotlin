@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 import org.jetbrains.kotlin.buildtools.internal.CancellableBuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.DaemonConnectionRegistry
 import org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl
+import org.jetbrains.kotlin.buildtools.internal.classloading.LruClassLoadersCache
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.io.File
 import kotlin.concurrent.atomics.AtomicBoolean

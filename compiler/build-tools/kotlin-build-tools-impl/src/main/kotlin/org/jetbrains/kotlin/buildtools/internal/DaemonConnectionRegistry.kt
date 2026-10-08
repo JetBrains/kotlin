@@ -25,8 +25,7 @@ internal class DaemonConnectionRegistry(private val sessionIsAliveFlagFile: Lazy
         val connectionsNullable = connections as MutableMap<DaemonExecutionPolicyImpl, CompileServiceSession?>
 
         return connectionsNullable.compute(policy) { policy, daemon: CompileServiceSession? ->
-            val resultingDaemon = daemon.takeIfAlive() ?: policy.createDaemonConnection(logger, messageCollector, sessionIsAliveFlagFile)
-            resultingDaemon
+            daemon.takeIfAlive() ?: policy.createDaemonConnection(logger, messageCollector, sessionIsAliveFlagFile)
         }
     }
 

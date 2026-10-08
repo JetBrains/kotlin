@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.cri
 
+import kotlinx.serialization.KSerializer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -27,5 +28,9 @@ internal class CriSubtypeDataDeserializationOperationImpl(
         executionContext: ExecutionContext,
     ): Iterable<SubtypeEntry> {
         return deserializer.deserializeSubtypeData(data)
+    }
+
+    override fun getResultSerializer(): KSerializer<Iterable<SubtypeEntry>> {
+        TODO("Not yet implemented")
     }
 }

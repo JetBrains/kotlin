@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.js.operations
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.buildtools.api.*
@@ -91,6 +92,10 @@ internal class JsDtsGenerationOperationImpl(
         )
         runTypeScriptExport(inputModules, typeScriptExportConfig)
         return CompilationResult.COMPILATION_SUCCESS
+    }
+
+    override fun getResultSerializer(): KSerializer<CompilationResult> {
+        TODO("Not yet implemented")
     }
 
     override val usesApplicationEnvironment: Boolean

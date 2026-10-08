@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.cri
 
+import kotlinx.serialization.KSerializer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -27,5 +28,9 @@ internal class CriFileIdToPathDataDeserializationOperationImpl(
         executionContext: ExecutionContext,
     ): Iterable<FileIdToPathEntry> {
         return deserializer.deserializeFileIdToPathData(data)
+    }
+
+    override fun getResultSerializer(): KSerializer<Iterable<FileIdToPathEntry>> {
+        TODO("Not yet implemented")
     }
 }

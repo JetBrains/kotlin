@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.internal.MessageVisitor
 
 public interface BtaSerializable {
-    public fun beforeSerialization(operationId: Int, logger: KotlinLogger): List<MessageVisitor>
-    public fun afterSerialization(operationId: Int, messageReporter: (Messages) -> Unit)
-    public fun getResultSerializer(): KSerializer<out Any>
+    public fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
+        return emptyList()
+    }
+
+    public fun afterSerialization(messageReporter: (Message) -> Unit) {}
 }

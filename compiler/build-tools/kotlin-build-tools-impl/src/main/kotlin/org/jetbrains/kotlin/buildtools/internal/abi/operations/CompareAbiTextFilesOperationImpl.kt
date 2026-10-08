@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal.abi.operations
 
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.abi.tools.AbiTools
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
@@ -41,6 +42,10 @@ internal class CompareAbiTextFilesOperationImpl(
         if (diff != null) {
             appendable.append(diff)
         }
+    }
+
+    override fun getResultSerializer(): KSerializer<Unit> {
+        TODO("Not yet implemented")
     }
 
     override fun deepCopy(): CompareAbiTextFilesOperation {
