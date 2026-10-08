@@ -484,6 +484,57 @@ FILE[kind=File[packageFqName=kotlin]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=T]
                       isClassRef: true
+      COMPANION_BLOCK
+        MODIFIER_LIST[companion]
+        CLASS_BODY
+          FUNCTION[fqName=kotlin.Array.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[public final inline operator MustUseReturnValue]
+              ANNOTATION_ENTRY[hasValueArguments=true, shortName=SinceKotlin]
+                valueArguments: [ version -> "2.5" ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=SinceKotlin]
+                        isClassRef: true
+                VALUE_ARGUMENT_LIST
+                  VALUE_ARGUMENT[isSpread=false]
+                    VALUE_ARGUMENT_NAME
+                      REFERENCE_EXPRESSION[referencedName=version]
+                    STRING_TEMPLATE
+                      LITERAL_STRING_TEMPLATE_ENTRY[text=2.5]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=ExperimentalCollectionLiteralsApi]
+                valueArguments: [ ]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=ExperimentalCollectionLiteralsApi]
+                        isClassRef: true
+            TYPE_PARAMETER_LIST
+              TYPE_PARAMETER[fqName=null, name=T]
+                MODIFIER_LIST[reified]
+            VALUE_PARAMETER_LIST
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
+                MODIFIER_LIST[vararg]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+                      isClassRef: true
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Array]
+                  isClassRef: true
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=T]
+                          isClassRef: true
   CLASS[classId=kotlin/Boolean, fqName=kotlin.Boolean, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Boolean, superNames=[Comparable]]
     MODIFIER_LIST[public final]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Boolean]

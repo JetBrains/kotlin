@@ -65,4 +65,15 @@ public expect class Array<T> {
 
     /** Creates an [Iterator] for iterating over the elements of the array. */
     public operator fun iterator(): Iterator<T>
+
+    companion {
+        /**
+         * Returns an array containing the specified elements.
+         *
+         * @sample samples.collections.Arrays.Constructors.arrayLiteralSample
+         */
+        @SinceKotlin("2.5")
+        @ExperimentalCollectionLiteralsApi
+        public inline operator fun <reified T> of(vararg elements: T): Array<T>
+    }
 }
