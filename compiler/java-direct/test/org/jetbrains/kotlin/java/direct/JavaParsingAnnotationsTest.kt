@@ -466,7 +466,7 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     @Test
     fun testEnumValueArgumentQualifiedWithImport() {
         // Qualified reference `RetentionPolicy.RUNTIME` with the class directly imported —
-        // enumClassId is built from the import, so isResolved must be true.
+        // enumClassId is resolved from the imported symbol, so isResolved must be true.
         val source = """
             package com.example;
 
@@ -476,7 +476,11 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             @Retention(RetentionPolicy.RUNTIME)
             public @interface MyAnno {}
         """.trimIndent()
-        val javaClass = parseFirstClass(source)
+        val enumClassId = ClassId.topLevel(FqName("java.lang.annotation.RetentionPolicy"))
+        val javaClass = parseFirstClassWithSymbols(
+            source,
+            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS)),
+        )
 
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as JavaEnumValueAnnotationArgument
@@ -488,33 +492,29 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
     @Test
     fun testEnumValueArgumentQualifiedWithoutImport() {
         // Qualified reference `MyEnum.A` where the outer class has NO import.
-        // the model itself owns resolution and `enumClassId` is reliable for every reference.
-        // Here the parsing-level fixture has no symbol provider wired, so the unimported same-
-        // package fallback hits the package+className heuristic — which gives the correct answer.
+        // The model resolves the same-package enum class through the symbol provider.
         val source = """
             package com.example;
 
             @AnnoOf(MyEnum.A)
             public class Host {}
         """.trimIndent()
-        val javaClass = parseFirstClass(source)
+        val enumClassId = ClassId(FqName("com.example"), Name.identifier("MyEnum"))
+        val javaClass = parseFirstClassWithSymbols(
+            source,
+            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS)),
+        )
 
         val anno = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "AnnoOf" }
         val arg = anno.arguments.first() as JavaEnumValueAnnotationArgument
 
-        // the assertion below covered the model-internal heuristic gate. Surrounding `enumClassId` /
-        // `entryName` checks cover the user-visible invariants.
-        assertEquals("com.example.MyEnum", arg.enumClassId?.asSingleFqName()?.asString()) { "Expected the same-package heuristic to kick in" }
+        assertEquals("com.example.MyEnum", arg.enumClassId?.asSingleFqName()?.asString())
         assertEquals("A", arg.entryName?.asString())
     }
 
     @Test
     fun testEnumValueArgumentBareWithStaticImport() {
         // Bare identifier `RUNTIME` resolved via a static import.
-        //
-        // the model owns resolution; in this parsing-level fixture (no symbol
-        // provider wired) the model still records the dotted className verbatim, which the
-        // top-level-`ClassId` fallback maps to the correct FQN.
         val source = """
             package com.example;
 
@@ -524,7 +524,11 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
             @Retention(RUNTIME)
             public @interface MyAnno {}
         """.trimIndent()
-        val javaClass = parseFirstClass(source)
+        val enumClassId = ClassId.topLevel(FqName("java.lang.annotation.RetentionPolicy"))
+        val javaClass = parseFirstClassWithSymbols(
+            source,
+            mapOf(enumClassId to libraryClassSymbol(enumClassId, classKind = ClassKind.ENUM_CLASS)),
+        )
 
         val retention = javaClass.annotations.first { it.classId?.shortClassName?.asString() == "Retention" }
         val arg = retention.arguments.first() as JavaEnumValueAnnotationArgument
