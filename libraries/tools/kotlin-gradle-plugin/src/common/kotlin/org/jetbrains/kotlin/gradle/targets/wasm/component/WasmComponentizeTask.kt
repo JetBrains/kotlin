@@ -19,10 +19,12 @@ import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsRequest
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimeEnv
-import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.WasmToolsPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.requestDefaultWasmTools
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.wasmtools.UsesWasmToolsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
@@ -50,15 +52,18 @@ import javax.inject.Inject
 @ExperimentalWasmDsl
 @DisableCachingByDefault
 abstract class WasmComponentizeTask
-internal constructor() : DefaultTask() {
+internal constructor() : DefaultTask(), UsesWasmToolsToolchainService {
     @get:Inject
     internal abstract val execOperations: ExecOperations
 
     @get:Inject
     internal abstract val fs: FileSystemOperations
 
-    @get:Input
-    abstract val executable: Property<String>
+    /**
+     * The `wasm-tools` distribution requested from the wasm-tools toolchain service.
+     */
+    @get:Nested
+    abstract val wasmToolsRequest: Property<WasmToolsRequest>
 
     @get:Internal
     internal abstract val env: Property<WasmtimeEnv>
@@ -135,7 +140,11 @@ internal constructor() : DefaultTask() {
 
     @TaskAction
     fun componentize() {
-        val wasmTools = executable.get()
+        val wasmTools = wasmToolsToolchainService.get()
+            .request(wasmToolsRequest.get())
+            .get()
+            .executable
+            .get()
 
         val inputModule = inputFile.getFile()
 
@@ -247,14 +256,10 @@ internal constructor() : DefaultTask() {
         ): TaskProvider<WasmComponentizeTask> {
             val project = compilation.target.project
             val witDirectories = project.configurations.named(compilation.witConfigurationName)
-            val wasmTools = WasmToolsPlugin.applyWithEnvSpec(project)
             return project.registerTask(
                 name,
             ) {
-                it.executable.convention(wasmTools.executable)
-                with(wasmTools) {
-                    it.dependsOn(project.wasmToolsSetupTaskProvider)
-                }
+                it.wasmToolsRequest.convention(project.requestDefaultWasmTools())
                 it.witProjects.from(project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME))
                 it.witProjects.from(witDirectories)
                 it.configuration()
