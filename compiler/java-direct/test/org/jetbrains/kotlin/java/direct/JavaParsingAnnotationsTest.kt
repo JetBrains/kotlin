@@ -7,13 +7,33 @@
 
 package org.jetbrains.kotlin.java.direct
 
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.builder.buildEnumEntryDeserializedAccessExpression
+import org.jetbrains.kotlin.fir.java.JavaScopeProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.getFirstStarImportCandidate
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaEnumValueAnnotationArgument
 import org.jetbrains.kotlin.load.java.structure.JavaLiteralAnnotationArgument
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmStandardClassIds
+import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
@@ -50,6 +70,50 @@ class JavaParsingAnnotationsTest : JavaParsingTestBase() {
         val notFound = javaClass.findAnnotation(FqName("Override"))
         assertNull(notFound) { "findAnnotation should return null for missing annotation" }
     }
+
+    @Test
+    fun testRecordComponentTypeKeepsTypeUseAnnotations() {
+        val source = """
+            import org.jetbrains.annotations.Nullable;
+            import test.DeclarationOnly;
+
+            public record MyRecord(@Nullable @DeclarationOnly String value, @Nullable String[] values) {}
+        """.trimIndent()
+        val typeUseAnnotation = ClassId.topLevel(FqName("org.jetbrains.annotations.Nullable"))
+        val session = createDummyFirSessionForTests()
+        @OptIn(SessionConfiguration::class)
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { classId ->
+            if (classId == typeUseAnnotation) typeUseAnnotationClassSymbol(classId) else null
+        })
+        val components = parseFirstClass(source, session).recordComponents.toList()
+        val value = components[0]
+        val values = components[1]
+
+        assertEquals(listOf("Nullable", "DeclarationOnly"), value.annotations.map { it.classId?.shortClassName?.asString() })
+        assertEquals(listOf(typeUseAnnotation), value.type.annotations.map { it.classId })
+        val arrayType = values.type as JavaArrayType
+        assertEquals(listOf(typeUseAnnotation), arrayType.componentType.annotations.map { it.classId })
+        assertTrue(arrayType.annotations.isEmpty())
+    }
+
+    private fun typeUseAnnotationClassSymbol(classId: ClassId): FirRegularClassSymbol = buildRegularClass {
+        moduleData = FirBinaryDependenciesModuleData(Name.special("<test>"))
+        origin = FirDeclarationOrigin.Library
+        name = classId.shortClassName
+        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+        classKind = ClassKind.ANNOTATION_CLASS
+        scopeProvider = JavaScopeProvider
+        symbol = FirRegularClassSymbol(classId)
+        annotations += buildAnnotation {
+            annotationTypeRef = buildResolvedTypeRef { coneType = JvmStandardClassIds.Annotations.Java.Target.constructClassLikeType() }
+            argumentMapping = buildAnnotationArgumentMapping {
+                mapping[Name.identifier("value")] = buildEnumEntryDeserializedAccessExpression {
+                    enumClassId = ClassId.topLevel(FqName("java.lang.annotation.ElementType"))
+                    enumEntryName = Name.identifier("TYPE_USE")
+                }
+            }
+        }
+    }.symbol
 
     @Test
     fun testAnnotatedTypeArguments() {

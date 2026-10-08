@@ -22,7 +22,12 @@ class JavaRecordComponentOverAst(
         get() {
             val typeNode = tree.findChildByType(node, JavaSyntaxElementType.TYPE)
                 ?: throw IllegalStateException("Record component must have a type: ${tree.getText(node)}")
-            return createJavaType(typeNode, tree, containingClass.memberResolutionContext)
+            return createJavaTypeWithAnnotations(
+                typeNode,
+                tree.findChildByType(node, JavaSyntaxElementType.MODIFIER_LIST),
+                tree,
+                containingClass.memberResolutionContext,
+            )
         }
 
     override val isVararg: Boolean
