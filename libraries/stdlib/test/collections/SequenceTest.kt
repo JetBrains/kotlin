@@ -760,7 +760,6 @@ public class SequenceTest {
         assertEquals(listOf(1, 2, 1, 3, 2, 3), sequenceOf(1, 2, 1, 3, 2, 3).toList())
     }
 
-    @OptIn(ExperimentalCollectionLiteralsApi::class)
     @Test fun sequenceOfEmpty() {
         compare(emptyList<Int>().asSequence(), sequenceOf<Int>()) {
             sequenceBehavior()
@@ -771,7 +770,6 @@ public class SequenceTest {
         }
     }
 
-    @OptIn(ExperimentalCollectionLiteralsApi::class)
     @Test fun sequenceOfSingleElement() {
         compare(listOf(42).asSequence(), sequenceOf(42)) {
             sequenceBehavior()
@@ -782,7 +780,6 @@ public class SequenceTest {
         }
     }
 
-    @OptIn(ExperimentalCollectionLiteralsApi::class)
     @Test fun sequenceOfVararg() {
         compare(listOf(1, 2, 3).asSequence(), sequenceOf(1, 2, 3)) {
             sequenceBehavior()
