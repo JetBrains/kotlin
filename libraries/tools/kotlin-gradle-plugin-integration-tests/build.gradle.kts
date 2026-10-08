@@ -485,6 +485,8 @@ val kgpTestingUtilities = configurations.detachedConfiguration(
 }
 
 tasks.withType<Test>().configureEach {
+    shardTestsByMethod(kotlinBuildProperties.booleanProperty("kotlin.test.gradle.it.shardByMethod", false).get())
+
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")
