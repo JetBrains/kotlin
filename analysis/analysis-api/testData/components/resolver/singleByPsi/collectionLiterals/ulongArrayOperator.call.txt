@@ -1,0 +1,42 @@
+KtCollectionLiteralExpression(37,47): '[1uL, 2uL]'
+  KaSimpleCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = [1uL, 2uL]
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.ULongArray
+        symbol = kotlin/ULongArray.of(vararg elements: kotlin.ULong): kotlin.ULongArray
+        valueParameters = [
+          KaVariableSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.ULong
+            symbol = vararg elements: kotlin.ULong
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = kotlin/ULongArray.of
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        1uL -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.ULong
+          symbol = vararg elements: kotlin.ULong
+          contextParameters = []
+          callableId = null),
+        2uL -> (KaVariableSignature:
+          name = elements
+          receiverType = null
+          returnType = kotlin.ULong
+          symbol = vararg elements: kotlin.ULong
+          contextParameters = []
+          callableId = null)
+      }

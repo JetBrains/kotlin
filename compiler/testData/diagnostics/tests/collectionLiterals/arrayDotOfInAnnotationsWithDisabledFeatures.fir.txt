@@ -1,0 +1,38 @@
+FILE: arrayDotOfInAnnotationsWithDisabledFeatures.kt
+    @FILE:R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/ExperimentalCollectionLiteralsApi|), <getClass>(Q|kotlin/ExperimentalUnsignedTypes|)) [evaluated = vararg(<getClass>(Q|kotlin/ExperimentalCollectionLiteralsApi|), <getClass>(Q|kotlin/ExperimentalUnsignedTypes|))])
+    public final annotation class NestedAnno : R|kotlin/Annotation| {
+        public constructor(vararg uint: R|kotlin/UIntArray| = Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|(), ulong: R|kotlin/ULongArray| = <collectionLiteralCall>()): R|NestedAnno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val uint: R|kotlin/UIntArray| = R|<local>/uint|
+            public get(): R|kotlin/UIntArray|
+
+        public final val ulong: R|kotlin/ULongArray| = R|<local>/ulong|
+            public get(): R|kotlin/ULongArray|
+
+    }
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(uint: R|kotlin/UIntArray| = <collectionLiteralCall>(), ulong: R|kotlin/ULongArray| = Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42))), ushort: R|kotlin/UShortArray|, ubyte: R|kotlin/UByteArray|, nested: R|NestedAnno| = R|/NestedAnno.NestedAnno|(vararg(*Q|kotlin/UIntArray|.R|kotlin/UIntArray.of*s|(vararg(UInt(42)))), <collectionLiteralCall>())): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val uint: R|kotlin/UIntArray| = R|<local>/uint|
+            public get(): R|kotlin/UIntArray|
+
+        public final val ulong: R|kotlin/ULongArray| = R|<local>/ulong|
+            public get(): R|kotlin/ULongArray|
+
+        public final val ushort: R|kotlin/UShortArray| = R|<local>/ushort|
+            public get(): R|kotlin/UShortArray|
+
+        public final val ubyte: R|kotlin/UByteArray| = R|<local>/ubyte|
+            public get(): R|kotlin/UByteArray|
+
+        public final val nested: R|NestedAnno| = R|<local>/nested|
+            public get(): R|NestedAnno|
+
+    }
+    @R|Anno|(ushort = <collectionLiteralCall>(UShort(42)) [evaluated = <collectionLiteralCall>(UShort(42))], ubyte = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|() [evaluated = Q|kotlin/UByteArray|.R|kotlin/UByteArray.of*s|()], nested = R|/NestedAnno.NestedAnno|(vararg(*<collectionLiteralCall>()), Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42)))) [evaluated = R|/NestedAnno.NestedAnno|(vararg(*<collectionLiteralCall>()), Q|kotlin/ULongArray|.R|kotlin/ULongArray.of*s|(vararg(ULong(42))))]) public final fun target(): R|kotlin/Unit| {
+        ^target Q|kotlin/Unit|
+    }
