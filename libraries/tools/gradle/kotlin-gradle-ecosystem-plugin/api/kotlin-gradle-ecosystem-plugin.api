@@ -16,9 +16,12 @@ public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinEcosystemPlugin :
 public abstract interface class org/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl {
 	public abstract fun nodeJs (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun nodeJs (Lorg/gradle/api/Action;)V
+	public abstract fun wasmTools (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun wasmTools (Lorg/gradle/api/Action;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl$DefaultImpls {
 	public static fun nodeJs (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
+	public static fun wasmTools (Lorg/jetbrains/kotlin/gradle/ecosystem/KotlinToolchainManagementDsl;Lorg/gradle/api/Action;)V
 }
 
