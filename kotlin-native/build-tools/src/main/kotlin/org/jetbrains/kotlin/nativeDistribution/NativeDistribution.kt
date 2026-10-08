@@ -162,6 +162,14 @@ class NativeDistribution(val root: Directory) {
         get() = root.dir("klib/common/stdlib")
 
     /**
+     * Directory containing compiled klibs for the commonizer support library.
+     * Mirrors the `build/classes/kotlin/` layout of the `commonizer-support-library` project.
+     * @see org.jetbrains.kotlin.commonizer.commonizerSupportLibrary
+     */
+    val commonizerSupportLibrary: Directory
+        get() = root.dir("klib/commonizer/support")
+
+    /**
      * Static compiler cache of standard library for a specific [target].
      */
     fun stdlibCache(target: String, withOptimizations: Boolean): Directory = cache("stdlib", target, perFile = true, withOptimizations)

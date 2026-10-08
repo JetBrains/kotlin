@@ -54,12 +54,7 @@ internal class CirProvidedClassifiersByModules internal constructor(
 
     companion object {
         fun load(modulesProvider: ModulesProvider): CirProvidedClassifiers {
-            val classifiers = CommonizerMap<CirEntityId, CirProvided.Classifier>()
-
-            modulesProvider.moduleInfos.forEach { moduleInfo ->
-                val metadata = modulesProvider.loadModuleMetadata(moduleInfo.name)
-                readModule(metadata, classifiers::set)
-            }
+            val classifiers = modulesProvider.loadAllClassifiers()
 
             if (classifiers.isEmpty())
                 return CirProvidedClassifiers.EMPTY
@@ -83,6 +78,22 @@ internal class CirProvidedClassifiersByModules internal constructor(
         }
 
     }
+}
+
+fun ModulesProvider.loadAllClassifiers(): CommonizerMap<CirEntityId, CirProvided.Classifier> {
+    val classifiers = CommonizerMap<CirEntityId, CirProvided.Classifier>()
+
+    moduleInfos.forEach { moduleInfo ->
+        val metadata = loadModuleMetadata(moduleInfo.name)
+        readModule(metadata) { id, classifier ->
+            // Preserve actual typealiases
+            if (classifiers[id] !is CirProvided.TypeAlias) {
+                classifiers[id] = classifier
+            }
+        }
+    }
+
+    return classifiers
 }
 
 private fun readExportedForwardDeclarations(

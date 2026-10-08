@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.core.SupportExpectClassSupplier
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.konan.NativeSensitiveManifestData
 import org.jetbrains.kotlin.commonizer.mergedtree.*
@@ -81,8 +82,50 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
         override fun addClassNode(classId: CirEntityId, node: CirClassNode) = error("This method should not be called")
         override fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode) = error("This method should not be called")
     },
-    commonDependencies = CirProvidedClassifiers.EMPTY
+    commonDependencies = CirProvidedClassifiers.EMPTY,
+    supportExpectClassSupplier = null,
 )
+
+fun createEmptyInlineSourceModule(name: String): InlineSourceBuilder.Module {
+    return InlineSourceBuilder.ModuleBuilder().apply {
+        this.name = name
+        source(content = "", "empty.kt")
+    }.build()
+}
+
+internal fun buildDummySupportLibraryModulesProvider(
+    targets: Iterable<CommonizerTarget>,
+    disposable: Disposable,
+): TargetDependent<ModulesProvider> =
+    TargetDependent(targets) {
+        MockModulesProvider.create(listOf(), disposable)
+    }
+
+internal fun buildDummySupportExpectClassSupplier(targets: Iterable<CommonizerTarget>, disposable: Disposable): SupportExpectClassSupplier =
+    SupportExpectClassSupplier(
+        targets = targets.toList(),
+        supportLibraryModulesProvider = buildDummySupportLibraryModulesProvider(
+            // For tests, we sometimes create generic commonizers with a few
+            // dummy targets, which we don't know how the individual tests will
+            // later use, so this code adds all possible shared combinations.
+            targets = buildSet {
+                targets.allLeaves().forAllPermutations { components ->
+                    this += when {
+                        components.size > 1 -> SharedCommonizerTarget(components.toSet())
+                        components.size == 1 -> components.first()
+                        else -> return@forAllPermutations
+                    }
+                }
+            },
+            disposable = disposable
+        )
+    )
+
+private fun <T> Collection<T>.forAllPermutations(onPermutation: (Set<T>) -> Unit) {
+    for (permutationIndex in 0 until (1 shl size)) {
+        onPermutation(filterIndexedTo(mutableSetOf()) { index, _ -> ((1 shl index) and permutationIndex) != 0 })
+    }
+}
 
 internal class MockModulesProvider private constructor(
     private val modules: Map<String, SerializedMetadata>,
