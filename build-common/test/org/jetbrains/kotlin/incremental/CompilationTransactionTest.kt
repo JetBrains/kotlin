@@ -232,6 +232,21 @@ class NonRecoverableCompilationTransactionTest : OutputsAwareCompilationTransact
     override fun createTransaction() = NonRecoverableCompilationTransaction(classesDir = workingDir)
 
     @Test
+    fun testEmptyDirectoriesAreKeptWithoutClassesDir() {
+        val file = workingDir.resolve("test/bar/A.class")
+        Files.createDirectories(file.parent)
+        Files.write(file, "something".toByteArray())
+        NonRecoverableCompilationTransaction().use {
+            it.deleteFile(file)
+            it.deleteEmptyClassDirectories()
+            it.markAsSuccessful()
+        }
+        assertFalse(Files.exists(file))
+        assertTrue(Files.isDirectory(file.parent))
+        assertTrue(Files.isDirectory(workingDir.resolve("test")))
+    }
+
+    @Test
     fun testModifyingExistingFileOnSuccess() {
         val file = workingDir.resolve("1.txt")
         Files.write(file, "something".toByteArray())

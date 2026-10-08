@@ -217,11 +217,14 @@ class ReadOnlyCompilationTransaction : CompilationTransaction, BaseCompilationTr
 
 /**
  * A non-recoverable implementation of compilation transaction. Changes reverting on failure should be performed externally if needed.
+ *
+ * If [classesDir] is `null`, empty package directories are not removed by [deleteEmptyClassDirectories]. This is the case for JPS,
+ * where a single transaction spans all the module targets with different output directories.
  */
 class NonRecoverableCompilationTransaction(
-    classesDir: Path,
+    classesDir: Path? = null,
 ) : CompilationTransaction, BaseCompilationTransaction() {
-    private val directoriesCleaner = EmptyClassDirectoriesCleaner(classesDir)
+    private val directoriesCleaner = classesDir?.let { EmptyClassDirectoriesCleaner(it) }
 
     override fun registerAddedOrChangedFile(outputFile: Path) {
         // do nothing
@@ -230,11 +233,13 @@ class NonRecoverableCompilationTransaction(
     override fun deleteFile(outputFile: Path) {
         if (Files.exists(outputFile)) {
             Files.delete(outputFile)
-            directoriesCleaner.registerDeletedFile(outputFile)
+            directoriesCleaner?.registerDeletedFile(outputFile)
         }
     }
 
-    override fun deleteEmptyClassDirectories() = directoriesCleaner.deleteEmptyDirectories()
+    override fun deleteEmptyClassDirectories() {
+        directoriesCleaner?.deleteEmptyDirectories()
+    }
 
     override fun close() {
         checkForExecutionException()
