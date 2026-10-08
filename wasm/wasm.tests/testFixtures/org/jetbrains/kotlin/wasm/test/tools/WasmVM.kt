@@ -122,8 +122,6 @@ internal sealed class WasmVM(
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
-                "-W",
-                "gc,function-references,exceptions",
                 "--invoke",
                 wasiEntryExport,
                 entryFile,
