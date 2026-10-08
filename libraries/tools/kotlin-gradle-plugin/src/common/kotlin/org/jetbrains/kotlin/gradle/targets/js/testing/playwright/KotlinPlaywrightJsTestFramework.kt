@@ -141,13 +141,24 @@ internal class KotlinPlaywrightJsTestFramework(
     internal val nodeJsToolchainService = registerNodeJsToolchainServiceIfAbsent(compilation.project)
 
     @Suppress("DEPRECATION")
-    override val executable: Provider<String> = nodeJsToolchainService.flatMap { nodeJsToolchainService ->
-        if (nodeJsToolchainService.isNodeJsToolchainDisabled()) {
-            compilation.nodeJsEnvSpec.executable
-        } else {
-            nodeJsToolchainService.request(nodeJsRequest.get()).flatMap { it.executable }
-        }
+    override val executable: Provider<String> = executableProvider(
+        // `compilation` is not available after loading from the configuration cache, so the legacy executable is resolved here.
+        // `nodeJsEnvSpec` applies NodeJsPlugin, so it must only be accessed when the toolchain is disabled.
+        legacyExecutable = nodeJsToolchainService.flatMap { service ->
+            if (service.isNodeJsToolchainDisabled()) compilation.nodeJsEnvSpec.executable else objects.property<String>()
+        },
+        nodeJsRequest = nodeJsRequest,
+    )
 
+    private fun executableProvider(
+        legacyExecutable: Provider<String>,
+        nodeJsRequest: Provider<NodeJsRequest>,
+    ): Provider<String> = nodeJsToolchainService.map { nodeJsToolchainService ->
+        if (nodeJsToolchainService.isNodeJsToolchainDisabled()) {
+            legacyExecutable.get()
+        } else {
+            nodeJsToolchainService.request(nodeJsRequest.get()).get().executable.get()
+        }
     }
 
     override fun createTestExecuter(): TestExecuter<*> = PlaywrightTestExecutor()
