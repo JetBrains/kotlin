@@ -26,6 +26,18 @@ class PhasedPipelineChecker(
         get() = listOf(TestPhaseDirectives)
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        return checkPhases(failedAssertions)
+    }
+
+    /**
+     * [suppressIfNeeded] is called only if there were some failures, but the phase directives must be checked
+     * for passing tests as well (e.g., to suggest promoting the phase of a test which passes the whole pipeline).
+     */
+    override fun checkIfTestShouldBeUnmuted() {
+        testServices.assertions.failAll(checkPhases(emptyList()).map { it.cause })
+    }
+
+    private fun checkPhases(failedAssertions: List<WrappedException>): List<WrappedException> {
         latestPhaseDirectiveOr { return failedAssertions + it }
         val targetedPhase = getTargetedPhase()
         if (targetedPhase == null) {
@@ -39,8 +51,6 @@ class PhasedPipelineChecker(
             else -> emptyList()
         }
     }
-
-    override fun checkIfTestShouldBeUnmuted() {}
 
     private fun getTargetedPhase(): TestPhase? {
         return testServices.moduleStructure.allDirectives[RUN_PIPELINE_TILL].lastOrNull() ?: defaultRunPipelineTill
