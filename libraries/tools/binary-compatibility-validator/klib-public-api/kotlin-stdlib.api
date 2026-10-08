@@ -2269,6 +2269,7 @@ final class kotlin/BooleanArray { // kotlin/BooleanArray|null[0]
     final fun get(kotlin/Int): kotlin/Boolean // kotlin/BooleanArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/BooleanIterator // kotlin/BooleanArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Boolean) // kotlin/BooleanArray.set|set(kotlin.Int;kotlin.Boolean){}[0]
+    final inline fun of(kotlin/BooleanArray...): kotlin/BooleanArray // kotlin/BooleanArray.of|of#static(kotlin.BooleanArray...){}[0]
 }
 
 final class kotlin/Byte : kotlin/Comparable<kotlin/Byte>, kotlin/Number { // kotlin/Byte|null[0]
@@ -2556,6 +2557,7 @@ final class kotlin/ByteArray { // kotlin/ByteArray|null[0]
     final fun get(kotlin/Int): kotlin/Byte // kotlin/ByteArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/ByteIterator // kotlin/ByteArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Byte) // kotlin/ByteArray.set|set(kotlin.Int;kotlin.Byte){}[0]
+    final inline fun of(kotlin/ByteArray...): kotlin/ByteArray // kotlin/ByteArray.of|of#static(kotlin.ByteArray...){}[0]
 }
 
 final class kotlin/Char : kotlin/Comparable<kotlin/Char> { // kotlin/Char|null[0]
@@ -2693,6 +2695,7 @@ final class kotlin/CharArray { // kotlin/CharArray|null[0]
     final fun get(kotlin/Int): kotlin/Char // kotlin/CharArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/CharIterator // kotlin/CharArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Char) // kotlin/CharArray.set|set(kotlin.Int;kotlin.Char){}[0]
+    final inline fun of(kotlin/CharArray...): kotlin/CharArray // kotlin/CharArray.of|of#static(kotlin.CharArray...){}[0]
 }
 
 final class kotlin/Double : kotlin/Comparable<kotlin/Double>, kotlin/Number { // kotlin/Double|null[0]
@@ -2966,6 +2969,7 @@ final class kotlin/DoubleArray { // kotlin/DoubleArray|null[0]
     final fun get(kotlin/Int): kotlin/Double // kotlin/DoubleArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/DoubleIterator // kotlin/DoubleArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Double) // kotlin/DoubleArray.set|set(kotlin.Int;kotlin.Double){}[0]
+    final inline fun of(kotlin/DoubleArray...): kotlin/DoubleArray // kotlin/DoubleArray.of|of#static(kotlin.DoubleArray...){}[0]
 }
 
 final class kotlin/Float : kotlin/Comparable<kotlin/Float>, kotlin/Number { // kotlin/Float|null[0]
@@ -3239,6 +3243,7 @@ final class kotlin/FloatArray { // kotlin/FloatArray|null[0]
     final fun get(kotlin/Int): kotlin/Float // kotlin/FloatArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/FloatIterator // kotlin/FloatArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Float) // kotlin/FloatArray.set|set(kotlin.Int;kotlin.Float){}[0]
+    final inline fun of(kotlin/FloatArray...): kotlin/FloatArray // kotlin/FloatArray.of|of#static(kotlin.FloatArray...){}[0]
 }
 
 final class kotlin/Int : kotlin/Comparable<kotlin/Int>, kotlin/Number { // kotlin/Int|null[0]
@@ -3508,6 +3513,7 @@ final class kotlin/IntArray { // kotlin/IntArray|null[0]
     final fun get(kotlin/Int): kotlin/Int // kotlin/IntArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/IntIterator // kotlin/IntArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Int) // kotlin/IntArray.set|set(kotlin.Int;kotlin.Int){}[0]
+    final inline fun of(kotlin/IntArray...): kotlin/IntArray // kotlin/IntArray.of|of#static(kotlin.IntArray...){}[0]
 }
 
 final class kotlin/KotlinNothingValueException : kotlin/RuntimeException { // kotlin/KotlinNothingValueException|null[0]
@@ -3696,6 +3702,7 @@ final class kotlin/LongArray { // kotlin/LongArray|null[0]
     final fun get(kotlin/Int): kotlin/Long // kotlin/LongArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/LongIterator // kotlin/LongArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Long) // kotlin/LongArray.set|set(kotlin.Int;kotlin.Long){}[0]
+    final inline fun of(kotlin/LongArray...): kotlin/LongArray // kotlin/LongArray.of|of#static(kotlin.LongArray...){}[0]
 }
 
 final class kotlin/NotImplementedError : kotlin/Error { // kotlin/NotImplementedError|null[0]
@@ -3994,6 +4001,7 @@ final class kotlin/ShortArray { // kotlin/ShortArray|null[0]
     final fun get(kotlin/Int): kotlin/Short // kotlin/ShortArray.get|get(kotlin.Int){}[0]
     final fun iterator(): kotlin.collections/ShortIterator // kotlin/ShortArray.iterator|iterator(){}[0]
     final fun set(kotlin/Int, kotlin/Short) // kotlin/ShortArray.set|set(kotlin.Int;kotlin.Short){}[0]
+    final inline fun of(kotlin/ShortArray...): kotlin/ShortArray // kotlin/ShortArray.of|of#static(kotlin.ShortArray...){}[0]
 }
 
 final class kotlin/String : kotlin/CharSequence, kotlin/Comparable<kotlin/String> { // kotlin/String|null[0]

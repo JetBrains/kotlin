@@ -2115,7 +2115,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class BooleanArray : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class BooleanArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BooleanArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/BooleanArray| {
             super<R|kotlin/Any|>()
         }
@@ -2134,6 +2134,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/BooleanIterator| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=BooleanArray] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/BooleanArray|): R|kotlin/BooleanArray| {
         }
 
     }
@@ -2333,7 +2336,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class ByteArray : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class ByteArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ByteArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/ByteArray| {
             super<R|kotlin/Any|>()
         }
@@ -2352,6 +2355,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/ByteIterator| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ByteArray] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/ByteArray|): R|kotlin/ByteArray| {
         }
 
     }
@@ -2452,7 +2458,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class CharArray : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class CharArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CharArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/CharArray| {
             super<R|kotlin/Any|>()
         }
@@ -2471,6 +2477,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/CharIterator| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=CharArray] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/CharArray|): R|kotlin/CharArray| {
         }
 
     }
@@ -2725,7 +2734,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class DoubleArray : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class DoubleArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DoubleArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/DoubleArray| {
             super<R|kotlin/Any|>()
         }
@@ -2744,6 +2753,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/DoubleIterator| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DoubleArray] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/DoubleArray|): R|kotlin/DoubleArray| {
         }
 
     }
@@ -3001,7 +3013,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class FloatArray : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class FloatArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FloatArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/FloatArray| {
             super<R|kotlin/Any|>()
         }
@@ -3020,6 +3032,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/FloatIterator| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FloatArray] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/FloatArray|): R|kotlin/FloatArray| {
         }
 
     }
@@ -3248,7 +3263,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class IntArray : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class IntArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/IntArray| {
             super<R|kotlin/Any|>()
         }
@@ -3267,6 +3282,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/IntIterator| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=IntArray] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/IntArray|): R|kotlin/IntArray| {
         }
 
     }
@@ -3487,7 +3505,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class LongArray : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class LongArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LongArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/LongArray| {
             super<R|kotlin/Any|>()
         }
@@ -3506,6 +3524,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/LongIterator| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LongArray] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/LongArray|): R|kotlin/LongArray| {
         }
 
     }
@@ -3808,7 +3829,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class ShortArray : R|kotlin/Any| {
+    public final [ResolvedTo(BODY_RESOLVE)] [FirCompanionBlockDataKey=[valid=1 nested=0]] class ShortArray : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ShortArray] constructor([ResolvedTo(BODY_RESOLVE)] size: R|kotlin/Int|): R|kotlin/ShortArray| {
             super<R|kotlin/Any|>()
         }
@@ -3827,6 +3848,9 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun iterator(): R|kotlin/collections/ShortIterator| {
+        }
+
+        @R|kotlin/SinceKotlin|[Types](version = String(2.5) [evaluated = String(2.5)]) @R|kotlin/ExperimentalCollectionLiteralsApi|[Types]() public final static operator [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ShortArray] fun of([ResolvedTo(BODY_RESOLVE)] vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray| {
         }
 
     }
