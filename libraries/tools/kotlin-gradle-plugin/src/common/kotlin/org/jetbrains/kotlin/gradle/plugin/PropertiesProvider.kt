@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
+import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainMode
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -802,6 +803,19 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nodeJsToolchainPreinstalledExecutablePath: Provider<String>
         get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
 
+    val wasmToolsToolchainMode: WasmToolsToolchainMode
+        get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_MODE).orNull
+            ?.let { WasmToolsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) } ?: WasmToolsToolchainMode.DOWNLOAD
+
+    val wasmToolsToolchainInstallationDir: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_INSTALLATION_DIR)
+
+    val wasmToolsToolchainDefaultDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_DOWNLOAD_URL)
+
+    val wasmToolsToolchainPreinstalledExecutablePath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
+
     /**
      * Connection URL of the debug session hosted by the IDE, set when the browser tests are being debugged.
      *
@@ -899,6 +913,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_NODEJS_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.js.nodeJsToolchainInstallationDir")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.js.nodeJsToolchainDownloadUrl")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.js.nodeJsToolchainPreinstalledExecutablePath")
+
+        val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_MODE = property("kotlin.wasm.wasmToolsToolchainMode")
+        val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.wasm.wasmToolsToolchainInstallationDir")
+        val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.wasm.wasmToolsToolchainDownloadUrl")
+        val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.wasm.wasmToolsToolchainPreinstalledExecutablePath")
         val KOTLIN_JS_IDE_DEBUG_SESSION_URL = property("kotlin.internal.js.ideDebugSessionUrl")
         val KOTLIN_BUILD_REPORT_SINGLE_FILE = property("kotlin.build.report.single_file")
         val KOTLIN_BUILD_REPORT_HTTP_URL = property("kotlin.build.report.http.url")

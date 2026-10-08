@@ -97,6 +97,7 @@ enum class StringListMetrics(
         AllowedListAnonymizer(listOf("exposed", "hidden", "moduleName", "rootPackage", "settings"))
     ),
     NODE_JS_TOOLCHAIN_SERVICE(CONCAT, AllowedListAnonymizer(listOf("download", "preinstalled", "disable", "custom"))),
+    WASM_TOOLS_TOOLCHAIN_SERVICE(CONCAT, AllowedListAnonymizer(listOf("download", "preinstalled", "disable", "custom"))),
 
     // CLI arguments
     CLI_MANUALLY_CONFIGURED_LANGUAGE_FEATURES(
