@@ -31,6 +31,7 @@ import java.nio.file.StandardOpenOption
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
 import org.jetbrains.kotlin.io.canonicalPathString
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys.DEBUG_PREFIX_MAP
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.absolute
 import kotlin.io.path.createDirectories
@@ -567,8 +568,10 @@ class CacheBuilder(
             this.cachedLibraries = cachedLibraries
             cacheDirectories = listOf(libraryCacheDirectory.absolutePathString())
             this.makePerFileCache = makePerFileCache
-            if (library.isSubjectOfIC)
+            if (library.isSubjectOfIC) {
                 cachedLibraryDependenciesFingerprint = computeDependenciesFingerprint(library).toString()
+                putIfNotNull(DEBUG_PREFIX_MAP, config.configuration[DEBUG_PREFIX_MAP])
+            }
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache
             serializedKlibDag = klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
