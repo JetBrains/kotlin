@@ -25,10 +25,10 @@ fun stamped(
     wrappers: AtomicStampedReference<Wrapper>, strings: AtomicStampedReference<String>,
     inline: Inline, int: Int, date: LocalDate, wrapper: Wrapper, string: String,
 ) {
-    inlines.compareAndSet(inline, inline, 0, 1)
-    ints.weakCompareAndSet(int, int, 0, 1)
-    dates.attemptStamp(date, 1)
-    wrappers.compareAndSet(wrapper, wrapper, 0, 1)
+    inlines.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>inline<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>inline<!>, 0, 1)
+    ints.weakCompareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>int<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>int<!>, 0, 1)
+    dates.attemptStamp(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>date<!>, 1)
+    wrappers.compareAndSet(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>wrapper<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>wrapper<!>, 0, 1)
     strings.compareAndSet(string, string, 0, 1)
 }
 
@@ -37,10 +37,10 @@ fun markable(
     wrappers: AtomicMarkableReference<Wrapper>, strings: AtomicMarkableReference<String>,
     inline: Inline, int: Int, date: LocalDate, wrapper: Wrapper, string: String,
 ) {
-    inlines.compareAndSet(inline, inline, false, true)
-    ints.weakCompareAndSet(int, int, false, true)
-    dates.attemptMark(date, true)
-    wrappers.compareAndSet(wrapper, wrapper, false, true)
+    inlines.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>inline<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>inline<!>, false, true)
+    ints.weakCompareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>int<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>int<!>, false, true)
+    dates.attemptMark(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>date<!>, true)
+    wrappers.compareAndSet(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>wrapper<!>, <!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>wrapper<!>, false, true)
     strings.compareAndSet(string, string, false, true)
 }
 
@@ -48,10 +48,10 @@ fun references(
     weak: WeakReference<Any>, soft: SoftReference<Any>, phantom: PhantomReference<Any>,
     inline: Inline, int: Int, date: LocalDate, wrapper: Wrapper, string: String,
 ) {
-    weak.refersTo(inline)
-    soft.refersTo(int)
-    phantom.refersTo(date)
-    weak.refersTo(wrapper)
+    weak.refersTo(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>inline<!>)
+    soft.refersTo(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>int<!>)
+    phantom.refersTo(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>date<!>)
+    weak.refersTo(<!IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS!>wrapper<!>)
     weak.refersTo(string)
     weak.refersTo(null)
 }
