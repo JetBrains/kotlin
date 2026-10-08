@@ -362,6 +362,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
+    @BuildToolsApiOnly
     fun testCircularDependencies() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -371,11 +372,13 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
+    @LegacyRunnerOnly
     fun testCircularDependenciesNoKotlinFiles() {
         doTest()
     }
 
     @Test
+    @LegacyRunnerOnly
     fun testCircularDependenciesDifferentPackages() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -398,6 +401,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
+    @LegacyRunnerOnly
     fun testCircularDependenciesSamePackage() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -422,6 +426,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
+    @LegacyRunnerOnly
     fun testCircularDependenciesSamePackageWithTests() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -463,6 +468,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
+    @LegacyRunnerOnly
     fun testCircularDependenciesInternalFromAnotherModule() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -471,6 +477,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
+    @LegacyRunnerOnly
     fun testCircularDependenciesWrongInternalFromTests() {
         initProject(JVM_MOCK_RUNTIME)
         val result = buildAllModules()
@@ -482,6 +489,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
+    @LegacyRunnerOnly
     fun testCircularDependencyWithReferenceToOldVersionLib() {
         initProject(JVM_MOCK_RUNTIME)
 
@@ -686,6 +694,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     }
 
     @Test
+    @LegacyRunnerOnly
     fun testHelp() {
         initProject()
 
