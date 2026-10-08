@@ -1,0 +1,6 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// DISABLE_NEXT_PHASE_SUGGESTION: This is a test for DISABLE_NEXT_PHASE_SUGGESTION
+
+fun test() {}
+
+/* GENERATED_FIR_TAGS: functionDeclaration */
