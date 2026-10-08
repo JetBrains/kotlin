@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.ExternalKlibSignatureIndicesParameters
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.library.KlibDAG
@@ -588,7 +589,18 @@ class NativeSecondStageCompilationConfig(
 
     internal var cacheSupport: CacheSupport = createCacheSupport(
             klibDag = configuration.serializedKlibDag?.deserialize(loadedKlibs.all)
-                    ?: KlibDAGBuilder(loadedKlibs.all) { it.isExplicitlySpecifiedByUserInCLIArgument }.build()
+                    ?: KlibDAGBuilder(
+                            KlibDAGBuilder.Parameters(
+                                    libraries = loadedKlibs.all,
+                                    externalIndicesParameters = configuration.generateSignatureIndicesDir?.let {
+                                        ExternalKlibSignatureIndicesParameters(
+                                                targetDiscriminator = target.name,
+                                                externalSignatureIndicesDir = it,
+                                                pathPrefixesForGenerationSignatureIndices = configuration.generateSignatureIndicesFrom,
+                                        )
+                                    }
+                            ) { it.isExplicitlySpecifiedByUserInCLIArgument }
+                    ).build()
     )
         private set
 
