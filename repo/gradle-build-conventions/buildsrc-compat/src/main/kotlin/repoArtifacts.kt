@@ -102,7 +102,10 @@ fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
 }
 
 fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> {
-    noDefaultJar()
+    val isInIdeaSync = kotlinBuildProperties.isInIdeaSync.get()
+    if (!isInIdeaSync) {
+        noDefaultJar()
+    }
 
     val shadowJarTask = tasks.register<ShadowJar>("shadowJar") {
         archiveClassifier.set("shadow")
@@ -121,15 +124,19 @@ fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvi
     }
 
     tasks.named("assemble").configure { dependsOn(runtimeJarTask) }
-    project.addArtifact("runtimeElements", runtimeJarTask, runtimeJarTask)
-    project.addArtifact("apiElements", runtimeJarTask, runtimeJarTask)
+    if (!isInIdeaSync) {
+        project.addArtifact("runtimeElements", runtimeJarTask, runtimeJarTask)
+        project.addArtifact("apiElements", runtimeJarTask, runtimeJarTask)
+    }
 
     return runtimeJarTask
 }
 
 fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> {
-
-    noDefaultJar()
+    val isInIdeaSync = kotlinBuildProperties.isInIdeaSync.get()
+    if (!isInIdeaSync) {
+        noDefaultJar()
+    }
 
     task.configure {
         configurations.add(project.configurations["embedded"])
@@ -139,8 +146,10 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
     }
 
     tasks.named("assemble").configure { dependsOn(task) }
-    project.addArtifact("runtimeElements", task, task)
-    project.addArtifact("apiElements", task, task)
+    if (!isInIdeaSync) {
+        project.addArtifact("runtimeElements", task, task)
+        project.addArtifact("apiElements", task, task)
+    }
 
     return task
 }
