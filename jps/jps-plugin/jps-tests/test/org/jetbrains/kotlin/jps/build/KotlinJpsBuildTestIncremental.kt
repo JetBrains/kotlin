@@ -20,6 +20,7 @@ import com.intellij.testFramework.RunAll
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
+import org.jetbrains.kotlin.compilerRunner.btapi.JpsBtaToolchainLoader
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertExists
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -56,7 +58,11 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     }
 
     @Test
-    @Disabled("KT-89967")
+    @DisabledIfSystemProperty(
+        named = JpsBtaToolchainLoader.IMPL_HOME_PROPERTY,
+        matches = ".+",
+        disabledReason = "KT-89967: no compiler metrics in build reports when compiling through the Build Tools API",
+    )
     fun testJpsBuildReportIC() {
 
         val reportDir = workDir.resolve("buildReport")
