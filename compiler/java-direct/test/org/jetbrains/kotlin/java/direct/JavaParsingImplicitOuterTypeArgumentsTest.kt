@@ -181,8 +181,11 @@ class JavaParsingImplicitOuterTypeArgumentsTest : JavaParsingTestBase() {
      */
     @Test
     fun testInnerClassOfUnrelatedGenericOuterIsRaw(@TempDir tempDir: Path) {
+        val outerId = ClassId.topLevel(FqName("p.Outer"))
+        val innerId = outerId.createNestedClassId(Name.identifier("Inner"))
         val finder = finderOver(
             tempDir,
+            setOf(outerId, innerId),
             "p/Outer.java" to """
                 package p;
                 public class Outer<T> {
@@ -209,8 +212,11 @@ class JavaParsingImplicitOuterTypeArgumentsTest : JavaParsingTestBase() {
 
     @Test
     fun testEnclosingInstanceNamedExplicitlyIsRawEvenInsideTheOuterItself(@TempDir tempDir: Path) {
+        val outerId = ClassId.topLevel(FqName("p.Outer"))
+        val innerId = outerId.createNestedClassId(Name.identifier("Inner"))
         val finder = finderOver(
             tempDir,
+            setOf(outerId, innerId),
             "p/Outer.java" to """
                 package p;
                 public class Outer<T> {
@@ -229,13 +235,15 @@ class JavaParsingImplicitOuterTypeArgumentsTest : JavaParsingTestBase() {
     }
 }
 
-private fun finderOver(tempDir: Path, vararg files: Pair<String, String>): JavaClassFinderOverAstImpl {
+private fun finderOver(tempDir: Path, classIds: Set<ClassId>, vararg files: Pair<String, String>): JavaClassFinderOverAstImpl {
     for (file in files) {
         val path = tempDir.resolve(file.first)
         path.parent.toFile().mkdirs()
         path.writeText(file.second)
     }
-    return JavaClassFinderOverAstImpl(listOf(tempDir.toFile()))
+    val symbols = classIds.associateWith { libraryClassSymbol(it) }
+    val session = JavaParsingTestBase().createSessionWithSymbols(symbols)
+    return JavaClassFinderOverAstImpl(session, listOf(tempDir.toFile()))
 }
 
 private fun JavaClassFinderOverAstImpl.findTopLevelClass(fqName: String): JavaClass {

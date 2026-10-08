@@ -118,19 +118,9 @@ class JavaClassifierTypeOverAst(
                 findInheritedTypeParameter(parts[0])?.let { return it }
             }
 
-            // Unlike [resolve] below, needs no `FirSession` symbol provider: serves parser-only tests, and saves
-            // a symbol-provider round-trip per segment.
-            var current: JavaClassifier? = findClassInCurrentScope(parts[0])
-
-            if (current is JavaClass) {
-                for (i in 1 until parts.size) {
-                    val part = Name.identifier(parts[i])
-                    current = declaredOrFullyInherited(current as JavaClass, part)
-                        ?: return null
-                }
-                return current
-            }
-
+            // Resolve the whole name for types outside the current AST scope (imports, package-qualified
+            // names, and other-file Java/Kotlin classes), as well as member types not exposed by the Java
+            // model, such as inherited members of binary/Kotlin classes and plugin-generated classes.
             resolve(rawTypeName)?.let { return classifierAdapterFor(it) }
         }
         return null
