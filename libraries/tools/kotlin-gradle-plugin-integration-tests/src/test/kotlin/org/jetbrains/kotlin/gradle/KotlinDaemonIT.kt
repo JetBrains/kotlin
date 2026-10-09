@@ -132,7 +132,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
     }
 
     @DisplayName("Kotlin daemon should be reused in mixed Kotlin JVM/JS project")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11])
+    @JdkVersions(versions = [JavaVersion.VERSION_17])
     @GradleWithJdkTest
     fun jsAndJvmCompatibleDaemons(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
         project(
