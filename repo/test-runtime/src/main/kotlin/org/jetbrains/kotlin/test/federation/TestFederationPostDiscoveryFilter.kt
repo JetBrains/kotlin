@@ -39,7 +39,8 @@ internal class TestFederationPostDiscoveryFilter : PostDiscoveryFilter {
                 else -> excluded("Not selected contract test")
             }
         }
-        return excluded("Not selected plain test")
+        return if (PlainTests in subsets) included("Selected by PlainTests")
+        else excluded("Not selected plain test")
     }
 
     private fun isSmokeTest(descriptor: TestDescriptor, source: MethodSource): Boolean =

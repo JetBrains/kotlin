@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jsScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.wasmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.btaClassloader
+import org.jetbrains.kotlin.testFederation.DelicateTestFederationApi
 import org.jetbrains.kotlin.testFederation.testFederationAllTestsRequested
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
@@ -82,6 +83,7 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
                     },
 
                     // We do not test the daemon when unless the AllTests subset is requested
+                    @OptIn(DelicateTestFederationApi::class)
                     if (testFederationAllTestsRequested) {
                         named(
                             "${namedArgument.name}[daemon]"
