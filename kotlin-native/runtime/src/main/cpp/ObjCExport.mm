@@ -310,10 +310,9 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
     setAssociatedTypeInfo(clazz, typeInfo);
   }
 
-  addCategoryMethods(clazz);
-
   addMethods(clazz, typeAdapter->directAdapters, typeAdapter->directAdapterNum);
   addMethods(object_getClass(clazz), typeAdapter->classAdapters, typeAdapter->classAdapterNum);
+  addCategoryMethods(clazz);
 
   if (isClassForPackage) return;
 
