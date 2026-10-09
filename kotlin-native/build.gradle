@@ -425,15 +425,16 @@ def sbomBundleRegularForPublish = tasks.register("sbomBundleRegularForPublish", 
     dependsOn(sbomBundleRegular)
     destinationDir = file("$buildDir/spdx/regular")
     from(sbomBundleRegular) {
-        rename(".*", "kotlin-native-${HostManager.platformName()}-${kotlinBuildProperties.kotlinVersion.get()}.spdx.json")
+        rename(".*", "kotlin-native-${kotlinBuildProperties.kotlinVersion.get()}-${HostManager.platformName()}.spdx.json")
     }
 }
 
 tasks.register("bundleRegular", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundleRegularForPublish)
     def simpleOsName = HostManager.platformName()
-    archiveBaseName.set("kotlin-native-$simpleOsName")
+    archiveBaseName.set("kotlin-native")
     archiveVersion.set(kotlinBuildProperties.kotlinVersion)
+    archiveClassifier.set(simpleOsName)
     from(nativeDistribution.map { it.root }) {
         include '**'
         exclude 'dependencies'
@@ -442,7 +443,7 @@ tasks.register("bundleRegular", (PlatformInfo.isWindows()) ? Zip : Tar) {
         exclude 'klib/platform'
         // Exclude platform libraries caches too. Keep caches for stdlib.
         exclude 'klib/cache/*/org.jetbrains.kotlin.native.platform.*/**'
-        into "${archiveBaseName.get()}-${archiveVersion.get()}"
+        into "${archiveBaseName.get()}-${archiveClassifier.get()}-${archiveVersion.get()}"
     }
 }
 
@@ -453,7 +454,7 @@ def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish"
     dependsOn(sbomBundlePrebuilt)
     destinationDir = file("$buildDir/spdx/prebuilt")
     from(sbomBundlePrebuilt) {
-        rename(".*", "kotlin-native-prebuilt-${HostManager.platformName()}-${kotlinBuildProperties.kotlinVersion.get()}.spdx.json")
+        rename(".*", "kotlin-native-prebuilt-${kotlinBuildProperties.kotlinVersion.get()}-${HostManager.platformName()}.spdx.json")
     }
 }
 
@@ -467,13 +468,14 @@ tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
         dependsOn(mergeCrossBundleTask)
 
     def simpleOsName = HostManager.platformName()
-    archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
+    archiveBaseName.set("kotlin-native-prebuilt")
     archiveVersion.set(kotlinBuildProperties.kotlinVersion)
+    archiveClassifier.set(simpleOsName)
     from(nativeDistribution.map { it.root }) {
         include '**'
         exclude 'dependencies'
         exclude 'klib/testLibrary'
-        into "${archiveBaseName.get()}-${archiveVersion.get()}"
+        into "${archiveBaseName.get()}-${archiveClassifier.get()}-${archiveVersion.get()}"
     }
 }
 
@@ -487,11 +489,11 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
         if (!containsPlatformLibraries) {
             exclude '**/mingw-w64-headers_LICENSE.txt'
         }
-        into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}"
+        into "${task.archiveBaseName.get()}-${task.archiveClassifier.get()}-${task.archiveVersion.get()}"
     }
 
     task.from(new File(project.rootDir, "license")) {
-        into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}/licenses"
+        into "${task.archiveBaseName.get()}-${task.archiveClassifier.get()}-${task.archiveVersion.get()}/licenses"
     }
 }
 
@@ -533,8 +535,7 @@ configure([bundleRegular, bundlePrebuilt]) {
     }
 
     // Calculating SHA-256 checksums for bundle artifacts
-    def archiveExtension = PlatformInfo.isWindows() ? 'zip' : 'tar.gz'
-    def checksumFile = archiveBaseName.zip(archiveVersion) { name, version -> file("${buildDir}/${name}-${version}.${archiveExtension}.sha256") }
+    def checksumFile = archiveFileName.map { name -> layout.buildDirectory.file("${name}.sha256").get().asFile }
     outputs.file(checksumFile).withPropertyName("checksumFile")
 
     // If `bundleRegular`/`bundlePrebuilt` tasks are executed with CC enabled, you will get a
@@ -750,7 +751,7 @@ publishing {
                         classifier = platformName(target)
                         extension = archiveExtension
                     }
-                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${platformName(target)}-${kotlinBuildProperties.kotlinVersion.get()}.spdx.json") {
+                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-${kotlinBuildProperties.kotlinVersion.get()}-${platformName(target)}.spdx.json") {
                         classifier = platformName(target)
                         extension = "spdx.json"
                     }
@@ -792,7 +793,7 @@ publishing {
                         classifier = platformName(target)
                         extension = archiveExtension
                     }
-                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-prebuilt-${platformName(target)}-${kotlinBuildProperties.kotlinVersion.get()}.spdx.json") {
+                    mvn.artifact("${UtilsKt.getNativeBundlesLocation(project)}/kotlin-native-prebuilt-${kotlinBuildProperties.kotlinVersion.get()}-${platformName(target)}.spdx.json") {
                         classifier = platformName(target)
                         extension = "spdx.json"
                     }

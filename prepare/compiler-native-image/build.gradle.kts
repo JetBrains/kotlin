@@ -250,7 +250,7 @@ val kotlincNativeImageDist = tasks.register<Copy>("kotlincNativeImageDist") {
     }
 }
 
-val nativeImageArchiveBaseName = run {
+val nativeImagePlatformName: String = run {
     val osName = when {
         currentOs.isWindows -> "windows"
         currentOs.isMacOsX -> "macos"
@@ -261,14 +261,16 @@ val nativeImageArchiveBaseName = run {
         "x86_64", "amd64" -> "x86_64"
         else -> error("Unsupported native-image host architecture: $osArch")
     }
-    "kotlin-compiler-graalvm-native-image-$osName-$arch-${project.version}"
+    "$osName-$arch"
 }
+val nativeImageArchiveBaseName = "kotlin-compiler-graalvm-native-image-${project.version}-$nativeImagePlatformName"
+val nativeImageDirectoryName = "kotlin-compiler-graalvm-native-image-$nativeImagePlatformName-${project.version}"
 val nativeImageArchiveExtension = if (currentOs.isWindows) "zip" else "tar.gz"
 
 fun AbstractArchiveTask.configureNativeImageArchive() {
     description = "Packs the native image distribution into the publishable release archive"
     from(kotlincNativeImageDist) {
-        into(nativeImageArchiveBaseName)
+        into(nativeImageDirectoryName)
     }
     archiveFileName.set("$nativeImageArchiveBaseName.$nativeImageArchiveExtension")
     destinationDirectory.set(layout.buildDirectory.map { it.dir("archives") })
