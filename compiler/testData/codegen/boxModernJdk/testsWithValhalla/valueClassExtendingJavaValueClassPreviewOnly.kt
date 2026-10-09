@@ -1,5 +1,4 @@
 // ISSUE: KT-90152
-// IGNORE_BACKEND: JVM
 // LANGUAGE: +FullValueClasses
 
 // Only JVM preview features are enabled here, not Valhalla value classes, so the Kotlin full value classes below are identity classes.
