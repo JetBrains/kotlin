@@ -1296,6 +1296,9 @@ data class SwiftPackageDumpTarget(
 data class SwiftPackageDumpTargetDependency(
     // product is a heterogeneous array: [productName: String, packageName: String, moduleAliases: Any?, condition: Any?]
     val product: List<kotlinx.serialization.json.JsonElement>? = null,
+    // target and byName are [name: String, condition: Any?]; a dependency written as a plain string dumps as byName
+    val target: List<kotlinx.serialization.json.JsonElement>? = null,
+    val byName: List<kotlinx.serialization.json.JsonElement>? = null,
 )
 
 @Serializable
