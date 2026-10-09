@@ -62,8 +62,13 @@ data class SimpleOutputItem(val sourceFiles: Collection<File>, val outputFile: F
         "$sourceFiles->$outputFile"
 }
 
-fun SimpleOutputItem.toGeneratedFile(metadataVersionFromLanguageVersion: MetadataVersion): GeneratedFile =
+fun SimpleOutputItem.toGeneratedFile(
+    metadataVersionFromLanguageVersion: MetadataVersion,
+    compilerGeneratedSyntheticSources: Set<File> = emptySet(),
+): GeneratedFile =
     when {
-        outputFile.name.endsWith(".class") -> GeneratedJvmClass(sourceFiles, outputFile, metadataVersionFromLanguageVersion)
-        else -> GeneratedFile(sourceFiles, outputFile)
+        outputFile.name.endsWith(".class") -> GeneratedJvmClass(
+            sourceFiles, outputFile, metadataVersionFromLanguageVersion, compilerGeneratedSyntheticSources
+        )
+        else -> GeneratedFile(sourceFiles, outputFile, compilerGeneratedSyntheticSources)
     }

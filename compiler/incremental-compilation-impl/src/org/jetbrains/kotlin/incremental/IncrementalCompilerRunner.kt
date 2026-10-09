@@ -629,9 +629,6 @@ abstract class IncrementalCompilerRunner<
                 exitCode = ec
                 compiled
             }
-            icContext.compilerGeneratedSyntheticSources.clear()
-            icContext.compilerGeneratedSyntheticSources.addAll(sourceFilesPreviouslyGeneratedByPlugins)
-            icContext.compilerGeneratedSyntheticSources.addAll(outputItemsCollector.sourceFileGeneratedForPlugin)
 
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
@@ -646,7 +643,7 @@ abstract class IncrementalCompilerRunner<
             }
 
             val generatedFiles = outputItemsCollector.outputs.map {
-                it.toGeneratedFile(metadataVersionFromLanguageVersion)
+                it.toGeneratedFile(metadataVersionFromLanguageVersion, icContext.compilerGeneratedSyntheticSources)
             }
             if (compilationMode is CompilationMode.Incremental) {
                 // todo: feels dirty, can this be refactored?
