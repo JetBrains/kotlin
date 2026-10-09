@@ -54,5 +54,8 @@ interface JsArtifactProducer<Module, File, Artifact, TestEnvironment> {
                 }
             }
         }
+        JsGenerationGranularity.PER_CLASS -> {
+            TODO()
+        }
     }
 }

@@ -169,6 +169,16 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xir-per-class",
+        description = "Generate one .js file per class and per top-level declaration set.",
+    )
+    var irPerClass: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xir-per-file",
         description = "Generate one .js file per source file.",
     )

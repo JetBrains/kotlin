@@ -126,6 +126,17 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
     }
 
     compilerArgument {
+        name = "Xir-per-class"
+        description = "Generate one .js file per class and per top-level declaration set.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
+
+    compilerArgument {
         name = "Xir-generate-inline-anonymous-functions"
         description =
             "Lambda expressions that capture values are translated into in-line anonymous JavaScript functions.".asReleaseDependent()

@@ -126,7 +126,13 @@ enum class TranslationMode(
     PER_MODULE_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_MODULE, minimizedMemberNames = true),
     PER_FILE_DEV(production = false, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = false),
     PER_FILE_PROD(production = true, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = false),
-    PER_FILE_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = true);
+    PER_FILE_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = true),
+
+    PER_CLASS_DEV(production = false, granularity = JsGenerationGranularity.PER_CLASS, minimizedMemberNames = false),
+
+    PER_CLASS_PROD(production = true, granularity = JsGenerationGranularity.PER_CLASS, minimizedMemberNames = false),
+
+    PER_CLASS_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_CLASS, minimizedMemberNames = true);
 
     companion object {
         fun fromFlags(
@@ -146,6 +152,12 @@ enum class TranslationMode(
                         if (minimizedMemberNames) PER_FILE_PROD_MINIMIZED_NAMES
                         else PER_FILE_PROD
                     } else PER_FILE_DEV
+
+                JsGenerationGranularity.PER_CLASS ->
+                    if (production) {
+                        if (minimizedMemberNames) PER_CLASS_PROD_MINIMIZED_NAMES
+                        else PER_CLASS_PROD
+                    } else PER_CLASS_DEV
 
                 JsGenerationGranularity.WHOLE_PROGRAM ->
                     if (production) {
@@ -300,6 +312,7 @@ class IrModuleToJsTransformer(
                 outJsProgram = outJsProgram,
             )
             JsGenerationGranularity.PER_FILE,
+            JsGenerationGranularity.PER_CLASS,
             JsGenerationGranularity.PER_MODULE,
                 -> generateMultiWrappedModuleBody(
                 artifactConfiguration,
