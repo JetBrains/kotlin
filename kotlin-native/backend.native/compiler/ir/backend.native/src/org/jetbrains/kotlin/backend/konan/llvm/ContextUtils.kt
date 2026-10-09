@@ -609,6 +609,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         llvmIntrinsic("Kotlin_gc_stackObject", functionType(voidType, false, pointerType), "nounwind")
     }
 
+    val gcKeepAliveMarker by lazy {
+        llvmIntrinsic("Kotlin_gc_keepAlive", functionType(voidType, false, refPointerType), "nounwind", "willreturn").also {
+            LLVMKotlinSetOnlyAccessesInaccessibleMemory(it.asCallback())
+            LLVMAddTargetDependentFunctionAttr(it.asCallback(), "call-inline-cost", "0")
+        }
+    }
+
     val gcCalleeExitMarker by lazy {
         llvmIntrinsic("llvm.sideeffect", functionType(voidType, false))
     }

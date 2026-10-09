@@ -29,6 +29,7 @@ bool isObjectAlive() {
 import kotlin.native.concurrent.*
 import kotlin.test.*
 import kotlinx.cinterop.autoreleasepool
+import kotlinx.cinterop.usePinned
 import objclib.*
 
 fun box(): String {
@@ -46,11 +47,13 @@ fun run() = withWorker {
     val obj = NSObjectImpl()
     setObject(obj)
 
-    try {
-        execute(TransferMode.SAFE, {}) {
-            isObjectAlive()
-        }.result
-    } catch (e: Throwable) {
-        false
+    obj.usePinned {
+        try {
+            execute(TransferMode.SAFE, {}) {
+                isObjectAlive()
+            }.result
+        } catch (e: Throwable) {
+            false
+        }
     }
 }

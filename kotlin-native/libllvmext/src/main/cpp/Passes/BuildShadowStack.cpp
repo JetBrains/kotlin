@@ -55,10 +55,11 @@ static constexpr const char *FrameLeaveMarkerName = "Kotlin_gc_frameLeave";
 static constexpr const char *FrameSetCurrentMarkerName =
     "Kotlin_gc_frameSetCurrent";
 static constexpr const char *StackObjectMarkerName = "Kotlin_gc_stackObject";
+static constexpr const char *KeepAliveMarkerName = "Kotlin_gc_keepAlive";
 
 static constexpr const char *MarkerNames[] = {
-    ReturnSlotMarkerName,      FrameEnterMarkerName,  FrameLeaveMarkerName,
-    FrameSetCurrentMarkerName, StackObjectMarkerName,
+    ReturnSlotMarkerName,  FrameEnterMarkerName,      FrameLeaveMarkerName,
+    FrameSetCurrentMarkerName, StackObjectMarkerName, KeepAliveMarkerName,
 };
 
 static constexpr const char *KotlinLandingPadMetadataName =
@@ -1443,6 +1444,7 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
   SmallVector<CallInst *, 1> FrameEnterMarkers;
   SmallVector<CallInst *, 4> FrameLeaveMarkers;
   SmallVector<CallInst *, 4> FrameSetCurrentMarkers;
+  SmallVector<CallInst *, 4> KeepAliveMarkers;
   SmallVector<CallInst *, 4> StackObjectMarkers;
   for (Instruction &I : instructions(F)) {
     auto *CI = dyn_cast<CallInst>(&I);
@@ -1458,6 +1460,8 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
       FrameLeaveMarkers.push_back(CI);
     else if (Name == FrameSetCurrentMarkerName)
       FrameSetCurrentMarkers.push_back(CI);
+    else if (Name == KeepAliveMarkerName)
+      KeepAliveMarkers.push_back(CI);
     else if (Name == StackObjectMarkerName)
       StackObjectMarkers.push_back(CI);
   }
@@ -1472,7 +1476,7 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
     for (ArrayRef<CallInst *> Markers :
          {ArrayRef(FrameEnterMarkers), ArrayRef(FrameLeaveMarkers),
           ArrayRef(FrameSetCurrentMarkers), ArrayRef(StackObjectMarkers),
-          ArrayRef(CalleeExitMarkers)}) {
+          ArrayRef(KeepAliveMarkers), ArrayRef(CalleeExitMarkers)}) {
       for (CallInst *CI : Markers)
         CI->eraseFromParent();
     }

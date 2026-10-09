@@ -1572,7 +1572,7 @@ internal class CodeGeneratorVisitor(
                 null
         )
 
-        return if (dstClass.isCompanion) {
+        val result = if (dstClass.isCompanion) {
             functionGenerationContext.icmpEq(objCObject, genGetObjCClass(dstClass.parentAsClass))
         } else if (dstClass.isObjCClass()) {
             if (dstClass.isInterface) {
@@ -1610,6 +1610,10 @@ internal class CodeGeneratorVisitor(
                 kTrue
             }
         }
+        if (context.config.lateShadowStack) {
+            call(llvm.gcKeepAliveMarker, listOf(obj))
+        }
+        return result
     }
 
     /**

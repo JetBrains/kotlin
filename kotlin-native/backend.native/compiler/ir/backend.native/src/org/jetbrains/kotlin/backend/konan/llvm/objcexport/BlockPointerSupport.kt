@@ -343,6 +343,9 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             store(llvm.kNull, refHolderInBlock(blockOnStack))
 
             val copiedBlock = callFromBridge(retainBlock, listOf(blockOnStack))
+            if (useLateShadowStack) {
+                call(llvm.gcKeepAliveMarker, listOf(castBetweenRefAndPointer(llvm.refPointerType, kotlinRef)))
+            }
 
             ret(copiedBlock)
         }

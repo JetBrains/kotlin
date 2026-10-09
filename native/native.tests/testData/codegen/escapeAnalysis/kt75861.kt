@@ -1,5 +1,6 @@
 @file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 import kotlin.native.ref.WeakReference
+import kotlinx.cinterop.usePinned
 
 class Node {
     var next: Node? = null
@@ -19,9 +20,12 @@ fun box(): String {
         }
     }
 
-    repeat(2) {
-        @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
-        kotlin.native.runtime.GC.collect()
+    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+    node1.usePinned {
+        repeat(2) {
+            @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+            kotlin.native.runtime.GC.collect()
+        }
     }
 
     return weakNode3.value?.value ?: "FAIL"

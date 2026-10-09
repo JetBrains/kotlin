@@ -84,6 +84,7 @@ private object ClassIds {
     val nativePointed = InteropFqNames.nativePointedName.interopClassId
     val interopCPointer = InteropFqNames.cPointerName.interopClassId
     val interopMemScope = InteropFqNames.memScopeName.interopClassId
+    val interopPinned = "Pinned".interopClassId
     val interopCOpaque = InteropFqNames.cOpaqueName.interopClassId
     val interopObjCObject = InteropFqNames.objCObjectName.interopClassId
     val interopObjCObjectBase = InteropFqNames.objCObjectBaseName.interopClassId
@@ -365,6 +366,7 @@ class BackendNativeSymbols(
     val interopCstr by CallableIds.cstrProperty.getterSymbol(extensionReceiverClass = irBuiltIns.stringClass)
     val interopWcstr by CallableIds.wcstrProperty.getterSymbol(extensionReceiverClass = irBuiltIns.stringClass)
     val interopMemScope = ClassIds.interopMemScope.classSymbol()
+    val interopPinned = ClassIds.interopPinned.classSymbol()
     val interopCValueWrite by CallableIds.cValueWrite.functionSymbol {
         it.extensionReceiverClass == interopCValue
     }

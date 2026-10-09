@@ -1,6 +1,7 @@
 // DISABLE_NATIVE: gcType=NOOP
 import kotlin.test.*
 import kotlin.native.ref.*
+import kotlinx.cinterop.usePinned
 
 data class Data(val s: String)
 
@@ -12,14 +13,16 @@ fun localWeak(): WeakReference<Data>  {
     return weak
 }
 
-@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 fun multiWeak(): Array<WeakReference<Data>>  {
     val x = Data("Hello")
-    val weaks = Array(100, { WeakReference(x) } )
-    weaks.forEach {
-        it -> if (it.get()?.s != "Hello") throw Error("bad reference")
+    return x.usePinned {
+        val weaks = Array(100, { WeakReference(x) } )
+        weaks.forEach {
+            it -> if (it.get()?.s != "Hello") throw Error("bad reference")
+        }
+        weaks
     }
-    return weaks
 }
 
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class, kotlin.experimental.ExperimentalNativeApi::class)

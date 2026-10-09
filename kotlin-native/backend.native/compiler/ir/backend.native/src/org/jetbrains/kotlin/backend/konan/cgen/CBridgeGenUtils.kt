@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.cgen
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.irCatch
+import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
@@ -180,6 +183,8 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
     val arguments = mutableListOf<IrExpression>()
     val cleanup = mutableListOf<IrBuilderWithScope.() -> IrStatement>()
 
+    private val pinned = mutableListOf<IrVariable>()
+
     private var memScope: IrVariable? = null
 
     fun getMemScope(): IrExpression = with(irBuilder) {
@@ -200,6 +205,22 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
         irGet(newMemScope)
     }
 
+    /**
+     * Pins the object [expression] evaluates to until the call has returned, as `usePinned` would, so that it stays
+     * alive while the callee only sees its raw pointer.
+     */
+    fun keepingAlive(expression: IrExpression): IrExpression = with(irBuilder) {
+        val pinnedType = symbols.interopPinned.typeWith(context.irBuiltIns.anyType).makeNullable()
+        val variable = scope.createTemporaryVariable(irNull(pinnedType), nameHint = "pinned", isMutable = true, irType = pinnedType)
+        prepare += variable
+        pinned += variable
+        irBlock(expression) {
+            val value = irTemporary(expression)
+            +irSet(variable, pinIfNotNull(symbols, value))
+            +irGet(value)
+        }
+    }
+
     fun build(
             function: IrFunction,
             transformCall: (IrMemberAccessExpression<*>) -> IrExpression = { it }
@@ -218,7 +239,13 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
             irBuilder.irBlock(kotlinCall) {
                 prepare.forEach { +it }
                 if (cleanup.isEmpty()) {
-                    +kotlinCall
+                    if (pinned.isEmpty()) {
+                        +kotlinCall
+                    } else {
+                        val result = irTemporary(kotlinCall)
+                        unpin()
+                        +irGet(result)
+                    }
                 } else {
                     // Note: generating try-catch as finally blocks are already lowered.
                     val result = irTemporary(IrTryImpl(startOffset, endOffset, kotlinCall.type).apply {
@@ -239,11 +266,33 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
                     })
                     // TODO: consider handling a cleanup failure properly.
                     cleanup.forEach { +it() }
+                    unpin()
                     +irGet(result)
                 }
             }
         }
     }
+
+    private fun IrStatementsBuilder<*>.unpin() {
+        pinned.forEach { +unpinIfPinned(symbols, it) }
+    }
+}
+
+/** Pins the object in [value], if any, as `usePinned` does. */
+internal fun IrBuilderWithScope.pinIfNotNull(symbols: BackendNativeSymbols, value: IrValueDeclaration): IrExpression {
+    val anyType = context.irBuiltIns.anyType
+    val pin = irCallConstructor(symbols.interopPinned.owner.constructors.single().symbol, listOf(anyType)).apply {
+        arguments[0] = irImplicitCast(irGet(value), anyType)
+    }
+    return irIfNull(symbols.interopPinned.typeWith(anyType).makeNullable(), irGet(value), irNull(), pin)
+}
+
+/** Unpins the handle in [pinned], if any. */
+internal fun IrBuilderWithScope.unpinIfPinned(symbols: BackendNativeSymbols, pinned: IrValueDeclaration): IrExpression {
+    val unpin = symbols.interopPinned.owner.simpleFunctions().single { it.name.asString() == "unpin" }
+    return irIfThen(irNotEquals(irGet(pinned), irNull()), irCall(unpin).apply {
+        dispatchReceiver = irImplicitCast(irGet(pinned), symbols.interopPinned.typeWith(context.irBuiltIns.anyType))
+    })
 }
 
 internal class CCallBuilder {

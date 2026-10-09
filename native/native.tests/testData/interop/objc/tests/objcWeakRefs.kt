@@ -1,4 +1,4 @@
-@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class, ExperimentalForeignApi::class)
 
 import kotlinx.cinterop.*
 import kotlin.native.concurrent.*
@@ -37,14 +37,16 @@ private fun testObjCWeakRef0(deallocListener: DeallocListener) = withWorker {
 //        }
 //    }
 
-    runInWorker {
-        // [deallocListener.deallocExecutorIsNil()] calls deallocExecutor getter, which retains [obj] and either
-        // puts it to autoreleasepool or releases it immediately (Obj-C ARC optimization).
-        // Wrap the call to autoreleasepool to ensure [obj] will be released:
-        autoreleasepool {
-            assertFalse(deallocListener.deallocExecutorIsNil())
+    obj.usePinned {
+        runInWorker {
+            // [deallocListener.deallocExecutorIsNil()] calls deallocExecutor getter, which retains [obj] and either
+            // puts it to autoreleasepool or releases it immediately (Obj-C ARC optimization).
+            // Wrap the call to autoreleasepool to ensure [obj] will be released:
+            autoreleasepool {
+                assertFalse(deallocListener.deallocExecutorIsNil())
+            }
+            // Process release of Kotlin reference to [obj] in any case:
+            kotlin.native.runtime.GC.collect()
         }
-        // Process release of Kotlin reference to [obj] in any case:
-        kotlin.native.runtime.GC.collect()
     }
 }
