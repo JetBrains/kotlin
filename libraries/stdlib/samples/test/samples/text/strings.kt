@@ -163,6 +163,34 @@ class Strings {
     }
 
     @Sample
+    fun filterIndexed() {
+        val textWithDigits = "0K2o4t6l8i9n"
+
+        // filter by both character and index
+        assertPrints(textWithDigits.filterIndexed { index, char -> char.digitToIntOrNull() == index }, "02468")
+        // filter by character only
+        assertPrints(textWithDigits.filterIndexed { _, char -> char.isLetter() }, "Kotlin")
+        // filter by index only
+        assertPrints(textWithDigits.filterIndexed { index, _ -> index % 2 == 0 }, "024689")
+    }
+
+    @Sample
+    fun filterIndexedTo() {
+        val userInput = "0P2e4t6e8r"
+
+        val numbersOnSameIndexAsValue = StringBuilder() // Mutable destination (Appendable)
+        // append characters matching the filter (i.e. numbers on same index as character) to numbersOnSameIndexAsValue
+        userInput.filterIndexedTo(numbersOnSameIndexAsValue) { index, char -> char.digitToIntOrNull() == index }
+        assertPrints(numbersOnSameIndexAsValue, "02468")
+
+        // append characters matching the filter (i.e. letters only) to a prefixed destination (i.e. Username: )
+        assertPrints(
+            userInput.filterIndexedTo(StringBuilder("Username: ")) { _, char -> char.isLetter() },
+            "Username: Peter"
+        )
+    }
+
+    @Sample
     fun findLast() {
         val text = "a1b2c3d4e5"
 
