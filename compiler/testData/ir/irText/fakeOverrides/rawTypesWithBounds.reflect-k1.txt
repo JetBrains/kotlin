@@ -53,7 +53,7 @@ KClass: abstract class Java : KotlinInterface, KotlinInterface2
     public abstract fun Java.a18(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
     public abstract fun Java.a19(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
     public abstract fun Java.a20(OutBox3<(raw) kotlin.CharSequence>): OutBox3<(raw) kotlin.CharSequence>
-    public abstract fun Java.a21(InBox3<(raw) kotlin.CharSequence>): InBox3<(raw) kotlin.CharSequence>
+    public abstract fun Java.a21((InBox3<(raw) kotlin.CharSequence>..InBox3<kotlin.Nothing>)): (InBox3<(raw) kotlin.CharSequence>..InBox3<kotlin.Nothing>)
     public abstract fun Java.a22(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
     public abstract fun Java.a23(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence>
     public abstract <B00> fun Java.b00(kotlin.Any?): kotlin.Any?
@@ -77,7 +77,7 @@ KClass: abstract class Java : KotlinInterface, KotlinInterface2
     public abstract <B18> fun Java.b18(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B18 : Box3<(raw) kotlin.CharSequence>
     public abstract <B19> fun Java.b19(???): ??? where B19 : Box3<(raw) kotlin.CharSequence>
     public abstract <B20> fun Java.b20(OutBox3<(raw) kotlin.CharSequence>): OutBox3<(raw) kotlin.CharSequence> where B20 : OutBox3<(raw) kotlin.CharSequence>
-    public abstract <B21> fun Java.b21(InBox3<(raw) kotlin.CharSequence>): InBox3<(raw) kotlin.CharSequence> where B21 : InBox3<(raw) kotlin.CharSequence>
+    public abstract <B21> fun Java.b21((InBox3<(raw) kotlin.CharSequence>..InBox3<kotlin.Nothing>)): (InBox3<(raw) kotlin.CharSequence>..InBox3<kotlin.Nothing>) where B21 : (InBox3<(raw) kotlin.CharSequence>..InBox3<kotlin.Nothing>)
     public abstract <B22> fun Java.b22(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B22 : Box3<(raw) kotlin.CharSequence>
     public abstract <B23> fun Java.b23(Box3<(raw) kotlin.CharSequence>): Box3<(raw) kotlin.CharSequence> where B23 : Box3<(raw) kotlin.CharSequence>
     public abstract <C00> fun Java.c00(Inv<(raw) kotlin.Any?>): Inv<(raw) kotlin.Any?> where C00 : Inv<(raw) kotlin.Any?>

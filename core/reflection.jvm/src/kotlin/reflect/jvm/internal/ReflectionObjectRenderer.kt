@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.render
 import org.jetbrains.kotlin.renderer.renderFlexibleMutabilityOrArrayElementVarianceType
 import kotlin.reflect.*
 import kotlin.reflect.full.contextParameters
+import kotlin.reflect.full.createTypeImpl
 import kotlin.reflect.full.extensionReceiverParameter
 import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.types.AbstractKType
@@ -125,7 +126,7 @@ internal object ReflectionObjectRenderer {
         type as AbstractKType
 
         if (type.isRawType) {
-            return renderType(type.lowerBoundIfFlexible()!!, renderRawArgumentPrefix = true)
+            return renderRawType(type.lowerBoundIfFlexible()!!, type.upperBoundIfFlexible()!!)
         }
 
         val lowerBound = type.lowerBoundIfFlexible()
@@ -170,6 +171,32 @@ internal object ReflectionObjectRenderer {
                 append(" */")
             }
         }
+    }
+
+    // See `RawTypeImpl.render`.
+    private fun renderRawType(lowerBound: AbstractKType, upperBound: AbstractKType): String {
+        val lowerRendered = renderType(lowerBound, renderRawArgumentPrefix = true)
+
+        val upperClassifier = upperBound.classifier
+        val argumentsCanBeReplaced = upperClassifier != null && lowerBound.arguments.size == upperBound.arguments.size &&
+                lowerBound.arguments.zip(upperBound.arguments).all { [lowerArgument, upperArgument] ->
+                    upperArgument == KTypeProjection.STAR ||
+                            upperArgument.type == lowerArgument.type && upperArgument.variance != KVariance.IN
+                }
+        val upperRendered =
+            if (argumentsCanBeReplaced) {
+                renderType(
+                    upperClassifier.createTypeImpl(
+                        lowerBound.arguments, upperBound.isMarkedNullable, upperBound.annotations, upperBound.mutableCollectionClass,
+                    ),
+                    renderRawArgumentPrefix = true,
+                )
+            } else {
+                renderType(upperBound)
+            }
+
+        if (lowerRendered == upperRendered) return lowerRendered
+        return renderFlexibleType(lowerRendered, upperRendered)
     }
 
     private fun getTypeClassFqName(type: AbstractKType, klass: KClass<*>): FqNameUnsafe? {
