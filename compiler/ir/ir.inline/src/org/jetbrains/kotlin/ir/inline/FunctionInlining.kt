@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isImmutable
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name.identifier
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.util.ArrayDeque
@@ -527,7 +528,7 @@ private class CallInlining(
 
 /**
  * Returns the type arguments of the type parameters of [callee] and of the classes of the dispatch receiver type hierarchy. The type
- * parameters with a star projection are omitted.
+ * parameters with a star projection or an `in` projection are omitted.
  */
 private fun IrFunctionAccessExpression.computeTypeArgumentsOf(callee: IrFunction): Map<IrTypeParameterSymbol, IrType> {
     val result = mutableMapOf<IrTypeParameterSymbol, IrType>()
@@ -544,7 +545,10 @@ private fun IrFunctionAccessExpression.computeTypeArgumentsOf(callee: IrFunction
         if (!visitedClasses.add(irClass.symbol)) continue
         val classTypeArguments = irClass.typeConstructorParameters.map { it.symbol }.zip(type.arguments.asSequence()).toMap()
         for ([typeParameter, typeArgument] in classTypeArguments) {
-            if (typeArgument is IrTypeProjection) result[typeParameter] = typeArgument.type
+            // With `in X`, the value is only known to be of a supertype of `X`. With `out X`, it is an `X`.
+            if (typeArgument is IrTypeProjection && typeArgument.variance != Variance.IN_VARIANCE) {
+                result[typeParameter] = typeArgument.type
+            }
         }
         val substitutor = IrTypeSubstitutor(classTypeArguments, allowEmptySubstitution = true)
         irClass.superTypes.mapTo(typesToVisit, substitutor::substitute)
