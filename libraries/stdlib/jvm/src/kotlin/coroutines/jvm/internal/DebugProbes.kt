@@ -11,26 +11,14 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.*
 import kotlin.coroutines.jvm.DebugProbes
 
-private val IS_ANDROID: Boolean = try {
-    Class.forName("android.os.Build")
-    true
-} catch (_: Exception) {
-    false
-}
-
 private val hasNoProbes: Boolean
 private val debugProbes: DebugProbes? = run {
-    if (IS_ANDROID) {
-        hasNoProbes = true
-        return@run null
-    }
     /*
     Respect debug probes loading explicitly being enabled or disabled by the System Property.
     If the property is not specified, we disable the mechanics on Android as using Service Loaders on Android can
     have unintended performance effects, especially at startup where this code might run.
      */
-    val isDebugProbesLoadingEnabled = System.getProperty("kotlin.coroutines.jvm.DebugProbes")?.toBooleanStrictOrNull()
-        ?: runCatching { Class.forName("android.os.Build") }.isFailure
+    val isDebugProbesLoadingEnabled = System.getProperty("kotlin.coroutines.jvm.DebugProbes")?.toBooleanStrictOrNull() ?: false
 
     if (isDebugProbesLoadingEnabled) {
         val result = mutableListOf<DebugProbes>()
