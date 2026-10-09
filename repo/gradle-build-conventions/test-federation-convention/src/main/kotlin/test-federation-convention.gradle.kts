@@ -86,7 +86,7 @@ tasks.withType<Test>().configureEach {
 
         // Exclude nightly tests if not specifically running in 'nightly' mode
         if (!areNightlyTestsEnabled.get()) {
-            testFramework.options.excludeTags("nightly", "org.jetbrains.kotlin.testFederation.NightlyTest")
+            testFramework.options.excludeTags("nightly")
         }
 
         // Check if classpath contains vintage engine and report it as unsupported
