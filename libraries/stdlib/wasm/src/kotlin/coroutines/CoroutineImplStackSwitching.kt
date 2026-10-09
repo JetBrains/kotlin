@@ -19,10 +19,8 @@ import kotlin.wasm.internal.resumeWithImpl
 
 @SinceKotlin("1.3")
 @UsedFromCompilerGeneratedCode
-internal class CoroutineImplStackSwitching<T, R>(
+internal open class CoroutineImplStackSwitching<T, R>(
     private val resultContinuation: Continuation<R>,
-    internal val wasmContBox: WasmContinuationBox =
-        WasmContinuationBox(nullContrefIntrinsic())
 ) : Continuation<T> {
 
     internal var result: Any? = null
@@ -34,15 +32,26 @@ internal class CoroutineImplStackSwitching<T, R>(
         ?: (context[ContinuationInterceptor]?.interceptContinuation(this) ?: this)
             .also { intercepted_ = it }
 
-    internal var pendingSuspend = false
+    // Box for the inner WebAssembly continuation object.
+    internal val wasmContBox: WasmContinuationBox =
+        WasmContinuationBox(nullContrefIntrinsic())
+
+    // True while this coroutine's wasm stack is executing
+    internal var isRunning = true
+
+    // Set by `resumeWith` when the coroutine resumes itself from inside its own `block`.
+    internal var resumedWhileRunning = false
 
     @Suppress("UNCHECKED_CAST")
     override fun resumeWith(result: Result<T>) {
         this.result = result.getOrNull()
         exception = result.exceptionOrNull()
 
-        if (pendingSuspend) {
-            pendingSuspend = false
+        // The coroutine is resuming itself from inside its own `block`: the wasm stack is still
+        // running, so there is nothing to resume -- just park the result for the block to pick up.
+        if (isRunning) {
+            check(!resumedWhileRunning) { "Continuation was resumed more than once" }
+            resumedWhileRunning = true
             return
         }
 
@@ -50,11 +59,12 @@ internal class CoroutineImplStackSwitching<T, R>(
             val outcome = doResume()
             this.result = outcome
             exception = null
-            if (outcome === COROUTINE_SUSPENDED) return
+            if (outcome === COROUTINE_SUSPENDED) return // isRunning was already cleared before parking
         } catch (exception: Throwable) { // Catch all exceptions
             this.result = null
             this.exception = exception
         }
+        isRunning = false // the stack ran to completion
 
         releaseIntercepted() // this instance is terminating
 
@@ -76,8 +86,10 @@ internal class CoroutineImplStackSwitching<T, R>(
         this.intercepted_ = CompletedContinuation // just in case
     }
 
-    fun doResume(): Any? {
+    open fun doResume(): Any? {
         val wasmCont = wasmContBox.wasmContinuation!!
+        wasmContBox.wasmContinuation = nullContrefIntrinsic()
+        isRunning = true
 
         val e = exception
         val resumeResult: Any? =
