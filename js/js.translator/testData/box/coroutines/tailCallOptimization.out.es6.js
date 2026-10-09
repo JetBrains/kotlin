@@ -1,8 +1,11 @@
 function *delay(timeMillis, $completion) {
   if (timeMillis <= 0n)
-    return Unit$getInstance();
+    return Unit$instance;
   // Inline function 'suspendCancellableCoroutine' call
   // Inline function 'kotlin.js.suspendCoroutineUninterceptedOrReturnJS' call
-  (yield () => Unit$getInstance());
-  return Unit$getInstance();
+  (yield () => {
+    $completion;
+    return Unit$instance;
+  });
+  return Unit$instance;
 }

@@ -236,5 +236,5 @@ val optimizationLoweringList: List<NamedCompilerPhase<JsIrOptimizationContext, I
     ::JsCleanupPurifiedLeftoverUsagesLowering,
     ::MoveCallableFactoriesToDeclarationsLowering,
     ::DeduplicateCallableReferenceFactoriesLowering,
-    ::WhileConditionFoldingLowering,
+    ::FixedPointOptimizationsLowering,
 )

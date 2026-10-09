@@ -42,6 +42,7 @@ open class ArgumentsHelper(private val entry: String) {
         }
     }
 
+
     private val targetBackends: Set<TargetBackend> =
         findNamedListArgument("TARGET_BACKENDS").mapTo(hashSetOf(), TargetBackend::valueOf)
 
@@ -57,6 +58,7 @@ open class ArgumentsHelper(private val entry: String) {
      * Names of directives that MUST NOT be registered for this to be evaluated.
      */
     val ignoredModes: Set<String> = findNamedListArgument("IGNORED_MODES").toSet()
+
 
     fun shouldRunWithBackend(backend: TargetBackend): Boolean {
         if (targetBackends.isNotEmpty()) {
