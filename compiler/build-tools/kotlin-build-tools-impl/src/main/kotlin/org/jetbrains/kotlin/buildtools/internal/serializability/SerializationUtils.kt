@@ -19,6 +19,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.DelicateBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.js.IncrementalModule
 import org.jetbrains.kotlin.buildtools.api.js.JsIncrementalCompilationConfiguration
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker.ScopeKind
 import org.jetbrains.kotlin.buildtools.api.wasm.WasmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.internal.LogLevel
+import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.JsHistoryBasedIncrementalCompilationConfigurationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsDtsGenerationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
@@ -116,6 +118,8 @@ public val btaSerializersModule: SerializersModule = SerializersModule {
             JvmSnapshotBasedIncrementalCompilationConfigurationImpl::class,
             JvmSnapshotBasedIncrementalCompilationConfigurationImplSerializer
         )
+        @OptIn(DelicateBuildToolsApi::class)
+        subclass(JvmJpsManagedIncrementalCompilationConfigurationImpl::class)
     }
 
     polymorphic(JsIncrementalCompilationConfiguration::class) {
@@ -167,6 +171,43 @@ public sealed class Message {
         public val type: BuildMetricsCollector.ValueType,
         public val value: Long,
     ) : Message()
+
+    public class FileMappingTracker {
+        @Serializable
+        public data class RecordSourceFilesToOutputFileMapping(val sourceFilePaths: List<Path>, val outputFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordSourceReferencedByCompilerPlugin(val sourceFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordOutputFileGeneratedForPlugin(val outputFilePath: Path) : Message()
+
+        @Serializable
+        public data class RecordSourceFileGeneratedForPlugin(val sourceFilePath: Path) : Message()
+    }
+
+    public class ExpectActualTracker {
+        @Serializable
+        public data class Report(val expectFilePath: Path, val actualFilePath: Path) : Message()
+
+        @Serializable
+        public data class ReportExpectOfLenientStub(val expectFilePath: Path) : Message()
+    }
+
+    public class EnumWhenTracker {
+        @Serializable
+        public data class Report(val whenExpressionFilePath: Path, val enumClassFqName: String) : Message()
+    }
+
+    public class ImportTracker {
+        @Serializable
+        public data class Report(val filePath: Path, val importedFqName: String) : Message()
+    }
+
+    public class InlineConstTracker {
+        @Serializable
+        public data class Report(val filePath: Path, val owner: String, val name: String, val constType: String) : Message()
+    }
 }
 
 public fun CompilerMessageSourceLocation.beforeSerialization(): CompilerMessageSourceLocation =

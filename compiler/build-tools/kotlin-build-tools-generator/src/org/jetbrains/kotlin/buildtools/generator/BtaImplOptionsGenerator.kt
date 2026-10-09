@@ -1010,6 +1010,7 @@ internal class BtaImplOptionsGenerator(
                 ClassName("kotlin.collections", "MutableList").parameterizedBy(restrictedArgViolationClass),
                 KModifier.PROTECTED,
             ) {
+                annotation(ANNOTATION_TRANSIENT)
                 initializer(
                     "%M()",
                     MemberName("kotlin.collections", "mutableListOf"),

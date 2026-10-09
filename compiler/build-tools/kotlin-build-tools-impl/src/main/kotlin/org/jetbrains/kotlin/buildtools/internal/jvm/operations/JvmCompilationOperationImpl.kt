@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
@@ -48,8 +47,9 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.buildtools.internal.jvm.toOptions
-import org.jetbrains.kotlin.buildtools.internal.serializability.JvmSnapshotBasedIncrementalCompilationConfigurationImplSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.ListOfPathsAsStringSerializer
+import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -81,7 +81,19 @@ internal class JvmCompilationOperationImpl(
 
     override fun toBuilder(): JvmCompilationOperation.Builder = deepCopy()
 
-    // TODO handle new way without options - use serialization?
+    override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
+        val visitors = super.beforeSerialization(logger).toMutableList()
+        (incrementalCompilation as? BtaSerializable)?.let { incrementalCompilation ->
+            visitors.addAll(incrementalCompilation.beforeSerialization(logger))
+        }
+        return visitors
+    }
+
+    override fun afterSerialization(messageReporter: (Message) -> Unit) {
+        super.afterSerialization(messageReporter)
+        (incrementalCompilation as? BtaSerializable)?.afterSerialization(messageReporter)
+    }
+
     override fun deepCopy(): JvmCompilationOperationImpl {
         @Suppress("UNCHECKED_CAST")
         return JvmCompilationOperationImpl(

@@ -72,6 +72,7 @@ public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.
     public open val warningsAsError: Boolean
         get() = false
 
+    @Transient
     public open val compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer
 
     override fun afterSerialization(messageReporter: (Message) -> Unit) {

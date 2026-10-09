@@ -70,6 +70,7 @@ internal abstract class CommonToolArgumentsImpl() : ArgumentsCommonToolArguments
   @SerialName("VERSION")
   internal var version: Boolean = defaultArguments.version
 
+  @Transient
   protected val _restrictedArgViolations: MutableList<RestrictedArgViolation> = mutableListOf()
 
   internal val restrictedArgViolations: List<RestrictedArgViolation>

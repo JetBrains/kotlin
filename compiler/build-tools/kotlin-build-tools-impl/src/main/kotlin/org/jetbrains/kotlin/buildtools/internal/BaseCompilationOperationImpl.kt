@@ -410,7 +410,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
     }
 }
 
-private class MessageReportingCompilerLookupTracker(private val messageReporter: (Message) -> Unit) : CompilerLookupTracker {
+internal class MessageReportingCompilerLookupTracker(private val messageReporter: (Message) -> Unit) : CompilerLookupTracker {
     override fun recordLookup(
         filePath: String,
         scopeFqName: String,
