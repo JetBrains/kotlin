@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.build.report.metrics
 import java.lang.management.ManagementFactory
 
 interface BuildMetricsReporter<in B : BuildTimeMetric, P : BuildPerformanceMetric> {
+    val isEnabled: Boolean
+        get() = true
+
     fun startMeasure(time: B)
     fun endMeasure(time: B)
     fun addTimeMetricNs(time: B, durationNs: Long)

@@ -544,6 +544,7 @@ abstract class IncrementalCompilerRunner<
     protected open fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: CacheManager) {}
 
     private fun collectSizeMetrics() {
+        if (!reporter.isEnabled) return
         reporter.measure(CALCULATE_OUTPUT_SIZE) {
             reporter.addMetric(
                 SNAPSHOT_SIZE,
