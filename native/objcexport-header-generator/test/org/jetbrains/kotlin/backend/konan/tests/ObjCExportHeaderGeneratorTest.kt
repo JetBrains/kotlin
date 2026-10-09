@@ -734,6 +734,12 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("reducedSpecialFunctionNamesExplicitMethodFamily"), Configuration(explicitMethodFamily = true))
     }
 
+    @Test
+    @TodoAnalysisApi
+    fun `test - manglers should be able to resolve entry naming clashes across enums`() {
+        doTest(headersTestDataDir.resolve("entryNamesClashAcrossEnums"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

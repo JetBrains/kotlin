@@ -6,7 +6,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSValue.h>
 
-@class Foo, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion;
+@class A, B, KotlinArray<T>, KotlinEnum<E>, KotlinEnumCompanion;
 
 @protocol KotlinComparable, KotlinIterator;
 
@@ -38,24 +38,36 @@ NS_ASSUME_NONNULL_BEGIN
 @property (readonly) int32_t ordinal __attribute__((swift_name("ordinal")));
 @end
 
-typedef NS_CLOSED_ENUM(int32_t, FooNSEnum) {
-  FooNSEnumAlpha __attribute__((swift_name("alpha"))) = 0,
-  FooNSEnumTheCopy __attribute__((swift_name("theCopy"))) = 1,
-  FooNSEnumBarFoo __attribute__((swift_name("barFoo"))) = 2,
-} __attribute__((swift_name("FooNSEnum")));
+typedef NS_CLOSED_ENUM(int32_t, Foo) {
+  FooBarBaz __attribute__((swift_name("barBaz"))) = 0,
+} __attribute__((swift_name("Foo")));
 
 
 __attribute__((objc_subclassing_restricted))
-@interface Foo : KotlinEnum<Foo *>
+@interface A : KotlinEnum<A *>
 + (instancetype)alloc __attribute__((unavailable));
 + (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
 - (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
-@property (readonly) FooNSEnum nsEnum;
-@property (class, readonly) Foo *alpha __attribute__((swift_name("alpha")));
-@property (class, readonly) Foo *theCopy __attribute__((swift_name("theCopy")));
-@property (class, readonly) Foo *barFoo __attribute__((swift_name("barFoo")));
-+ (KotlinArray<Foo *> *)values __attribute__((swift_name("values()")));
-@property (class, readonly) NSArray<Foo *> *entries __attribute__((swift_name("entries")));
+@property (readonly) Foo nsEnum;
+@property (class, readonly) A *barBaz __attribute__((swift_name("barBaz")));
++ (KotlinArray<A *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<A *> *entries __attribute__((swift_name("entries")));
+@end
+
+typedef NS_CLOSED_ENUM(int32_t, FooBar) {
+  FooBarBaz_ __attribute__((swift_name("baz"))) = 0,
+} __attribute__((swift_name("FooBar")));
+
+
+__attribute__((objc_subclassing_restricted))
+@interface B : KotlinEnum<B *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (readonly) FooBar nsEnum;
+@property (class, readonly) B *baz __attribute__((swift_name("baz")));
++ (KotlinArray<B *> *)values __attribute__((swift_name("values()")));
+@property (class, readonly) NSArray<B *> *entries __attribute__((swift_name("entries")));
 @end
 
 __attribute__((objc_subclassing_restricted))

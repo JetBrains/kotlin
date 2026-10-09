@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaEnumEntrySymbol
+import org.jetbrains.kotlin.backend.konan.mangleIfStdMacro
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.Name
 
@@ -76,18 +77,18 @@ private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): Obj
 }
 
 internal fun ObjCExportContext.getNSEnumEntryName(nsEnumTypeName: String, symbol: KaEnumEntrySymbol): String {
-    val name = getNSEnumEntryBaseName(symbol, forSwift = false, mangleObjCName = false)
-    return nsEnumTypeName + name.replaceFirstChar(Char::uppercaseChar)
+    val name = getNSEnumEntryBaseName(symbol, forSwift = false)
+    return (nsEnumTypeName + name.replaceFirstChar(Char::uppercaseChar)).mangleIfStdMacro()
 }
 
 internal fun ObjCExportContext.getNSEnumEntrySwiftName(symbol: KaEnumEntrySymbol): String {
-    return getNSEnumEntryBaseName(symbol, forSwift = true, mangleObjCName = false)
+    return getNSEnumEntryBaseName(symbol, forSwift = true)
 }
 
-private fun ObjCExportContext.getNSEnumEntryBaseName(symbol: KaEnumEntrySymbol, forSwift: Boolean, mangleObjCName: Boolean): String {
+private fun ObjCExportContext.getNSEnumEntryBaseName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
     val objCEnumEntryNameAnnotation = symbol.resolveObjCEnumEntryNameAnnotation()
     val name = (if (forSwift) objCEnumEntryNameAnnotation?.swiftName?.ifEmpty { null } else null) ?: objCEnumEntryNameAnnotation?.objCName
-    return name?.ifEmpty { null } ?: getEnumEntryName(symbol, forSwift, mangleObjCName)
+    return name?.ifEmpty { null } ?: getEnumEntryName(symbol, forSwift, mangleObjCName = false)
 }
 
 /**

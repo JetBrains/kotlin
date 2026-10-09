@@ -25,3 +25,19 @@ enum class Foo {
     // In the corresponding @interface, the property's name and its corresponding Swift name should be entryName3Swift.
     @ObjCEnum.EntryName(name = "YES", swiftName = "NO") ENTRY_NAME_3_SWIFT,
 }
+
+// Typename in NS_CLOSED_ENUM should be mangled.
+@ObjCEnum(name = "NULL") enum class A {
+    ENTRY_1,
+    ENTRY_2
+}
+
+// Entry name = DE + BUG in NS_CLOSED_ENUM; should be mangled.
+@ObjCEnum(name = "DE") enum class B {
+    @ObjCEnum.EntryName(name = "BUG") ENTRY_3,
+}
+
+// Entry name = N + O in NS_CLOSED_ENUM; should be mangled.
+@ObjCEnum(name = "N") enum class C {
+    @ObjCName("O") ENTRY_4,
+}
