@@ -1468,7 +1468,7 @@ private fun ObjCExportCodeGenerator.createCategoryAdapter(
             vtableSize = -1,
             itable = emptyList(),
             itableSize = -1,
-            objCName = category.binaryName,
+            objCName = category.classBinaryName,
             directAdapters = adapters,
             classAdapters = emptyList(),
             virtualAdapters = emptyList(),
