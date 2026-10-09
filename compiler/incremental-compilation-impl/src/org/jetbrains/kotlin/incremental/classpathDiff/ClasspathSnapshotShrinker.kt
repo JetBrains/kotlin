@@ -306,6 +306,8 @@ internal fun shrinkAndSaveClasspathSnapshot(
         }
     }
 
+    if (!reporter.isEnabled) return
+
     reporter.addMetric(SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
     reporter.addMetric(
         CLASSPATH_ENTRY_COUNT,
