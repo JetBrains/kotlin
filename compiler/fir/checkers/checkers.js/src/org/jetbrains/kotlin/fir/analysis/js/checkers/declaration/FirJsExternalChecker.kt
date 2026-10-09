@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.isKotlinValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.analysis.web.common.checkers.declaration.FirWebCommonExternalChecker
@@ -98,7 +98,7 @@ object FirJsExternalChecker : FirWebCommonExternalChecker(allowCompanionInInterf
             }
         }
 
-        reportOnParametersAndReturnTypesIf(valueClassInExternalDiagnostic) { it.isKotlinValueClass(context.session) }
+        reportOnParametersAndReturnTypesIf(valueClassInExternalDiagnostic) { it.isValueClass(context.session) }
 
         if (LanguageFeature.JsEnableExtensionFunctionInExternals.isDisabled()) {
             reportOnParametersAndReturnTypesIf(

@@ -1109,7 +1109,7 @@ inline fun FirElement.requireFeatureSupport(
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
     get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
-        !it.isPrimitiveOrNullablePrimitive && !it.isKotlinValueClass(context.session)
+        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
     }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
