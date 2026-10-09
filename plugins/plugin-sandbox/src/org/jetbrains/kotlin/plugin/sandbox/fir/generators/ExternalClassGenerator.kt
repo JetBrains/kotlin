@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaLazyDeprecationsProvider
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaClass
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.createConstructor
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createNestedClass
 import org.jetbrains.kotlin.fir.plugin.createTopLevelClass
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
@@ -68,6 +70,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     data object ExternalClassGeneratorKey : GeneratedDeclarationKey()
     data object JavaClassWithHiddenNestedGeneratorKey : GeneratedDeclarationKey()
+    data object JavaAccessorGeneratorKey : GeneratedDeclarationKey()
 
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
@@ -162,8 +165,11 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        if (callableId.classId !in classIdsForMatchedClasses || callableId.callableName != MATERIALIZE_NAME) return emptyList()
         val owner = context?.owner
+        if (owner?.origin is FirDeclarationOrigin.Java.Source) {
+            return generateJavaAccessor(callableId, context)
+        }
+        if (callableId.classId !in classIdsForMatchedClasses || callableId.callableName != MATERIALIZE_NAME) return emptyList()
         require(owner is FirRegularClassSymbol)
         val matchedClassId = owner.matchedClass ?: return emptyList()
         val matchedClassSymbol = session.getRegularClassSymbolByClassId(matchedClassId) ?: return emptyList()
@@ -175,11 +181,33 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         return listOf(function.symbol)
     }
 
+    private fun generateJavaAccessor(callableId: CallableId, context: MemberGenerationContext): List<FirNamedFunctionSymbol> {
+        val owner = context.owner
+        if (!owner.hasAnnotation(ClassId(SANDBOX_ANNOTATIONS_PACKAGE, FqName("JavaClassWithGeneratedGetter"), false), session)) {
+            return emptyList()
+        }
+        val accessor = buildJavaMethod {
+            javaOrigin = FirDeclarationOrigin.Java.Plugin(JavaAccessorGeneratorKey)
+            containingClassSymbol = owner
+            dispatchReceiverType = owner.defaultType()
+            name = callableId.callableName
+            moduleData = session.moduleData
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public,
+            )
+            symbol = FirNamedFunctionSymbol(callableId)
+            returnTypeRef = session.builtinTypes.intType
+        }
+        return listOf(accessor.symbol)
+    }
+
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when (classSymbol.classId) {
             in classIdsForMatchedClasses -> setOf(MATERIALIZE_NAME, SpecialNames.INIT)
             GENERATED_CLASS_ID -> setOf(SpecialNames.INIT)
-            else -> emptySet()
+            else -> if (classSymbol.origin is FirDeclarationOrigin.Java) setOf(Name.identifier("getFoo")) else emptySet()
         }
     }
 
