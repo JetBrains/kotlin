@@ -33,6 +33,10 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
 
     val USE_PSI_CLASS_FILES_READING by directive("Use a slower (PSI-based) class files reading implementation")
 
+    val USE_PSI_JAVA_FACADE by directive(
+        "Analyze Java sources with the PSI-based Java facade instead of java-direct. Reference the issue that requires it"
+    )
+
     val PROVIDE_JAVA_AS_BINARIES by directive(
         "Compile Kotlin with classpath JAR binaries for all .java sources instead of with .java sources themselves"
     )
