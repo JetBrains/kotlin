@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
+import org.jetbrains.kotlin.kapt.base.util.ClassTrackingURLClassLoader
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.info
@@ -148,7 +149,7 @@ open class FirKaptAnalysisHandlerExtension(
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
 
         if (options.detectMemoryLeaks != DetectMemoryLeaksMode.NONE) {
-            MemoryLeakDetector.add(processors.classLoader)
+            MemoryLeakDetector.add(processors.classLoader) { (it as? ClassTrackingURLClassLoader)?.definedClasses }
 
             val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
             val [leakDetectionTime, leaks] = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }
