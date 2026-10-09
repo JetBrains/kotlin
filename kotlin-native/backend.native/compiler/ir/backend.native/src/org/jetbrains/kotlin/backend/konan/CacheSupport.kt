@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
+import org.jetbrains.kotlin.konan.config.makePerFileCache
 import org.jetbrains.kotlin.konan.config.preLinkCaches
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -92,11 +93,11 @@ class CacheSupport(
         incrementalCacheDirectory?.let { add(it) }
     }
 
-    internal fun tryGetImplicitOutput(cacheDeserializationStrategy: CacheDeserializationStrategy?): String? {
-        val libraryToCache = libraryToCache ?: return null
+    internal fun tryGetImplicitOutput(cacheInfo: PartialCacheInfo?): String? {
+        val libraryToCache = cacheInfo ?: return null
         // Put the resulting library in the first cache directory.
         val cacheDirectory = implicitCacheDirectories.firstOrNull() ?: return null
-        val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
+        val singleFileStrategy = libraryToCache.strategy as? CacheDeserializationStrategy.SingleFile
         val baseLibraryCacheDirectory = cacheDirectory.resolve(
                 if (singleFileStrategy == null)
                     CachedLibraries.getCachedLibraryName(libraryToCache.klib)
@@ -145,7 +146,19 @@ class CacheSupport(
                     "not found among resolved libraries:\n  " +
                     klibDag.librariesReverseTopoSorted.joinToString("\n  ") { it.path.pathString })
 
-    internal val libraryToCache = configuration.konanLibraryToAddToCache?.let {
+    internal val librariesToCache: Map<KotlinLibrary, PartialCacheInfo> = configuration[CACHE_BATCH]?.let { batch ->
+        require(configuration.konanLibraryToAddToCache == null) { "Batched build cannot be mixed with single cache build" }
+        require(configuration.makePerFileCache) {
+            "Batched build is only supported for per-file caches as a part of incremental build"
+        }
+        batch.keys.associate { path ->
+            val library = getLibrary(Path(path))
+            require(cachedLibraries.getLibraryCache(library, allowIncomplete = true) == null) {
+                "Cache batch contains an already cached library: ${library.path}"
+            }
+            library to PartialCacheInfo(library, CacheDeserializationStrategy.WholeModule)
+        }
+    } ?: configuration.konanLibraryToAddToCache?.let {
         val libraryToAddToCacheFile = Path(it)
         val libraryToAddToCache = getLibrary(libraryToAddToCacheFile)
         val libraryCache = cachedLibraries.getLibraryCache(libraryToAddToCache, allowIncomplete = true)
@@ -158,9 +171,9 @@ class CacheSupport(
                 CacheDeserializationStrategy.WholeModule
             else
                 CacheDeserializationStrategy.MultipleFiles(filesToCache, libraryToAddToCache.getFileFqNames(filesToCache))
-            PartialCacheInfo(libraryToAddToCache, strategy)
+            mapOf(libraryToAddToCache to PartialCacheInfo(libraryToAddToCache, strategy))
         }
-    }
+    } ?: emptyMap()
 
     internal val preLinkCaches: Boolean =
             configuration.preLinkCaches
@@ -174,10 +187,10 @@ class CacheSupport(
         // Note: The libraries should be in the reverse topo-order here.
         for (library in klibDag.librariesReverseTopoSorted) {
             val cache = cachedLibraries.getLibraryCache(library)
-            if (cache != null || library == libraryToCache?.klib) {
+            if (cache != null || library in librariesToCache) {
                 val dependencies = klibDag.getAllDependencies(library)
                 for (dependency in dependencies) {
-                    if (!cachedLibraries.isLibraryCached(dependency) && dependency != libraryToCache?.klib) {
+                    if (!cachedLibraries.isLibraryCached(dependency) && dependency !in librariesToCache) {
                         val description = if (cache != null) "cached (in ${cache.path})" else "going to be cached"
                         configuration.reportCompilationErrorAndThrow("${library.path} is $description, but its dependency isn't: ${dependency.path}")
                     }
@@ -186,10 +199,10 @@ class CacheSupport(
         }
 
         // Ensure not making cache for libraries that are already cached:
-        libraryToCache?.klib?.let {
-            val cache = cachedLibraries.getLibraryCache(it)
+        librariesToCache.keys.forEach { library ->
+            val cache = cachedLibraries.getLibraryCache(library)
             if (cache is CachedLibraries.Cache.Monolithic) {
-                configuration.reportCompilationErrorAndThrow("can't cache library '${it.path}' " +
+                configuration.reportCompilationErrorAndThrow("can't cache library '${library.path}' " +
                         "that is already cached in '${cache.path}'")
             }
         }
