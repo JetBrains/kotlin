@@ -66,13 +66,13 @@ class ExplicitApiIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build(":compileDebugKotlin") {
+            build(":compileDebugKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":compileDebugKotlin")
 
                 assertCompilerArgument(":compileDebugKotlin", "-Xexplicit-api=warning")
             }
 
-            build(":compileDebugUnitTestKotlin") {
+            build(":compileDebugUnitTestKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":compileDebugUnitTestKotlin")
 
                 assertNoCompilerArgument(":compileDebugUnitTestKotlin", "-Xexplicit-api=warning")
@@ -110,7 +110,7 @@ class ExplicitApiIT : KGPBaseTest() {
                 assertTasksExecuted(":compileDebugKotlin")
                 assertCompilerArgument(":compileDebugKotlin", "-Xexplicit-api=warning")
             }
-            build(":compileDebugUnitTestKotlin") {
+            build(":compileDebugUnitTestKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":compileDebugUnitTestKotlin")
                 assertNoCompilerArgument(":compileDebugUnitTestKotlin", "-Xexplicit-api=warning")
             }
@@ -145,16 +145,16 @@ class ExplicitApiIT : KGPBaseTest() {
                 """.trimMargin()
                 )
             }
-            build(":compileDebugKotlin") {
+            build(":compileDebugKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":compileDebugKotlin")
                 assertCompilerArgument(":compileDebugKotlin", "-Xexplicit-api=warning")
                 assertOutputContains("Visibility must be specified in explicit API mode")
             }
-            build(":compileDebugUnitTestKotlin") {
+            build(":compileDebugUnitTestKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":compileDebugUnitTestKotlin")
                 assertNoCompilerArgument(":compileDebugUnitTestKotlin", "-Xexplicit-api=warning")
             }
-            build(":compileDebugAndroidTestKotlin") {
+            build(":compileDebugAndroidTestKotlin", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
                 assertTasksExecuted(":compileDebugAndroidTestKotlin")
                 assertNoCompilerArgument(":compileDebugAndroidTestKotlin", "-Xexplicit-api=warning")
             }

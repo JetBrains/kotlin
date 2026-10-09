@@ -15,9 +15,8 @@ import org.junit.platform.engine.DiscoverySelector
 import org.junit.platform.engine.discovery.DiscoverySelectors
 import org.junit.platform.launcher.TestIdentifier
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder
-import org.junit.platform.launcher.core.LauncherFactory
 
-internal class TestMetadataFilterIntegrationTest {
+internal class TestMetadataFilterIntegrationTest : AbstractFakeTestIntegrationTest() {
     private fun assertDiscoveredTests(
         filter: TestMetadataFilter,
         expectedIncluded: Set<String>,
@@ -42,7 +41,7 @@ internal class TestMetadataFilterIntegrationTest {
             .filters(filter)
             .build()
 
-        val testPlan = LauncherFactory.create().discover(request)
+        val testPlan = discoverFakeTestPlan(request)
 
         val discoveredTestNames = testPlan.roots
             .flatMap(testPlan::getDescendants)
