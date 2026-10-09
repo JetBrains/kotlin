@@ -161,7 +161,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
                     kind.valueModifierPrefix,
                 )
-            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.classId.isRecordId() &&
+            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.isJavaValueClass && !supertypeSymbol.classId.isRecordId() &&
                 !(kind.isWillBecomeValueClass && supertypeSymbol.willBecomeKotlinOrJdkValueClass(context.session))
             ) {
                 reportOn(
