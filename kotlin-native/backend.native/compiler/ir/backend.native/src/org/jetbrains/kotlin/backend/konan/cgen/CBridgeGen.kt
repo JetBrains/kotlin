@@ -560,7 +560,7 @@ internal fun KotlinStubs.generateObjCCall(
     }
 
     fun rawPtrOf(kotlinObject: IrExpression) = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
-        this.arguments[0] = kotlinObject
+        this.arguments[0] = if (keepsPassedObjectsAlive) callBuilder.bridgeCallBuilder.keepingAlive(kotlinObject) else kotlinObject
     }
 
     val preparedReceiver = if (method.objCConsumesReceiver()) {
@@ -573,13 +573,7 @@ internal fun KotlinStubs.generateObjCCall(
         }
     } else {
         when (receiver) {
-            is ObjCCallReceiver.Regular -> rawPtrOf(
-                    if (keepsPassedObjectsAlive) {
-                        callBuilder.bridgeCallBuilder.keepingAlive(receiver.kotlinObject)
-                    } else {
-                        receiver.kotlinObject
-                    }
-            )
+            is ObjCCallReceiver.Regular -> rawPtrOf(receiver.kotlinObject)
 
             is ObjCCallReceiver.Retained -> {
                 // Note: shall not happen: Retained is used only for alloc result currently,
@@ -1264,7 +1258,7 @@ private class ObjCReferenceValuePassing(
         get() = CTypes.voidPtr
 
     override val keepsArgumentAlive: Boolean
-        get() = !retained
+        get() = true
 
     override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression {
         val ptr = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
