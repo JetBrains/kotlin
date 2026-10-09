@@ -6662,6 +6662,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface UninitializedEnumCompanionReference : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass: KClass<UninitializedEnumCompanionReference>
+            get() = UninitializedEnumCompanionReference::class
+
+        public val enumClass: KaClassLikeSymbol
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface ValReassignment : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass: KClass<ValReassignment>
             get() = ValReassignment::class

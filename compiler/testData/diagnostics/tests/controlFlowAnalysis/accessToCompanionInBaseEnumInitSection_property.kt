@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
 // WITH_STDLIB
-// ISSUE: KT-57456, KT-57608
+// ISSUE: KT-57456, KT-57608, KT-74926
 @file:OptIn(ExperimentalContracts::class)
 
 import kotlin.contracts.ExperimentalContracts
@@ -18,6 +18,14 @@ enum class Enum {
         val dInside by <!UNINITIALIZED_ENUM_COMPANION!>value<!>
         val eInside by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>value<!> }
         val fInside by nonInPlaceDelegate { value }
+
+        val gInside = <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!>
+        val hInside = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+        val iInside = nonInPlaceRun { Companion }
+
+        val jInside by <!UNINITIALIZED_ENUM_COMPANION!>Companion<!>
+        val kInside by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+        val lInside by nonInPlaceDelegate { Companion }
     },
     B {
         init {
@@ -28,6 +36,14 @@ enum class Enum {
             val dInit by <!UNINITIALIZED_ENUM_COMPANION!>value<!>
             val eInit by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>value<!> }
             val fInit by nonInPlaceDelegate { value }
+
+            val gInit = <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!>
+            val hInit = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+            val iInit = nonInPlaceRun { Companion }
+
+            val jInit by <!UNINITIALIZED_ENUM_COMPANION!>Companion<!>
+            val kInit by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+            val lInit by nonInPlaceDelegate { Companion }
         }
     },
     C {
@@ -41,6 +57,14 @@ enum class Enum {
                 val eInside by inPlaceDelegate { value }
                 val fInside by nonInPlaceDelegate { value }
 
+                val gInside = Companion
+                val hInside = inPlaceRun { Companion }
+                val iInside = nonInPlaceRun { Companion }
+
+                val jInside by Companion
+                val kInside by inPlaceDelegate { Companion }
+                val lInside by nonInPlaceDelegate { Companion }
+
                 init {
                     val aInit = value
                     val bInit = inPlaceRun { value }
@@ -49,6 +73,14 @@ enum class Enum {
                     val dInit by value
                     val eInit by inPlaceDelegate { value }
                     val fInit by nonInPlaceDelegate { value }
+
+                    val gInit = Companion
+                    val hInit = inPlaceRun { Companion }
+                    val iInit = nonInPlaceRun { Companion }
+
+                    val jInit by Companion
+                    val kInit by inPlaceDelegate { Companion }
+                    val lInit by nonInPlaceDelegate { Companion }
                 }
 
                 fun localFun() {
@@ -59,6 +91,14 @@ enum class Enum {
                     val d by value
                     val e by inPlaceDelegate { value }
                     val f by nonInPlaceDelegate { value }
+
+                    val g = Companion
+                    val h = inPlaceRun { Companion }
+                    val i = nonInPlaceRun { Companion }
+
+                    val j by Companion
+                    val k by inPlaceDelegate { Companion }
+                    val l by nonInPlaceDelegate { Companion }
                 }
             }
         }
@@ -74,6 +114,14 @@ enum class Enum {
                 val eInside by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>value<!> }
                 val fInside by nonInPlaceDelegate { value }
 
+                val gInside = <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!>
+                val hInside = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+                val iInside = nonInPlaceRun { Companion }
+
+                val jInside by <!UNINITIALIZED_ENUM_COMPANION!>Companion<!>
+                val kInside by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+                val lInside by nonInPlaceDelegate { Companion }
+
                 init {
                     val aInit = <!UNINITIALIZED_ENUM_COMPANION!>value<!>
                     val bInit = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION!>value<!> }
@@ -82,6 +130,14 @@ enum class Enum {
                     val dInit by <!UNINITIALIZED_ENUM_COMPANION!>value<!>
                     val eInit by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>value<!> }
                     val fInit by nonInPlaceDelegate { value }
+
+                    val gInit = <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!>
+                    val hInit = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+                    val iInit = nonInPlaceRun { Companion }
+
+                    val jInit by <!UNINITIALIZED_ENUM_COMPANION!>Companion<!>
+                    val kInit by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+                    val lInit by nonInPlaceDelegate { Companion }
                 }
 
                 fun localFun() {
@@ -92,6 +148,14 @@ enum class Enum {
                     val d by value
                     val e by inPlaceDelegate { value }
                     val f by nonInPlaceDelegate { value }
+
+                    val g = Companion
+                    val h = inPlaceRun { Companion }
+                    val i = nonInPlaceRun { Companion }
+
+                    val j by Companion
+                    val k by inPlaceDelegate { Companion }
+                    val l by nonInPlaceDelegate { Companion }
                 }
             }
         }
@@ -105,6 +169,14 @@ enum class Enum {
     val d by <!UNINITIALIZED_ENUM_COMPANION!>value<!>
     val e by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION!>value<!> }
     val f by nonInPlaceDelegate { value }
+
+    val g = <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!>
+    val h = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+    val i = nonInPlaceRun { Companion }
+
+    val j by <!UNINITIALIZED_ENUM_COMPANION!>Companion<!>
+    val k by inPlaceDelegate { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> }
+    val l by nonInPlaceDelegate { Companion }
 
     companion object {
         val value = "value"
@@ -121,6 +193,16 @@ enum class EnumWithConstructor(val a: String, val b: String, val c: String) {
     companion object {
         val value = "value"
     }
+}
+
+enum class EnumWithCompanionReferencesInConstructor(val a: Any, val b: Any, val c: Any) {
+    A(
+        a = <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!>,
+        b = inPlaceRun { <!UNINITIALIZED_ENUM_COMPANION_REFERENCE!>Companion<!> },
+        c = nonInPlaceRun { Companion }
+    );
+
+    companion object
 }
 
 operator fun <T> T.provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, T> = ReadOnlyProperty { _, _ -> this }

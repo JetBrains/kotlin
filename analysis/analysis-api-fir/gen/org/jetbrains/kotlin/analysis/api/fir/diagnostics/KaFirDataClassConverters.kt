@@ -6399,6 +6399,13 @@ private fun KaDiagnosticConverterBuilder.addConversions133() {
             token,
         )
     }
+    add(FirErrors.UNINITIALIZED_ENUM_COMPANION_REFERENCE) { firDiagnostic ->
+        UninitializedEnumCompanionReferenceImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirJvmErrors.IMPLEMENTATION_BY_DELEGATION_WITH_DIFFERENT_GENERIC_SIGNATURE.errorFactory) { firDiagnostic ->
         ImplementationByDelegationWithDifferentGenericSignatureErrorImpl(
             firSymbolBuilder.functionBuilder.buildNamedFunctionSymbol(firDiagnostic.a),

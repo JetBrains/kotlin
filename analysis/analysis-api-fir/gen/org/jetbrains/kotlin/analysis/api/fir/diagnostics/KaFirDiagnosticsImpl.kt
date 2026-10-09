@@ -4719,6 +4719,12 @@ internal class UninitializedEnumCompanionImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UninitializedEnumCompanion
 
+internal class UninitializedEnumCompanionReferenceImpl(
+    override val enumClass: KaClassLikeSymbol,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UninitializedEnumCompanionReference
+
 internal class ValReassignmentImpl(
     override val variable: KaVariableSymbol,
     firDiagnostic: KtDiagnosticWithSource,

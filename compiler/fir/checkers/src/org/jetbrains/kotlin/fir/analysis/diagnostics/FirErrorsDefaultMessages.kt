@@ -911,6 +911,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_GET_CLASS_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ERROR_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_ENUM_COMPANION_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_ARRAY_OF_NOTHING_IN_CLASS_LITERAL_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
@@ -3476,6 +3477,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(UNINITIALIZED_PARAMETER, "Parameter ''{0}'' is uninitialized here.", VARIABLE_NAME)
         map.put(UNINITIALIZED_ENUM_ENTRY, "Enum entry ''{0}'' is uninitialized here.", VARIABLE_NAME)
         map.put(UNINITIALIZED_ENUM_COMPANION, "Companion object of enum class ''{0}'' is uninitialized here.", DECLARATION_NAME)
+        map.put(UNINITIALIZED_ENUM_COMPANION_REFERENCE, "Companion object of enum class ''{0}'' is uninitialized here.", DECLARATION_NAME)
         map.put(VAL_REASSIGNMENT, "''val'' cannot be reassigned.", VARIABLE_NAME)
         map.put(VAL_REASSIGNMENT_VIA_BACKING_FIELD_ERROR, "Reassignment of read-only property via backing field.", VARIABLE_NAME)
         map.put(

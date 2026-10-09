@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ResolvedQualifierNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.resolvedControlFlowGraphReference
@@ -55,6 +56,8 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
         companionSymbol: FirRegularClassSymbol,
         enumClass: FirRegularClassSymbol,
     ) {
+        val companionReferences = mutableListOf<FirExpression>()
+
         for (node in graph.nodes) {
             if (node is CFGNodeWithSubgraphs) {
                 for (subGraph in node.subGraphs) {
@@ -75,17 +78,27 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
             val qualifiedAccess = when (node) {
                 is QualifiedAccessNode -> node.fir
                 is FunctionCallExitNode -> node.firAsFunctionCallOrNull ?: continue
+                is ResolvedQualifierNode -> {
+                    if (node.fir.accessedObjectSymbol == companionSymbol) {
+                        companionReferences += node.fir
+                    }
+                    continue
+                }
                 else -> continue
             }
             val matchingReceiver = qualifiedAccess.allReceiverExpressions
                 .firstOrNull { it.unwrapSmartcastExpression().getClassSymbol(qualifiedAccess) == companionSymbol }
             if (matchingReceiver != null) {
+                companionReferences.remove(matchingReceiver.unwrapSmartcastExpression())
                 reporter.reportOn(
                     matchingReceiver.source ?: qualifiedAccess.source,
                     FirErrors.UNINITIALIZED_ENUM_COMPANION,
                     enumClass
                 )
             }
+        }
+        for (reference in companionReferences) {
+            reporter.reportOn(reference.source, FirErrors.UNINITIALIZED_ENUM_COMPANION_REFERENCE, enumClass)
         }
     }
 
