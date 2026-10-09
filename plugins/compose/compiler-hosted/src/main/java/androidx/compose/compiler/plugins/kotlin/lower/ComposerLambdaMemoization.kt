@@ -35,20 +35,22 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private class CaptureCollector {
     val captures = mutableSetOf<IrValueDeclaration>()
@@ -354,7 +356,7 @@ class ComposerLambdaMemoization(
                     )
                 }
             }
-        }.markAsComposableSingletonClass()
+        }
         composableSingletonsClass = current
         return current
     }
@@ -775,37 +777,24 @@ class ComposerLambdaMemoization(
         val isComposableContext = currentFunctionContext?.composable == true
         val originalType = functionExpression.type
         return if (!collector.hasCaptures) {
-            val enclosingFunction = currentFunctionContext?.declaration
-            val inPublicInlineScope = enclosingFunction?.isInPublicInlineScope == true
+            // Public inline functions can't use singleton instance because changes to the function body
+            // can cause ABI incompatibilities. Note that we still generate singleton instances
+            // to ensure that we don't break existing consumers.
+            val inlineScopeExpression = runIf(currentFunctionContext?.declaration?.isInPublicInlineScope == true) {
+                // The copy stays in the enclosing function, so it is taken before the lambda is prepared to become a singleton.
+                val copy = functionExpression.deepCopyWithSymbols(functionExpression.function.parent)
+                wrapFunctionExpression(declarationContext, copy, collector, isComposableContext)
+            }
             // lambda will be moved into ComposableSingletons, which is a non-generic object, so nothing stored there may reference type parameters of the enclosing declaration
             // erase them to their upper bounds: the singleton is a single shared instance and genuinely is not parameterized.
             functionExpression.type = originalType.eraseTypeParameters()
+            functionExpression.copyReferencedOuterTypeParameters()
             val singleton = irGetComposableSingleton(
-                lambdaExpression = wrapFunctionExpression(
-                    declarationContext,
-                    functionExpression,
-                    collector,
-                    false
-                ),
+                lambdaExpression = wrapFunctionExpression(declarationContext, functionExpression, collector, false),
                 lambdaType = functionExpression.type,
                 lambdaName = createSingletonLambdaName(functionExpression)
             )
-            if (inPublicInlineScope) {
-                // Public inline functions can't use singleton instance because changes to the function body
-                // can cause ABI incompatibilities. Note that we still generate singleton instances
-                // to ensure that we don't break existing consumers.
-                wrapFunctionExpression(
-                    declarationContext,
-                    functionExpression.deepCopyWithSymbols(functionExpression.function.parent),
-                    collector,
-                    isComposableContext
-                )
-                    .also {
-                        it.associatedComposableSingletonStub = singleton
-                    }
-            } else {
-                singleton
-            }
+            inlineScopeExpression ?: singleton
         } else {
             wrapFunctionExpression(declarationContext, functionExpression, collector, isComposableContext)
         }
@@ -1017,23 +1006,40 @@ class ComposerLambdaMemoization(
             arguments[index] = expression.markIsTransformedLambda()
         }
 
-        // Copy type parameters to ensure that types are captured correctly.
-        val functionContext = currentFunctionContext
-        if (functionContext != null && functionContext.composable && functionContext.declaration.typeParameters.isNotEmpty()) {
-            expression.function.copyTypeParametersFrom(functionContext.declaration)
-            expression.function.remapTypes(SimpleTypeRemapper(
-                object : SymbolRemapper by SymbolRemapper.EMPTY {
-                    override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
-                        if (symbol is IrTypeParameterSymbol && symbol.owner.parent == functionContext.declaration) {
-                            expression.function.typeParameters[symbol.owner.index].symbol
-                        } else {
-                            symbol
-                        }
-                }
-            ))
-        }
-
         return composableLambdaExpression.markHasTransformedLambda()
+    }
+
+    /**
+     * A singleton lambda is stored in ComposableSingletons, where type parameters declared outside the lambda
+     * (by enclosing functions and classes) are out of scope, so give the lambda its own copies of the ones it references.
+     */
+    private fun IrFunctionExpression.copyReferencedOuterTypeParameters() {
+        val outerTypeParameters = function.collectReferencedOuterTypeParameters()
+        if (outerTypeParameters.isEmpty()) return
+        val copies = function.copyTypeParameters(outerTypeParameters)
+        function.remapTypes(IrTypeParameterRemapper(outerTypeParameters.zip(copies).toMap()))
+    }
+
+    /**
+     * Type parameters declared outside this function and referenced in it, directly or through bounds of other such type parameters,
+     * in the order of declaration: from the outermost container, by index within a container.
+     */
+    private fun IrFunction.collectReferencedOuterTypeParameters(): List<IrTypeParameter> {
+        val outerContainers = parents.filterIsInstance<IrTypeParametersContainer>().filter { it.typeParameters.isNotEmpty() }.toList().asReversed()
+        // The common case: nothing to reference, don't walk the body.
+        if (outerContainers.isEmpty()) return emptyList()
+        val function = this
+        val referenced = mutableSetOf<IrTypeParameter>()
+        acceptVoid(object : IrTypeVisitorVoid() {
+            override fun visitType(container: IrElement, type: IrType) {
+                val typeParameter = type.classifierOrNull?.owner as? IrTypeParameter ?: return
+                if (function in typeParameter.parents) return
+                if (referenced.add(typeParameter)) {
+                    typeParameter.superTypes.forEach { visitTypeRecursively(typeParameter, it) }
+                }
+            }
+        })
+        return referenced.sortedWith(compareBy({ outerContainers.indexOf(it.parent) }, { it.index }))
     }
 
     private fun rememberExpression(
@@ -1184,16 +1190,7 @@ class ComposerLambdaMemoization(
     }
 
     private fun <T : IrElement> T.markAsComposableSingleton(): T {
-        // Mark it so the ComposableCallTransformer can insert the correct source information
-        // around this call
         this.isComposableSingleton = true
-        return this
-    }
-
-    private fun <T : IrElement> T.markAsComposableSingletonClass(): T {
-        // Mark it so the ComposableCallTransformer can insert the correct source information
-        // around this call
-        isComposableSingletonClass = true
         return this
     }
 
