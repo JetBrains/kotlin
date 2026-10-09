@@ -690,7 +690,8 @@ include(
 if (buildProperties.isSwiftImportEnabled.get()) {
     include(
         ":native:swift:kir",
-        ":native:swift:kir:tree-generator"
+        ":native:swift:kir:tree-generator",
+        ":native:swift:kir-printer"
     )
 }
 
