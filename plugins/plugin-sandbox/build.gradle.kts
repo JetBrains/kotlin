@@ -36,7 +36,7 @@ dependencies {
     implementation(project(":compiler:ir.tree"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":compiler:plugin-api"))
-    implementation(project(":compiler:fir:plugin-utils"))
+    implementation(project(":compiler:fir:plugin.api"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
@@ -46,7 +46,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
-    testFixturesApi(project(":compiler:fir:plugin-utils"))
+    testFixturesApi(project(":compiler:fir:plugin.api"))
     testFixturesImplementation(testFixtures(project(":tools:kotlinp-jvm")))
 
     testFixturesApi(testFixtures(project(":native:native.tests")))
