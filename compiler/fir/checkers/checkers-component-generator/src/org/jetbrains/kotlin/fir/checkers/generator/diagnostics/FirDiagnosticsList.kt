@@ -1931,6 +1931,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNINITIALIZED_ENUM_COMPANION by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirRegularClassSymbol>("enumClass")
         }
+        val UNINITIALIZED_ENUM_COMPANION_REFERENCE by warning<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<FirRegularClassSymbol>("enumClass")
+        }
         val VAL_REASSIGNMENT by error<KtExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirVariableSymbol<*>>("variable")
         }
