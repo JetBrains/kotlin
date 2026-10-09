@@ -75,6 +75,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                     }
                 }
             }
+
             val qualifiedAccess = when (node) {
                 is QualifiedAccessNode -> node.fir
                 is FunctionCallExitNode -> node.firAsFunctionCallOrNull ?: continue
@@ -86,15 +87,21 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker(MppChecker
                 }
                 else -> continue
             }
-            val matchingReceiver = qualifiedAccess.allReceiverExpressions
-                .firstOrNull { it.unwrapSmartcastExpression().getClassSymbol(qualifiedAccess) == companionSymbol }
-            if (matchingReceiver != null) {
-                companionReferences.remove(matchingReceiver.unwrapSmartcastExpression())
+
+            for (expression in qualifiedAccess.allReceiverExpressions) {
+                val unwrappedExpression = expression.unwrapSmartcastExpression()
+
+                if (unwrappedExpression.getClassSymbol(qualifiedAccess) != companionSymbol) continue
+
+                companionReferences.remove(unwrappedExpression)
+
                 reporter.reportOn(
-                    matchingReceiver.source ?: qualifiedAccess.source,
+                    unwrappedExpression.source ?: qualifiedAccess.source,
                     FirErrors.UNINITIALIZED_ENUM_COMPANION,
                     enumClass
                 )
+
+                break
             }
         }
         for (reference in companionReferences) {
