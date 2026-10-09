@@ -1,13 +1,4 @@
-FILE: RichError.kt
-    package kotlin
-
-    public abstract class RichError : R|kotlin/Any| {
-        public constructor(): R|kotlin/RichError| {
-            super<R|kotlin/Any|>()
-        }
-
-    }
-FILE: test.kt
+FILE: samConversionToUnionType.kt
     public abstract fun interface Sam : R|kotlin/Any| {
         public abstract fun invoke(): R|kotlin/Unit|
 
