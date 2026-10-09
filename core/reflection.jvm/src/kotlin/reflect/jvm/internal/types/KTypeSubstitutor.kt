@@ -66,8 +66,8 @@ internal class KTypeSubstitutor(
             variance,
             when {
                 type.arguments.isEmpty() -> type
-                else -> classifier.createTypeImpl(
-                    type.arguments.map { argumentProjection ->
+                else -> {
+                    val arguments = type.arguments.map { argumentProjection ->
                         val argumentVariance = argumentProjection.variance
                         val argumentType = argumentProjection.type
                         when {
@@ -75,14 +75,27 @@ internal class KTypeSubstitutor(
                                 substituteWithoutErasureRecursively(argumentType, argumentVariance)
                             else -> KTypeProjection.STAR
                         }
-                    },
-                    type.isMarkedNullable,
-                    type.annotations,
-                    (type as? AbstractKType)?.mutableCollectionClass,
-                )
+                    }
+                    type.replaceTypeArguments(arguments)
+                }
             }
         )
         return result
+    }
+
+    private fun AbstractKType.replaceTypeArguments(newArguments: List<KTypeProjection>): AbstractKType = when (this) {
+        is SimpleKType -> SimpleKType(
+            classifier,
+            newArguments,
+            isMarkedNullable,
+            lazyAnnotations,
+            abbreviation?.let { substituteWithoutErasureRecursively(it, KVariance.INVARIANT).type },
+            isDefinitelyNotNullType,
+            isNothingType,
+            isSuspendFunctionType,
+            mutableCollectionClass,
+        )
+        else -> classifier!!.createTypeImpl(newArguments, isMarkedNullable, annotations, mutableCollectionClass)
     }
 
     // This method is needed for the K1-based implementation because we're not substituting types inside descriptors.
