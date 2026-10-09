@@ -441,8 +441,8 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
                 val javaClsClass = DecompiledLightClassesFactory.createClsJavaClassFromVirtualFile(
                     mirrorFile = psiFile,
                     classFile = partClassFile,
-                    correspondingClassOrObject = null,
                     project = project,
+                    correspondingClassOrObject = { null },
                 ) ?: return@mapNotNull null
 
                 KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, psiFile, null)

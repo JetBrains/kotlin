@@ -12,6 +12,15 @@
         serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.references.ReadWriteAccessCheckerBaseImpl"
     />
 
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.psi.KtFileClassProvider"
+        serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.java.KotlinStandaloneFileClassProvider"
+    />
+
+    <projectService
+        serviceImplementation="org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache"
+    />
+
     <applicationService serviceInterface="org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.BuiltinsVirtualFileProviderCliImpl"/>
   </extensions>
