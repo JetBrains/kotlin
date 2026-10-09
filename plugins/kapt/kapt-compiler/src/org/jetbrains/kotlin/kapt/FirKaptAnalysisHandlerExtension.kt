@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.cli.reportOutput
@@ -61,6 +62,7 @@ open class FirKaptAnalysisHandlerExtension(
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
             val contentRoots = configuration.contentRoots
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
+            compileClasspath.addAll(contentRoots.filterIsInstance<JvmModulePathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.outputDirectory
         }
