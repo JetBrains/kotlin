@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
+import org.jetbrains.kotlin.gradle.apple.SwiftPackageDump
 import org.jetbrains.kotlin.gradle.apple.describeSwiftPackage
+import org.jetbrains.kotlin.gradle.apple.dumpSwiftPackage
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
@@ -25,7 +29,6 @@ import kotlin.io.path.name
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
@@ -213,7 +216,7 @@ class SwiftPackageExportIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Targets that export different Swift modules can't share a package")
+    @DisplayName("Targets that export different Swift modules share a package")
     @GradleTest
     fun testPerTargetApiDependencies(
         gradleVersion: GradleVersion,
@@ -295,18 +298,36 @@ class SwiftPackageExportIT : KGPBaseTest() {
                 "depMacOs"
             )
 
-            // Every target exports a module the other targets don't have: depIos, depIosSim or depMacOs.
-            // Combining targets with different Swift modules is not supported, so the export is refused.
-            buildAndFail(":exportDebugSwiftPackage") {
-                assertHasDiagnostic(KotlinToolingDiagnostics.SwiftExportPackageModulesMismatch)
-                assertTasksFailed(":generateDebugSwiftPackage")
-                assertNull(task(":exportDebugSwiftPackage"))
-            }
-            assertDirectoryDoesNotExist(projectPath.resolve("package/Debug"))
+            // Every target exports a module the others don't have: depIos, depIosSim or depMacOs. The package has
+            // all three, and each one is an empty module on the other destinations.
+            build(":exportDebugSwiftPackage")
+
+            val exportedPackage = projectPath.resolve("package/Debug")
+            assertEquals(
+                setOf("DepIos", "DepIosSim", "DepMacOs"),
+                describeSwiftPackage(exportedPackage).products.single().targets.filter { it.startsWith("Dep") }.toSet(),
+            )
+
+            val consumer = consumerOf(
+                exportedPackage,
+                """
+                #if os(macOS)
+                import DepMacOs
+                print(depMacOsApi())
+                #elseif targetEnvironment(simulator)
+                import DepIosSim
+                print(depIosSimApi())
+                #else
+                import DepIos
+                print(depIosApi())
+                #endif
+                """
+            )
+            consumer.assertBuildsForEveryDestination()
         }
     }
 
-    @DisplayName("A module whose Swift dependencies differ per target can't be exported in one package")
+    @DisplayName("A dependency that only one Apple platform has is limited to that platform")
     @GradleTest
     fun testPerTargetDependenciesOfAnExportedModule(
         gradleVersion: GradleVersion,
@@ -371,15 +392,29 @@ class SwiftPackageExportIT : KGPBaseTest() {
                 "iosWidgets"
             )
 
-            buildAndFail(":exportDebugSwiftPackage") {
-                assertHasDiagnostic(
-                    KotlinToolingDiagnostics.SwiftExportPackageModulesMismatch,
-                    // The library is exported transitively, so its module is named after the root project too.
-                    withSubstring = "Networking: depends on [KotlinRuntimeSupport, SharedIosWidgets] for iosArm64 " +
-                            "and on [KotlinRuntimeSupport] for macosArm64",
-                )
-                assertTasksFailed(":generateDebugSwiftPackage")
-            }
+            build(":exportDebugSwiftPackage")
+
+            // The library is exported transitively, so its module is named after the root project too.
+            val exportedPackage = projectPath.resolve("package/Debug")
+            assertEquals(
+                mapOf("KotlinRuntimeSupport" to null, "SharedIosWidgets" to listOf("ios")),
+                dumpSwiftPackage(exportedPackage).targetDependencyPlatforms("Networking")
+                    .filterKeys { it == "KotlinRuntimeSupport" || it == "SharedIosWidgets" },
+            )
+
+            val consumer = consumerOf(
+                exportedPackage,
+                """
+                import Networking
+
+                print(networkingApi())
+                #if os(iOS)
+                import SharedIosWidgets
+                print(widget().title)
+                #endif
+                """
+            )
+            consumer.assertBuildsForEveryDestination()
         }
     }
 
@@ -426,6 +461,44 @@ class SwiftPackageExportIT : KGPBaseTest() {
         IOS_SIMULATOR("arm64-apple-ios18.0-simulator", "iphonesimulator"),
         IOS("arm64-apple-ios18.0", "iphoneos"),
     }
+
+    /** A consumer package that depends on the exported package at [packagePath] and runs [main]. */
+    private fun TestProject.consumerOf(packagePath: Path, main: String): Path {
+        val consumer = projectPath.resolve("consumer")
+        consumer.resolve("Sources/Consumer").createDirectories()
+        consumer.resolve("Package.swift").writeText(
+            """
+            // swift-tools-version: 5.9
+            import PackageDescription
+            let package = Package(
+                name: "Consumer",
+                platforms: [.iOS("18.0"), .macOS("15.0")],
+                dependencies: [.package(name: "Shared", path: "${packagePath.toAbsolutePath()}")],
+                targets: [
+                    .executableTarget(name: "Consumer", dependencies: [.product(name: "SharedLibrary", package: "Shared")])
+                ]
+            )
+            """.trimIndent()
+        )
+        consumer.resolve("Sources/Consumer/main.swift").writeText(main.trimIndent())
+        return consumer
+    }
+
+    /** Builds the consumer package at this path for every [SwiftDestination]. */
+    private fun Path.assertBuildsForEveryDestination() {
+        SwiftDestination.entries.forEach { destination ->
+            val build = swiftBuild(destination)
+            assertTrue(build.isSuccessful, "The consumer of the exported package failed to build for $destination:\n$build")
+        }
+    }
+
+    /** The target dependencies of [target], with the platforms a condition limits each one to. */
+    private fun SwiftPackageDump.targetDependencyPlatforms(target: String): Map<String, List<String>?> =
+        targets.single { it.name == target }.dependencies.mapNotNull { dependency ->
+            val entry = dependency.target ?: dependency.byName ?: return@mapNotNull null
+            val platforms = (entry.getOrNull(1) as? JsonObject)?.get("platformNames")?.jsonArray?.map { it.jsonPrimitive.content }
+            entry[0].jsonPrimitive.content to platforms
+        }.toMap()
 
     /** Builds the Swift package at this path for [destination], in a scratch directory of its own. */
     private fun Path.swiftBuild(destination: SwiftDestination): ProcessRunResult {
