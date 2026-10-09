@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.isJavaValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.isFullValueClass
@@ -78,7 +79,9 @@ fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isEnumClass = boundsSymbols.any { it.isEnumClass },
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = boundsSymbols.any { it.isBuiltin },
-        isFullValueClassOrObject = boundsSymbols.any { (it as? FirRegularClassSymbol)?.isFullValueClass == true },
+        isFullValueClassOrObject = boundsSymbols.any { symbol ->
+            symbol is FirRegularClassSymbol && (symbol.isFullValueClass || symbol.isJavaValueClass(session))
+        },
         isInlineValueClass = boundsSymbols.any { (it as? FirRegularClassSymbol)?.isInlineClass == true },
         isAnnotationClass = boundsSymbols.any { it.isAnnotationClass },
         isDataClassOrObject = boundsSymbols.any { it.isData },

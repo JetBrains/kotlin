@@ -133,9 +133,37 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
     return isSupertypeOf(other, mutableSetOf())
 }
 
-fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
+fun ConeKotlinType.isKotlinValueClass(session: FirSession): Boolean {
     // Value classes have `inline` or `value` modifier in FIR
     return toRegularClassSymbol(session)?.isInlineOrValue == true
+}
+
+fun ConeKotlinType.isValueClass(session: FirSession): Boolean =
+    isKotlinValueClass(session) || isJavaValueClass(session)
+
+// Like javac, this includes type parameters and captured types bounded by a Java value class. A flexible primitive type like `Int!` is
+// its Java box, like `java.lang.Integer`.
+fun ConeKotlinType.isJavaValueClass(session: FirSession, visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf()): Boolean =
+    when (this) {
+        is ConeFlexibleType -> lowerBound.isJavaValueClass(session, visited) ||
+                isFlexiblePrimitive() && lowerBound.toRegularClassSymbol(session)?.isMappedToJavaValueClass(session) == true
+        is ConeDefinitelyNotNullType -> original.isJavaValueClass(session, visited)
+        is ConeIntersectionType -> intersectedTypes.any { it.isJavaValueClass(session, visited) }
+        is ConeTypeParameterType ->
+            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.isJavaValueClass(session, visited) }
+        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isJavaValueClass(session, visited) }
+        is ConeClassLikeType -> toRegularClassSymbol(session)?.isJavaValueClass(session) == true
+        is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
+            -> false
+    }
+
+fun ConeKotlinType.isFlexiblePrimitive(): Boolean {
+    return this is ConeFlexibleType && lowerBound.isPrimitiveOrNullablePrimitive && upperBound.isPrimitiveOrNullablePrimitive
+}
+
+fun FirRegularClassSymbol.isMappedToJavaValueClass(session: FirSession): Boolean {
+    val platformClassId = session.platformClassMapper.getCorrespondingPlatformClass(classId) ?: return false
+    return (platformClassId.toSymbol(session) as? FirRegularClassSymbol)?.isJavaValueClass(session) == true
 }
 
 fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =

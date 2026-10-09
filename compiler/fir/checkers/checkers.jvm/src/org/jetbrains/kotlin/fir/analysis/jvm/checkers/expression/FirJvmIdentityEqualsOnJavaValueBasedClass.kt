@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirEqualityOperatorCallChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.disableWarningsForValueBasedJavaClasses
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
@@ -26,6 +27,8 @@ internal object FirJvmIdentityEqualsOnJavaValueBasedClass : FirEqualityOperatorC
         require(arguments.size == 2) { "Expected arguments of size 2" }
 
         if (arguments.any { it.resolvedType.isNullableNothing }) return
+        // Identity comparisons of value classes are reported by `FirEqualityCompatibilityChecker`.
+        if (arguments.any { it.resolvedType.isValueClass(context.session) }) return
         for (arg in arguments) {
             val type = arg.resolvedType
             if (type.isJavaValueBasedClass()) {

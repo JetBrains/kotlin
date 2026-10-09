@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.isJavaValueClass
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -161,7 +162,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                     FirErrors.VALUE_CLASS_CANNOT_EXTEND_CLASSES,
                     kind.valueModifierPrefix,
                 )
-            } else if (!supertypeSymbol.isFullValueClass && !supertypeSymbol.classId.isRecordId() &&
+            } else if (!supertypeSymbol.isValueClassSupertype() &&
                 !(kind.isWillBecomeValueClass && supertypeSymbol.willBecomeKotlinOrJdkValueClass(context.session))
             ) {
                 reportOn(
@@ -532,4 +533,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     private fun ClassId.isRecordId(): Boolean =
         relativeClassName == recordFqName && packageFqName == javaLangFqName
+
+    context(context: CheckerContext)
+    private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean =
+        isFullValueClass || isJavaValueClass(context.session) || classId.isRecordId() || isMappedToJavaValueClass(context.session)
 }
