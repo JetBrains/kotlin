@@ -16,16 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
-import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
@@ -128,15 +122,6 @@ internal fun <R> FirSession.cycleGuardedSupertypeWalk(classId: ClassId, default:
         block()
     } finally {
         active?.remove(classId)
-    }
-}
-
-internal fun FirRegularClass.supertypeRefsForJavaResolution(session: FirSession): List<FirTypeRef> {
-    if (superTypeRefs.all { it is FirResolvedTypeRef }) return superTypeRefs
-    val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol) ?: return superTypeRefs
-    val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
-    return visitor.withFile(containingFile) {
-        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs, resolveRecursively = true)
     }
 }
 
