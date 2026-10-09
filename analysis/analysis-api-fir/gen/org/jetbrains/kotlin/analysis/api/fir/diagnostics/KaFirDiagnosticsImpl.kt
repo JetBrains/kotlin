@@ -6407,6 +6407,12 @@ internal class AnnotationTargetsOnlyInJavaImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationTargetsOnlyInJava
 
+internal class AnnotationTargetsNonExistentAccessorImpl(
+    override val declarationName: String,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationTargetsNonExistentAccessor
+
 internal class RuntimeAnnotationOnLambdaIsNotRetainedImpl(
     override val annotationClass: KaClassLikeSymbol,
     firDiagnostic: KtDiagnosticWithSource,
