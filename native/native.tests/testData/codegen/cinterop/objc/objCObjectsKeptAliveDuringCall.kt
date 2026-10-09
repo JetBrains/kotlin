@@ -2,6 +2,7 @@
 // DISABLE_NATIVE: isAppleTarget=false
 // WITH_PLATFORM_LIBS
 // IGNORE_NATIVE: gcType=NOOP
+// FREE_COMPILER_ARGS: -Xbinary=lateShadowStackClearDeadSlots=true
 
 // MODULE: cinterop
 // FILE: lib.def
