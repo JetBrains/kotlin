@@ -25,12 +25,12 @@ import java.util.IdentityHashMap
 import java.util.concurrent.atomic.AtomicReference
 
 fun <T : JavaAbstractVal> identityEquality(v: JavaVal, date: LocalDate, abstract: JavaAbstractVal, bounded: T, record: Record, any: Any) {
-    v === JavaVal(1)
-    v !== any
-    <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>date<!> === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>LocalDate.MIN<!>
-    abstract === any
-    bounded === any
-    record === any
+    <!FORBIDDEN_IDENTITY_EQUALS!>v === JavaVal(1)<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>v !== any<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>date === LocalDate.MIN<!>
+    <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>abstract === any<!>
+    <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>bounded === any<!>
+    <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>record === any<!>
 }
 
 fun structuralEquality(v: JavaVal, s: String) {
@@ -38,34 +38,34 @@ fun structuralEquality(v: JavaVal, s: String) {
 }
 
 fun identitySensitiveOperations(v: JavaVal, abstract: JavaAbstractVal) {
-    System.identityHashCode(v)
-    WeakReference(v)
-    IdentityHashMap<JavaVal, String>()
-    System.identityHashCode(abstract)
-    WeakReference(abstract)
-    IdentityHashMap<JavaAbstractVal, String>()
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>v<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>v<!>)
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>JavaVal<!>, String>()
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>abstract<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>abstract<!>)
+    IdentityHashMap<<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>JavaAbstractVal<!>, String>()
 }
 
 fun <T : JavaAbstractVal> identitySensitiveOperationsThroughBounds(bounded: T, values: MutableList<out JavaAbstractVal>) {
-    System.identityHashCode(bounded)
-    WeakReference(bounded)
-    WeakReference(values[0])
+    System.identityHashCode(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bounded<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>bounded<!>)
+    WeakReference(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>values[0]<!>)
 }
 
 fun atomicReference(ref: AtomicReference<JavaVal>, v: JavaVal, abstractRef: AtomicReference<JavaAbstractVal>, abstract: JavaAbstractVal) {
-    ref.compareAndSet(v, JavaVal(2))
-    abstractRef.compareAndSet(abstract, abstract)
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ref.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>v<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>JavaVal(2)<!>)<!>
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>abstractRef.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>abstract<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>abstract<!>)<!>
 }
 
 fun <T : JavaAbstractVal> atomicReferenceThroughBounds(ref: AtomicReference<T>, bounded: T) {
-    ref.compareAndSet(bounded, bounded)
+    <!ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY!>ref.compareAndSet(<!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bounded<!>, <!ATOMIC_REF_CALL_ARGUMENT_WITHOUT_CONSISTENT_IDENTITY!>bounded<!>)<!>
 }
 
 @JvmInline
 value class KotlinVal(val x: Int)
 
 fun mixedIdentityEquality(kotlinVal: KotlinVal, date: LocalDate) {
-    <!FORBIDDEN_IDENTITY_EQUALS!>kotlinVal === <!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE!>date<!><!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>kotlinVal === date<!>
 }
 
 /* GENERATED_FIR_TAGS: equalityExpression, flexibleType, functionDeclaration, integerLiteral, javaFunction, javaProperty,
