@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.resolveSupertypesOnAir
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -573,9 +574,9 @@ internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
             }
 
             // 3. Kotlin / built-in / deserialized arm.
-            firClass.supertypeRefsForJavaResolution(c.fileContext.session).map { ref ->
+            firClass.resolveSupertypesOnAir(c.fileContext.session).map { ref ->
                 // A ref that stayed unresolved makes this a partial answer, which must not be cached.
-                ((ref as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)?.lookupTag?.classId
+                (ref.coneTypeOrNull as? ConeClassLikeType)?.lookupTag?.classId
                     ?: return@cycleGuardedSupertypeWalk null
             }
         }
