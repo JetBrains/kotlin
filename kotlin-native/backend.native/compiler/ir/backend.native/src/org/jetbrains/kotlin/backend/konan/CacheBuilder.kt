@@ -492,13 +492,68 @@ class CacheBuilder(
             filesToCache: List<String>,
             libraryCache: Path,
     ) {
+        // TODO: Run monolithic cache builds in parallel.
+        trySpawningCacheBuild(
+                library,
+                makePerFileCache,
+                libraryCache,
+        ) {
+            compilationSpawner.spawn(config.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
+                config.configuration.konanHome?.let {
+                    this.konanHome = it
+                }
+                val libraryPath = library.canonicalPath.pathString
+                val libraries = dependencies.map { it.canonicalPath.pathString }
+                val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.canonicalPath.pathString to it.second }
+                configuration.reportLog(
+                        "-p static_cache -Xadd-cache=${library.path} \\\n" +
+                                libraries.joinToString("\n") { "-library $it \\" } + "\n" +
+                                cachedLibraries.entries.joinToString("\n") { "-Xcached-library=${it.key},${it.value} \\" } + "\n" +
+                                "-Xcache-directory=${libraryCacheDirectory.absolutePathString()}\n"
+                )
+
+                setupCommonOptionsForCaches(config)
+                konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
+                // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
+                // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
+                checkDependencies = true
+                konanLibraryToAddToCache = libraryPath
+                konanNoDefaultLibs = true
+                konanNoStdlib = true
+                konanLibraries = libraries + libraryPath
+                val generateTestRunner = this@CacheBuilder.generateTestRunner
+                if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
+                    konanFriendLibraries = config.loadedKlibs.friends.map { it.canonicalPath.pathString }
+                    this.generateTestRunner = generateTestRunner
+                    konanIncludedLibraries = listOf(libraryPath)
+                    configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
+                }
+                this.cachedLibraries = cachedLibraries
+                cacheDirectories = listOf(libraryCacheDirectory.absolutePathString())
+                this.makePerFileCache = makePerFileCache
+                if (library.isSubjectOfIC)
+                    cachedLibraryDependenciesFingerprint = computeDependenciesFingerprint(library).toString()
+                if (filesToCache.isNotEmpty())
+                    this.filesToCache = filesToCache
+                serializedKlibDag = klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
+            }
+        }
+
+        cacheRootDirectories[library] = libraryCache.absolutePathString()
+    }
+
+    @OptIn(ExperimentalPathApi::class)
+    private fun trySpawningCacheBuild(
+            library: KotlinLibrary,
+            makePerFileCache: Boolean,
+            output: Path,
+            spawn: () -> Unit,
+    ) {
         try {
-            // TODO: Run monolithic cache builds in parallel.
-            spawnLibraryCacheBuild(library, dependencies, dependencyCaches, libraryCacheDirectory, makePerFileCache, filesToCache)
-            cacheRootDirectories[library] = libraryCache.absolutePathString()
+            spawn()
         } catch (t: Throwable) {
             try {
-                libraryCache.deleteRecursively()
+                output.deleteRecursively()
             } catch (_: Throwable) {
                 // Nothing to do.
             }
@@ -523,55 +578,6 @@ class CacheBuilder(
                         "$extraUserInfo\n\n${t.message}\n\n${t.stackTraceToString()}"
                     }
             configuration.reportCompilationErrorAndThrow(message)
-        }
-    }
-
-    private fun spawnLibraryCacheBuild(
-            library: KotlinLibrary,
-            dependencies: List<KotlinLibrary>,
-            dependencyCaches: List<String>,
-            libraryCacheDirectory: Path,
-            makePerFileCache: Boolean,
-            filesToCache: List<String>,
-    ) {
-        compilationSpawner.spawn(config.additionalCacheFlags /* TODO: Some way to put them directly to CompilerConfiguration? */) {
-            config.configuration.konanHome?.let {
-                this.konanHome = it
-            }
-            val libraryPath = library.canonicalPath.pathString
-            val libraries = dependencies.map { it.canonicalPath.pathString }
-            val cachedLibraries = dependencies.zip(dependencyCaches).associate { it.first.canonicalPath.pathString to it.second }
-            configuration.reportLog(
-                    "-p static_cache -Xadd-cache=${library.path} \\\n" +
-                            libraries.joinToString("\n") { "-library $it \\" } + "\n" +
-                            cachedLibraries.entries.joinToString("\n") { "-Xcached-library=${it.key},${it.value} \\" } + "\n" +
-                            "-Xcache-directory=${libraryCacheDirectory.absolutePathString()}\n"
-            )
-
-            setupCommonOptionsForCaches(config)
-            konanProducedArtifactKind = CompilerOutputKind.STATIC_CACHE
-            // CHECK_DEPENDENCIES is computed based on outputKind, which is overwritten in the line above
-            // So we have to change CHECK_DEPENDENCIES accordingly, otherwise they might not be downloaded (see KT-67547)
-            checkDependencies = true
-            konanLibraryToAddToCache = libraryPath
-            konanNoDefaultLibs = true
-            konanNoStdlib = true
-            konanLibraries = libraries + libraryPath
-            val generateTestRunner = this@CacheBuilder.generateTestRunner
-            if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
-                konanFriendLibraries = config.loadedKlibs.friends.map { it.canonicalPath.pathString }
-                this.generateTestRunner = generateTestRunner
-                konanIncludedLibraries = listOf(libraryPath)
-                configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
-            }
-            this.cachedLibraries = cachedLibraries
-            cacheDirectories = listOf(libraryCacheDirectory.absolutePathString())
-            this.makePerFileCache = makePerFileCache
-            if (library.isSubjectOfIC)
-                cachedLibraryDependenciesFingerprint = computeDependenciesFingerprint(library).toString()
-            if (filesToCache.isNotEmpty())
-                this.filesToCache = filesToCache
-            serializedKlibDag = klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
         }
     }
 
