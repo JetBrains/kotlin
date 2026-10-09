@@ -16,6 +16,7 @@ annotation class DummyFunction(val fileName: String = "")
 @Target(AnnotationTarget.FUNCTION)
 annotation class TestTopLevelPrivateSuspendFun
 annotation class ExternalClassWithNested
+annotation class JavaClassWithHiddenNested
 annotation class NestedClassAndMaterializeMember
 annotation class MyInterfaceSupertype
 annotation class CompanionWithFoo

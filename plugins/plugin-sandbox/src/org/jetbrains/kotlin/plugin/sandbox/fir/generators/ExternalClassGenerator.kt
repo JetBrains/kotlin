@@ -6,22 +6,45 @@
 package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.builder.buildLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate.BuilderContext.or
+import org.jetbrains.kotlin.fir.java.FirJavaLazyDeprecationsProvider
+import org.jetbrains.kotlin.fir.java.JavaScopeProvider
+import org.jetbrains.kotlin.fir.java.MutableJavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaClass
+import org.jetbrains.kotlin.fir.java.enhancement.FirJavaAnnotationList
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.plugin.createConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createNestedClass
 import org.jetbrains.kotlin.fir.plugin.createTopLevelClass
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.plugin.sandbox.fir.SANDBOX_ANNOTATIONS_PACKAGE
 import org.jetbrains.kotlin.plugin.sandbox.fir.fqn
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 /*
  * Generates class /foo.AllOpenGenerated with
@@ -40,13 +63,15 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         private val MATERIALIZE_NAME = Name.identifier("materialize")
 
         private val PREDICATE = LookupPredicate.create { annotated("ExternalClassWithNested".fqn()) }
+        private val JAVA_PREDICATE = LookupPredicate.create { annotated("JavaClassWithHiddenNested".fqn()) }
     }
 
     data object ExternalClassGeneratorKey : GeneratedDeclarationKey()
+    data object JavaClassWithHiddenNestedGeneratorKey : GeneratedDeclarationKey()
 
     private val predicateBasedProvider = session.predicateBasedProvider
     private val matchedClasses by lazy {
-        predicateBasedProvider.getSymbolsByPredicate(PREDICATE).filterIsInstance<FirRegularClassSymbol>()
+        predicateBasedProvider.getSymbolsByPredicate(PREDICATE.or(JAVA_PREDICATE)).filterIsInstance<FirRegularClassSymbol>()
     }
     private val classIdsForMatchedClasses: Map<ClassId, FirRegularClassSymbol> by lazy {
         matchedClasses.associateBy {
@@ -70,6 +95,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
                 ExternalClassGeneratorKey -> generateNestedClass(owner.classId.createNestedClassId(name), owner)
                 else -> null
             }
+            is FirDeclarationOrigin.Java.Source -> generateNestedJavaClass(owner.classId.createNestedClassId(name), owner)
             else -> null
         }
     }
@@ -86,6 +112,52 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
         return createNestedClass(owner, classId.shortClassName, ExternalClassGeneratorKey).also {
             it.matchedClass = matchedClass.classId
+        }.symbol
+    }
+
+    private fun generateNestedJavaClass(classId: ClassId, owner: FirClassSymbol<*>): FirClassLikeSymbol<*>? {
+        if (!owner.hasAnnotation(ClassId(SANDBOX_ANNOTATIONS_PACKAGE, FqName("JavaClassWithHiddenNested"), false), session)) {
+            return null
+        }
+        val annotation = buildAnnotation {
+            annotationTypeRef = buildResolvedTypeRef {
+                coneType = ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagImpl(StandardClassIds.Annotations.Deprecated),
+                    emptyArray(),
+                    isMarkedNullable = false
+                )
+            }
+            argumentMapping = buildAnnotationArgumentMapping {
+                mapping[StandardClassIds.Annotations.ParameterNames.deprecatedMessage] = buildLiteralExpression(
+                    null, ConstantValueKind.String, "", setType = true
+                )
+                mapping[StandardClassIds.Annotations.ParameterNames.deprecatedLevel] = buildPropertyAccessExpression {
+                    calleeReference = buildResolvedNamedReference {
+                        name = Name.identifier("HIDDEN")
+                        resolvedSymbol = FirEnumEntrySymbol(
+                            CallableId(StandardClassIds.DeprecationLevel, Name.identifier("HIDDEN"))
+                        )
+                    }
+                }
+            }
+        }
+        return buildJavaClass {
+            javaOrigin = FirDeclarationOrigin.Java.Plugin(JavaClassWithHiddenNestedGeneratorKey)
+            key = JavaClassWithHiddenNestedGeneratorKey
+            scopeProvider = JavaScopeProvider
+            containingClassSymbol = owner
+            javaTypeParameterStack = MutableJavaTypeParameterStack()
+            name = classId.shortClassName
+            moduleData = session.moduleData
+            annotationList = object : FirJavaAnnotationList, List<FirAnnotation> by listOf(annotation) {}
+            deprecationsProvider = FirJavaLazyDeprecationsProvider(listOf(annotation), session)
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public,
+            )
+            classKind = ClassKind.CLASS
+            symbol = FirRegularClassSymbol(classId)
         }.symbol
     }
 
@@ -112,10 +184,10 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        return if (classSymbol.classId == GENERATED_CLASS_ID) {
-            classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
-        } else {
-            emptySet()
+        return when {
+            classSymbol.classId == GENERATED_CLASS_ID -> classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
+            classSymbol.origin is FirDeclarationOrigin.Java -> setOf(Name.identifier("Nested"))
+            else -> emptySet()
         }
     }
 
@@ -129,6 +201,7 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
         register(PREDICATE)
+        register(JAVA_PREDICATE)
     }
 }
 
