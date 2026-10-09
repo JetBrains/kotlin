@@ -86,7 +86,7 @@ internal class NativeBackendContext(
     }
 
     val moduleDeserializerProvider by lazy {
-        ModuleDeserializerProvider(config.libraryToCache, config.cachedLibraries, irLinker)
+        ModuleDeserializerProvider(config.librariesToCache, config.cachedLibraries, irLinker)
     }
 
     private val inlineFunctionDeserializers = ConcurrentHashMap<KonanPartialModuleDeserializer, InlineFunctionDeserializer>()
