@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -176,15 +176,15 @@ class IsCasedTest {
         var lastChecked = -1
         for (range in casedRanges) {
             for (codePoint in lastChecked + 1 until range.first) {
-                assertFalse(codePoint.isCased())
+                assertFalse(isCased(codePoint))
             }
-            for (codePoint in range.first..range.last) {
-                assertTrue(codePoint.isCased())
+            for (codePoint in range) {
+                assertTrue(isCased(codePoint))
             }
             lastChecked = range.last
         }
         for (codePoint in lastChecked + 1..0x10FFFF) {
-            assertFalse(codePoint.isCased())
+            assertFalse(isCased(codePoint))
         }
     }
 }
