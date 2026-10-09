@@ -10,7 +10,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory.findJvmRootsForJavaFiles
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestFile

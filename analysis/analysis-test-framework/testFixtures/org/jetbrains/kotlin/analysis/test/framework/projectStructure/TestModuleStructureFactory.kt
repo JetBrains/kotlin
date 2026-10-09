@@ -11,7 +11,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
 import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.addLibraryDependencies

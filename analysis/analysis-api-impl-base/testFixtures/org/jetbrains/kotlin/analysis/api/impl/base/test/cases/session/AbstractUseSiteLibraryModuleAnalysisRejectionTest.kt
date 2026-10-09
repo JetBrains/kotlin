@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.sessions.KaBaseUseSiteLibrary
 import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.session.analyze
-import org.jetbrains.kotlin.analysis.api.standalone.base.KotlinStandalonePlatformSettings
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.fir.KotlinStandalonePlatformSettings
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar

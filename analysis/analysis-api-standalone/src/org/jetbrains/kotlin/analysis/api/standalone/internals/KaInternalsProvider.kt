@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.*
 public interface KaInternalsProvider {
     @KaImplementationDetail
     public companion object {
-        private const val IMPL = "org.jetbrains.kotlin.analysis.api.standalone.base.KaInternalsProviderImpl"
+        private const val IMPL = "org.jetbrains.kotlin.analysis.api.standalone.fir.KaInternalsProviderImpl"
 
         @JvmStatic
         public val instance: KaInternalsProvider by lazy(PUBLICATION) {

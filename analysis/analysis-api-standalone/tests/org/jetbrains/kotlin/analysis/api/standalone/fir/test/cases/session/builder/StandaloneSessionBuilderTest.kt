@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.resolution.*
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
 import org.jetbrains.kotlin.analysis.api.symbols.*

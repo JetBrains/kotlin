@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.test.framework.projectStructure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.isSdkLibrary
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.StandaloneWorkaroundApi
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.AbstractStandaloneTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.builder.compileToJar

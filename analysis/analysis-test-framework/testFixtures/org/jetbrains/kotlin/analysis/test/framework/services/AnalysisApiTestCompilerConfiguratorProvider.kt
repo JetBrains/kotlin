@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.ktTestModuleStructure
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment

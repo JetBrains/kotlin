@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.session.analyze
 import org.jetbrains.kotlin.analysis.api.session.analyzeCopy
-import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.standalone.fir.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTest
 import org.jetbrains.kotlin.analysis.test.data.manager.ManagedTestAssertions
 import org.jetbrains.kotlin.analysis.test.data.manager.TestVariantChain
