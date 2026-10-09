@@ -45,6 +45,7 @@ HIGH:
   import kotlin.PublishedApi
   import kotlin.ReplaceWith
   import kotlin.RequiresOptIn
+  import kotlin.RichError
   import kotlin.Short
   import kotlin.ShortArray
   import kotlin.SinceKotlin
