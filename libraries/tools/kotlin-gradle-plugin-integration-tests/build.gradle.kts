@@ -341,6 +341,25 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
             excludeTags(JunitTag.DaemonsKGP.name)
         }
     }
+
+    tasks.register<Test>("kgpAllParallelTests_ExtremeParallelism") {
+        group = KGP_TEST_TASKS_GROUP
+        description = "Runs all tests for Kotlin Gradle plugins except daemon ones"
+        maxParallelForks = 1
+
+        classpath = sourceSets["test"].runtimeClasspath
+        testClassesDirs = sourceSets["test"].output.classesDirs
+        useJUnitPlatform {
+            excludeTags(JunitTag.DaemonsKGP.name)
+        }
+
+        systemProperty("junit.jupiter.execution.parallel.enabled", "true")
+        systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
+        systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
+        systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
+        systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", "32")
+        systemProperty("junit.jupiter.execution.parallel.config.fixed.max-pool-size", "32")
+    }
 }
 
 class TaskConfiguration(
