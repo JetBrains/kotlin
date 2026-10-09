@@ -421,6 +421,13 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testFullValueClasses() {
+        val testName = "fullValueClasses"
+        val testCase = generateObjCFramework(testName, listOf("-XXLanguage:+FullValueClasses"))
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun objCExportTest() {
         objCExportTestImpl("", emptyList(), emptyList(), false)
     }

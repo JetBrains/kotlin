@@ -205,7 +205,7 @@ internal class ClassifierExplorer(
                     ClassKind.INTERFACE,
                     ClassKind.ENUM_CLASS,
                     ClassKind.ANNOTATION_CLASS -> true
-                    else -> isInlineClass || when (superClass.kind) {
+                    else -> isInlineClass || isFullValueClass && !superClass.isFullValueClass || when (superClass.kind) {
                         ClassKind.ENUM_CLASS -> kind != ClassKind.ENUM_ENTRY
                         ClassKind.CLASS -> superClass.modality == Modality.FINAL
                         else -> true
