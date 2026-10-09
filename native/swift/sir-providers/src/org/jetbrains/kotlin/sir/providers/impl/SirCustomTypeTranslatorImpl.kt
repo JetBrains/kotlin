@@ -31,12 +31,13 @@ import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public class SirCustomTypeTranslatorImpl(
-    private val session: SirSession
+    private val session: SirSession,
+    private val collectionsV2: Boolean = false,
 ) : SirCustomTypeTranslator {
     private val dynamicTypeToWrapperMap = mutableMapOf<SirNominalType, SirCustomTypeTranslator.BridgeWrapper>()
 
     public override fun isFqNameSupported(fqName: FqName): Boolean {
-        return supportedFqNames.contains(fqName)
+        return supportedFqNames.contains(fqName) && (!collectionsV2 || fqName !in collectionFqNames)
     }
 
     context(kaSession: KaSession)
@@ -313,15 +314,19 @@ public class SirCustomTypeTranslatorImpl(
 
         private val closedRangeFqName = RANGES_PACKAGE_FQ_NAME.child(Name.identifier("ClosedRange"))
 
+        private val collectionFqNames: List<FqName> =
+            listOf(
+                FqNames.list,
+                FqNames.mutableList,
+            )
+
         // These classes already have ObjC counterparts assigned statically in ObjC Export.
         private val supportedFqNames: List<FqName> =
-            listOf(
+            collectionFqNames + listOf(
                 FqNames.set,
                 FqNames.mutableSet,
                 FqNames.map,
                 FqNames.mutableMap,
-                FqNames.list,
-                FqNames.mutableList,
                 FqNames.string.toSafe(),
                 openEndRangeFqName,
                 closedRangeFqName,

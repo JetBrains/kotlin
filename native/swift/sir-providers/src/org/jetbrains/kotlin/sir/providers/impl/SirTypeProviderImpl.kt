@@ -31,6 +31,7 @@ public class SirTypeProviderImpl(
     private val sirSession: SirSession,
     override val errorTypeStrategy: ErrorTypeStrategy,
     override val unsupportedTypeStrategy: ErrorTypeStrategy,
+    private val collectionsV2: Boolean = false,
 ) : SirTypeProvider {
 
     @ConsistentCopyVisibility
@@ -68,6 +69,9 @@ public class SirTypeProviderImpl(
         buildSirType(this@translateType, ctx)
             .handleErrors(ctx.reportErrorType, ctx.reportUnsupportedType)
             .handleImports(ctx.processTypeImports)
+
+    private val KaUsualClassType.isCollectionV2Type: Boolean
+        get() = collectionsV2 && classId in listOf(StandardClassIds.List, StandardClassIds.MutableList)
 
     @OptIn(KaNonPublicApi::class)
     private fun buildSirType(ktType: KaType, ctx: TypeTranslationCtx): SirType {
@@ -112,6 +116,40 @@ public class SirTypeProviderImpl(
                                                 STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedStateFlowImpl
                                                 MUTABLE_STATE_FLOW_CLASS_ID -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlowImpl
                                                 else -> KotlinCoroutineSupportModule.kotlinTypedFlowImpl
+                                            },
+                                            elementType = translatedElement,
+                                            erasedType = SirExistentialType(
+                                                protocols = listOf(protocol to emptyList()),
+                                                origin = KotlinType(kaType)
+                                            ),
+                                        ).reifiedType.optionalIfNeeded(kaType)
+                                    }
+                                }
+                            }
+
+                            // TODO: Use custom generated typed collection types KT-88831
+                            if (kaType.isCollectionV2Type) {
+                                val protocol = kaType.symbol.toSir().primaryDeclaration as SirProtocol
+                                val elementArg = kaType.typeArguments.singleOrNull()
+                                if (elementArg is KaTypeArgumentWithVariance) {
+                                    val elementType = elementArg.type
+                                    val translatedElement = when {
+                                        elementType.classId == KaStandardTypeClassIds.UNIT ->
+                                            ctx.anyRepresentativeType().optionalIfNeeded(elementType)
+
+                                        else -> elementType.translateType(ctx)
+                                    }
+                                    if (translatedElement !is SirErrorType && translatedElement !is SirUnsupportedType) {
+                                        return@withSessions SirType.Origin.ReifiedType.List(
+                                            typedProtocol = when (kaType.classId) {
+                                                StandardClassIds.List -> KotlinRuntimeSupportModule.typedList
+                                                StandardClassIds.MutableList -> KotlinRuntimeSupportModule.typedMutableList
+                                                else -> KotlinRuntimeSupportModule.typedList
+                                            },
+                                            typedStruct = when (kaType.classId) {
+                                                StandardClassIds.List -> KotlinRuntimeSupportModule.typedListImpl
+                                                StandardClassIds.MutableList -> KotlinRuntimeSupportModule.typedMutableListImpl
+                                                else -> KotlinRuntimeSupportModule.typedListImpl
                                             },
                                             elementType = translatedElement,
                                             erasedType = SirExistentialType(
