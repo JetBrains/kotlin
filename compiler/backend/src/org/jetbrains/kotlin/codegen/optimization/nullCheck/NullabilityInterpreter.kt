@@ -37,7 +37,7 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
         val resultType = defaultResult?.type
 
         return when {
-            insn.opcode == Opcodes.ACONST_NULL && !insn.isTypeOf() && !insn.isEnumEntries() ->
+            insn.opcode == Opcodes.ACONST_NULL && !insn.isNullForReifiedTypeOf() && !insn.isEnumEntries() ->
                 NullBasicValue
             insn.opcode == Opcodes.NEW ->
                 NotNullBasicValue(resultType)
@@ -68,12 +68,6 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
             else ->
                 defaultResult
         }
-    }
-
-    private fun AbstractInsnNode.isTypeOf(): Boolean {
-        val marker = previous as? MethodInsnNode ?: return false
-        return ReifiedTypeInliner.isOperationReifiedMarker(previous)
-                && marker.operationKind == ReifiedTypeInliner.OperationKind.TYPE_OF
     }
 
     private fun AbstractInsnNode.isReifiedSafeAs(): Boolean {
