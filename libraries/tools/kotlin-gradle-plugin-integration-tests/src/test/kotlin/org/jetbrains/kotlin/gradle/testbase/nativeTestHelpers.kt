@@ -76,20 +76,19 @@ fun extractNativeToolSettings(
 internal object MPPNativeTargets {
     val current = when (HostManager.host) {
         KonanTarget.LINUX_X64 -> "linux64"
-        KonanTarget.MACOS_X64 -> "macos64"
         KonanTarget.MACOS_ARM64 -> "macosArm64"
         KonanTarget.MINGW_X64 -> "mingw64"
         else -> error("Unsupported host")
     }
 
     val unsupported = when {
-        HostManager.hostIsMingw -> setOf("macos64")
-        HostManager.hostIsLinux -> setOf("macos64")
+        HostManager.hostIsMingw -> setOf("macosArm64")
+        HostManager.hostIsLinux -> setOf("macosArm64")
         HostManager.hostIsMac -> emptySet()
         else -> error("Unknown host")
     }
 
-    val supported = listOf("linux64", "macos64", "mingw64").filter { !unsupported.contains(it) }
+    val supported = listOf("linux64", "macosArm64", "mingw64").filter { !unsupported.contains(it) }
 }
 
 fun computeCacheDirName(

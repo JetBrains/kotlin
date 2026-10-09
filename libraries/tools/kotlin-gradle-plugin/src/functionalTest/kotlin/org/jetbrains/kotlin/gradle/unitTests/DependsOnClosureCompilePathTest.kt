@@ -21,8 +21,6 @@ class DependsOnClosureCompilePathTest {
     @Test
     fun `test - default hierarchy - iosMain`() {
         kotlin.iosArm64()
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
-        kotlin.iosX64()
         kotlin.iosSimulatorArm64()
         project.evaluate()
 

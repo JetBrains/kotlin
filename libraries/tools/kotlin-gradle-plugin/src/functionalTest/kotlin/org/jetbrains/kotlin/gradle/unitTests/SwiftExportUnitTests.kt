@@ -184,7 +184,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export missing arch`() {
         val project = swiftExportProject(archs = "arm64", multiplatform = {
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             listOf(iosSimulatorArm64(), iosX64(), iosArm64())
         })
 
@@ -196,7 +196,7 @@ class SwiftExportUnitTests {
 
         val arm64SimLib = project.multiplatformExtension.iosSimulatorArm64().binaries.findStaticLib("SwiftExportBinary", buildType)
         val arm64Lib = project.multiplatformExtension.iosArm64().binaries.findStaticLib("SwiftExportBinary", buildType)
-        @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+        // fixme: KT-89587 Clean up tests after iosX64 target deprecation
         val x64Lib = project.multiplatformExtension.iosX64().binaries.findStaticLib("SwiftExportBinary", buildType)
 
         assertNotNull(arm64SimLib)
@@ -213,7 +213,7 @@ class SwiftExportUnitTests {
     @Test
     fun `test swift export embed and sign inputs`() {
         val project = swiftExportProject(archs = "arm64 x86_64", multiplatform = {
-            @Suppress("DEPRECATION_ERROR") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
+            // fixme: KT-89587 Clean up tests after iosX64 target deprecation
             listOf(iosSimulatorArm64(), iosX64())
         })
 
