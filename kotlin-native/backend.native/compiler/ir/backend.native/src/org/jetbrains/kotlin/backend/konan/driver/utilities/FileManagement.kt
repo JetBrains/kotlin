@@ -7,19 +7,22 @@ package org.jetbrains.kotlin.backend.konan.driver.utilities
 
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.CacheSupport
+import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
+import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.temporaryFilesDir
 import java.io.File
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
-internal fun createTempFiles(config: NativeSecondStageCompilationConfig, cacheDeserializationStrategy: CacheDeserializationStrategy?): TempFiles {
+internal fun createTempFiles(config: NativeSecondStageCompilationConfig, cacheInfo: PartialCacheInfo?): TempFiles {
     val pathToTempDir = config.configuration.temporaryFilesDir?.let {
-        val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
+        val singleFileStrategy = cacheInfo?.strategy as? CacheDeserializationStrategy.SingleFile
         if (singleFileStrategy == null)
             it
-        else Path(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).pathString
+        else Path(it, CachedLibraries.getPerFileCachedLibraryName(cacheInfo.klib),
+                CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).pathString
     }
     return TempFiles(pathToTempDir)
 }

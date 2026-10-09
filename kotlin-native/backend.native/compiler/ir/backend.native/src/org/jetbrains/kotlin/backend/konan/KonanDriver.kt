@@ -107,7 +107,7 @@ class KonanDriver(
                 || isProducingExecutableFromLibraries
 
         // Return early if no input was provided.
-        if (!hasCompilerInput && config.libraryToCache == null) return
+        if (!hasCompilerInput && config.librariesToCache.isEmpty()) return
 
         if (isProducingExecutableFromLibraries && configuration.generateTestRunner != TestRunnerKind.NONE) {
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING,
@@ -142,7 +142,7 @@ class KonanDriver(
             config.reloadCacheSupport()
 
             // Parallel cache build might have already built our asked-to-build cache. Check for that and return early if true.
-            if (!hasCompilerInput && config.libraryToCache == null)
+            if (!hasCompilerInput && config.librariesToCache.isEmpty())
                 return
         }
 

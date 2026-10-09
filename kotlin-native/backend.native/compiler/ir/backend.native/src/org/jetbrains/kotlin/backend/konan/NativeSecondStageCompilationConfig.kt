@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.io.readProperties
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgument
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.utils.KotlinNativePaths
 import java.nio.file.Files
 import java.nio.file.Path
@@ -611,14 +612,14 @@ class NativeSecondStageCompilationConfig(
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries
 
-    internal val libraryToCache: PartialCacheInfo?
-        get() = cacheSupport.libraryToCache
+    internal val librariesToCache: Map<KotlinLibrary, PartialCacheInfo>
+        get() = cacheSupport.librariesToCache
 
     internal val producePerFileCache
         get() = configuration.makePerFileCache
 
     private val implicitModuleName: String
-        get() = cacheSupport.libraryToCache?.let {
+        get() = cacheSupport.librariesToCache.values.singleOrNull()?.let {
             if (producePerFileCache)
                 CachedLibraries.getPerFileCachedLibraryName(it.klib)
             else

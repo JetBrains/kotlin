@@ -83,7 +83,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             it.objCExportedInterface = objCExportedInterface
             it.objCExportCodeSpec = objCCodeSpec
         }
-        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
+        engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
     }
 
     private fun produceCLibrary(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment) {
@@ -105,7 +105,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput) {
             it.cAdapterExportedElements = cAdapterElements
         }
-        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
+        engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
     }
 
     /**
@@ -117,7 +117,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
 
         val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput)
-        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
+        engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, bitcodeFilePath: String) {
@@ -155,7 +155,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) { engine.runPhase(CreateTestBundlePhase, frontendOutput.moduleDescriptor) }
         val linkKlibsOutput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLinking) { engine.linkKlibs(frontendOutput) }
         val backendContext = createBackendContext(config, frontendOutput.moduleDescriptor, linkKlibsOutput)
-        engine.runBackend(backendContext, linkKlibsOutput.irModule, performanceManager)
+        engine.runBackend(backendContext, linkKlibsOutput.irModulesToCompile, performanceManager)
     }
 
     @OptIn(K1Deprecation::class)

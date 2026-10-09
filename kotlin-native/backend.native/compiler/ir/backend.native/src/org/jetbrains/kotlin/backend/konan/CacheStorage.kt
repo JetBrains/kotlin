@@ -23,12 +23,13 @@ import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.bufferedWriter
 import kotlin.io.path.deleteRecursively
 import kotlin.io.path.exists
+import kotlin.io.path.pathString
 import kotlin.io.path.writeBytes
 import kotlin.io.path.writeLines
 import kotlin.random.Random
 
 private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
-    val runtimeFingerprint = if (config.libraryToCache!!.klib.isNativeStdlib) {
+    val runtimeFingerprint = if (cacheInfo!!.klib.isNativeStdlib) {
         config.distribution.runtimeFingerprint(config.target)
     } else {
         null
@@ -39,7 +40,12 @@ private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
             target = config.target,
             compilerFingerprint = config.distribution.compilerFingerprint,
             runtimeFingerprint = runtimeFingerprint,
-            dependenciesFingerprint = config.configuration.cachedLibraryDependenciesFingerprint?.let { FingerprintHash.fromString(it) },
+            dependenciesFingerprint = config.configuration[CACHE_BATCH]?.let { batch ->
+                // The batch is keyed by Klib.canonicalPath and must contain every library compiled here.
+                // A silent miss would store a null fingerprint, making the cache forever stale (see [CacheBuilder.staleCacheReason]).
+                batch[cacheInfo.klib.canonicalPath.pathString]
+                        ?: error("Library ${cacheInfo.klib.path} is not found in the cache batch")
+            } ?: config.configuration.cachedLibraryDependenciesFingerprint?.let { FingerprintHash.fromString(it) },
     )
 }
 

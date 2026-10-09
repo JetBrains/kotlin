@@ -60,6 +60,7 @@ internal class LinkKlibsOutput(
         val symbols: BackendNativeSymbols,
         val symbolTable: ReferenceSymbolTable,
         val irLinker: KonanIrLinker,
+        val irModulesToCompile: List<IrModuleFragment> = listOf(irModule),
 ) : KotlinBackendIrHolder {
 
     override val kotlinIr: IrElement
@@ -73,8 +74,7 @@ internal fun LinkKlibsContext.linkKlibs(
     val symbolTable = symbolTable!!
     val moduleDescriptor = input.moduleDescriptor
 
-    val libraryToCache = config.libraryToCache
-    val stdlibToCache = libraryToCache?.klib?.takeIf { it.isNativeStdlib }
+    val stdlibToCache = config.librariesToCache.keys.firstOrNull { it.isNativeStdlib }
     require(stdlibToCache == null || !config.cachedLibraries.isLibraryCached(stdlibToCache)) { "The cache for stdlib is already built" }
 
     val irLinker = createIrLinker(moduleDescriptor)
@@ -82,7 +82,6 @@ internal fun LinkKlibsContext.linkKlibs(
     scheduleDependenciesForDeserialization(
             loadedKlibs = config.loadedKlibs,
             moduleDescriptors = moduleDescriptor.allDependencyModules,
-            libraryToCache = libraryToCache?.klib,
             linker = irLinker
     )
 
@@ -127,7 +126,7 @@ internal fun LinkKlibsContext.linkKlibs(
             .filter { it.name != FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
             .let { sortAccordingToKlibDagIfCachesAreUsed(it) }
 
-    return if (libraryToCache == null) {
+    return if (config.librariesToCache.isEmpty()) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
         LinkKlibsOutput(
                 irModules = irModulesForLinkKlibsOutput,
@@ -138,22 +137,23 @@ internal fun LinkKlibsContext.linkKlibs(
                 irLinker = irLinker
         )
     } else {
-        val [libraryModules, otherModules] = irModulesForLinkKlibsOutput.partition { it.kotlinLibrary == libraryToCache.klib }
-        val libraryModule = libraryModules.firstOrNull() ?: error("No module for the library being cached: ${libraryToCache.klib}")
+        val [libraryModules, otherModules] = irModulesForLinkKlibsOutput.partition { it.kotlinLibrary in config.librariesToCache }
+        check(libraryModules.size == config.librariesToCache.size) { "Missing modules for libraries being cached" }
         LinkKlibsOutput(
                 irModules = otherModules, // TODO(KT-88867): Keep the full list of all IR module fragments in `irModules`
-                irModule = libraryModule,
+                irModule = libraryModules.first(),
                 irBuiltIns = irBuiltIns,
                 symbols = symbols,
                 symbolTable = symbolTable,
-                irLinker = irLinker
+                irLinker = irLinker,
+                irModulesToCompile = libraryModules,
         )
     }
 }
 
 private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor): KonanIrLinker {
     val symbolTable = symbolTable!!
-    val exportedDependencies = (config.loadedKlibs.exported + config.loadedKlibs.included + listOfNotNull(config.libraryToCache?.klib)).toSet()
+    val exportedDependencies = (config.loadedKlibs.exported + config.loadedKlibs.included + config.librariesToCache.keys).toSet()
 
     val deserializationConfiguration = CommonCompilerDeserializationConfiguration(config.configuration.languageVersionSettings)
     val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
@@ -180,7 +180,7 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor):
             exportedDependencies = exportedDependencies,
             partialLinkageConfig = config.configuration.partialLinkageConfig,
             irDiagnosticReporter = irDiagnosticReporter,
-            libraryBeingCached = config.libraryToCache,
+            librariesBeingCached = config.librariesToCache,
             externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
     )
 }
@@ -188,7 +188,6 @@ private fun LinkKlibsContext.createIrLinker(moduleDescriptor: ModuleDescriptor):
 private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
         loadedKlibs: LoadedNativeKlibs,
         moduleDescriptors: List<ModuleDescriptor>,
-        libraryToCache: KotlinLibrary?,
         linker: KonanIrLinker,
 ) {
     val libraryToModuleDescriptor: Map<KotlinLibrary, ModuleDescriptor> = moduleDescriptors
@@ -204,7 +203,7 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
         val dependencyModuleDescriptor: ModuleDescriptor = libraryToModuleDescriptor[library]
                 ?: error("Could not resolve module descriptor for $library")
 
-        val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library != config.libraryToCache?.klib
+        val isFullyCachedLibrary = config.cachedLibraries.isLibraryCached(library) && library !in config.librariesToCache
 
         when {
             isFullyCachedLibrary && library.isHeader -> linker.deserializeHeadersWithInlineBodies(dependencyModuleDescriptor, library)
@@ -214,7 +213,8 @@ private fun LinkKlibsContext.scheduleDependenciesForDeserialization(
     }
 
     // Make sure the library-to-be-cached is also scheduled for deserialization.
-    ensureCStructsAndEnumsAreLoadedForCaching(linker, libraryToCache)
+    // Note: a batched build never contains C-interop libraries, so it has nothing to load here.
+    ensureCStructsAndEnumsAreLoadedForCaching(linker, config.librariesToCache.keys.singleOrNull())
 
     // Finally, add the forward declarations module (if there is any). It does not have any associated KLIB.
     moduleDescriptors.firstOrNull { it.isForwardDeclarationModule }?.let {
