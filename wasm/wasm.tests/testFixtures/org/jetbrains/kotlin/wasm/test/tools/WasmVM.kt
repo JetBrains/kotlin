@@ -9,9 +9,12 @@ import java.io.BufferedReader
 import java.io.File
 import java.io.InputStreamReader
 import java.lang.Boolean.getBoolean
-import kotlin.test.fail
 
 private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
+
+internal const val WASI_BOX_ENTRY_EXPORT = "startTest"
+
+internal const val WASI_UNIT_TESTS_ENTRY_EXPORT = "startUnitTests"
 
 internal sealed class WasmVM(
     val property: String,
@@ -28,6 +31,7 @@ internal sealed class WasmVM(
         useNewExceptionHandling: Boolean = false,
         useStackSwitching: Boolean = false,
         toolArgs: List<String> = emptyList(),
+        wasiEntryExport: String = WASI_BOX_ENTRY_EXPORT,
     ): String
 
     object V8 : WasmVM(property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
@@ -38,6 +42,7 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -58,6 +63,7 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -75,7 +81,8 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -93,11 +100,12 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 entryFile,
-                "startTest",
+                wasiEntryExport,
                 workingDirectory = workingDirectory,
             )
     }
@@ -110,13 +118,14 @@ internal sealed class WasmVM(
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
             toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
                 "-W",
                 "gc,function-references,exceptions",
                 "--invoke",
-                "startTest",
+                wasiEntryExport,
                 entryFile,
                 workingDirectory = workingDirectory,
             )
@@ -129,7 +138,8 @@ internal sealed class WasmVM(
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
             useStackSwitching: Boolean,
-            toolArgs: List<String>
+            toolArgs: List<String>,
+            wasiEntryExport: String,
         ) =
             tool.run(
                 *toolArgs.toTypedArray(),
@@ -175,7 +185,10 @@ internal class ExternalTool(val path: String) {
 
         val exitValue = process.waitFor()
         if (exitValue != 0) {
-            fail("Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"\nOUTPUT:\n$stdout\n---")
+            throw ExternalToolFailure(
+                "Command \"$commandString\" terminated with exit code $exitValue in working dir \"$workingDirectory\"\nOUTPUT:\n$stdout\n---",
+                output = stdout.toString(),
+            )
         }
 
         return stdout.toString()
@@ -184,3 +197,9 @@ internal class ExternalTool(val path: String) {
 
 internal fun escapeShellArgument(arg: String): String =
     "'${arg.replace("'", "'\\''")}'"
+
+/**
+ * A process that exited with a non-zero code. [output] is what it printed before, as captured: a crashed VM's output is
+ * still evidence of what ran, so it is kept apart from the message instead of having to be cut out of it again.
+ */
+internal class ExternalToolFailure(message: String, val output: String) : AssertionError(message)
