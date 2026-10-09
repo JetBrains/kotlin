@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionSessionComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.compiler.plugin.fir.scriptCompilationComponent
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.collectAndResolveScriptAnnotationsViaFir
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaLightTree
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.convertToFirViaPsi
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createScriptAnnotationResolutionSession
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllForK2
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.refineAllViaFir
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -83,19 +80,14 @@ class FirScriptDefinitionProviderService(
             } else null
         } ?: run {
             getBaseConfiguration(sourceCode)?.onSuccess {
-                (it.refineAllForK2(
+                it.refineAllViaFir(
                     sourceCode,
-                    hostConfiguration
-                ) { script, configuration ->
+                    hostConfiguration,
                     // the script's own session cannot be used: the script file would be recorded in it twice
-                    collectAndResolveScriptAnnotationsViaFir(
-                        script, configuration, hostConfiguration,
-                        getSessionForAnnotationResolution = { _, _ -> createScriptAnnotationResolutionSession(session, hostConfiguration) },
-                        convertToFir = if (script is KtFileScriptSource) SourceCode::convertToFirViaPsi
-                        else SourceCode::convertToFirViaLightTree,
-                        tolerateInvalidAnnotations = script is KtFileScriptSource,
-                    )
-                }).also { refined ->
+                    getAnnotationSession = { _, _ -> createScriptAnnotationResolutionSession(session, hostConfiguration) },
+                    // the service is used by the Analysis API as well, where the invalid annotations should not fail the refinement
+                    failOnInvalidAnnotations = false,
+                ).also { refined ->
                     hostBasedCache.storeRefinedCompilationConfiguration(sourceCode, refined)
                 }
             }

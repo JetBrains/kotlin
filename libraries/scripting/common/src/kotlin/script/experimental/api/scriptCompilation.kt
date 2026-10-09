@@ -15,6 +15,15 @@ import kotlin.script.experimental.impl.refineOnAnnotationsWithLazyDataCollection
 import kotlin.script.experimental.impl.simpleRefineImpl
 import kotlin.script.experimental.util.PropertiesCollection
 
+/**
+ * Describes a compiler plugin requested for a script compilation. A null [id] indicates that the plugin is identified by [classpath].
+ */
+data class ScriptCompilerPlugin(
+    val id: String?,
+    val classpath: List<File>,
+    val options: List<String> = emptyList(),
+) : Serializable
+
 interface ScriptCompilationConfigurationKeys
 
 /**
@@ -159,6 +168,9 @@ val ScriptCompilationConfigurationKeys.dependencyRepositories by PropertiesColle
  * The list of compiler options that will be applied on script compilation, the syntax is the same as for CLI compiler
  */
 val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.key<List<String>>() // Q: CommonCompilerOptions instead?
+
+/** The list of compiler plugins requested for script compilation. */
+val ScriptCompilationConfigurationKeys.compilerPlugins by PropertiesCollection.key<List<ScriptCompilerPlugin>>()
 
 /**
  * The callback that will be called on the script compilation before parsing the script

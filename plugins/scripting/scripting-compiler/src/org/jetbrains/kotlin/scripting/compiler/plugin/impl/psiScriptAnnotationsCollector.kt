@@ -66,11 +66,9 @@ import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.api.dependencies
-import kotlin.script.experimental.api.hostConfiguration
 import kotlin.script.experimental.api.refineConfigurationOnAnnotations
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.configurationDependencies
-import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.util.classpathFromClass
 
@@ -99,18 +97,17 @@ class PsiScriptAnnotationsCollector(
         // the annotation resolution session obtains the script's configuration through the provider in the host configuration
         val baseHostConfiguration =
             hostConfiguration.withCompilationConfigurationProvider(SingleScriptCompilationConfigurationProvider(compilationConfiguration))
-        val scriptHostConfiguration =
-            compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration].withDefaultsFrom(baseHostConfiguration)
+        val scriptHostConfiguration = effectiveHostConfiguration(baseHostConfiguration, compilationConfiguration)
         val classpath = classpathFor(getRegularClasspath(scriptFile), compilationConfiguration, scriptHostConfiguration)
+        val getAnnotationSession: AnnotationResolutionSessionProvider = { _, _ ->
+            createAnnotationResolutionSession(scriptFile.project, classpath, scriptHostConfiguration)
+        }
         return collectAndResolveScriptAnnotationsViaFir(
             KtFileScriptSource(scriptFile),
             compilationConfiguration,
             baseHostConfiguration,
-            getSessionForAnnotationResolution = { _, _ ->
-                createAnnotationResolutionSession(scriptFile.project, classpath, scriptHostConfiguration)
-            },
+            getAnnotationSession,
             convertToFir = SourceCode::convertToFirViaPsi,
-            tolerateInvalidAnnotations = true,
         )
     }
 }

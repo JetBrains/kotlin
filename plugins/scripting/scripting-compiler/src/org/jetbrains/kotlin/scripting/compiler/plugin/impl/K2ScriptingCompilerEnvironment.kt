@@ -12,12 +12,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.javaInterop
 import org.jetbrains.kotlin.cli.jvm.compiler.toVfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
-import org.jetbrains.kotlin.compiler.plugin.registerInProject
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.disableStandardScriptDefinition
+import org.jetbrains.kotlin.config.inlineConstTracker
+import org.jetbrains.kotlin.config.jvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.scriptingHostConfiguration
 import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.fir.session.firCachesFactoryForCliMode
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.*
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -44,6 +44,8 @@ import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.JvmDependency
+import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 interface K2ScriptingCompilerEnvironment {
     val baseScriptCompilationConfiguration: ScriptCompilationConfiguration
@@ -65,31 +67,40 @@ internal interface K2ScriptingCompilerEnvironmentInternal : K2ScriptingCompilerE
     fun updateContext(configuration: CompilerConfiguration)
 }
 
-internal open class K2ScriptingCompilerEnvironmentImpl(
+internal class K2ScriptingCompilerEnvironmentImpl(
+    shared: ScriptingSharedState<ScriptingModuleDataProvider>,
     override val baseScriptCompilationConfiguration: ScriptCompilationConfiguration,
-    override val hostConfiguration: ScriptingHostConfiguration,
-    override val predefinedJavaComponents: FirSharableJavaComponents,
-    override val projectEnvironment: VfsBasedProjectEnvironment,
-    override val moduleDataProvider: ScriptingModuleDataProvider,
     override val messageCollector: ScriptDiagnosticsMessageCollector,
     override val compilerContext: SharedScriptCompilationContext,
-    override val packagePartProvider: PackagePartProvider,
-    override val extensionRegistrars: List<FirExtensionRegistrar>,
-    override val sharedLibrarySession: FirSession,
-    override var dummySessionForAnnotationResolution: FirSession?,
-    override var sessionFactoryContext: FirJvmSessionFactory.Context
 ) : K2ScriptingCompilerEnvironmentInternal {
+    override val hostConfiguration: ScriptingHostConfiguration = shared.hostConfiguration
+    override val moduleDataProvider: ScriptingModuleDataProvider = shared.moduleDataProvider
+    override val projectEnvironment: VfsBasedProjectEnvironment = shared.librarySessions.projectEnvironment
+    override val extensionRegistrars: List<FirExtensionRegistrar> = shared.librarySessions.extensionRegistrars
+    override val sharedLibrarySession: FirSession = shared.librarySessions.sharedLibrarySession
+    override var sessionFactoryContext: FirJvmSessionFactory.Context = shared.librarySessions.sessionFactoryContext
+    override var dummySessionForAnnotationResolution: FirSession? = null
+    override val predefinedJavaComponents: FirSharableJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
+    override val packagePartProvider: PackagePartProvider =
+        projectEnvironment.getPackagePartProvider(sessionFactoryContext.librariesClasspath)
 
     override fun updateContext(configuration: CompilerConfiguration) {
-        val previous = sessionFactoryContext
-        sessionFactoryContext = FirJvmSessionFactory.Context(
-            configuration = configuration,
-            projectEnvironment = previous.projectEnvironment,
-            librariesClasspath = previous.librariesClasspath,
-            javaInterop = previous.javaInterop,
-        )
+        sessionFactoryContext = sessionFactoryContext.updatedFor(configuration)
     }
 }
+
+/**
+ * The context captures the JVM target and the inline constant tracker of the configuration it is created from,
+ * so it is recreated only when they differ, e.g. after applying the refined compiler options.
+ */
+internal fun FirJvmSessionFactory.Context.updatedFor(configuration: CompilerConfiguration): FirJvmSessionFactory.Context =
+    if ((configuration.jvmTarget ?: JvmTarget.DEFAULT) == jvmTarget && configuration.inlineConstTracker === inlineConstTracker) this
+    else FirJvmSessionFactory.Context(
+        configuration = configuration,
+        projectEnvironment = projectEnvironment,
+        librariesClasspath = librariesClasspath,
+        javaInterop = javaInterop,
+    )
 
 open class ScriptingModuleDataProvider(private val baseName: String, baseLibraryPaths: List<Path>) : ModuleDataProvider() {
 
@@ -175,58 +186,100 @@ fun createCompilerState(
     messageCollector: ScriptDiagnosticsMessageCollector,
     hostConfiguration: ScriptingHostConfiguration,
 ): K2ScriptingCompilerEnvironment {
-    val project = compilerContext.environment.project
     val compilerConfiguration = compilerContext.environment.configuration
-    val languageVersionSettings = compilerConfiguration.languageVersionSettings
     val moduleName = (compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)?.let { Name.guessByFirstCharacter(it) }
         ?: Name.special("<script-module>"))
-
-    val extensionStorage = CompilerPluginRegistrar.ExtensionStorage()
-
     val scriptCompilationConfiguration = compilerContext.baseScriptCompilationConfiguration
+    val shared = createScriptingSharedState(compilerContext, hostConfiguration, moduleName) {
+        ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), it.map(File::toPath))
+    }
 
-    compilerConfiguration.add(
+    return K2ScriptingCompilerEnvironmentImpl(shared, scriptCompilationConfiguration, messageCollector, compilerContext)
+}
+
+internal class ScriptingLibrarySessions(
+    val projectEnvironment: VfsBasedProjectEnvironment,
+    val extensionRegistrars: List<FirExtensionRegistrar>,
+    val sessionFactoryContext: FirJvmSessionFactory.Context,
+    val sharedLibrarySession: FirSession,
+)
+
+internal class ScriptingSharedState<P : ModuleDataProvider>(
+    val hostConfiguration: ScriptingHostConfiguration,
+    val moduleDataProvider: P,
+    val librarySessions: ScriptingLibrarySessions,
+)
+
+/**
+ * The resulting host configuration is also stored as the scripting host configuration of the compiler configuration.
+ */
+internal fun <P : ModuleDataProvider> createScriptingSharedState(
+    compilerContext: SharedScriptCompilationContext,
+    hostConfiguration: ScriptingHostConfiguration,
+    moduleName: Name,
+    createModuleDataProvider: (List<File>) -> P,
+): ScriptingSharedState<P> {
+    val compilerConfiguration = compilerContext.environment.configuration
+    val baseConfiguration = compilerContext.baseScriptCompilationConfiguration
+    val hostConfigurationWithProvider = compilerConfiguration.addScriptDefinitionAndConfigureHost(hostConfiguration, baseConfiguration)
+    compilerConfiguration.scriptingHostConfiguration = hostConfigurationWithProvider
+    val classpath = baseConfiguration.baseCompilationClasspath()
+    val moduleDataProvider = createModuleDataProvider(classpath)
+    val librarySessions = createScriptingLibrarySessions(compilerContext, moduleName, classpath, moduleDataProvider)
+    return ScriptingSharedState(hostConfigurationWithProvider, moduleDataProvider, librarySessions)
+}
+
+internal fun ScriptCompilationConfiguration.baseCompilationClasspath(): List<File> =
+    this[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
+        when (it) {
+            is JvmDependency -> it.classpath
+            // FIR has no class-loader based symbol provider yet, so the loader is expanded to its classpath, KT-60443.
+            is JvmDependencyFromClassLoader -> scriptCompilationClasspathFromContext(
+                classLoader = it.getClassLoader(this),
+                wholeClasspath = true,
+                unpackJarCollections = true,
+            )
+            else -> emptyList()
+        }
+    }
+
+internal fun CompilerConfiguration.addScriptDefinitionAndConfigureHost(
+    hostConfiguration: ScriptingHostConfiguration,
+    scriptCompilationConfiguration: ScriptCompilationConfiguration,
+): ScriptingHostConfiguration {
+    add(
         ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
         ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
     )
-
-    val definitionSources = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES)
-    val definitions = compilerConfiguration.getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)
-    val scriptDefinitionProvider = CliScriptDefinitionProvider(
-        compilerConfiguration.disableStandardScriptDefinition
-    ).also {
-        it.setScriptDefinitionsSources(definitionSources)
-        it.setScriptDefinitions(definitions)
+    val scriptDefinitionProvider = CliScriptDefinitionProvider(disableStandardScriptDefinition).also {
+        it.setScriptDefinitionsSources(getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS_SOURCES))
+        it.setScriptDefinitions(getList(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS))
     }
-
-    val hostConfigurationWithProvider = hostConfiguration.with {
+    return hostConfiguration.with {
         scriptCompilationConfigurationProvider(ScriptCompilationConfigurationProviderOverDefinitionProvider(scriptDefinitionProvider))
         scriptRefinedCompilationConfigurationsCache(ScriptRefinedCompilationConfigurationCacheImpl())
     }
+}
 
-    compilerConfiguration.scriptingHostConfiguration = hostConfigurationWithProvider
-
-    with(ScriptingK2CompilerPluginRegistrar()) { extensionStorage.registerExtensions(compilerConfiguration) }
-    extensionStorage.registerInProject(project) { "Error on plugin registration: ${it.javaClass.name}" }
-
-    val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-        (it as? JvmDependency)?.classpath ?: emptyList()
-    }
+/**
+ * Should be called after the compiler plugins are registered, since the FIR extension registrars are taken from the configuration.
+ */
+internal fun createScriptingLibrarySessions(
+    compilerContext: SharedScriptCompilationContext,
+    moduleName: Name,
+    classpath: List<File>,
+    moduleDataProvider: ModuleDataProvider,
+): ScriptingLibrarySessions {
+    val compilerConfiguration = compilerContext.environment.configuration
+    val languageVersionSettings = compilerConfiguration.languageVersionSettings
     compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
     val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
     val extensionRegistrars = compilerConfiguration.getCompilerExtensions(FirExtensionRegistrar)
-    val librariesClasspath = JvmClasspath.ProjectLibraries()
-    val javaInterop = projectEnvironment.javaInterop(compilerConfiguration, withJavaSources = false)
-    val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesClasspath)
-    val predefinedJavaComponents = FirSharableJavaComponents(firCachesFactoryForCliMode)
-
-    val moduleDataProvider = ScriptingModuleDataProvider(moduleName.asStringStripSpecialMarkers(), classpath.map(File::toPath))
-
     val sessionFactoryContext = FirJvmSessionFactory.Context(
         configuration = compilerConfiguration,
         projectEnvironment = projectEnvironment,
-        librariesClasspath = librariesClasspath,
-        javaInterop = javaInterop,
+        librariesClasspath = JvmClasspath.ProjectLibraries(),
+        javaInterop = projectEnvironment.javaInterop(compilerConfiguration, withJavaSources = false),
     )
     val sharedLibrarySession = FirJvmSessionFactory.createSharedLibrarySession(
         mainModuleName = moduleName,
@@ -234,7 +287,6 @@ fun createCompilerState(
         languageVersionSettings = languageVersionSettings,
         context = sessionFactoryContext,
     )
-
     FirJvmSessionFactory.createLibrarySession(
         sharedLibrarySession,
         moduleDataProvider = moduleDataProvider,
@@ -242,19 +294,5 @@ fun createCompilerState(
         languageVersionSettings = languageVersionSettings,
         context = sessionFactoryContext,
     )
-
-    return K2ScriptingCompilerEnvironmentImpl(
-        scriptCompilationConfiguration,
-        hostConfigurationWithProvider,
-        predefinedJavaComponents,
-        projectEnvironment,
-        moduleDataProvider,
-        messageCollector,
-        compilerContext,
-        packagePartProvider,
-        extensionRegistrars,
-        sharedLibrarySession,
-        dummySessionForAnnotationResolution = null,
-        sessionFactoryContext,
-    )
+    return ScriptingLibrarySessions(projectEnvironment, extensionRegistrars, sessionFactoryContext, sharedLibrarySession)
 }

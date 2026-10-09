@@ -34,6 +34,12 @@ annotation class Import(vararg val paths: String)
 @Retention(AnnotationRetention.SOURCE)
 annotation class CompilerOptions(vararg val options: String)
 
+/** The first argument is a compiler plugin id or jar path; subsequent arguments are plugin options. */
+@Target(AnnotationTarget.FILE)
+@Repeatable
+@Retention(AnnotationRetention.SOURCE)
+annotation class CompilerPlugin(vararg val args: String)
+
 /**
  * Option that configures the name of the variable that will hold a file pointing to the script location.
  * If not specified, {@link [SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME]} will be used as the variable name
