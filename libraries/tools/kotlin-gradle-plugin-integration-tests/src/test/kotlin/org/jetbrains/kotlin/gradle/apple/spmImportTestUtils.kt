@@ -920,7 +920,7 @@ internal fun BuildResult.assertResolvedVersions(
                 )
             )
         },
-        version = 2,
+        version = 3,
     )
 
     assertEquals(expected.sortedPins(), actual.sortedPins().ignoreRevisions())
