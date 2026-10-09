@@ -249,6 +249,18 @@ internal class KaFirSymbolRelationProvider(
             return null
         }
 
+        when (val psi = symbol.realPsi) {
+            null -> {}
+
+            // Library declarations might belong to either a deserialized or a resolvable library session, so only FIR can tell
+            is KtElement -> psi.containingKtFile.takeUnless(KtFile::isCompiled)?.let {
+                return KaFirFileSymbol(it, analysisSession)
+            }
+
+            // Java declarations
+            else -> return null
+        }
+
         val firFileSymbol = symbol.firSymbol.fir.getContainingFile()?.symbol ?: return null
         return firSymbolBuilder.buildFileSymbol(firFileSymbol)
     }
