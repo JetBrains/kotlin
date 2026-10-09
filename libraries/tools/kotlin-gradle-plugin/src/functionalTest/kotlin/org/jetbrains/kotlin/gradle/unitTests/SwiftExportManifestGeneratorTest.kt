@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleS
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.CinteropPackageImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftPackagePlatform
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SPMManifestGenerator
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftPackageModule
+import org.jetbrains.kotlin.konan.target.Family
 import kotlin.test.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -24,7 +26,7 @@ class SwiftExportManifestGeneratorTest {
             swiftApiModule,
             "SharedLibrary",
             "KotlinRuntime",
-            sharedModulesFixture(swiftApiModule)
+            sharedModulesFixture(swiftApiModule).inPackage()
         )
 
         val manifestGold = sharedLibraryManifestGold()
@@ -40,7 +42,7 @@ class SwiftExportManifestGeneratorTest {
             swiftApiModule,
             "SharedLibrary",
             "KotlinRuntime",
-            complicatedModulesFixture(swiftApiModule)
+            complicatedModulesFixture(swiftApiModule).inPackage()
         )
 
         val manifestGold = complicatedManifestGold()
@@ -56,7 +58,7 @@ class SwiftExportManifestGeneratorTest {
             swiftApiModule,
             "SharedLibrary",
             "KotlinRuntime",
-            emptyModulesFixture()
+            emptyModulesFixture().inPackage()
         )
 
         val manifestGold = emptyManifestGold()
@@ -70,7 +72,7 @@ class SwiftExportManifestGeneratorTest {
             "Shared",
             "SharedLibrary",
             "KotlinRuntime",
-            sharedModulesFixture("Shared")
+            sharedModulesFixture("Shared").inPackage()
         )
 
         val expectedManifest = sharedLibraryManifestGold()
@@ -84,7 +86,7 @@ class SwiftExportManifestGeneratorTest {
             "SingleModule",
             "SingleLibrary",
             "KotlinRuntime",
-            singleModuleFixture()
+            singleModuleFixture().inPackage()
         )
 
         val expectedManifest = singleModuleManifestGold()
@@ -100,7 +102,7 @@ class SwiftExportManifestGeneratorTest {
             swiftApiModule,
             "SharedLibrary",
             "KotlinRuntime",
-            sharedModulesFixture(swiftApiModule),
+            sharedModulesFixture(swiftApiModule).inPackage(),
             CinteropPackageImport(
                 path = "/repo/build/kotlin/swiftImport",
                 productName = "KotlinMultiplatformLinkedPackage",
@@ -117,12 +119,59 @@ class SwiftExportManifestGeneratorTest {
             "Shared",
             "SharedLibrary",
             "KotlinRuntime",
-            sharedModulesFixture("Shared"),
+            sharedModulesFixture("Shared").inPackage(),
             kotlinBinaryTarget = "SharedKotlin",
             platforms = listOf(SwiftPackagePlatform("iOS", "18.0"), SwiftPackagePlatform("macOS", "15.0")),
         )
 
         assertEquals(platformsManifestGold(), manifest)
+    }
+
+    @Test
+    fun `test swift export SPM manifest with a dependency limited to a platform`() {
+        val manifest = SPMManifestGenerator.generateManifest(
+            "Shared",
+            "SharedLibrary",
+            "KotlinRuntime",
+            // The platforms come in the order of the manifest, whatever the order of the set.
+            sharedModulesFixture("Shared").inPackage(
+                dependencyPlatforms = mapOf("Shared" to mapOf("Dependency" to setOf(Family.TVOS, Family.IOS)))
+            ),
+        )
+
+        assertEquals(
+            """
+            // swift-tools-version: 5.9
+
+            import PackageDescription
+            let package = Package(
+                name: "Shared",
+                products: [
+                    .library(
+                        name: "SharedLibrary",
+                        targets: ["Shared", "Dependency"]
+                    )
+                ],
+                targets: [
+                    .target(
+                        name: "Shared",
+                        dependencies: [.target(name: "Dependency", condition: .when(platforms: [.iOS, .tvOS])), "SharedBridge", "KotlinRuntime"]
+                    ),
+                    .target(
+                        name: "SharedBridge"
+                    ),
+                    .target(
+                        name: "Dependency",
+                        dependencies: ["KotlinRuntime"]
+                    ),
+                    .target(
+                        name: "KotlinRuntime"
+                    )
+                ]
+            )
+            """.trimIndent() + "\n",
+            manifest,
+        )
     }
 
     private fun platformsManifestGold() = """
@@ -164,6 +213,12 @@ class SwiftExportManifestGeneratorTest {
             ]
         )
     """.trimIndent() + "\n"
+
+    private fun List<GradleSwiftExportModule>.inPackage(
+        dependencyPlatforms: Map<String, Map<String, Set<Family>>> = emptyMap(),
+    ): List<SwiftPackageModule> = map {
+        SwiftPackageModule(it, variants = emptyMap(), dependencyPlatforms = dependencyPlatforms[it.name].orEmpty())
+    }
 
     private fun sharedModulesFixture(swiftApiModule: String): List<GradleSwiftExportModule> = listOf(
         GradleSwiftExportModule.BridgesToKotlin(
