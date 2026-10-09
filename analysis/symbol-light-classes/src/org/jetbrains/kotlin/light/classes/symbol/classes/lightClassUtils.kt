@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.TokenType
 import com.intellij.psi.impl.source.tree.TreeUtil
 import com.intellij.psi.util.PsiUtilCore
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaBuiltinsModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 
 
-context(_: KaSession)
 internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(containingModule: KaModule): Boolean {
     if ((containingModule as? KaDanglingFileModule)?.isCodeFragment == true) {
         // Avoid building light classes for code fragments
@@ -43,7 +41,7 @@ internal fun KaClassSymbol.shouldNotBeVisibleAsLightClass(containingModule: KaMo
     }
 
     val classOrObjectPsi = realPsi as? KtClassOrObject ?: return false
-    if ((containingFile?.realPsi as? KtFile)?.originalFile?.virtualFile == null) return true
+    if (classOrObjectPsi.containingKtFile.originalFile.virtualFile == null) return true
     if (hasParseErrorsAround(classOrObjectPsi) || PsiUtilCore.hasErrorElementChild(classOrObjectPsi)) return true
     return classDeclaredInUnexpectedPosition(classOrObjectPsi)
 }
