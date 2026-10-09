@@ -17,6 +17,4 @@ val swcKotlinBuild = extensions.create<SwcExtension>(
     swcEnvSpec,
 )
 
-with(swcKotlinBuild) {
-    swcEnvSpec.version.set(swcVersion)
-}
+swcEnvSpec.version.set(swcKotlinBuild.swcVersion)
