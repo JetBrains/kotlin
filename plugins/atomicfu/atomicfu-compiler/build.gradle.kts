@@ -61,13 +61,9 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:plugin.api"))
+    // Required to extending 'AbstractAtomicReferenceToPrimitiveCallChecker'.
     compileOnly(project(":compiler:fir:checkers:checkers.common"))
-    compileOnly(project(":compiler:fir:fir2ir"))
-    compileOnly(project(":compiler:fir:entrypoint"))
 
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli-base"))
