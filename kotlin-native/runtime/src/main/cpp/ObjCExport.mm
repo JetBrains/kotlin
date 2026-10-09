@@ -219,12 +219,19 @@ static void forEachCategoryAdapter(const char* className, F&& action) {
   }
 }
 
+static void addMethods(Class clazz, const ObjCToKotlinMethodAdapter* adapters, int adapterNum) {
+  for (int i = 0; i < adapterNum; ++i) {
+    const ObjCToKotlinMethodAdapter* adapter = adapters + i;
+    SEL selector = sel_registerName(adapter->selector);
+    class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
+    // The method above may fail if there is a matching Swift/Obj-C extension method for this Kotlin class.
+    // This is pretty much ok, and we shouldn't replace that method with our own.
+  }
+}
+
 static void addCategoryMethods(Class clazz) {
   forEachCategoryAdapter(class_getName(clazz), [clazz](const ObjCTypeAdapter* adapter) {
-    for (int i = 0; i < adapter->directAdapterNum; ++i) {
-      const ObjCToKotlinMethodAdapter* methodAdapter = adapter->directAdapters + i;
-      class_addMethod(clazz, sel_registerName(methodAdapter->selector), methodAdapter->imp, methodAdapter->encoding);
-    }
+    addMethods(clazz, adapter->directAdapters, adapter->directAdapterNum);
   });
 }
 
@@ -305,20 +312,8 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
 
   addCategoryMethods(clazz);
 
-  for (int i = 0; i < typeAdapter->directAdapterNum; ++i) {
-    const ObjCToKotlinMethodAdapter* adapter = typeAdapter->directAdapters + i;
-    SEL selector = sel_registerName(adapter->selector);
-    class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
-    // The method above may fail if there is a matching Swift/Obj-C extension method for this Kotlin class.
-    // This is pretty much ok, and we shouldn't replace that method with our own.
-  }
-
-  Class metaClazz = object_getClass(clazz);
-  for (int i = 0; i < typeAdapter->classAdapterNum; ++i) {
-    const ObjCToKotlinMethodAdapter* adapter = typeAdapter->classAdapters + i;
-    SEL selector = sel_registerName(adapter->selector);
-    class_addMethod(metaClazz, selector, adapter->imp, adapter->encoding);
-  }
+  addMethods(clazz, typeAdapter->directAdapters, typeAdapter->directAdapterNum);
+  addMethods(object_getClass(clazz), typeAdapter->classAdapters, typeAdapter->classAdapterNum);
 
   if (isClassForPackage) return;
 
@@ -1082,12 +1077,7 @@ static kotlin::ThreadStateAware<kotlin::SpinLock> classCreationMutex;
 static int anonymousClassNextId = 0;
 
 static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) {
-  for (int i = 0; i < typeAdapter->virtualAdapterNum; ++i) {
-    const ObjCToKotlinMethodAdapter* adapter = typeAdapter->virtualAdapters + i;
-    SEL selector = sel_registerName(adapter->selector);
-
-    class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
-  }
+  addMethods(clazz, typeAdapter->virtualAdapters, typeAdapter->virtualAdapterNum);
 }
 
 static Class createClass(const TypeInfo* typeInfo, Class superClass, const TypeInfo* objCSuperType) {
