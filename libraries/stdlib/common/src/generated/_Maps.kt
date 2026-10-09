@@ -673,3 +673,20 @@ public fun <K, V> Map<out K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
     return entries.asSequence()
 }
 
+/**
+ * Splits the original map into a pair of maps,
+ * where *first* map contains elements for which [predicate] yielded `true`,
+ * while *second* map contains elements for which [predicate] yielded `false`.
+ *
+ * @sample samples.collections.Maps.Operations.partition
+ */
+public inline fun <K, V> Map<K, V>.partition(predicate: (Map.Entry<K, V>) -> Boolean): Pair<Map<K, V>, Map<K, V>> {
+    val first = mutableMapOf<K, V>()
+    val second = mutableMapOf<K, V>()
+    forEach {
+        if (predicate(it)) first[it.key] = it.value
+        else second[it.key] = it.value
+    }
+    return Pair(first, second)
+}
+
