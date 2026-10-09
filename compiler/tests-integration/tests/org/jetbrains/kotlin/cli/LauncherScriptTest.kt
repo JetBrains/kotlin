@@ -452,8 +452,8 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
             "$testDataDirectory/helloWorld.kt",
             K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
             environment = mapOf("JAVA_HOME" to KtTestUtil.getJdk11Home().absolutePath),
-            expectedStderr = "warning: running Kotlin compiler using JDK 11 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17 or supplying '-Xallow-pre-17-runtime-jdk' (which will only work until Kotlin 2.5.20-Beta1). See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
-            expectedExitCode = 0,
+            expectedStderr = "error: running Kotlin compiler using JDK 11 will not be supported in future versions of Kotlin. Consider upgrading to at least JDK 17 or supplying '-Xallow-pre-17-runtime-jdk' (which will only work until Kotlin 2.5.20-Beta1). See https://jb.gg/kotlin-compiler-jdk-17-migration for more details.",
+            expectedExitCode = 1,
         )
     }
 
