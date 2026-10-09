@@ -13,12 +13,14 @@ fun localWeak(): WeakReference<Data>  {
 }
 
 @OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun multiWeak(): Array<WeakReference<Data>>  {
     val x = Data("Hello")
     val weaks = Array(100, { WeakReference(x) } )
     weaks.forEach {
         it -> if (it.get()?.s != "Hello") throw Error("bad reference")
     }
+    kotlin.native.internal.keepAlive(x)
     return weaks
 }
 
