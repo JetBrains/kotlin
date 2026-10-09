@@ -9,7 +9,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.isArray
-import org.jetbrains.kotlin.backend.konan.llvm.objcexport.WritableTypeInfoPointer
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.generateWritableTypeInfoForSyntheticInterface
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
 import org.jetbrains.kotlin.backend.konan.lower.hasSyntheticNameToBeHiddenInReflection
@@ -94,7 +93,7 @@ internal class RTTIGenerator(
             relativeName: String?,
             flags: Int,
             classId: Int,
-            writableTypeInfo: WritableTypeInfoPointer?,
+            writableTypeInfo: ConstPointer?,
             associatedObjects: ConstPointer?,
             processObjectInMark: ConstPointer?,
             requiredAlignment: Int,
@@ -199,9 +198,9 @@ internal class RTTIGenerator(
 
         val className = irClass.fqNameForIrSerialization
 
-        val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
+        val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass) as? DefinedClassLlvmDeclarations ?: error(irClass.render())
 
-        val bodyType = llvmDeclarations.bodyType.llvmBodyType
+        val bodyType = llvmDeclarations.body.objectBody.llvmBodyType
 
         val instanceSize = getInstanceSize(bodyType, irClass)
 
@@ -220,7 +219,7 @@ internal class RTTIGenerator(
         val interfacesPtr = staticData.placeGlobalConstArray("kintf:$className",
                 llvm.pointerType, interfaces)
 
-        val objOffsets = getObjOffsets(llvmDeclarations.bodyType)
+        val objOffsets = getObjOffsets(llvmDeclarations.body.objectBody)
 
         val objOffsetsPtr = staticData.placeGlobalConstArray("krefs:$className", llvm.int32Type, objOffsets)
 
@@ -253,13 +252,13 @@ internal class RTTIGenerator(
                 reflectionInfo.relativeName,
                 flagsFromClass(irClass) or reflectionInfo.reflectionFlags,
                 context.getLayoutBuilder(irClass).classId,
-                llvmDeclarations.writableTypeInfoGlobal,
+                llvmDeclarations.writableTypeInfo?.pointer,
                 associatedObjects = genAssociatedObjects(irClass),
                 processObjectInMark = when {
                     irClass.symbol == context.irBuiltIns.arrayClass -> llvm.Kotlin_processArrayInMark.toConstPointer()
-                    else -> genProcessObjectInMark(llvmDeclarations.bodyType)
+                    else -> genProcessObjectInMark(llvmDeclarations.body.objectBody)
                 },
-                requiredAlignment = llvmDeclarations.alignment
+                requiredAlignment = llvmDeclarations.body.alignment
         )
 
         val typeInfoGlobalValue = if (!irClass.typeInfoHasVtableAttached) {
@@ -420,8 +419,8 @@ internal class RTTIGenerator(
             return llvm.nullPointer
 
         val className = irClass.fqNameForIrSerialization.toString()
-        val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass)
-        val bodyType = llvmDeclarations.bodyType.llvmBodyType
+        val llvmDeclarations = generationState.llvmDeclarations.forClass(irClass) as? DefinedClassLlvmDeclarations ?: error(irClass.render())
+        val bodyType = llvmDeclarations.body.llvmBodyType
         val elementType = getElementType(irClass)
 
         val value = if (elementType != null) {
@@ -435,10 +434,10 @@ internal class RTTIGenerator(
         } else {
             class FieldRecord(val offset: Int, val type: Int, val name: String)
 
-            val objectFieldIndices = llvmDeclarations.bodyType.sortedIndicesOfObjectFields.toSet()
+            val objectFieldIndices = llvmDeclarations.body.objectBody.sortedIndicesOfObjectFields.toSet()
 
             val fields = context.getLayoutBuilder(irClass).getFields(llvm).map {
-                val index = llvmDeclarations.fieldIndices[it.irFieldSymbol]!!
+                val index = llvmDeclarations.body.fieldsIndices[it.irFieldSymbol]!!
                 val isObjectType = index in objectFieldIndices
                 FieldRecord(
                         LLVMOffsetOfElement(llvmTargetData, bodyType, index).toInt(),
@@ -559,7 +558,7 @@ internal class RTTIGenerator(
                 relativeName = ReflectionInfo.EMPTY.relativeName,
                 flags = flagsFromClass(irClass) or (if (immutable) TF_IMMUTABLE else 0),
                 classId = typeHierarchyInfo.classIdLo,
-                writableTypeInfo = writableTypeInfo,
+                writableTypeInfo = writableTypeInfo?.pointer,
                 associatedObjects = null,
                 processObjectInMark = genProcessObjectInMark(bodyType),
                 requiredAlignment = runtime.objectAlignment
