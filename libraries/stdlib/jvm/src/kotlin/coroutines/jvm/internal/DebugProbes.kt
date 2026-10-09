@@ -29,8 +29,7 @@ private val debugProbes: DebugProbes? = run {
     If the property is not specified, we disable the mechanics on Android as using Service Loaders on Android can
     have unintended performance effects, especially at startup where this code might run.
      */
-    val isDebugProbesLoadingEnabled = System.getProperty("kotlin.coroutines.jvm.DebugProbes")?.toBooleanStrictOrNull()
-        ?: runCatching { Class.forName("android.os.Build") }.isFailure
+    val isDebugProbesLoadingEnabled = System.getProperty("kotlin.coroutines.jvm.DebugProbes")?.toBooleanStrictOrNull() ?: false
 
     if (isDebugProbesLoadingEnabled) {
         val result = mutableListOf<DebugProbes>()
