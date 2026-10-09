@@ -34,8 +34,8 @@ internal class KTypeSubstitutor(
         // Small optimization
         if (substitution.isEmpty()) return KTypeProjection(variance, type)
 
-        val lowerBound = (type as? AbstractKType)?.lowerBoundIfFlexible()
-        val upperBound = (type as? AbstractKType)?.upperBoundIfFlexible()
+        val lowerBound = (type as AbstractKType).lowerBoundIfFlexible()
+        val upperBound = type.upperBoundIfFlexible()
         if (lowerBound != null && upperBound != null) {
             val substitutedLower = substituteWithoutErasureRecursively(lowerBound, variance).lowerBoundIfFlexible()
             val substitutedUpper = substituteWithoutErasureRecursively(upperBound, variance).upperBoundIfFlexible()
@@ -44,7 +44,12 @@ internal class KTypeSubstitutor(
             return when {
                 substitutedUpperType != null && substitutedLowerType != null -> KTypeProjection(
                     substitutedLower.variance,
-                    createPlatformKType(substitutedLowerType, substitutedUpperType, isRawType = type.isRawType)
+                    createPlatformKType(
+                        substitutedLowerType, substitutedUpperType, type.isRawType,
+                        computeJavaType = if (type.isRawType)
+                            (substitutedLowerType.classifier as? KClass<*>)?.let { lazyOf(it.java) }
+                        else null,
+                    )
                 )
                 else -> KTypeProjection.STAR
             }
@@ -246,7 +251,11 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
             arguments = List(parameters.size) { KTypeProjection.STAR },
             nullable = upperBoundIfFlexible()?.isMarkedNullable ?: isMarkedNullable,
         )
-        return createPlatformKType(lower, upper, isRawType = !replaceArgumentsWithStarProjections)
+        val isRawType = !replaceArgumentsWithStarProjections
+        return createPlatformKType(
+            lower, upper, isRawType,
+            computeJavaType = if (isRawType) (classifier as? KClass<*>)?.let { lazyOf(it.java) } else null,
+        )
     }
 }
 
