@@ -152,6 +152,7 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {
         if (!buildFeatures.isolatedProjects.active.get()) {
+            @Suppress("DEPRECATION")
             nodejs()
         }
         // cast is necessary because of KT-85971
