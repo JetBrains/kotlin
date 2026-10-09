@@ -81,7 +81,7 @@ tasks.withType<Test>().configureEach {
         }
 
         for (testSubset in subsets.get()) {
-            println("##teamcity[addBuildTag '$testSubset']")
+            println("##teamcity[addBuildTag '${testSubset.toEmoji()}']")
         }
 
         // Exclude nightly tests if not specifically running in 'nightly' mode

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.testFederation.TestFederationInferAffectedDomainsTask
+import org.jetbrains.kotlin.testFederation.TestFederationResolveModelTask
 
 buildscript {
     /**
@@ -896,3 +897,4 @@ plugins.withType<WasmYarnPlugin> {
 }
 
 tasks.register<TestFederationInferAffectedDomainsTask>("inferAffectedDomains")
+tasks.register<TestFederationResolveModelTask>("resolveTestFederationModel")
