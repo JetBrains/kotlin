@@ -704,6 +704,8 @@ abstract interface <#A: kotlin/Any?> kotlin.collections/MutableList : kotlin.col
     abstract fun retainAll(kotlin.collections/Collection<#A>): kotlin/Boolean // kotlin.collections/MutableList.retainAll|retainAll(kotlin.collections.Collection<1:0>){}[0]
     abstract fun set(kotlin/Int, #A): #A // kotlin.collections/MutableList.set|set(kotlin.Int;1:0){}[0]
     abstract fun subList(kotlin/Int, kotlin/Int): kotlin.collections/MutableList<#A> // kotlin.collections/MutableList.subList|subList(kotlin.Int;kotlin.Int){}[0]
+    final fun <#A1: kotlin/Any?> of(kotlin/Array<out #A1>...): kotlin.collections/MutableList<#A1> // kotlin.collections/MutableList.of|of#static(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    final inline fun <#A1: kotlin/Any?> of(): kotlin.collections/MutableList<#A1> // kotlin.collections/MutableList.of|of#static(){0§<kotlin.Any?>}[0]
 
     // Targets: [js]
     open fun asJsArrayView(): kotlin.js.collections/JsArray<#A> // kotlin.collections/MutableList.asJsArrayView|asJsArrayView(){}[0]
@@ -730,6 +732,8 @@ abstract interface <#A: kotlin/Any?> kotlin.collections/MutableSet : kotlin.coll
     abstract fun remove(#A): kotlin/Boolean // kotlin.collections/MutableSet.remove|remove(1:0){}[0]
     abstract fun removeAll(kotlin.collections/Collection<#A>): kotlin/Boolean // kotlin.collections/MutableSet.removeAll|removeAll(kotlin.collections.Collection<1:0>){}[0]
     abstract fun retainAll(kotlin.collections/Collection<#A>): kotlin/Boolean // kotlin.collections/MutableSet.retainAll|retainAll(kotlin.collections.Collection<1:0>){}[0]
+    final fun <#A1: kotlin/Any?> of(kotlin/Array<out #A1>...): kotlin.collections/MutableSet<#A1> // kotlin.collections/MutableSet.of|of#static(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    final inline fun <#A1: kotlin/Any?> of(): kotlin.collections/MutableSet<#A1> // kotlin.collections/MutableSet.of|of#static(){0§<kotlin.Any?>}[0]
 
     // Targets: [js]
     open fun asJsSetView(): kotlin.js.collections/JsSet<#A> // kotlin.collections/MutableSet.asJsSetView|asJsSetView(){}[0]
@@ -805,6 +809,9 @@ abstract interface <#A: out kotlin/Any?> kotlin.collections/List : kotlin.collec
     abstract fun listIterator(): kotlin.collections/ListIterator<#A> // kotlin.collections/List.listIterator|listIterator(){}[0]
     abstract fun listIterator(kotlin/Int): kotlin.collections/ListIterator<#A> // kotlin.collections/List.listIterator|listIterator(kotlin.Int){}[0]
     abstract fun subList(kotlin/Int, kotlin/Int): kotlin.collections/List<#A> // kotlin.collections/List.subList|subList(kotlin.Int;kotlin.Int){}[0]
+    final fun <#A1: kotlin/Any?> of(kotlin/Array<out #A1>...): kotlin.collections/List<#A1> // kotlin.collections/List.of|of#static(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    final inline fun <#A1: kotlin/Any?> of(#A1): kotlin.collections/List<#A1> // kotlin.collections/List.of|of#static(0:0){0§<kotlin.Any?>}[0]
+    final inline fun <#A1: kotlin/Any?> of(): kotlin.collections/List<#A1> // kotlin.collections/List.of|of#static(){0§<kotlin.Any?>}[0]
 
     // Targets: [js]
     open fun asJsReadonlyArrayView(): kotlin.js.collections/JsReadonlyArray<#A> // kotlin.collections/List.asJsReadonlyArrayView|asJsReadonlyArrayView(){}[0]
@@ -840,6 +847,9 @@ abstract interface <#A: out kotlin/Any?> kotlin.collections/Set : kotlin.collect
     abstract fun containsAll(kotlin.collections/Collection<#A>): kotlin/Boolean // kotlin.collections/Set.containsAll|containsAll(kotlin.collections.Collection<1:0>){}[0]
     abstract fun isEmpty(): kotlin/Boolean // kotlin.collections/Set.isEmpty|isEmpty(){}[0]
     abstract fun iterator(): kotlin.collections/Iterator<#A> // kotlin.collections/Set.iterator|iterator(){}[0]
+    final fun <#A1: kotlin/Any?> of(kotlin/Array<out #A1>...): kotlin.collections/Set<#A1> // kotlin.collections/Set.of|of#static(kotlin.Array<out|0:0>...){0§<kotlin.Any?>}[0]
+    final inline fun <#A1: kotlin/Any?> of(#A1): kotlin.collections/Set<#A1> // kotlin.collections/Set.of|of#static(0:0){0§<kotlin.Any?>}[0]
+    final inline fun <#A1: kotlin/Any?> of(): kotlin.collections/Set<#A1> // kotlin.collections/Set.of|of#static(){0§<kotlin.Any?>}[0]
 
     // Targets: [js]
     open fun asJsReadonlySetView(): kotlin.js.collections/JsReadonlySet<#A> // kotlin.collections/Set.asJsReadonlySetView|asJsReadonlySetView(){}[0]

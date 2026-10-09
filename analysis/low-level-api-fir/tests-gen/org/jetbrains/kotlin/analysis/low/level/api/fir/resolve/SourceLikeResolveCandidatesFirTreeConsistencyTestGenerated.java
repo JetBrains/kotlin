@@ -2378,6 +2378,12 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("mutableSetOperator.kt")
+    public void testMutableSetOperator() {
+      run("mutableSetOperator.kt");
+    }
+
+    @Test
     @TestMetadata("noOf.kt")
     public void testNoOf() {
       run("noOf.kt");

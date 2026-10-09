@@ -749,6 +749,9 @@ KClass: abstract interface kotlin.collections.List : Collection, Any
     public abstract fun kotlin.collections.List<E>.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<E>
     public open <T> fun kotlin.collections.List<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.List<E>.toString(): kotlin.String
+    public final operator inline <E> fun of(): kotlin.collections.List<E>
+    public final operator inline <E> fun of(E): kotlin.collections.List<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.List<E>
     public abstract val kotlin.collections.List<E>.size: kotlin.Int
   declaredMembers:
     public abstract operator fun kotlin.collections.List<E>.contains(E): kotlin.Boolean
@@ -762,7 +765,14 @@ KClass: abstract interface kotlin.collections.List : Collection, Any
     public abstract fun kotlin.collections.List<E>.listIterator(kotlin.Int): kotlin.collections.ListIterator<E>
     public open fun kotlin.collections.List<E>.spliterator(): java.util.Spliterator<E!>
     public abstract fun kotlin.collections.List<E>.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<E>
+    public final operator inline <E> fun of(): kotlin.collections.List<E>
+    public final operator inline <E> fun of(E): kotlin.collections.List<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.List<E>
     public abstract val kotlin.collections.List<E>.size: kotlin.Int
+  staticMembers:
+    public final operator inline <E> fun of(): kotlin.collections.List<E>
+    public final operator inline <E> fun of(E): kotlin.collections.List<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.List<E>
 KClass: abstract interface kotlin.collections.ListIterator : Iterator, Any
   members:
     public open operator fun kotlin.collections.ListIterator<T>.equals(kotlin.Any?): kotlin.Boolean
@@ -901,6 +911,9 @@ KClass: abstract interface kotlin.collections.List : Collection, Any
     public abstract fun kotlin.collections.List<E>.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<E>
     public open <T> fun kotlin.collections.List<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.List<E>.toString(): kotlin.String
+    public final operator inline <E> fun of(): kotlin.collections.List<E>
+    public final operator inline <E> fun of(E): kotlin.collections.List<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.List<E>
     public abstract val kotlin.collections.List<E>.size: kotlin.Int
   declaredMembers:
     public abstract operator fun kotlin.collections.List<E>.contains(E): kotlin.Boolean
@@ -914,7 +927,14 @@ KClass: abstract interface kotlin.collections.List : Collection, Any
     public abstract fun kotlin.collections.List<E>.listIterator(kotlin.Int): kotlin.collections.ListIterator<E>
     public open fun kotlin.collections.List<E>.spliterator(): java.util.Spliterator<E!>
     public abstract fun kotlin.collections.List<E>.subList(kotlin.Int, kotlin.Int): kotlin.collections.List<E>
+    public final operator inline <E> fun of(): kotlin.collections.List<E>
+    public final operator inline <E> fun of(E): kotlin.collections.List<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.List<E>
     public abstract val kotlin.collections.List<E>.size: kotlin.Int
+  staticMembers:
+    public final operator inline <E> fun of(): kotlin.collections.List<E>
+    public final operator inline <E> fun of(E): kotlin.collections.List<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.List<E>
 KClass: abstract interface kotlin.collections.ListIterator : Iterator, Any
   members:
     public open operator fun kotlin.collections.ListIterator<T>.equals(kotlin.Any?): kotlin.Boolean
@@ -984,6 +1004,9 @@ KClass: abstract interface kotlin.collections.Set : Collection, Any
     public open fun kotlin.collections.Set<E>.stream(): java.util.stream.Stream<E>
     public open <T> fun kotlin.collections.Set<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.Set<E>.toString(): kotlin.String
+    public final operator inline <E> fun of(): kotlin.collections.Set<E>
+    public final operator inline <E> fun of(E): kotlin.collections.Set<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.Set<E>
     public abstract val kotlin.collections.Set<E>.size: kotlin.Int
   declaredMembers:
     public abstract operator fun kotlin.collections.Set<E>.contains(E): kotlin.Boolean
@@ -991,7 +1014,14 @@ KClass: abstract interface kotlin.collections.Set : Collection, Any
     public abstract fun kotlin.collections.Set<E>.isEmpty(): kotlin.Boolean
     public abstract operator fun kotlin.collections.Set<E>.iterator(): kotlin.collections.Iterator<E>
     public open fun kotlin.collections.Set<E>.spliterator(): java.util.Spliterator<E!>
+    public final operator inline <E> fun of(): kotlin.collections.Set<E>
+    public final operator inline <E> fun of(E): kotlin.collections.Set<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.Set<E>
     public abstract val kotlin.collections.Set<E>.size: kotlin.Int
+  staticMembers:
+    public final operator inline <E> fun of(): kotlin.collections.Set<E>
+    public final operator inline <E> fun of(E): kotlin.collections.Set<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.Set<E>
 KClass: abstract interface kotlin.collections.Set : Collection, Any
   members:
     public abstract operator fun kotlin.collections.Set<E>.contains(E): kotlin.Boolean
@@ -1006,6 +1036,9 @@ KClass: abstract interface kotlin.collections.Set : Collection, Any
     public open fun kotlin.collections.Set<E>.stream(): java.util.stream.Stream<E>
     public open <T> fun kotlin.collections.Set<E>.toArray(java.util.function.IntFunction<kotlin.Array<(out) T!>!>!): kotlin.Array<(out) T!>! where T : kotlin.Any!
     public open fun kotlin.collections.Set<E>.toString(): kotlin.String
+    public final operator inline <E> fun of(): kotlin.collections.Set<E>
+    public final operator inline <E> fun of(E): kotlin.collections.Set<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.Set<E>
     public abstract val kotlin.collections.Set<E>.size: kotlin.Int
   declaredMembers:
     public abstract operator fun kotlin.collections.Set<E>.contains(E): kotlin.Boolean
@@ -1013,7 +1046,14 @@ KClass: abstract interface kotlin.collections.Set : Collection, Any
     public abstract fun kotlin.collections.Set<E>.isEmpty(): kotlin.Boolean
     public abstract operator fun kotlin.collections.Set<E>.iterator(): kotlin.collections.Iterator<E>
     public open fun kotlin.collections.Set<E>.spliterator(): java.util.Spliterator<E!>
+    public final operator inline <E> fun of(): kotlin.collections.Set<E>
+    public final operator inline <E> fun of(E): kotlin.collections.Set<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.Set<E>
     public abstract val kotlin.collections.Set<E>.size: kotlin.Int
+  staticMembers:
+    public final operator inline <E> fun of(): kotlin.collections.Set<E>
+    public final operator inline <E> fun of(E): kotlin.collections.Set<E>
+    public final operator <E> fun of(kotlin.Array<out E>): kotlin.collections.Set<E>
 KClass: abstract class kotlin.collections.ShortIterator : Iterator, Any
   constructors:
     public final fun `<init>`(): kotlin.collections.ShortIterator

@@ -1,0 +1,13 @@
+KT element: KtValueArgument
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of|<R|kotlin/String|>(vararg(String(a)))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] stdlibMutableSetOperator.kt
+    public final [ResolvedTo(STATUS)] fun accept([ResolvedTo(STATUS)] set: R|kotlin/collections/MutableSet<kotlin/String>|): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        R|/accept|(Q|kotlin/collections/MutableSet|.R|kotlin/collections/MutableSet.of|<R|kotlin/String|>(vararg(String(a))))
+    }

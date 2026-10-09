@@ -2038,6 +2038,12 @@ public abstract interface List<out E> : R|kotlin/collections/Collection<E>| {
 
     public open fun getLast(): R|E|
 
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static inline operator fun <E> of(): R|kotlin/collections/List<E>|
+
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static inline operator fun <E> of(element: R|E|): R|kotlin/collections/List<E>|
+
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static operator fun <E> of(vararg elements: R|kotlin/Array<out E>|): R|kotlin/collections/List<E>|
+
 }
 
 public abstract interface ListIterator<out T> : R|kotlin/collections/Iterator<T>| {
@@ -2240,6 +2246,10 @@ public abstract interface MutableList<E> : R|kotlin/collections/List<E>|, R|kotl
 
     public open override fun getLast(): R|E|
 
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static inline operator fun <E> of(): R|kotlin/collections/MutableList<E>|
+
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static operator fun <E> of(vararg elements: R|kotlin/Array<out E>|): R|kotlin/collections/MutableList<E>|
+
 }
 
 public abstract interface MutableListIterator<T> : R|kotlin/collections/ListIterator<T>|, R|kotlin/collections/MutableIterator<T>| {
@@ -2370,6 +2380,10 @@ public abstract interface MutableSet<E> : R|kotlin/collections/Set<E>|, R|kotlin
 
     public abstract override fun nonExistingMethod(p0: R|E!|): R|kotlin/String!|
 
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static inline operator fun <E> of(): R|kotlin/collections/MutableSet<E>|
+
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static operator fun <E> of(vararg elements: R|kotlin/Array<out E>|): R|kotlin/collections/MutableSet<E>|
+
 }
 
 public abstract interface Set<out E> : R|kotlin/collections/Collection<E>| {
@@ -2391,6 +2405,12 @@ public abstract interface Set<out E> : R|kotlin/collections/Collection<E>| {
     public open fun toString(): R|kotlin/String|
 
     public abstract override fun nonExistingMethod(p0: R|E!|): R|kotlin/String!|
+
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static inline operator fun <E> of(): R|kotlin/collections/Set<E>|
+
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static inline operator fun <E> of(element: R|E|): R|kotlin/collections/Set<E>|
+
+    @R|kotlin/ExperimentalCollectionLiteralsApi|() @R|kotlin/SinceKotlin|(version = String(2.5)) public final static operator fun <E> of(vararg elements: R|kotlin/Array<out E>|): R|kotlin/collections/Set<E>|
 
 }
 

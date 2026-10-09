@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +CompanionBlocks
 
 class NonEmptyList {
     companion object {
@@ -23,8 +24,8 @@ fun test() {
     f0(<!NO_VALUE_FOR_PARAMETER!>[]<!>)
 
     f1([])
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>(<!UNRESOLVED_REFERENCE!>[42]<!>)
-    <!NONE_APPLICABLE!>f1<!>(<!UNRESOLVED_REFERENCE!>[42.0]<!>)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>([42])
+    <!NONE_APPLICABLE!>f1<!>([42.0])
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, objectDeclaration,
