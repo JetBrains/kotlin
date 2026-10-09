@@ -145,6 +145,26 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    @Test
+    fun testSourcePackagePrefixMixedRoots() {
+        initProject(JVM_MOCK_RUNTIME)
+        buildAllModules().assertSuccessful()
+    }
+
+    @Test
+    @BuildToolsApiOnly
+    fun testJavaSourceRootsArgumentsIgnored() {
+        initProject(JVM_MOCK_RUNTIME)
+        val result = buildAllModules()
+        result.assertSuccessful()
+
+        val warnings = result.getMessages(BuildMessage.Kind.WARNING).map { it.messageText }.sorted()
+        val expected = "Argument '-Xjava-source-roots' is passed multiple times:"
+        assertTrue(warnings.first().startsWith(expected)) {
+            "Expected argument to start with: \"$expected\", but got: ${warnings.joinToString(", ")}"
+        }
+    }
+
     private fun k2jsOutput(vararg moduleNames: String): Array<String> {
         val moduleNamesSet = moduleNames.toSet()
         val list = mutableListOf<String>()
