@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonPrimitive
-import org.jetbrains.kotlin.gradle.apple.SwiftPackageDump
 import org.jetbrains.kotlin.gradle.apple.describeSwiftPackage
 import org.jetbrains.kotlin.gradle.apple.dumpSwiftPackage
+import org.jetbrains.kotlin.gradle.apple.targetDependencyPlatforms
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.ProcessRunResult
+import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -141,9 +139,10 @@ class SwiftPackageExportIT : KGPBaseTest() {
                 print(iosArm64Api())
                 """.trimIndent()
             )
-            val macosBuild = consumer.swiftBuild(SwiftDestination.MACOS)
-            assertFalse(macosBuild.isSuccessful, "The consumer built for macOS with the iOS API:\n$macosBuild")
-            assertEquals(listOf("cannot find 'iosArm64Api' in scope"), macosBuild.output.swiftCompilationErrors())
+            consumer.swiftBuild(SwiftDestination.MACOS).assertProcessRunResult {
+                assertFalse(isSuccessful, "The consumer built for macOS with the iOS API")
+                assertEquals(listOf("cannot find 'iosArm64Api' in scope"), output.swiftCompilationErrors())
+            }
 
             build(":exportDebugSwiftPackage") {
                 assertTasksUpToDate(
@@ -431,8 +430,8 @@ class SwiftPackageExportIT : KGPBaseTest() {
 
             val xcframework = projectPath.resolve("package/Debug/SharedKotlin.xcframework")
             assertEquals(setOf("ios-arm64", "ios-arm64_x86_64-simulator"), xcframework.directoryNames())
-            assertEquals(setOf("arm64"), xcframework.resolve("ios-arm64/libSharedKotlin.a").architectures())
-            assertEquals(setOf("arm64", "x86_64"), xcframework.resolve("ios-arm64_x86_64-simulator/libSharedKotlin.a").architectures())
+            assertEquals(setOf("arm64"), machOArchitectures(xcframework.resolve("ios-arm64/libSharedKotlin.a")))
+            assertEquals(setOf("arm64", "x86_64"), machOArchitectures(xcframework.resolve("ios-arm64_x86_64-simulator/libSharedKotlin.a")))
         }
     }
 
@@ -468,23 +467,16 @@ class SwiftPackageExportIT : KGPBaseTest() {
     /** Builds the consumer package at this path for every [SwiftDestination]. */
     private fun Path.assertBuildsForEveryDestination() {
         SwiftDestination.entries.forEach { destination ->
-            val build = swiftBuild(destination)
-            assertTrue(build.isSuccessful, "The consumer of the exported package failed to build for $destination:\n$build")
+            swiftBuild(destination).assertProcessRunResult {
+                assertTrue(isSuccessful, "The consumer of the exported package failed to build for $destination")
+            }
         }
     }
-
-    /** The target dependencies of [target], with the platforms a condition limits each one to. */
-    private fun SwiftPackageDump.targetDependencyPlatforms(target: String): Map<String, List<String>?> =
-        targets.single { it.name == target }.dependencies.mapNotNull { dependency ->
-            val entry = dependency.target ?: dependency.byName ?: return@mapNotNull null
-            val platforms = (entry.getOrNull(1) as? JsonObject)?.get("platformNames")?.jsonArray?.map { it.jsonPrimitive.content }
-            entry[0].jsonPrimitive.content to platforms
-        }.toMap()
 
     /** Builds the Swift package at this path for [destination], in a scratch directory of its own. */
     private fun Path.swiftBuild(destination: SwiftDestination): ProcessRunResult {
         val sdk = runProcess(listOf("xcrun", "--sdk", destination.sdk, "--show-sdk-path"), toFile())
-            .also { assertTrue(it.isSuccessful, it.toString()) }
+            .also { it.assertProcessRunResult { assertTrue(isSuccessful, "No SDK path for ${destination.sdk}") } }
             .output.trim()
         return runProcess(
             listOf("swift", "build", "--triple", destination.triple, "--sdk", sdk, "--scratch-path", ".build-${destination.sdk}"),
@@ -495,13 +487,6 @@ class SwiftPackageExportIT : KGPBaseTest() {
     /** The messages of the Swift compilation errors in a `swift build` output, which colours them. */
     private fun String.swiftCompilationErrors(): List<String> = replace(ansiEscape, "")
         .lineSequence().mapNotNull { swiftError.find(it)?.groupValues?.get(1) }.distinct().toList()
-
-    /** The architectures of a static library, as `lipo` lists them. */
-    private fun Path.architectures(): Set<String> {
-        val lipo = runProcess(listOf("lipo", "-archs", toString()), parent.toFile())
-        assertTrue(lipo.isSuccessful, lipo.toString())
-        return lipo.output.trim().split(" ").toSet()
-    }
 
     private fun Path.directoryNames(): Set<String> = listDirectoryEntries().filter { it.isDirectory() }.map { it.name }.toSet()
 

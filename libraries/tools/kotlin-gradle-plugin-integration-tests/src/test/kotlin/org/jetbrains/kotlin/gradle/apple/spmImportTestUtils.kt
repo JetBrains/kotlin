@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.apple
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
@@ -1322,6 +1325,14 @@ data class SwiftPackageDumpUnsafeFlags(
 fun dumpSwiftPackage(packagePath: Path): SwiftPackageDump {
     return runAppleToolCommand(packagePath, listOf("swift", "package", "dump-package"))
 }
+
+/** The target dependencies of [target], with the platforms a condition limits each one to. */
+fun SwiftPackageDump.targetDependencyPlatforms(target: String): Map<String, List<String>?> =
+    targets.single { it.name == target }.dependencies.mapNotNull { dependency ->
+        val entry = dependency.target ?: dependency.byName ?: return@mapNotNull null
+        val platforms = (entry.getOrNull(1) as? JsonObject)?.get("platformNames")?.jsonArray?.map { it.jsonPrimitive.content }
+        entry[0].jsonPrimitive.content to platforms
+    }.toMap()
 
 // region xcodebuild PIF dump DTOs
 
