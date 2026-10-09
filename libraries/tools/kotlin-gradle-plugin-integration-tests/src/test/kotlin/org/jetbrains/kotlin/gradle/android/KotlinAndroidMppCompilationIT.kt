@@ -32,7 +32,6 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
                 .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
@@ -112,7 +111,6 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion)
                 // `resolveAllConfigurations` task is not compatible with CC and isolated projects
                 .disableIsolatedProjects(),
             buildJdk = jdkVersion.location
@@ -189,7 +187,7 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
 
             val groupDir = subProject("lib").projectPath.resolve("build/repo/com/example")
 
-            build("publish", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+            build("publish") {
                 // Also check that custom user-specified attributes are written in all Android modules metadata:
                 assertFileContains(
                     groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.module"),
@@ -289,7 +287,6 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
             build(
                 ":compileDebugUnitTestKotlinAndroid",
                 ":compileReleaseUnitTestKotlinAndroid",
-                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion),
             ) {
                 assertTasksExecuted(
                     ":compileDebugKotlinAndroid",
@@ -319,7 +316,6 @@ class KotlinAndroidMppCompilationIT : KGPBaseTest() {
             "new-mpp-android", gradleVersion,
             defaultBuildOptions
                 .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
                 .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location

@@ -561,9 +561,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name).isInstance(
                         project.extensions.getByName("android")
                     )
-                }.buildAndReturn(
-                    deriveBuildOptions = { buildOptions.suppressAgpWarningIsProperty(gradleVersion) }
-                ),
+                }.buildAndReturn(),
                 "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
             )
         }

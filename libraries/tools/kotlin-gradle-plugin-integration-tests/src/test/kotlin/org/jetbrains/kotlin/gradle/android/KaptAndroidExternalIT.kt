@@ -54,8 +54,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         project(
             "android-dbflow".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 setOf("https://jitpack.io")
@@ -82,8 +81,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
             "android-realm".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion"))
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
             buildJdk = jdkVersion.location,
         ) {
             build("assembleDebug") {
@@ -111,8 +109,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         project(
             "android-databinding".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
         ) {
             // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
@@ -150,7 +147,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
         project(
             "androidx-navigation-safe-args".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             val safeArgsVersion = "2.5.3"
@@ -172,8 +169,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
             "android-databinding-androidX".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("kaptDebugKotlin") {
@@ -193,8 +189,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
             "mpp-android-kapt".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
             buildJdk = jdkVersion.location
         ) {
             build(":shared:compileDebugKotlinAndroid") {

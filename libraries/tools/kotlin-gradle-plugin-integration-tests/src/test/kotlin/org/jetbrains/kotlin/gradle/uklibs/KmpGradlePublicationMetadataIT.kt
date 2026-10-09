@@ -145,7 +145,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
                     publishLibraryVariants("debug", "release")
                 }
             }
-        }.publish(deriveBuildOptions = { buildOptions.suppressAgpWarningIsProperty(gradleVersion) })
+        }.publish()
         assertEquals(
             GradleMetadata(
                 variants = rootVariantsSharedByAllPublications

@@ -311,8 +311,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         ) {
             build(
                 "clean",
-                ":mylibrary:assembleDebug",
-                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)
+                ":mylibrary:assembleDebug"
             )
 
             subProject("baseLibrary")
