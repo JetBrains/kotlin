@@ -1,12 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTIC_ARGUMENTS
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// ALLOW_KOTLIN_PACKAGE
-// FILE: RichError.kt
-package kotlin
-
-abstract class RichError
-// FILE: test.kt
 error class Foo
 
 fun test(x: String | Foo, y: String? | Foo, z: String?) {

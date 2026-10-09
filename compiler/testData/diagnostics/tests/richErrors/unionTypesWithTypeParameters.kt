@@ -1,11 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
-// ALLOW_KOTLIN_PACKAGE
-// FILE: RichError.kt
-package kotlin
-
-abstract class RichError
-// FILE: test.kt
 error class Foo
 
 typealias TA = RichError
