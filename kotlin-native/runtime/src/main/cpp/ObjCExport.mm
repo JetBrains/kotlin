@@ -925,12 +925,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     }
   };
 
-  // Compiler relies on using reverse adapters here from all supertypes
-  // in [ObjCExportCodeGenerator.createReverseAdapters].
-  for (const TypeInfo* t : supers) {
-    const ObjCTypeAdapter* typeAdapter = getTypeAdapter(t);
-    if (typeAdapter == nullptr) continue;
-
+  auto applyReverseAdapters = [&](const TypeInfo* t, const ObjCTypeAdapter* typeAdapter) {
     for (int i = 0; i < typeAdapter->reverseAdapterNum; ++i) {
       const KotlinToObjCMethodAdapter* adapter = &typeAdapter->reverseAdapters[i];
       // Swift Export subclasses patch unconditionally — Swift dynamic dispatch
@@ -946,6 +941,15 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       if (adapter->itableIndex != -1 && superITable != nullptr)
         addToITable(adapter->interfaceId, adapter->itableIndex, adapter->kotlinImpl);
     }
+  };
+
+  // Compiler relies on using reverse adapters here from all supertypes
+  // in [ObjCExportCodeGenerator.createReverseAdapters].
+  for (const TypeInfo* t : supers) {
+    const ObjCTypeAdapter* typeAdapter = getTypeAdapter(t);
+    if (typeAdapter == nullptr) continue;
+
+    applyReverseAdapters(t, typeAdapter);
   }
 
   for (const TypeInfo* t = superType; t != nullptr; t = t->superType_) {
@@ -953,13 +957,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     if (typeAdapter == nullptr) continue;
 
     forEachCategoryAdapter(typeAdapter->objCName, [&](const ObjCTypeAdapter* categoryAdapter) {
-      for (int i = 0; i < categoryAdapter->reverseAdapterNum; ++i) {
-        const KotlinToObjCMethodAdapter* adapter = &categoryAdapter->reverseAdapters[i];
-        if ((!isSwiftExportSubclass || t == theAnyTypeInfo) &&
-            definedSelectors.find(sel_registerName(adapter->selector)) == definedSelectors.end()) continue;
-
-        throwIfCantBeOverridden(clazz, adapter);
-      }
+      applyReverseAdapters(t, categoryAdapter);
     });
   }
 
