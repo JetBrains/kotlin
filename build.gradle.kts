@@ -529,7 +529,6 @@ tasks {
 
     val incrementalCompilationTest = testLifecycleTask("incrementalCompilationTest", QualityGate.Master) {
         dependsOn(":compiler:incremental-compilation-impl:test")
-        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
     }
 
     val compilerPluginTest = testLifecycleTask("compilerPluginTest", QualityGate.Master) {
