@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 /*
  * Swift Export runs for every Kotlin target, and the Swift API of two targets can differ. A Swift package has
  * one copy of its sources, so a file that differs is combined: the output of each target goes into a
- * conditional compilation branch for the destination of that target.
+ * conditional compilation branch for the destination of that target. A module that only some targets export
+ * is combined the same way, so it compiles to an empty module on the other destinations.
  */
 
 internal enum class SwiftPackageSourceLanguage {
@@ -84,19 +85,20 @@ internal class SwiftExportSourceVariant(val target: KonanTarget, val content: St
 
 /**
  * Combines the [variants] of a generated file into one file. Targets with the same content share a branch,
- * and content that is the same for every target is returned as it is.
+ * and content that is the same for all [packageTargets] is returned unchanged.
  *
  * A branch has the whole file with its imports, because an import can be platform specific as well.
  */
 internal fun combineSwiftExportSources(
     variants: List<SwiftExportSourceVariant>,
     language: SwiftPackageSourceLanguage,
+    packageTargets: Set<KonanTarget> = variants.map { it.target }.toSet(),
 ): String {
     require(variants.isNotEmpty()) { "Nothing to combine" }
 
-    val targetsByContent = LinkedHashMap<String, MutableList<KonanTarget>>()
-    variants.forEach { variant -> targetsByContent.getOrPut(variant.content) { mutableListOf() }.add(variant.target) }
-    if (targetsByContent.size == 1) return variants.first().content
+    val targetsByContent = LinkedHashMap<String, MutableSet<KonanTarget>>()
+    variants.forEach { variant -> targetsByContent.getOrPut(variant.content) { linkedSetOf() }.add(variant.target) }
+    if (targetsByContent.values.singleOrNull() == packageTargets) return variants.first().content
 
     val nextBranch = when (language) {
         SwiftPackageSourceLanguage.SWIFT -> "#elseif"
@@ -115,68 +117,72 @@ internal fun combineSwiftExportSources(
             appendLine(content.trimEnd('\n'))
         }
         // No #else: a destination no target is built for has no XCFramework slice, and SwiftPM refuses it before
-        // compiling anything.
+        // compiling anything. A target that doesn't export the module gets no branch, so the file is empty there.
         appendLine("#endif")
     }
 }
 
 /**
- * The Swift [modules] of [target], which has [targetName] in the build script.
+ * The Swift [modules] of [target].
  */
 internal class SwiftExportTargetModules(
-    val targetName: String,
     val target: KonanTarget,
     val modules: List<GradleSwiftExportModule>,
 )
 
 /**
- * What has to be the same for every target. Combining targets with different Swift modules is not supported.
+ * A module of the Swift package combined from several targets.
  */
-private data class SwiftModuleShape(val isBridged: Boolean, val bridgeName: String?, val dependencies: Set<String>)
+internal class SwiftPackageModule(
+    /** The module from the first target that exports it, with the dependencies it has on any target. */
+    val module: GradleSwiftExportModule,
+    /** The module from each target that exports it. Empty in the Xcode flow, which copies the sources as they are. */
+    val variants: Map<KonanTarget, GradleSwiftExportModule>,
+    /** The Apple families each platform-specific dependency is limited to. */
+    val dependencyPlatforms: Map<String, Set<Family>>,
+)
 
-private fun SwiftExportTargetModules.shapes(): Map<String, SwiftModuleShape> = modules.associate { module ->
-    module.name to SwiftModuleShape(
-        isBridged = module is GradleSwiftExportModule.BridgesToKotlin,
-        bridgeName = (module as? GradleSwiftExportModule.BridgesToKotlin)?.bridgeName,
-        dependencies = module.dependencies.toSortedSet(),
+/**
+ * Combines the modules of [targets]: every module that any target exports, with the dependencies it has on any
+ * target. Any target's copy of a module can serve as the base, because its kind and bridge name depend only on
+ * the module name and the project's bridge prefix.
+ */
+internal fun combineSwiftExportModules(targets: List<SwiftExportTargetModules>): List<SwiftPackageModule> =
+    targets.flatMap { target -> target.modules.map { it.name } }
+        .distinct()
+        .map { name -> combineVariants(targets.variantsOf(name)) }
+
+/**
+ * The module named [name] for every target that exports it.
+ */
+private fun List<SwiftExportTargetModules>.variantsOf(name: String): Map<KonanTarget, GradleSwiftExportModule> =
+    mapNotNull { target -> target.modules.find { it.name == name }?.let { target.target to it } }.toMap()
+
+private fun combineVariants(variants: Map<KonanTarget, GradleSwiftExportModule>): SwiftPackageModule {
+    val dependencies = variants.values.flatMap { it.dependencies }.distinct().sorted()
+    return SwiftPackageModule(
+        module = variants.values.first().withDependencies(dependencies),
+        variants = variants,
+        dependencyPlatforms = dependencies.mapNotNull { dependency ->
+            variants.platformsDependingOn(dependency)?.let { dependency to it }
+        }.toMap(),
     )
 }
 
 /**
- * Two targets with different Swift modules, by their names in the build script.
+ * The Apple families to limit [dependency] to, or null if it needs no condition. Only the targets that export the
+ * module count, as the module is empty on the others.
  */
-internal data class SwiftExportModuleGraphMismatch(
-    val referenceTarget: String,
-    val otherTarget: String,
-    val differences: List<String>,
-)
+private fun Map<KonanTarget, GradleSwiftExportModule>.platformsDependingOn(dependency: String): Set<Family>? {
+    val (depending, others) = keys.partition { dependency in getValue(it).dependencies }
+    if (others.isEmpty()) return null
+    val families = depending.map { it.family }.toSet()
+    // A condition covers a whole platform, device and simulator alike, so the dependency stays unconditional.
+    if (others.any { it.family in families }) return null
+    return families
+}
 
-/**
- * Compares the modules of [targets] with the modules of the first one. Returns the first difference found.
- */
-internal fun findSwiftExportModuleGraphMismatch(targets: List<SwiftExportTargetModules>): SwiftExportModuleGraphMismatch? {
-    val reference = targets.firstOrNull() ?: return null
-    val referenceShapes = reference.shapes()
-
-    for (other in targets.drop(1)) {
-        val otherShapes = other.shapes()
-        if (otherShapes == referenceShapes) continue
-
-        val differences = (referenceShapes.keys + otherShapes.keys).sorted().mapNotNull { name ->
-            val expected = referenceShapes[name]
-            val actual = otherShapes[name]
-            when {
-                expected == actual -> null
-                actual == null -> "$name: only for ${reference.targetName}"
-                expected == null -> "$name: only for ${other.targetName}"
-                expected.dependencies != actual.dependencies ->
-                    "$name: depends on ${expected.dependencies} for ${reference.targetName} " +
-                            "and on ${actual.dependencies} for ${other.targetName}"
-                else -> "$name: bridges to Kotlin differently for ${reference.targetName} and ${other.targetName}"
-            }
-        }
-
-        return SwiftExportModuleGraphMismatch(reference.targetName, other.targetName, differences)
-    }
-    return null
+private fun GradleSwiftExportModule.withDependencies(dependencies: List<String>): GradleSwiftExportModule = when (this) {
+    is GradleSwiftExportModule.BridgesToKotlin -> copy(dependencies = dependencies)
+    is GradleSwiftExportModule.SwiftOnly -> copy(dependencies = dependencies)
 }

@@ -2313,10 +2313,6 @@ class ExportExtensionSwiftPackageIntegrationTests {
             listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_SIMULATOR_ARM64, KonanTarget.MACOS_ARM64),
             targetOutputs.map { it.target.get() },
         )
-        assertEquals(
-            listOf("iosArm64", "iosSimulatorArm64", "macosArm64"),
-            targetOutputs.map { it.targetName.get() },
-        )
         assertNull(generateTask.swiftModulesFile.orNull)
         // The headers are only collected for the Xcode integration.
         assertFalse(generateTask.collectIncludes.get())
@@ -2329,7 +2325,7 @@ class ExportExtensionSwiftPackageIntegrationTests {
     }
 
     @Test
-    fun `test the generate task knows the targets by the names they are declared with`() {
+    fun `test the generate task reads the output of targets declared with custom names`() {
         val project = exportDslProject(multiplatform = { iosArm64("phone"); macosArm64("desktop") }) {
             exportExtension.swift {
                 moduleName.set("Shared")
@@ -2340,9 +2336,13 @@ class ExportExtensionSwiftPackageIntegrationTests {
         }
 
         val generateTask = assertIs<GenerateSPMPackageFromSwiftExport>(project.tasks.findByName("generateDebugSwiftPackage"))
+        val swiftExportDirectory = project.layout.buildDirectory.dir("SwiftPackageExport").get().asFile
         assertEquals(
-            listOf("desktop" to KonanTarget.MACOS_ARM64, "phone" to KonanTarget.IOS_ARM64),
-            generateTask.targetOutputs.get().map { it.targetName.get() to it.target.get() },
+            listOf(
+                KonanTarget.MACOS_ARM64 to swiftExportDirectory.resolve("desktop/modules.json"),
+                KonanTarget.IOS_ARM64 to swiftExportDirectory.resolve("phone/modules.json"),
+            ),
+            generateTask.targetOutputs.get().map { it.target.get() to it.swiftModulesFile.locationOnly.get().asFile },
         )
     }
 
