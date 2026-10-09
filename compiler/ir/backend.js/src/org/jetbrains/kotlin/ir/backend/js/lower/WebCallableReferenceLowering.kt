@@ -170,6 +170,15 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
         val LAMBDA_IMPL by IrDeclarationOriginImpl.Regular
         val FUNCTION_REFERENCE_IMPL by IrDeclarationOriginImpl.Regular
         val GENERATED_MEMBER_IN_CALLABLE_REFERENCE by IrDeclarationOriginImpl.Regular
+
+        // Origin of the bridged functions created by WasmCallableReferenceLowering, which hold the
+        // bodies of lambdas or callable references. The function is placed at the top level of the
+        // file, but it semantically belongs to the callable object, so calling it must not run the
+        // lazy initializers of the file's top-level properties (KT-89490). We achieve that by making
+        // this origin not in the `compatibleOrigins` list of top-level declarations specified in
+        // PropertyLazyInitLowering. The function still holds user code, so the origin is listed in
+        // `debugFriendlyOrigins` to keep its debug information.
+        val BRIDGED_CALLABLE_REFERENCE_FUNCTION by IrDeclarationOriginImpl.Regular
     }
 }
 
