@@ -967,16 +967,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testK2JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            buildGradleKts.append(
-                """
-                    rootProject.subprojects.forEach {
-                        it.tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile> {
-                            compilerOptions.languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
-                        }
-                    }
-                """.trimIndent()
-            )
-
             build(":app:compileProductionExecutableKotlinJs")
 
             projectPath.resolve("app/src/jsMain/kotlin/App.kt").modify {
@@ -2343,7 +2333,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                     .readLines()
 
                 var startIndex = 0
-                for ([index, line] in webpackConfig.withIndex()) {
+                for ((index, line) in webpackConfig.withIndex()) {
                     if (line.contains("// source maps")) {
                         startIndex = index + 1
                         break

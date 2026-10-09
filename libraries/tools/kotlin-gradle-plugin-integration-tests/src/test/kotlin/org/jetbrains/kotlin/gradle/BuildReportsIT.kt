@@ -174,7 +174,7 @@ class BuildReportsIT : KGPBaseTest() {
         project: String,
         task: String,
         gradleVersion: GradleVersion,
-        languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
+        languageVersion: String = KotlinVersion.DEFAULT.version, // FIXME(KT-69597): Previously hardcoded to language version 2.0.
         disableIsolatedProjects: Boolean = false,
         freeCompilerArgs: List<String> = listOf(),
         expectedReportLines: List<String> = listOf(),
