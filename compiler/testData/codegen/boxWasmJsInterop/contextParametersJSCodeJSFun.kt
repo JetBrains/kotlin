@@ -1,6 +1,7 @@
 // LANGUAGE: +ContextParameters
 // WITH_STDLIB
 
+@JsModule("a")
 external interface Context {
     fun action(): String
 }

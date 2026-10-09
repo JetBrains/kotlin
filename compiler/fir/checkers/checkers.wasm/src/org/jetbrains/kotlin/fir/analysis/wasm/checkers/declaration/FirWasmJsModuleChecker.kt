@@ -13,12 +13,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsModule
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds.Annotations.JsQualifier
 
 object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
@@ -28,11 +26,26 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
     override fun check(declaration: FirDeclaration) {
         if (declaration is FirFile || !declaration.hasAnnotation(JsModule, context.session)) return
 
-        if (declaration is FirProperty && declaration.isVar) {
+        val isExternal = declaration.symbol.isEffectivelyExternal(context.session)
+
+        if (!context.isTopLevel) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER)
+        }
+
+        // An external interface has no runtime value, unless its companion object is imported from the module.
+        if (context.isTopLevel && isExternal && declaration is FirRegularClass && declaration.isInterface &&
+            declaration.companionObjectSymbol == null
+        ) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE)
+        }
+
+        // A qualified declaration is referenced through its qualifier, so a write lands on a plain JS object.
+        // Without a qualifier the declaration is the default export of the module, which is never writable.
+        if (declaration is FirProperty && declaration.isVar && !isQualified(declaration)) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }
 
-        if (!declaration.symbol.isEffectivelyExternal(context.session)) {
+        if (!isExternal) {
             reporter.reportOn(declaration.source, FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL)
         }
 
@@ -40,4 +53,9 @@ object FirWasmJsModuleChecker : FirBasicDeclarationChecker(MppCheckerKind.Common
             reporter.reportOn(declaration.source, FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED)
         }
     }
+
+    context(context: CheckerContext)
+    private fun isQualified(declaration: FirDeclaration): Boolean =
+        declaration.hasAnnotation(JsQualifier, context.session) ||
+                context.containingFileSymbol.hasAnnotation(JsQualifier, context.session)
 }
