@@ -158,7 +158,7 @@ class NativeDeserializerFacade(
             exportedDependencies = emptySet(),
             partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
             irDiagnosticReporter = irDiagnosticReporter,
-            libraryBeingCached = null,
+            librariesBeingCached = emptyMap(),
             externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
         )
 

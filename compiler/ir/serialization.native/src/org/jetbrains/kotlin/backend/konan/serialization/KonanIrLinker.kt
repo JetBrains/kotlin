@@ -36,7 +36,7 @@ class KonanIrLinker(
     private val exportedDependencies: Set<KotlinLibrary>,
     partialLinkageConfig: PartialLinkageConfig,
     irDiagnosticReporter: IrDiagnosticReporter,
-    private val libraryBeingCached: PartialCacheInfo?,
+    private val librariesBeingCached: Map<KotlinLibrary, PartialCacheInfo>,
     externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
     partialLinkageIssueSink: PartialLinkageIssueSink? = null,
 ) : KotlinIrLinker(configuration, symbolTable) {
@@ -96,10 +96,7 @@ class KonanIrLinker(
             )
         }
         else -> {
-            val deserializationStrategy = when {
-                klib == libraryBeingCached?.klib -> libraryBeingCached.strategy
-                else -> CacheDeserializationStrategy.WholeModule
-            }
+            val deserializationStrategy = librariesBeingCached[klib]?.strategy ?: CacheDeserializationStrategy.WholeModule
             KonanPartialModuleDeserializer(
                 this, moduleFragment, klib, strategyResolver, deserializationStrategy
             )
