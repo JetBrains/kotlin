@@ -9,8 +9,14 @@
 namespace llvm::kotlin {
 class BuildShadowStackPass : public PassInfoMixin<BuildShadowStackPass> {
 public:
+  explicit BuildShadowStackPass(bool ClearDeadSlots = false)
+      : ClearDeadSlots(ClearDeadSlots) {}
+
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &MAM);
 
   static constexpr unsigned GCAddressSpace = 1;
+
+private:
+  bool ClearDeadSlots;
 };
 }

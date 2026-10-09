@@ -278,3 +278,16 @@ loop:
 exit:
   ret void
 }
+
+; CHECK-LABEL: define void @dead_root_not_cleared_by_default()
+; CHECK: store ptr %a, ptr %slot_0
+; CHECK-NOT: store ptr null
+; CHECK: ret void
+define void @dead_root_not_cleared_by_default() #0 {
+entry:
+  %a = call ptr addrspace(1) @alloc_func()
+  call void @safepoint_1()
+  call void @use_func(ptr addrspace(1) %a)
+  call void @safepoint_2()
+  ret void
+}

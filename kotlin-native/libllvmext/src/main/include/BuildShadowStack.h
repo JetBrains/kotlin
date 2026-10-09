@@ -10,7 +10,7 @@
 
 LLVM_C_EXTERN_C_BEGIN
 
-void LLVMKotlinBuildShadowStack(LLVMModuleRef M);
+void LLVMKotlinBuildShadowStack(LLVMModuleRef M, int ClearDeadSlots);
 
 LLVM_C_EXTERN_C_END
 

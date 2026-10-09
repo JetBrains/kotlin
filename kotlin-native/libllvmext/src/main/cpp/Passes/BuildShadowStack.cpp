@@ -1072,7 +1072,8 @@ static bool hasGCAddressSpaceValue(const Function &F) {
   return false;
 }
 
-static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
+static bool buildShadowStack(Function &F, bool ClearDeadSlots,
+                             DominatorTree *DT = nullptr) {
   if (F.isDeclaration() || F.empty())
     return false;
 
@@ -1446,7 +1447,7 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
     }
   }
 
-  if (NumRootSlots > 0 || ReturnSlotPtr) {
+  if (ClearDeadSlots && (NumRootSlots > 0 || ReturnSlotPtr)) {
     unsigned NumRoots = LiveRoots.size();
     SmallVector<unsigned, 16> SlotOfRoot;
     for (Value *V : LiveRoots)
@@ -1760,7 +1761,7 @@ static void inlineFrameHelpers(Module &M) {
   }
 }
 
-static bool buildShadowStackOnModule(Module &M) {
+static bool buildShadowStackOnModule(Module &M, bool ClearDeadSlots) {
   SmallVector<Function *, 32> Definitions;
   for (Function &F : M) {
     if (!F.isDeclaration())
@@ -1769,7 +1770,7 @@ static bool buildShadowStackOnModule(Module &M) {
 
   bool Changed = false;
   for (Function *F : Definitions)
-    Changed |= buildShadowStack(*F);
+    Changed |= buildShadowStack(*F, ClearDeadSlots);
 
   lowerModuleDeclarations(M);
 
@@ -1796,11 +1797,12 @@ static bool buildShadowStackOnModule(Module &M) {
   return Changed;
 }
 
-extern "C" void LLVMKotlinBuildShadowStack(LLVMModuleRef M) {
-  buildShadowStackOnModule(*unwrap(M));
+extern "C" void LLVMKotlinBuildShadowStack(LLVMModuleRef M,
+                                           int ClearDeadSlots) {
+  buildShadowStackOnModule(*unwrap(M), ClearDeadSlots);
 }
 
 PreservedAnalyses BuildShadowStackPass::run(Module &M, ModuleAnalysisManager &) {
-  buildShadowStackOnModule(M);
+  buildShadowStackOnModule(M, ClearDeadSlots);
   return PreservedAnalyses::none();
 }
