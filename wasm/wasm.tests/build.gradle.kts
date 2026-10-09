@@ -402,6 +402,12 @@ projectTests {
             useJUnitPlatform {
                 tags?.let { includeTags(it) }
             }
+            // Wasmtime supports the stack switching proposal only on x86_64 Linux
+            if (currentOsType != OsType(OsName.LINUX, OsArch.X86_64)) {
+                filter {
+                    excludeTestsMatching("org.jetbrains.kotlin.wasm.test.WasmWasiCodegenCoroutinesStackSwitchingTestGenerated*")
+                }
+            }
             setupGradlePropertiesForwarding()
             addAbsoluteDirectoryProperty(layout.buildDirectory, "kotlin.wasm.test.root.out.dir")
             addAbsoluteDirectoryProperty(node.nodeProjectDir, "kotlin.wasm.test.node.dir")
