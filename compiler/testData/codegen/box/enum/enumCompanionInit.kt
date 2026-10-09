@@ -65,12 +65,7 @@ fun box(): String {
     F.foo()
     G.O.foo()
 
-    val expectedResult = when (BACKEND_UNDER_TEST) {
-        // KT-83337 Difference in behavior on nested class initialization
-        "JS_IR", "JS_IR_ES6" -> "E.init(x);E.init(y);E.companion.init;X;Y;F.init(x);F.init(y);F.companion.init;F.foo();X;G.init(x);G.init(y);G.O.init;G.O.foo();X;"
-        else ->                 "E.init(x);E.init(y);E.companion.init;X;Y;F.init(x);F.init(y);F.companion.init;F.foo();X;G.O.init;G.O.foo();X;"
-    }
-    if (result != expectedResult)
+    if (result != "E.init(x);E.init(y);E.companion.init;X;Y;F.init(x);F.init(y);F.companion.init;F.foo();X;G.O.init;G.O.foo();X;")
         return "fail: $result"
 
     return "OK"
