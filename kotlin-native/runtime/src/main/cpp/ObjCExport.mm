@@ -10,6 +10,7 @@
 
 #if KONAN_OBJC_INTEROP
 
+#include <algorithm>
 #include <cstdlib>
 #include <map>
 #import <mutex>
@@ -194,6 +195,9 @@ __attribute__((weak)) int Kotlin_ObjCExport_sortedClassAdaptersNum = 0;
 __attribute__((weak)) const ObjCTypeAdapter** Kotlin_ObjCExport_sortedProtocolAdapters = nullptr;
 __attribute__((weak)) int Kotlin_ObjCExport_sortedProtocolAdaptersNum = 0;
 
+__attribute__((weak)) const ObjCTypeAdapter** Kotlin_ObjCExport_sortedCategoryAdapters = nullptr;
+__attribute__((weak)) int Kotlin_ObjCExport_sortedCategoryAdaptersNum = 0;
+
 __attribute__((weak)) bool Kotlin_ObjCExport_initTypeAdapters = false;
 
 static const ObjCTypeAdapter* findClassAdapter(Class clazz) {
@@ -201,6 +205,34 @@ static const ObjCTypeAdapter* findClassAdapter(Class clazz) {
         Kotlin_ObjCExport_sortedClassAdapters,
         Kotlin_ObjCExport_sortedClassAdaptersNum
   );
+}
+
+template <typename F>
+static void forEachCategoryAdapter(const char* className, F&& action) {
+  const ObjCTypeAdapter** begin = Kotlin_ObjCExport_sortedCategoryAdapters;
+  const ObjCTypeAdapter** end = begin + Kotlin_ObjCExport_sortedCategoryAdaptersNum;
+  auto it = std::lower_bound(begin, end, className, [](const ObjCTypeAdapter* adapter, const char* name) {
+    return strcmp(adapter->objCName, name) < 0;
+  });
+  for (; it != end && strcmp((*it)->objCName, className) == 0; ++it) {
+    action(*it);
+  }
+}
+
+static void addMethods(Class clazz, const ObjCToKotlinMethodAdapter* adapters, int adapterNum) {
+  for (int i = 0; i < adapterNum; ++i) {
+    const ObjCToKotlinMethodAdapter* adapter = adapters + i;
+    SEL selector = sel_registerName(adapter->selector);
+    class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
+    // The method above may fail if there is a matching Swift/Obj-C extension method for this Kotlin class.
+    // This is pretty much ok, and we shouldn't replace that method with our own.
+  }
+}
+
+static void addCategoryMethods(Class clazz) {
+  forEachCategoryAdapter(class_getName(clazz), [clazz](const ObjCTypeAdapter* adapter) {
+    addMethods(clazz, adapter->directAdapters, adapter->directAdapterNum);
+  });
 }
 
 static const ObjCTypeAdapter* findProtocolAdapter(Protocol* prot) {
@@ -278,20 +310,9 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
     setAssociatedTypeInfo(clazz, typeInfo);
   }
 
-  for (int i = 0; i < typeAdapter->directAdapterNum; ++i) {
-    const ObjCToKotlinMethodAdapter* adapter = typeAdapter->directAdapters + i;
-    SEL selector = sel_registerName(adapter->selector);
-    class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
-    // The method above may fail if there is a matching Swift/Obj-C extension method for this Kotlin class.
-    // This is pretty much ok, and we shouldn't replace that method with our own.
-  }
-
-  Class metaClazz = object_getClass(clazz);
-  for (int i = 0; i < typeAdapter->classAdapterNum; ++i) {
-    const ObjCToKotlinMethodAdapter* adapter = typeAdapter->classAdapters + i;
-    SEL selector = sel_registerName(adapter->selector);
-    class_addMethod(metaClazz, selector, adapter->imp, adapter->encoding);
-  }
+  addMethods(clazz, typeAdapter->directAdapters, typeAdapter->directAdapterNum);
+  addMethods(object_getClass(clazz), typeAdapter->classAdapters, typeAdapter->classAdapterNum);
+  addCategoryMethods(clazz);
 
   if (isClassForPackage) return;
 
@@ -904,12 +925,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     }
   };
 
-  // Compiler relies on using reverse adapters here from all supertypes
-  // in [ObjCExportCodeGenerator.createReverseAdapters].
-  for (const TypeInfo* t : supers) {
-    const ObjCTypeAdapter* typeAdapter = getTypeAdapter(t);
-    if (typeAdapter == nullptr) continue;
-
+  auto applyReverseAdapters = [&](const TypeInfo* t, const ObjCTypeAdapter* typeAdapter) {
     for (int i = 0; i < typeAdapter->reverseAdapterNum; ++i) {
       const KotlinToObjCMethodAdapter* adapter = &typeAdapter->reverseAdapters[i];
       // Swift Export subclasses patch unconditionally — Swift dynamic dispatch
@@ -925,6 +941,24 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       if (adapter->itableIndex != -1 && superITable != nullptr)
         addToITable(adapter->interfaceId, adapter->itableIndex, adapter->kotlinImpl);
     }
+  };
+
+  // Compiler relies on using reverse adapters here from all supertypes
+  // in [ObjCExportCodeGenerator.createReverseAdapters].
+  for (const TypeInfo* t : supers) {
+    const ObjCTypeAdapter* typeAdapter = getTypeAdapter(t);
+    if (typeAdapter == nullptr) continue;
+
+    applyReverseAdapters(t, typeAdapter);
+  }
+
+  for (const TypeInfo* t = superType; t != nullptr; t = t->superType_) {
+    const ObjCTypeAdapter* typeAdapter = getTypeAdapter(t);
+    if (typeAdapter == nullptr) continue;
+
+    forEachCategoryAdapter(typeAdapter->objCName, [&](const ObjCTypeAdapter* categoryAdapter) {
+      applyReverseAdapters(t, categoryAdapter);
+    });
   }
 
   // Compiler relies on using reverse adapters here from all supertypes
@@ -1040,12 +1074,7 @@ static kotlin::ThreadStateAware<kotlin::SpinLock> classCreationMutex;
 static int anonymousClassNextId = 0;
 
 static void addVirtualAdapters(Class clazz, const ObjCTypeAdapter* typeAdapter) {
-  for (int i = 0; i < typeAdapter->virtualAdapterNum; ++i) {
-    const ObjCToKotlinMethodAdapter* adapter = typeAdapter->virtualAdapters + i;
-    SEL selector = sel_registerName(adapter->selector);
-
-    class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
-  }
+  addMethods(clazz, typeAdapter->virtualAdapters, typeAdapter->virtualAdapterNum);
 }
 
 static Class createClass(const TypeInfo* typeInfo, Class superClass, const TypeInfo* objCSuperType) {
