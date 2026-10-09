@@ -189,3 +189,20 @@ declare void @kotlin_func() #0
 @exception_type_info = external constant ptr
 
 !0 = !{}
+
+; CHECK-LABEL: define void @untagged_pad_without_roots()
+; CHECK-NOT: alloca
+; CHECK-NOT: EnterFrame
+; CHECK: lpad:
+; CHECK-NOT: LeaveFrame
+; CHECK: resume
+define void @untagged_pad_without_roots() #0 personality ptr @__gxx_personality_v0 {
+entry:
+  invoke void @throwing_call() to label %cont unwind label %lpad
+cont:
+  ret void
+lpad:
+  %lp = landingpad { ptr, i32 } cleanup
+  call void @safepoint_1()
+  resume { ptr, i32 } %lp
+}

@@ -1176,14 +1176,6 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
     report_fatal_error(StringRef(Msg));
   }
 
-  bool HasEHPad = false;
-  for (BasicBlock &BB : F) {
-    if (BB.getLandingPadInst() || isa<ResumeInst>(BB.getTerminator())) {
-      HasEHPad = true;
-      break;
-    }
-  }
-
   SmallSetVector<Value *, 8> PlainRoots;
   DenseMap<Value *, SmallVector<Instruction *, 1>> PlainRootsByBase;
   for (CallInst *CI : ReturnSlotMarkers) {
@@ -1275,7 +1267,7 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
   }
 
   if (LiveRoots.empty() && ReturnSlotMarkers.empty() &&
-      StackObjectMarkers.empty() && !HasEHPad) {
+      StackObjectMarkers.empty() && FrameSetCurrentMarkers.empty()) {
     eraseFrameMarkers();
     Bases.eraseUnused();
     lowerAddressSpaces(F);
