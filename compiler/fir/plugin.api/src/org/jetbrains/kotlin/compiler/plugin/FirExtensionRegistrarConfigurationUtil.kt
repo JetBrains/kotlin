@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
  * all call sites will call the generic-one `getCompilerExtensions` function without any modification.
  */
 @Suppress("unused")
-fun CompilerConfiguration.getCompilerExtensions(descriptor: FirExtensionRegistrar.Companion): List<FirExtensionRegistrar> {
+public fun CompilerConfiguration.getCompilerExtensions(descriptor: FirExtensionRegistrar.Companion): List<FirExtensionRegistrar> {
     val extensions = getCompilerExtensions(FirExtensionRegistrarAdapter)
     @Suppress("UNCHECKED_CAST")
     return extensions as List<FirExtensionRegistrar>
@@ -32,7 +32,7 @@ fun CompilerConfiguration.getCompilerExtensions(descriptor: FirExtensionRegistra
 
 @OptIn(ExperimentalCompilerApi::class)
 context(storage: CompilerPluginRegistrar.ExtensionStorage)
-fun FirExtensionRegistrar.Companion.registerExtension(extension: FirExtensionRegistrar) {
+public fun FirExtensionRegistrar.Companion.registerExtension(extension: FirExtensionRegistrar) {
     with(storage) {
         FirExtensionRegistrarAdapter.Companion.registerExtension(extension)
     }
