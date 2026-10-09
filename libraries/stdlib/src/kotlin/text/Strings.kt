@@ -640,6 +640,28 @@ public fun String.removePrefix(prefix: CharSequence): String {
 }
 
 /**
+ * If this char sequence does not start with the given [prefix], returns a new char sequence
+ * with the prefix added. Otherwise, returns a new char sequence with the same characters.
+ */
+public fun CharSequence.ensurePrefix(prefix: CharSequence): CharSequence {
+    if (!this.startsWith(prefix)) {
+        return prefix.toString() + this.toString()
+    }
+    return subSequence(0, length)
+}
+
+/**
+ * If this string does not start with the given [prefix], returns a copy of this string
+ * with the prefix added. Otherwise, returns this string.
+ */
+public fun String.ensurePrefix(prefix: CharSequence): String {
+    if (!this.startsWith(prefix)) {
+        return prefix.toString() + this
+    }
+    return this
+}
+
+/**
  * If this char sequence ends with the given [suffix], returns a new char sequence
  * with the suffix removed. Otherwise, returns a new char sequence with the same characters.
  */
@@ -657,6 +679,28 @@ public fun CharSequence.removeSuffix(suffix: CharSequence): CharSequence {
 public fun String.removeSuffix(suffix: CharSequence): String {
     if (endsWith(suffix)) {
         return substring(0, length - suffix.length)
+    }
+    return this
+}
+
+/**
+ * If the char sequence not ends with the given [suffix], returns a copy of this string
+ * with the suffix appended. Otherwise, returns a new char sequence with the same characters.
+ */
+public fun CharSequence.ensureSuffix(suffix: CharSequence): CharSequence {
+    if (!endsWith(suffix)) {
+        return this.toString() + suffix.toString()
+    }
+    return subSequence(0, length)
+}
+
+/**
+ * If the string not ends with the given [suffix], returns a copy of this string
+ * with the suffix appended. Otherwise, returns this string.
+ */
+public fun String.ensureSuffix(suffix: CharSequence): String {
+    if (!endsWith(suffix)) {
+        return this + suffix.toString()
     }
     return this
 }
