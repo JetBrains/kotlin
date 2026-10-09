@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 enum class A { V1 }
 
 fun testVariableAssignment_throws(a: A) {

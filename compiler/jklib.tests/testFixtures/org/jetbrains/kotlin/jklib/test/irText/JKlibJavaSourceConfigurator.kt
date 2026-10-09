@@ -36,7 +36,7 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
-        val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives)
+        val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(registeredDirectives, default = TestJdkKind.FULL_JDK_17)
         JvmEnvironmentConfigurator.getJdkHome(jdkKind)?.let { configuration.put(JVMConfigurationKeys.JDK_HOME, it) }
 
         when (jdkKind) {

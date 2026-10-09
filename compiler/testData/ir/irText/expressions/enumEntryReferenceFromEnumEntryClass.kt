@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 enum class MyEnum {
     Z {
         var counter = 0

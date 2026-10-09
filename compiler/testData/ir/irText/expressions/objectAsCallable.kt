@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 object A
 
 enum class En { X }
