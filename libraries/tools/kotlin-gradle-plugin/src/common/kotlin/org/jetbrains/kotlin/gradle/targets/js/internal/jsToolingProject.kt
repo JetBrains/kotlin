@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.web.npm.NpmDependencyCollectionMode
 import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
 
 /**
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
  * Only intended for internal use, to prototype Isolated Projects support.
  */
 internal fun Project.jsToolingProject(): Project {
-    return if (npmSharedProjectsPerProject && isProjectIsolationEnabled) {
+    return if (isConfigurationBasedNpmDependencyCollection || (npmSharedProjectsPerProject && isProjectIsolationEnabled)) {
         this
     } else {
         rootProject
@@ -26,6 +27,13 @@ internal fun Project.jsToolingProject(): Project {
 
 private val Project.npmSharedProjectsPerProject: Boolean
     get() = PropertiesProvider(project).npmSharedDependenciesProjectMode.orNull == "PER-PROJECT"
+
+/**
+ * `true` when transitive npm dependencies come from the `kotlinNpmSharedDependencies`
+ * configurations instead of the root project.
+ */
+private val Project.isConfigurationBasedNpmDependencyCollection: Boolean
+    get() = PropertiesProvider(this).npmDependencyCollectionMode.get() == NpmDependencyCollectionMode.ISOLATED_PROJECTS
 
 /**
  * Check if [project] is the project to use for JS and WasmJS tooling plugins.
