@@ -196,6 +196,10 @@ internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): Externa
     if (isNullish(x)) null else x
 
 @UsedFromCompilerGeneratedCode
+internal fun jsIsUndefinedAdapter(x: ExternalInterfaceType?): Boolean =
+    js("x === undefined")
+
+@UsedFromCompilerGeneratedCode
 internal fun jsToKotlinStringAdapter(x: JsString) = String(x)
 
 
