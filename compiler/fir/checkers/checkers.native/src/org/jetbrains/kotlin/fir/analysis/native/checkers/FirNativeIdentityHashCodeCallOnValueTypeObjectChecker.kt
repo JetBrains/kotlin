@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.checkers.isKotlinValueClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
@@ -51,5 +51,5 @@ internal object FirNativeIdentityHashCodeCallOnValueTypeObjectChecker : FirFunct
     }
 
     context(context: CheckerContext)
-    private fun ConeKotlinType.isValueType(): Boolean = isPrimitiveOrNullablePrimitive || isValueClass(context.session)
+    private fun ConeKotlinType.isValueType(): Boolean = isPrimitiveOrNullablePrimitive || isKotlinValueClass(context.session)
 }
