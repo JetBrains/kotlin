@@ -382,12 +382,7 @@ splitPlainRootInvokeEdges(const SmallSetVector<Value *, 8> &PlainRoots,
     BasicBlock *Normal = II->getNormalDest();
     if (Normal->getSinglePredecessor())
       continue;
-    bool FeedsMerge = llvm::any_of(II->users(), [&](User *U) {
-      auto *Phi = dyn_cast<PHINode>(U);
-      return Phi && Phi->getParent() == Normal;
-    });
-    if (FeedsMerge)
-      SplitEdge(II->getParent(), Normal, &DT);
+    SplitEdge(II->getParent(), Normal, &DT);
   }
 }
 

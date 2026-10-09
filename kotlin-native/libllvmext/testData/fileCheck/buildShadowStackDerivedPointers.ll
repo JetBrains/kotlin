@@ -562,3 +562,36 @@ lpad:
   call void @Kotlin_gc_frameSetCurrent()
   resume { ptr, i32 } %lp
 }
+
+; CHECK-LABEL: define void @return_slot_invoke_into_loop(i32 %n)
+; CHECK: %k = invoke ptr @raw_slot_getter(ptr %slot{{[_0-9]*}})
+; CHECK-NEXT: to label %[[SPLIT:.*]] unwind label %lpad
+; CHECK: [[SPLIT]]:
+; CHECK: loop:
+; CHECK-NEXT: %acc.base = phi ptr [ %a, %[[SPLIT]] ], [ %k, %loop ]
+; CHECK: store ptr %acc.base, ptr %slot_
+define void @return_slot_invoke_into_loop(i32 %n) #0 personality ptr @__gxx_personality_v0 {
+entry:
+  %a = call ptr addrspace(1) @alloc_func()
+  %a.raw = addrspacecast ptr addrspace(1) %a to ptr
+  %a.field = getelementptr i8, ptr %a.raw, i64 16
+  %slot = call ptr @Kotlin_gc_returnSlot()
+  %k = invoke ptr @raw_slot_getter(ptr %slot)
+         to label %loop unwind label %lpad
+loop:
+  %acc = phi ptr [ %a.field, %entry ], [ %field, %loop ]
+  %i = phi i32 [ 0, %entry ], [ %i.next, %loop ]
+  %field = getelementptr i8, ptr %k, i64 16
+  call void @safepoint_1()
+  %i.next = add i32 %i, 1
+  %done = icmp eq i32 %i.next, %n
+  br i1 %done, label %exit, label %loop
+exit:
+  call void @safepoint_1()
+  call void @raw_call(ptr %acc)
+  ret void
+lpad:
+  %lp = landingpad { ptr, i32 } cleanup
+  call void @Kotlin_gc_frameSetCurrent()
+  resume { ptr, i32 } %lp
+}
