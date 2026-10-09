@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.jvm.checkers
 import org.jetbrains.kotlin.config.JDK_VALUE_CLASSES
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.config.isJvmTargetValhallaCompatible
+import org.jetbrains.kotlin.fir.FirPlatformValueClassDeterminer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformValueClassDeterminer
 import org.jetbrains.kotlin.fir.java.jvmTargetProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
