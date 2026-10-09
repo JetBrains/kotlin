@@ -74,8 +74,7 @@ class BinaryJavaClass(
     private var usesValueClassesPreview: Boolean = false
 
     override val isValue: Boolean
-        get() = usesValueClassesPreview &&
-                !isInterface && !isAnnotationType && !isEnum && !isSet(Opcodes.ACC_MODULE) && !isSet(Opcodes.ACC_SUPER)
+        get() = usesValueClassesPreview && !isInterface && !isSet(Opcodes.ACC_MODULE) && !isSet(Opcodes.ACC_SUPER)
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
