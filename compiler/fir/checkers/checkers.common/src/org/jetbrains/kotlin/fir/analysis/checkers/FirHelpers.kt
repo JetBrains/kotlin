@@ -133,7 +133,7 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
     return isSupertypeOf(other, mutableSetOf())
 }
 
-fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
+fun ConeKotlinType.isKotlinValueClass(session: FirSession): Boolean {
     // Value classes have `inline` or `value` modifier in FIR
     return toRegularClassSymbol(session)?.isInlineOrValue == true
 }
@@ -1077,7 +1077,7 @@ inline fun FirElement.requireFeatureSupport(
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
     get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
-        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
+        !it.isPrimitiveOrNullablePrimitive && !it.isKotlinValueClass(context.session)
     }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
