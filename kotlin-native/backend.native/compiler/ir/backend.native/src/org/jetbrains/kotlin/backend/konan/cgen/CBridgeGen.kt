@@ -1542,15 +1542,13 @@ private class ObjCBlockPointerValuePassing(
         }
 
         invokeMethod.body = irBuiltIns.createIrBuilder(invokeMethod.symbol).irBlockBody(startOffset, endOffset) {
-            val blockPointer = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
-                arguments[0] = irGetField(irGet(invokeMethod.parameters[0]), blockHolderField)
-            }
+            val blockHolder = irGetField(irGet(invokeMethod.parameters[0]), blockHolderField)
 
             val arguments = (0 until parameterCount).map { index ->
                 irGet(invokeMethod.parameters[index + 1])
             }
 
-            +irReturn(callBlock(blockPointer, arguments))
+            +irReturn(callBlock(blockHolder, arguments))
         }
 
         stubs.addKotlin(irClass)
@@ -1560,8 +1558,11 @@ private class ObjCBlockPointerValuePassing(
         return constructor
     }
 
-    private fun IrBuilderWithScope.callBlock(blockPtr: IrExpression, arguments: List<IrExpression>): IrExpression {
+    private fun IrBuilderWithScope.callBlock(blockHolder: IrExpression, arguments: List<IrExpression>): IrExpression {
         val callBuilder = KotlinToCCallBuilder(this, stubs, isObjCMethod = false, ForeignExceptionMode.default)
+        val blockPtr = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
+            this.arguments[0] = if (stubs.keepsPassedObjectsAlive) callBuilder.bridgeCallBuilder.keepingAlive(blockHolder) else blockHolder
+        }
 
         val rawBlockPointerParameter =  callBuilder.passThroughBridge(blockPtr, blockPtr.type, CTypes.id)
         val blockVariableName = "block"
