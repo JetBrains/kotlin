@@ -23,10 +23,13 @@ import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.isUnixStaticLib
 import org.jetbrains.kotlin.konan.file.isWindowsStaticLib
 import java.io.BufferedReader
+import java.io.DataInputStream
 import java.io.InputStreamReader
 import kotlin.io.path.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
+import kotlin.io.path.inputStream
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
 import kotlin.io.path.writeLines
@@ -50,6 +53,8 @@ private fun llvmArStaticLibraryCommands(
     objectFiles: List<ObjectFile>,
     libraries: List<String>,
     tempFiles: TempFiles,
+    // Archive format (`--format`); when null, llvm-ar infers it from the first member.
+    format: String? = null,
 ): List<Command> {
     val members = objectFiles + libraries
     // Operation + modifiers:
@@ -68,6 +73,7 @@ private fun llvmArStaticLibraryCommands(
     // (forward-slash Unix paths are unaffected).
     return listOf(Command(llvmAr).apply {
         +"--rsp-quoting=windows"
+        if (format != null) +"--format=$format"
         +operation
         +executable
         +responseFileArg(tempFiles, "ar-members", members)
@@ -230,7 +236,8 @@ class AndroidLinker(targetProperties: AndroidConfigurables)
 class MacOSBasedLinker(targetProperties: AppleConfigurables)
     : LinkerFlags(targetProperties), AppleConfigurables by targetProperties {
 
-    private val libtool = "$absoluteTargetToolchain/bin/libtool"
+    private val llvmAr = "$absoluteLlvmHome/bin/llvm-ar"
+    private val lipo = "$absoluteTargetToolchain/bin/lipo"
     private val linker = "$absoluteTargetToolchain/bin/ld"
     private val strip = "$absoluteTargetToolchain/bin/strip"
     private val dsymutil = "$absoluteTargetToolchain/bin/dsymutil"
@@ -297,7 +304,46 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
         add(sdkVersion)
     }.toList()
 
+    private fun isUniversalBinary(path: String): Boolean {
+        if (!Path(path).exists()) return false // Let the archiver report the missing input.
+        val magic = Path(path).inputStream().use { DataInputStream(it).runCatching { readInt() }.getOrNull() }
+
+        val FAT_MAGIC = 0xCAFEBABE.toInt()
+        val FAT_MAGIC_64 = 0xCAFEBABF.toInt()
+        return magic == FAT_MAGIC || magic == FAT_MAGIC_64
+    }
+
+    private fun hasSliceForArch(universalBinary: String): Boolean =
+        Command(lipo, universalBinary, "-verify_arch", arch).runProcess() == 0
+
     override fun LinkerArguments.finalLinkCommands(): List<Command> {
+        if (kind == LinkerOutputKind.STATIC_LIBRARY) {
+            require(sanitizer == null) {
+                "Sanitizers are unsupported"
+            }
+            // llvm-ar can't look into universal binaries, so extract the slice for the target arch from them first.
+            val thinCommands = mutableListOf<Command>()
+            fun thin(inputs: List<String>) = inputs.mapNotNull { input ->
+                if (!isUniversalBinary(input)) return@mapNotNull input
+                if (!hasSliceForArch(input)) {
+                    // libtool `-arch_only` used to silently skip such inputs, so keep skipping them for compatibility.
+                    System.err.println("warning: $input is a universal binary without the $arch slice, ignoring it")
+                    return@mapNotNull null
+                }
+                // The thin slice keeps the original file name, because
+                // it becomes the archive member name when the input isn't an archive itself (e.g. a dylib).
+                val thinOutput = tempFiles.create("thin-${thinCommands.size}").createDirectories()
+                    .resolve(Path(input).name).absolutePathString()
+                thinCommands += Command(lipo, input, "-thin", arch, "-output", thinOutput)
+                thinOutput
+            }
+
+            val members = thin(objectFiles)
+            val libraries = thin(staticLibraries + dynamicLibraries)
+            return thinCommands +
+                    llvmArStaticLibraryCommands(llvmAr, executable, members, libraries, tempFiles, format = "darwin")
+        }
+
         val staticLibrariesArgs = if (staticLibraries.isEmpty())
             staticLibraries
         else tempFiles.create("libraries").let { librariesListFile ->
@@ -312,20 +358,6 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
             listOf("-filelist", dynamicLibrariesListFile.absolutePathString())
         }
 
-        if (kind == LinkerOutputKind.STATIC_LIBRARY) {
-            require(sanitizer == null) {
-                "Sanitizers are unsupported"
-            }
-            return listOf(Command(libtool).apply {
-                +"-D"
-                +"-static"
-                +listOf("-o", executable)
-                +listOf("-arch_only", arch)
-                +objectFiles
-                +staticLibrariesArgs
-                +dynamicLibrariesArgs
-            })
-        }
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
 
         val result = mutableListOf<Command>()

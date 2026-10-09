@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.isSimulator
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
@@ -15,10 +13,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFramewor
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationDependencyType
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClang
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.createUniversalBinary
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.has32BitPointers
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.lipoCreate
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.universalBinaryArchs
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -80,18 +78,8 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
 
         val image = createUniversal(imageType = includedImageType)
 
-        val emptySource = buildDir.resolve("stub.kt")
-        assert(emptySource.createNewFile())
-
         val klibWithIncludedUniversalBinary = ExistingDependency(
-            compileToLibrary(
-                emptySource,
-                outputDir = buildDir,
-                freeCompilerArgs = TestCompilerArgs(
-                    "-include-binary", image.canonicalPath,
-                ),
-                dependencies = emptyList()
-            ),
+            compileToLibraryIncludeBinaryOnly(image),
             TestCompilationDependencyType.IncludedLibrary,
         )
 
@@ -121,30 +109,13 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
         val emptySource = buildDir.resolve("stub.c")
         assert(emptySource.createNewFile())
 
-        val configurables = testRunSettings.configurables
-
-        val armImage = compileWithArch(
-            inputFile = emptySource,
-            arch = "arm64",
-            imageType = imageType,
-        )
-        val otherImage = compileWithArch(
-            inputFile = emptySource,
-            arch = if (configurables.target.family == Family.OSX || configurables.targetTriple.isSimulator) {
-                "x86_64"
-            } else {
-                // Apple devices SDKs don't support x86_64, but support arm64e.
-                "arm64e"
-            },
-            imageType = imageType,
-        )
-
-        val outputImage = buildDir.resolve("output.a")
-        if (outputImage.exists()) outputImage.delete()
-        return lipoCreate(
-            inputFiles = listOf(armImage, otherImage),
-            outputFile = outputImage,
-        ).assertSuccess().resultingArtifact.libraryFile
+        return createUniversalBinary(universalBinaryArchs, outputFile = buildDir.resolve("output.a")) { arch ->
+            compileWithArch(
+                inputFile = emptySource,
+                arch = arch,
+                imageType = imageType,
+            )
+        }
     }
 
     private fun compileWithArch(
