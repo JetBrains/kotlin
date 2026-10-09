@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
+import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadata
 import org.jetbrains.kotlin.backend.konan.serialization.CacheMetadataSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.ObjCAdapterSerializer
+import org.jetbrains.kotlin.backend.konan.serialization.PartialLinkageIssuesSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.TrivialGettersSerializer
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.runtimeFingerprint
 import org.jetbrains.kotlin.konan.config.cachedLibraryDependenciesFingerprint
+import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.isNativeStdlib
 import java.io.File
@@ -77,6 +80,7 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
         saveEagerInitializedProperties()
         saveTrivialGetters()
         saveObjCAdapters()
+        savePartialLinkageIssues()
     }
 
     private fun saveMetadata() {
@@ -112,5 +116,47 @@ internal class CacheStorage(private val generationState: NativeGenerationState) 
 
     private fun saveObjCAdapters() {
         outputFiles.objCAdaptersFile!!.writeBytes(ObjCAdapterSerializer.serialize(generationState.objCAdapters))
+    }
+
+    /**
+     * Stores the partial linkage issues reported for the code being cached, so that the compilations that reuse
+     * this cache instead of compiling the code once again can report the very same issues (KT-78253).
+     *
+     * An issue may only be stored in the cache of a file that is rebuilt by every change which could resolve that
+     * issue - otherwise the issue would outlive the problem it reports. Hence:
+     * - An issue reported for one of the files being cached is stored in the cache of that very file. Whatever
+     *   fixes such an issue - an edit of the file itself or of a declaration it references - makes that file dirty.
+     * - An issue reported for anything else (e.g. for an inline function of a dependency, whose body is
+     *   deserialized lazily, or for a missing declaration) is stored only if this compilation caches a single file,
+     *   which is then the only code that could have triggered the issue. When several files are cached at once,
+     *   there is no way to tell which of them is responsible: keeping the issue in the caches of all of them would
+     *   make the issue survive in the caches of the innocent files, so it is not stored at all.
+     */
+    private fun savePartialLinkageIssues() {
+        // Note: Empty for a whole-library cache build, in which case the deserialization strategy covers every file.
+        val filePathsBeingCached = generationState.config.configuration.filesToCache
+        val deserializationStrategy = generationState.cacheDeserializationStrategy
+        val moduleName = generationState.context.irLinker
+                .findKonanModuleDeserializer(generationState.config.libraryToCache!!.klib)?.moduleFragment?.name?.asString()
+
+        val issues = generationState.config.partialLinkageIssues.collectResult().filter { issue ->
+            // Different modules may contain the same source path, especially when KLIB paths are relative.
+            val isFromCachedModule = issue.moduleName == moduleName
+            when {
+                // A whole-library cache also owns issues triggered by lazily deserialized dependency code.
+                deserializationStrategy == CacheDeserializationStrategy.WholeModule -> true
+                // The issue is reported for the code that is being cached here.
+                isFromCachedModule && deserializationStrategy?.contains(issue.filePath) == true -> true
+                // The issue belongs to the cache of another file compiled in this very compilation.
+                isFromCachedModule && issue.filePath in filePathsBeingCached -> false
+                // The issue is attributed to none of the files being cached.
+                else -> filePathsBeingCached.size == 1
+            }
+        }
+
+        // Most caches have no issues at all, so don't bother creating a file for them.
+        if (issues.isEmpty()) return
+
+        outputFiles.partialLinkageIssuesFile!!.writeBytes(PartialLinkageIssuesSerializer.serialize(issues))
     }
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.library.deserialize
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
+import org.jetbrains.kotlin.backend.konan.serialization.PartialLinkageIssueCollector
 import org.jetbrains.kotlin.backend.konan.serialization.loadNativeKlibs
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
@@ -485,6 +486,12 @@ class NativeSecondStageCompilationConfig(
     internal val useDebugInfoInNativeLibs = configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
     internal val partialLinkageConfig = configuration.partialLinkageConfig
+
+    /**
+     * Accumulates the partial linkage issues reported during this compilation. When a cache is built, the issues
+     * are stored in it, so that they can be replayed by the compilations that reuse the cached code (see KT-78253).
+     */
+    internal val partialLinkageIssues = PartialLinkageIssueCollector()
 
     internal val additionalCacheFlags by lazy { platformManager.loader(target).additionalCacheFlags }
 
