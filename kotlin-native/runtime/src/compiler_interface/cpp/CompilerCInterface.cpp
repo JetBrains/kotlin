@@ -24,8 +24,10 @@ extern "C" {
 touchType(InitNode);
 
 touchType(TypeInfo)
+touchType(ClassHierarchyIds)
 touchType(ExtendedTypeInfo)
 touchType(InterfaceTableRecord)
+touchType(InterfaceTable)
 touchType(AssociatedObjectTableRecord)
 
 touchType(ObjHeader)
@@ -54,6 +56,7 @@ touchFunction(CheckCurrentFrame)
 touchFunction(LookupInterfaceTableRecord)
 touchFunction(IsSubtype)
 touchFunction(IsSubclassFast)
+touchFunction(IsSubclassFastIndirect)
 touchFunction(Kotlin_Any_getTypeInfo)
 
 touchFunction(ThrowException)

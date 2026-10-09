@@ -83,6 +83,19 @@ struct InterfaceTableRecord {
     VTableElement const* vtable;
 };
 
+// The interface lookup table of a class. Its layout is decided by the compilation that produces the final binary.
+struct InterfaceTable {
+    // The number of records minus one (mask: `records_[interfaceId & size_]`) if they form a perfect hash table keyed by the interface id,
+    // or the negated number of records if they are sorted by the interface id instead.
+    int32_t size_;
+    InterfaceTableRecord const* records_;
+};
+
+struct ClassHierarchyIds {
+    int32_t low_;
+    int32_t high_;
+};
+
 // This struct represents runtime type information and by itself is the compile time
 // constant.
 // When adding a field here do not forget to adjust:
@@ -107,8 +120,7 @@ struct TypeInfo {
     int32_t objOffsetsCount_;
     const TypeInfo* const* implementedInterfaces_;
     int32_t implementedInterfacesCount_;
-    int32_t interfaceTableSize_;
-    InterfaceTableRecord const* interfaceTable_;
+    InterfaceTable const* interfaceTable_;
 
     // String for the fully qualified dot-separated name of the package containing class.
     ObjHeader* packageName_;
@@ -121,8 +133,10 @@ struct TypeInfo {
     // Various flags.
     int32_t flags_;
 
-    // Class id built with the whole class hierarchy taken into account. The details are in ClassLayoutBuilder.
+    // The interval of this class in the class hierarchy, or the id of this interface.
+    // Set only when the whole program was compiled at once; otherwise the interval lives in classHierarchyIds_ instead
     ClassId classId_;
+    ClassHierarchyIds* classHierarchyIds_;
 
 #if KONAN_TYPE_INFO_HAS_WRITABLE_PART
     WritableTypeInfo* writableInfo_;

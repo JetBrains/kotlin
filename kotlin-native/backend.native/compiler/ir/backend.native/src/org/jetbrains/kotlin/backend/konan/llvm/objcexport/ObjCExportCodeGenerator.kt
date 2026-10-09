@@ -1530,7 +1530,7 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
 
     val [itable, itableSize] = when {
         irClass.isInterface -> Pair(emptyList(), context.getLayoutBuilder(irClass).interfaceVTableEntries.size)
-        irClass.isAbstract() -> rttiGenerator.interfaceTableRecords(irClass)
+        irClass.isAbstract() -> rttiGenerator.interfaceTableRecordsForObjCTypeAdapter(irClass)
         else -> Pair(emptyList(), -1)
     }
 

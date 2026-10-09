@@ -163,7 +163,12 @@ private fun CodeGenerator.emitObjCAdapterFromCache(
             reverseAdapters = serialized.reverseBridges.map {
                 KotlinToObjCMethodAdapter(
                         selector = it.selector,
-                        itablePlace = ClassLayoutBuilder.InterfaceTablePlace(it.interfaceId, it.itableSize, it.itableIndex),
+                        itablePlace = ClassLayoutBuilder.InterfaceTablePlace(
+                                irInterface = null,
+                                interfaceId = it.interfaceId,
+                                itableSize = it.itableSize,
+                                methodIndex = it.itableIndex,
+                        ),
                         vtableIndex = it.vtableIndex,
                         kotlinImpl = importCachedFunctionAddress(it.impl),
                 )

@@ -388,6 +388,10 @@ class NativeSecondStageCompilationConfig(
 
     override val loadedKlibs = loadNativeKlibs(configuration, target)
 
+    /** The caches this compilation links against. */
+    val linkedCaches: List<CachedLibraries.Cache>
+        get() = loadedKlibs.all.mapNotNull { cachedLibraries.getLibraryCache(it) }
+
     internal val externalDependenciesFile = configuration.externalDependencies?.let(::Path)
 
     val fullExportedNamePrefix: String

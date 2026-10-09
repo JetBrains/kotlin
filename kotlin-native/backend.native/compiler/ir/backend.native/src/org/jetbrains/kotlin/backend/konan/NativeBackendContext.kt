@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageS
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.llvm.GlobalHierarchyAnalysisResult
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
@@ -137,7 +138,7 @@ internal class NativeBackendContext(
     var objCExportedInterface: ObjCExportedInterface? = null
     var objCExportCodeSpec: ObjCExportCodeSpec? = null
 
-    fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
+    fun hasGlobalHierarchyAnalysis() = ::globalHierarchyAnalysisResult.isInitialized
 
     @OptIn(K1Deprecation::class)
     val stdlibModule

@@ -363,6 +363,8 @@ internal class CodeGeneratorVisitor(
             codegen.objCDataGenerator?.finishModule()
 
             overrideRuntimeGlobals()
+            // has to happen before llvm.used is appended
+            codegen.createGlobalHierarchyStructures()
             appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produceCInterface) {

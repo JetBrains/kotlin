@@ -16,9 +16,10 @@ import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.binaryTypeIsReference
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin
-import org.jetbrains.kotlin.backend.konan.ir.ClassGlobalHierarchyInfo
 import org.jetbrains.kotlin.backend.konan.ir.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.classHierarchyIdsSymbolName
+import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface.interfaceIdSymbolName
 import org.jetbrains.kotlin.backend.konan.isCache
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Native
 import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
@@ -209,19 +210,34 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
 }
 
 internal object VirtualTablesLookup {
-    private fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
-        val interfaceTableSize = load(llvm.int32Type, structGep(runtime.typeInfoType, typeInfo, 9 /* interfaceTableSize_ */))
-        val interfaceTable = load(llvm.pointerType, structGep(runtime.typeInfoType, typeInfo, 10 /* interfaceTable_ */))
+    /**
+     * The id of [irClass] in the interface numbering. Only the compilation that lays the whole hierarchy out
+     * knows it, so everyone else loads it from the global that compilation defines.
+     */
+    private fun FunctionGenerationContext.interfaceIdOf(irClass: IrClass): LLVMValueRef = when {
+        context.hasGlobalHierarchyAnalysis() -> llvm.int32(context.globalHierarchyInterfaceId(irClass))
+        context.hierarchyWillBeLaidOutByFinalLink ->
+            load(llvm.int32Type, importGlobal(irClass.interfaceIdSymbolName, llvm.int32Type))
+        else -> llvm.int32(irClass.backupInterfaceId)
+    }
+
+    private fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: LLVMValueRef): LLVMValueRef {
+        val table = load(llvm.pointerType, structGep(runtime.typeInfoType, typeInfo, 9 /* interfaceTable_ */))
+        val interfaceTableSize = load(llvm.int32Type, structGep(runtime.interfaceTableType, table, 0 /* size_ */))
+        val interfaceTable = load(llvm.pointerType, structGep(runtime.interfaceTableType, table, 1 /* records_ */))
 
         fun fastPath(): LLVMValueRef {
             // The fastest optimistic version.
-            val interfaceTableIndex = and(interfaceTableSize, llvm.int32(interfaceId))
+            val interfaceTableIndex = and(interfaceTableSize, interfaceId)
             return gep(runtime.interfaceTableRecordType, interfaceTable, interfaceTableIndex)
         }
 
-        // See details in ClassLayoutBuilder.
-        return if (context.ghaEnabled()
-                && context.globalHierarchyAnalysisResult.bitsPerColor <= ClassGlobalHierarchyInfo.MAX_BITS_PER_COLOR
+        // Known only where the colouring itself was computed; a cache has to test the shape at run time.
+        val bitsPerColor = if (context.hasGlobalHierarchyAnalysis()) context.globalHierarchyAnalysisResult.bitsPerColor else null
+
+        // See the explanation of the scheme on GlobalHierarchyAnalysis.
+        return if (bitsPerColor != null
+                && bitsPerColor <= MAX_BITS_PER_COLOR
                 && context.config.produce != CompilerOutputKind.FRAMEWORK
         ) {
             // All interface tables are small and no unknown interface inheritance.
@@ -242,7 +258,7 @@ internal object VirtualTablesLookup {
             appendingTo(slowPathBB) {
                 val actualInterfaceTableSize = sub(llvm.kImmInt32Zero, interfaceTableSize) // -interfaceTableSize
                 val slowValue = call(llvm.lookupInterfaceTableRecord,
-                        listOf(interfaceTable, actualInterfaceTableSize, llvm.int32(interfaceId)))
+                        listOf(interfaceTable, actualInterfaceTableSize, interfaceId))
                 br(takeResBB)
                 addPhiIncoming(resultPhi, currentBlock to slowValue)
             }
@@ -250,18 +266,35 @@ internal object VirtualTablesLookup {
         }
     }
 
-    fun FunctionGenerationContext.checkIsSubtype(objTypeInfo: LLVMValueRef, dstClass: IrClass) = if (!context.ghaEnabled()) {
-        call(llvm.isSubtypeFunction, listOf(objTypeInfo, codegen.typeInfoValue(dstClass)))
-    } else {
-        val dstHierarchyInfo = context.getLayoutBuilder(dstClass).hierarchyInfo
-        if (!dstClass.isInterface) {
-            call(llvm.isSubclassFastFunction,
-                    listOf(objTypeInfo, llvm.int32(dstHierarchyInfo.classIdLo), llvm.int32(dstHierarchyInfo.classIdHi)))
-        } else {
+    fun FunctionGenerationContext.checkIsSubtype(objTypeInfo: LLVMValueRef, dstClass: IrClass) = when {
+        // Without the optimizations no hierarchy analysis runs, so there is nothing to be fast about.
+        !context.shouldOptimize() -> call(llvm.isSubtypeFunction, listOf(objTypeInfo, codegen.typeInfoValue(dstClass)))
+
+        dstClass.isInterface -> {
             // Essentially: typeInfo.itable[place(interfaceId)].id == interfaceId
-            val interfaceId = dstHierarchyInfo.interfaceId
+            val interfaceId = interfaceIdOf(dstClass)
             val interfaceTableRecord = getInterfaceTableRecord(objTypeInfo, interfaceId)
-            icmpEq(load(llvm.int32Type, structGep(runtime.interfaceTableRecordType, interfaceTableRecord, 0 /* id */)), llvm.int32(interfaceId))
+            icmpEq(
+                    load(llvm.int32Type, structGep(runtime.interfaceTableRecordType, interfaceTableRecord, 0 /* id */)),
+                    interfaceId
+            )
+        }
+
+        context.hierarchyWillBeLaidOutByFinalLink -> {
+            // Neither interval is known here: the destination's comes from its global, and the object's own
+            // one the runtime reads through the classHierarchyIds_ of its type info.
+            val struct = importGlobal(dstClass.classHierarchyIdsSymbolName, runtime.classHierarchyIdsType)
+            val classIdLo = load(llvm.int32Type, structGep(runtime.classHierarchyIdsType, struct, 0 /* classIdLo */))
+            val classIdHi = load(llvm.int32Type, structGep(runtime.classHierarchyIdsType, struct, 1 /* classIdHi */))
+            call(llvm.isSubclassFastIndirectFunction, listOf(objTypeInfo, classIdLo, classIdHi))
+        }
+
+        else -> {
+            // The whole program is here: the destination's interval is a constant, and the object's own id sits
+            // right in its type info, so the check is a plain range test over one load.
+            val interval = context.globalHierarchyClassIdInterval(dstClass)
+            call(llvm.isSubclassFastFunction,
+                    listOf(objTypeInfo, llvm.int32(interval.classIdLo), llvm.int32(interval.classIdHi)))
         }
     }
 
@@ -291,7 +324,7 @@ internal object VirtualTablesLookup {
             else -> {
                 // Essentially: typeInfo.itable[place(interfaceId)].vtable[method]
                 val itablePlace = layoutBuilder.itablePlace(irFunction)
-                val interfaceTableRecord = getInterfaceTableRecord(typeInfoPtr, itablePlace.interfaceId)
+                val interfaceTableRecord = getInterfaceTableRecord(typeInfoPtr, interfaceIdOf(itablePlace.irInterface!!))
                 val vtable = load(llvm.pointerType, structGep(runtime.interfaceTableRecordType, interfaceTableRecord, 2 /* vtable */))
                 val slot = gep(llvm.pointerType, vtable, llvm.int32(itablePlace.methodIndex))
                 load(llvm.pointerType, slot)
