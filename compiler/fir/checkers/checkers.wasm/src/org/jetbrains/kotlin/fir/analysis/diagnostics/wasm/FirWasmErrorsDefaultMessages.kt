@@ -43,7 +43,7 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN,
-            "Annotation ''{0}'' is only allowed on member functions of declarations annotated with ''kotlin.js.native'' functions.",
+            "Annotation ''{0}'' is only allowed on member functions of external declarations.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(

@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 internal object FirWasmJsNativeInvokeChecker : FirWebCommonAbstractNativeAnnotationChecker(
     WebCommonStandardClassIds.Annotations.JsNativeInvoke,
-    FirWasmErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
+    FirWasmErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN,
+    allowNonMemberExtensions = false,
 ) {
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true

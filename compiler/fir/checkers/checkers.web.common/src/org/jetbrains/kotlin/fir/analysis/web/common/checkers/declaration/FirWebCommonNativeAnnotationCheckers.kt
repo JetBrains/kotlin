@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 abstract class FirWebCommonAbstractNativeAnnotationChecker(
     private val requiredAnnotation: ClassId,
     private val error: KtDiagnosticFactory1<ConeKotlinType>,
+    private val allowNonMemberExtensions: Boolean,
 ) : FirNamedFunctionChecker(MppCheckerKind.Platform) {
 
     context(context: CheckerContext)
@@ -41,7 +42,9 @@ abstract class FirWebCommonAbstractNativeAnnotationChecker(
         val isMember = !context.isTopLevel && declaration.visibility != Visibilities.Local
         val isExtension = declaration.isExtension
 
-        if (isMember && (isExtension || !declaration.symbol.isNativeObject(context.session)) || !isMember && !isExtension) {
+        if (isMember && (isExtension || !declaration.symbol.isNativeObject(context.session)) ||
+            !isMember && (!isExtension || !allowNonMemberExtensions)
+        ) {
             reporter.reportOn(
                 declaration.source,
                 error,
