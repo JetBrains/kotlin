@@ -24,6 +24,8 @@ Note: The IntelliJ Kotlin plugin is in a separate repository (JetBrains/intellij
 ## Common Pitfalls
 
 - Don't modify `*Generated.java` test files directly - regenerate them with `generateTests` Gradle task
+- Generated test runners are frequently written to the gitignored `<module>/build/tests-gen/` directory, not the tracked `tests-gen/`. This isn't just a repo-search (grep/glob over Git content) blind spot — JetBrains MCP search/read tools and JetBrains AI Assistant also can't see or open gitignored files, even given the exact path, so a "no matches" result there is never proof the file doesn't exist. Before concluding a runner "doesn't exist", read [testing.md § Where generated runners land](testing.md#where-generated-runners-land--read-before-searching)
+- Not every task whose name looks like a test runner is JUnit-filterable with `--tests`. Some modules register additional CI-only task names (e.g. `jsTest`/`jsES6Test` in `js/js.tests`, `fastJarFSLongTests` in `compiler`, `aggregateTests`/`nightlyTests` in `compiler/fir/fir2ir`) with `skipInLocalBuild = true`; locally (off TeamCity) these become plain no-op `Task`s, not `Test` tasks, so `--tests` silently fails on them. The real filterable task is normally the module's plain `test` task (e.g. `:js:js.tests:test`) — read [testing.md § Finding the real test task](testing.md#finding-the-real-test-task-vs-decoy-tasks) before assuming a task doesn't support filtering
 
 ## Diagnostic Messages
 
@@ -72,9 +74,14 @@ Use `-q` (quiet) flag to reduce output noise. Example of commands for areas WITH
 # Run FIR compiler tests
 ./gradlew :compiler:fir:fir2ir:test --tests "org.jetbrains.kotlin.test.runners.ir.FirLightTreeJvmIrTextTestGenerated"
 
+# Run JS backend box tests — use the plain `test` task, NOT `jsTest`/`jsES6Test` (those are CI-only decoy tasks locally)
+./gradlew :js:js.tests:test --tests "org.jetbrains.kotlin.js.test.runners.JsCodegenBoxTestGenerated.testSomeTest"
+
 # Update test data files (when format changes)
 ./gradlew :compiler:test --tests "TestClassName" -Pkotlin.test.update.test.data=true --continue
 ```
+
+The first local invocation of JS/Native/Wasm test tasks can take a while to configure the build and provision the JS/Native toolchain (Node.js, D8, klib dependencies, etc.) before any test actually runs — this setup cost is expected and is not a sign that something is broken.
 
 ## Commit Guidelines
 
@@ -86,6 +93,8 @@ Use `-q` (quiet) flag to reduce output noise. Example of commands for areas WITH
 **ALWAYS use JetBrains MCP equivalents instead.**
 
 **Exception:** for paths outside the project (e.g., `~/.claude/`), use standard tools — MCP only works with project-relative paths.
+
+**Exception:** for anything under a gitignored build output directory (e.g. `<module>/build/tests-gen/`, `<module>/build/reports/`), JetBrains MCP tools (`search_file`, `search_text`, `read_file`) — and JetBrains AI Assistant's own file search/reference more generally — will report **no matches / can't find it, even for files that exist**, because they filter out `.gitignore`d paths at the index level, regardless of how exact the path or glob pattern is. Use `Bash` (`find`, `ls`, `cat`) instead, which reads the filesystem directly. See [testing.md § Where generated runners land](testing.md#where-generated-runners-land--read-before-searching).
 
 **NEVER use `execute_terminal_command` tool.**
 **ALWAYS use default `Bash` instead.**
