@@ -440,6 +440,14 @@ KClass: interface kotlin.RequiresOptIn : Annotation, Any
   declaredMembers:
     public final val kotlin.RequiresOptIn.level: kotlin.RequiresOptIn.Level
     public final val kotlin.RequiresOptIn.message: kotlin.String
+KClass: abstract class kotlin.RichError : Any
+  constructors:
+    public final fun `<init>`(): kotlin.RichError
+  members:
+    public open operator fun kotlin.RichError.equals(kotlin.Any?): kotlin.Boolean
+    public open fun kotlin.RichError.hashCode(): kotlin.Int
+    public open fun kotlin.RichError.toString(): kotlin.String
+  declaredMembers:
 KClass: class kotlin.Short.Companion : Any
   members:
     public open operator fun kotlin.Short.Companion.equals(kotlin.Any?): kotlin.Boolean
