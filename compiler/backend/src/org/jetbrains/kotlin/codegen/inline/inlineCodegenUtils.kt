@@ -714,3 +714,8 @@ fun resolveCatchStoreInstruction(insn: AbstractInsnNode): AbstractInsnNode? {
 
     return null
 }
+
+// The minor version of a class version, `0xFFFF` in a class file that uses preview features, is in its upper 16 bits. A regenerated class
+// gets the current compilation's minor version.
+internal fun regeneratedClassVersion(originalVersion: Int, classFileVersion: Int): Int =
+    (classFileVersion and 0xFFFF.inv()) or maxOf(originalVersion and 0xFFFF, classFileVersion and 0xFFFF)

@@ -69,7 +69,7 @@ object FirJvmInlineTargetQualifiedAccessChecker : FirQualifiedAccessExpressionCh
             containerSource.knownJvmBinaryClass
         }
 
-        val inlinedVersion = (binaryClass as? FileBasedKotlinClass)?.classVersion ?: return
+        val inlinedVersion = (binaryClass as? FileBasedKotlinClass)?.classVersion?.major ?: return
         val currentVersion = currentJvmTarget.majorVersion
 
         if (currentVersion < inlinedVersion) {
