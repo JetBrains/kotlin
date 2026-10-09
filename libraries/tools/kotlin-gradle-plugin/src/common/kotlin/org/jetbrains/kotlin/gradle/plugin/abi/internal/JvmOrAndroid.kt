@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 internal fun AbiValidationExtension.finalizeJvmVariant(
     project: Project,
     target: KotlinTarget,
+    abiConfiguration: AbiValidationConfiguration,
 ) {
-    finalizeVariant(project, binariesSource.get(), MAIN_COMPILATION_NAME, target)
+    finalizeVariant(project, binariesSource.get(), MAIN_COMPILATION_NAME, target, abiConfiguration)
 }
 
 
@@ -33,24 +34,24 @@ internal fun AbiValidationExtension.finalizeJvmVariant(
 internal fun AbiValidationExtension.finalizeAndroidVariant(
     project: Project,
     target: KotlinTarget,
+    abiConfiguration: AbiValidationConfiguration,
 ) {
-    finalizeVariant(project, binariesSource.get(), ANDROID_RELEASE_BUILD_TYPE, target)
+    finalizeVariant(project, binariesSource.get(), ANDROID_RELEASE_BUILD_TYPE, target, abiConfiguration)
 }
 
 private fun finalizeVariant(
     project: Project,
     binariesSource: BinariesSource,
     compilationName: String,
-    target: KotlinTarget
+    target: KotlinTarget,
+    abiConfiguration: AbiValidationConfiguration
 ) {
-    val taskSet = AbiValidationTaskSet(project)
-
     val classfiles = project.files()
-    taskSet.addSingleJvmTarget(classfiles)
+    abiConfiguration.addJvmDump(classfiles)
 
     when (binariesSource) {
         BinariesSource.MAVEN_PUBLICATIONS -> {
-            project.analyzeMavenPublicationForJvm(taskSet, classfiles)
+            project.analyzeMavenPublicationForJvm(classfiles)
         }
         BinariesSource.MAIN_COMPILATION -> {
             target.compilations.withCompilationIfExists(compilationName) {
@@ -67,7 +68,7 @@ private fun finalizeVariant(
     }
 }
 
-internal fun Project.analyzeMavenPublicationForJvm(taskSet: AbiValidationTaskSet, classfiles: ConfigurableFileCollection) {
+internal fun Project.analyzeMavenPublicationForJvm(classfiles: ConfigurableFileCollection) {
     val publishingExtension = extensions.findByType(PublishingExtension::class.java)
     if (publishingExtension == null) {
         reportDiagnostic(KotlinToolingDiagnostics.AbiValidationNoPublishPlugin())
@@ -77,8 +78,9 @@ internal fun Project.analyzeMavenPublicationForJvm(taskSet: AbiValidationTaskSet
         if (publication is MavenPublication) {
             publication.artifacts.configureEach { artifact ->
                 if (artifact.classifier == null) {
-                    classfiles.from(artifact.file)
-                    taskSet.addDependencies(artifact.buildDependencies)
+                    classfiles.from(
+                        files(artifact.file).builtBy(artifact.buildDependencies)
+                    )
                 }
             }
         }
