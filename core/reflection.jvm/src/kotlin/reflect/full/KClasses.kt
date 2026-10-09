@@ -138,7 +138,11 @@ val KClass<*>.declaredMemberExtensionFunctions: Collection<KFunction<*>>
 
 /**
  * Returns static properties declared in this class.
- * Only properties representing static fields of Java classes are considered static.
+ *
+ * The following properties are considered static:
+ * - properties representing static fields of Java classes.
+ * - experimental companion block properties (refer to [KEEP-449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md)
+ *   for more details on the experimental "companion blocks" feature).
  */
 @SinceKotlin("1.1")
 val KClass<*>.staticProperties: Collection<KProperty0<*>>
