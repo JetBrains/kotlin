@@ -1,5 +1,5 @@
 // TARGET_BACKEND: NATIVE
-// FREE_COMPILER_ARGS: -Xbinary=lateShadowStack=true
+// FREE_COMPILER_ARGS: -Xbinary=lateShadowStack=true -Xbinary=lateShadowStackClearDeadSlots=true
 @file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, kotlin.experimental.ExperimentalNativeApi::class)
 package gc_stack_roots.tier1_features.f16_f17_runtime_abi
 
