@@ -216,7 +216,7 @@ fun JavaExec.configureJklibCompilation(
 val compileStdlib = tasks.register("compileStdlib", JavaExec::class) {
     val javaToolchains = project.extensions.getByType(JavaToolchainService::class.java)
     javaLauncher.set(javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17))
     })
     configureJklibCompilation(copyMinimalSources, outputKlib)
 
