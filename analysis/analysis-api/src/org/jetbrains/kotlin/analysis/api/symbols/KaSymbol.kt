@@ -353,5 +353,11 @@ public enum class KaSymbolOrigin {
     NATIVE_FORWARD_DECLARATION,
     ;
 
-    public fun isFromJava(): Boolean = this == JAVA_SOURCE || this == JAVA_LIBRARY || this == JAVA_PLUGIN
+    /**
+     * @return true iff a corresponding declaration is declared in Java (source/library/plugin generated)
+     */
+    public fun isFromJava(): Boolean = when (this) {
+        JAVA_SOURCE, JAVA_LIBRARY, JAVA_PLUGIN -> true
+        else -> false
+    }
 }
