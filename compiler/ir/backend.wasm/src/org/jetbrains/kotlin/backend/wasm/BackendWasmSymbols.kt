@@ -52,8 +52,7 @@ class BackendWasmSymbols(
         val isSupportedInterface by CallableIds.isSupportedInterface.functionSymbol()
         val getInterfaceVTable by CallableIds.getInterfaceVTable.functionSymbol()
         val wasmGetInterfaceVTableBodyImpl by CallableIds.wasmGetInterfaceVTableBodyImpl.functionSymbol()
-        // XXX Drop fallback to KFunctionImplNew (now it is older than KFunctionImpl) after bootstrap.
-        val kFunctionImpl: IrClassSymbol = ClassIds.KFunctionImpl.classSymbolOrNull() ?: ClassIds.KFunctionImplNew.classSymbol()
+        val kFunctionImpl: IrClassSymbol = ClassIds.KFunctionImpl.classSymbol()
         val kFunctionErrorImpl: IrClassSymbol = ClassIds.KFunctionErrorImpl.classSymbol()
     }
 
@@ -164,9 +163,6 @@ class BackendWasmSymbols(
     val refCastNull by CallableIds.wasm_ref_cast_null.functionSymbol()
     val callRef by CallableIds.wasm_call_ref.functionSymbol()
     val wasmArrayCopy by CallableIds.wasm_array_copy.functionSymbol()
-    val wasmArrayNewData0 by CallableIds.array_new_data0.functionSymbol()
-    val wasmArrayNewData by CallableIds.array_new_data.functionSymbol()
-    val wasmArrayNewData0CharArray by CallableIds.array_new_data0_char_array.functionSymbolOrNull()
 
     val intToLong by CallableIds.wasm_i64_extend_i32_s.functionSymbol()
 
@@ -445,8 +441,6 @@ private object ClassIds {
     val KClassImpl = "KClassImpl".wasmClassId
     val KClassInterfaceImpl = "KClassInterfaceImpl".wasmClassId
     val KFunctionImpl = "KFunctionImpl".wasmClassId
-    // XXX To be removed after bootstrap.
-    val KFunctionImplNew = "KFunctionImplNew".wasmClassId
     val KFunctionErrorImpl = "KFunctionErrorImpl".wasmClassId
     val WasmLongImmutableArray = "WasmLongImmutableArray".wasmClassId
     val FunctionAdapter = "FunctionAdapter".wasmClassId
@@ -539,9 +533,6 @@ private object CallableIds {
     val wasm_ref_test = "wasm_ref_test".wasmCallableId
     val wasm_ref_cast_null = "wasm_ref_cast_null".wasmCallableId
     val wasm_array_copy = "wasm_array_copy".wasmCallableId
-    val array_new_data0 = "array_new_data0".wasmCallableId
-    val array_new_data = "array_new_data".wasmCallableId
-    val array_new_data0_char_array = "array_new_data0_char_array".wasmCallableId
     val wasm_i64_extend_i32_s = "wasm_i64_extend_i32_s".wasmCallableId
     val rangeCheck = "rangeCheck".wasmCallableId
 
