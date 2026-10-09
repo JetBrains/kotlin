@@ -431,7 +431,11 @@ class FrameworkTest : AbstractNativeSimpleTest() {
             TestKind.STANDALONE_NO_TR, extras, moduleName,
             listOf(testDir.resolve("$testName.kt")),
             TestCompilerArgs("-module-name", moduleName, "-Xbinary=bundleId=$testName"),
-            givenDependencies = setOf(TestModule.Given(receivers.klibFile), TestModule.Given(first.klibFile), TestModule.Given(second.klibFile)),
+            givenDependencies = setOf(
+                TestModule.Given(receivers.klibFile),
+                TestModule.Given(first.klibFile),
+                TestModule.Given(second.klibFile),
+            ),
         )
         testCompilationFactory
             .testCaseToObjCFrameworkCompilation(testCase, testRunSettings, exportedLibraries = listOf(receivers, first, second))
