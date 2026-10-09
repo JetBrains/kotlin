@@ -51,6 +51,8 @@ internal interface KotlinStubs {
 
     val isSwiftExportEnabled: Boolean
 
+    val keepsPassedObjectsAlive: Boolean
+
     fun addKotlin(declaration: IrDeclaration)
     fun getUniqueCName(prefix: String): String
     fun getUniqueKotlinFunctionReferenceClassName(prefix: String): String
@@ -509,7 +511,7 @@ private fun KotlinToCCallBuilder.buildCall(
 }
 
 internal sealed class ObjCCallReceiver {
-    class Regular(val rawPtr: IrExpression) : ObjCCallReceiver()
+    class Regular(val kotlinObject: IrExpression) : ObjCCallReceiver()
     class Retained(val rawPtr: IrExpression) : ObjCCallReceiver()
 }
 
@@ -557,17 +559,27 @@ internal fun KotlinStubs.generateObjCCall(
         null
     }
 
+    fun rawPtrOf(kotlinObject: IrExpression) = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
+        this.arguments[0] = kotlinObject
+    }
+
     val preparedReceiver = if (method.objCConsumesReceiver()) {
         when (receiver) {
             is ObjCCallReceiver.Regular -> irCall(symbols.interopObjCRetain.owner).apply {
-                this.arguments[0] = receiver.rawPtr
+                this.arguments[0] = rawPtrOf(receiver.kotlinObject)
             }
 
             is ObjCCallReceiver.Retained -> receiver.rawPtr
         }
     } else {
         when (receiver) {
-            is ObjCCallReceiver.Regular -> receiver.rawPtr
+            is ObjCCallReceiver.Regular -> rawPtrOf(
+                    if (keepsPassedObjectsAlive) {
+                        callBuilder.bridgeCallBuilder.keepingAlive(receiver.kotlinObject)
+                    } else {
+                        receiver.kotlinObject
+                    }
+            )
 
             is ObjCCallReceiver.Retained -> {
                 // Note: shall not happen: Retained is used only for alloc result currently,
@@ -1036,8 +1048,15 @@ private abstract class SimpleValuePassing : ValuePassing {
     context(_: CDeclarationScope)
     abstract fun cToBridged(expression: String): String
 
+    open val keepsArgumentAlive: Boolean get() = false
+
     override fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression {
-        val bridgeArgument = irBuilder.kotlinToBridged(expression)
+        val argument = if (keepsArgumentAlive && stubs.keepsPassedObjectsAlive) {
+            bridgeCallBuilder.keepingAlive(expression)
+        } else {
+            expression
+        }
+        val bridgeArgument = irBuilder.kotlinToBridged(argument)
         val cBridgeValue = passThroughBridge(bridgeArgument, kotlinBridgeType, cBridgeType).name
         val cValue = context(state) { bridgedToC(cBridgeValue) }
         return CExpression(cValue, cType)
@@ -1243,6 +1262,9 @@ private class ObjCReferenceValuePassing(
         get() = CTypes.voidPtr
     override val cType: CType
         get() = CTypes.voidPtr
+
+    override val keepsArgumentAlive: Boolean
+        get() = !retained
 
     override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression {
         val ptr = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {

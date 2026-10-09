@@ -53,6 +53,7 @@ enum class IntrinsicType {
     INIT_INSTANCE,
     IS_SUBTYPE,
     THE_UNIT_INSTANCE,
+    KEEP_ALIVE,
     // Enums
     ENUM_VALUES,
     ENUM_VALUE_OF,

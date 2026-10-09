@@ -64,6 +64,8 @@ static constexpr const char *KotlinLandingPadMetadataName =
 
 static constexpr const char *StackObjectMarkerName = "Kotlin_gc_stackObject";
 
+static constexpr const char *KeepAliveMarkerName = "Kotlin_gc_keepAlive";
+
 static constexpr const char *KotlinGcFrameAttrName = "kotlin-gc-frame";
 
 struct ValueTypeAccess : GlobalValue {
@@ -159,7 +161,7 @@ static bool isNonSafepointFunction(const Function &F) {
 
   if (Name == ReturnSlotMarkerName || Name == FrameEnterMarkerName ||
       Name == FrameLeaveMarkerName || Name == FrameSetCurrentMarkerName ||
-      Name == StackObjectMarkerName)
+      Name == StackObjectMarkerName || Name == KeepAliveMarkerName)
     return true;
 
   return false;
@@ -1140,6 +1142,8 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
   collectMarkerCalls(F, FrameEnterMarkerName, FrameEnterMarkers);
   collectMarkerCalls(F, FrameLeaveMarkerName, FrameLeaveMarkers);
   collectMarkerCalls(F, FrameSetCurrentMarkerName, FrameSetCurrentMarkers);
+  SmallVector<CallInst *, 4> KeepAliveMarkers;
+  collectMarkerCalls(F, KeepAliveMarkerName, KeepAliveMarkers);
 
   SmallVector<CallInst *, 4> StackObjectMarkers;
   if (Function *Marker = F.getParent()->getFunction(StackObjectMarkerName);
@@ -1163,6 +1167,8 @@ static bool buildShadowStack(Function &F, DominatorTree *DT = nullptr) {
     for (CallInst *CI : FrameSetCurrentMarkers)
       CI->eraseFromParent();
     for (CallInst *CI : StackObjectMarkers)
+      CI->eraseFromParent();
+    for (CallInst *CI : KeepAliveMarkers)
       CI->eraseFromParent();
   };
 
@@ -1784,7 +1790,8 @@ static bool buildShadowStackOnModule(Module &M) {
 
   for (const char *Name :
        {ReturnSlotMarkerName, FrameEnterMarkerName, FrameLeaveMarkerName,
-        FrameSetCurrentMarkerName, StackObjectMarkerName}) {
+        FrameSetCurrentMarkerName, StackObjectMarkerName,
+        KeepAliveMarkerName}) {
     Function *Marker = M.getFunction(Name);
     if (!Marker)
       continue;

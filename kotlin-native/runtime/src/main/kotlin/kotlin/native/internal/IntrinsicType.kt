@@ -54,6 +54,7 @@ internal class IntrinsicType {
         const val INIT_INSTANCE                 = "INIT_INSTANCE"
         const val IS_SUBTYPE                    = "IS_SUBTYPE"
         const val THE_UNIT_INSTANCE             = "THE_UNIT_INSTANCE"
+        const val KEEP_ALIVE                    = "KEEP_ALIVE"
 
         // Enums
         const val ENUM_VALUES                   = "ENUM_VALUES"

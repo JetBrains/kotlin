@@ -753,3 +753,38 @@ entry:
   %v = load i32, ptr addrspace(1) %gep
   ret i32 %v
 }
+
+; CHECK-LABEL: define void @test_keep_alive_marker()
+; CHECK: %o = call ptr @alloc_func()
+; CHECK-NEXT: %slot_0 = getelementptr inbounds [3 x ptr], ptr %shadow_stack_frame, i32 0, i32 2
+; CHECK-NEXT: store ptr %o, ptr %slot_0, align 8
+; CHECK: call void @raw_call(ptr %raw)
+; CHECK-NOT: Kotlin_gc_keepAlive
+; CHECK: call void @LeaveFrame(ptr %shadow_stack_frame, i32 0, i32 3)
+; CHECK-NEXT: ret void
+declare void @raw_call(ptr)
+declare void @Kotlin_gc_keepAlive(ptr addrspace(1))
+
+define void @test_keep_alive_marker() #0 {
+entry:
+  %o = call ptr addrspace(1) @alloc_func()
+  %f = getelementptr inbounds i8, ptr addrspace(1) %o, i64 8
+  %raw = load ptr, ptr addrspace(1) %f
+  call void @raw_call(ptr %raw)
+  call void @Kotlin_gc_keepAlive(ptr addrspace(1) %o)
+  ret void
+}
+
+; CHECK-LABEL: define void @test_no_keep_alive_marker()
+; CHECK-NOT: alloca [
+; CHECK: ret void
+define void @test_no_keep_alive_marker() #0 {
+entry:
+  %o = call ptr addrspace(1) @alloc_func()
+  %f = getelementptr inbounds i8, ptr addrspace(1) %o, i64 8
+  %raw = load ptr, ptr addrspace(1) %f
+  call void @raw_call(ptr %raw)
+  ret void
+}
+
+; CHECK-NOT: declare void @Kotlin_gc_keepAlive

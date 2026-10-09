@@ -684,6 +684,10 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         llvmIntrinsic("Kotlin_gc_stackObject", functionType(voidType, false, pointerType), "nounwind")
     }
 
+    val gcKeepAliveMarker by lazy {
+        llvmIntrinsic("Kotlin_gc_keepAlive", functionType(voidType, false, refPointerType), "nounwind")
+    }
+
     val llvmTrap = llvmIntrinsic(
             "llvm.trap",
             functionType(voidType, false),
