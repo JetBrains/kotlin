@@ -48,7 +48,7 @@ internal class CompareAbiTextFilesOperationImpl(
         TODO("Not yet implemented")
     }
 
-    override fun deepCopy(): CompareAbiTextFilesOperation {
+    override fun deepCopy(): CompareAbiTextFilesOperationImpl {
         return CompareAbiTextFilesOperationImpl(appendable, expectedDumpFile, actualDumpFile, abiTools).also {
             it.copyFrom(this)
         }

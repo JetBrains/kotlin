@@ -21,6 +21,10 @@ internal class CriLookupDataDeserializationOperationImpl(
     override val usesApplicationEnvironment: Boolean
         get() = false
 
+    override fun deepCopy(): BuildOperationImpl<Iterable<LookupEntry>> {
+        return CriLookupDataDeserializationOperationImpl(deserializer, data)
+    }
+
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,

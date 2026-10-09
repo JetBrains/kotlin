@@ -21,6 +21,10 @@ internal class CriSubtypeDataDeserializationOperationImpl(
     override val usesApplicationEnvironment: Boolean
         get() = false
 
+    override fun deepCopy(): BuildOperationImpl<Iterable<SubtypeEntry>> {
+        return CriSubtypeDataDeserializationOperationImpl(deserializer, data)
+    }
+
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,

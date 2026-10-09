@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.KotlinToolchainsImpl
 import org.jetbrains.kotlin.buildtools.internal.LogLevel
-import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
@@ -68,7 +67,7 @@ import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
 import java.util.*
-import java.util.concurrent.ConcurrentSkipListSet
+import java.util.concurrent.ConcurrentSkipListMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -328,14 +327,14 @@ abstract class CompileServiceImplBase(
             if (time == null) return@forEachPhaseMeasurement
 
             val metrics = when (phaseType) {
-                PhaseType.Initialization -> CompilationPerformanceMetrics.COMPILER_INITIALIZATION
-                PhaseType.Analysis -> CompilationPerformanceMetrics.CODE_ANALYSIS
+                Initialization -> CompilationPerformanceMetrics.COMPILER_INITIALIZATION
+                Analysis -> CompilationPerformanceMetrics.CODE_ANALYSIS
                 // TODO: Report `IrGeneration` (FIR2IR) time
-                PhaseType.IrLowering -> {
+                IrLowering -> {
                     codegenTime += time
                     null
                 }
-                PhaseType.Backend -> {
+                Backend -> {
                     codegenTime += time
                     null
                 }
@@ -343,7 +342,7 @@ abstract class CompileServiceImplBase(
             }
             if (metrics != null) {
                 performanceMetrics.add(BuildMetricsValue(metrics, time.millis))
-                if (phaseType == PhaseType.Analysis) {
+                if (phaseType == Analysis) {
                     reportLps(CompilationPerformanceMetrics.ANALYSIS_LPS, time)
                 }
             }
@@ -369,7 +368,7 @@ abstract class CompileServiceImplBase(
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
         getICReporter: (ServicesFacadeT, CompilationResultsT & Any, CompilationOptions) -> RemoteBuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
         compilationId: Int? = null,
-    ) = kotlin.run {
+    ) = run {
         maybeWaitForTestStart()
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
         val targetPlatform = compilationOptions.targetPlatform
@@ -377,10 +376,10 @@ abstract class CompileServiceImplBase(
 
         @Suppress("UNCHECKED_CAST")
         val compiler = when (targetPlatform) {
-            CompileService.TargetPlatform.JVM -> K2JVMCompiler()
-            CompileService.TargetPlatform.JS -> K2JSCompiler()
-            CompileService.TargetPlatform.WASM -> KotlinWasmCompiler()
-            CompileService.TargetPlatform.METADATA -> KotlinMetadataCompiler()
+            JVM -> K2JVMCompiler()
+            JS -> K2JSCompiler()
+            WASM -> KotlinWasmCompiler()
+            METADATA -> KotlinMetadataCompiler()
         } as CLICompiler<CommonCompilerArguments>
 
         val k2PlatformArgs = compiler.createArguments()
@@ -391,11 +390,11 @@ abstract class CompileServiceImplBase(
 
         if (argumentParseError.isNotEmpty()) {
             argumentParseError.forEach {
-                messageCollector.report(CompilerMessageSeverity.ERROR, it)
+                messageCollector.report(ERROR, it)
             }
             CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
         } else when (compilationOptions.compilerMode) {
-            CompilerMode.JPS_COMPILER -> {
+            JPS_COMPILER -> {
                 @Suppress("UNCHECKED_CAST")
                 servicesFacade as JpsServicesFacadeT
                 withIncrementalCompilation(k2PlatformArgs, enabled = servicesFacade.hasIncrementalCaches()) {
@@ -414,7 +413,7 @@ abstract class CompileServiceImplBase(
                     }
                 }
             }
-            CompilerMode.NON_INCREMENTAL_COMPILER -> {
+            NON_INCREMENTAL_COMPILER -> {
                 doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { _, _, compilationCanceled ->
                     val lookupTracker = if (ReportCategory.COMPILER_LOOKUP.code in compilationOptions.reportCategories) {
                         RemoteLookupTracker(servicesFacade)
@@ -435,7 +434,7 @@ abstract class CompileServiceImplBase(
                             k2PlatformArgs
                         )
                         icReporter.reportPerformanceData(compiler.defaultPerformanceManager.unitStats)
-                        val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = DumpFormat.PlainText)
+                        val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = PlainText)
                         compilationResults?.also {
                             (it as CompilationResults).add(
                                 CompilationResultCategory.BUILD_REPORT_LINES.code,
@@ -452,7 +451,7 @@ abstract class CompileServiceImplBase(
                     }
                 }
             }
-            CompilerMode.INCREMENTAL_COMPILER -> {
+            INCREMENTAL_COMPILER -> {
                 val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
                 val gradleIncrementalServicesFacade = servicesFacade
                 val lookupTracker = if (ReportCategory.COMPILER_LOOKUP.code in compilationOptions.reportCategories) {
@@ -460,7 +459,7 @@ abstract class CompileServiceImplBase(
                 } else null
 
                 when (targetPlatform) {
-                    CompileService.TargetPlatform.JVM -> withIncrementalCompilation(k2PlatformArgs) {
+                    JVM -> withIncrementalCompilation(k2PlatformArgs) {
                         doCompile(sessionId, daemonReporter, tracer = null, compilationId = compilationId) { _, _, compilationCanceled ->
                             execIncrementalCompiler(
                                 k2PlatformArgs as K2JVMCompilerArguments,
@@ -477,7 +476,7 @@ abstract class CompileServiceImplBase(
                             )
                         }
                     }
-                    CompileService.TargetPlatform.JS -> withJsIC(k2PlatformArgs) {
+                    JS -> withJsIC(k2PlatformArgs) {
                         doCompile(sessionId, daemonReporter, tracer = null, compilationId = null) { _, _, _ ->
                             execJsIncrementalCompiler(
                                 k2PlatformArgs as K2JSCompilerArguments,
@@ -493,7 +492,7 @@ abstract class CompileServiceImplBase(
                             )
                         }
                     }
-                    CompileService.TargetPlatform.WASM -> withJsIC(k2PlatformArgs) {
+                    WASM -> withJsIC(k2PlatformArgs) {
                         doCompile(sessionId, daemonReporter, tracer = null, compilationId = null) { _, _, _ ->
                             execJsIncrementalCompiler(
                                 k2PlatformArgs as KotlinWasmCompilerArguments,
@@ -594,14 +593,14 @@ abstract class CompileServiceImplBase(
                         pc.memory.kb()
                     )
                 } kb)".let {
-                    daemonMessageReporter.report(ReportSeverity.INFO, it)
+                    daemonMessageReporter.report(INFO, it)
                     log.info(it)
                 }
 
                 // this will only be reported if if appropriate (e.g. ByClass) profiler is used
                 for ([obj, counters] in rpcProfiler.getCounters()) {
                     "PERF: rpc by $obj: ${counters.count} calls, ${counters.time.ms()} ms, thread ${counters.threadTime.ms()} ms".let {
-                        daemonMessageReporter.report(ReportSeverity.INFO, it)
+                        daemonMessageReporter.report(INFO, it)
                         log.info(it)
                     }
                 }
@@ -656,7 +655,7 @@ abstract class CompileServiceImplBase(
     }
 
     protected inline fun <R> ifAliveChecksImpl(
-        minAliveness: Aliveness = Aliveness.LastSession,
+        minAliveness: Aliveness = LastSession,
         body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> {
         val curState = state.alive.get()
@@ -732,7 +731,7 @@ abstract class CompileServiceImplBase(
             workingDir = workingDir,
             reporter = reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings?.buildHistoryFile,
-            scopeExpansion = CompileScopeExpansionMode.ALWAYS,
+            scopeExpansion = ALWAYS,
             modulesApiHistory = modulesApiHistory,
             icFeatures = incrementalCompilationOptions.icFeatures,
             lookupTrackerDelegate = lookupTracker ?: LookupTracker.DO_NOTHING,
@@ -753,7 +752,7 @@ abstract class CompileServiceImplBase(
     }
 
     private fun SourcesChanges.toChangedFiles(): ChangedFiles = when (this) {
-        is SourcesChanges.Unknown -> ChangedFiles.Unknown
+        is SourcesChanges.Unknown -> Unknown
         is SourcesChanges.ToBeCalculated -> ChangedFiles.DeterminableFiles.ToBeComputed
         is SourcesChanges.Known -> ChangedFiles.DeterminableFiles.Known(modifiedFiles, removedFiles)
     }
@@ -836,6 +835,7 @@ abstract class CompileServiceImplBase(
         }
 }
 
+@OptIn(ExperimentalBuildToolsApi::class)
 class CompileServiceImpl(
     val registry: Registry,
     val compiler: CompilerSelector,
@@ -861,7 +861,7 @@ class CompileServiceImpl(
 
     // RMI-exposed API
 
-    override fun getDaemonInfo(): CompileService.CallResult<String> = ifAlive(minAliveness = Aliveness.Dying) {
+    override fun getDaemonInfo(): CompileService.CallResult<String> = ifAlive(minAliveness = Dying) {
         CompileService.CallResult.Good("Kotlin daemon on port $port")
     }
 
@@ -883,7 +883,7 @@ class CompileServiceImpl(
         CompileService.CallResult.Good(daemonJVMOptions)
     }
 
-    override fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> = ifAlive(minAliveness = Aliveness.Alive) {
+    override fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> = ifAlive(minAliveness = Alive) {
         state.addClient(aliveFlagPath)
         log.info("Registered a client alive file: $aliveFlagPath")
         CompileService.CallResult.Ok()
@@ -894,7 +894,7 @@ class CompileServiceImpl(
     }
 
     // TODO: consider tying a session to a client and use this info to cleanup
-    override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
+    override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Alive) {
         CompileService.CallResult.Good(
             state.sessions.leaseSession(run {
                 val runningCompilations = RunningCompilations()
@@ -909,11 +909,11 @@ class CompileServiceImpl(
             })
     }
 
-    override fun isSessionActive(sessionId: Int): CompileService.CallResult<Boolean> = ifAlive(minAliveness = Aliveness.LastSession) {
+    override fun isSessionActive(sessionId: Int): CompileService.CallResult<Boolean> = ifAlive(minAliveness = LastSession) {
         CompileService.CallResult.Good(state.sessions[sessionId] != null)
     }
 
-    override fun releaseCompileSession(sessionId: Int) = ifAlive(minAliveness = Aliveness.LastSession) {
+    override fun releaseCompileSession(sessionId: Int) = ifAlive(minAliveness = LastSession) {
         state.sessions.remove(sessionId)
         log.info("cleaning after session $sessionId")
         clearJarCache()
@@ -928,12 +928,12 @@ class CompileServiceImpl(
     override fun getUsedMemory(withGC: Boolean): CompileService.CallResult<Long> =
         ifAlive { CompileService.CallResult.Good(usedMemory(withGC = withGC)) }
 
-    override fun shutdown(): CompileService.CallResult<Nothing> = ifAliveExclusive(minAliveness = Aliveness.LastSession) {
+    override fun shutdown(): CompileService.CallResult<Nothing> = ifAliveExclusive(minAliveness = LastSession) {
         shutdownWithDelay()
         CompileService.CallResult.Ok()
     }
 
-    override fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> = ifAlive(minAliveness = Aliveness.LastSession) {
+    override fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> = ifAlive(minAliveness = LastSession) {
         val res = when {
             graceful -> gracefulShutdown(true)
             else -> {
@@ -985,9 +985,12 @@ class CompileServiceImpl(
     }
 
     override fun cancelCompilation(sessionId: Int, compilationId: Int): CompileService.CallResult<Nothing> = ifAlive {
+        log.info { "Canceling operation $compilationId" }
         withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
-            (session?.data as? RunningCompilations)?.remove(compilationId)
-            CompileService.CallResult.Ok()
+            if ((session?.data as? RunningCompilations)?.remove(compilationId) == true)
+                CompileService.CallResult.Ok()
+            else
+                CompileService.CallResult.Error("Compilation $compilationId not found or has not started yet")
         }
     }
 
@@ -1039,8 +1042,8 @@ class CompileServiceImpl(
         servicesFacade: CompilerServicesFacadeBase,
         templateClasspath: List<File>,
         templateClassName: String,
-    ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
-        if (compilationOptions.targetPlatform != CompileService.TargetPlatform.JVM)
+    ): CompileService.CallResult<Int> = ifAlive(minAliveness = Alive) {
+        if (compilationOptions.targetPlatform != JVM)
             CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
         else {
             val disposable = Disposer.newDisposable("Disposable for ${CompileServiceImpl::class.simpleName}.leaseReplSession")
@@ -1056,14 +1059,14 @@ class CompileServiceImpl(
     }
 
     override fun replCreateState(sessionId: Int): CompileService.CallResult<ReplStateFacade> =
-        ifAlive(minAliveness = Aliveness.Alive) {
+        ifAlive(minAliveness = Alive) {
             withValidRepl(sessionId) {
                 CompileService.CallResult.Good(createRemoteState(port))
             }
         }
 
     override fun replCheck(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
+        ifAlive(minAliveness = Alive) {
             withValidRepl(sessionId) {
                 withValidReplState(replStateId) { state ->
                     check(state, codeLine)
@@ -1072,7 +1075,7 @@ class CompileServiceImpl(
         }
 
     override fun replCompile(sessionId: Int, replStateId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCompileResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
+        ifAlive(minAliveness = Alive) {
             withValidRepl(sessionId) {
                 withValidReplState(replStateId) { state ->
                     compile(state, codeLine)
@@ -1080,66 +1083,56 @@ class CompileServiceImpl(
             }
         }
 
-    @OptIn(ExperimentalBuildToolsApi::class, ExperimentalSerializationApi::class)
-    override fun execute(
-        operation: ByteArray,
-        operationId: Int,
-        callbackChannel: DaemonCallbackChannel,
-    ): CompileService.CallResult<ByteArray> {
-        val kotlinToolchains = KotlinToolchains.loadImplementation(
-            URLClassLoader(System.getProperty("java.class.path").split(File.pathSeparator).map { Path(it).toUri().toURL() }.toTypedArray())
+    val kotlinToolchains: KotlinToolchainsImpl by lazy {
+        KotlinToolchains.loadImplementation(
+            URLClassLoader(System.getProperty("java.class.path").split(File.pathSeparator).map { Path(it).toUri().toURL() }
+                               .toTypedArray())
         ) as KotlinToolchainsImpl
+    }
 
-        val buildOperation = kotlinToolchains.deserializeOperation(operation) as BuildOperationImpl<*>
-        log.info("Received operation: $buildOperation")
-        val logger = object : KotlinLogger {
-            override val isDebugEnabled: Boolean
-                get() = true // TODO
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun execute(
+        sessionId: Int,
+        compilationId: Int,
+        operation: ByteArray,
+        callbackChannel: DaemonCallbackChannel,
+    ): CompileService.CallResult<ByteArray> = ifAlive {
+        maybeWaitForTestStart()
+        log.info { "Executing operation $compilationId" }
+        withValidClientOrSessionProxy(sessionId) { session: ClientOrSessionProxy<Any>? ->
+            val buildOperation = kotlinToolchains.deserializeOperation(operation) as BuildOperationImpl<*>
 
-            private fun reportMessage(level: LogLevel, message: String) {
+            @Suppress("ObjectLiteralToLambda")
+            val disposable = if (buildOperation is CancellableBuildOperation<*>) {
+                object : Disposable {
+                    override fun dispose() {
+                        log.info { "Dispose: canceling operation $compilationId" }
+                        buildOperation.cancel()
+                    }
+                }
+            } else null
+            (session?.data as? RunningCompilations)?.add(compilationId, disposable)
+
+            val messageSender = { message: Message ->
                 callbackChannel.report(
-                    kotlinToolchains.protobuf.encodeToByteArray<Message>(
-                        Message.LogLine(level, message)
-                    )
+                    kotlinToolchains.protobuf.encodeToByteArray<Message>(message)
                 )
             }
+            val logger = RemoteLogger(messageSender)
+            buildOperation.afterSerialization(messageSender)
 
-            override fun error(msg: String, throwable: Throwable?) {
-                reportMessage(LogLevel.ERROR, msg) // TODO exception
+            val result: Any? = kotlinToolchains.createBuildSession().use { buildSession ->
+                buildSession.executeOperation(buildOperation, logger = logger)
             }
 
-            override fun warn(msg: String, throwable: Throwable?) {
-                reportMessage(LogLevel.WARN, msg)  // TODO exception
-            }
-
-            override fun info(msg: String) {
-                reportMessage(LogLevel.INFO, msg)
-            }
-
-            override fun debug(msg: String) {
-                reportMessage(LogLevel.DEBUG, msg)
-            }
-
-            override fun lifecycle(msg: String) {
-                reportMessage(LogLevel.LIFECYCLE, msg)
-            }
-        }
-        buildOperation.afterSerialization { message ->
-            callbackChannel.report(
-                kotlinToolchains.protobuf.encodeToByteArray<Message>(message)
+            @Suppress("UNCHECKED_CAST")
+            CompileService.CallResult.Good(
+                ProtoBuf.encodeToByteArray(
+                    buildOperation.getResultSerializer() as KSerializer<Any?>,
+                    result
+                )
             )
         }
-        val result: Any? = kotlinToolchains.createBuildSession().use { buildSession ->
-            buildSession.executeOperation(buildOperation, logger = logger)
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        return CompileService.CallResult.Good(
-            ProtoBuf.encodeToByteArray(
-                buildOperation.getResultSerializer() as KSerializer<Any?>,
-                result
-            )
-        )
     }
 
     override fun periodicAndAfterSessionCheck() {
@@ -1148,7 +1141,7 @@ class CompileServiceImpl(
 
         val anyDead = state.sessions.cleanDead() || state.cleanDeadClients()
 
-        ifAliveUnit(minAliveness = Aliveness.LastSession) {
+        ifAliveUnit(minAliveness = LastSession) {
             when {
                 // check if in graceful shutdown state and all sessions are closed
                 state.alive.get() == Aliveness.LastSession.ordinal && state.sessions.isEmpty() -> {
@@ -1170,7 +1163,7 @@ class CompileServiceImpl(
             }
         }
 
-        ifAliveUnit(minAliveness = Aliveness.Alive) {
+        ifAliveUnit(minAliveness = Alive) {
             when {
                 daemonOptions.autoshutdownUnusedSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && compilationsCounter.get() == 0 && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownUnusedSeconds -> {
                     log.info("Unused timeout exceeded ${daemonOptions.autoshutdownUnusedSeconds}s")
@@ -1188,7 +1181,7 @@ class CompileServiceImpl(
     }
 
     override fun periodicSeldomCheck() {
-        ifAliveUnit(minAliveness = Aliveness.Alive) {
+        ifAliveUnit(minAliveness = Alive) {
 
             // compiler changed (seldom check) - shutdown
             if (classpathWatcher.isChanged) {
@@ -1314,7 +1307,7 @@ class CompileServiceImpl(
                 currentCompilationsCount == compilationsCounter.get() &&
                 currentSessionId == state.sessions.lastSessionId
             ) {
-                ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession) {
+                ifAliveExclusiveUnit(minAliveness = LastSession) {
                     log.fine("Execute delayed shutdown")
                     shutdownNow()
                 }
@@ -1326,7 +1319,7 @@ class CompileServiceImpl(
 
     private fun gracefulShutdown(onAnotherThread: Boolean): Boolean {
 
-        fun shutdownIfIdle() = ifAliveExclusiveUnit(minAliveness = Aliveness.LastSession) {
+        fun shutdownIfIdle() = ifAliveExclusiveUnit(minAliveness = LastSession) {
             when {
                 state.sessions.isEmpty() -> shutdownWithDelay()
                 else -> {
@@ -1384,13 +1377,13 @@ class CompileServiceImpl(
     }
 
     private inline fun <R> ifAlive(
-        minAliveness: Aliveness = Aliveness.LastSession,
+        minAliveness: Aliveness = LastSession,
         body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> = rwlock.read {
         ifAliveChecksImpl(minAliveness, body)
     }
 
-    private inline fun ifAliveUnit(minAliveness: Aliveness = Aliveness.LastSession, body: () -> Unit): Unit = rwlock.read {
+    private inline fun ifAliveUnit(minAliveness: Aliveness = LastSession, body: () -> Unit): Unit = rwlock.read {
         ifAliveChecksImpl(minAliveness) {
             body()
             CompileService.CallResult.Ok()
@@ -1398,13 +1391,13 @@ class CompileServiceImpl(
     }
 
     private inline fun <R> ifAliveExclusive(
-        minAliveness: Aliveness = Aliveness.LastSession,
+        minAliveness: Aliveness = LastSession,
         body: () -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> = rwlock.write {
         ifAliveChecksImpl(minAliveness, body)
     }
 
-    private inline fun ifAliveExclusiveUnit(minAliveness: Aliveness = Aliveness.LastSession, body: () -> Unit): Unit = rwlock.write {
+    private inline fun ifAliveExclusiveUnit(minAliveness: Aliveness = LastSession, body: () -> Unit): Unit = rwlock.write {
         ifAliveChecksImpl(minAliveness) {
             body()
             CompileService.CallResult.Ok()
@@ -1412,16 +1405,51 @@ class CompileServiceImpl(
     }
 }
 
-@PublishedApi
-internal class RunningCompilations {
-    private val compilations = ConcurrentSkipListSet<Int>()
+class RemoteLogger(private val messageReporter: (Message) -> Unit) : KotlinLogger {
+    override val isDebugEnabled: Boolean
+        get() = true // TODO
 
-    fun remove(compilationId: Int) {
-        compilations.remove(compilationId)
+    private fun reportMessage(level: LogLevel, message: String) {
+        messageReporter(Message.LogLine(level, message))
     }
 
-    fun add(compilationId: Int) {
-        compilations.add(compilationId)
+    override fun error(msg: String, throwable: Throwable?) {
+        reportMessage(ERROR, msg) // TODO exception
+    }
+
+    override fun warn(msg: String, throwable: Throwable?) {
+        reportMessage(WARN, msg)  // TODO exception
+    }
+
+    override fun info(msg: String) {
+        reportMessage(INFO, msg)
+    }
+
+    override fun debug(msg: String) {
+        reportMessage(DEBUG, msg)
+    }
+
+    override fun lifecycle(msg: String) {
+        reportMessage(LIFECYCLE, msg)
+    }
+}
+
+@PublishedApi
+internal class RunningCompilations {
+    private val compilations = ConcurrentSkipListMap<Int, Disposable>()
+
+    fun remove(compilationId: Int) =
+        compilations.remove(compilationId).let { disposable: Disposable? ->
+            if (disposable != null) {
+                Disposer.dispose(disposable)
+                true
+            } else {
+                false
+            }
+        }
+
+    fun add(compilationId: Int, disposable: Disposable? = null) {
+        compilations[compilationId] = disposable ?: Disposer.newDisposable("Empty disposable for running compilation")
     }
 
     fun getCompilationCanceledStatus(compilationId: Int) = object : CompilationCanceledStatus {
@@ -1433,7 +1461,12 @@ internal class RunningCompilations {
     }
 
     fun cancelAll() {
-        compilations.clear()
+        val iter = compilations.iterator()
+        while (iter.hasNext()) {
+            val item = iter.next()
+            Disposer.dispose(item.value)
+            iter.remove()
+        }
     }
 }
 

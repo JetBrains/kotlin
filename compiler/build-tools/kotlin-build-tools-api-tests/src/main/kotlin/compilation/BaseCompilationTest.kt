@@ -17,6 +17,7 @@ import kotlin.io.path.createTempDirectory
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.readText
 
 @TestDataPath("\$CONTENT_ROOT/../main/resources/modules")
 abstract class BaseCompilationTest {
@@ -35,10 +36,12 @@ abstract class BaseCompilationTest {
                 @OptIn(DelicateBuildToolsApi::class)
                 this[ExecutionPolicy.WithDaemon.DAEMON_RUN_DIR_PATH] = daemonRunPath
                 this[ExecutionPolicy.WithDaemon.SHUTDOWN_DELAY_MILLIS] = 0
+                this[ExecutionPolicy.WithDaemon.LOGS_PATH] = daemonRunPath
                 additionalDaemonConfiguration()
             }
             body(daemonPolicy, daemonRunPath)
         } finally {
+            daemonRunPath.listDirectoryEntries("*.log").forEach { println(it.readText()) }
             attemptCleanupDaemon(daemonRunPath, additionalCleanupActions)
         }
     }
@@ -55,6 +58,7 @@ abstract class BaseCompilationTest {
         var tries = 10
         do {
             val deleted = try {
+                daemonRunPath.listDirectoryEntries("*.log").forEach { it.deleteIfExists() }
                 daemonRunPath.listDirectoryEntries("*.run").forEach { it.deleteIfExists() }
                 daemonRunPath.deleteExisting()
                 true // run file AND daemon directory deletion was successful, which means daemon is gone now

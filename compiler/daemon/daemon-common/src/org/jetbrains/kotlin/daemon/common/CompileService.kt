@@ -183,8 +183,9 @@ interface CompileService : Remote {
 
     @Throws(RemoteException::class)
     fun execute(
+        sessionId: Int,
+        compilationId: Int,
         operation: ByteArray,
-        operationId: Int,
         callbackChannel: DaemonCallbackChannel,
     ): CallResult<ByteArray>
 }

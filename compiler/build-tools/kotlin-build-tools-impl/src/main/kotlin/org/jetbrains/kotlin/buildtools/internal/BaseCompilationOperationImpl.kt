@@ -17,10 +17,9 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.arguments.*
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
-import org.jetbrains.kotlin.buildtools.internal.serializability.BtaSerializable
 import org.jetbrains.kotlin.buildtools.internal.serializability.CompilationResultSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.Message
-import org.jetbrains.kotlin.buildtools.internal.serializability.beforeSerialization
+import org.jetbrains.kotlin.buildtools.internal.serializability.MessageReportingMessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.LookupTrackerAdapter
@@ -28,8 +27,6 @@ import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginsLoader
 import org.jetbrains.kotlin.compilerRunner.toArgumentStrings
@@ -429,30 +426,6 @@ private class MessageReportingCompilerLookupTracker(private val messageReporter:
         messageReporter(
             Message.LookupClear
         )
-    }
-}
-
-private class MessageReportingMessageCollectorWithDiagnosticId(private val messageReporter: (Message) -> Unit) :
-    MessageCollectorWithDiagnosticId {
-    override fun clear() {
-        messageReporter(Message.CompilerMessageClear)
-    }
-
-    override fun hasErrors(): Boolean {
-        return false
-    }
-
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-        messageReporter(Message.CompilerMessageWithDiagnosticId(severity, message, location?.beforeSerialization(), diagnosticId = null))
-    }
-
-    override fun report(
-        severity: CompilerMessageSeverity,
-        message: String,
-        location: CompilerMessageSourceLocation?,
-        diagnosticId: String?,
-    ) {
-        messageReporter(Message.CompilerMessageWithDiagnosticId(severity, message, location?.beforeSerialization(), diagnosticId))
     }
 }
 

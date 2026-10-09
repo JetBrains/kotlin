@@ -25,9 +25,6 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
     @Transient
     private val onCancelAction: AtomicReference<(() -> Unit)?> = AtomicReference(null)
 
-    @Transient
-    protected val compilationId: Int = compilationIdCounter.incrementAndFetch()
-
     override fun cancel() {
         val wasCancelled = isCancelled.exchange(true)
         if (!wasCancelled) {
@@ -36,6 +33,7 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
     }
 
     fun onCancel(action: () -> Unit) {
+        requireNotCancelled()
         val actionWasSet = onCancelAction.compareAndSet(null, action)
         check(actionWasSet) { "onCancel action was already set. Setting it again is an error." }
     }
@@ -47,10 +45,6 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
                 throw CompilationCanceledException()
             }
         }
-    }
-
-    companion object {
-        private val compilationIdCounter = AtomicInt(0)
     }
 
     abstract fun executeCancellableImpl(
@@ -67,10 +61,13 @@ internal abstract class CancellableBuildOperationImpl<R> : BuildOperationImpl<R>
         executionContext: ExecutionContext,
     ): R {
         val returnValue = executeCancellableImpl(projectId, executionPolicy, logger, executionContext)
-        return if (isCancelled.load()) {
+        requireNotCancelled()
+        return returnValue
+    }
+
+    private fun requireNotCancelled() {
+        if (isCancelled.load()) {
             throw OperationCancelledException()
-        } else {
-            returnValue
         }
     }
 }

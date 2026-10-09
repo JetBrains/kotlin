@@ -18,7 +18,7 @@ import java.nio.file.Path
  * @since 2.4.0
  */
 @ExperimentalBuildToolsApi
-public interface DiscoverScriptExtensionsOperation : BuildOperation<Collection<String>> {
+public interface DiscoverScriptExtensionsOperation : BuildOperation<List<String>> {
     /**
      * The classpath to search for custom script extensions.
      */

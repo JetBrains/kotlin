@@ -90,6 +90,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
+                println(logLines)
                 assertLogContainsPatterns(
                     expectedLogLevel(strategyConfig),
                     ".*Non-incremental compilation will be performed: ${BuildAttribute.COMPILER_ARGS_CHANGED.readableString}".toRegex(),
@@ -99,5 +100,5 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     private fun expectedLogLevel(strategyConfig: CompilerExecutionStrategyConfiguration): LogLevel =
-        if (strategyConfig.second is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+        LogLevel.INFO // TODO: KT-85024
 }

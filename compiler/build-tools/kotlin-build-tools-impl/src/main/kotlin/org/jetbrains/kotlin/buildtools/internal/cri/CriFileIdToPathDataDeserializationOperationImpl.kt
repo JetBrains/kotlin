@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.cri.CriFileIdToPathDataDeserializationOperation
 import org.jetbrains.kotlin.buildtools.api.cri.FileIdToPathEntry
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
+import org.jetbrains.kotlin.buildtools.internal.DeepCopyable
 import org.jetbrains.kotlin.buildtools.internal.ExecutionContext
 
 internal class CriFileIdToPathDataDeserializationOperationImpl(
@@ -32,5 +33,9 @@ internal class CriFileIdToPathDataDeserializationOperationImpl(
 
     override fun getResultSerializer(): KSerializer<Iterable<FileIdToPathEntry>> {
         TODO("Not yet implemented")
+    }
+
+    override fun deepCopy(): CriFileIdToPathDataDeserializationOperationImpl {
+        return CriFileIdToPathDataDeserializationOperationImpl(deserializer, data)
     }
 }

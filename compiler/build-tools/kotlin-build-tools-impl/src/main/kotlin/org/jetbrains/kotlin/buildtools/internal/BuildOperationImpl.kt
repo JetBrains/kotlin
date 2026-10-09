@@ -25,12 +25,18 @@ import org.jetbrains.kotlin.buildtools.internal.serializability.Message
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
+import org.jetbrains.kotlin.daemon.common.CompileService
 import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.incrementAndFetch
 
 @OptIn(ExperimentalAtomicApi::class)
 @Serializable
 public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.Builder, BtaSerializable {
+    @Transient
+    protected val compilationId: Int = compilationIdCounter.incrementAndFetch()
+
     @SerialName("METRICS_COLLECTOR")
     @Transient
     internal var metricsCollector: BuildMetricsCollector? = null
@@ -60,6 +66,8 @@ public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.
 
     @Transient
     private val executionStarted = AtomicBoolean(false)
+
+    public abstract fun deepCopy(): BuildOperationImpl<R>
 
     public open val warningsAsError: Boolean
         get() = false
@@ -115,29 +123,44 @@ public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.
         logger: KotlinLogger,
         executionContext: ExecutionContext,
     ): R {
-        val messageVisitors: List<MessageVisitor> = beforeSerialization(logger) + LogLineVisitor(logger)
+        deepCopy().let { operationCopy -> // do not modify the original operation object
+            val messageVisitors: List<MessageVisitor> = operationCopy.beforeSerialization(logger) + LogLineVisitor(logger)
 
-        val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger, compilerMessageRenderer, warningsAsError)
-        val daemon = executionContext.daemonConnectionRegistry.getCompileServiceSession(executionPolicy, logger, loggerAdapter)
-            ?: error("Unable to get daemon connection")
-        val memoryUsageBeforeBuild = daemon.compileService.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
+            val loggerAdapter = KotlinLoggerMessageCollectorAdapter(logger, operationCopy.compilerMessageRenderer, operationCopy.warningsAsError)
+            val daemon = executionContext.daemonConnectionRegistry.getCompileServiceSession(executionPolicy, logger, loggerAdapter)
+                ?: error("Unable to get daemon connection")
+            val memoryUsageBeforeBuild = daemon.compileService.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
 
-        val serializedOperation = KotlinToolchainsImpl.protobuf.encodeToByteArray<BtaSerializable>(this)
-        val callbackChannel = BtaCallbackChannel(KotlinToolchainsImpl.protobuf, messageVisitors)
-        val result = try {
-            daemon.compileService.execute(serializedOperation, 0, callbackChannel).get()
-        } finally {
-            val memoryUsageAfterBuild = runCatching { daemon.compileService.getUsedMemory(withGC = false).takeIf { it.isGood }?.get() }.getOrNull()
-            getMetricsReporter().let { metricsReporter ->
-                if (memoryUsageAfterBuild == null || memoryUsageBeforeBuild == null) {
-                    logger.debug("Unable to calculate memory usage")
-                } else {
-                    metricsReporter.addMetric(DAEMON_INCREASED_MEMORY, memoryUsageAfterBuild - memoryUsageBeforeBuild)
-                    metricsReporter.addMetric(DAEMON_MEMORY_USAGE, memoryUsageAfterBuild)
+            val serializedOperation = KotlinToolchainsImpl.protobuf.encodeToByteArray<BtaSerializable>(operationCopy)
+            val callbackChannel = BtaCallbackChannel(KotlinToolchainsImpl.protobuf, messageVisitors)
+            if (this is CancellableBuildOperationImpl<*>) {
+                onCancel {
+                    logger.info("Sending cancel request for operation ${operationCopy.compilationId}")
+                    daemon.compileService.cancelCompilation(daemon.sessionId, operationCopy.compilationId)
                 }
             }
+            val result = try {
+                when (val result =
+                    daemon.compileService.execute(daemon.sessionId, operationCopy.compilationId, serializedOperation, callbackChannel)) {
+                    is CompileService.CallResult.Dying -> throw(IllegalStateException("Daemon is dying"))
+                    is CompileService.CallResult.Error -> result.cause?.let { throw(it) } ?: throw(IllegalStateException("Unknown error"))
+                    is CompileService.CallResult.Good<*> -> result.get()
+                    is CompileService.CallResult.Ok -> result.get()
+                }
+            } finally {
+                val memoryUsageAfterBuild =
+                    operationCopy.runCatching { daemon.compileService.getUsedMemory(withGC = false).takeIf { it.isGood }?.get() }.getOrNull()
+                operationCopy.getMetricsReporter().let { metricsReporter ->
+                    if (memoryUsageAfterBuild == null || memoryUsageBeforeBuild == null) {
+                        logger.debug("Unable to calculate memory usage")
+                    } else {
+                        metricsReporter.addMetric(DAEMON_INCREASED_MEMORY, memoryUsageAfterBuild - memoryUsageBeforeBuild)
+                        metricsReporter.addMetric(DAEMON_MEMORY_USAGE, memoryUsageAfterBuild)
+                    }
+                }
+            }
+            return KotlinToolchainsImpl.protobuf.decodeFromByteArray(operationCopy.getResultSerializer(), result)
         }
-        return KotlinToolchainsImpl.protobuf.decodeFromByteArray(getResultSerializer(), result)
     }
 
     /**
@@ -161,6 +184,8 @@ public abstract class BuildOperationImpl<R> : BuildOperation<R>, BuildOperation.
         val XX_KGP_METRICS_COLLECTOR: Option<Boolean> = Option("XX_KGP_METRICS_COLLECTOR")
         val XX_KGP_METRICS_COLLECTOR_OUT: Option<ByteArray?> = Option("XX_KGP_METRICS_COLLECTOR_OUT")
         val ENABLE_CLASSLOADER_CACHE: Option<Boolean> = Option("ENABLE_CLASSLOADER_CACHE")
+
+        private val compilationIdCounter = AtomicInt(0)
     }
 }
 

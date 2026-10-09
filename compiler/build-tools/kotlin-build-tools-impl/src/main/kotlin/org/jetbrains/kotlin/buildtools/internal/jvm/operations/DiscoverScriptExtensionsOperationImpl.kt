@@ -2,12 +2,17 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:UseSerializers(PathAsStringSerializer::class)
 
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import kotlinx.serialization.UseSerializers
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.builtins.serializer
 import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -15,8 +20,13 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.arguments.CommonToolArgumentsImpl.Companion.WERROR
+import org.jetbrains.kotlin.buildtools.internal.serializability.Message
+import org.jetbrains.kotlin.buildtools.internal.serializability.MessageReportingMessageCollectorWithDiagnosticId
+import org.jetbrains.kotlin.buildtools.internal.serializability.PathAsStringSerializer
 import org.jetbrains.kotlin.buildtools.internal.serializability.getPropertyWithSerialNameValue
 import org.jetbrains.kotlin.buildtools.internal.serializability.setPropertyWithSerialNameValue
+import org.jetbrains.kotlin.cli.common.messages.MessageCollectorWithDiagnosticId
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.nio.file.Path
@@ -25,32 +35,55 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 @Serializable
 internal class DiscoverScriptExtensionsOperationImpl(
     override val classpath: List<Path>,
+    @Transient
     @SerialName("COMPILER_MESSAGE_RENDERER") override var compilerMessageRenderer: CompilerMessageRenderer = DefaultCompilerMessageRenderer,
-) : BuildOperationImpl<Collection<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
+) : BuildOperationImpl<List<String>>(), DiscoverScriptExtensionsOperation, DiscoverScriptExtensionsOperation.Builder,
     DeepCopyable<DiscoverScriptExtensionsOperation> {
 
     override val usesApplicationEnvironment: Boolean
         get() = false
+
+    @Transient
+    private var compilerMessageCollector: MessageCollectorWithDiagnosticId? = null
+
+    override fun afterSerialization(messageReporter: (Message) -> Unit) {
+        super.afterSerialization(messageReporter)
+        compilerMessageCollector = MessageReportingMessageCollectorWithDiagnosticId(messageReporter)
+    }
+
+    override fun beforeSerialization(logger: KotlinLogger): List<MessageVisitor> {
+        val messageVisitors = super.beforeSerialization(logger).toMutableList()
+        messageVisitors.add(
+            CompilerMessageVisitor(
+                KotlinLoggerMessageCollectorAdapter(
+                    logger,
+                    compilerMessageRenderer,
+                    false
+                )
+            )
+        )
+        return messageVisitors
+    }
 
     override fun executeImpl(
         projectId: ProjectId,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,
         executionContext: ExecutionContext,
-    ): Collection<String> {
+    ): List<String> {
         // KT-84096 BTA: support daemon execution for script discovery operation
         check(executionPolicy is ExecutionPolicy.InProcess) { "Only in-process execution policy is supported for this operation." }
         val definitions = ScriptDefinitionsFromClasspathDiscoverySource(
             classpath.map(Path::toFile), defaultJvmScriptingHostConfiguration, KotlinLoggerMessageCollectorAdapter(
-                logger ?: DefaultKotlinLogger, this[COMPILER_MESSAGE_RENDERER], warningsAsErrors = false
+                logger ?: DefaultKotlinLogger, compilerMessageRenderer, warningsAsErrors = false
             ).reporter
         ).definitions
 
         return definitions.mapTo(arrayListOf()) { it.fileExtension }
     }
 
-    override fun getResultSerializer(): KSerializer<Collection<String>> {
-        TODO("Not yet implemented")
+    override fun getResultSerializer(): KSerializer<List<String>> {
+        return ListSerializer(String.serializer())
     }
 
     override fun toBuilder(): DiscoverScriptExtensionsOperation.Builder = deepCopy()
@@ -67,7 +100,10 @@ internal class DiscoverScriptExtensionsOperationImpl(
 
     override fun build(): DiscoverScriptExtensionsOperation = deepCopy()
 
-    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl = DiscoverScriptExtensionsOperationImpl(classpath, compilerMessageRenderer)
+    override fun deepCopy(): DiscoverScriptExtensionsOperationImpl =
+        DiscoverScriptExtensionsOperationImpl(classpath, compilerMessageRenderer).also {
+            it.copyFrom(this)
+        }
 
     private operator fun <V> get(key: Option<V>): V =
         DiscoverScriptExtensionsOperationImpl::class.getPropertyWithSerialNameValue(this, key.id)

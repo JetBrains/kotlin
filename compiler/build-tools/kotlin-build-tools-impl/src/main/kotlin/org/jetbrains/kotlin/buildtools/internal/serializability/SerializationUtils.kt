@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.buildtools.internal.js.operations.JsDtsGenerationOpe
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsKlibCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.js.operations.JsLinkingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationConfigurationImpl
+import org.jetbrains.kotlin.buildtools.internal.jvm.operations.DiscoverScriptExtensionsOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmClasspathSnapshottingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.metadata.operations.KotlinMetadataKlibCompilationOperationImpl
@@ -103,7 +104,7 @@ public val btaSerializersModule: SerializersModule = SerializersModule {
         subclass(WasmLinkingOperationImpl::class)
         subclass(JsLinkingOperationImpl::class)
         subclass(JsDtsGenerationOperationImpl::class)
-//        subclass(JvmCompilationOperationImpl::class)
+        subclass(DiscoverScriptExtensionsOperationImpl::class)
     }
     polymorphic(CompilerMessageSourceLocation::class) {
         subclass(org.jetbrains.kotlin.buildtools.internal.serializability.CompilerMessageLocation::class)

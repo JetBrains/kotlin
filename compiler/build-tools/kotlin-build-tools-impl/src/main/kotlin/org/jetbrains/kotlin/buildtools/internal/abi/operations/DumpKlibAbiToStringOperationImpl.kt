@@ -98,7 +98,7 @@ internal class DumpKlibAbiToStringOperationImpl(
         return AbiFiltersImpl()
     }
 
-    override fun deepCopy(): DumpKlibAbiToStringOperation {
+    override fun deepCopy(): DumpKlibAbiToStringOperationImpl {
         return DumpKlibAbiToStringOperationImpl(
             appendable,
             klibs.toMap(),

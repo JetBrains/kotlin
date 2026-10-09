@@ -87,7 +87,6 @@ class ScriptingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Smoke test of custom script extension discovery")
     fun smokeTestCustomScriptExtensionDiscovery(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeInProcess(strategyConfig)
         dependencyOnThisClasspath.location.copyToRecursively(workingDirectory, followLinks = false, overwrite = false)
         workingDirectory.resolve("META-INF/kotlin/script/templates").apply {
             createDirectories()
@@ -110,7 +109,6 @@ class ScriptingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Script extension discovery with custom extension without .kts suffix")
     fun discoverCustomExtensionWithoutKtsSuffix(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeInProcess(strategyConfig)
         dependencyOnThisClasspath.location.copyToRecursively(workingDirectory, followLinks = false, overwrite = false)
         workingDirectory.resolve("META-INF/kotlin/script/templates").apply {
             createDirectories()
@@ -125,7 +123,6 @@ class ScriptingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Script extension discovery with compound custom extension")
     fun discoverCompoundCustomExtension(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeInProcess(strategyConfig)
         dependencyOnThisClasspath.location.copyToRecursively(workingDirectory, followLinks = false, overwrite = false)
         workingDirectory.resolve("META-INF/kotlin/script/templates").apply {
             createDirectories()
@@ -140,7 +137,6 @@ class ScriptingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Script extension discovery finds multiple templates")
     fun discoverMultipleTemplates(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeInProcess(strategyConfig)
         dependencyOnThisClasspath.location.copyToRecursively(workingDirectory, followLinks = false, overwrite = false)
         workingDirectory.resolve("META-INF/kotlin/script/templates").apply {
             createDirectories()
@@ -156,7 +152,6 @@ class ScriptingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Script extension discovery with empty classpath")
     fun discoverWithEmptyClasspath(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeInProcess(strategyConfig)
         workingDirectory.resolve("empty").createDirectories()
 
         val result = executeDiscovery(strategyConfig, listOf(workingDirectory.resolve("empty")))
@@ -167,7 +162,6 @@ class ScriptingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Script extension discovery with non-existing path")
     fun discoverWithNonExistingPath(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeInProcess(strategyConfig)
         val nonExistingPath = workingDirectory.resolve("does-not-exist")
 
         val result = executeDiscovery(strategyConfig, listOf(nonExistingPath))
@@ -178,7 +172,6 @@ class ScriptingTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     @DisplayName("Script extension discovery with marker but without class")
     fun discoverWithMarkerButNoClass(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeInProcess(strategyConfig)
         workingDirectory.resolve("META-INF/kotlin/script/templates").apply {
             createDirectories()
             resolve("com.example.NonExistentScript").createFile()
@@ -187,29 +180,6 @@ class ScriptingTest : BaseCompilationTest() {
         val result = executeDiscovery(strategyConfig, listOf(workingDirectory))
 
         assertTrue(result.isEmpty(), "Expected empty list when class is missing")
-    }
-
-    // TODO: Remove this test and add daemon execution support when KT-84096 is implemented
-    @BtaVersionsOnlyCompilationTest
-    @DisplayName("Script extension discovery fails with daemon execution policy")
-    fun discoverScriptExtensionsFailsWithDaemon(toolchain: KotlinToolchains) {
-        val classpath = listOf(workingDirectory.resolve("greet-script-template"))
-        val operation = toolchain.jvm.discoverScriptExtensionsOperationBuilder(classpath).build()
-        val daemonPolicy = toolchain.daemonExecutionPolicyBuilder().build()
-
-        val exception = assertThrows<IllegalStateException> {
-            toolchain.createBuildSession().use { session ->
-                session.executeOperation(operation, daemonPolicy, TestKotlinLogger())
-            }
-        }
-        assertEquals("Only in-process execution policy is supported for this operation.", exception.message)
-    }
-
-    private fun assumeInProcess(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        assumeTrue(
-            strategyConfig.second is ExecutionPolicy.InProcess,
-            "DiscoverScriptExtensionsOperation only supports in-process execution"
-        )
     }
 
     private fun executeDiscovery(

@@ -536,7 +536,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
     }
 
     private fun AbstractProject<*, *, *>.expectedLogLevel(): LogLevel =
-        if (defaultStrategyConfig is ExecutionPolicy.WithDaemon) LogLevel.DEBUG else LogLevel.INFO // TODO: KT-85024
+        LogLevel.INFO // TODO: KT-85024
 
     private fun AbstractProject<*, *, *>.assumeNotMetadata() {
         assumeFalse(this is MetadataProject)

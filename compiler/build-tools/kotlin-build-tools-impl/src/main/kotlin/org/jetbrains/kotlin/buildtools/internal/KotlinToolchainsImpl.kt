@@ -229,7 +229,6 @@ internal class BtaCallbackChannel(
     UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) {
     override fun report(message: ByteArray) {
         val message = protoBuf.decodeFromByteArray<Message>(message)
-        println(message)
-        val _ = messageVisitors.any { it.accept(message) }
+        messageVisitors.forEach { it.accept(message) }
     }
 }

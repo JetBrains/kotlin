@@ -91,6 +91,8 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
                             buildSession.executeOperation(operation, daemonPolicy, logger)
                         } catch (_: OperationCancelledException) {
                             operationWasCancelled.store(true)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
                     }
                     operation.cancel()
@@ -127,7 +129,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         assumeTrue(hasCancellationSupport)
         runSingleShotDaemonTest(kotlinToolchains, additionalDaemonConfiguration = {
             this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
-                "-Dkotlin.daemon.wait.before.compilation.for.tests=true"
+                "Dkotlin.daemon.wait.before.compilation.for.tests=true"
             )
         }, additionalCleanupActions = { daemonRunPath ->
             daemonRunPath.resolve("daemon-test-start").deleteIfExists()
@@ -159,9 +161,12 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
                     val operation = compilationOperation.build()
                     val thread = thread {
                         try {
-                            buildSession.executeOperation(operation, daemonPolicy, logger)
+                            val result = buildSession.executeOperation(operation, daemonPolicy, logger)
+                            println(result)
                         } catch (_: OperationCancelledException) {
                             operationWasCancelled.store(true)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
                     }
                     operation.cancel()
