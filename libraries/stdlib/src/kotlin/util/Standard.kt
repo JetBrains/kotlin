@@ -60,6 +60,38 @@ public inline fun <T, R> T.run(block: T.() -> R): R {
 }
 
 /**
+ * Calls the specified function [block] and returns its result if [condition] is true, or returns `null` _without executing the given block_
+ * if [condition] is false.
+ */
+@kotlin.internal.InlineOnly
+@OptIn(ExperimentalExtendedContracts::class)
+public inline fun <R> runOrNull(condition: Boolean, block: () -> R): R? {
+    contract {
+        condition holdsIn block
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+        returnsResultOf(block)
+    }
+    return if (condition) block() else null
+}
+
+/**
+ * Calls the specified function [block] and returns its result if [condition] is true, or returns [default] _without executing the given
+ * block_ if [condition] is false.
+ *
+ * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#run).
+ */
+@kotlin.internal.InlineOnly
+@OptIn(ExperimentalExtendedContracts::class)
+public inline fun <R> runOrDefault(condition: Boolean, default: R, block: () -> R): R {
+    contract {
+        condition holdsIn block
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+        returnsResultOf(block)
+    }
+    return if (condition) block() else default
+}
+
+/**
  * Calls the specified function [block] with the given [receiver] as its receiver and returns its result.
  *
  * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#with).
