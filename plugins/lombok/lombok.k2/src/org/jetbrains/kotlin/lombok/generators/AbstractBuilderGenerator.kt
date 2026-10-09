@@ -95,6 +95,9 @@ sealed class BuilderDeclarationType {
          * collection for a `@Singular` field, whatever collection type the field is declared with.
          */
         class Build(val entitySymbol: FirBasedSymbol<*>, val useGuavaForSingular: Boolean) : Function()
+
+        /** Will be used for `@SuperBuilder` */
+        object Self : Function()
         object Builder : Function()
         object ToBuilder : Function()
     }
@@ -378,9 +381,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 val hasBuilderDefault = itemProperty?.findAnnotationOnPropertyOrField(LombokNames.BUILDER_DEFAULT_ID) != null
 
                 generatedVariables.addIfNonClashing(item.name, existingVariableNames) {
+                    val key = BuilderGeneratorKey(BuilderDeclarationType.Field)
                     if (builderSymbol.hasJavaOrigin) {
                         buildJavaField {
-                            isFromSource = true
+                            origin = FirDeclarationOrigin.Java.Plugin(key)
                             lazyHasConstantInitializer = lazy { false }
                             lazyHasInitializer = lazy { false }
                             this@buildJavaField.containingClassSymbol = builderSymbol
@@ -409,7 +413,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         }
                         createMemberProperty(
                             owner = builderSymbol,
-                            key = BuilderGeneratorKey(BuilderDeclarationType.Field),
+                            key = key,
                             name = it,
                             returnType = fieldType,
                             isVal = false,
@@ -544,6 +548,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             if (builderMethodName != null) {
                 addIfNonClashing(Name.identifier(builderMethodName), existingFunctionNames) { name ->
+                    val key = BuilderGeneratorKey(BuilderDeclarationType.Function.Builder)
                     if (containingClassSymbol.hasJavaOrigin) {
                         val methodSymbol = FirNamedFunctionSymbol(CallableId(entitySymbol.classId, name))
                         val methodTypeParameters =
@@ -555,6 +560,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             returnTypeRef = createBuilderType(methodTypeParameters).toFirResolvedTypeRef(),
                             visibility = visibility,
                             modality = Modality.OPEN,
+                            key = key,
                             dispatchReceiverType = if (isStaticBuilderFunction) null else builderDeclaration.dispatchReceiverType,
                             isStatic = isStaticBuilderFunction,
                             methodSymbol = methodSymbol,
@@ -570,7 +576,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
                         createMemberFunction(
                             owner = containingClassSymbol,
-                            key = BuilderGeneratorKey(BuilderDeclarationType.Function.Builder),
+                            key = key,
                             name = name,
                             returnTypeProvider = {
                                 createBuilderType(it)
@@ -606,9 +612,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                         returnTypeRef = @OptIn(SymbolInternals::class) createBuilderType(entitySymbol.typeParameterSymbols.map { it.fir }).toFirResolvedTypeRef(),
                         visibility = visibility,
                         modality = Modality.OPEN,
-                        createKey = {
-                            BuilderGeneratorKey(BuilderDeclarationType.Function.ToBuilder)
-                        }
+                        key = BuilderGeneratorKey(BuilderDeclarationType.Function.ToBuilder),
                     )
                 }
             }
@@ -791,9 +795,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
                 visibility = visibility,
                 modality = Modality.OPEN,
-                createKey = {
-                    BuilderGeneratorKey(BuilderDeclarationType.Function.Setter)
-                },
+                key = BuilderGeneratorKey(BuilderDeclarationType.Function.Setter),
                 source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default),
             )
         }
@@ -928,7 +930,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 returnTypeRef = builderType,
                 visibility = visibility,
                 modality = Modality.OPEN,
-                createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.AddSingle(item.name)) },
+                key = BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.AddSingle(item.name)),
                 source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default),
             )
         }
@@ -970,7 +972,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 returnTypeRef = builderType,
                 visibility = visibility,
                 modality = Modality.OPEN,
-                createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.AddAll(item.name)) },
+                key = BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.AddAll(item.name)),
                 source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default),
             )
         }
@@ -983,7 +985,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 returnTypeRef = builderType,
                 visibility = visibility,
                 modality = Modality.OPEN,
-                createKey = { BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.Clear(item.name)) },
+                key = BuilderGeneratorKey(BuilderDeclarationType.SingularFunction.Clear(item.name)),
                 source = item.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default),
             )
         }
@@ -1017,6 +1019,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         val effectiveVisibility: EffectiveVisibility
 
         val typeParametersMapping = builderDeclaration.extractTypeParametersMapping(builderSymbol, existingDeclaration = false)
+        val key = BuilderGeneratorKey(BuilderDeclarationType.Class.Builder)
 
         val builderBuilder = if (hasJavaOrigin) {
             effectiveVisibility = containingClass.effectiveVisibility.lowerBound(
@@ -1026,8 +1029,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
             FirJavaClassBuilder().apply {
                 containingClassSymbol = containingClass
-                isFromSource = true
-                key = BuilderGeneratorKey(BuilderDeclarationType.Class.Builder)
+                javaOrigin = FirDeclarationOrigin.Java.Plugin(key)
 
                 // Remap Java type parameters from the containing declaration to the newly created type parameters to make the Java resolve work.
                 // Don't care about outer type parameters because builder classes are always static (nested).
@@ -1041,7 +1043,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             effectiveVisibility = visibility.toEffectiveVisibility(this)
 
             FirRegularClassBuilder().apply {
-                origin = FirDeclarationOrigin.Plugin(BuilderGeneratorKey(BuilderDeclarationType.Class.Builder))
+                origin = FirDeclarationOrigin.Plugin(key)
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 scopeProvider = session.kotlinScopeProvider
             }

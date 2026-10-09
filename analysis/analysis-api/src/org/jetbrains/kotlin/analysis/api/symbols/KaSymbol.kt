@@ -225,6 +225,11 @@ public enum class KaSymbolOrigin {
     JAVA_LIBRARY,
 
     /**
+     * A declaration from a plugin-generated Java source code.
+     */
+    JAVA_PLUGIN,
+
+    /**
      * A declaration from a synthetic constructor function used to build instances of [SAM interfaces](https://kotlinlang.org/docs/fun-interfaces.html#sam-conversions).
      *
      * @see KaSamConstructorSymbol
@@ -346,4 +351,13 @@ public enum class KaSymbolOrigin {
      * section in the Kotlin documentation.
      */
     NATIVE_FORWARD_DECLARATION,
+    ;
+
+    /**
+     * @return true iff a corresponding declaration is declared in Java (source/library/plugin generated)
+     */
+    public fun isFromJava(): Boolean = when (this) {
+        JAVA_SOURCE, JAVA_LIBRARY, JAVA_PLUGIN -> true
+        else -> false
+    }
 }

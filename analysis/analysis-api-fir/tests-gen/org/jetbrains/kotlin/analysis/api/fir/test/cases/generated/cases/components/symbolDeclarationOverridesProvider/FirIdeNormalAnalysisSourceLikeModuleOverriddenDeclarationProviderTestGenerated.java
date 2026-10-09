@@ -188,6 +188,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleOverriddenDeclarationProviderTe
   }
 
   @Test
+  @TestMetadata("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt")
+  public void testJavaGetterImplementingKotlinProperty_MethodMode_Plugin() {
+    run("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt");
+  }
+
+  @Test
   @TestMetadata("javaSetterImplementingKotlinProperty_AccessorMode.kt")
   public void testJavaSetterImplementingKotlinProperty_AccessorMode() {
     run("javaSetterImplementingKotlinProperty_AccessorMode.kt");

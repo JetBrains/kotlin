@@ -60,7 +60,7 @@ class JavaOverridabilityRules(private val session: FirSession) : PlatformSpecifi
         return overrideCandidate.isOriginallyFromJava() || baseDeclaration.isOriginallyFromJava()
     }
 
-    private fun FirCallableDeclaration.isOriginallyFromJava(): Boolean = unwrapFakeOverrides().origin == FirDeclarationOrigin.Enhancement
+    private fun FirCallableDeclaration.isOriginallyFromJava(): Boolean = unwrapFakeOverrides().origin is FirDeclarationOrigin.Enhancement
 
     override fun chooseIntersectionVisibility(
         overrides: Collection<FirCallableSymbol<*>>,

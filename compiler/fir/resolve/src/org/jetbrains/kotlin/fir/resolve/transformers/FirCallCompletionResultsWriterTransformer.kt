@@ -585,7 +585,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun FirBasedSymbol<*>.isJavaConstructor(): Boolean {
         if (this !is FirConstructorSymbol) return false
 
-        return this.unwrapUseSiteSubstitutionOverrides().origin == FirDeclarationOrigin.Enhancement
+        return this.unwrapUseSiteSubstitutionOverrides().origin is FirDeclarationOrigin.Enhancement
     }
 
     private fun FirCall.transformArgumentList(
