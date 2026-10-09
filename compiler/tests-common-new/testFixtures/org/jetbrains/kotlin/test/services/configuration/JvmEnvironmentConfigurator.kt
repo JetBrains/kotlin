@@ -272,7 +272,11 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         setupK2CliConfiguration(module, configuration)
 
-        val javaFiles = module.javaFiles.ifEmpty { return }
+        // `addSourcesForDependsOnClosure` compiles the Kotlin sources of the whole `dependsOn` closure in this
+        // configuration, so its Java sources belong here too; java-direct sees only the configured Java source roots.
+        val modulesWithJavaFiles = module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
+            .filter { it.javaFiles.isNotEmpty() }
+        val javaFiles = modulesWithJavaFiles.flatMap { it.javaFiles }.ifEmpty { return }
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
         val javaModuleInfoFiles = javaFiles.filter { it.name == MODULE_INFO_FILE }
 
@@ -280,7 +284,9 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             if (javaModuleInfoFiles.isNotEmpty()) {
                 configuration.addJavaSourceRootsByJavaModules(javaModuleInfoFiles)
             } else {
-                configuration.addJavaSourceRoot(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module))
+                for (moduleWithJavaFiles in modulesWithJavaFiles) {
+                    configuration.addJavaSourceRoot(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(moduleWithJavaFiles))
+                }
             }
 
             // we add this as a part of the classpath only when Java files are being analyzed as sources,
