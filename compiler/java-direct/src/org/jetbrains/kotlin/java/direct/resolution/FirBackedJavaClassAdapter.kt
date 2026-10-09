@@ -14,11 +14,12 @@ import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.resolveSupertypesOnAir
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.java.direct.model.FirBackedJavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -116,7 +117,7 @@ internal class FirBackedJavaClassAdapter(
         }
 
     /**
-     * Resolved supertype chain, read through [supertypeRefsForJavaResolution] — the same
+     * Resolved supertype chain, read through [resolveSupertypesOnAir] — the same
      * prefer-resolved-then-on-air answer the resolution side uses. Each cone type is exposed as a
      * [FirBackedJavaClassifierType] so its arguments can be read back. Guarded by
      * [cycleGuardedSupertypeWalk]; symbol resolution funnels through [cycleSafeClassLikeSymbol].
@@ -124,8 +125,8 @@ internal class FirBackedJavaClassAdapter(
     override val supertypes: Collection<JavaClassifierType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val fir = firRegularClass ?: return@lazy emptyList()
         session.cycleGuardedSupertypeWalk(resolvedClassId, default = emptyList()) {
-            fir.supertypeRefsForJavaResolution(session)
-                .mapNotNull { (it as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType }
+            fir.resolveSupertypesOnAir(session)
+                .mapNotNull { it.coneTypeOrNull as? ConeClassLikeType }
                 .map { FirBackedJavaClassifierType(it, session) }
         }
     }
