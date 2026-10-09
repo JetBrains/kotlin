@@ -20,7 +20,7 @@ interface BinaryClassFileIndex {
      */
     val classpathVersion: Int get() = 0
 
-    /** The class files declaring [topLevelClassId], in classpath order. */
+    /** Returns class files declaring [topLevelClassId], in classpath order. */
     fun findTopLevelClassFiles(topLevelClassId: ClassId): Collection<BinaryClassFileHandle>
 
     /**
@@ -30,7 +30,6 @@ interface BinaryClassFileIndex {
      */
     fun classFileNamesInPackage(packageFqName: FqName): Set<String>
 
-    /** Whether any binary root contains the directory of [packageFqName]. */
     fun containsPackageDirectory(packageFqName: FqName): Boolean
 }
 
@@ -42,9 +41,6 @@ interface BinaryClassFileIndex {
 interface BinaryClassFileHandle {
     val nameWithoutExtension: String
 
-    /**
-     * Whether this class file lies in [classpathRoot].
-     */
     fun isUnder(classpathRoot: JvmClasspathRootId): Boolean
 
     fun readBytes(): ByteArray
