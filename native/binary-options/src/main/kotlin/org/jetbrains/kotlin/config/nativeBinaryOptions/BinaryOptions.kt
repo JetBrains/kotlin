@@ -135,6 +135,10 @@ object BinaryOptions : BinaryOptionRegistry() {
     val runLLVMPassesInCompiler by booleanOption()
 
     val enableReleaseBinaryCache by booleanOption()
+
+    val lateShadowStack by booleanOption()
+
+    val lateShadowStackClearDeadSlots by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

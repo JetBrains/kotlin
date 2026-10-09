@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.ExceptionHandler
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.lower.getLoweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
+import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isOverridable
@@ -26,6 +27,14 @@ internal class CAdapterCodegen(
         private val codegen: CodeGenerator,
         override val generationState: NativeGenerationState,
 ) : ContextUtils {
+    init {
+        if (generationState.config.lateShadowStack) {
+            generationState.config.configuration.reportCompilationErrorAndThrow(
+                    "-Xbinary=lateShadowStack=true is not supported when producing a C interface " +
+                            "(the generated C++ glue still expects the return-slot ABI)"
+            )
+        }
+    }
 
     fun buildAllAdaptersRecursively(elements: CAdapterExportedElements) {
         val top = elements.scopes.single()

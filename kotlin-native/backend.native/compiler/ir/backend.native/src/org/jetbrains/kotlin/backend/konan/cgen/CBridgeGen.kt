@@ -51,6 +51,8 @@ internal interface KotlinStubs {
 
     val isSwiftExportEnabled: Boolean
 
+    val keepsPassedObjectsAlive: Boolean
+
     fun addKotlin(declaration: IrDeclaration)
     fun getUniqueCName(prefix: String): String
     fun getUniqueKotlinFunctionReferenceClassName(prefix: String): String
@@ -509,7 +511,7 @@ private fun KotlinToCCallBuilder.buildCall(
 }
 
 internal sealed class ObjCCallReceiver {
-    class Regular(val rawPtr: IrExpression) : ObjCCallReceiver()
+    class Regular(val kotlinObject: IrExpression) : ObjCCallReceiver()
     class Retained(val rawPtr: IrExpression) : ObjCCallReceiver()
 }
 
@@ -557,17 +559,21 @@ internal fun KotlinStubs.generateObjCCall(
         null
     }
 
+    fun rawPtrOf(kotlinObject: IrExpression) = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
+        this.arguments[0] = if (keepsPassedObjectsAlive) callBuilder.bridgeCallBuilder.keepingAlive(kotlinObject) else kotlinObject
+    }
+
     val preparedReceiver = if (method.objCConsumesReceiver()) {
         when (receiver) {
             is ObjCCallReceiver.Regular -> irCall(symbols.interopObjCRetain.owner).apply {
-                this.arguments[0] = receiver.rawPtr
+                this.arguments[0] = rawPtrOf(receiver.kotlinObject)
             }
 
             is ObjCCallReceiver.Retained -> receiver.rawPtr
         }
     } else {
         when (receiver) {
-            is ObjCCallReceiver.Regular -> receiver.rawPtr
+            is ObjCCallReceiver.Regular -> rawPtrOf(receiver.kotlinObject)
 
             is ObjCCallReceiver.Retained -> {
                 // Note: shall not happen: Retained is used only for alloc result currently,
@@ -1036,8 +1042,15 @@ private abstract class SimpleValuePassing : ValuePassing {
     context(_: CDeclarationScope)
     abstract fun cToBridged(expression: String): String
 
+    open val keepsArgumentAlive: Boolean get() = false
+
     override fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression {
-        val bridgeArgument = irBuilder.kotlinToBridged(expression)
+        val argument = if (keepsArgumentAlive && stubs.keepsPassedObjectsAlive) {
+            bridgeCallBuilder.keepingAlive(expression)
+        } else {
+            expression
+        }
+        val bridgeArgument = irBuilder.kotlinToBridged(argument)
         val cBridgeValue = passThroughBridge(bridgeArgument, kotlinBridgeType, cBridgeType).name
         val cValue = context(state) { bridgedToC(cBridgeValue) }
         return CExpression(cValue, cType)
@@ -1243,6 +1256,9 @@ private class ObjCReferenceValuePassing(
         get() = CTypes.voidPtr
     override val cType: CType
         get() = CTypes.voidPtr
+
+    override val keepsArgumentAlive: Boolean
+        get() = true
 
     override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression {
         val ptr = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
@@ -1520,15 +1536,13 @@ private class ObjCBlockPointerValuePassing(
         }
 
         invokeMethod.body = irBuiltIns.createIrBuilder(invokeMethod.symbol).irBlockBody(startOffset, endOffset) {
-            val blockPointer = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
-                arguments[0] = irGetField(irGet(invokeMethod.parameters[0]), blockHolderField)
-            }
+            val blockHolder = irGetField(irGet(invokeMethod.parameters[0]), blockHolderField)
 
             val arguments = (0 until parameterCount).map { index ->
                 irGet(invokeMethod.parameters[index + 1])
             }
 
-            +irReturn(callBlock(blockPointer, arguments))
+            +irReturn(callBlock(blockHolder, arguments))
         }
 
         stubs.addKotlin(irClass)
@@ -1538,8 +1552,11 @@ private class ObjCBlockPointerValuePassing(
         return constructor
     }
 
-    private fun IrBuilderWithScope.callBlock(blockPtr: IrExpression, arguments: List<IrExpression>): IrExpression {
+    private fun IrBuilderWithScope.callBlock(blockHolder: IrExpression, arguments: List<IrExpression>): IrExpression {
         val callBuilder = KotlinToCCallBuilder(this, stubs, isObjCMethod = false, ForeignExceptionMode.default)
+        val blockPtr = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
+            this.arguments[0] = if (stubs.keepsPassedObjectsAlive) callBuilder.bridgeCallBuilder.keepingAlive(blockHolder) else blockHolder
+        }
 
         val rawBlockPointerParameter =  callBuilder.passThroughBridge(blockPtr, blockPtr.type, CTypes.id)
         val blockVariableName = "block"

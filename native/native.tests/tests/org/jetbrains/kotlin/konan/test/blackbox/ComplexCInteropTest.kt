@@ -201,7 +201,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
             defFile = interopObjCDir.resolve("objcSmoke.def"),
             ktFiles = listOf(interopObjCDir.resolve("$ktFilePrefix.kt")),
             freeCompilerArgs = TestCompilerArgs(
-                compilerArgs = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi", "-linker-option", "-L${buildDir.absolutePath}"),
+                compilerArgs = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi", "-linker-option", "-L${buildDir.absolutePath}", "-Xbinary=lateShadowStackClearDeadSlots=true"),
                 cinteropArgs = listOf("-header", "smoke.h")
             ),
             extras = TestCase.NoTestRunnerExtras("main"),
@@ -247,7 +247,8 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
                     "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
                     "-opt-in=kotlin.native.internal.InternalForKotlinNative",
                     "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion",
-                    "-tr", "-e", "main", "-linker-option", "-L${buildDir.absolutePath}"
+                    "-tr", "-e", "main", "-linker-option", "-L${buildDir.absolutePath}",
+                    "-Xbinary=lateShadowStackClearDeadSlots=true"
                 ),
                 cinteropArgs = hFiles.flatMap { listOf("-header", "tests/${it.name}") }
             ),

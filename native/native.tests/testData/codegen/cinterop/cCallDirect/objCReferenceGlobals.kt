@@ -4,6 +4,7 @@
 
 // TARGET_BACKEND: NATIVE
 // FREE_CINTEROP_ARGS: -Xccall-mode direct
+// FREE_COMPILER_ARGS: -Xbinary=lateShadowStackClearDeadSlots=true
 
 // The test relies on GC actually collecting garbage and doesn't make any sense otherwise:
 // IGNORE_NATIVE: gcType=NOOP

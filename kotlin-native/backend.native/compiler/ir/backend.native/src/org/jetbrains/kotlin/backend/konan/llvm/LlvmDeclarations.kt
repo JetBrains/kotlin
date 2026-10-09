@@ -431,9 +431,18 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     || (declaration.isAccessor && declaration.moduleFragment.kotlinLibrary?.isCInteropLibrary() == true)
                     || declaration.isCFunctionOrGlobalAccessor()) return
 
-            val symbolName = declaration.computeSymbolName(context, forImplementation = true)
-            val proto = LlvmFunctionProto(declaration, symbolName, this, LLVMLinkage.LLVMExternalLinkage)
-            llvm.externalFunction(proto)
+            checkExternalReturnSlotAbiIsBridged(declaration)
+
+            if (declaration.isGcUnsafeWithReturnSlot) {
+                getOrCreateGcUnsafeAdapter(declaration)
+            } else {
+                val symbolName = declaration.computeSymbolName(context, forImplementation = true)
+                val proto = LlvmFunctionProto(
+                        declaration, symbolName, this, LLVMLinkage.LLVMExternalLinkage,
+                        isExternalNative = context.config.lateShadowStack
+                )
+                llvm.externalFunction(proto, isKotlinCode = false)
+            }
         } else {
             if (!declaration.shouldGenerateBody())
                 return

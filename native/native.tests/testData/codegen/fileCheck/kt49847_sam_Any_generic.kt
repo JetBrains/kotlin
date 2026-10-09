@@ -7,7 +7,8 @@ fun interface Foo<T> {
 
 fun baz(x: Any): Int = x.hashCode()
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 // CHECK-NOT: Int-box
 // CHECK-NOT: Int-unbox
 // CHECK-LABEL: epilogue:

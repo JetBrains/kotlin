@@ -66,7 +66,8 @@ fun reproduce4(obj: Any, t: Any?): Boolean {
 // CHECK-LABEL: epilogue:
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     if (reproduce(StringValue(), Any())) return "FAIL KT-87261 (type check): o is Other folded to true"
     if (reproduce2(null, Any())) return "FAIL KT-87261 (nullable type operand): o is Other folded to true"

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.get
+import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toCValues
 import llvm.*
 
@@ -18,6 +21,18 @@ sealed class LlvmCallable(
     val name: String? by lazy { llvmValue.valueName }
     val returnType: LLVMTypeRef by lazy { LLVMGetReturnType(functionType)!! }
     val numParams: Int by lazy { LLVMCountParamTypes(functionType) }
+    val paramTypes: List<LLVMTypeRef> by lazy {
+        val count = numParams
+        if (count == 0) {
+            emptyList()
+        } else {
+            memScoped {
+                val dest = allocArray<LLVMTypeRefVar>(count)
+                LLVMGetParamTypes(functionType, dest)
+                (0 until count).map { dest[it]!! }
+            }
+        }
+    }
     val isConstant by lazy { llvmValue.isConst }
 
     fun buildCall(builder: LLVMBuilderRef, args: List<LLVMValueRef>, name: String = "") =
@@ -87,10 +102,11 @@ sealed class LlvmFunction(
             returnsObjectType: Boolean,
             llvmValue: LLVMValueRef,
             attributeProvider: LlvmFunctionAttributeProvider,
+            val hasReturnSlot: Boolean,
     ) : LlvmFunction(functionType, returnsObjectType, llvmValue, attributeProvider) {
 
         internal constructor(llvmValue: LLVMValueRef, signature: LlvmFunctionSignature) :
-                this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature)
+                this(signature.llvmFunctionType, signature.returnsObjectType, llvmValue, signature, signature.hasReturnSlot)
 
         fun addBasicBlock(context: LLVMContextRef, name: String = "") =
                 LLVMAppendBasicBlockInContext(context, llvmValue, name)!!

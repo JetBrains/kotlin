@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
+import org.jetbrains.kotlin.backend.konan.optimizations.BuildShadowStackPass
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -145,6 +146,22 @@ internal val RemoveRedundantSafepointsPhaseInLLVM = optimizationPipelinePass(
         pipeline = ::RemoveRedundantSafepointsPipeline
 )
 
+internal val BuildShadowStackPhaseInCompiler = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
+        name = "BuildShadowStack",
+        postactions = getDefaultLlvmModuleActions(),
+        op = { context, _ ->
+            BuildShadowStackPass().runOnModule(
+                    module = context.llvm.module,
+                    clearDeadSlots = context.config.lateShadowStackClearDeadSlots
+            )
+        }
+)
+
+internal val BuildShadowStackPhaseInLLVM = optimizationPipelinePass(
+        name = "BuildShadowStack",
+        pipeline = ::BuildShadowStackPipeline
+)
+
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "CStubs",
         postactions = getDefaultLlvmModuleActions(),
@@ -195,6 +212,9 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         }
         if (!context.config.runLLVMPassesInCompiler) {
             it.runAndMeasurePhase(RemoveRedundantSafepointsPhaseInLLVM, module)
+            if (context.config.lateShadowStack) {
+                it.runAndMeasurePhase(BuildShadowStackPhaseInLLVM, module)
+            }
         }
         if (context.config.checkStateAtExternalCalls) {
             // The list of known functions has to be created after all optimizations (notably, DCE).
@@ -203,5 +223,8 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     }
     if (context.config.runLLVMPassesInCompiler) {
         runAndMeasurePhase(RemoveRedundantSafepointsPhaseInCompiler)
+        if (context.config.lateShadowStack) {
+            runAndMeasurePhase(BuildShadowStackPhaseInCompiler)
+        }
     }
 }

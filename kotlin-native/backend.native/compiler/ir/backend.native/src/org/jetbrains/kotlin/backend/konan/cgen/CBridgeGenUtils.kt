@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
@@ -180,6 +181,8 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
     val arguments = mutableListOf<IrExpression>()
     val cleanup = mutableListOf<IrBuilderWithScope.() -> IrStatement>()
 
+    private val keptAlive = mutableListOf<IrVariable>()
+
     private var memScope: IrVariable? = null
 
     fun getMemScope(): IrExpression = with(irBuilder) {
@@ -200,6 +203,17 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
         irGet(newMemScope)
     }
 
+    fun keepingAlive(expression: IrExpression): IrExpression = with(irBuilder) {
+        val type = expression.type.makeNullable()
+        val variable = scope.createTemporaryVariable(irNull(type), nameHint = "keptAlive", isMutable = true, irType = type)
+        prepare += variable
+        keptAlive += variable
+        irBlock(expression) {
+            +irSet(variable, expression)
+            +irImplicitCast(irGet(variable), expression.type)
+        }
+    }
+
     fun build(
             function: IrFunction,
             transformCall: (IrMemberAccessExpression<*>) -> IrExpression = { it }
@@ -218,7 +232,13 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
             irBuilder.irBlock(kotlinCall) {
                 prepare.forEach { +it }
                 if (cleanup.isEmpty()) {
-                    +kotlinCall
+                    if (keptAlive.isEmpty()) {
+                        +kotlinCall
+                    } else {
+                        val result = irTemporary(kotlinCall)
+                        keepAlive()
+                        +irGet(result)
+                    }
                 } else {
                     // Note: generating try-catch as finally blocks are already lowered.
                     val result = irTemporary(IrTryImpl(startOffset, endOffset, kotlinCall.type).apply {
@@ -239,9 +259,16 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
                     })
                     // TODO: consider handling a cleanup failure properly.
                     cleanup.forEach { +it() }
+                    keepAlive()
                     +irGet(result)
                 }
             }
+        }
+    }
+
+    private fun IrStatementsBuilder<*>.keepAlive() {
+        keptAlive.forEach {
+            +irCall(symbols.keepAlive).apply { arguments[0] = irGet(it) }
         }
     }
 }

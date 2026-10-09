@@ -44,7 +44,8 @@ fun changeGlobalRangeToList(): Int {
     return sum
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(6, changeRangeToListByFun())
     assertEquals(10, changeRangeToListExplicit())

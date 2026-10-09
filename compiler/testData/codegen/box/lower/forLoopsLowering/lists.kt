@@ -26,7 +26,8 @@ fun testDoubleSumOfList(): Double {
     return listOf(1.0, 2.0, 3.0).sumOf { it }
 }
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     assertEquals(6, testIntSumOfList())
     assertEquals(6, testIntSumOfArrayList())

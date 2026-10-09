@@ -47,7 +47,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     ).generate {
         val thisRef = param(0)
         val associatedObjectHolder = if (useSeparateHolder) {
-            loadSlot(llvm.pointerType, true, structGep(bodyType, thisRef, 1), isVar = false)
+            loadSlot(llvm.refPointerType, true, structGep(bodyType, thisRef, 1), isVar = false)
         } else {
             thisRef
         }
@@ -96,13 +96,17 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             objectBodyType,
             immutable = true
     )
-    val functionSig = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)))
+    val functionSig = LlvmFunctionSignature(
+            codegen.kObjHeaderPtrReturnType,
+            listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)),
+            hasReturnSlot = true,
+    )
     return functionGenerator(
             functionSig.toProto("convertBlock${bridge.nameSuffix}", null, LLVMLinkage.LLVMInternalLinkage)
     ).generate {
         val blockPtr = param(0)
         ifThen(icmpEq(blockPtr, llvm.kNull)) {
-            ret(llvm.kNull)
+            ret(llvm.kNullRef)
         }
 
         val retainedBlockPtr = callFromBridge(retainBlock, listOf(blockPtr))
@@ -264,7 +268,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         val result = functionGenerator(blockType.toBlockInvokeLlvmType(llvm).toProto(invokeName, null, LLVMLinkage.LLVMInternalLinkage)) {
             switchToRunnable = true
         }.generate {
-            val kotlinObject = load(llvm.pointerType, objectInBlock(param(0)))
+            val kotlinObject = load(llvm.refPointerType, objectInBlock(param(0)))
 
             val arguments = (1 .. blockType.numberOfParameters).map { index -> param(index) }
 

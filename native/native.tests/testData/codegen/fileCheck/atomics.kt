@@ -291,9 +291,11 @@ fun longArr_compareAndSet() = longArr.compareAndSet(0, 1L, 2L)
 // Array<T>
 val refArr = arrayOfNulls<String?>(2)
 
-// CHECK-LABEL: define ptr @"kfun:#refArr_atomicGet(){}kotlin.String?"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#refArr_atomicGet(){}kotlin.String?"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#refArr_atomicGet(){}kotlin.String?"
 // CHECK: call ptr @Kotlin_arrayGetElementAddress(ptr noundef %{{[0-9]+}}, i32 noundef 0)
-// CHECK: load atomic ptr, ptr %{{[0-9]+}} seq_cst
+// CHECK-EAGER_SHADOW_STACK: load atomic ptr, ptr %{{[0-9]+}} seq_cst
+// CHECK-LATE_SHADOW_STACK: load atomic ptr addrspace(1), ptr %{{[0-9]+}} seq_cst
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_atomicGet() = refArr.atomicGet(0)
 
@@ -303,13 +305,15 @@ fun refArr_atomicGet() = refArr.atomicGet(0)
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_atomicSet() = refArr.atomicSet(0, null)
 
-// CHECK-LABEL: define ptr @"kfun:#refArr_getAndSet(){}kotlin.String?"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#refArr_getAndSet(){}kotlin.String?"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#refArr_getAndSet(){}kotlin.String?"
 // CHECK: call ptr @Kotlin_arrayGetElementAddress(ptr noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: call ptr @GetAndSetVolatileHeapRef(ptr noundef %{{[0-9]+}}, ptr noundef null, ptr noundef %{{[0-9]+}})
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_getAndSet() = refArr.getAndSet(0, null)
 
-// CHECK-LABEL: define ptr @"kfun:#refArr_compareAndExchange(){}kotlin.String?"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#refArr_compareAndExchange(){}kotlin.String?"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#refArr_compareAndExchange(){}kotlin.String?"
 // CHECK: call ptr @Kotlin_arrayGetElementAddress(ptr noundef %{{[0-9]+}}, i32 noundef 0)
 // CHECK: call ptr @CompareAndSwapVolatileHeapRef(ptr noundef %{{[0-9]+}}, ptr noundef null, ptr noundef null, ptr noundef %{{[0-9]+}})
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -325,7 +329,8 @@ fun refArr_compareAndExchange() = refArr.compareAndExchange(0, null, null)
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun refArr_compareAndSet() = refArr.compareAndSet(0, null, null)
 
-// CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-EAGER_SHADOW_STACK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
+// CHECK-LATE_SHADOW_STACK-LABEL: define ptr addrspace(1) @"kfun:#box(){}kotlin.String"
 fun box(): String {
     byteGlobal_getField()
     byteGlobal_setField()

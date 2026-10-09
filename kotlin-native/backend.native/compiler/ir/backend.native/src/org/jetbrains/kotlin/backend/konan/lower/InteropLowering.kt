@@ -143,6 +143,8 @@ private abstract class BaseInteropIrTransformer(
 
             override val isSwiftExportEnabled = context.config.swiftExport
 
+            override val keepsPassedObjectsAlive get() = context.config.lateShadowStack
+
             override fun addKotlin(declaration: IrDeclaration) {
                 addKotlin(declaration)
             }
@@ -558,7 +560,7 @@ private class InteropTransformerPart1(
     ): IrExpression = genLoweredObjCMethodCall(
             info = info,
             superQualifier = superQualifier,
-            receiver = ObjCCallReceiver.Regular(rawPtr = getRawPtr(receiver)),
+            receiver = ObjCCallReceiver.Regular(kotlinObject = receiver),
             arguments = arguments,
             call = call,
             method = method

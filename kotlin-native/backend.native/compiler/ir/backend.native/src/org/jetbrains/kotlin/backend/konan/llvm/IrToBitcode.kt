@@ -247,8 +247,14 @@ internal class CodeGeneratorVisitor(
         override fun evaluateExpression(value: IrExpression, resultSlot: LLVMValueRef?): LLVMValueRef =
                 this@CodeGeneratorVisitor.evaluateExpression(value, resultSlot)
 
-        override fun getObjectFieldPointer(thisRef: LLVMValueRef, field: IrField): LLVMValueRef =
-                this@CodeGeneratorVisitor.fieldPtrOfClass(thisRef, field)
+        override fun getObjectFieldPointer(thisRef: LLVMValueRef, field: IrField): LLVMValueRef {
+            val ptr = this@CodeGeneratorVisitor.fieldPtrOfClass(thisRef, field)
+            return if (ptr.type != llvm.pointerType) {
+                functionGenerationContext.addrspacecast(llvm.pointerType, ptr)
+            } else {
+                ptr
+            }
+        }
 
         override fun getStaticFieldPointer(field: IrField) =
                 this@CodeGeneratorVisitor.staticFieldPtr(field, functionGenerationContext)
@@ -363,6 +369,11 @@ internal class CodeGeneratorVisitor(
             codegen.objCDataGenerator?.finishModule()
 
             overrideRuntimeGlobals()
+            if (context.config.lateShadowStack) {
+                llvm.compilerUsedGlobals.add(llvm.enterFrameFunction.toConstPointer().llvm)
+                llvm.compilerUsedGlobals.add(llvm.leaveFrameFunction.toConstPointer().llvm)
+                llvm.compilerUsedGlobals.add(llvm.setCurrentFrameFunction.toConstPointer().llvm)
+            }
             appendLlvmUsed("llvm.used", llvm.usedFunctions.map { it.toConstPointer().llvm } + llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", llvm.compilerUsedGlobals)
             if (context.config.produceCInterface) {
@@ -1433,7 +1444,7 @@ internal class CodeGeneratorVisitor(
                 },
                 onNull = {
                     if (value.typeOperand.isNullable()) {
-                        llvm.kNull
+                        llvm.kNullRef
                     } else {
                         callDirect(
                                 context.symbols.throwNullPointerException.owner,
@@ -1485,7 +1496,7 @@ internal class CodeGeneratorVisitor(
                     if (type.isNullable())
                         kTrue
                     else
-                        functionGenerationContext.icmpNe(arg, llvm.kNull)
+                        functionGenerationContext.icmpNe(arg, llvm.kNullRef)
                 },
                 onNull = { if (type.isNullable()) kTrue else kFalse },
                 onCheck = { _, checkResult -> checkResult }
@@ -1503,7 +1514,7 @@ internal class CodeGeneratorVisitor(
             onCheck: (argument: LLVMValueRef, checkResult: LLVMValueRef) -> LLVMValueRef,
     ) : LLVMValueRef {
         val srcArg = evaluateExpression(value.argument, resultSlot)
-        require(srcArg.type == llvm.pointerType) { "Expected ObjHeader but was ${srcArg.type.toTypeString()} for ${value.argument.dump()}" }
+        require(srcArg.type == llvm.refPointerType) { "Expected ObjHeader but was ${srcArg.type.toTypeString()} for ${value.argument.dump()}" }
         val srcType = value.argument.type
         val isSuperClassCast = srcType.isSuperClassCastTo(dstClass)
 
@@ -1515,7 +1526,7 @@ internal class CodeGeneratorVisitor(
             val bbNull = basicBlock("instance_of_null", value.startLocation)
 
 
-            val condition = icmpEq(srcArg, llvm.kNull)
+            val condition = icmpEq(srcArg, llvm.kNullRef)
             condBr(condition, bbNull, bbInstanceOf)
 
             positionAtEnd(bbNull)
@@ -1743,7 +1754,7 @@ internal class CodeGeneratorVisitor(
         val alignment: Int
         if (thisPtr != null) {
             require(!field.isStatic) { "Unexpected receiver for a static field: ${value.render()}" }
-            require(thisPtr.type == llvm.pointerType) {
+            require(thisPtr.type == llvm.refPointerType) {
                 thisPtr.type.toTypeString()
             }
             address = fieldPtrOfClass(thisPtr, field)
@@ -1803,7 +1814,7 @@ internal class CodeGeneratorVisitor(
     private fun evaluateConst(value: IrConst): ConstValue {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
         return when (value.kind) {
-            IrConstKind.Null -> llvm.nullPointer
+            IrConstKind.Null -> if (value.type.binaryTypeIsReference()) llvm.nullRefPointer else llvm.nullPointer
             IrConstKind.Boolean -> llvm.constInt1(value.value as Boolean)
             IrConstKind.Char -> llvm.constChar16(value.value as Char)
             IrConstKind.Byte -> llvm.constInt8(value.value as Byte)
@@ -1844,7 +1855,7 @@ internal class CodeGeneratorVisitor(
                     if (value.value.kind == IrConstKind.Null) {
                         Zero(value.type.toLLVMType(llvm))
                     } else {
-                        require(value.type.toLLVMType(llvm) == llvm.pointerType) {
+                        require(value.type.toLLVMType(llvm) == llvm.refPointerType) {
                             "Can't wrap ${value.value.kind.asString} constant to type ${value.type.render()}"
                         }
                         value.toBoxCacheValue(generationState) ?: codegen.staticData.createConstKotlinObject(
@@ -1928,7 +1939,7 @@ internal class CodeGeneratorVisitor(
                     }
                 }
 
-                require(value.type.toLLVMType(llvm) == llvm.pointerType) { "Constant object is not an object, but ${value.type.render()}" }
+                require(value.type.toLLVMType(llvm) == llvm.refPointerType) { "Constant object is not an object, but ${value.type.render()}" }
                 codegen.staticData.createConstKotlinObject(
                         constructedClass,
                         *fields.toTypedArray()
@@ -2489,7 +2500,7 @@ internal class CodeGeneratorVisitor(
                 linkage = LLVMLinkage.LLVMExternalLinkage,
                 independent = true // Protocol is header-only declaration.
         )
-        val protocolGetter = llvm.externalFunction(protocolGetterProto)
+        val protocolGetter = llvm.externalFunction(protocolGetterProto, isKotlinCode = false)
 
         // a protocol getter can call objc_retain, which takes a global objc lock see KT-80770
         functionGenerationContext.switchThreadState(ThreadState.Native)

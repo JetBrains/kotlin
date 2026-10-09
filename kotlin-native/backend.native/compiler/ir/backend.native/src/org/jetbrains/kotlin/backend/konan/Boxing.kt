@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.ConstValue
 import org.jetbrains.kotlin.backend.konan.llvm.StaticData
+import org.jetbrains.kotlin.backend.konan.llvm.addrspacecast
 import org.jetbrains.kotlin.backend.konan.llvm.constValue
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -218,7 +219,7 @@ internal fun IrConstantPrimitive.toBoxCacheValue(generationState: NativeGenerati
                 BoxCache.LONG -> llvm.int64Type
             })
             val llvmArrayType = LLVMArrayType(llvmType, end - start + 1)!!
-            llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(llvm, llvmArrayType, value.toInt() - start)?.getElementPtr(llvm, llvmType, 0)
+            llvm.boxCacheGlobals[cacheType]?.pointer?.getElementPtr(llvm, llvmArrayType, value.toInt() - start)?.getElementPtr(llvm, llvmType, 0)?.addrspacecast(llvm.runtime.objHeaderPtrType)
         }
     } else {
         null
