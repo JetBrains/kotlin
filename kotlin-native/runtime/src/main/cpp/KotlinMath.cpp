@@ -104,6 +104,65 @@ namespace {
 }
 #endif
 
+#if !KONAN_USE_BUILTIN_ROUNDEVEN
+template <typename Float> Float roundevenFallback(Float x) {
+    static_assert(std::is_same_v<Float, KFloat> ||
+                  std::is_same_v<Float, KDouble>);
+
+    using UInt = std::conditional_t<
+        std::is_same_v<Float, float>,
+        std::uint32_t,
+        std::uint64_t>;
+
+    using Limits = std::numeric_limits<Float>;
+    static_assert(Limits::is_iec559 && Limits::radix == 2);
+    static_assert(sizeof(Float) == sizeof(UInt));
+
+    constexpr int fractionBits = Limits::digits - 1;
+    constexpr int exponentBias = Limits::max_exponent - 1;
+    constexpr int storageBits = std::numeric_limits<UInt>::digits;
+
+    constexpr UInt signMask = UInt{1} << (storageBits - 1);
+    constexpr UInt oneBits  = UInt{1023} << fractionBits;
+    constexpr UInt halfBits = UInt{1022} << fractionBits;
+
+    UInt bits;
+    std::memcpy(&bits, &x, sizeof(bits));
+
+    const auto sign = bits & signMask;
+    const auto magnitude = bits & ~signMask;
+    const int exponent = static_cast<int>(magnitude >> fractionBits) - exponentBias;
+
+    if (exponent >= fractionBits) {
+        // Already integral, infinity, or NaN.
+        return x;
+    }
+
+    if (exponent < 0) {
+        // |x| <= 0.5 -> signed zero; 0.5 < |x| < 1 -> signed one.
+        bits = sign | (magnitude > halfBits ? oneBits : UInt{0});
+    } else {
+        // The bit corresponding to an increment of 1.0.
+        const auto unit = UInt{1} << (fractionBits - exponent);
+        const auto fractionMask = unit - 1;
+        const auto fraction = magnitude & fractionMask;
+        auto rounded = magnitude & ~fractionMask;
+
+        const auto halfway = unit >> 1;
+        const bool odd = (rounded & unit) != 0;
+
+        if (fraction > halfway || (fraction == halfway && odd)) {
+            rounded += unit;
+        }
+
+        bits = sign | rounded;
+    }
+
+    std::memcpy(&x, &bits, sizeof(x));
+    return x;
+}
+#endif
+
 extern "C" {
 
 // region Double math.
@@ -159,49 +218,7 @@ KDouble Kotlin_math_round(KDouble x) {
 #if KONAN_USE_BUILTIN_ROUNDEVEN
     return __builtin_roundeven(x);
 #else
-    static_assert(sizeof(KDouble) == sizeof(std::uint64_t));
-    static_assert(
-            std::numeric_limits<KDouble>::is_iec559 && std::numeric_limits<KDouble>::digits == 53 &&
-            std::numeric_limits<KDouble>::max_exponent == 1024);
-
-    std::uint64_t bits;
-    std::memcpy(&bits, &x, sizeof(bits));
-
-    constexpr std::uint64_t signMask = UINT64_C(1) << 63;
-    constexpr std::uint64_t oneBits = UINT64_C(1023) << 52;
-    constexpr std::uint64_t halfBits = UINT64_C(1022) << 52;
-
-    const auto sign = bits & signMask;
-    const auto magnitude = bits & ~signMask;
-    const int exponent = static_cast<int>(magnitude >> 52) - 1023;
-
-    if (exponent >= 52) {
-        // Already integral, infinity, or NaN.
-        return x;
-    }
-
-    if (exponent < 0) {
-        // |x| <= 0.5 -> signed zero; 0.5 < |x| < 1 -> signed one.
-        bits = sign | (magnitude > halfBits ? oneBits : 0);
-    } else {
-        // The bit corresponding to an increment of 1.0.
-        const auto unit = UINT64_C(1) << (52 - exponent);
-        const auto fractionMask = unit - 1;
-        const auto fraction = magnitude & fractionMask;
-        auto rounded = magnitude & ~fractionMask;
-
-        const auto halfway = unit >> 1;
-        const bool odd = (rounded & unit) != 0;
-
-        if (fraction > halfway || (fraction == halfway && odd)) {
-            rounded += unit;
-        }
-
-        bits = sign | rounded;
-    }
-
-    std::memcpy(&x, &bits, sizeof(x));
-    return x;
+    return roundevenFallback<KDouble>(x);
 #endif
 }
 
@@ -285,49 +302,7 @@ KFloat Kotlin_math_roundf(KFloat x) {
 #if KONAN_USE_BUILTIN_ROUNDEVEN
     return __builtin_roundevenf(x);
 #else
-    static_assert(sizeof(KFloat) == sizeof(std::uint32_t));
-    static_assert(
-            std::numeric_limits<KFloat>::is_iec559 && std::numeric_limits<KFloat>::digits == 24 &&
-            std::numeric_limits<KFloat>::max_exponent == 128);
-
-    std::uint32_t bits;
-    std::memcpy(&bits, &x, sizeof(bits));
-
-    constexpr std::uint32_t signMask = UINT32_C(1) << 31;
-    constexpr std::uint32_t oneBits = UINT32_C(1023) << 23;
-    constexpr std::uint32_t halfBits = UINT32_C(1022) << 23;
-
-    const auto sign = bits & signMask;
-    const auto magnitude = bits & ~signMask;
-    const int exponent = static_cast<int>(magnitude >> 23) - 127;
-
-    if (exponent >= 23) {
-        // Already integral, infinity, or NaN.
-        return x;
-    }
-
-    if (exponent < 0) {
-        // |x| <= 0.5 -> signed zero; 0.5 < |x| < 1 -> signed one.
-        bits = sign | (magnitude > halfBits ? oneBits : 0);
-    } else {
-        // The bit corresponding to an increment of 1.0.
-        const auto unit = UINT64_C(1) << (23 - exponent);
-        const auto fractionMask = unit - 1;
-        const auto fraction = magnitude & fractionMask;
-        auto rounded = magnitude & ~fractionMask;
-
-        const auto halfway = unit >> 1;
-        const bool odd = (rounded & unit) != 0;
-
-        if (fraction > halfway || (fraction == halfway && odd)) {
-            rounded += unit;
-        }
-
-        bits = sign | rounded;
-    }
-
-    std::memcpy(&x, &bits, sizeof(x));
-    return x;
+    return roundevenFallback<KFloat>(x);
 #endif
 }
 
