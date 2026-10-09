@@ -16,21 +16,21 @@ import kotlin.io.path.reader
 class JdkCompatibilityIT : KotlinMavenTestBase() {
 
     @MavenTest
-    @DisplayName("Compilation fails on JDK 1.8 when code uses JDK 9+ API")
-    fun testCustomJdk8Failure(mavenVersion: TestVersions.Maven) {
+    @DisplayName("Compilation fails on JDK 17 when code uses JDK 21+ API")
+    fun testCustomJdkFailure(mavenVersion: TestVersions.Maven) {
         testProject("test-customJdk", mavenVersion) {
             build(
                 "package",
                 expectedToFail = true,
                 buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
+                    javaVersion = TestVersions.Java.JDK_17,
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_17))
                 )
             ) {
                 assertCompilationFailed()
                 assertBuildLogContains(
                     "[INFO] Overriding JDK home path with",
-                    "Unresolved reference 'StackWalker'"
+                    "Unresolved reference 'SequencedCollection'"
                 )
             }
         }
@@ -54,15 +54,18 @@ class JdkCompatibilityIT : KotlinMavenTestBase() {
     }
 
     @MavenTest
-    @DisplayName("Compilation with JDK 8 internal classpath dependencies succeeds")
-    fun testJava8Classpath(mavenVersion: TestVersions.Maven) {
+    @DisplayName("Compilation with JDK 17 internal classpath dependencies succeeds")
+    fun testJavaClasspath(mavenVersion: TestVersions.Maven) {
         testProject("java8/test-classpath", mavenVersion) {
             build(
                 "package",
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
+                    javaVersion = TestVersions.Java.JDK_17,
+                    extraMavenProperties = mapOf(
+                        "kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_17),
+                        "kotlin.compiler.jdkHome" to context.getJavaHomeString(TestVersions.Java.JDK_1_8),
+                    )
                 )
             ) {
                 assertTestsPassed(1)

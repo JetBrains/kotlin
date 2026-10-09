@@ -351,11 +351,7 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
             setMavenProperty("maven.compiler.source", "1.7")
             setMavenProperty("maven.compiler.target", "1.7")
 
-            build(
-                "package",
-                buildOptions = buildOptions.copy(javaVersion = TestVersions.Java.JDK_11)
-                    .withoutKotlinDaemon("KT-71048: prevents JDK11 daemon contamination of subsequent JDK17 tests")
-            ) {
+            build("package") {
                 assertBuildLogContains("[WARNING] maven.compiler.target=1.7 is not supported as a Kotlin jvmTarget")
                 assertClassFilesMajorVersion(JVM_8_MAJOR_VERSION, *allKotlinOutputPaths())
             }
@@ -368,11 +364,7 @@ class SmartDefaultsJvmTargetIT : KotlinMavenTestBase() {
         testProject("test-smart-defaults-auto-bind-order", mavenVersion) {
             setMavenProperty("maven.compiler.release", "7")
 
-            build(
-                "package",
-                buildOptions = buildOptions.copy(javaVersion = TestVersions.Java.JDK_11)
-                    .withoutKotlinDaemon("KT-71048: prevents JDK11 daemon contamination of subsequent JDK17 tests")
-            ) {
+            build("package") {
                 assertBuildLogContains("[WARNING] maven.compiler.release=7 is not supported as a Kotlin jvmTarget")
                 assertClassFilesMajorVersion(JVM_8_MAJOR_VERSION, *allKotlinOutputPaths())
             }
