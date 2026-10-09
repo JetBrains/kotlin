@@ -12,7 +12,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:fir:plugin.api"))
     compileOnly(intellijCore())
 }
 

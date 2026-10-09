@@ -11,7 +11,7 @@ dependencies {
     api(project(":kotlin-sam-with-receiver-compiler-plugin.k2"))
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
-    compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:fir:plugin.api"))
     compileOnly(intellijCore())
 }
 
