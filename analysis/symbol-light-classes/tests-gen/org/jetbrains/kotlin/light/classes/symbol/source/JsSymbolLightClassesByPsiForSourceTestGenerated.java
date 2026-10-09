@@ -401,6 +401,12 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
+  @TestMetadata("staticMethodsForOverrides.kt")
+  public void testStaticMethodsForOverrides() {
+    run("staticMethodsForOverrides.kt");
+  }
+
+  @Test
   @TestMetadata("strangeIdentifiers.kt")
   public void testStrangeIdentifiers() {
     run("strangeIdentifiers.kt");
