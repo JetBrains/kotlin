@@ -24,7 +24,7 @@ object CirTreeSerializer {
         node: CirRootNode,
         targetIndex: Int,
         statsCollector: StatsCollector?,
-        moduleConsumer: (KlibModuleMetadata) -> Unit
+        moduleConsumer: (libraryName: String, module: KlibModuleMetadata) -> Unit
     ) {
         node.accept(
             CirTreeSerializationVisitor(statsCollector, moduleConsumer),
@@ -36,7 +36,7 @@ object CirTreeSerializer {
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 private class CirTreeSerializationVisitor(
     private val statsCollector: StatsCollector?,
-    private val moduleConsumer: (KlibModuleMetadata) -> Unit
+    private val moduleConsumer: (libraryName: String, module: KlibModuleMetadata) -> Unit
 ) : CirNodeVisitor<CirTreeSerializationContext, Any?> {
     private val classConsumer = ClassConsumer()
 
@@ -48,7 +48,7 @@ private class CirTreeSerializationVisitor(
             val moduleContext = rootContext.moduleContext(moduleName)
             val module: KlibModuleMetadata = moduleNode.accept(this, moduleContext)?.cast() ?: return@forEach
             statsCollector?.logModule(moduleContext)
-            moduleConsumer(module)
+            moduleConsumer(moduleName.name, module)
         }
 
         System.gc()

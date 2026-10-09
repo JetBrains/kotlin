@@ -86,8 +86,7 @@ internal fun serializeTarget(
     commonized: CirRootNode,
     outputTarget: SharedCommonizerTarget,
 ): Unit = parameters.logger.progress(outputTarget, "Serialized target") {
-    CirTreeSerializer.serializeSingleTarget(commonized, commonized.indexOfCommon, parameters.statsCollector) { metadataModule ->
-        val libraryName = metadataModule.name
+    CirTreeSerializer.serializeSingleTarget(commonized, commonized.indexOfCommon, parameters.statsCollector) { libraryName, metadataModule ->
         val serializedMetadata = with(metadataModule.write(ChunkedKlibModuleFragmentWriteStrategy())) {
             SerializedMetadata(
                 header,

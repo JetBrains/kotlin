@@ -48,7 +48,8 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
     private fun loadModuleMetadata(library: KotlinLibrary) = KlibModuleMetadata.readLenient(
             object : KlibModuleMetadata.MetadataLibraryProvider {
                 private val metadata = library.metadata
-                override val moduleHeaderData get() = metadata.moduleHeaderData ?: error("No metadata header data found")
+                override val moduleHeaderData get() = metadata.moduleHeaderData
+                override val packageNames: Set<String> = metadata.getPackageNames()
                 override val metadataVersion = KlibMetadataVersion((library.metadataVersion?.toArray()
                         ?: error("No metadata version specified in ${library.path}")))
                 override fun packageMetadata(fqName: String, partName: String) = metadata.getPackageFragment(fqName, partName)
@@ -56,6 +57,7 @@ internal class MetadataDumper(private val output: KlibToolOutput) {
             }
     )
 
+    @Suppress("DEPRECATION")
     private fun preprocessMetadataForTests(module: KlibModuleMetadata) = KlibModuleMetadata(
         name = module.name,
         fragments = module.fragments.groupBy { it.fqName }.mapNotNull { [packageFqName, fragments] ->

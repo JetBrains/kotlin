@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.library.components.inlinableFunctionsIr
 import org.jetbrains.kotlin.library.components.ir
 import org.jetbrains.kotlin.library.components.metadata
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
-import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -89,8 +88,6 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
     override fun execute() {
         val metadata = args.library.metadata
 
-        val metadataHeader = parseModuleHeader(metadata.moduleHeaderData)
-
         val nonEmptyPackageFQNs = buildSet {
             addAll(metadata.getPackageNames())
 
@@ -108,7 +105,6 @@ internal class Info(output: KlibToolOutput, args: ParsedArguments) : KlibToolCom
                 .associateTo(sortedMapOf()) { it.key.toString() to it.value.toString() }
 
         output.appendLine("Full path: ${args.library.path.toRealPath()}")
-        metadataHeader?.let { output.appendLine("Module name (metadata): ${it.moduleName}") }
         output.appendLine("Non-empty package FQNs (${nonEmptyPackageFQNs.size}):")
         nonEmptyPackageFQNs.forEach { packageFQN ->
             output.appendLine("  $packageFQN")
