@@ -9,38 +9,25 @@ package kotlin.wasm.internal
 
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineImplStackSwitching
-import kotlin.coroutines.WasmContinuationBox
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.wasm.internal.reftypes.typedcontref
 
-// Resumes the execution of wasm contref (wasmContinuation parameter)
-// by calling wasm `resume` instruction.
-//
-// When the execution suspends, returns COROUTINE_SUSPENDED.
-// If the suspension doesn't happen, returns the result.
+// Resumes the execution of `wasmContinuation` by calling wasm `resume` instruction.
+// If the continuation suspends, evaluates to the new contref.
+// If the continuation completes without suspending, executes wasm `return` with its result from the *calling* function,
+// so the caller must return `Any?` and must not have any `try`/`finally` around the call.
 @Suppress("UNUSED_PARAMETER")
-internal fun resumeWithImpl(wasmContinuation: typedcontref<(Any?) -> Unit>): Any? =
-    resumeWithIntrinsic()
-
-// Resumes the execution of wasm contref (wasmContinuation parameter)
-// by calling wasm `resume_throw` instruction.
-// It raises an exception (`exceptionToResume`) at the point contref was suspended previously
-// (after `suspend` instruction).
-//
-// When the execution suspends, returns COROUTINE_SUSPENDED.
-// If the suspension doesn't happen, returns the result.
-@Suppress("UNUSED_PARAMETER")
-internal fun resumeThrowImpl(exceptionToResume: Throwable, wasmContinuation: typedcontref<(Any?) -> Unit>): Any? =
-    resumeThrowIntrinsic()
-
 @ExcludedFromCodegen
-internal fun resumeWithIntrinsic(): Any? {
+internal fun resumeWithIntrinsic(wasmContinuation: typedcontref<(Any?) -> Unit>): typedcontref<(Any?) -> Unit> {
     implementedAsIntrinsic
 }
 
+// Same as `resumeIntrinsic`, but calls wasm `resume_throw` instruction
+// raising `exception` at the point `wasmContinuation` was suspended previously.
+@Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun resumeThrowIntrinsic(): Any? {
+internal fun resumeThrowIntrinsic(exception: Throwable, wasmContinuation: typedcontref<(Any?) -> Unit>): typedcontref<(Any?) -> Unit> {
     implementedAsIntrinsic
 }
 
@@ -60,19 +47,18 @@ internal suspend fun <T> suspendOrReturnStackSwitching(blockResult: Any?): T {
     if (coroutineImpl.resumedWhileRunning) {
         // `block` resumed the continuation itself, the result is already here -- do not park.
         coroutineImpl.resumedWhileRunning = false
-        coroutineImpl.exception?.let { throw it }
+        coroutineImpl.absorbedSelfResume = true
     } else {
         coroutineImpl.isRunning = false
-        suspendIntrinsic(coroutineImpl.wasmContBox)
+        suspendIntrinsic()
     }
 
-    return coroutineImpl.result as T
+    return coroutineImpl.result.getOrThrow() as T
 }
 
-@Suppress("UNUSED_PARAMETER")
 @UsedFromCompilerGeneratedCode
 @ExcludedFromCodegen
-internal fun suspendIntrinsic(contBox: WasmContinuationBox) {
+internal fun suspendIntrinsic() {
     implementedAsIntrinsic
 }
 
@@ -101,4 +87,27 @@ internal fun <R, P, T> suspendFunction2ToContref(
     completion: Continuation<T>
 ): typedcontref<(Any?) -> Unit> {
     implementedAsIntrinsic
+}
+
+internal fun startWrappedCoroutineStackSwitchingImpl(
+    wasmContinuation: typedcontref<(Any?) -> Unit>,
+    coroutine: CoroutineImplStackSwitching<*, *>,
+): Any? {
+    val result = try {
+        coroutine.wasmContinuation = wasmContinuation
+        coroutine.doResume()
+    } catch (e: Throwable) {
+        coroutine.isRunning = false
+        if (!coroutine.absorbedSelfResume) throw e
+        coroutine.completeWith(Result.failure(e))
+        return COROUTINE_SUSPENDED
+    }
+
+    if (result === COROUTINE_SUSPENDED) return result // parked; `completion` owns the contref now
+
+    coroutine.isRunning = false
+    if (!coroutine.absorbedSelfResume) return result // never suspended -- return the value directly
+
+    coroutine.completeWith(Result.success(result))
+    return COROUTINE_SUSPENDED
 }
