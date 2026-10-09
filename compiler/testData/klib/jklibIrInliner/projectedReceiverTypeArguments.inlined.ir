@@ -1,0 +1,135 @@
+Module: lib
+FILE fqName:lib fileName:/lib.kt lineStartOffsets: [0, 15, 31, 43, 44, 78, 104, 129, 146, 152, 154, 155, 202, 203]
+  CLASS[44, 153] CLASS name:Box modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[44, 153] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib.Box<T of lib.Box>
+    TYPE_PARAMETER[59, 60] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY[62, 74] name:value visibility:public modality:FINAL [val]
+      FIELD[62, 74] PROPERTY_BACKING_FIELD name:value type:T of lib.Box visibility:private [final]
+        EXPRESSION_BODY[62, 74]
+          GET_VAR[62, 74] 'value: T of lib.Box declared in lib.Box.<init>' type=T of lib.Box origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[62, 74] DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL returnType:T of lib.Box
+        VALUE_PARAMETER[62, 74] kind:DispatchReceiver name:<this> index:0 type:lib.Box<T of lib.Box>
+        correspondingProperty: PROPERTY[62, 74] name:value visibility:public modality:FINAL [val]
+        BLOCK_BODY[62, 74]
+          RETURN[62, 74] type=kotlin.Nothing from='public final fun <get-value> (): T of lib.Box declared in lib.Box'
+            GET_FIELD[62, 74] 'FIELD PROPERTY_BACKING_FIELD name:value type:T of lib.Box visibility:private [final]' type=T of lib.Box origin=null
+              receiver: GET_VAR[62, 74] '<this>: lib.Box<T of lib.Box> declared in lib.Box.<get-value>' type=lib.Box<T of lib.Box> origin=null
+    CONSTRUCTOR[61, 75] visibility:public returnType:lib.Box<T of lib.Box> [primary]
+      VALUE_PARAMETER[62, 74] kind:Regular name:value index:0 type:T of lib.Box
+      BLOCK_BODY[61, 75]
+        DELEGATING_CONSTRUCTOR_CALL[44, 153] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[44, 153] classDescriptor='CLASS CLASS name:Box modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN[89, 151] name:get visibility:public modality:FINAL returnType:T of lib.Box [inline]
+      VALUE_PARAMETER[89, 151] kind:DispatchReceiver name:<this> index:0 type:lib.Box<T of lib.Box>
+      BLOCK_BODY[102, 151]
+        VAR[112, 128] name:v type:T of lib.Box [val]
+          CALL[123, 128] 'public final fun <get-value> (): T of lib.Box declared in lib.Box' type=T of lib.Box origin=GET_PROPERTY
+            ARG <this>: GET_VAR[123, 128] '<this>: lib.Box<T of lib.Box> declared in lib.Box.get' type=lib.Box<T of lib.Box> origin=IMPLICIT_ARGUMENT
+        RETURN[137, 145] type=kotlin.Nothing from='public final fun get (): T of lib.Box declared in lib.Box'
+          GET_VAR[144, 145] 'val v: T of lib.Box declared in lib.Box.get' type=T of lib.Box origin=null
+  CLASS[155, 201] CLASS name:SubBox modality:OPEN visibility:public superTypes:[lib.Box<U of lib.SubBox>]
+    thisReceiver: VALUE_PARAMETER[155, 201] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib.SubBox<U of lib.SubBox>
+    TYPE_PARAMETER[173, 174] name:U index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR[175, 185] visibility:public returnType:lib.SubBox<U of lib.SubBox> [primary]
+      VALUE_PARAMETER[176, 184] kind:Regular name:value index:0 type:U of lib.SubBox
+      BLOCK_BODY[175, 185]
+        DELEGATING_CONSTRUCTOR_CALL[155, 201] 'public constructor <init> (value: T of lib.Box) declared in lib.Box'
+          TYPE_ARG T: U of lib.SubBox
+          ARG value: GET_VAR[195, 200] 'value: U of lib.SubBox declared in lib.SubBox.<init>' type=U of lib.SubBox origin=null
+        INSTANCE_INITIALIZER_CALL[155, 201] classDescriptor='CLASS CLASS name:SubBox modality:OPEN visibility:public superTypes:[lib.Box<U of lib.SubBox>]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in lib.Box
+    FUN[-2, -2] FAKE_OVERRIDE name:get visibility:public modality:FINAL returnType:U of lib.SubBox [inline,fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:lib.Box<U of lib.SubBox>
+      overridden:
+        public final fun get (): T of lib.Box declared in lib.Box
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in lib.Box
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in lib.Box
+    PROPERTY[-2, -2] FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final value: T of lib.Box declared in lib.Box
+      FUN[-2, -2] FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL returnType:U of lib.SubBox [fake_override]
+        VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:lib.Box<U of lib.SubBox>
+        correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-value> (): T of lib.Box declared in lib.Box
+Module: main
+FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 34, 51, 64, 65, 80, 98, 99, 168, 218, 219, 281, 282, 349, 403, 404, 470]
+  FUN[168, 217] name:testIn visibility:public modality:FINAL returnType:kotlin.Any?
+    VALUE_PARAMETER[179, 198] kind:Regular name:box index:0 type:lib.Box<in kotlin.String>
+    BLOCK_BODY[208, 217]
+      RETURN[217, 217] type=kotlin.Nothing from='public final fun testIn (box: lib.Box<in kotlin.String>): kotlin.Any? declared in test'
+        RETURNABLE_BLOCK[212, 217] type=kotlin.Any? origin=null
+          INLINED_BLOCK[212, 217]->[89, 151] type=kotlin.Any? origin=null
+            inlinedFunctionSymbol: public final fun get (): T of lib.Box declared in lib.Box
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            VAR[112, 128] name:v type:kotlin.Any? [val]
+              CALL[123, 128] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any? origin=GET_PROPERTY
+                ARG 1: TYPE_OP[208, 211] type=lib.Box<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=lib.Box<kotlin.Any?>
+                  GET_VAR[208, 211] 'box: lib.Box<in kotlin.String> declared in test.testIn' type=lib.Box<in kotlin.String> origin=null
+            RETURN[137, 145] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_VAR[144, 145] 'val v: kotlin.Any? declared in test.testIn' type=kotlin.Any? origin=null
+  FUN[219, 280] name:testInInherited visibility:public modality:FINAL returnType:kotlin.Any?
+    VALUE_PARAMETER[239, 261] kind:Regular name:box index:0 type:lib.SubBox<in kotlin.String>
+    BLOCK_BODY[271, 280]
+      RETURN[280, 280] type=kotlin.Nothing from='public final fun testInInherited (box: lib.SubBox<in kotlin.String>): kotlin.Any? declared in test'
+        RETURNABLE_BLOCK[275, 280] type=kotlin.Any? origin=null
+          INLINED_BLOCK[275, 280]->[89, 151] type=kotlin.Any? origin=null
+            inlinedFunctionSymbol: public final fun get (): T of lib.Box declared in lib.Box
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            VAR[112, 128] name:v type:kotlin.Any? [val]
+              CALL[123, 128] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any? origin=GET_PROPERTY
+                ARG 1: TYPE_OP[271, 274] type=lib.Box<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=lib.Box<kotlin.Any?>
+                  GET_VAR[271, 274] 'box: lib.SubBox<in kotlin.String> declared in test.testInInherited' type=lib.SubBox<in kotlin.String> origin=null
+            RETURN[137, 145] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_VAR[144, 145] 'val v: kotlin.Any? declared in test.testInInherited' type=kotlin.Any? origin=null
+  FUN[349, 402] name:testOut visibility:public modality:FINAL returnType:kotlin.Number
+    VALUE_PARAMETER[361, 381] kind:Regular name:box index:0 type:lib.Box<out kotlin.Number>
+    BLOCK_BODY[393, 402]
+      RETURN[402, 402] type=kotlin.Nothing from='public final fun testOut (box: lib.Box<out kotlin.Number>): kotlin.Number declared in test'
+        RETURNABLE_BLOCK[397, 402] type=kotlin.Number origin=null
+          INLINED_BLOCK[397, 402]->[89, 151] type=kotlin.Number origin=null
+            inlinedFunctionSymbol: public final fun get (): T of lib.Box declared in lib.Box
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            VAR[112, 128] name:v type:kotlin.Number [val]
+              CALL[123, 128] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Number origin=GET_PROPERTY
+                ARG 1: TYPE_OP[393, 396] type=lib.Box<kotlin.Number> origin=IMPLICIT_CAST typeOperand=lib.Box<kotlin.Number>
+                  GET_VAR[393, 396] 'box: lib.Box<out kotlin.Number> declared in test.testOut' type=lib.Box<out kotlin.Number> origin=null
+            RETURN[137, 145] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_VAR[144, 145] 'val v: kotlin.Number declared in test.testOut' type=kotlin.Number origin=null
+  FUN[404, 469] name:testOutInherited visibility:public modality:FINAL returnType:kotlin.Number
+    VALUE_PARAMETER[425, 448] kind:Regular name:box index:0 type:lib.SubBox<out kotlin.Number>
+    BLOCK_BODY[460, 469]
+      RETURN[469, 469] type=kotlin.Nothing from='public final fun testOutInherited (box: lib.SubBox<out kotlin.Number>): kotlin.Number declared in test'
+        RETURNABLE_BLOCK[464, 469] type=kotlin.Number origin=null
+          INLINED_BLOCK[464, 469]->[89, 151] type=kotlin.Number origin=null
+            inlinedFunctionSymbol: public final fun get (): T of lib.Box declared in lib.Box
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            VAR[112, 128] name:v type:kotlin.Number [val]
+              CALL[123, 128] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Number origin=GET_PROPERTY
+                ARG 1: TYPE_OP[460, 463] type=lib.Box<kotlin.Number> origin=IMPLICIT_CAST typeOperand=lib.Box<kotlin.Number>
+                  GET_VAR[460, 463] 'box: lib.SubBox<out kotlin.Number> declared in test.testOutInherited' type=lib.SubBox<out kotlin.Number> origin=null
+            RETURN[137, 145] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_VAR[144, 145] 'val v: kotlin.Number declared in test.testOutInherited' type=kotlin.Number origin=null
