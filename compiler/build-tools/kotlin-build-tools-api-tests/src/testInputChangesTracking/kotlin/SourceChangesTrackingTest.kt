@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogCon
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.expectFailWithError
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
@@ -238,6 +239,28 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
             }
             module2.compile {
                 assertCompiledSources("a.kt", "b.kt")
+            }
+        }
+    }
+
+    @DisplayName("Removal of source file with an object recompiles usages referencing its members through imported symbol")
+    @DefaultStrategyAndPlatformAgnosticScenarioTest
+    @TestMetadata("ic-scenarios/object-member-usage")
+    fun testRemovingObjectRecompilesImportedUsages(scenario: ScenarioCreator) {
+        scenario {
+            val mod = module("ic-scenarios/object-member-usage")
+
+            mod.deleteFile("Foo.kt")
+            mod.compile {
+                expectFailWithError(
+                    setOf(
+                        ".*/Usage\\.kt:\\d+:\\d+ Unresolved reference 'Foo'.*".toRegex(),
+                        ".*/ImportedUsage\\.kt:\\d+:\\d+ Unresolved reference 'Foo'.*".toRegex(),
+                        ".*/ImportedUsage\\.kt:\\d+:\\d+ Unresolved reference 'bar'.*".toRegex(),
+                        ".*/Import\\.kt:\\d+:\\d+ Unresolved reference 'Foo'.*".toRegex(),
+                    )
+                )
+                assertCompiledSources("Usage.kt", "ImportedUsage.kt", "Import.kt")
             }
         }
     }
