@@ -796,6 +796,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             lambdaInfo.lambdaClass.parent,
             lambdaInfo.superInvokeFun
         )
+        freeFunctionDeclaration.origin = WebCallableReferenceLowering.LIFTED_CALLABLE_REFERENCE_FUNCTION
 
         freeFunctionDeclaration.body = inlineLambdaBody(
             freeFunctionDeclaration,
