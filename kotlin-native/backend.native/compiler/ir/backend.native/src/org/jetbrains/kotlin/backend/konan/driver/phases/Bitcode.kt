@@ -151,7 +151,8 @@ internal val BuildShadowStackPhaseInCompiler = createSimpleNamedCompilerPhase<Bi
         postactions = getDefaultLlvmModuleActions(),
         op = { context, _ ->
             BuildShadowStackPass().runOnModule(
-                    module = context.llvm.module
+                    module = context.llvm.module,
+                    clearDeadSlots = context.config.lateShadowStackClearDeadSlots
             )
         }
 )

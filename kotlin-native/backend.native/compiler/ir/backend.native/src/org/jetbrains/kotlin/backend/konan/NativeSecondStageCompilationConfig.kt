@@ -502,6 +502,8 @@ class NativeSecondStageCompilationConfig(
 
     val lateShadowStack: Boolean = configuration.get(BinaryOptions.lateShadowStack) ?: false
 
+    val lateShadowStackClearDeadSlots: Boolean = configuration.get(BinaryOptions.lateShadowStackClearDeadSlots) ?: false
+
     private fun StringBuilder.appendCommonCacheFlavor() {
         append(target.toString())
         if (debug) append("-g")

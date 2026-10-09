@@ -9,7 +9,7 @@ import llvm.LLVMKotlinBuildShadowStack
 import llvm.LLVMModuleRef
 
 internal class BuildShadowStackPass {
-    fun runOnModule(module: LLVMModuleRef) {
-        LLVMKotlinBuildShadowStack(module)
+    fun runOnModule(module: LLVMModuleRef, clearDeadSlots: Boolean) {
+        LLVMKotlinBuildShadowStack(module, if (clearDeadSlots) 1 else 0)
     }
 }
