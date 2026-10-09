@@ -115,23 +115,8 @@ class SwiftPackageExportIT : KGPBaseTest() {
             assertEquals(listOf("SharedKotlin"), targets.getValue("KotlinRuntime").targetDependencies)
 
             // Every destination sees the API of its own target, and links the matching slice of the Kotlin binary.
-            val consumer = projectPath.resolve("consumer")
-            consumer.resolve("Sources/Consumer").createDirectories()
-            consumer.resolve("Package.swift").writeText(
-                """
-                // swift-tools-version: 5.9
-                import PackageDescription
-                let package = Package(
-                    name: "Consumer",
-                    platforms: [.iOS("18.0"), .macOS("15.0")],
-                    dependencies: [.package(name: "Shared", path: "../package/Debug")],
-                    targets: [
-                        .executableTarget(name: "Consumer", dependencies: [.product(name: "SharedLibrary", package: "Shared")])
-                    ]
-                )
-                """.trimIndent()
-            )
-            consumer.resolve("Sources/Consumer/main.swift").writeText(
+            val consumer = consumerOf(
+                exportedPackage,
                 """
                 import Shared
                 import Common
@@ -144,13 +129,9 @@ class SwiftPackageExportIT : KGPBaseTest() {
                 #else
                 print(iosArm64Api())
                 #endif
-                """.trimIndent()
+                """
             )
-
-            SwiftDestination.entries.forEach { destination ->
-                val build = consumer.swiftBuild(destination)
-                assertTrue(build.isSuccessful, "The consumer of the exported package failed to build for $destination:\n$build")
-            }
+            consumer.assertBuildsForEveryDestination()
 
             // The API of another destination is not there: calling it is a compilation error, not a link error.
             consumer.resolve("Sources/Consumer/main.swift").writeText(
