@@ -60,6 +60,7 @@ object SirSwiftModule : SirModule() {
     val caseIterable = protocol("CaseIterable")
     val losslessStringConvertible = protocol("LosslessStringConvertible")
     val rawRepresentable = protocol("RawRepresentable")
+    val anyClass = protocol("AnyClass")
 }
 
 object SirSwiftConcurrencyModule : SirModule() { // Some swift standard library definitions are actually re-exported from other modules
