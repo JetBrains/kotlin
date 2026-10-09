@@ -39,12 +39,6 @@ data class IncrementalCompilationFeatures(
      */
     val usePreciseJavaTracking: Boolean = false,
     /**
-     * Snapshot-based IC is only available in JVM.
-     * BuildHistory-based IC is only available in JS.
-     * This field would be soon removed.
-     */
-    val withAbiSnapshot: Boolean = false,
-    /**
      * Enables [RecoverableCompilationTransaction] for better restoration of build outputs
      * in case of a build error.
      */

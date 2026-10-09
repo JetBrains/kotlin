@@ -30,9 +30,6 @@ internal class TaskExecutionInfo(
 )
 
 internal fun IncrementalCompilationEnvironment.collectIcTags(): Set<StatTag> = buildSet {
-    if (icFeatures.withAbiSnapshot) {
-        add(StatTag.ABI_SNAPSHOT)
-    }
     if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
         add(StatTag.ARTIFACT_TRANSFORM)
     }

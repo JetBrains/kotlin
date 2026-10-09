@@ -104,7 +104,7 @@ class IncrementalJsCompilerRunner(
         get() = true
 
     override val shouldStoreFullFqNamesInLookupCache
-        get() = icFeatures.withAbiSnapshot
+        get() = false
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: CommonJsAndWasmCompilerArguments): IncrementalJsCachesManager {
         return IncrementalJsCachesManager(icContext, KlibMetadataSerializerProtocol, cacheDirectory).also { caches ->
@@ -124,12 +124,11 @@ class IncrementalJsCompilerRunner(
         changedFiles: ChangedFiles.DeterminableFiles.Known,
         args: CommonJsAndWasmCompilerArguments,
         messageCollector: MessageCollector,
-        classpathAbiSnapshots: Map<String, AbiSnapshot> //Ignore for now
     ): CompilationMode {
         if (buildHistoryFile == null) {
             error("The build is configured to use the build-history based IC approach, but doesn't specify the buildHistoryFile")
         }
-        if (!icFeatures.withAbiSnapshot && !buildHistoryFile.isFile) {
+        if (!buildHistoryFile.isFile) {
             return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
         }
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile, messageCollector) ?: return CompilationMode.Rebuild(BuildAttribute.INVALID_LAST_BUILD_INFO)

@@ -86,7 +86,6 @@ abstract class IncrementalCompilerRunner<
     protected open val lookupTrackerDelegate: LookupTracker = LookupTracker.DO_NOTHING
     protected val cacheDirectory = File(workingDir, cacheDirName)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
-    private val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
     internal val dirtyFilesProvider: DirtyFilesProvider = DirtyFilesProvider(workingDir, kotlinSourceFilesExtensions, reporter)
 
     /**
@@ -272,12 +271,10 @@ abstract class IncrementalCompilerRunner<
                     return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
                 }
 
-                val classpathAbiSnapshot = if (icFeatures.withAbiSnapshot) getClasspathAbiSnapshot(args) else null
-
                 // Step 2: Compute files to recompile
                 val compilationMode = try {
                     reporter.measure(IC_CALCULATE_INITIAL_DIRTY_SET) {
-                        calculateSourcesToCompile(caches, knownChangedFiles, args, messageCollector, classpathAbiSnapshot ?: emptyMap())
+                        calculateSourcesToCompile(caches, knownChangedFiles, args, messageCollector)
                     }
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE, e)
@@ -287,18 +284,6 @@ abstract class IncrementalCompilerRunner<
                     return ICResult.RequiresRebuild(compilationMode.reason)
                 }
 
-                val abiSnapshotData = if (icFeatures.withAbiSnapshot) {
-                    if (!abiSnapshotFile.exists()) {
-                        reporter.debug { "Jar snapshot file does not exist: ${abiSnapshotFile.path}" }
-                        return ICResult.RequiresRebuild(NO_ABI_SNAPSHOT)
-                    }
-                    reporter.info { "Incremental compilation with ABI snapshot enabled" }
-                    AbiSnapshotData(
-                        snapshot = AbiSnapshotImpl.read(abiSnapshotFile),
-                        classpathAbiSnapshot = classpathAbiSnapshot!!
-                    )
-                } else null
-
                 // Step 3: Compile incrementally
                 val exitCode = try {
                     compileImpl(
@@ -307,10 +292,9 @@ abstract class IncrementalCompilerRunner<
                         allSourceFiles,
                         args,
                         caches,
-                        abiSnapshotData,
                         messageCollector,
                     )
-                } catch (e: RequireRebuildForCorrectnessInKMPException) {
+                } catch (_: RequireRebuildForCorrectnessInKMPException) {
                     return ICResult.RequiresRebuild(UNSAFE_INCREMENTAL_CHANGE_KT_62686)
                 } catch (e: Throwable) {
                     return ICResult.Failed(IC_FAILED_TO_COMPILE_INCREMENTALLY, e)
@@ -362,25 +346,13 @@ abstract class IncrementalCompilerRunner<
                 classpathForLibrarySetSnapshot(args),
                 modulesApiHistory.modulesInfo,
             )
-            val abiSnapshotData = if (icFeatures.withAbiSnapshot) {
-                AbiSnapshotData(snapshot = AbiSnapshotImpl(mutableMapOf()), classpathAbiSnapshot = getClasspathAbiSnapshot(args))
-            } else null
-
-            val exitCode = compileImpl(icContext, CompilationMode.Rebuild(rebuildReason), allSourceFiles, args, caches, abiSnapshotData, messageCollector)
+            val exitCode = compileImpl(icContext, CompilationMode.Rebuild(rebuildReason), allSourceFiles, args, caches, messageCollector)
             if (exitCode == ExitCode.OK) {
                 if (hashedConfigurationInputs != null) {
                     caches.inputsCache.configurationInputsMap.updateHash(hashedConfigurationInputs)
                 }
             }
             exitCode
-        }
-    }
-
-    private class AbiSnapshotData(val snapshot: AbiSnapshot, val classpathAbiSnapshot: Map<String, AbiSnapshot>)
-
-    private fun getClasspathAbiSnapshot(args: Args): Map<String, AbiSnapshot> {
-        return reporter.measure(SET_UP_ABI_SNAPSHOTS) {
-            setupJarDependencies(args, reporter)
         }
     }
 
@@ -461,13 +433,7 @@ abstract class IncrementalCompilerRunner<
         changedFiles: DeterminableFiles.Known,
         args: Args,
         messageCollector: MessageCollector,
-        classpathAbiSnapshots: Map<String, AbiSnapshot>,
     ): CompilationMode
-
-    protected open fun setupJarDependencies(
-        args: Args,
-        reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
-    ): Map<String, AbiSnapshot> = emptyMap()
 
     sealed class CompilationMode {
         class Incremental(val dirtyFiles: DirtyFilesContainer) : CompilationMode()
@@ -521,13 +487,12 @@ abstract class IncrementalCompilerRunner<
         allSourceFiles: List<File>,
         args: Args,
         caches: CacheManager,
-        abiSnapshotData: AbiSnapshotData?, // Not null iff withAbiSnapshot = true
         messageCollector: MessageCollector,
     ): ExitCode {
         performWorkBeforeCompilation(compilationMode, args)
 
         val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
-        val exitCode = doCompile(icContext, caches, compilationMode, allKotlinFiles, args, abiSnapshotData, messageCollector)
+        val exitCode = doCompile(icContext, caches, compilationMode, allKotlinFiles, args, messageCollector)
 
         performWorkAfterCompilation(compilationMode, exitCode, caches)
         return exitCode
@@ -547,7 +512,7 @@ abstract class IncrementalCompilerRunner<
         reporter.measure(CALCULATE_OUTPUT_SIZE) {
             reporter.addMetric(
                 SNAPSHOT_SIZE,
-                (buildHistoryFile?.length() ?: 0) + lastBuildInfoFile.length() + abiSnapshotFile.length()
+                (buildHistoryFile?.length() ?: 0) + lastBuildInfoFile.length()
             )
             reporter.addMetric(
                 CACHE_DIRECTORY_SIZE,
@@ -561,7 +526,6 @@ abstract class IncrementalCompilerRunner<
         compilationMode: CompilationMode,
         allKotlinSources: List<File>,
         args: Args,
-        abiSnapshotData: AbiSnapshotData?, // Not null iff withAbiSnapshot = true
         originalMessageCollector: MessageCollector,
     ): ExitCode {
         val dirtySources = when (compilationMode) {
@@ -569,7 +533,7 @@ abstract class IncrementalCompilerRunner<
             is CompilationMode.Rebuild -> LinkedHashSet(allKotlinSources)
         }
 
-        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis(), abiSnapshotData?.classpathAbiSnapshot ?: emptyMap())
+        val currentBuildInfo = BuildInfo(startTS = System.currentTimeMillis())
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
         val buildDirtyFqNames = HashSet<FqName>()
         val allDirtySources = HashSet<File>()
@@ -680,9 +644,6 @@ abstract class IncrementalCompilerRunner<
             }
 
             if (compilationMode is CompilationMode.Rebuild) {
-                if (icFeatures.withAbiSnapshot) {
-                    abiSnapshotData!!.snapshot.protos.putAll(changesCollector.protoDataChanges())
-                }
                 break
             }
 
@@ -722,24 +683,11 @@ abstract class IncrementalCompilerRunner<
 
             buildDirtyLookupSymbols.addAll(dirtyLookupSymbols)
             buildDirtyFqNames.addAll(dirtyClassFqNames)
-
-            //update
-            if (icFeatures.withAbiSnapshot) {
-                //TODO(valtman) check method/ kts class remove
-                changesCollector.protoDataRemoved().forEach { abiSnapshotData!!.snapshot.protos.remove(it) }
-                abiSnapshotData!!.snapshot.protos.putAll(changesCollector.protoDataChanges())
-            }
         }
 
         if (exitCode == ExitCode.OK) {
             reporter.measure(STORE_BUILD_INFO) {
                 BuildInfo.write(icContext, currentBuildInfo, lastBuildInfoFile)
-
-                //write abi snapshot
-                if (icFeatures.withAbiSnapshot) {
-                    //TODO(valtman) check method/class remove
-                    AbiSnapshotImpl.write(icContext, abiSnapshotData!!.snapshot, abiSnapshotFile)
-                }
             }
         }
         if (exitCode == ExitCode.OK && compilationMode is CompilationMode.Incremental) {
@@ -783,7 +731,6 @@ abstract class IncrementalCompilerRunner<
     companion object {
         const val DIRTY_SOURCES_FILE_NAME = "dirty-sources.txt"
         const val LAST_BUILD_INFO_FILE_NAME = "last-build.bin"
-        const val ABI_SNAPSHOT_FILE_NAME = "abi-snapshot.bin"
         const val BUILD_HISTORY_FILE_NAME = "build-history.bin"
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,6 +46,8 @@ import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState as cleanOutputsAndLocalStateUtil
 
 private const val ABI_SNAPSHOT_FILE_NAME = "abi-snapshot.bin"
+private const val ABI_SNAPSHOT_DEPRECATION_MESSAGE =
+    "ABI snapshot-based incremental compilation was removed; this property is no longer used."
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
@@ -151,13 +153,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:PathSensitive(PathSensitivity.RELATIVE)
     internal val commonSourceSet: ConfigurableFileCollection = objectFactory.fileCollection()
 
+    @Deprecated(ABI_SNAPSHOT_DEPRECATION_MESSAGE)
     @get:Internal
     val abiSnapshotFile
         get() = taskBuildCacheableOutputDirectory.file(ABI_SNAPSHOT_FILE_NAME)
 
-    @get:Input
+    @Deprecated(ABI_SNAPSHOT_DEPRECATION_MESSAGE)
+    @get:Internal
     val abiSnapshotRelativePath: Property<String> = objectFactory.property(String::class.java).value(
-        //TODO update to support any jar changes
         "$name/${ABI_SNAPSHOT_FILE_NAME}"
     )
 
