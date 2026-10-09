@@ -1484,9 +1484,9 @@ fun PublishedProject.assertSwiftPMMetadataVariantExistsInRootComponent() {
 
 fun TestProject.commonizeAndDumpCinteropSignatures(
     commonizerBasePath: Path = projectPath,
-    commonizeTask: String = "commonizeCInterop",
+    vararg extraArgs: String = arrayOf(),
 ): String {
-    build(commonizeTask)
+    build("commonizeCInterop", *extraArgs)
 
     val commonizerResult = commonizerBasePath.resolve("build/classes/kotlin/commonizer/swiftPMImport")
         .listDirectoryEntries()
