@@ -221,7 +221,7 @@ private class JKlibNonPrivateInlineFunctionResolver(
 }
 
 /**
- * Binds the field symbols, and the class symbols qualifying them, that [NonLinkingIrInlineFunctionDeserializer] leaves unbound.
+ * Binds the field symbols that [NonLinkingIrInlineFunctionDeserializer] leaves unbound.
  *
  * That deserializer reads the inline function bodies of the dependencies into a symbol table of its own, and deliberately leaves the
  * symbols they reference unbound: they are not meant to be linked, as `IrFileSerializer` writes them back as signatures anyway. Field
@@ -246,8 +246,6 @@ private class UnboundFieldSymbolBinder(private val symbolFinder: SymbolFinder) :
     override fun visitFieldAccess(expression: IrFieldAccessExpression) {
         val symbol = expression.symbol
         if (!symbol.isBound) (symbol as IrFieldSymbolImpl).bind(symbol.findField())
-        // The class qualifying an access to a static Java field, e.g. `System` in `System.out`.
-        expression.superQualifierSymbol?.takeUnless { it.isBound }?.let { expression.superQualifierSymbol = it.findClass() }
         super.visitFieldAccess(expression)
     }
 
@@ -269,13 +267,6 @@ private class UnboundFieldSymbolBinder(private val symbolFinder: SymbolFinder) :
             ?.firstOrNull { it.name.asString() == propertySignature.shortName }
             ?.backingField
             ?: error("Cannot find the field `${propertySignature.declarationFqName}` of `$classId`")
-    }
-
-    private fun IrClassSymbol.findClass(): IrClassSymbol {
-        val signature = signature as? IdSignature.CommonSignature
-            ?: error("Cannot resolve the class of the unexpected signature `$signature`")
-        val classId = ClassId(FqName(signature.packageFqName), FqName(signature.declarationFqName), isLocal = false)
-        return symbolFinder.findClass(classId) ?: error("Cannot find the class `$classId`")
     }
 }
 
