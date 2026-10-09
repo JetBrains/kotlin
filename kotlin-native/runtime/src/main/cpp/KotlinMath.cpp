@@ -123,8 +123,8 @@ template <typename Float> Float roundevenFallback(Float x) {
     constexpr int storageBits = std::numeric_limits<UInt>::digits;
 
     constexpr UInt signMask = UInt{1} << (storageBits - 1);
-    constexpr UInt oneBits  = UInt{1023} << fractionBits;
-    constexpr UInt halfBits = UInt{1022} << fractionBits;
+    constexpr UInt oneBits  = UInt{exponentBias} << fractionBits;
+    constexpr UInt halfBits = UInt{exponentBias - 1} << fractionBits;
 
     UInt bits;
     std::memcpy(&bits, &x, sizeof(bits));
