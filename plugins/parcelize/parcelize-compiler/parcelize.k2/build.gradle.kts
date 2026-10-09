@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":compiler:fir:cones"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:plugin-utils"))
+    implementation(project(":compiler:fir:plugin.api"))
     implementation(project(":compiler:fir:checkers:checkers.common"))
     implementation(project(":compiler:fir:checkers:checkers.jvm"))
     implementation(project(":compiler:fir:diagnostic-renderers"))

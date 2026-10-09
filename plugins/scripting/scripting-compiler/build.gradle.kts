@@ -20,7 +20,7 @@ dependencies {
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:semantics.api"))
     compileOnly(project(":compiler:fir:fir2ir:jvm-backend"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
+    compileOnly(project(":compiler:fir:plugin.api"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-jvm"))
     compileOnly(project(":core:descriptors.runtime"))

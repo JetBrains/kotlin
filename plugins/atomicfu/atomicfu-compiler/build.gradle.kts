@@ -64,7 +64,7 @@ dependencies {
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
+    compileOnly(project(":compiler:fir:plugin.api"))
     compileOnly(project(":compiler:fir:checkers:checkers.common"))
     compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(project(":compiler:fir:entrypoint"))

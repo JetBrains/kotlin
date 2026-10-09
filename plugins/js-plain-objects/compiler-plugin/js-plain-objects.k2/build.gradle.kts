@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":compiler:fir:cones"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:plugin-utils"))
+    implementation(project(":compiler:fir:plugin.api"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":compiler:cli-base"))
 

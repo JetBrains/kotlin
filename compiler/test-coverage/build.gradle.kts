@@ -28,7 +28,7 @@ dependencies {
     jacocoAggregation(project(":compiler:fir:tree"))
     jacocoAggregation(project(":compiler:fir:semantics.api"))
     jacocoAggregation(project(":compiler:fir:resolve"))
-    jacocoAggregation(project(":compiler:fir:plugin-utils"))
+    jacocoAggregation(project(":compiler:fir:plugin.api"))
     jacocoAggregation(project(":compiler:fir:fir-serialization"))
     jacocoAggregation(project(":compiler:fir:fir-deserialization"))
     jacocoAggregation(project(":compiler:fir:fir-jvm"))

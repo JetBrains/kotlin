@@ -22,7 +22,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
-    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
+    testRuntimeOnly(project(":compiler:fir:plugin.api"))
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))

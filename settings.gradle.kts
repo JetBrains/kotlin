@@ -517,7 +517,7 @@ include(
     ":compiler:fir:fir2ir:jvm-backend",
     ":compiler:fir:semantics.api",
     ":compiler:fir:resolve",
-    ":compiler:fir:plugin-utils",
+    ":compiler:fir:plugin.api",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:fir-deserialization",
     ":compiler:fir:fir-jvm",

@@ -16,7 +16,7 @@ dependencies {
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:fir-serialization"))
     compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
+    compileOnly(project(":compiler:fir:plugin.api"))
     compileOnly(project(":compiler:fir:entrypoint"))
     compileOnly(project(":compiler:cli-base"))
     compileOnly(libs.kotlinx.serialization.core)

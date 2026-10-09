@@ -21,7 +21,7 @@ dependencies {
 
     testCompileOnly(intellijCore())
 
-    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
+    testRuntimeOnly(project(":compiler:fir:plugin.api"))
 
     testRuntimeOnly(commonDependency("org.lz4:lz4-java"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
