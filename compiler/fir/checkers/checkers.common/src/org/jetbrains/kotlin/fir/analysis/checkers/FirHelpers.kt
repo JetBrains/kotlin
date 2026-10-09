@@ -133,25 +133,35 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
     return isSupertypeOf(other, mutableSetOf())
 }
 
-fun ConeKotlinType.isKotlinValueClass(session: FirSession): Boolean {
+private fun ConeKotlinType.isKotlinValueClass(session: FirSession): Boolean {
     // Value classes have `inline` or `value` modifier in FIR
     return toRegularClassSymbol(session)?.isInlineOrValue == true
 }
 
+/**
+ * Whether this type is a value class type: a Kotlin inline or full value class, or a Java value class type (see [isJavaValueClassType]).
+ */
 fun ConeKotlinType.isValueClass(session: FirSession): Boolean =
-    isKotlinValueClass(session) || isJavaValueClass(session)
+    isKotlinValueClass(session) || isJavaValueClassType(session)
 
-// Like javac, this includes type parameters and captured types bounded by a Java value class. A flexible primitive type like `Int!` is
-// its Java box, like `java.lang.Integer`.
-fun ConeKotlinType.isJavaValueClass(session: FirSession, visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf()): Boolean =
+/**
+ * Whether this type is a Java value class type. Like javac, this includes type parameters, captured types and intersection types
+ * bounded by a Java value class, and a flexible primitive type like `Int!` whose Java box, like `java.lang.Integer`, is a value class.
+ *
+ * Unlike [FirRegularClassSymbol.isJavaValueClass], which checks only the class itself.
+ */
+private fun ConeKotlinType.isJavaValueClassType(
+    session: FirSession,
+    visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
+): Boolean =
     when (this) {
-        is ConeFlexibleType -> lowerBound.isJavaValueClass(session, visited) ||
+        is ConeFlexibleType -> lowerBound.isJavaValueClassType(session, visited) ||
                 isFlexiblePrimitive() && lowerBound.toRegularClassSymbol(session)?.isMappedToJavaValueClass(session) == true
-        is ConeDefinitelyNotNullType -> original.isJavaValueClass(session, visited)
-        is ConeIntersectionType -> intersectedTypes.any { it.isJavaValueClass(session, visited) }
+        is ConeDefinitelyNotNullType -> original.isJavaValueClassType(session, visited)
+        is ConeIntersectionType -> intersectedTypes.any { it.isJavaValueClassType(session, visited) }
         is ConeTypeParameterType ->
-            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.isJavaValueClass(session, visited) }
-        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isJavaValueClass(session, visited) }
+            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.isJavaValueClassType(session, visited) }
+        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isJavaValueClassType(session, visited) }
         is ConeClassLikeType -> toRegularClassSymbol(session)?.isJavaValueClass(session) == true
         is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
             -> false
@@ -1109,7 +1119,7 @@ inline fun FirElement.requireFeatureSupport(
 context(context: CheckerContext)
 internal val ConeKotlinType.hasStableIdentityForAtomicOperations: Boolean
     get() = fullyExpandedType().unwrapToSimpleTypeUsingLowerBound().let {
-        !it.isPrimitiveOrNullablePrimitive && !it.isKotlinValueClass(context.session)
+        !it.isPrimitiveOrNullablePrimitive && !it.isValueClass(context.session)
     }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
