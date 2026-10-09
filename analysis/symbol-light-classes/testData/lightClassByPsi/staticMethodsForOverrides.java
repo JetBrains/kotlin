@@ -10,17 +10,14 @@ public final class ClassWithCompanion /* ClassWithCompanion*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() ClassWithCompanion.Companion Companion;
 
-  @java.lang.Override()
   @kotlin.jvm.JvmStatic()
   public static void function();//  function()
 
-  @java.lang.Override()
+  public  ClassWithCompanion();//  .ctor()
+
   public static int getProperty();//  getProperty()
 
-  @java.lang.Override()
   public static void setProperty(int);//  setProperty(int)
-
-  public  ClassWithCompanion();//  .ctor()
 
   class Companion ...
 }
@@ -43,14 +40,11 @@ public abstract interface InterfaceWithCompanion /* InterfaceWithCompanion*/ {
   @org.jetbrains.annotations.NotNull()
   public static final @org.jetbrains.annotations.NotNull() InterfaceWithCompanion.Companion Companion;
 
-  @java.lang.Override()
   @kotlin.jvm.JvmStatic()
   public static void function();//  function()
 
-  @java.lang.Override()
   public static int getProperty();//  getProperty()
 
-  @java.lang.Override()
   public static void setProperty(int);//  setProperty(int)
 
   class Companion ...
@@ -81,13 +75,10 @@ public abstract interface InterfaceWithImplementations /* InterfaceWithImplement
   public default void setProperty(int);//  setProperty(int)
 
   public static final class DefaultImpls /* InterfaceWithImplementations.DefaultImpls*/ {
-    @java.lang.Override()
     public static int getProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() InterfaceWithImplementations);//  getProperty(@org.jetbrains.annotations.NotNull() InterfaceWithImplementations)
 
-    @java.lang.Override()
     public static void function(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() InterfaceWithImplementations);//  function(@org.jetbrains.annotations.NotNull() InterfaceWithImplementations)
 
-    @java.lang.Override()
     public static void setProperty(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() InterfaceWithImplementations, int);//  setProperty(@org.jetbrains.annotations.NotNull() InterfaceWithImplementations, int)
   }
 }
