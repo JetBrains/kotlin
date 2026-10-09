@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.apple
 
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.EnvironmentalVariablesOverride
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
@@ -29,7 +30,7 @@ import kotlin.test.assertEquals
     supportedOn = [OS.MAC],
     enabledOnCI = [OS.MAC],
 )
-@OptIn(EnvironmentalVariablesOverride::class)
+@OptIn(EnvironmentalVariablesOverride::class, ExperimentalKotlinGradlePluginApi::class)
 @SwiftPMImportGradlePluginTests
 class SwiftPMImportCompositeBuildIT : KGPBaseTest() {
 
