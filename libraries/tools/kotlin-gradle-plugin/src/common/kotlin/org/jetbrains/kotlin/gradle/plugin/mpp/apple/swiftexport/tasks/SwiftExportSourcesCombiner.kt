@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleArchitecture
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.GradleSwiftExportModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.swiftPackagePlatformNames
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -26,56 +21,61 @@ internal enum class SwiftPackageSourceLanguage {
 }
 
 /**
- * The `<TargetConditionals.h>` macros of the Apple families.
- */
-private val targetConditionalsOsMacros: Map<Family, String> = mapOf(
-    Family.IOS to "TARGET_OS_IOS",
-    Family.OSX to "TARGET_OS_OSX",
-    Family.TVOS to "TARGET_OS_TV",
-    Family.WATCHOS to "TARGET_OS_WATCH",
-)
-
-/**
  * The condition that only holds for the destination of this target.
  *
  * Fails for a target that is not an Apple one.
  */
 internal fun KonanTarget.swiftPackageDestinationCondition(language: SwiftPackageSourceLanguage): String {
-    val architecture = appleArchitecture
-    val isSimulator = when (appleTarget) {
-        AppleTarget.IPHONE_SIMULATOR, AppleTarget.TVOS_SIMULATOR, AppleTarget.WATCHOS_SIMULATOR -> true
-        AppleTarget.IPHONE_DEVICE, AppleTarget.TVOS_DEVICE, AppleTarget.WATCHOS_DEVICE, AppleTarget.MACOS_DEVICE -> false
+    val (swift, c) = destinationConditions()
+    return when (language) {
+        SwiftPackageSourceLanguage.SWIFT -> swift
+        SwiftPackageSourceLanguage.C_HEADER -> c
     }
+}
 
-    val parts = when (language) {
-        SwiftPackageSourceLanguage.SWIFT -> listOfNotNull(
-            "os(${swiftPackagePlatformNames.getValue(family)})",
-            when {
-                family == Family.OSX -> null
-                isSimulator -> "targetEnvironment(simulator)"
-                else -> "!targetEnvironment(simulator)"
-            },
-            // Mac Catalyst is `os(iOS)` too, and there is no Kotlin target for it.
-            "!targetEnvironment(macCatalyst)".takeIf { family == Family.IOS && !isSimulator },
-            "arch(${architecture.clangArch})",
-        )
-        SwiftPackageSourceLanguage.C_HEADER -> listOfNotNull(
-            targetConditionalsOsMacros.getValue(family),
-            when {
-                family == Family.OSX -> null
-                isSimulator -> "TARGET_OS_SIMULATOR"
-                else -> "!TARGET_OS_SIMULATOR"
-            },
-            "!TARGET_OS_MACCATALYST".takeIf { family == Family.IOS && !isSimulator },
-            when (architecture) {
-                // TARGET_CPU_ARM64 is set for arm64_32 as well.
-                AppleArchitecture.ARM64 -> "TARGET_CPU_ARM64 && TARGET_RT_64_BIT"
-                AppleArchitecture.ARM64_32 -> "TARGET_CPU_ARM64 && !TARGET_RT_64_BIT"
-                AppleArchitecture.X86_64 -> "TARGET_CPU_X86_64"
-            },
-        )
-    }
-    return parts.joinToString(" && ")
+/*
+ * The Swift and C conditions of every Apple target, read off its target triple. Mac Catalyst is `os(iOS)` too and
+ * has no Kotlin target, so the iOS device condition excludes it. In C, `__is_target_environment(unknown)` already
+ * rules out both the simulator and Mac Catalyst.
+ */
+private fun KonanTarget.destinationConditions(): Pair<String, String> = when (this) {
+    KonanTarget.IOS_ARM64 ->
+        "os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst) && arch(arm64)" to
+                "__is_target_os(ios) && __is_target_environment(unknown) && __is_target_arch(arm64)"
+    KonanTarget.IOS_SIMULATOR_ARM64 ->
+        "os(iOS) && targetEnvironment(simulator) && arch(arm64)" to
+                "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(arm64)"
+    KonanTarget.IOS_X64 ->
+        "os(iOS) && targetEnvironment(simulator) && arch(x86_64)" to
+                "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(x86_64)"
+    KonanTarget.MACOS_ARM64 ->
+        "os(macOS) && arch(arm64)" to
+                "__is_target_os(macos) && __is_target_arch(arm64)"
+    KonanTarget.MACOS_X64 ->
+        "os(macOS) && arch(x86_64)" to
+                "__is_target_os(macos) && __is_target_arch(x86_64)"
+    KonanTarget.TVOS_ARM64 ->
+        "os(tvOS) && !targetEnvironment(simulator) && arch(arm64)" to
+                "__is_target_os(tvos) && __is_target_environment(unknown) && __is_target_arch(arm64)"
+    KonanTarget.TVOS_SIMULATOR_ARM64 ->
+        "os(tvOS) && targetEnvironment(simulator) && arch(arm64)" to
+                "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(arm64)"
+    KonanTarget.TVOS_X64 ->
+        "os(tvOS) && targetEnvironment(simulator) && arch(x86_64)" to
+                "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(x86_64)"
+    KonanTarget.WATCHOS_ARM64 ->
+        "os(watchOS) && !targetEnvironment(simulator) && arch(arm64_32)" to
+                "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64_32)"
+    KonanTarget.WATCHOS_DEVICE_ARM64 ->
+        "os(watchOS) && !targetEnvironment(simulator) && arch(arm64)" to
+                "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64)"
+    KonanTarget.WATCHOS_SIMULATOR_ARM64 ->
+        "os(watchOS) && targetEnvironment(simulator) && arch(arm64)" to
+                "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(arm64)"
+    KonanTarget.WATCHOS_X64 ->
+        "os(watchOS) && targetEnvironment(simulator) && arch(x86_64)" to
+                "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(x86_64)"
+    else -> throw IllegalArgumentException("Swift Export doesn't support $this")
 }
 
 /**
@@ -106,10 +106,6 @@ internal fun combineSwiftExportSources(
     }
 
     return buildString {
-        if (language == SwiftPackageSourceLanguage.C_HEADER) {
-            appendLine("#include <TargetConditionals.h>")
-            appendLine()
-        }
         targetsByContent.entries.forEachIndexed { index, (content, targets) ->
             val conditions = targets.map { it.swiftPackageDestinationCondition(language) }
             val condition = conditions.singleOrNull() ?: conditions.joinToString(" || ") { "($it)" }

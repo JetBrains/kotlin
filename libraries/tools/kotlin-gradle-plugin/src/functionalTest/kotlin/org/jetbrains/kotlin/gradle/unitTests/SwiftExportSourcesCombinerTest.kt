@@ -47,18 +47,18 @@ class SwiftExportSourcesCombinerTest {
     fun `c conditions of every apple target`() {
         assertEquals(
             mapOf(
-                "ios_arm64" to "TARGET_OS_IOS && !TARGET_OS_SIMULATOR && !TARGET_OS_MACCATALYST && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "ios_simulator_arm64" to "TARGET_OS_IOS && TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "ios_x64" to "TARGET_OS_IOS && TARGET_OS_SIMULATOR && TARGET_CPU_X86_64",
-                "macos_arm64" to "TARGET_OS_OSX && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "macos_x64" to "TARGET_OS_OSX && TARGET_CPU_X86_64",
-                "tvos_arm64" to "TARGET_OS_TV && !TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "tvos_simulator_arm64" to "TARGET_OS_TV && TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "tvos_x64" to "TARGET_OS_TV && TARGET_OS_SIMULATOR && TARGET_CPU_X86_64",
-                "watchos_arm64" to "TARGET_OS_WATCH && !TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && !TARGET_RT_64_BIT",
-                "watchos_device_arm64" to "TARGET_OS_WATCH && !TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "watchos_simulator_arm64" to "TARGET_OS_WATCH && TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && TARGET_RT_64_BIT",
-                "watchos_x64" to "TARGET_OS_WATCH && TARGET_OS_SIMULATOR && TARGET_CPU_X86_64",
+                "ios_arm64" to "__is_target_os(ios) && __is_target_environment(unknown) && __is_target_arch(arm64)",
+                "ios_simulator_arm64" to "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(arm64)",
+                "ios_x64" to "__is_target_os(ios) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
+                "macos_arm64" to "__is_target_os(macos) && __is_target_arch(arm64)",
+                "macos_x64" to "__is_target_os(macos) && __is_target_arch(x86_64)",
+                "tvos_arm64" to "__is_target_os(tvos) && __is_target_environment(unknown) && __is_target_arch(arm64)",
+                "tvos_simulator_arm64" to "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(arm64)",
+                "tvos_x64" to "__is_target_os(tvos) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
+                "watchos_arm64" to "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64_32)",
+                "watchos_device_arm64" to "__is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64)",
+                "watchos_simulator_arm64" to "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(arm64)",
+                "watchos_x64" to "__is_target_os(watchos) && __is_target_environment(simulator) && __is_target_arch(x86_64)",
             ),
             appleTargets.associate { it.name to it.swiftPackageDestinationCondition(SwiftPackageSourceLanguage.C_HEADER) },
         )
@@ -155,13 +155,11 @@ class SwiftExportSourcesCombinerTest {
 
         assertEquals(
             """
-            #include <TargetConditionals.h>
-
-            #if TARGET_OS_IOS && !TARGET_OS_SIMULATOR && !TARGET_OS_MACCATALYST && TARGET_CPU_ARM64 && TARGET_RT_64_BIT
+            #if __is_target_os(ios) && __is_target_environment(unknown) && __is_target_arch(arm64)
             #include <stdint.h>
 
             int32_t device();
-            #elif TARGET_OS_WATCH && !TARGET_OS_SIMULATOR && TARGET_CPU_ARM64 && !TARGET_RT_64_BIT
+            #elif __is_target_os(watchos) && __is_target_environment(unknown) && __is_target_arch(arm64_32)
             #include <stdint.h>
 
             int32_t watch();
