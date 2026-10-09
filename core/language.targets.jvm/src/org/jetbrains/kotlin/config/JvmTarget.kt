@@ -70,3 +70,10 @@ enum class JvmTarget(
             entries - JVM_1_6
     }
 }
+
+/**
+ * Whether value classes (JEP 401) are available with [jvmTarget]: they are a preview feature since JVM 28, so they also need JVM preview
+ * features to be enabled ([isJvmPreviewEnabled]).
+ */
+fun isJvmTargetValhallaCompatible(jvmTarget: JvmTarget, isJvmPreviewEnabled: Boolean): Boolean =
+    isJvmPreviewEnabled && jvmTarget >= JvmTarget.JVM_28
