@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelineArtifact
 import org.jetbrains.kotlin.cli.registerExtensionStorage
 import org.jetbrains.kotlin.cli.reportOutput
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt.base.*
+import org.jetbrains.kotlin.kapt.base.util.ClassTrackingURLClassLoader
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt.base.util.info
@@ -61,6 +63,7 @@ open class FirKaptAnalysisHandlerExtension(
             projectBaseDir = projectBaseDir ?: project.basePath?.let(::File)
             val contentRoots = configuration.contentRoots
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
+            compileClasspath.addAll(contentRoots.filterIsInstance<JvmModulePathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.outputDirectory
         }
@@ -146,7 +149,7 @@ open class FirKaptAnalysisHandlerExtension(
         logger.info { "Annotation processing took $annotationProcessingTime ms" }
 
         if (options.detectMemoryLeaks != DetectMemoryLeaksMode.NONE) {
-            MemoryLeakDetector.add(processors.classLoader)
+            MemoryLeakDetector.add(processors.classLoader) { (it as? ClassTrackingURLClassLoader)?.definedClasses }
 
             val isParanoid = options.detectMemoryLeaks == DetectMemoryLeaksMode.PARANOID
             val [leakDetectionTime, leaks] = measureTimeMillis { MemoryLeakDetector.process(isParanoid) }

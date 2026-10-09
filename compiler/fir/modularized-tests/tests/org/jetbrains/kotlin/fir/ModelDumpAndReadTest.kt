@@ -55,7 +55,7 @@ class ModelDumpAndReadTest {
 
         assertEquals("testmain", moduleData.name)
         assertEquals(listOf(mainKt, main2Kt), moduleData.sources.toList())
-        assertTrue(moduleData.classpath.any { it.name == "kotlin-stdlib.jar" })
+        assertTrue(moduleData.classpath.any { it.name == "kotlin-stdlib.jar" } xor moduleData.modulepath.any { it.name == "kotlin-stdlib.jar" })
     }
 
     @Test
