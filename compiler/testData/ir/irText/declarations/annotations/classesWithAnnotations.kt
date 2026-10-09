@@ -1,3 +1,4 @@
+// DUMP_IR_DIFFERENCE: JKLIB
 annotation class TestAnn(val x: String)
 
 @TestAnn("class")

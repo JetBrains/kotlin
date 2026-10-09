@@ -1,0 +1,46 @@
+--- a/enumClassDeclaration.ir.txt
++++ b/enumClassDeclaration.ir.jklib.txt
+@@ -18,6 +18,10 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.A
+       overridden:
+         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
++    FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.A?>?>? [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
++      overridden:
++        public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] E of kotlin.Enum?>?>? declared in kotlin.Enum
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.A>
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -66,6 +70,10 @@
+           VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.B
+           overridden:
+             public final fun compareTo (other: <root>.B): kotlin.Int declared in <root>.B
++        FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.B?>?>? [fake_override]
++          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
++          overridden:
++            public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.B?>?>? declared in <root>.B
+         FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+           VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -115,6 +123,10 @@
+           VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.B
+           overridden:
+             public final fun compareTo (other: <root>.B): kotlin.Int declared in <root>.B
++        FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.B?>?>? [fake_override]
++          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
++          overridden:
++            public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.B?>?>? declared in <root>.B
+         FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+           VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+           VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+@@ -162,6 +174,10 @@
+       VALUE_PARAMETER kind:Regular name:other index:1 type:<root>.B
+       overridden:
+         public final fun compareTo (other: E of kotlin.Enum): kotlin.Int declared in kotlin.Enum
++    FUN FAKE_OVERRIDE name:describeConstable visibility:public modality:FINAL returnType:@[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] <root>.B?>?>? [fake_override]
++      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
++      overridden:
++        public final fun describeConstable (): @[FlexibleNullability] java.util.Optional<@[FlexibleNullability] java.lang.Enum.EnumDesc<@[FlexibleNullability] E of kotlin.Enum?>?>? declared in kotlin.Enum
+     FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL returnType:kotlin.Boolean [fake_override,operator]
+       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Enum<<root>.B>
+       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
