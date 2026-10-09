@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.asKaType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneType
 import org.jetbrains.kotlin.analysis.api.fir.utils.coneTypeProjection
+import org.jetbrains.kotlin.analysis.api.fir.utils.constructFirAnnotationWithoutArguments
+import org.jetbrains.kotlin.analysis.api.fir.utils.constructAttributesForNonArgsAnnotations
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.types.typeCreation.*
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -17,20 +19,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.classKind
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
-import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
-import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.withParameterNameAnnotation
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
@@ -237,7 +232,8 @@ internal class KaFirTypeCreator(
     override fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit): KaDynamicType {
         withValidityAssertion {
             val builder = KaBaseDynamicTypeBuilder(this).apply(init)
-            val coneType = ConeDynamicType.create(rootModuleSession, attributes = constructAnnotationAttributes(builder.annotations))
+            val attributes = constructAttributesForNonArgsAnnotations(builder.annotations, analysisSession)
+            val coneType = ConeDynamicType.create(rootModuleSession, attributes = attributes)
             return coneType.asKaType() as KaDynamicType
         }
     }
@@ -264,10 +260,10 @@ internal class KaFirTypeCreator(
             else -> StandardNames.getFunctionClassId(numberOfParameters)
         }
 
-        val firAnnotation = builder.annotations.mapNotNull { constructAnnotation(it) }
+        val firAnnotations = builder.annotations.mapNotNull { constructFirAnnotationWithoutArguments(it, analysisSession) }
 
         val refinedClassId =
-            analysisSession.firSession.functionTypeService.extractSingleExtensionKindForDeserializedConeType(baseClassId, firAnnotation)
+            analysisSession.firSession.functionTypeService.extractSingleExtensionKindForDeserializedConeType(baseClassId, firAnnotations)
                 ?.let { functionClassKind ->
                     ClassId(functionClassKind.packageFqName, functionClassKind.numberedClassName(numberOfParameters))
                 } ?: baseClassId
@@ -297,68 +293,22 @@ internal class KaFirTypeCreator(
             add(returnType)
         }
 
-        val constructedAttributes = constructAnnotationAttributesList(builder.annotations)
-            .let { attributes ->
-                if (contextParameters.isNotEmpty()) {
-                    attributes + CompilerConeAttributes.ContextFunctionTypeParams(contextParameters.size)
-                } else {
-                    attributes
-                }
-            }
-
         val typeContext = rootModuleSession.typeContext
         val coneType = typeContext.createSimpleType(
             constructor = lookupTag,
             arguments = typeArguments,
             nullable = builder.isMarkedNullable,
             isExtensionFunction = builder.receiverType != null,
-            attributes = constructedAttributes
+            contextParameterCount = contextParameters.size,
+            attributes = firAnnotations.computeTypeAttributes(rootModuleSession, shouldExpandTypeAliases = true).toList()
         ) as ConeClassLikeType
 
         return coneType.asKaType()
     }
 
     private fun ConeKotlinType.withAnnotationAttributes(annotationClassIds: List<ClassId>): ConeKotlinType {
-        return this.withAttributes(constructAnnotationAttributes(annotationClassIds))
+        return this.withAttributes(constructAttributesForNonArgsAnnotations(annotationClassIds, analysisSession))
     }
-
-    private fun constructAnnotationAttributes(annotationClassIds: List<ClassId>): ConeAttributes {
-        return ConeAttributes.create(constructAnnotationAttributesList(annotationClassIds))
-    }
-
-    private fun constructAnnotationAttributesList(annotationClassIds: List<ClassId>): List<ConeAttribute<*>> {
-        if (annotationClassIds.isEmpty()) {
-            return emptyList()
-        }
-
-        val customAttribute = CustomAnnotationTypeAttribute(annotationClassIds.mapNotNull(::constructAnnotation))
-
-        return listOf(customAttribute)
-    }
-
-    private fun constructAnnotation(classId: ClassId): FirAnnotation? {
-        val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(classId)
-            ?: return null
-
-        if (classSymbol.classKind?.isAnnotationClass != true) {
-            return null
-        }
-
-        val firSession = analysisSession.firSession
-        val primaryConstructor = classSymbol.getPrimaryConstructorSymbol(firSession, firSession.getScopeSession()) ?: return null
-
-        if (primaryConstructor.valueParameterSymbols.isNotEmpty()) {
-            return null
-        }
-
-        return buildAnnotation {
-            annotationTypeRef = buildResolvedTypeRef {
-                this.coneType = classSymbol.defaultType()
-            }
-            argumentMapping = FirEmptyAnnotationArgumentMapping
-        }
-    }
-
 
     private fun ConeKotlinType.asKaType(): KaType = asKaType(analysisSession)
 

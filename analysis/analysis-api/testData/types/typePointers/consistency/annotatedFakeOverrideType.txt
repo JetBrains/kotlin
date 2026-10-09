@@ -1,0 +1,20 @@
+Restored type is the same as the original one
+
+KaUsualClassType:
+  abbreviation: null
+  annotations: [
+    Anno(number = 1)
+      psi: null
+  ]
+  classId: kotlin/String
+  qualifiers: [
+    KaResolvedClassTypeQualifier:
+      name: String
+      symbol: KaNamedClassSymbol(kotlin/String)
+      typeArguments: []
+  ]
+  symbol: KaNamedClassSymbol(kotlin/String)
+  typeArguments: []
+  isMarkedNullable: false
+  isNullable: false
+  hasFlexibleNullability: false

@@ -1,0 +1,3 @@
+Restored type is the same as the original one
+
+context(kotlin.String, kotlin.Any) kotlin.String.(kotlin.String) -> kotlin.Int?

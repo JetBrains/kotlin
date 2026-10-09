@@ -1,0 +1,3 @@
+Restored type is the same as the original one
+
+@JavaAnno(number = 6, strings = ["a", "b"], target = java.lang.annotation.ElementType.FIELD, klass = kotlin.String::class) kotlin.String!

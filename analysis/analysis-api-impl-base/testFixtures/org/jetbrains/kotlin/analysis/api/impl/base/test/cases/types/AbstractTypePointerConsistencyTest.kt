@@ -6,20 +6,24 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types
 
 import org.jetbrains.kotlin.analysis.api.expressions.expressionType
+import org.jetbrains.kotlin.analysis.api.renderer.render
 import org.jetbrains.kotlin.analysis.api.session.useSiteSession
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
+import org.jetbrains.kotlin.analysis.api.symbols.symbol
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.api.types.restore
 import org.jetbrains.kotlin.analysis.api.types.type
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
@@ -33,29 +37,45 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
         val renderer = KaDebugRenderer(renderTypeByProperties = true)
 
         lateinit var beforeString: String
+        lateinit var beforeStringPretty: String
+        lateinit var afterString: String
+        lateinit var afterStringPretty: String
         lateinit var typePointer: KaTypePointer<*>
 
         analyzeForTest(mainFile) {
             val type = when (targetExpression) {
                 is KtTypeReference -> targetExpression.type
+                is KtCallableDeclaration -> (targetExpression.symbol as KaCallableSymbol).returnType
                 is KtExpression -> targetExpression.expressionType ?: error("$targetExpression does not have a type")
                 else -> error("Unsupported expression type: $targetExpression")
             }
 
-            beforeString = renderer.renderType(useSiteSession, type)
+            // Rendering resolves annotation arguments, so the pointer is created first to check that it does not rely on that
             typePointer = type.createPointer()
+            beforeString = renderer.renderType(useSiteSession, type)
+            beforeStringPretty = type.render(position = Variance.INVARIANT)
         }
 
-        val afterString = analyzeForTest(restoreAt) {
+        analyzeForTest(restoreAt) {
             val restoredType = typePointer.restore()
             if (restoredType != null) {
-                renderer.renderType(useSiteSession, restoredType)
+                afterString = renderer.renderType(useSiteSession, restoredType)
+                afterStringPretty = restoredType.render(position = Variance.INVARIANT)
             } else {
-                "Type pointer restoration failed"
+                afterString = "Type pointer restoration failed"
+                afterStringPretty = afterString
             }
         }
 
-        val actualText = if (beforeString == afterString) {
+        val actualText = buildOutputString(beforeString.withoutAnnotationPsi(), afterString.withoutAnnotationPsi())
+        val actualTextPretty = buildOutputString(beforeStringPretty, afterStringPretty)
+
+        assertEqualsToTestOutputFile(actualText)
+        assertEqualsToTestOutputFile(actualTextPretty, extension = ".pretty.txt")
+    }
+
+    private fun buildOutputString(beforeString: String, afterString: String): String {
+        return if (beforeString == afterString) {
             buildString {
                 appendLine("Restored type is the same as the original one").appendLine()
                 append(beforeString)
@@ -69,7 +89,13 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
                 append(afterString)
             }
         }
-
-        testServices.assertions.assertEqualsToTestOutputFile(actualText)
     }
+
+    /**
+     * Type pointers restore annotations from scratch and intentionally do not restore their PSI,
+     * so the annotation PSI is rendered as `null` to keep it out of the before/after comparison.
+     */
+    private fun String.withoutAnnotationPsi(): String = replace(ANNOTATION_PSI_REGEX, "$1null")
+
+    private val ANNOTATION_PSI_REGEX = Regex("""^(\s*psi:\s*)KtAnnotationEntry$""", RegexOption.MULTILINE)
 }

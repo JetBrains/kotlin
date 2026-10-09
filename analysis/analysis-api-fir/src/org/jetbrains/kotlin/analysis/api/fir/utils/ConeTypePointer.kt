@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  * we throw an exception to break the cycle and signal that the restoration logic must be handled specially.
  */
 internal class ConeTypeRecursionGuard {
-    private val creationCache = mutableMapOf<ConeKotlinType, ConeTypePointerWrapper<*>>()
+    private val creationCache = mutableMapOf<ConeTypeCacheKey, ConeTypePointerWrapper<*>>()
     private val restorationCache = mutableMapOf<ConeTypePointer<*>, RestorationState<*>>()
 
     private sealed class RestorationState<T : ConeKotlinType> {
@@ -46,7 +46,9 @@ internal class ConeTypeRecursionGuard {
     }
 
     fun <T : ConeKotlinType> createPointer(coneType: T, create: (T) -> ConeTypePointer<T>): ConeTypePointer<T> {
-        val existingWrapper = creationCache[coneType]
+        val cacheKey = ConeTypeCacheKey(coneType)
+
+        val existingWrapper = creationCache[cacheKey]
         if (existingWrapper != null) {
             // Cycle detected - return a pointer that delegates to the wrapper
             @Suppress("UNCHECKED_CAST")
@@ -55,7 +57,7 @@ internal class ConeTypeRecursionGuard {
 
         // Create an uninitialized wrapper and add it to the cache
         val wrapper = ConeTypePointerWrapper<T>()
-        creationCache[coneType] = wrapper
+        creationCache[cacheKey] = wrapper
 
         val pointer = create(coneType)
         wrapper.initialize(pointer)
@@ -85,6 +87,99 @@ internal class ConeTypeRecursionGuard {
         restorationCache[pointer] = RestorationState.Completed(restoredType)
 
         return restoredType
+    }
+}
+
+/**
+ * A [ConeKotlinType] cache key which also accounts for type attributes, including the ones of nested types.
+ *
+ * [ConeLookupTagBasedType.equals] only distinguishes attributes when [ConeAttributes.definitelyDifferFrom] says so, and that check
+ * skips every attribute with [ConeAttribute.implementsEquality]` == false`. Type arguments are compared with the same `equals`.
+ * As pointers restore attributes, types which differ only in such an attribute (e.g. `@Anno String` and `String`)
+ * must not share a cache entry, otherwise the first one visited would win for both.
+ */
+private class ConeTypeCacheKey(val type: ConeKotlinType) {
+    // Attributes are not a part of any 'ConeKotlinType.hashCode()' implementation, so they are not accounted for here either.
+    override fun hashCode(): Int = type.hashCode()
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConeTypeCacheKey) return false
+        if (type === other.type) return true
+        return type == other.type && type.attributesStrictlyEqual(other.type)
+    }
+
+    /**
+     * Compares the attributes of two structurally equal types and of all their nested types with [strictlyEquals].
+     *
+     * Like [strictlyEquals], the comparison is conservative: it may report equal types as different (e.g. if the intersected types
+     * of a [ConeIntersectionType] are iterated in a different order), but it never reports different attributes as equal.
+     */
+    private fun ConeKotlinType.attributesStrictlyEqual(other: ConeKotlinType): Boolean {
+        if (this === other) return true
+        if (!attributes.strictlyEquals(other.attributes)) return false
+
+        return when (this) {
+            is ConeFlexibleType -> other is ConeFlexibleType &&
+                    lowerBound.attributesStrictlyEqual(other.lowerBound) &&
+                    upperBound.attributesStrictlyEqual(other.upperBound)
+            is ConeDefinitelyNotNullType -> other is ConeDefinitelyNotNullType && original.attributesStrictlyEqual(other.original)
+            is ConeIntersectionType -> other is ConeIntersectionType &&
+                    intersectedTypes.size == other.intersectedTypes.size &&
+                    intersectedTypes.zip(other.intersectedTypes).all { [type, otherType] -> type.attributesStrictlyEqual(otherType) } &&
+                    nullableAttributesStrictlyEqual(upperBoundForApproximation, other.upperBoundForApproximation)
+            is ConeUnionType -> other is ConeUnionType &&
+                    primaryType.attributesStrictlyEqual(other.primaryType) &&
+                    richErrorTypes.size == other.richErrorTypes.size &&
+                    richErrorTypes.zip(other.richErrorTypes).all { [type, otherType] -> type.attributesStrictlyEqual(otherType) }
+            is ConeLookupTagBasedType -> typeArguments.size == other.typeArguments.size &&
+                    typeArguments.zip(other.typeArguments).all { [argument, otherArgument] ->
+                        nullableAttributesStrictlyEqual(argument.type, otherArgument.type)
+                    }
+            is ConeTypeVariableType, is ConeCapturedType, is ConeStubType, is ConeIntegerLiteralType -> true
+        }
+    }
+
+    private fun nullableAttributesStrictlyEqual(type: ConeKotlinType?, other: ConeKotlinType?): Boolean {
+        if (type == null || other == null) return type === other
+        return type.attributesStrictlyEqual(other)
+    }
+
+    /**
+     * Compares two [ConeAttributes] attribute by attribute.
+     *
+     * Existing compiler equality logic is inapplicable for the cache:
+     * - [ConeAttributes] has no [equals] of its own, so its instances are compared by identity;
+     * - [ConeAttributes.definitelyDifferFrom] skips every attribute with [ConeAttribute.implementsEquality]` == false`, and so reports
+     *   types differing only in such an attribute as potentially equal.
+     *
+     * [strictlyEquals] takes two attribute lists and compares their elements pair-wise.
+     * If two attribute lists contain the same attributes, then these attributes appear in the same order.
+     * That's because an attribute is stored in the slot which [TypeRegistry.getId][org.jetbrains.kotlin.util.TypeRegistry.getId] assigns to its
+     * [ConeAttribute.key], those ids come from the single process-wide registry [ConeAttributes.Companion], and
+     * [AbstractArrayMapOwner.iterator][org.jetbrains.kotlin.util.AbstractArrayMapOwner.iterator] walks the slots in ascending order.
+     *
+     * The comparison is intentionally conservative. An attribute which does not implement structural equality falls back to [Any.equals],
+     * which is identity, so two distinct instances of such an attribute always count as different, even if they carry the same content.
+     * Consequently, the function may report equal attribute sets
+     * as different, which only costs a redundant cache entry, but it never reports different attribute sets as equal.
+     */
+    private fun ConeAttributes.strictlyEquals(other: ConeAttributes): Boolean {
+        if (this === other) return true
+
+        val isThisEmpty = isEmpty()
+        val isOtherEmpty = other.isEmpty()
+        if (isThisEmpty || isOtherEmpty) {
+            return isOtherEmpty == isThisEmpty
+        }
+
+        val attributes = toList()
+        val otherAttributes = other.toList()
+        if (attributes.size != otherAttributes.size) return false
+
+        return attributes.zip(otherAttributes).all { [attribute, otherAttribute] ->
+            attribute == otherAttribute
+        }
     }
 }
 
@@ -130,7 +225,7 @@ internal fun <T : ConeKotlinType> T.createPointer(
     return guard.createPointer(coneType = this) { coneType ->
         @Suppress("UNCHECKED_CAST")
         when (coneType) {
-            is ConeDynamicType -> ConeDynamicTypePointer
+            is ConeDynamicType -> ConeDynamicTypePointer(coneType, builder, guard)
             is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullTypePointer(coneType, builder, guard)
             is ConeIntersectionType -> ConeIntersectionTypePointer(coneType, builder, guard)
             is ConeRawType -> ConeRawTypePointer(coneType, builder, guard)
@@ -138,8 +233,8 @@ internal fun <T : ConeKotlinType> T.createPointer(
             is ConeCapturedType -> ConeCapturedTypePointer(coneType, builder, guard)
             is ConeErrorType -> ConeErrorTypePointer(coneType, builder, guard)
             is ConeClassLikeType -> ConeClassLikeTypePointer(coneType, builder, guard)
-            is ConeTypeParameterType -> ConeTypeParameterTypePointer(coneType, builder)
-            is ConeTypeVariableType -> ConeTypeVariableTypePointer(coneType, builder)
+            is ConeTypeParameterType -> ConeTypeParameterTypePointer(coneType, builder, guard)
+            is ConeTypeVariableType -> ConeTypeVariableTypePointer(coneType, builder, guard)
             is ConeIntegerLiteralConstantType -> ConeIntegerLiteralConstantTypePointer(coneType, builder, guard)
             is ConeIntegerConstantOperatorType -> ConeIntegerConstantOperatorTypePointer(coneType)
             else -> ConeNeverRestoringTypePointer
@@ -171,6 +266,7 @@ private class ConeClassLikeTypePointer(
     private val isNullable = coneType.isMarkedNullable
     private val abbreviatedTypePointer = coneType.abbreviatedType?.createPointer(builder, guard)
     private val isTypeAlias = lookupTag.toSymbol(builder.rootSession) is FirTypeAliasSymbol
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder, guard)
 
     // function types-specific attributes
     private val hasReceiverType = coneType.receiverType(builder.rootSession) != null
@@ -196,6 +292,7 @@ private class ConeClassLikeTypePointer(
             if (contextParameterNumber != 0) {
                 add(CompilerConeAttributes.ContextFunctionTypeParams(contextParameterNumber))
             }
+            addAll(annotationPointer.restore(session, guard))
         }
 
         return ConeClassLikeTypeImpl(
@@ -210,24 +307,28 @@ private class ConeClassLikeTypePointer(
 private class ConeTypeParameterTypePointer(
     coneType: ConeTypeParameterType,
     builder: KaSymbolByFirBuilder,
+    guard: ConeTypeRecursionGuard,
 ) : ConeTypePointer<ConeTypeParameterType> {
     private val typeParameterPointer = builder.classifierBuilder.buildTypeParameterSymbol(coneType.lookupTag.symbol).createPointer()
     private val isNullable = coneType.isMarkedNullable
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder, guard)
 
     override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeTypeParameterType? {
         val typeParameterSymbol = typeParameterPointer.restoreSymbol(session) ?: return null
 
         val lookupTag = ConeTypeParameterLookupTag(typeParameterSymbol.firSymbol)
-        return ConeTypeParameterType(lookupTag, isNullable)
+        return ConeTypeParameterType(lookupTag, isNullable, attributes = annotationPointer.restore(session, guard))
     }
 }
 
 private class ConeTypeVariableTypePointer(
     coneType: ConeTypeVariableType,
     builder: KaSymbolByFirBuilder,
+    guard: ConeTypeRecursionGuard,
 ) : ConeTypePointer<ConeTypeVariableType> {
     private val debugName = coneType.typeConstructor.debugName
     private val isMarkedNullable = coneType.isMarkedNullable
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder, guard)
 
     private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>? = run {
         val typeParameterLookupTag = coneType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag
@@ -242,7 +343,7 @@ private class ConeTypeVariableTypePointer(
         val typeParameterSymbol = typeParameterSymbolPointer?.let { it.restoreSymbol(session) ?: return null }
 
         val typeConstructor = ConeTypeVariableTypeConstructor(debugName, typeParameterSymbol?.firSymbol?.toLookupTag())
-        return ConeTypeVariableType(isMarkedNullable, typeConstructor)
+        return ConeTypeVariableType(isMarkedNullable, typeConstructor, attributes = annotationPointer.restore(session, guard))
     }
 }
 
@@ -256,6 +357,7 @@ private class ConeCapturedTypePointer(
     private val isMarkedNullable = coneType.isMarkedNullable
     private val coneProjectionPointer = ConeTypeProjectionPointer(coneType.constructor.projection, builder, guard)
     private val constructorSupertypePointers = coneType.constructor.supertypes?.map { it.createPointer(builder, guard) }
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder, guard)
 
     private val typeParameterSymbolPointer: KaSymbolPointer<KaTypeParameterSymbol>? = run {
         val typeParameterLookupTag = coneType.constructor.typeParameterMarker as? ConeTypeParameterLookupTag
@@ -288,6 +390,7 @@ private class ConeCapturedTypePointer(
         return ConeCapturedType(
             isMarkedNullable,
             typeConstructor,
+            annotationPointer.restore(session, guard),
         )
     }
 
@@ -408,6 +511,7 @@ private class ConeErrorTypePointer(
     private val delegatedTypePointer = coneType.delegatedType?.createPointer(builder, guard)
     private val typeArgumentPointers = coneType.typeArguments.map { ConeTypeProjectionPointer(it, builder, guard) }
     private val nullable = coneType.nullable
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder, guard)
 
     override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeErrorType? {
         val coneDiagnostic = coneDiagnosticPointer.restore(session) ?: return null
@@ -419,14 +523,21 @@ private class ConeErrorTypePointer(
             isUninferredParameter = isUninferredParameter,
             delegatedType = delegatedConeType,
             typeArguments = typeArguments.toTypedArray(),
+            attributes = annotationPointer.restore(session, guard),
             nullable = nullable,
         )
     }
 }
 
-private object ConeDynamicTypePointer : ConeTypePointer<ConeDynamicType> {
+private class ConeDynamicTypePointer(
+    coneType: ConeDynamicType,
+    builder: KaSymbolByFirBuilder,
+    guard: ConeTypeRecursionGuard,
+) : ConeTypePointer<ConeDynamicType> {
+    private val annotationPointer = ConeAnnotationPointer.create(coneType, builder, guard)
+
     override fun restore(session: KaFirSession, guard: ConeTypeRecursionGuard): ConeDynamicType {
-        return ConeDynamicType.create(session.firSession)
+        return ConeDynamicType.create(session.firSession, attributes = annotationPointer.restore(session, guard))
     }
 }
 

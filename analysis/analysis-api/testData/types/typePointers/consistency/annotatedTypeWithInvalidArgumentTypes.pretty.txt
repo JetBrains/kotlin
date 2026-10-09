@@ -1,0 +1,9 @@
+Type has changed on restoration
+
+Before:
+
+@Complex(arrayOfArrays = [[1, 2], [3, 4]], classA = error("non-annotation value"), classAArray = [], functionType = error("non-annotation value"), intArray = [true, false]) kotlin.collections.List<kotlin.String>
+
+After:
+
+kotlin.collections.List<kotlin.String>
