@@ -240,5 +240,5 @@ The new java facade builder is introduced to allow substituting the implementati
 
 ### Tests
 
-The module contains unit tests and also "steals" all phased diagnostics and box tests that contain Java files from the main compiler
-testdata.
+The module contains unit tests only. Java facade behavior end-to-end is covered by the main compiler test suites (phased diagnostics,
+box tests, etc.), which use java-direct by default.
