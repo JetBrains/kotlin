@@ -5,7 +5,6 @@
 
 package test.text
 
-import test.TestPlatform
 import test.testExceptOn
 import kotlin.text.unicode.*
 import kotlin.test.*
@@ -108,7 +107,7 @@ class CodePointCasingTest {
 
 
         // mappings not available in JDK 8' version of Unicode
-        testExceptOn(TestPlatform.Jvm) {
+        testExceptOn({ it.isJvmEarlierThan(17) }) {
             testRange(::testLowercase, ((0x1C90..0x1CBF) - 0x1CBB - 0x1CBC).map(::CodePoint), -0xBC0)
 
             testRange(::testLowercase, CodePoint(0x10C80)..CodePoint(0x10CB2), 0x40)
@@ -189,7 +188,7 @@ class CodePointCasingTest {
         testRange(::testUppercase, CodePoint(0x10428)..CodePoint(0x1044F), -0x28)
 
         // mappings not available in JDK 8' version of Unicode
-        testExceptOn(TestPlatform.Jvm) {
+        testExceptOn({ it.isJvmEarlierThan(17) }) {
             // large mapping
             testUppercase('\u029C', '\u029C')
             testUppercase('\u029D', '\uA7B2')
