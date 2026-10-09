@@ -7,12 +7,10 @@ plugins {
 }
 
 dependencies {
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:plugin.api"))
+    // TODO(KT-90146): Required to access various utility functions.
     compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:checkers:checkers.common"))
     compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:fir:entrypoint"))
 
     compileOnly(intellijCore())
     runtimeOnly(kotlinStdlib())
