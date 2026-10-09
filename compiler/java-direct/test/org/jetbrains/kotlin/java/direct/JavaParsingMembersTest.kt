@@ -237,8 +237,8 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         // `FirSymbolProvider` to resolve `@Target`. The dummy session used by `parseFirstClass`
         // has none, so the filter drops every member annotation. The parser itself still captures
         // the annotation correctly — see `regularParam.annotations` below — and the end-to-end
-        // propagation contract is covered by the `JavaUsingAst*` integration suite, which runs
-        // against a full FIR session.
+        // propagation contract is covered by the compiler's diagnostic and box test suites, which
+        // run against a full FIR session.
         val regular = javaClass.methods.first { it.name.asString() == "ofRegular" }
         val regularParam = regular.valueParameters.first()
         assertFalse(regularParam.isVararg, "Regular param should not be vararg")
@@ -252,8 +252,8 @@ class JavaParsingMembersTest : JavaParsingTestBase() {
         )
 
         // Varargs parameter: type should be JavaArrayType (String[]) with a JavaClassifierType
-        // component (String). Component-vs-array annotation placement is again covered by
-        // `JavaUsingAst*` integration tests rather than this parsing-only test (see comment above).
+        // component (String). Component-vs-array annotation placement is again covered by the
+        // compiler's diagnostic and box tests rather than this parsing-only test (see comment above).
         val vararg = javaClass.methods.first { it.name.asString() == "ofJspecify" }
         val varargParam = vararg.valueParameters.first()
         assertTrue(varargParam.isVararg, "Vararg param should be vararg")

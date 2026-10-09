@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseSet
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.MockLibraryUtil.compileJavaFilesLibraryToJar
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.backend.handlers.PhasedIrDumpHandler
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.test.cli.CliDirectives.FORCE_COMPILE_AS_JAVA_MODULE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.ASSERTIONS_MODE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.DISABLE_OPTIMIZATION
@@ -46,6 +48,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_JAVA_FACADE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WHEN_EXPRESSIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
@@ -59,6 +62,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.PARAMETER
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_TYPE_TABLE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestFile
@@ -210,6 +214,16 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         if (!module.targetPlatform(testServices).isJvm()) return
         configureDefaultJvmTarget(configuration)
         val registeredDirectives = module.directives
+        val usePsiJavaFacade = if (USE_PSI_JAVA_FACADE in registeredDirectives) {
+            val values = registeredDirectives[USE_PSI_JAVA_FACADE]
+            check(values.isEmpty() || values == listOf("true") || values == listOf("false")) {
+                "USE_PSI_JAVA_FACADE expects no value, true, or false, but got ${values.joinToString()}"
+            }
+            values != listOf("false")
+        } else {
+            registeredDirectives.singleOrZeroValue(FIR_PARSER) == FirParser.Psi
+        }
+        configuration.put(JVMConfigurationKeys.USE_JAVA_DIRECT, !usePsiJavaFacade)
 
         if (ConfigurationDirectives.WITH_KOTLIN_JVM_ANNOTATIONS in module.directives) {
             configuration.addJvmClasspathRoot(ForTestCompileRuntime.jvmAnnotationsForTests())

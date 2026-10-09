@@ -240,5 +240,6 @@ The new java facade builder is introduced to allow substituting the implementati
 
 ### Tests
 
-The module contains unit tests and also "steals" all phased diagnostics and box tests that contain Java files from the main compiler
-testdata.
+The module contains unit tests only. Java facade behavior end-to-end is covered by the main compiler test suites. 
+JVM tests that use the PSI FIR parser use the PSI Java facade; all other tests use java-direct. 
+`USE_PSI_JAVA_FACADE` can be used to override this choice.
