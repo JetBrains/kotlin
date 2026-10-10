@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.google.gson.GsonBuilder
+import org.gradle.api.GradleException
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
+import java.nio.file.Path
 
 /**
  * Creates fake NodeJS module directory from given Gradle `dependency`.
@@ -110,7 +112,7 @@ private fun createNodeModule(
     files: (File) -> Unit,
 ): File {
     /** imported package directory */
-    val dir = container.resolve(packageJson.name).resolve(packageJson.version)
+    val dir = importedPackageDirWithinCache(container, packageJson.name, packageJson.version)
 
     if (dir.exists()) dir.deleteRecursively()
 
@@ -130,4 +132,30 @@ private fun createNodeModule(
     }
 
     return dir
+}
+
+// npm package name: `name` or `@scope/name`. No path separator allowed.
+private val ACCEPTED_NPM_PACKAGE_NAME = Regex("(@[A-Za-z0-9_.-]+/)?[A-Za-z0-9_.-]+")
+
+// [name] and [version] come from a dependency's package.json. An absolute name or `..` would put
+// the imported package outside the cache and delete what it lands on (KT-89245, CWE-22/CWE-73).
+internal fun importedPackageDirWithinCache(container: File, name: String, version: String): File {
+    val dir = container.resolve(name).resolve(version)
+
+    val hasAcceptedPackageName = name.matches(ACCEPTED_NPM_PACKAGE_NAME)
+    val staysWithinCache = container.toPath().strictlyContains(dir.toPath())
+
+    if (!hasAcceptedPackageName || !staysWithinCache) {
+        throw GradleException(
+            "Illegal npm package coordinates (name='$name', version='$version'): the imported-package " +
+                    "directory '$dir' would be created outside the cache directory '$container'."
+        )
+    }
+    return dir
+}
+
+private fun Path.strictlyContains(child: Path): Boolean {
+    val base = toAbsolutePath().normalize()
+    val target = child.toAbsolutePath().normalize()
+    return target != base && target.startsWith(base)
 }
