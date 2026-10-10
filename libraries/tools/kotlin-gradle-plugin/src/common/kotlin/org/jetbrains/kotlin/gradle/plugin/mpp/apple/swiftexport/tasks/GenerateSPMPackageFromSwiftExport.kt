@@ -49,11 +49,11 @@ internal abstract class SwiftExportTargetOutput {
     @get:Input
     abstract val target: Property<KonanTarget>
 
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    /** The modules file of the run. [files] already contains it, so it isn't tracked separately. */
+    @get:Internal
     abstract val swiftModulesFile: RegularFileProperty
 
-    /** The generated files. [swiftModulesFile] has their paths, but not their content. */
+    /** The output directory of the run, with [swiftModulesFile] and the generated files it lists. */
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val files: ConfigurableFileCollection
@@ -108,10 +108,14 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val kotlinRuntime: DirectoryProperty
 
-    @get:InputFile
-    @get:Optional
-    @get:PathSensitive(PathSensitivity.RELATIVE)
+    /** The modules file of the run, Xcode flow only. [swiftExportFiles] already contains it, so it isn't tracked separately. */
+    @get:Internal
     abstract val swiftModulesFile: RegularFileProperty
+
+    /** The output directory of the run, with [swiftModulesFile] and the generated files it lists. Xcode flow only. */
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val swiftExportFiles: ConfigurableFileCollection
 
     @get:Input
     val swiftPMImportHasDependencies: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
@@ -175,18 +179,19 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     private fun deserializeSwiftModules(): List<GradleSwiftExportModule> {
         check(swiftModulesFile.isPresent) { "Neither targetOutputs nor swiftModulesFile is set for $path" }
-        val modulesFile = swiftModulesFile.getFile().readText()
-        val swiftModules = SerializationTools.readFromJson(modulesFile)
-        return swiftModules.modules
+        return readSwiftModules(swiftModulesFile.getFile())
     }
 
     private fun deserializeTargetModules(): List<SwiftExportTargetModules> = targetOutputs.get().map { output ->
         SwiftExportTargetModules(
             output.targetName.get(),
             output.target.get(),
-            SerializationTools.readFromJson(output.swiftModulesFile.getFile().readText()).modules,
+            readSwiftModules(output.swiftModulesFile.getFile()),
         )
     }
+
+    private fun readSwiftModules(modulesFile: File): List<GradleSwiftExportModule> =
+        SerializationTools.readFromJson(modulesFile.readText(), baseDirectory = modulesFile.parentFile).modules
 
     /**
      * Only the content of the generated files is combined. The modules and their dependencies have to be the

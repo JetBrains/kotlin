@@ -14,7 +14,6 @@ internal enum class GradleSwiftExportModuleType : Serializable {
 
 internal data class GradleSwiftExportModules(
     val modules: List<GradleSwiftExportModule>,
-    val timestamp: Long,
 ) : Serializable
 
 internal sealed class GradleSwiftExportModule(

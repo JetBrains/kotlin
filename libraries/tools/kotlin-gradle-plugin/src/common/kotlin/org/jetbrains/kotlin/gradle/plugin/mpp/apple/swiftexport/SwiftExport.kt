@@ -280,7 +280,6 @@ private fun Project.registerSwiftExportRun(
         }
         task.exportedModules.set(exportedModules)
         task.dependencyOptionsOverrides.set(dependencyOptionsOverrides)
-        task.mainCompilationOutputFiles.from(mainCompilation.compileTaskProvider.map { it.outputs.files })
 
         task.ignoreExperimentalDiagnostic.set(kotlinPropertiesProvider.swiftExportIgnoreExperimental)
         task.customJvmArgs.set(kotlinPropertiesProvider.swiftExportJvmArgs)
@@ -289,8 +288,10 @@ private fun Project.registerSwiftExportRun(
         task.kotlinNativeProvider.set(
             mainCompilation.compileTaskProvider.flatMap { it.kotlinNativeProvider }
         )
+        // `map`, not `flatMap`. `outputFile` is itself derived with a `flatMap` and has no producer attached, so the
+        // dependency on the compile task has to come from the task provider.
         task.mainModuleInput.artifact.fileProvider(
-            mainCompilation.compileTaskProvider.flatMap { it.outputFile }
+            mainCompilation.compileTaskProvider.map { it.outputFile.get() }
         )
 
         // Output
@@ -363,6 +364,7 @@ private fun Project.registerPackageGeneration(
         task.kotlinRuntime.set(swiftExportKotlinRuntime)
 
         task.swiftModulesFile.set(swiftExportTask.flatMap { it.parameters.swiftModulesFile })
+        task.swiftExportFiles.from(swiftExportTask.flatMap { it.parameters.outputDirectory })
         task.swiftLibraryName.set(swiftApiLibraryName)
         task.swiftApiModuleName.set(swiftApiModuleName)
 

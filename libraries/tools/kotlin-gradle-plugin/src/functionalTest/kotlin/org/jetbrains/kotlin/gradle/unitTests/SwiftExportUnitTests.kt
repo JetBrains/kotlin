@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import com.android.build.api.variant.impl.capitalizeFirstChar
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -26,9 +27,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExten
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModuleMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
@@ -152,6 +155,35 @@ class SwiftExportUnitTests {
         // Check generateSPMPackage task dependencies
         val generateSPMPackageTaskDependencies = generateSPMPackageTask.taskDependencies.getDependencies(null)
         assert(generateSPMPackageTaskDependencies.contains(swiftExportTask))
+    }
+
+    @Test
+    fun `test swift export embed and sign package generation tracks the generated files`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.getByName("iosSimulatorArm64SwiftExport") as SwiftExportTask
+        val generateTask = project.tasks.getByName("iosSimulatorArm64DebugGenerateSPMPackage") as GenerateSPMPackageFromSwiftExport
+
+        assertEquals(setOf(swiftExportTask.parameters.outputDirectory.get().asFile), generateTask.swiftExportFiles.files)
+        assertTrue(swiftExportTask in generateTask.taskDependencies.getDependencies(null))
+    }
+
+    @Test
+    fun `test swift export task is cacheable`() {
+        assertNotNull(SwiftExportTask::class.java.getAnnotation(CacheableTask::class.java))
+    }
+
+    @Test
+    fun `test swift export takes the main klib from its compile task`() {
+        val project = swiftExportProject()
+        project.evaluate()
+
+        val swiftExportTask = project.tasks.getByName("iosSimulatorArm64SwiftExport") as SwiftExportTask
+        val compileTask = project.tasks.getByName("compileKotlinIosSimulatorArm64") as KotlinNativeCompile
+
+        assertEquals(compileTask.outputFile.get(), swiftExportTask.mainModuleInput.artifact.get().asFile)
+        assertTrue(compileTask in swiftExportTask.taskDependencies.getDependencies(null))
     }
 
     @Test
@@ -613,6 +645,8 @@ class SwiftExportUnitTests {
 
         assertEquals(listOf("-XX:+UseG1GC", "-Dfoo=bar"), swiftExportTask.customJvmArgs.get())
         assertEquals(listOf("-XX:+UseG1GC", "-Dfoo=bar", "-Xmx1g"), swiftExportTask.workerJvmArgs)
+        // Only the `-D` entries are an input: the heap size doesn't change the translation, a system property might.
+        assertEquals(listOf("-Dfoo=bar"), swiftExportTask.trackedWorkerJvmArgs)
     }
 
     @Test
