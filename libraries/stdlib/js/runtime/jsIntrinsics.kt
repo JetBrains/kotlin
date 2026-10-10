@@ -317,6 +317,11 @@ internal fun <A> slice(a: A): A
 @JsIntrinsic
 @UsedFromCompilerGeneratedCode
 @Effects(EffectsKind.PURE)
+internal fun <A> jsArrayIndexOf(array: Array<A>, a: A): Int
+
+@JsIntrinsic
+@UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
 internal fun <T> jsArrayLike2Array(arrayLike: Any?): Array<T>
 
 @JsIntrinsic

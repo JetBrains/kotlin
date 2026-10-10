@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.lower.isLoweredTrivialEnum
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.isStaticMethodOfClass
@@ -25,7 +27,7 @@ object EnumIntrinsicsUtils {
         staticMethodPredicate: (IrSimpleFunction) -> Boolean
     ): IrExpression {
         val enum = call.typeArguments[0]?.getClass() ?: return call
-        if (!enum.isEnumClass) return call
+        if (!enum.isEnumClass && !enum.isLoweredTrivialEnum) return call
         val staticMethod = enum.findDeclaration(staticMethodPredicate)
         if (staticMethod == null || !staticMethod.isStaticMethodOfClass)
             compilationException(
@@ -53,9 +55,23 @@ object EnumIntrinsicsUtils {
 
 class EnumIntrinsicsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) = when (call.symbol) {
-        context.symbols.enumValueOfIntrinsic -> EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
+        context.symbols.enumValueOfIntrinsic -> transformEnumValueOfIntrinsic(call)
         context.symbols.enumValuesIntrinsic -> EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
         context.symbols.enumEntriesIntrinsic -> EnumIntrinsicsUtils.transformEnumEntriesIntrinsic(call)
         else -> call
+    }
+
+    // Because lowered trivial enums are inline-classes, an unboxing is generated for the `enumValueOfIntrinsic`,
+    // so the returned value of the static `valueOf` method should be boxed.
+    // On the AST optimization level the operation unbox(boxed(valueOf)) will be simplified to just valueOf call
+    private fun transformEnumValueOfIntrinsic(call: IrFunctionAccessExpression): IrExpression {
+        val transformedCall = EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
+        if (transformedCall === call) return transformedCall
+
+        val enumType = call.typeArguments[0]?.takeIf { it.getClass()?.isLoweredTrivialEnum == true}
+            ?: return transformedCall
+
+        return JsIrBuilder.buildCall(context.symbols.jsBoxIntrinsic, call.type, listOf(enumType, call.type))
+            .apply { arguments[0] = transformedCall }
     }
 }
