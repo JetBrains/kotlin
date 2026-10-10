@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:checkers:checkers.common"))
     implementation(project(":core:compiler.common.web"))
 
     /*
