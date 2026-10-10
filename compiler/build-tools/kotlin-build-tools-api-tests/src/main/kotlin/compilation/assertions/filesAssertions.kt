@@ -152,6 +152,22 @@ fun assertOutputFileContains(fileName: String, expectedContent: String) {
     assert(expectedContent in fileContents) { "File $file does not contain expected content.\n\nFile contents:\n$fileContents" }
 }
 
+/**
+ * Asserts that [directoryName] (relative to the module's output directory) does not exist, not even as an empty directory.
+ *
+ * [assertOutputs] only looks at regular files, so a stale empty directory left behind after its outputs were removed
+ * is invisible to it. Such a directory is still harmful: the compiler treats an existing output directory as an existing package.
+ */
+context(module: ModuleContext)
+fun assertNoOutputDirectory(directoryName: String) {
+    val directory = module.outputDirectory.resolve(directoryName)
+    assert(!directory.exists()) {
+        "Directory $directory is expected not to exist.\nIts contents:\n${
+            directory.walk().map { it.relativeTo(module.outputDirectory) }.joinToString("\n").ifEmpty { "<empty>" }
+        }"
+    }
+}
+
 context(module: ModuleContext)
 fun assertOutputFileDoesNotContain(fileName: String, unexpectedContent: String) {
     val file = module.outputDirectory.resolve(fileName)
@@ -381,14 +397,26 @@ fun assertKnmFileCount(expectedCount: Int, packageFqName: String = "") {
 }
 
 /**
- * Asserts that the compilation produced no `.knm` files (klib metadata package fragments) anywhere under the module's
- * output directory.
+ * Asserts that the compilation produced no `.knm` files (klib metadata package fragments) for the package [packageFqName],
+ * or anywhere under the module's output directory if [packageFqName] is `null`.
  *
- * Useful for the empty-source case: with no sources the compiler creates no package fragment directories
- * (`root_package`, `package_<fqName>`) at all, so there is no specific directory to point [assertKnmFileCount] at.
+ * With a [packageFqName], the package fragment directory (`root_package` for the root package, `package_<fqName>` otherwise)
+ * must not exist at all: a stale empty one is as harmful as stale fragments, as the compiler may treat it as an existing package.
  */
 context(module: ModuleContext)
-fun assertNoKnmFiles() {
+fun assertNoKnmFiles(packageFqName: String? = null) {
+    if (packageFqName != null) {
+        val packageDirectory = module.outputDirectory
+            .resolve(KLIB_DEFAULT_COMPONENT_DIR)
+            .resolve(KLIB_METADATA_FOLDER_NAME)
+            .resolve(linkDataPackageFolderName(packageFqName))
+        assert(!packageDirectory.exists()) {
+            "Expected no package fragment directory for the package '$packageFqName', but $packageDirectory exists with the contents:\n${
+                packageDirectory.walk().map { it.relativeTo(module.outputDirectory) }.joinToString("\n").ifEmpty { "<empty>" }
+            }"
+        }
+        return
+    }
     val knmFiles = module.outputDirectory.walk()
         .filter { it.isRegularFile() && it.fileName.toString().endsWith(".$KLIB_METADATA_FILE_EXTENSION") }
         .map { it.relativeTo(module.outputDirectory).toString() }

@@ -17,7 +17,7 @@ class IncrementalCompilationContext(
     val pathConverterForSourceFiles: FileToPathConverter = BasicFileToPathConverter,
     val pathConverterForOutputFiles: FileToPathConverter = BasicFileToPathConverter,
     val storeFullFqNamesInLookupCache: Boolean = false,
-    val transaction: CompilationTransaction = NonRecoverableCompilationTransaction(),
+    val transaction: CompilationTransaction = ReadOnlyCompilationTransaction(),
     val reporter: ICReporter = DoNothingICReporter,
     /**
      * Controls whether changes in lookup cache should be tracked. Required for the classpath snapshots based IC approach
@@ -38,7 +38,7 @@ class IncrementalCompilationContext(
     constructor(
         pathConverter: FileToPathConverter,
         storeFullFqNamesInLookupCache: Boolean = false,
-        transaction: CompilationTransaction = NonRecoverableCompilationTransaction(),
+        transaction: CompilationTransaction = ReadOnlyCompilationTransaction(),
         reporter: ICReporter = DoNothingICReporter,
         trackChangesInLookupCache: Boolean = false,
         keepIncrementalCompilationCachesInMemory: Boolean = false,

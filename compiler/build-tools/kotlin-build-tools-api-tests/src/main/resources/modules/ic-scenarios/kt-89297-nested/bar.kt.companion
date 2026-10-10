@@ -1,0 +1,11 @@
+package test
+
+class bar {
+    object baz {
+        fun A(): A1 = A1()
+    }
+
+    class A1 {
+        fun foo() = "companion"
+    }
+}
