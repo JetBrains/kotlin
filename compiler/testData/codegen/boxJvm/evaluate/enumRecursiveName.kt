@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM
 
 enum class TestEnum(val testNaming: String) {
     OK(OK.name),

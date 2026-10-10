@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
@@ -30,8 +32,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 abstract class VariableInitializationCheckProcessor {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -212,7 +216,8 @@ abstract class VariableInitializationCheckProcessor {
             !symbol.isExternal &&
             expression.hasMatchingReceiver(this) &&
             symbol in properties &&
-            !symbol.isInitializedAt(node, data = this)
+            !symbol.isInitializedAt(node, data = this) &&
+            !(symbol is FirEnumEntrySymbol && node.isReceiverOfEnumName(expression))
         ) {
             reportUninitializedVariable(expression, symbol)
         }
@@ -304,6 +309,14 @@ private val Kind.doNotReportUninitializedVariableForInitialization: Boolean
         Kind.Function, Kind.AnonymousFunction, Kind.LocalFunction -> true
         else -> false
     }
+
+// The backends replace `Enum.name` of an enum entry with a constant, so the entry itself is not loaded.
+private fun CFGNode<*>.isReceiverOfEnumName(expression: FirQualifiedAccessExpression): Boolean {
+    val access = (followingNodes.singleOrNull() as? QualifiedAccessNode)?.fir ?: return false
+    if (access.dispatchReceiver !== expression) return false
+    val callableId = access.calleeReference.toResolvedPropertySymbol()?.unwrapFakeOverrides()?.callableId ?: return false
+    return callableId.classId == StandardClassIds.Enum && callableId.callableName == StandardNames.NAME
+}
 
 /**
  * Determine if this declaration is evaluated inline. This is distinct from [evaluatedInPlace], as the declaration must also be inlined by
