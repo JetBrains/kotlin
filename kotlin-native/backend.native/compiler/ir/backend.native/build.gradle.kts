@@ -49,7 +49,7 @@ dependencies {
     implementation(project(":native:native.config"))
     implementation(project(":native:cinterop.deserialization"))
     implementation(project(":kotlinx-metadata-klib"))
-    compileOnly(project(":kotlin-metadata")) // Only to fix IDE reporting unresolved references (KTI-3323).
+    implementation(project(":kotlin-metadata"))
 
     testImplementation(kotlinTest("junit5"))
     testImplementation(testFixtures(project(":compiler:ir.backend.common")))

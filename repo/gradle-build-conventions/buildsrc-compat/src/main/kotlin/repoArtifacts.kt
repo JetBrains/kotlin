@@ -102,8 +102,6 @@ fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
 }
 
 fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> {
-    noDefaultJar()
-
     val shadowJarTask = tasks.register<ShadowJar>("shadowJar") {
         archiveClassifier.set("shadow")
         configurations.add(project.configurations["embedded"])
@@ -121,8 +119,30 @@ fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvi
     }
 
     tasks.named("assemble").configure { dependsOn(runtimeJarTask) }
-    project.addArtifact("runtimeElements", runtimeJarTask, runtimeJarTask)
-    project.addArtifact("apiElements", runtimeJarTask, runtimeJarTask)
+
+    plugins.withId("kotlin-build-publishing") {
+        configurations.named("publishedRuntime") {
+            setExtendsFrom(emptyList())
+            outgoing.artifacts.clear()
+            project.addArtifact(this.name, runtimeJarTask, runtimeJarTask)
+        }
+        configurations.named("publishedCompile") {
+            setExtendsFrom(emptyList())
+            outgoing.artifacts.clear()
+            project.addArtifact(this.name, runtimeJarTask, runtimeJarTask)
+        }
+    }
+
+    val hasMainSources = sourceSets.findByName("main")?.allSource?.isEmpty == false
+    if (!hasMainSources) {
+        noDefaultJar()
+        project.addArtifact("runtimeElements", runtimeJarTask, runtimeJarTask)
+        project.addArtifact("apiElements", runtimeJarTask, runtimeJarTask)
+    } else {
+        tasks.named<Jar>("jar").configure {
+            archiveClassifier.set("unshaded")
+        }
+    }
 
     return runtimeJarTask
 }
