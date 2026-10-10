@@ -287,7 +287,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     // @Override // JPS
     public KType platformType(KType lowerBound, KType upperBound) {
         // TODO: KT-78951 typeOf creates a non-raw type for raw types from Java
-        return TypeOfImplKt.createPlatformKType(lowerBound, upperBound, false);
+        return TypeOfImplKt.createPlatformKType(lowerBound, upperBound, false, null);
     }
 
     // @Override // JPS
