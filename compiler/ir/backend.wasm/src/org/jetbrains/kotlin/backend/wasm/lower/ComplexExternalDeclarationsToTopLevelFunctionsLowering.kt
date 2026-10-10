@@ -448,7 +448,11 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
 
         val module = currentFile.getJsModule()
             ?: declaration.getJsModule()?.also {
-                name = if (declaration is IrClass && declaration.isObject) null else "default"
+                name = when {
+                    qualifier != null -> name
+                    declaration is IrClass && declaration.isObject -> null
+                    else -> "default"
+                }
             }
 
         if (qualifier == null && module == null) {
