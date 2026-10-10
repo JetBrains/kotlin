@@ -56,7 +56,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
             buildJdk = jdkVersion.location
         ) {
             val groupDir = subProject("lib").projectPath.resolve("build/repo/com/example")
-            build("publish", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+            build("publish") {
                 assertDirectoryExists(groupDir.resolve("lib-jvmlib"))
                 assertDirectoryExists(groupDir.resolve("lib-jslib"))
                 assertDirectoryExists(groupDir.resolve("lib-androidlib"))
@@ -263,8 +263,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             subProject("lib").buildGradleKts.appendText(
@@ -359,7 +358,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
                         }                        
                         """.trimIndent()
             }
-            build("publish", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+            build("publish") {
                 listOf("foobar", "foobaz").forEach { flavor ->
                     listOf("-debug", "").forEach { buildType ->
                         assertFileExists(appGroupDir.resolve("app-androidapp-$flavor$buildType/1.0/app-androidapp-$flavor$buildType-1.0.aar"))
@@ -418,8 +417,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
             "new-mpp-android",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             settingsGradle.replaceText("include ':app', ':lib'", "include ':lib'")
@@ -466,8 +464,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
-                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
             buildJdk = jdkVersion.location
         ) {
             build("publish") {
@@ -502,8 +499,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
             "new-mpp-android-agp-compatibility",
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
             localRepoDir = tempDir
         ) {
@@ -533,7 +529,6 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
                 consumerAgpVersion.minSupportedGradleVersion,
                 buildOptions = defaultBuildOptions
                     .copy(androidVersion = consumerAgpVersion.version)
-                    .suppressAgpWarningIsProperty(gradleVersion)
                     // is property deprecation warning is only produced on the first run, which is hard to detect in this particular test
                     .copy(warningMode = WarningMode.None),
                 buildJdk = File(System.getProperty("jdk${consumerAgpVersion.requiredJdkVersion.majorVersion}Home")),

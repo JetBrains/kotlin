@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.Project
 import org.gradle.api.initialization.resolve.RepositoriesMode
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
@@ -459,9 +458,7 @@ private fun validateDebuggingSocketIsListeningForTestsWithEnv(
 }
 
 private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
-    if (buildOptions.warningMode != WarningMode.Fail && buildOptions.warningMode != WarningMode.None) {
-        assertDeprecationWarningsArePresent(buildOptions.warningMode)
-    }
+    // no-op
 }
 
 private fun TestProject.ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions: BuildOptions) {

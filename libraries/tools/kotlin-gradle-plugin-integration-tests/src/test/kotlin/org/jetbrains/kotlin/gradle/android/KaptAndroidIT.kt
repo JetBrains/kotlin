@@ -32,7 +32,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "kt15001".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug") {
@@ -61,7 +61,7 @@ class KaptAndroidIT : KaptBaseIT() {
                 """.trimMargin()
             )
 
-            build("assembleDebug", buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion)) {
+            build("assembleDebug") {
                 assertKaptSuccessful()
             }
 
@@ -86,7 +86,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "android-dagger".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             subProject("app").buildGradle.appendText(
@@ -123,7 +123,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "android-dagger".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("--dry-run", "assembleDebug") {
@@ -144,7 +144,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "AndroidLibraryKotlinProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
@@ -295,7 +295,6 @@ class KaptAndroidIT : KaptBaseIT() {
 
             build(
                 ":Android:kaptFlavor1DebugKotlin", "--dry-run",
-                buildOptions = buildOptions.suppressAgpWarningIsProperty(gradleVersion),
             )
 
             build(
@@ -316,7 +315,7 @@ class KaptAndroidIT : KaptBaseIT() {
         project(
             "kapt/android-dagger",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build(":app:compileDebugAndroidTestKotlin") {
@@ -358,8 +357,7 @@ class KaptAndroidIT : KaptBaseIT() {
                         includeCompileClasspath = true,
                     ),
                     androidVersion = agpVersion,
-                )
-                .suppressAgpWarningIsProperty(gradleVersion),
+                ),
             buildJdk = jdkVersion.location
         ) {
             build("assembleDebug") {

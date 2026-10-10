@@ -94,12 +94,7 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
                     ":Test" to setOf("clean"),
                 ),
                 configuredTasks()
-                    .buildAndReturn(
-                        "--dry-run",
-                        deriveBuildOptions = {
-                            buildOptions.suppressAgpWarningIsProperty(gradleVersion)
-                        }
-                    ),
+                    .buildAndReturn("--dry-run"),
             )
             build("help")
         }

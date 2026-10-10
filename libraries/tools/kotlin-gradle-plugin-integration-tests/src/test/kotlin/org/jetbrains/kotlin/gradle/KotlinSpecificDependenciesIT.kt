@@ -135,8 +135,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(
                     androidVersion = agpVersion,
-                )
-                .suppressAgpWarningIsProperty(gradleVersion),
+                ),
             buildJdk = jdkVersion.location
         ) {
             removeDependencies(buildGradle)
@@ -162,8 +161,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(
                     androidVersion = agpVersion,
-                )
-                .suppressAgpWarningIsProperty(gradleVersion),
+                ),
             buildJdk = jdkVersion.location
         ) {
             removeDependencies(buildGradle)
