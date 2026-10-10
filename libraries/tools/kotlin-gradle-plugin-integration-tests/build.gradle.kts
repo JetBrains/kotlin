@@ -353,12 +353,13 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
             excludeTags(JunitTag.DaemonsKGP.name)
         }
 
+        val parallelism = (Runtime.getRuntime().availableProcessors() * 1.5).toInt()
         systemProperty("junit.jupiter.execution.parallel.enabled", "true")
         systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
         systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
         systemProperty("junit.jupiter.execution.parallel.config.strategy", "fixed")
-        systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", "32")
-        systemProperty("junit.jupiter.execution.parallel.config.fixed.max-pool-size", "32")
+        systemProperty("junit.jupiter.execution.parallel.config.fixed.parallelism", "$parallelism")
+        systemProperty("junit.jupiter.execution.parallel.config.fixed.max-pool-size", "$parallelism")
     }
 }
 
