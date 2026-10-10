@@ -43,6 +43,7 @@ object Elements : TemplateGroupBase() {
         operator(true)
 
         doc { "Returns `true` if [element] is found in the ${f.collection}." }
+        sample("${f.sampleClass}.contains")
         typeParam("@kotlin.internal.OnlyInputTypes T")
         val isDeprecated = f == ArraysOfPrimitives && primitive!!.isFloatingPoint()
         if (isDeprecated) {
