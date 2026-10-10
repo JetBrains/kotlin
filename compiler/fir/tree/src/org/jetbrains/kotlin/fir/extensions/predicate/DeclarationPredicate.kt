@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.extensions.predicate
 
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 
 // -------------------------------------------- Predicates --------------------------------------------
@@ -43,6 +44,22 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         }
     }
 
+    class MatchingType(
+        override val predicate: DeclarationPredicate,
+        override val targets: Set<KotlinTarget>,
+    ) : DeclarationPredicate(), AbstractPredicate.MatchingType<DeclarationPredicate> {
+        init {
+            PredicateTargets.requireSupported(targets)
+        }
+
+        override val annotations: Set<AnnotationFqn> = predicate.annotations
+        override val metaAnnotations: Set<AnnotationFqn> = predicate.metaAnnotations
+
+        override fun <R, D> accept(visitor: PredicateVisitor<DeclarationPredicate, R, D>, data: D): R {
+            return visitor.visitMatchingType(this, data)
+        }
+    }
+
     // ------------------------------------ Annotated ------------------------------------
 
     sealed class Annotated(final override val annotations: Set<AnnotationFqn>) : DeclarationPredicate(),
@@ -61,7 +78,8 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         }
     }
 
-    class AnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations), AbstractPredicate.AnnotatedWith<DeclarationPredicate> {
+    class AnnotatedWith(annotations: Set<AnnotationFqn>) : Annotated(annotations),
+        AbstractPredicate.AnnotatedWith<DeclarationPredicate> {
         override fun <R, D> accept(visitor: PredicateVisitor<DeclarationPredicate, R, D>, data: D): R {
             return visitor.visitAnnotatedWith(this, data)
         }
@@ -141,6 +159,9 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
 
         fun metaAnnotated(metaAnnotations: Collection<AnnotationFqn>, includeItself: Boolean): DeclarationPredicate =
             MetaAnnotatedWith(metaAnnotations.toSet(), includeItself)
+
+        // ------------------- targets -------------------
+        override fun DeclarationPredicate.matching(targets: Set<KotlinTarget>): DeclarationPredicate = MatchingType(this, targets.toSet())
     }
 
     companion object {

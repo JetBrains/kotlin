@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.extensions.predicate
 
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 
@@ -54,6 +55,32 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
 
         override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
             return visitor.visitAnd(this, data)
+        }
+    }
+
+    /**
+     * Filters the declarations matched by [predicate] to those with one of [targets].
+     * The targets apply to the matched declaration, including when [predicate] checks its parents or children.
+     * Nested matching predicates require the declaration to match each wrapper's targets. A declaration can have multiple targets,
+     * so matching [KotlinTarget.FUNCTION] and then [KotlinTarget.TOP_LEVEL_FUNCTION] matches top-level functions.
+     */
+    sealed interface MatchingType<P : AbstractPredicate<P>> : AbstractPredicate<P> {
+        val predicate: P
+
+        /**
+         * Kinds of declarations this predicate matches. An empty set matches declarations of any kind.
+         *
+         * These are the same targets the compiler checks for `@Target`. For example, [KotlinTarget.FUNCTION] matches
+         * every function and [KotlinTarget.TOP_LEVEL_FUNCTION] matches only top-level functions.
+         * Only [PredicateTargets.supported] are allowed.
+         *
+         * [FirPredicateBasedProvider.getSymbolsByPredicate] checks targets before recording a symbol for incremental compilation.
+         * Declarations of other kinds aren't recorded.
+         */
+        val targets: Set<KotlinTarget>
+
+        override fun <R, D> accept(visitor: PredicateVisitor<P, R, D>, data: D): R {
+            return visitor.visitMatchingType(this, data)
         }
     }
 
@@ -242,5 +269,18 @@ sealed interface AbstractPredicate<P : AbstractPredicate<P>> {
         abstract fun hasAnnotated(annotations: Collection<AnnotationFqn>): P
 
         abstract fun annotatedOrUnder(annotations: Collection<AnnotationFqn>): P
+
+        // ------------------- targets -------------------
+        /**
+         * Restricts the declarations matched by this predicate to the given [targets].
+         * See [MatchingType.targets].
+         */
+        fun P.matching(vararg targets: KotlinTarget): P = matching(targets.toSet())
+
+        /**
+         * Restricts the declarations matched by this predicate to the given [targets].
+         * See [MatchingType.targets].
+         */
+        abstract fun P.matching(targets: Set<KotlinTarget>): P
     }
 }

@@ -16,6 +16,10 @@ abstract class PredicateVisitor<P : AbstractPredicate<P>, R, D> {
         return visitPredicate(predicate, data)
     }
 
+    open fun visitMatchingType(predicate: AbstractPredicate.MatchingType<P>, data: D): R {
+        return visitPredicate(predicate, data)
+    }
+
     open fun visitAnnotated(predicate: AbstractPredicate.Annotated<P>, data: D): R {
         return visitPredicate(predicate, data)
     }

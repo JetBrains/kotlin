@@ -13,7 +13,16 @@ annotation class AddSupertype(val value: KClass<*>)
 
 annotation class DummyFunction(val fileName: String = "")
 
-@Target(AnnotationTarget.FUNCTION)
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.ANNOTATION_CLASS,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.FIELD,
+    AnnotationTarget.TYPEALIAS,
+)
 annotation class TestTopLevelPrivateSuspendFun
 annotation class ExternalClassWithNested
 annotation class NestedClassAndMaterializeMember

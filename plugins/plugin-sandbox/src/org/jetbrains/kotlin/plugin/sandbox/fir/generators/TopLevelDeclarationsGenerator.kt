@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.plugin.sandbox.fir.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
@@ -29,7 +30,9 @@ import org.jetbrains.kotlin.plugin.sandbox.fir.SANDBOX_ANNOTATIONS_PACKAGE
 class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
         private val DUMMY_FUNCTION_CLASS_ID = ClassId(SANDBOX_ANNOTATIONS_PACKAGE, Name.identifier("DummyFunction"))
-        private val PREDICATE = LookupPredicate.create { annotated(DUMMY_FUNCTION_CLASS_ID.asSingleFqName()) }
+        private val PREDICATE = LookupPredicate.create {
+            annotated(DUMMY_FUNCTION_CLASS_ID.asSingleFqName()).matching(KotlinTarget.CLASS)
+        }
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider
