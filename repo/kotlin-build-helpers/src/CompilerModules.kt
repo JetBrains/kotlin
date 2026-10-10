@@ -75,7 +75,7 @@ object CompilerModules {
         ":compiler:fir:resolve",
         ":compiler:fir:fir-serialization",
         ":compiler:fir:fir-deserialization",
-        ":compiler:fir:plugin-utils",
+        ":compiler:fir:plugin.api",
         ":compiler:fir:tree",
         ":compiler:fir:fir-jvm",
         ":compiler:fir:fir-native",

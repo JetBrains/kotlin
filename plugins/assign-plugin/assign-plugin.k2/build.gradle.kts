@@ -11,12 +11,12 @@ dependencies {
     implementation(project(":compiler:frontend.common-psi"))
     implementation(project(":compiler:psi:psi-api"))
 
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:checkers:checkers.common"))
     compileOnly(project(":compiler:ir.backend.common"))
-    compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:fir:plugin.api"))
+    // Needed for internal 'FirAssignExpressionAltererExtension' FIR extension.
+    compileOnly(project(":compiler:fir:resolve"))
+    // TODO(KT-90146): Required to access various utility functions.
+    compileOnly(project(":compiler:fir:checkers:checkers.common"))
 
     compileOnly(intellijCore())
     runtimeOnly(kotlinStdlib())

@@ -7,11 +7,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":compiler:fir:cones"))
-    implementation(project(":compiler:fir:tree"))
-    implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:plugin-utils"))
-    implementation(project(":compiler:fir:entrypoint"))
+    implementation(project(":compiler:fir:plugin.api"))
+    // TODO(KT-90146): Required to access various utility functions.
+    implementation(project(":compiler:fir:checkers:checkers.js"))
     implementation(project(":compiler:cli-base"))
 
     implementation(project(":compiler:frontend.common-psi"))

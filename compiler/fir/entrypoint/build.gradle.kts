@@ -22,6 +22,7 @@ dependencies {
     api(project(":compiler:fir:checkers:checkers.native"))
     api(project(":compiler:fir:checkers:checkers.wasm"))
     api(project(":compiler:fir:fir-deserialization"))
+    api(project(":compiler:fir:plugin.api"))
     implementation(project(":wasm:wasm.frontend"))
     implementation(project(":native:frontend.native"))
     api(project(":compiler:ir.actualization"))

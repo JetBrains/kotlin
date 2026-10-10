@@ -31,7 +31,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
-    testRuntimeOnly(project(":compiler:fir:plugin-utils"))
+    testRuntimeOnly(project(":compiler:fir:plugin.api"))
 
     powerAssertCompilerPluginJar(project(":kotlin-power-assert-compiler-plugin")) { isTransitive = false }
     kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = true }

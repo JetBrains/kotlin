@@ -32,16 +32,18 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":core:descriptors"))
 
-    implementation(project(":compiler:fir:cones"))
-    implementation(project(":compiler:fir:tree"))
-    implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:checkers:checkers.common"))
-    implementation(project(":compiler:fir:fir2ir"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.tree"))
-    implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":compiler:plugin-api"))
-    implementation(project(":compiler:fir:plugin-utils"))
+    implementation(project(":compiler:fir:plugin.api"))
+    // Required for 'FirFunctionCallRefinementExtension' internal FIR extension.
+    implementation(project(":compiler:fir:resolve"))
+    // TODO(KT-90146): Required to access various utility functions.
+    implementation(project(":compiler:fir:checkers:checkers.common"))
+    // TODO(KT-90146): Required to access various utility functions.
+    implementation(project(":compiler:fir:fir-jvm"))
+    // TODO(KT-90146): Required to access various utility functions.
+    implementation(project(":compiler:fir:fir2ir"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)
 
@@ -51,7 +53,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
-    testFixturesApi(project(":compiler:fir:plugin-utils"))
+    testFixturesApi(project(":compiler:fir:plugin.api"))
     testFixturesImplementation(testFixtures(project(":tools:kotlinp-jvm")))
 
     testFixturesApi(testFixtures(project(":native:native.tests")))

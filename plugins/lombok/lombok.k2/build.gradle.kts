@@ -11,15 +11,15 @@ dependencies {
     implementation(project(":compiler:psi:psi-api"))
     implementation(project(":core:compiler.common.jvm"))
 
-    compileOnly(project(":compiler:fir:cones"))
-    compileOnly(project(":compiler:fir:diagnostic-renderers"))
-    compileOnly(project(":compiler:fir:tree"))
-    compileOnly(project(":compiler:fir:semantics.api"))
-    compileOnly(project(":compiler:fir:resolve"))
-    compileOnly(project(":compiler:fir:checkers:checkers.common"))
+    compileOnly(project(":compiler:fir:plugin.api"))
+    // Required for JVM specific FIR elements.
     compileOnly(project(":compiler:fir:fir-jvm"))
-    compileOnly(project(":compiler:fir:entrypoint"))
-    compileOnly(project(":compiler:fir:plugin-utils"))
+    // TODO(KT-90146): Required to access various utility functions.
+    compileOnly(project(":compiler:fir:resolve"))
+    // TODO(KT-90146): Required to access various utility functions.
+    // Required to access FirError.
+    compileOnly(project(":compiler:fir:checkers:checkers.common"))
+
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:ir.backend.common"))
 

@@ -8,12 +8,8 @@ plugins {
 
 dependencies {
     implementation(project(":core:compiler.common.jvm"))
-    implementation(project(":compiler:fir:cones"))
-    implementation(project(":compiler:fir:tree"))
-    implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:checkers:checkers.common"))
     implementation(project(":compiler:ir.backend.common"))
-    implementation(project(":compiler:fir:entrypoint"))
+    implementation(project(":compiler:fir:plugin.api"))
 
     compileOnly(intellijCore())
     runtimeOnly(kotlinStdlib())

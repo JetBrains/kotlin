@@ -11,16 +11,11 @@ dependencies {
     implementation(project(":compiler:frontend.common-psi"))
 
     compileOnly(intellijCore())
-    implementation(project(":compiler:fir:cones"))
-    implementation(project(":compiler:fir:tree"))
-    implementation(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:plugin-utils"))
+    implementation(project(":compiler:fir:plugin.api"))
+    // Required for JVM specific utility functions.
+    implementation(project(":compiler:fir:fir-jvm"))
+    // TODO(KT-90146): Required to access various utility functions.
     implementation(project(":compiler:fir:checkers:checkers.common"))
-    implementation(project(":compiler:fir:checkers:checkers.jvm"))
-    implementation(project(":compiler:fir:diagnostic-renderers"))
-    implementation(project(":compiler:ir.backend.common"))
-    implementation(project(":compiler:ir.tree"))
-    implementation(project(":compiler:fir:entrypoint"))
 }
 
 sourceSets {
