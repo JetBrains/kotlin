@@ -258,10 +258,8 @@ class StringBuilderTest {
     @Test
     @Suppress("DEPRECATION")
     fun capacityTest() {
-        testExceptOn(TestPlatform.Js) {
-            testExceptOn(TestPlatform.WasmJs) {
-                assertEquals(100, StringBuilder(100).capacity()) // not implemented in JS and WasmJs
-            }
+        testExceptOn(TestPlatform::isJsOrWasmJs) {
+            assertEquals(100, StringBuilder(100).capacity()) // not implemented in JS and WasmJs
         }
         StringBuilder("string builder from string capacity test").let { sb ->
             assertTrue(sb.capacity() >= sb.length)
@@ -277,17 +275,15 @@ class StringBuilderTest {
             sb.ensureCapacity(-1) // negative argument is ignored
             assertTrue(sb.capacity() >= sb.length)
             sb.ensureCapacity(sb.length * 10)
-            testExceptOn(TestPlatform.Js) {
-                testExceptOn(TestPlatform.WasmJs) {
-                    assertTrue(sb.capacity() >= sb.length * 10) // not implemented in JS and WasmJs
-                }
+            testExceptOn(TestPlatform::isJsOrWasmJs) {
+                assertTrue(sb.capacity() >= sb.length * 10) // not implemented in JS and WasmJs
             }
         }
     }
 
     @Test
-    fun overflow() = testExceptOn(TestPlatform.Js) {
-        testExceptOn(TestPlatform.WasmJs) {
+    fun overflow() =
+        testExceptOn(TestPlatform::isJsOrWasmJs) {
             class CharSeq(override val length: Int) : CharSequence {
                 override fun get(index: Int): Char =
                     throw IllegalStateException("Not expected to be called")
@@ -305,7 +301,6 @@ class StringBuilderTest {
                 StringBuilder(initialContent).insert(5, bigCharSeq)
             }
         }
-    }
 
     @Test
     fun indexOf() {

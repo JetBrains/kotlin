@@ -13,6 +13,7 @@ public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
 
 
 public actual val TestPlatform.Companion.current: TestPlatform get() = TestPlatform.Js
+public actual val TestPlatform.Companion.jvmVersion: Int? get() = null
 
 // TODO: should be true at least in JS IR after implementing KT-24975
 public actual val isFloat32RangeEnforced: Boolean = false
