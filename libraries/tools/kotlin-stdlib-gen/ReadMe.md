@@ -1,4 +1,4 @@
-## Code Generation for Standard Library
+## Code generation for standard library
 
 Some of the code in the standard library is created by code generation based on templates.
 For example, many `Array` methods need to be implemented separately for `Array<T>`, `ByteArray`, `ShortArray`, `IntArray`, etc.
