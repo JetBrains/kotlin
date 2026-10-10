@@ -183,6 +183,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   }
 
   @Test
+  @TestMetadata("constructorWithThrowsFromLibrary.kt")
+  public void testConstructorWithThrowsFromLibrary() {
+    run("constructorWithThrowsFromLibrary.kt");
+  }
+
+  @Test
   @TestMetadata("contextParametersInTypesLibrary.kt")
   public void testContextParametersInTypesLibrary() {
     run("contextParametersInTypesLibrary.kt");
@@ -264,6 +270,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   @TestMetadata("genericFromOuterClassInInnerClass.kt")
   public void testGenericFromOuterClassInInnerClass() {
     run("genericFromOuterClassInInnerClass.kt");
+  }
+
+  @Test
+  @TestMetadata("genericMethodWithThrowsFromLibrary.kt")
+  public void testGenericMethodWithThrowsFromLibrary() {
+    run("genericMethodWithThrowsFromLibrary.kt");
   }
 
   @Test
@@ -582,6 +594,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByReferenceTestGenerated 
   @TestMetadata("primaryConstructorValueParameterAsProperty.kt")
   public void testPrimaryConstructorValueParameterAsProperty() {
     run("primaryConstructorValueParameterAsProperty.kt");
+  }
+
+  @Test
+  @TestMetadata("propertyAccessorsWithThrowsFromLibrary.kt")
+  public void testPropertyAccessorsWithThrowsFromLibrary() {
+    run("propertyAccessorsWithThrowsFromLibrary.kt");
   }
 
   @Test

@@ -63,7 +63,7 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
 
     @Test
     public void testAllFilesPresentInPureKotlinAbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^.]+)$"), Pattern.compile("^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)|(^addNullableAnnotation$)|(^changeTopLevelTypeAlias$)|(^renameFileWithFunctionOverloadAndCreateConflict$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), false);
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^.]+)$"), Pattern.compile("^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict|bridgeWithThrows)|(^addNullableAnnotation$)|(^changeTopLevelTypeAlias$)|(^renameFileWithFunctionOverloadAndCreateConflict$)|(^unwrapJvmFieldInJvmNameFromObject$)|(^changeTypealiasTypeWithHierarchy$)|(^changeMethodToPropertyInInheritance$)"), false);
     }
 
     @Test

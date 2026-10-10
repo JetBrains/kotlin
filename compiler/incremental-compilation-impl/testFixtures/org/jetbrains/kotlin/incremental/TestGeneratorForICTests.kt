@@ -34,7 +34,7 @@ fun main(args: Array<String>) {
                     "incremental", "pureKotlin", extension = null, recursive = false,
                     // TODO: 'fileWithConstantRemoved' should be fixed in https://youtrack.jetbrains.com/issue/KT-58824
                     excludedPattern = listOf(
-                        "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)",
+                        "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict|bridgeWithThrows)",
                         ExcludePattern.JPS_ONLY,
                     ).joinToString("|")
                 )

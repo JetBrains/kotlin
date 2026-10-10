@@ -1,0 +1,31 @@
+Retained.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package lib
+
+  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.BINARY)
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CONSTRUCTOR])
+  public final annotation class Retained public constructor() : kotlin.Annotation {
+  }
+
+SourceOnly.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package lib
+
+  @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+  @kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CONSTRUCTOR])
+  public final annotation class SourceOnly public constructor() : kotlin.Annotation {
+  }
+
+WithThrows.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  package lib
+
+  public final class WithThrows @lib.Retained @kotlin.jvm.Throws(exceptionClasses = [java.io.IOException::class, java.lang.IllegalStateException::class]) public constructor(value: kotlin.String) {
+      public final val value: kotlin.String /* compiled code */
+  }
