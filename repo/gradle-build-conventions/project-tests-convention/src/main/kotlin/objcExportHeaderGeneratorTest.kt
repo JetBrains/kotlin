@@ -38,7 +38,10 @@ fun ProjectTestsExtension.nativeTestTaskWithExternalDependencies(
             attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
             /* Project dependencies shall resolve the platform from the current host */
-            attribute(KotlinNativeTarget.konanTargetAttribute, HostManager.host.name)
+            attribute(
+                KotlinNativeTarget.konanTargetAttribute,
+                HostManager.host.name,
+            )
         }
 
         project.dependencies {

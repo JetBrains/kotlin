@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     kotlin("multiplatform")
@@ -15,6 +16,7 @@ kotlin {
     val nativeTarget = when {
         HostManager.hostIsMac -> macosX64("native")
         HostManager.hostIsMingw -> mingwX64("native")
+        HostManager.host == KonanTarget.LINUX_ARM64 -> linuxArm64("native")
         HostManager.hostIsLinux -> linuxX64("native")
         else -> error("Unexpected host: ${HostManager.host}")
     }

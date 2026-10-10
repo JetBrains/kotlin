@@ -73,6 +73,34 @@ To compile the basic compiler distribution from sources, run following command:
 It will build compiler and stdlib for host target, without
 [platform libraries](https://kotlinlang.org/docs/native-platform-libs.html).
 
+### Bootstrapping Linux AArch64
+
+Until a Linux AArch64 compiler distribution is published, the source build needs
+an existing AArch64 bootstrap distribution, AArch64 LLVM, and AArch64 libffi
+built with `-fPIC`. The independent bootstrap utilities build supplies the
+current host detector before Native projects are configured:
+
+    ./gradlew :prepare:build.version:writeStdlibVersion \
+        :native:kotlin-native-utils:jar :kotlin-native:dist \
+        -Pkotlin.native.enabled=true \
+        -Pkotlin.native.bootstrapDistribution=<aarch64-bootstrap-distribution> \
+        -Pkotlin.native.llvm=<aarch64-llvm-directory> \
+        -Pkotlin.native.libffi=<aarch64-pic-libffi-directory> \
+        --configure-on-demand
+
+This source bootstrap is automatic on Linux AArch64 with the default Kotlin
+bootstrap. For a custom Kotlin bootstrap, build `:native:kotlin-native-utils:jar`
+first and pass it as `-Pkotlin.native.bootstrapUtilsJar=<native-utils-jar>` to
+subsequent builds.
+
+For the first bootstrap, `kotlin.native.libclangInterop.prebuiltSources` can
+point to libclang binding sources generated on another supported host.
+
+The local libffi path is retained in the source-built distribution for compiler
+use with a fresh `KONAN_DATA_DIR`. Such distributions are machine-local; omit
+the override when building a release against published AArch64 libffi artifacts.
+Relative `kotlin.native.libffi` paths are resolved from the repository root.
+
 To get platform libraries, add `distPlatformLibs` task, e.g.
 
     ./gradlew :kotlin-native:dist :kotlin-native:distPlatformLibs

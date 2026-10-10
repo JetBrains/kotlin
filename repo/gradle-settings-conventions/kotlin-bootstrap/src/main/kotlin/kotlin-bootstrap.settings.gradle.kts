@@ -5,6 +5,7 @@
 
 import java.io.StringReader
 import java.util.Properties
+import org.gradle.api.artifacts.ExternalModuleDependency
 import org.gradle.api.internal.GradleInternal
 
 private object Config {
@@ -355,6 +356,40 @@ var Project.bootstrapKotlinRepo: String?
     set(value) {
         extensions.extraProperties.set(Config.PROJECT_KOTLIN_REPO, value)
     }
+
+// Project scripts need the current host detector before the normal Native utilities project can run.
+val nativeBootstrapUtilsJar = loadLocalOrGradleProperty("kotlin.native.bootstrapUtilsJar")
+val isLinuxArm64 = providers.systemProperty("os.name").zip(providers.systemProperty("os.arch")) { os, arch ->
+    os.equals("Linux", ignoreCase = true) &&
+        (arch.equals("aarch64", ignoreCase = true) || arch.equals("arm64", ignoreCase = true))
+}.get()
+val useSourceNativeBootstrap = isLinuxArm64 && !nativeBootstrapUtilsJar.isPresent &&
+    !isLocalBootstrapEnabled.get() && !teamCityBootstrapVersion.isPresent && !customBootstrapVersion.isPresent &&
+    defaultBootstrapVersion.get() == rootGradleProperties.get().getProperty(Config.DEFAULT_BOOTSTRAP_VERSION)
+if (useSourceNativeBootstrap) {
+    includeBuild(kotlinRootDir.resolve("kotlin-native/bootstrap-utils")) {
+        dependencySubstitution {
+            substitute(module("org.jetbrains.kotlin.build:bootstrap-native-utils")).using(project(":"))
+        }
+    }
+}
+gradle.beforeProject {
+    // These build-logic projects must configure before the bootstrap producer can be resolved.
+    if (useSourceNativeBootstrap && rootProject.name in setOf("bootstrap-native-utils", "kotlin-build-helpers", "gradle-settings-conventions")) {
+        return@beforeProject
+    }
+    if (useSourceNativeBootstrap) {
+        val bootstrapDependency = buildscript.dependencies.create("org.jetbrains.kotlin.build:bootstrap-native-utils:1")
+        (bootstrapDependency as ExternalModuleDependency).isTransitive = false
+        buildscript.dependencies.add("classpath", bootstrapDependency)
+    } else {
+        nativeBootstrapUtilsJar.orNull?.let { path ->
+            val jar = kotlinRootDir.resolve(path)
+            require(jar.isFile) { "kotlin.native.bootstrapUtilsJar must point to a JAR: $jar" }
+            buildscript.dependencies.add("classpath", files(jar))
+        }
+    }
+}
 
 // Get the bootstrap kotlin version and repository url
 // and set it using pluginManagement and dependencyManagement
