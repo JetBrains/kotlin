@@ -7,6 +7,7 @@ package kotlinx.metadata.klib
 
 import kotlinx.metadata.klib.impl.*
 import kotlinx.metadata.klib.impl.KlibMetadataVersionWriteExtension
+import org.jetbrains.kotlin.library.components.KlibMetadataComponent
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.*
@@ -82,7 +83,7 @@ class KlibModuleMetadata(
      * Serialized representation of module metadata.
      */
     class SerializedKlibMetadata(
-        val header: ByteArray,
+        val header: ByteArray?,
         val fragments: List<List<ByteArray>>,
         val fragmentNames: List<String>,
         val metadataVersion: KlibMetadataVersion,
@@ -92,7 +93,8 @@ class KlibModuleMetadata(
      * Specifies access to library's metadata.
      */
     interface MetadataLibraryProvider {
-        val moduleHeaderData: ByteArray
+        val moduleHeaderData: ByteArray?
+        val packageNames: Set<String>
         val metadataVersion: KlibMetadataVersion
         fun packageMetadataParts(fqName: String): Set<String>
         fun packageMetadata(fqName: String, partName: String): ByteArray
@@ -143,8 +145,8 @@ class KlibModuleMetadata(
         ): KlibModuleMetadata {
             checkMetadataVersionForRead(library.metadataVersion, lenient)
 
-            val moduleHeader = parseModuleHeader(library.moduleHeaderData) ?: error("Header file was not found")
-            val moduleFragments = moduleHeader.packageFragmentNameList.flatMap { packageFqName ->
+            val moduleHeader = parseModuleHeader(library.moduleHeaderData)
+            val moduleFragments = library.packageNames.flatMap { packageFqName ->
                 library.packageMetadataParts(packageFqName).map { part ->
                     val packageFragment = parsePackageFragment(library.packageMetadata(packageFqName, part))
                     val nameResolver = NameResolverImpl(packageFragment.strings, packageFragment.qualifiedNames)
@@ -158,7 +160,7 @@ class KlibModuleMetadata(
                 }.let(readStrategy::processModuleParts)
             }
             return KlibModuleMetadata(
-                moduleHeader.moduleName,
+                moduleHeader?.moduleName ?: error("Header file was not found"),
                 moduleFragments,
                 library.metadataVersion,
                 isAllowedToWrite = !lenient,
