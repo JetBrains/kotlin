@@ -79,7 +79,11 @@ class JavaEnumValueAnnotationArgumentImpl(
                 return JavaFieldImpl(psiReferenceSource.factory.createPsiSource(element)).containingClass.classId
             }
 
-            val fqName = ( psiReferenceSource.psi.qualifier as? PsiReferenceExpression)?.qualifiedName ?: return null
+            val qualifier = psiReferenceSource.psi.qualifier as? PsiReferenceExpression ?: return null
+            // A Kotlin enum class is visible to Java PSI as a class stub without its entries (KT-90014)
+            (qualifier.resolve() as? PsiClass)?.let { return JavaClassImpl(psiReferenceSource.factory.createPsiSource(it)).classId }
+
+            val fqName = qualifier.qualifiedName ?: return null
             // TODO: find a way to construct a correct name (with nested classes) for unresolved enums
             return ClassId.topLevel(FqName(fqName))
         }

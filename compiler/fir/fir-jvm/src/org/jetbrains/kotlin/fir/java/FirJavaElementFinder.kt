@@ -192,12 +192,7 @@ class FirJavaElementFinder(
             firClass.typeParameters.filterIsInstance<FirTypeParameter>().map { Pair(it.name.asString(), arrayOf(CommonClassNames.JAVA_LANG_OBJECT)) }
         )
 
-        val superTypeRefs = when {
-            firClass.superTypeRefs.all { it is FirResolvedTypeRef } -> firClass.superTypeRefs
-            else -> firClass.resolveSupertypesOnAir(session)
-        }
-
-        stub.addSupertypesReferencesLists(firClass, superTypeRefs, session)
+        stub.addSupertypesReferencesLists(firClass, firClass.resolveSupertypesOnAir(session), session)
 
         for (nestedClass in firClass.declarations.filterIsInstance<FirRegularClass>()) {
             buildStub(nestedClass, stub)
@@ -258,9 +253,15 @@ class FirJavaElementFinder(
     }
 }
 
-private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
+/**
+ * The supertype refs of this class, resolved on air unless they are resolved already. A class with no containing file
+ * in the [session]'s `FirProvider` gets its refs back as they are, so callers must cope with unresolved refs.
+ */
+fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
+    if (superTypeRefs.all { it is FirResolvedTypeRef }) return superTypeRefs
+    val containingFile = session.firProvider.getFirClassifierContainerFileIfAny(symbol) ?: return superTypeRefs
     val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
-    return visitor.withFile(session.firProvider.getFirClassifierContainerFile(this.symbol)) {
+    return visitor.withFile(containingFile) {
         visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs, resolveRecursively = true)
     }
 }

@@ -21,6 +21,8 @@ public class a {}
 package test;
 
 public class d {
+    // KT-87823: javac rejects `a.b` (`a` is the type `test.a`, which has no member `b`; JLS 6.5.5.2),
+    // but both Java facades load it as class `b` from package `a`.
     public a.b getB() { return null; }
 }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.java.resolveSupertypesOnAir
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -66,12 +67,15 @@ internal fun resolveCanonicalName(qualifiedName: String): ClassId? =
  *    type in that package (JLS 6.5.4.2) — e.g. for an inline `java.util.List`, `java` and
  *    `java.util` are packages and `List` is the type;
  *  - each segment after the leftmost type must be a member type of the previous one (JLS
- *    6.5.5.2): declared, or — with [fullResolution] — inherited from its supertypes.
+ *    6.5.5.2): declared, or — with [fullResolution] — inherited from its supertypes. With
+ *    [allowDanglingMemberClassId], which takes effect only with [fullResolution], a missing member
+ *    yields its unresolved nested `ClassId` instead of `null`.
  */
 context(c: JavaResolutionContext)
 internal fun resolveQualifiedNameToClassIdFromParts(
     parts: List<String>,
     fullResolution: Boolean,
+    allowDanglingMemberClassId: Boolean = false,
 ): ClassId? {
     require(parts.size > 1)
 
@@ -90,15 +94,21 @@ internal fun resolveQualifiedNameToClassIdFromParts(
     // Member-type descent (JLS 6.5.5.2). The inherited lookup covers names like
     // `SimpleFunctionDescriptor.CopyBuilder`, where `CopyBuilder` comes from the
     // `FunctionDescriptor` superinterface of the resolved prefix.
+    // Once a member is missing, the remaining segments are appended without probing.
+    var dangling = false
     while (next < parts.size) {
         val declared = outerClassId.createNestedClassId(Name.identifier(parts[next]))
         outerClassId = when {
-            classExists(declared, fullResolution) -> declared
-            fullResolution -> findInheritedNestedClass(outerClassId, parts[next]) ?: return null // TODO: (KT-87823) maybe we should return a dangling (unresolvable) classId here
+            dangling || classExists(declared, fullResolution) -> declared
+            fullResolution -> findInheritedNestedClass(outerClassId, parts[next])
+                ?: if (allowDanglingMemberClassId) declared.also { dangling = true } else return null
             else -> return null
         }
         next++
     }
+    // TODO KT-87823: decide whether to keep parity with PSI (`javac/qualifiedExpression/PackageVsClass2`), where an
+    //  unresolved type name falls back to the whole-name package split. javac rejects such a name (JLS 6.5.5.2).
+    if (dangling && tryResolve(ClassId.topLevel(FqName.fromSegments(parts)))) return null
     return outerClassId
 }
 
@@ -564,9 +574,9 @@ internal fun directSupertypeClassIds(classId: ClassId): List<ClassId> =
             }
 
             // 3. Kotlin / built-in / deserialized arm.
-            firClass.supertypeRefsForJavaResolution(c.fileContext.session).map { ref ->
+            firClass.resolveSupertypesOnAir(c.fileContext.session).map { ref ->
                 // A ref that stayed unresolved makes this a partial answer, which must not be cached.
-                ((ref as? FirResolvedTypeRef)?.coneType as? ConeClassLikeType)?.lookupTag?.classId
+                (ref.coneTypeOrNull as? ConeClassLikeType)?.lookupTag?.classId
                     ?: return@cycleGuardedSupertypeWalk null
             }
         }

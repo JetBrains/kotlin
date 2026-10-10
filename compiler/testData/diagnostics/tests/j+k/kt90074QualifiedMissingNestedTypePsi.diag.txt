@@ -1,0 +1,1 @@
+/main.kt:26:9: error: Cannot access class 'Outer.Missing'. Check your module classpath for missing or conflicting dependencies.

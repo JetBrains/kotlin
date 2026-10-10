@@ -21,15 +21,20 @@ import java.nio.file.Path
 import kotlin.io.path.pathString
 
 object FirTestSessionFactoryHelper {
+    /**
+     * [compilerConfiguration] must be the one [projectEnvironment] was built from: java-direct takes the `.java`
+     * sources from its content roots, while PSI finds them through a project-wide scope and ignores it.
+     */
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
         projectEnvironment: VfsBasedProjectEnvironment,
+        compilerConfiguration: CompilerConfiguration,
         librariesClasspath: JvmClasspath = JvmClasspath.ProjectLibraries(),
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
     ): FirSession {
-        val configuration = CompilerConfiguration.create().apply {
+        val configuration = compilerConfiguration.copy().apply {
             this.languageVersionSettings = languageVersionSettings
         }
         return FirSessionFactoryHelper.createSessionWithDependencies(

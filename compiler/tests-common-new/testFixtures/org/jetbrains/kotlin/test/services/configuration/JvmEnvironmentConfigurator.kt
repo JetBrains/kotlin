@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.STRING_CONCAT
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_JAVA_FACADE
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WHEN_EXPRESSIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
@@ -201,6 +202,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(ENHANCED_COROUTINES_DEBUGGING, JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
         register(NO_NEW_JAVA_ANNOTATION_TARGETS, JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
         register(USE_PSI_CLASS_FILES_READING, JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
+        register(USE_PSI_JAVA_FACADE, JVMConfigurationKeys.USE_JAVA_DIRECT, isInverted = true)
         register(ALLOW_KOTLIN_PACKAGE, CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)
         register(DISABLE_OPTIMIZATION, JVMConfigurationKeys.DISABLE_OPTIMIZATION)
         register(WHEN_EXPRESSIONS, JVMConfigurationKeys.WHEN_GENERATION_SCHEME)
@@ -272,7 +274,11 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
         setupK2CliConfiguration(module, configuration)
 
-        val javaFiles = module.javaFiles.ifEmpty { return }
+        // `addSourcesForDependsOnClosure` compiles the Kotlin sources of the whole `dependsOn` closure in this
+        // configuration, so its Java sources belong here too; java-direct sees only the configured Java source roots.
+        val modulesWithJavaFiles = module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
+            .filter { it.javaFiles.isNotEmpty() }
+        val javaFiles = modulesWithJavaFiles.flatMap { it.javaFiles }.ifEmpty { return }
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
         val javaModuleInfoFiles = javaFiles.filter { it.name == MODULE_INFO_FILE }
 
@@ -280,7 +286,9 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             if (javaModuleInfoFiles.isNotEmpty()) {
                 configuration.addJavaSourceRootsByJavaModules(javaModuleInfoFiles)
             } else {
-                configuration.addJavaSourceRoot(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module))
+                for (moduleWithJavaFiles in modulesWithJavaFiles) {
+                    configuration.addJavaSourceRoot(testServices.sourceFileProvider.getJavaSourceDirectoryForModule(moduleWithJavaFiles))
+                }
             }
 
             // we add this as a part of the classpath only when Java files are being analyzed as sources,

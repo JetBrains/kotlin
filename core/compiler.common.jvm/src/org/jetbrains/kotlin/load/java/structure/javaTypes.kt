@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.name.ClassId
 
 interface JavaType : ListBasedJavaAnnotationOwner
 
@@ -33,6 +34,21 @@ interface JavaClassifierType : JavaType {
     val classifierQualifiedName: String
     val presentableText: String
 }
+
+/**
+ * A [JavaClassifierType] that knows the [ClassId] of its classifier even when [JavaClassifierType.classifier] is
+ * unresolved. Kept apart from [JavaClassifierType], so that the interface every Java model implements is unchanged.
+ */
+interface JavaClassifierTypeWithRecordedClassId {
+    val recordedClassId: ClassId?
+}
+
+/**
+ * A classifier's [ClassId], retained even when its [JavaClassifierType.classifier] is unresolved; unlike
+ * [JavaClassifierType.classifierQualifiedName], it preserves the package/class boundary.
+ */
+val JavaClassifierType.classifierClassId: ClassId?
+    get() = (this as? JavaClassifierTypeWithRecordedClassId)?.recordedClassId
 
 interface JavaPrimitiveType : JavaType {
     /** `null` means the `void` type. */

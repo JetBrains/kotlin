@@ -8345,7 +8345,7 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Experimental direct java support.",
+                                    "current": "Build the Java model of Java sources directly from their syntax tree.",
                                     "valueInVersions": []
                                 },
                                 "delimiter": null,
@@ -8358,7 +8358,7 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": false,
+                                        "current": true,
                                         "valueInVersions": []
                                     }
                                 },
@@ -8379,7 +8379,7 @@
                                         "valueInVersions": []
                                     },
                                     "defaultValue": {
-                                        "current": false,
+                                        "current": true,
                                         "valueInVersions": []
                                     }
                                 },

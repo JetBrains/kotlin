@@ -5,24 +5,13 @@
 
 package org.jetbrains.kotlin.java.direct
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirBinaryDependenciesModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertInstanceOf
 import org.junit.jupiter.api.Test
@@ -52,15 +41,6 @@ class JavaImplicitSupertypeResolutionTest : JavaParsingTestBase() {
         return session
     }
 
-    private fun libraryClassSymbol(classId: ClassId): FirRegularClassSymbol = buildRegularClass {
-        moduleData = FirBinaryDependenciesModuleData(Name.special("<test>"))
-        origin = FirDeclarationOrigin.Library
-        name = classId.shortClassName
-        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
-        classKind = ClassKind.CLASS
-        scopeProvider = JavaScopeProvider
-        symbol = FirRegularClassSymbol(classId)
-    }.symbol
 
     private fun assertSingleCanonicalProbe(source: String, expected: ClassId, alsoKnown: Set<ClassId> = emptySet()) {
         val probes = mutableListOf<ClassId>()

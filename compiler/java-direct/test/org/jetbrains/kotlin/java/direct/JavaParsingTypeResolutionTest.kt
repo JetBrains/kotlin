@@ -8,10 +8,16 @@
 package org.jetbrains.kotlin.java.direct
 
 import com.intellij.java.syntax.element.JavaSyntaxTokenType
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.java.direct.model.JavaClassOverAst
 import org.jetbrains.kotlin.java.direct.resolution.findInnerClassFromSupertypes
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.classId
+import org.jetbrains.kotlin.load.java.structure.classifierClassId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotEquals
@@ -136,6 +142,66 @@ class JavaParsingTypeResolutionTest : JavaParsingTestBase() {
         val supertype2 = myClass.supertypes.first()
         assertEquals("java.util.ArrayList", supertype2.classifierQualifiedName)
         assertNull(supertype2.classifier) { "java.util.ArrayList should NOT be in local scope" }
+    }
+
+    @Test
+    @OptIn(SessionConfiguration::class)
+    fun testMemberTypeKnownOnlyToSymbolProviderResolves() {
+        // KT-90074: `Generated` stands for a nested class that a compiler plugin adds to `Outer`.
+        val source = """
+            package test;
+            class User extends Outer {
+                Outer.Generated qualified;
+                test.Outer.Generated fullyQualified;
+                Generated simple;
+            }
+            class Outer {}
+        """.trimIndent()
+        val outer = ClassId(FqName("test"), Name.identifier("Outer"))
+        val generated = outer.createNestedClassId(Name.identifier("Generated"))
+        val known = setOf(outer, generated)
+        val session = createDummyFirSessionForTests()
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { if (it in known) libraryClassSymbol(it) else null })
+        val user = parseFirstClass(source, session)
+
+        for (fieldName in listOf("qualified", "fullyQualified", "simple")) {
+            val type = user.fields.first { it.name.asString() == fieldName }.type as JavaClassifierType
+            val classifier = type.classifier
+            assertNotNull(classifier) { "$fieldName should resolve through the symbol provider" }
+            assertEquals(generated, (classifier as JavaClass).classId, fieldName)
+        }
+    }
+
+    @Test
+    @OptIn(SessionConfiguration::class)
+    fun testUnresolvedMemberTypeKeepsClassIdBoundary() {
+        val source = """
+            package test;
+            class User {
+                Outer.Missing qualified;
+                test.Outer.Missing fullyQualified;
+                Outer.Inner.Missing deep;
+            }
+            class Outer {
+                class Inner {}
+            }
+        """.trimIndent()
+        val outer = ClassId(FqName("test"), Name.identifier("Outer"))
+        val known = setOf(outer, outer.createNestedClassId(Name.identifier("Inner")))
+        val session = createDummyFirSessionForTests()
+        session.register(FirSymbolProvider::class, StubSymbolProvider(session) { if (it in known) libraryClassSymbol(it) else null })
+        val user = parseFirstClass(source, session)
+
+        fun recordedClassIdOf(fieldName: String): ClassId? {
+            val type = user.fields.first { it.name.asString() == fieldName }.type as JavaClassifierType
+            assertNull(type.classifier) { "$fieldName should stay unresolved" }
+            return type.classifierClassId
+        }
+
+        val missing = ClassId(FqName("test"), FqName("Outer.Missing"), isLocal = false)
+        assertEquals(missing, recordedClassIdOf("qualified"))
+        assertEquals(missing, recordedClassIdOf("fullyQualified"))
+        assertEquals(ClassId(FqName("test"), FqName("Outer.Inner.Missing"), isLocal = false), recordedClassIdOf("deep"))
     }
 
     @Test
