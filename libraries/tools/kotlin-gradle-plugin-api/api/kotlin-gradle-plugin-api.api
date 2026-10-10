@@ -831,6 +831,82 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/nodejs/PreInstal
 	public abstract fun getNodeJsExecutable ()Lorg/gradle/api/provider/Property;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DefaultWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DefaultWasmToolsToolchainService$Parameters : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getDownloadBaseUrl ()Lorg/gradle/api/provider/Property;
+	public abstract fun getInstallationDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getOffline ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/DisabledWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/PreInstalledWasmToolsToolchainService : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/PreInstalledWasmToolsToolchainService$Parameters : org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService$Parameters {
+	public fun <init> ()V
+	public abstract fun getWasmToolsExecutable ()Lorg/gradle/api/provider/Property;
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsBuildPlatform;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArch ()Ljava/lang/String;
+	public final fun getOs ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsExecutable {
+	public abstract fun getExecutable ()Lorg/gradle/api/provider/Property;
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsRequest {
+	public abstract fun getPlatform ()Lorg/gradle/api/provider/Property;
+	public abstract fun getVersion ()Lorg/gradle/api/provider/Property;
+	public final fun version (Ljava/lang/String;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl {
+	public abstract fun disable ()V
+	public abstract fun toolchainService (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun toolchainService (Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl$DefaultImpls {
+	public static fun disable (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl;)V
+	public static fun toolchainService (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainManagementDsl;Lkotlin/reflect/KClass;Lorg/gradle/api/Action;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService : org/gradle/api/services/BuildService {
+	public abstract fun request (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsRequest;)Lorg/gradle/api/provider/Provider;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsToolchainService$Parameters : org/gradle/api/services/BuildServiceParameters {
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion : java/io/Serializable {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/dsl/toolchain/wasmtools/WasmToolsVersion;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getVersion ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/CInteropSettings : org/gradle/api/Named {
 	public abstract fun compilerOpts (Ljava/util/List;)V
 	public abstract fun compilerOpts ([Ljava/lang/String;)V
@@ -1738,6 +1814,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/tasks/abi/KotlinLega
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/nodejs/UsesNodeJsToolchainService : org/gradle/api/Task {
 	public abstract fun getNodeJsToolchainService ()Lorg/gradle/api/provider/Property;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/tasks/wasmtools/UsesWasmToolsToolchainService : org/gradle/api/Task {
+	public abstract fun getWasmToolsToolchainService ()Lorg/gradle/api/provider/Property;
 }
 
 public abstract interface class org/jetbrains/kotlin/project/model/LanguageSettings {

@@ -3027,11 +3027,12 @@ public class org/jetbrains/kotlin/gradle/targets/js/ir/Executable : org/jetbrain
 	public final fun getExecuteTaskBaseName ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/targets/js/ir/ExecutableWasm : org/jetbrains/kotlin/gradle/targets/js/ir/Executable, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
+public class org/jetbrains/kotlin/gradle/targets/js/ir/ExecutableWasm : org/jetbrains/kotlin/gradle/targets/js/ir/Executable, org/jetbrains/kotlin/gradle/targets/js/ir/WasmBinary {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBinaryMode;)V
 	public fun getMainOptimizedFile ()Lorg/gradle/api/provider/Provider;
 	public fun getMainWasmFile ()Lorg/gradle/api/provider/Provider;
 	public fun getOptimizeTask ()Lorg/gradle/api/tasks/TaskProvider;
+	protected fun syncInputConfigure (Lorg/jetbrains/kotlin/gradle/targets/js/ir/DefaultIncrementalSyncTask;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/JsBinary {
@@ -5509,6 +5510,18 @@ public abstract class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/Binaryen
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/binaryen/BinaryenSetupTask$Companion {
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/wasm/component/WasmComponentizeTask : org/gradle/api/DefaultTask, org/jetbrains/kotlin/gradle/tasks/wasmtools/UsesWasmToolsToolchainService {
+	public final fun componentize ()V
+	public abstract fun getAdapter ()Lorg/gradle/api/provider/Provider;
+	public abstract fun getComponentEmbedArguments ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getComponentNewArguments ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getInputFile ()Lorg/gradle/api/file/RegularFileProperty;
+	public abstract fun getOutputDirectory ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getWasmToolsRequest ()Lorg/gradle/api/provider/Property;
+	public abstract fun getWitProjects ()Lorg/gradle/api/file/ConfigurableFileCollection;
+	public abstract fun setAdapter (Lorg/gradle/api/provider/Provider;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/wasm/d8/D8Env : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {

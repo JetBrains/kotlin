@@ -170,6 +170,30 @@ internal fun getGroovyRepositoryBlock(
     |                includeModule("bytecodealliance.wasmtime", "wasmtime") 
     |            }
     |        }
+    |        ivy {
+    |            url = uri("https://github.com/bytecodealliance/wasmtime/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/[artifact].[ext]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("bytecodealliance.wasmtime", "wasi_snapshot_preview1.command") 
+    |            }
+    |        }
+    |        ivy {
+    |            url = uri("https://github.com/bytecodealliance/wasm-tools/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/[artifact]-[revision]-[classifier].[ext]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("bytecodealliance.wasm-tools", "wasm-tools") 
+    |            }
+    |        }
     |        maven {
     |            url = "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
     |        }
@@ -351,6 +375,30 @@ internal fun getKotlinRepositoryBlock(
     |            }
     |            content { 
     |                includeModule("bytecodealliance.wasmtime", "wasmtime") 
+    |            }
+    |        }
+    |        ivy {
+    |            url = uri("https://github.com/bytecodealliance/wasmtime/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/[artifact].[ext]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("bytecodealliance.wasmtime", "wasi_snapshot_preview1.command") 
+    |            }
+    |        }
+    |        ivy {
+    |            url = uri("https://github.com/bytecodealliance/wasm-tools/releases/download")
+    |            patternLayout {
+    |                artifact("v[revision]/[artifact]-[revision]-[classifier].[ext]")
+    |            }
+    |            metadataSources { 
+    |                artifact() 
+    |            }
+    |            content { 
+    |                includeModule("bytecodealliance.wasm-tools", "wasm-tools") 
     |            }
     |        }
     |        maven {
