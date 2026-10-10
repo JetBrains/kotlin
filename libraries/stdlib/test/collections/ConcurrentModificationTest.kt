@@ -96,9 +96,8 @@ class ConcurrentModificationTest {
         if (TestPlatform.current == TestPlatform.Js) return
 
         /**
-         * Some operations should register a modification by contract, but java ArrayList,
-         * whose implementation we can't change, do not register.
-         * @param isJavaArrayListBehavior specifies whether to test java ArrayList behavior or the behavior by contract.
+         * An empty `addAll` may register a modification, see the KDoc of `AbstractMutableList.modCount`.
+         * java ArrayList, our ArrayList and ListBuilder register one, ArrayDeque does not.
          */
         fun operations(isJavaArrayListBehavior: Boolean) = listOf<CollectionOperation<MutableList<String>>>(
             CollectionOperation("set()", throwsCME = false) { set(2, "e") },
@@ -126,22 +125,29 @@ class ConcurrentModificationTest {
 
             CollectionOperation("clear()") { clear() },
             CollectionOperation("iterator.remove()") { iterator().apply { val _ = next(); remove() } },
-        ).also { ops ->
-            // TODO(KT-89006): change .also to .let
-            val _ = ops + ops.map {
-                CollectionOperation("subList(1, size)." + it.description, it.throwsCME) { it.function.invoke(subList(1, size)) }
-            }
+        )
+
+        // A sub list registers a modification on an empty addAll when its root list does,
+        // except java.util.ArrayList.SubList, which registers nothing.
+        fun testThrowsCME(
+            isJavaArrayListBehavior: Boolean = true,
+            isJavaSubList: Boolean = false,
+            withMutableList: WithCollection<MutableList<String>>
+        ) {
+            val subListOperations: List<CollectionOperation<MutableList<String>>> =
+                operations(isJavaArrayListBehavior && !isJavaSubList).map { op ->
+                    CollectionOperation("subList(1, size)." + op.description, op.throwsCME) { op.function.invoke(subList(1, size)) }
+                }
+            testIteratorThrowsCME(withMutableList, operations(isJavaArrayListBehavior) + subListOperations)
         }
 
-        fun testThrowsCME(isJavaArrayListBehavior: Boolean = true, withMutableList: WithCollection<MutableList<String>>) {
-            testIteratorThrowsCME(withMutableList, operations(isJavaArrayListBehavior))
-        }
+        val onJvm = TestPlatform.current == TestPlatform.Jvm
 
         // size == capacity
-        testThrowsCME { action ->
+        testThrowsCME(isJavaSubList = onJvm) { action ->
             MutableList(4) { ('a' + it).toString() }.also(action)
         }
-        testThrowsCME { action ->
+        testThrowsCME(isJavaSubList = onJvm) { action ->
             mutableListOf("a", "b", "c", "d").also(action)
         }
 
@@ -163,7 +169,7 @@ class ConcurrentModificationTest {
         }
 
         // size < capacity
-        testThrowsCME { action ->
+        testThrowsCME(isJavaSubList = onJvm) { action ->
             ArrayList<String>(10).apply {
                 addAll(listOf("a", "b", "c", "d"))
                 action(this)
