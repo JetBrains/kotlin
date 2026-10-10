@@ -13,7 +13,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.jetbrains.kotlin.konan.target.Xcode
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
@@ -139,6 +138,83 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                 """.trimIndent(),
                 commonizeAndDumpCinteropSignatures().filterOutNoiseSignatures(),
                 message = "Updated cinterop signatures should match expected output"
+            )
+        }
+    }
+
+    @GradleTest
+    fun `local package with trait`(version: GradleVersion) {
+        project("empty", version) {
+            val packageWithTraitName = "PackageWithTrait"
+            val packageWithTraitPath = projectPath.resolve(packageWithTraitName).createDirectories()
+
+            packageWithTraitPath.resolve("Package.swift").writeText(
+                """
+                    // swift-tools-version: 6.1
+                    import PackageDescription
+
+                    let package = Package(
+                        name: "$packageWithTraitName",
+                        platforms: [.iOS(.v15)],
+                        products: [
+                            .library(name: "$packageWithTraitName", targets: ["$packageWithTraitName"])
+                        ],
+                        traits: [
+                            .trait(name: "ExtraAPI")
+                        ],
+                        targets: [
+                            .target(name: "$packageWithTraitName")
+                        ]
+                    )
+                """.trimIndent()
+            )
+            packageWithTraitPath.resolve("Sources/$packageWithTraitName").createDirectories()
+                .resolve("$packageWithTraitName.swift").writeText(
+                    """
+                        import Foundation
+
+                        @objc public class ${packageWithTraitName}: NSObject {
+                            #if ExtraAPI
+                            @objc public func availableWithTrait() -> String {
+                                return "trait enabled"
+                            }
+                            #endif
+                        }
+                    """.trimIndent()
+                )
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            val property = "enableTrait"
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                    iosSimulatorArm64()
+
+                    swiftPMDependencies {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(packageWithTraitName),
+                            products = listOf(packageWithTraitName),
+                            traits = if (project.hasProperty(property)) setOf("ExtraAPI") else emptySet()
+                        )
+                    }
+                }
+            }
+
+            assertEquals(
+                listOf(),
+                commonizeAndDumpCinteropSignatures().lineSequence()
+                    .filter { "availableWithTrait" in it }
+                    .toList()
+            )
+            assertEquals(
+                listOf(
+                    "public open expect fun swiftPMImport/empty/${packageWithTraitName}.availableWithTrait(): kotlin/String",
+                ),
+                commonizeAndDumpCinteropSignatures(extraArgs = arrayOf("-P${property}")).lineSequence()
+                    .filter { "availableWithTrait" in it }
+                    .toList()
             )
         }
     }
