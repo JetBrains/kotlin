@@ -98,9 +98,6 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
 
   TEST2 = TEST2()
   private enum entry class TEST2 : TestEnum4 {
-    val z: Int
-      get
-
     init {
       <this>.#z = <this>.<get-x>()
     }
@@ -114,6 +111,9 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
     override fun foo() {
       println(message = TestEnum4.TEST2)
     }
+
+    val z: Int
+      get
 
   }
 

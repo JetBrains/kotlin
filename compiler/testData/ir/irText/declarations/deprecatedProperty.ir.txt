@@ -89,6 +89,15 @@ FILE fqName:<root> fileName:/deprecatedProperty.kt
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultGetSet type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-testVarWithExplicitDefaultGetSet>' type=kotlin.Int origin=null
+  PROPERTY name:testExtVal visibility:public modality:FINAL [val]
+    annotations:
+      Deprecated(message = "", replaceWith = <null>, level = <null>)
+    FUN name:<get-testExtVal> visibility:public modality:FINAL returnType:kotlin.Int
+      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.Any
+      correspondingProperty: PROPERTY name:testExtVal visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testExtVal> (<this>: kotlin.Any): kotlin.Int declared in <root>'
+          CONST Int type=kotlin.Int value=1
   PROPERTY name:testLateinitVar visibility:public modality:FINAL [lateinit,var]
     annotations:
       Deprecated(message = "", replaceWith = <null>, level = <null>)
@@ -104,15 +113,6 @@ FILE fqName:<root> fileName:/deprecatedProperty.kt
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Any declared in <root>.<set-testLateinitVar>' type=kotlin.Any origin=null
-  PROPERTY name:testExtVal visibility:public modality:FINAL [val]
-    annotations:
-      Deprecated(message = "", replaceWith = <null>, level = <null>)
-    FUN name:<get-testExtVal> visibility:public modality:FINAL returnType:kotlin.Int
-      VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:0 type:kotlin.Any
-      correspondingProperty: PROPERTY name:testExtVal visibility:public modality:FINAL [val]
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-testExtVal> (<this>: kotlin.Any): kotlin.Int declared in <root>'
-          CONST Int type=kotlin.Int value=1
   PROPERTY name:testValWithExplicitGet visibility:public modality:FINAL [val]
     annotations:
       Deprecated(message = "", replaceWith = <null>, level = <null>)

@@ -23,35 +23,6 @@ FILE fqName:<root> fileName:/InitializationOrderTest.kt
             SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:_counter$volatile type:kotlin.Long visibility:private declared in <root>.AAA' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<set-_counter$volatile>' type=<root>.AAA origin=null
               value: GET_VAR 'value: kotlin.Long declared in <root>.AAA.<set-_counter$volatile>' type=kotlin.Long origin=null
-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateInitInt$volatile visibility:public modality:FINAL [var]
-      FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private
-        annotations:
-          Volatile
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lateInitInt$volatile> visibility:public modality:FINAL returnType:kotlin.Int
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AAA
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateInitInt$volatile visibility:public modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-lateInitInt$volatile> (): kotlin.Int declared in <root>.AAA'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private declared in <root>.AAA' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-lateInitInt$volatile>' type=<root>.AAA origin=null
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-lateInitInt$volatile> visibility:public modality:FINAL returnType:kotlin.Unit
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AAA
-        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateInitInt$volatile visibility:public modality:FINAL [var]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <set-lateInitInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AAA'
-            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private declared in <root>.AAA' type=kotlin.Unit origin=null
-              receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<set-lateInitInt$volatile>' type=<root>.AAA origin=null
-              value: GET_VAR 'value: kotlin.Int declared in <root>.AAA.<set-lateInitInt$volatile>' type=kotlin.Int origin=null
-    PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:public modality:FINAL [val]
-      FIELD ATOMICFU_GENERATED_FIELD name:intArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
-      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-intArr> visibility:public modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
-        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AAA
-        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:public modality:FINAL [val]
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.AAA'
-            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:intArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.AAA' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
-              receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-intArr>' type=<root>.AAA origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private declared in <root>.AAA' type=kotlin.Unit origin=null
@@ -165,6 +136,35 @@ FILE fqName:<root> fileName:/InitializationOrderTest.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:public modality:FINAL [val]
+      FIELD ATOMICFU_GENERATED_FIELD name:intArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final]
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-intArr> visibility:public modality:FINAL returnType:java.util.concurrent.atomic.AtomicIntegerArray
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AAA
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:intArr visibility:public modality:FINAL [val]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-intArr> (): java.util.concurrent.atomic.AtomicIntegerArray declared in <root>.AAA'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:intArr type:java.util.concurrent.atomic.AtomicIntegerArray visibility:private [final] declared in <root>.AAA' type=java.util.concurrent.atomic.AtomicIntegerArray origin=null
+              receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-intArr>' type=<root>.AAA origin=null
+    PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateInitInt$volatile visibility:public modality:FINAL [var]
+      FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private
+        annotations:
+          Volatile
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<get-lateInitInt$volatile> visibility:public modality:FINAL returnType:kotlin.Int
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AAA
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateInitInt$volatile visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-lateInitInt$volatile> (): kotlin.Int declared in <root>.AAA'
+            GET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private declared in <root>.AAA' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<get-lateInitInt$volatile>' type=<root>.AAA origin=null
+      FUN ATOMICFU_GENERATED_PROPERTY_ACCESSOR name:<set-lateInitInt$volatile> visibility:public modality:FINAL returnType:kotlin.Unit
+        VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.AAA
+        VALUE_PARAMETER kind:Regular name:value index:1 type:kotlin.Int
+        correspondingProperty: PROPERTY ATOMICFU_GENERATED_PROPERTY name:lateInitInt$volatile visibility:public modality:FINAL [var]
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <set-lateInitInt$volatile> (value: kotlin.Int): kotlin.Unit declared in <root>.AAA'
+            SET_FIELD 'FIELD ATOMICFU_GENERATED_FIELD name:lateInitInt$volatile type:kotlin.Int visibility:private declared in <root>.AAA' type=kotlin.Unit origin=null
+              receiver: GET_VAR '<this>: <root>.AAA declared in <root>.AAA.<set-lateInitInt$volatile>' type=<root>.AAA origin=null
+              value: GET_VAR 'value: kotlin.Int declared in <root>.AAA.<set-lateInitInt$volatile>' type=kotlin.Int origin=null
     PROPERTY name:counterValue visibility:public modality:FINAL [val]
       FUN name:<get-counterValue> visibility:public modality:FINAL returnType:kotlin.Long
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AAA

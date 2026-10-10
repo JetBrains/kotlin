@@ -36,17 +36,6 @@ FILE fqName:<root> fileName:/genericWithClassUpperBound.kt
               receiver: GET_VAR '<this>: <root>.Box<T of <root>.Box> declared in <root>.Box.<get-content>' type=<root>.Box<T of <root>.Box> origin=null
     CLASS GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] OBJECT name:Companion modality:FINAL visibility:public [companion] superTypes:[kotlin.Any]
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Box.Companion
-      PROPERTY KOTLINX_SERIALIZATION name:$cachedDescriptor visibility:public modality:FINAL [val]
-        FIELD KOTLINX_SERIALIZATION name:$cachedDescriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
-          annotations:
-            JvmField
-        FUN KOTLINX_SERIALIZATION name:<get-$cachedDescriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
-          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.Companion
-          correspondingProperty: PROPERTY KOTLINX_SERIALIZATION name:$cachedDescriptor visibility:public modality:FINAL [val]
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-$cachedDescriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.Companion'
-              GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:$cachedDescriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final] declared in <root>.Box.Companion' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
-                receiver: GET_VAR '<this>: <root>.Box.Companion declared in <root>.Box.Companion.<get-$cachedDescriptor>' type=<root>.Box.Companion origin=null
       ANONYMOUS_INITIALIZER isStatic=false
         BLOCK_BODY
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlinx.serialization.internal.PluginGeneratedSerialDescriptor [val]
@@ -86,33 +75,22 @@ FILE fqName:<root> fileName:/genericWithClassUpperBound.kt
           RETURN type=kotlin.Nothing from='public final fun serializer <T> (typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.Companion.serializer>): kotlinx.serialization.KSerializer<<root>.Box<T of <root>.Box.Companion.serializer>> declared in <root>.Box.Companion'
             CONSTRUCTOR_CALL 'public constructor <init> (typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.$serializer>) declared in <root>.Box.$serializer' type=<root>.Box.$serializer<T of <root>.Box.Companion.serializer> origin=null
               ARG typeSerial0: GET_VAR 'typeSerial0: kotlinx.serialization.KSerializer<T of <root>.Box.Companion.serializer> declared in <root>.Box.Companion.serializer' type=kotlinx.serialization.KSerializer<T of <root>.Box.Companion.serializer> origin=null
+      PROPERTY KOTLINX_SERIALIZATION name:$cachedDescriptor visibility:public modality:FINAL [val]
+        FIELD KOTLINX_SERIALIZATION name:$cachedDescriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
+          annotations:
+            JvmField
+        FUN KOTLINX_SERIALIZATION name:<get-$cachedDescriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.Companion
+          correspondingProperty: PROPERTY KOTLINX_SERIALIZATION name:$cachedDescriptor visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-$cachedDescriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.Companion'
+              GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:$cachedDescriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final] declared in <root>.Box.Companion' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                receiver: GET_VAR '<this>: <root>.Box.Companion declared in <root>.Box.Companion.<get-$cachedDescriptor>' type=<root>.Box.Companion origin=null
     CLASS KOTLINX_SERIALIZATION CLASS name:$serializer modality:FINAL visibility:public superTypes:[kotlinx.serialization.internal.GeneratedSerializer<<root>.Box<T of <root>.Box.$serializer>>]
       annotations:
         Deprecated(message = "This synthesized declaration should not be used directly", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Box.$serializer<T of <root>.Box.$serializer>
       TYPE_PARAMETER GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:T index:0 variance: superTypes:[<root>.Base] reified:false
-      PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
-        overridden:
-          public abstract descriptor: kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
-        FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-descriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
-          correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
-          overridden:
-            public abstract fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
-                receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.<get-descriptor>' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
-      PROPERTY KOTLINX_SERIALIZATION name:typeSerial0 visibility:public modality:FINAL [val]
-        FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final]
-        FUN KOTLINX_SERIALIZATION name:<get-typeSerial0> visibility:private modality:FINAL returnType:kotlinx.serialization.KSerializer<*>
-          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
-          correspondingProperty: PROPERTY KOTLINX_SERIALIZATION name:typeSerial0 visibility:public modality:FINAL [val]
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='private final fun <get-typeSerial0> (): kotlinx.serialization.KSerializer<*> declared in <root>.Box.$serializer'
-              GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
-                receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.<get-typeSerial0>' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
       ANONYMOUS_INITIALIZER isStatic=false
         BLOCK_BODY
           VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlinx.serialization.internal.PluginGeneratedSerialDescriptor [val]
@@ -286,6 +264,28 @@ FILE fqName:<root> fileName:/genericWithClassUpperBound.kt
               ARG elements: VARARG type=kotlin.Array<kotlinx.serialization.KSerializer<*>> varargElementType=kotlinx.serialization.KSerializer<*>
                 GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
                   receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.typeParametersSerializers' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+      PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
+        overridden:
+          public abstract descriptor: kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
+        FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-descriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+          correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
+          overridden:
+            public abstract fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Box.$serializer'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.<get-descriptor>' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
+      PROPERTY KOTLINX_SERIALIZATION name:typeSerial0 visibility:public modality:FINAL [val]
+        FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final]
+        FUN KOTLINX_SERIALIZATION name:<get-typeSerial0> visibility:private modality:FINAL returnType:kotlinx.serialization.KSerializer<*>
+          VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> index:0 type:<root>.Box.$serializer<T of <root>.Box.$serializer>
+          correspondingProperty: PROPERTY KOTLINX_SERIALIZATION name:typeSerial0 visibility:public modality:FINAL [val]
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='private final fun <get-typeSerial0> (): kotlinx.serialization.KSerializer<*> declared in <root>.Box.$serializer'
+              GET_FIELD 'FIELD KOTLINX_SERIALIZATION name:typeSerial0 type:kotlinx.serialization.KSerializer<*> visibility:private [final] declared in <root>.Box.$serializer' type=kotlinx.serialization.KSerializer<*> origin=null
+                receiver: GET_VAR '<this>: <root>.Box.$serializer<T of <root>.Box.$serializer> declared in <root>.Box.$serializer.<get-typeSerial0>' type=<root>.Box.$serializer<T of <root>.Box.$serializer> origin=null
     CONSTRUCTOR KOTLINX_SERIALIZATION visibility:internal returnType:<root>.Box<T of <root>.Box>
       VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:seen0 index:0 type:kotlin.Int
       VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:content index:1 type:T of <root>.Box?
@@ -386,19 +386,6 @@ FILE fqName:<root> fileName:/genericWithClassUpperBound.kt
       annotations:
         Deprecated(message = "This synthesized declaration should not be used directly", replaceWith = <null>, level = DeprecationLevel.HIDDEN)
       thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.Leaf.$serializer
-      PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
-        overridden:
-          public abstract descriptor: kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
-        FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-descriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
-          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Leaf.$serializer
-          correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
-          overridden:
-            public abstract fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
-                receiver: GET_VAR '<this>: <root>.Leaf.$serializer declared in <root>.Leaf.$serializer.<get-descriptor>' type=<root>.Leaf.$serializer origin=null
       ANONYMOUS_INITIALIZER isStatic=false
         BLOCK_BODY
           VAR IR_TEMPORARY_VARIABLE name:tmp_10 type:kotlinx.serialization.internal.PluginGeneratedSerialDescriptor [val]
@@ -544,6 +531,19 @@ FILE fqName:<root> fileName:/genericWithClassUpperBound.kt
           CALL 'public abstract fun endStructure (descriptor: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit declared in kotlinx.serialization.encoding.CompositeEncoder' type=kotlin.Unit origin=null
             ARG <this>: GET_VAR 'val tmp_18: kotlinx.serialization.encoding.CompositeEncoder declared in <root>.Leaf.$serializer.serialize' type=kotlinx.serialization.encoding.CompositeEncoder origin=null
             ARG descriptor: GET_VAR 'val tmp_17: kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer.serialize' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+      PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
+        overridden:
+          public abstract descriptor: kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
+        FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-descriptor> visibility:public modality:FINAL returnType:kotlinx.serialization.descriptors.SerialDescriptor
+          VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.Leaf.$serializer
+          correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey] name:descriptor visibility:public modality:FINAL [val]
+          overridden:
+            public abstract fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in kotlinx.serialization.internal.GeneratedSerializer
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-descriptor> (): kotlinx.serialization.descriptors.SerialDescriptor declared in <root>.Leaf.$serializer'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:descriptor type:kotlinx.serialization.descriptors.SerialDescriptor visibility:private [final]' type=kotlinx.serialization.descriptors.SerialDescriptor origin=null
+                receiver: GET_VAR '<this>: <root>.Leaf.$serializer declared in <root>.Leaf.$serializer.<get-descriptor>' type=<root>.Leaf.$serializer origin=null
     CONSTRUCTOR KOTLINX_SERIALIZATION visibility:internal returnType:<root>.Leaf
       VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:seen0 index:0 type:kotlin.Int
       VALUE_PARAMETER KOTLINX_SERIALIZATION kind:Regular name:value index:1 type:kotlin.String?

@@ -1,8 +1,23 @@
+val h: String /* by */
+  field = lazy<String>(initializer = local fun <anonymous>(): String {
+    return "H"
+  }
+)
+  get(): String {
+  }
+
+fun foo(): String {
+}
+
 val a: String
   get
 
 val b: String
   get
+
+val c: String
+  get(): String {
+  }
 
 val d: Boolean
   get
@@ -15,13 +30,13 @@ var f: Int
   set(value: Int) {
   }
 
-val h: String /* by */
-  field = lazy<String>(initializer = local fun <anonymous>(): String {
-    return "H"
+val g: Int
+  get(): Int {
   }
-)
-  get(): String {
-  }
+
+const val i: Int
+  field = 123
+  get
 
 val j: Any
   get
@@ -30,21 +45,6 @@ val k: Function1<String, String>
   get
 
 val l: Function1<String, String>
-  get
-
-fun foo(): String {
-}
-
-val c: String
-  get(): String {
-  }
-
-val g: Int
-  get(): Int {
-  }
-
-const val i: Int
-  field = 123
   get
 
 val m: String
@@ -56,3 +56,4 @@ val n: String
   inline get(): String {
     return "N"
   }
+
