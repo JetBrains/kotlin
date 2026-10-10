@@ -353,7 +353,7 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
             excludeTags(JunitTag.DaemonsKGP.name)
         }
 
-        val parallelism = (Runtime.getRuntime().availableProcessors() * 1.5).toInt()
+        val parallelism = Runtime.getRuntime().availableProcessors()
         systemProperty("junit.jupiter.execution.parallel.enabled", "true")
         systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
         systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
