@@ -19,6 +19,7 @@
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import java.lang.reflect.*
 import kotlin.reflect.*
@@ -99,15 +100,23 @@ val Field.kotlinProperty: KProperty<*>?
                 return kotlinPackage.members.findKProperty(this)
             }
 
-            val companionKClass = declaringClass.kotlin.companionObject
+            val declaringKClass = declaringClass.kotlin
+
+            val companionKClass = declaringKClass.companionObject
             if (companionKClass != null) {
-                val companionField = declaringClass.getDeclaredFieldOrNull(name)
+                val companionField = declaringClass.getDeclaredFieldOrNull(name, false)
                 if (companionField != null) {
                     companionKClass.memberProperties.findKProperty(companionField)?.let { return it }
                 }
             }
 
-            declaringClass.kotlin.staticProperties.findKProperty(this)?.let { return it }
+            if (declaringClass.simpleName == JvmAbi.INTERFACE_PRIVATE_FIELDS1_CLASS_NAME || declaringClass.simpleName == JvmAbi.INTERFACE_PRIVATE_FIELDS2_CLASS_NAME) {
+                val interfaceClass = declaringClass.enclosingClass
+                    ?: error("${JvmAbi.INTERFACE_PRIVATE_FIELDS1_CLASS_NAME}/${JvmAbi.INTERFACE_PRIVATE_FIELDS2_CLASS_NAME} must have enclosing class")
+                interfaceClass.kotlin.staticProperties.findKProperty(this)?.let { return it }
+            }
+
+            declaringKClass.staticProperties.findKProperty(this)?.let { return it }
         }
 
         return declaringClass.kotlin.memberProperties.findKProperty(this)
