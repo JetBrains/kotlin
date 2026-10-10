@@ -261,8 +261,8 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             BUILDER_FIELD_ANNOTATION_ON_BODY_PROPERTY,
-            "''@{0}'' has no effect on a property declared in the class body: a Kotlin class builds out of the " +
-                    "value parameters of the constructor or function ''build()'' calls, so only those are builder fields. " +
+            "''@{0}'' has no effect on an val declared in the class body: a Kotlin class builds out of the " +
+                    "value parameters of the constructor, mutable properties or function ''build()'' calls, so only those are builder fields. " +
                     "Declare the property in the primary constructor to make it one.",
             CommonRenderers.STRING,
         )
