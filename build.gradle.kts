@@ -352,6 +352,11 @@ tasks {
         dependsOn(":js:js.tests:jsES6InlineAnonymousFunctionsTest")
     }
 
+    // TODO(KT-82969): Promote to QualityGate.Nightly
+    testLifecycleTask("jsSwcTest", QualityGate.Undefined) {
+        dependsOn(":js:js.tests:jsSwcTest")
+    }
+
     testLifecycleTask("jsKlibCompatibilityTest", QualityGate.Master) {
         dependsOn(":js:js.tests:klib-compatibility:testMinimalInAggregate")
     }
