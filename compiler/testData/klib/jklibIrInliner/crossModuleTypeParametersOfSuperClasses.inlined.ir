@@ -1,0 +1,107 @@
+Module: lib
+FILE fqName:lib fileName:/lib.kt lineStartOffsets: [0, 15, 31, 43, 44, 79, 105, 130, 147, 153, 155, 156, 196, 197]
+  CLASS[44, 154] CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[44, 154] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib.Base<T of lib.Base>
+    TYPE_PARAMETER[60, 61] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    PROPERTY[63, 75] name:value visibility:public modality:FINAL [val]
+      FIELD[63, 75] PROPERTY_BACKING_FIELD name:value type:T of lib.Base visibility:private [final]
+        EXPRESSION_BODY[63, 75]
+          GET_VAR[63, 75] 'value: T of lib.Base declared in lib.Base.<init>' type=T of lib.Base origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN[63, 75] DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL returnType:T of lib.Base
+        VALUE_PARAMETER[63, 75] kind:DispatchReceiver name:<this> index:0 type:lib.Base<T of lib.Base>
+        correspondingProperty: PROPERTY[63, 75] name:value visibility:public modality:FINAL [val]
+        BLOCK_BODY[63, 75]
+          RETURN[63, 75] type=kotlin.Nothing from='public final fun <get-value> (): T of lib.Base declared in lib.Base'
+            GET_FIELD[63, 75] 'FIELD PROPERTY_BACKING_FIELD name:value type:T of lib.Base visibility:private [final]' type=T of lib.Base origin=null
+              receiver: GET_VAR[63, 75] '<this>: lib.Base<T of lib.Base> declared in lib.Base.<get-value>' type=lib.Base<T of lib.Base> origin=null
+    CONSTRUCTOR[62, 76] visibility:public returnType:lib.Base<T of lib.Base> [primary]
+      VALUE_PARAMETER[63, 75] kind:Regular name:value index:0 type:T of lib.Base
+      BLOCK_BODY[62, 76]
+        DELEGATING_CONSTRUCTOR_CALL[44, 154] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[44, 154] classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN[90, 152] name:get visibility:public modality:FINAL returnType:T of lib.Base [inline]
+      VALUE_PARAMETER[90, 152] kind:DispatchReceiver name:<this> index:0 type:lib.Base<T of lib.Base>
+      BLOCK_BODY[103, 152]
+        VAR[113, 129] name:v type:T of lib.Base [val]
+          CALL[124, 129] 'public final fun <get-value> (): T of lib.Base declared in lib.Base' type=T of lib.Base origin=GET_PROPERTY
+            ARG <this>: GET_VAR[124, 129] '<this>: lib.Base<T of lib.Base> declared in lib.Base.get' type=lib.Base<T of lib.Base> origin=IMPLICIT_ARGUMENT
+        RETURN[138, 146] type=kotlin.Nothing from='public final fun get (): T of lib.Base declared in lib.Base'
+          GET_VAR[145, 146] 'val v: T of lib.Base declared in lib.Base.get' type=T of lib.Base origin=null
+  CLASS[156, 195] CLASS name:Sub modality:FINAL visibility:public superTypes:[lib.Base<U of lib.Sub>]
+    thisReceiver: VALUE_PARAMETER[156, 195] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib.Sub<U of lib.Sub>
+    TYPE_PARAMETER[166, 167] name:U index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR[168, 178] visibility:public returnType:lib.Sub<U of lib.Sub> [primary]
+      VALUE_PARAMETER[169, 177] kind:Regular name:value index:0 type:U of lib.Sub
+      BLOCK_BODY[168, 178]
+        DELEGATING_CONSTRUCTOR_CALL[156, 195] 'public constructor <init> (value: T of lib.Base) declared in lib.Base'
+          TYPE_ARG T: U of lib.Sub
+          ARG value: GET_VAR[189, 194] 'value: U of lib.Sub declared in lib.Sub.<init>' type=U of lib.Sub origin=null
+        INSTANCE_INITIALIZER_CALL[156, 195] classDescriptor='CLASS CLASS name:Sub modality:FINAL visibility:public superTypes:[lib.Base<U of lib.Sub>]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in lib.Base
+    FUN[-2, -2] FAKE_OVERRIDE name:get visibility:public modality:FINAL returnType:U of lib.Sub [inline,fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:lib.Base<U of lib.Sub>
+      overridden:
+        public final fun get (): T of lib.Base declared in lib.Base
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in lib.Base
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in lib.Base
+    PROPERTY[-2, -2] FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final value: T of lib.Base declared in lib.Base
+      FUN[-2, -2] FAKE_OVERRIDE name:<get-value> visibility:public modality:FINAL returnType:U of lib.Sub [fake_override]
+        VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:lib.Base<U of lib.Sub>
+        correspondingProperty: PROPERTY[-2, -2] FAKE_OVERRIDE name:value visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-value> (): T of lib.Base declared in lib.Base
+Module: main
+FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 34, 51, 64, 65, 80, 81, 164, 211, 212, 349, 393]
+  FUN[164, 210] name:test visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER[173, 189] kind:Regular name:sub index:0 type:lib.Sub<kotlin.String>
+    BLOCK_BODY[201, 210]
+      RETURN[210, 210] type=kotlin.Nothing from='public final fun test (sub: lib.Sub<kotlin.String>): kotlin.String declared in test'
+        RETURNABLE_BLOCK[205, 210] type=kotlin.String origin=null
+          INLINED_BLOCK[205, 210]->[90, 152] type=kotlin.String origin=null
+            inlinedFunctionSymbol: public final fun get (): T of lib.Base declared in lib.Base
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            VAR[113, 129] name:v type:kotlin.String [val]
+              CALL[124, 129] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.String origin=GET_PROPERTY
+                ARG 1: TYPE_OP[201, 204] type=lib.Base<kotlin.String> origin=IMPLICIT_CAST typeOperand=lib.Base<kotlin.String>
+                  GET_VAR[201, 204] 'sub: lib.Sub<kotlin.String> declared in test.test' type=lib.Sub<kotlin.String> origin=null
+            RETURN[138, 146] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_VAR[145, 146] 'val v: kotlin.String declared in test.test' type=kotlin.String origin=null
+  FUN[349, 392] name:testStar visibility:public modality:FINAL returnType:kotlin.Any?
+    VALUE_PARAMETER[362, 373] kind:Regular name:sub index:0 type:lib.Sub<*>
+    BLOCK_BODY[383, 392]
+      RETURN[392, 392] type=kotlin.Nothing from='public final fun testStar (sub: lib.Sub<*>): kotlin.Any? declared in test'
+        RETURNABLE_BLOCK[387, 392] type=kotlin.Any? origin=null
+          INLINED_BLOCK[387, 392]->[90, 152] type=kotlin.Any? origin=null
+            inlinedFunctionSymbol: public final fun get (): T of lib.Base declared in lib.Base
+            inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+            VAR[113, 129] name:v type:kotlin.Any? [val]
+              CALL[124, 129] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Any? origin=GET_PROPERTY
+                ARG 1: TYPE_OP[383, 386] type=lib.Base<kotlin.Any?> origin=IMPLICIT_CAST typeOperand=lib.Base<kotlin.Any?>
+                  GET_VAR[383, 386] 'sub: lib.Sub<*> declared in test.testStar' type=lib.Sub<*> origin=null
+            RETURN[138, 146] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_VAR[145, 146] 'val v: kotlin.Any? declared in test.testStar' type=kotlin.Any? origin=null

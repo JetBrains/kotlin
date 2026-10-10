@@ -1,0 +1,69 @@
+Module: lib
+FILE fqName:lib fileName:/lib.kt lineStartOffsets: [0, 15, 31, 43, 44, 91, 92, 102, 145, 146, 198, 300, 302, 303]
+  CLASS[92, 301] CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    thisReceiver: VALUE_PARAMETER[92, 301] INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:lib.C
+    CONSTRUCTOR[92, 301] visibility:public returnType:lib.C [primary]
+      BLOCK_BODY[92, 301]
+        DELEGATING_CONSTRUCTOR_CALL[92, 301] 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL[92, 301] classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+    FUN[-2, -2] FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      VALUE_PARAMETER[-2, -2] kind:Regular name:other index:1 type:kotlin.Any?
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+    FUN[-2, -2] FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+      VALUE_PARAMETER[-2, -2] kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+    FUN[92, 92] SYNTHETIC_ACCESSOR name:access$privateFunction visibility:internal modality:FINAL returnType:kotlin.Int [companion]
+      VALUE_PARAMETER[114, 144] kind:Regular name:$this index:0 type:lib.C
+      BLOCK_BODY[92, 92]
+        RETURN[92, 92] type=kotlin.Nothing from='internal final fun access$privateFunction ($this: lib.C): kotlin.Int declared in lib.C'
+          CALL[92, 92] 'private final fun privateFunction (): kotlin.Int declared in lib.C' type=kotlin.Int origin=null
+            ARG <this>: GET_VAR[-1, -1] '$this: lib.C declared in lib.C.access$privateFunction' type=lib.C origin=null
+    FUN[218, 299] name:internalInlineFunction visibility:internal modality:FINAL returnType:kotlin.Int [inline]
+      VALUE_PARAMETER[218, 299] kind:DispatchReceiver name:<this> index:0 type:lib.C
+      annotations:
+        Suppress(names = ["NON_PUBLIC_CALL_FROM_PUBLIC_INLINE"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+      BLOCK_BODY[254, 299]
+        RETURN[299, 299] type=kotlin.Nothing from='internal final fun internalInlineFunction (): kotlin.Int declared in lib.C'
+          CALL[254, 299] 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            ARG <this>: CALL[254, 271] 'internal final fun access$privateFunction ($this: lib.C): kotlin.Int declared in lib.C' type=kotlin.Int origin=null
+              ARG $this: GET_VAR[254, 271] '<this>: lib.C declared in lib.C.internalInlineFunction' type=lib.C origin=IMPLICIT_ARGUMENT
+            ARG other: CALL[274, 299] 'internal final fun access$privateTopLevelFunction$tLibKt (): kotlin.Int declared in lib' type=kotlin.Int origin=null
+    FUN[114, 144] name:privateFunction visibility:private modality:FINAL returnType:kotlin.Int
+      VALUE_PARAMETER[114, 144] kind:DispatchReceiver name:<this> index:0 type:lib.C
+      BLOCK_BODY[143, 144]
+        RETURN[144, 144] type=kotlin.Nothing from='private final fun privateFunction (): kotlin.Int declared in lib.C'
+          CONST[143, 144] Int type=kotlin.Int value=2
+  FUN[0, 0] SYNTHETIC_ACCESSOR name:access$privateTopLevelFunction$tLibKt visibility:internal modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[0, 0]
+      RETURN[0, 0] type=kotlin.Nothing from='internal final fun access$privateTopLevelFunction$tLibKt (): kotlin.Int declared in lib'
+        CALL[0, 0] 'private final fun privateTopLevelFunction (): kotlin.Int declared in lib' type=kotlin.Int origin=null
+  FUN[52, 90] name:privateTopLevelFunction visibility:private modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[89, 90]
+      RETURN[90, 90] type=kotlin.Nothing from='private final fun privateTopLevelFunction (): kotlin.Int declared in lib'
+        CONST[89, 90] Int type=kotlin.Int value=1
+Module: main
+FILE fqName:test fileName:/main.kt lineStartOffsets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 36, 53, 66, 67, 80, 81, 128]
+  FUN[81, 127] name:test visibility:public modality:FINAL returnType:kotlin.Int
+    BLOCK_BODY[99, 127]
+      RETURN[127, 127] type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in test'
+        BLOCK[103, 127] type=kotlin.Int origin=INLINE_ARGS_CONTAINER
+          VAR[-1, -1] IR_TEMPORARY_VARIABLE name:tmp_0 type:lib.C [val]
+            CONSTRUCTOR_CALL[99, 102] 'public constructor <init> () declared in lib.C' type=lib.C origin=null
+          RETURNABLE_BLOCK[103, 127] type=kotlin.Int origin=null
+            INLINED_BLOCK[103, 127]->[218, 299] type=kotlin.Int origin=null
+              inlinedFunctionSymbol: internal final fun internalInlineFunction (): kotlin.Int declared in lib.C
+              inlinedFunctionFileEntry: FILE_ENTRY path:/lib.kt
+              VAR[-1, -1] IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER name:this type:lib.C [val]
+                GET_VAR[-1, -1] 'val tmp_0: lib.C declared in test.test' type=lib.C origin=null
+              RETURN[299, 299] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+                CALL[254, 299] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=PLUS
+                  ARG 1: CALL[254, 271] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=null
+                    ARG 1: GET_VAR[254, 271] 'val this: lib.C declared in test.test' type=lib.C origin=IMPLICIT_ARGUMENT
+                  ARG 2: CALL[274, 299] 'UNBOUND IrSimpleFunctionSymbolImpl' type=kotlin.Int origin=null

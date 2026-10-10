@@ -1,5 +1,5 @@
 // HEADER_MODE
-// IGNORE_BACKEND: JS_IR, WASM_JS, NATIVE
+// IGNORE_BACKEND: JS_IR, WASM_JS, NATIVE, JKLIB
 
 class TestClass {
     // 1. Properties

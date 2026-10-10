@@ -1,0 +1,21 @@
+FILE fqName:<root> fileName:/nonReifiedTypeParameters.kt lineStartOffsets: [0, 93, 94, 123, 140, 153, 155, 156, 192]
+  FUN[101, 154] name:id visibility:public modality:FINAL returnType:T of <root>.id [inline]
+    TYPE_PARAMETER[106, 107] name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    VALUE_PARAMETER[112, 116] kind:Regular name:x index:0 type:T of <root>.id
+    BLOCK_BODY[121, 154]
+      VAR[127, 139] name:y type:T of <root>.id [val]
+        GET_VAR[138, 139] 'x: T of <root>.id declared in <root>.id' type=T of <root>.id origin=null
+      RETURN[144, 152] type=kotlin.Nothing from='public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>'
+        GET_VAR[151, 152] 'val y: T of <root>.id declared in <root>.id' type=T of <root>.id origin=null
+  FUN[156, 191] name:test visibility:public modality:FINAL returnType:kotlin.String
+    VALUE_PARAMETER[165, 174] kind:Regular name:s index:0 type:kotlin.String
+    BLOCK_BODY[186, 191]
+      RETURN[191, 191] type=kotlin.Nothing from='public final fun test (s: kotlin.String): kotlin.String declared in <root>'
+        RETURNABLE_BLOCK[186, 191] type=kotlin.String origin=null
+          INLINED_BLOCK[186, 191]->[101, 154] type=kotlin.String origin=null
+            inlinedFunctionSymbol: public final fun id <T> (x: T of <root>.id): T of <root>.id declared in <root>
+            inlinedFunctionFileEntry: FILE_ENTRY path:/nonReifiedTypeParameters.kt
+            VAR[127, 139] name:y type:kotlin.String [val]
+              GET_VAR[189, 190] 's: kotlin.String declared in <root>.test' type=kotlin.String origin=null
+            RETURN[144, 152] type=kotlin.Nothing from='{IrReturnableBlockImpl}'
+              GET_VAR[151, 152] 'val y: kotlin.String declared in <root>.test' type=kotlin.String origin=null
