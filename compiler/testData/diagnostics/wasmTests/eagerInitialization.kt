@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: CODEGEN
 // ISSUE: KT-89476
 @file:OptIn(kotlin.ExperimentalStdlibApi::class)
 

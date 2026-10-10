@@ -2,6 +2,7 @@
 // WITH_STDLIB
 // OPT_IN: kotlin.contracts.ExperimentalContracts
 // LANGUAGE_FEATURE_TOGGLED: ReturnValueCheckerIsStable
+// DISABLE_NEXT_PHASE_SUGGESTION: fails at FRONTEND when the language feature is disabled
 
 import kotlin.contracts.*
 

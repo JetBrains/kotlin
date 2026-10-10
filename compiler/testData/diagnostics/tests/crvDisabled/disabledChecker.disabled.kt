@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // WITH_STDLIB
 // LANGUAGE_FEATURE_TOGGLED: ReturnValueCheckerIsStable
+// DISABLE_NEXT_PHASE_SUGGESTION: fails at FRONTEND when the language feature is disabled
 
 <!IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED!>@file:MustUseReturnValues<!>
 
