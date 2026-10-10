@@ -256,6 +256,9 @@ internal fun Project.createGeneralTestTask(
                 description = "Carries Test configuration for test-data-manager"
 
                 testTaskInitializer()
+                // The IDE offers every `Test` task whose `testClassesDirs` cover a test source as a gutter run option.
+                // The test data manager reads only `classpath`, so dropping them hides the carrier from the gutter.
+                testClassesDirs = files()
                 onlyIf("configuration carrier; tests must not be executed") {
                     false
                 }
