@@ -261,6 +261,11 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File kotlinWebImageDistForTests() {
+        return getFileFromProperty(KOTLIN_WEB_IMAGE_DIST_PATH);
+    }
+
+    @NotNull
     public static File kotlinNativeImageResourcesPathForTests() {
         return getFileFromProperty(KOTLIN_NATIVE_IMAGE_RESOURCES_PATH);
     }

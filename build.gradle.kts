@@ -330,6 +330,7 @@ tasks {
     testLifecycleTask("nativeImageCompilerTest", QualityGate.None) {
         dependsOn(":kotlin-compiler-native-image:nativeImageBoxTest")
         dependsOn(":kotlin-compiler-native-image:nativeImageSmokeTest")
+        dependsOn(":kotlin-compiler-native-image:webImageSmokeTest")
     }
 
     testLifecycleTask("jsCompilerTest", QualityGate.Master) {

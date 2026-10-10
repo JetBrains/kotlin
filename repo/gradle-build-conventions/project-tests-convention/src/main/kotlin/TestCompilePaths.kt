@@ -37,6 +37,7 @@ object TestCompilePaths {
 
     const val KOTLIN_DIST_PATH = "kotlin.dist.path"
     const val KOTLIN_NATIVE_IMAGE_DIST_PATH = "kotlin.native-image.dist.path"
+    const val KOTLIN_WEB_IMAGE_DIST_PATH = "kotlin.web-image.dist.path"
     const val KOTLIN_NATIVE_IMAGE_RESOURCES_PATH = "kotlin.native-image.resources.path"
     const val KOTLIN_NATIVE_IMAGE_PLUGINS_RUNTIME = "kotlin.native-image.plugins-runtime.classpath"
     const val KOTLIN_NATIVE_IMAGE_PLUGINS_CLASSPATH = "kotlin.native-image.plugins-build.classpath"
