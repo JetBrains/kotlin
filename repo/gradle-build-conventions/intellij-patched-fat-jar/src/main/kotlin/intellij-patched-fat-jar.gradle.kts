@@ -51,15 +51,17 @@ tasks.named<Jar>("sourcesJar") {
     addEmbeddedLibrarySources(configurations["embedded"])
 }
 
-configurations.named("apiElements") {
-    /*
-        For compile avoidance, 'apiElements' publishes 'classes' and 'resources' variants.
-        However, those variants only include content of the module itself (without its dependencies), so consumers compiling
-        against the module will (by default) get the incorrect classpath. This is a per-module equivalent of Gradle's
-        `org.gradle.java.compile-classpath-packaging`.
+if (!isInIdeaSync) {
+    configurations.named("apiElements") {
+        /*
+            For compile avoidance, 'apiElements' publishes 'classes' and 'resources' variants.
+            However, those variants only include content of the module itself (without its dependencies), so consumers compiling
+            against the module will (by default) get the incorrect classpath. This is a per-module equivalent of Gradle's
+            `org.gradle.java.compile-classpath-packaging`.
 
-        `runtimeElements` isn't changed a runtime classpath resolution already selects the proper JAR variant.
-    */
-    val removed = outgoing.variants.removeIf { it.name == "classes" || it.name == "resources" }
-    check(removed) { "'classes' and 'resources' variants expected" }
+            `runtimeElements` isn't changed a runtime classpath resolution already selects the proper JAR variant.
+        */
+        val removed = outgoing.variants.removeIf { it.name == "classes" || it.name == "resources" }
+        check(removed) { "'classes' and 'resources' variants expected" }
+    }
 }
