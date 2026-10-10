@@ -68,6 +68,18 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <configuration>
+                    <argLine>
+                        --add-opens jdk.charsets/sun.nio.cs.ext=ALL-UNNAMED
+                        --add-opens java.base/sun.net.dns=ALL-UNNAMED
+                        --add-opens java.base/com.sun.crypto.provider=ALL-UNNAMED
+                        --add-opens java.base/sun.nio=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

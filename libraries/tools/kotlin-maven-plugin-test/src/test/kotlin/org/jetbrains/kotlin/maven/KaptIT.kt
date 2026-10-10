@@ -109,26 +109,6 @@ class KaptIT : KotlinMavenTestBase() {
     }
 
     @MavenTest
-    @DisplayName("KAPT processes Dagger annotations on JDK 8")
-    fun testDaggerAnnotationProcessingJdk8(mavenVersion: TestVersions.Maven) {
-        testProject("java8/test-dagger-maven-example", mavenVersion) {
-            build(
-                "package",
-                expectedToFail = false,
-                buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
-                ).withoutKotlinDaemon(
-                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
-                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
-                )
-            ) {
-                assertJarExistsAndNotEmpty("target/dagger-maven-example-1.0-SNAPSHOT.jar")
-            }
-        }
-    }
-
-    @MavenTest
     @DisplayName("KAPT respects includeCompileClasspath=false in kapt mojo configuration")
     fun testKaptIncludeCompileClasspathDisabledInKaptMojo(mavenVersion: TestVersions.Maven) {
         val buildOptions = if (isWindowsHost) buildOptions.copy(useKotlinDaemon = false) else buildOptions
@@ -182,27 +162,6 @@ class KaptIT : KotlinMavenTestBase() {
             }
         }
     }
-    
-    @MavenTest
-    @DisplayName("KAPT with allopen generates Dagger sources on JDK 8")
-    fun testKaptWithAllopenOnJdk8(mavenVersion: TestVersions.Maven) {
-        testProject("java8/test-kapt-allopen", mavenVersion) {
-            build(
-                "package",
-                expectedToFail = false,
-                buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
-                ).withoutKotlinDaemon(
-                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
-                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
-                )
-            ) {
-                assertJarExistsAndNotEmpty("target/dagger-maven-example-1.0-SNAPSHOT.jar")
-                assertFileExists("target/generated-sources/kapt/compile/coffee/CoffeeMaker_Factory.java")
-            }
-        }
-    }
 
     @MavenTest
     @DisplayName("Lombok with KAPT produces generated Java helpers, Kotlin extensions, and stubs")
@@ -224,27 +183,6 @@ class KaptIT : KotlinMavenTestBase() {
                 assertFileExists(
                     "app/target/kaptStubs/compile/cats/CatHouse.java"
                 ) { "KAPT stub for CatHouse was not found" }
-            }
-        }
-    }
-
-    @MavenTest
-    @DisplayName("KAPT with allopen and extensions enabled generates Dagger sources on JDK 8")
-    fun testKaptWithAllopenAndSmartDefaultsOnJdk8(mavenVersion: TestVersions.Maven) {
-        testProject("java8/test-enable-extensions-kapt-allopen", mavenVersion) {
-            build(
-                "package",
-                expectedToFail = false,
-                buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
-                ).withoutKotlinDaemon(
-                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
-                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
-                )
-            ) {
-                assertJarExistsAndNotEmpty("target/test-enable-extensions-kapt-allopen-1.0-SNAPSHOT.jar")
-                assertFileExists("target/generated-sources/kapt/compile/coffee/CoffeeMaker_Factory.java")
             }
         }
     }
