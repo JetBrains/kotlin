@@ -147,6 +147,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
         private fun SourceValue.longerWhenFusedWithPop() = insns.fold(0) { x, insn ->
             when {
                 insn.isPurePush() -> x - 1
+                insn.isReifiedOperationPlaceholderConstant() -> x - 4
                 insn.isPrimitiveBoxing() || insn.isPrimitiveTypeConversion() -> x
                 else -> x + 1
             }
@@ -179,9 +180,6 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
     }
 }
 
-fun AbstractInsnNode.isPurePush() =
-    isLoadOperation() || opcode in Opcodes.ACONST_NULL..Opcodes.LDC + 2 || isUnitInstance()
-
 fun AbstractInsnNode.isPop() =
     opcode == Opcodes.POP || opcode == Opcodes.POP2
 
@@ -204,9 +202,49 @@ fun AbstractInsnNode.isNullForReifiedTypeOf(): Boolean {
 fun AbstractInsnNode.isReifiedOperationPlaceholderConstant(): Boolean =
     isLdcForReifiedJavaClass() || isNullForReifiedTypeOf()
 
+fun AbstractInsnNode.isLdcOfSize2(): Boolean =
+    opcode == Opcodes.LDC && this is LdcInsnNode && (this.cst is Double || this.cst is Long)
+
 fun InsnList.removeReifiedOperation(placeholderConstant: AbstractInsnNode) {
     set(placeholderConstant.previous.previous.previous, InsnNode(Opcodes.NOP)) // operation kind
     set(placeholderConstant.previous.previous, InsnNode(Opcodes.NOP)) // type argument
     set(placeholderConstant.previous, InsnNode(Opcodes.NOP)) // marker
     set(placeholderConstant, InsnNode(Opcodes.NOP)) // placeholder constant
 }
+
+/**
+ * A pure push is an instruction that:
+ * - Has no side effects
+ * - Modifies the stack: ... -> ... value
+ * - Is not a trailing part of a multi-instruction sequence (such a reification marker)
+ */
+fun AbstractInsnNode.isPurePush(): Boolean = isPurePushOfSize1() || isPurePushOfSize2()
+
+/**
+ * A pure push of size 1 is an instruction that:
+ * - Has no side effects
+ * - Modifies the stack: ... -> ... value[size = 1]
+ * - Is not a trailing part of a multi-instruction sequence (such a reification marker)
+ */
+fun AbstractInsnNode.isPurePushOfSize1(): Boolean =
+    (opcode == Opcodes.ACONST_NULL && !isNullForReifiedTypeOf()) ||
+            opcode in Opcodes.ICONST_M1..Opcodes.ICONST_5 ||
+            opcode in Opcodes.FCONST_0..Opcodes.FCONST_2 ||
+            (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) ||
+            (opcode == Opcodes.LDC && !isLdcOfSize2() && !isLdcForReifiedJavaClass()) ||
+            (opcode == Opcodes.ILOAD || opcode == Opcodes.FLOAD || opcode == Opcodes.ALOAD) ||
+            isUnitInstance()
+
+/**
+ * A pure push of size 1 is an instruction that:
+ * - Has no side effects
+ * - Modifies the stack: ... -> ... value[size = 2]
+ * - Is not a trailing part of a multi-instruction sequence (such a reification marker)
+ */
+fun AbstractInsnNode.isPurePushOfSize2(): Boolean =
+    isLdcOfSize2() ||
+            opcode == Opcodes.LCONST_0 || opcode == Opcodes.LCONST_1 ||
+            opcode == Opcodes.DCONST_0 || opcode == Opcodes.DCONST_1 ||
+            opcode == Opcodes.LLOAD ||
+            opcode == Opcodes.DLOAD
+
