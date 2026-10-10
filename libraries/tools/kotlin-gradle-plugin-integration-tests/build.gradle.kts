@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+import org.jetbrains.kotlin.konan.target.HostManager
 import java.nio.file.Paths
 
 plugins {
@@ -211,6 +212,10 @@ tasks.register<Delete>("cleanTestKitCache") {
 val parcelizeRuntimeKmpPublication =
     ":plugins:parcelize:parcelize-runtime:publishKotlinMultiplatformPublicationToMavenLocal"
 
+val parcelizeRuntimeNativePublications = listOf(
+    "IosX64", "AndroidNativeArm32", "AndroidNativeArm64", "AndroidNativeX86", "AndroidNativeX64",
+).map { ":plugins:parcelize:parcelize-runtime:publish${it}PublicationToMavenLocal" }
+
 val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::class) {
     description = "Only runs on CI. " +
             "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
@@ -221,9 +226,10 @@ val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::clas
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
     delete(userHomeKonanDir)
 
-    // Publishing the root KMP metadata commonizes the Native distribution and may use ~/.konan.
+    // Publishing KMP metadata and Native variants may use ~/.konan.
     // Clean afterward so failures only report default-home usage by the tests themselves.
     mustRunAfter(parcelizeRuntimeKmpPublication)
+    mustRunAfter(parcelizeRuntimeNativePublications)
 
     doLast {
         logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
@@ -459,10 +465,12 @@ tasks.withType<Test>().configureEach {
 
     dependsOn(":kotlin-gradle-plugin:validatePlugins")
     dependsOnKotlinGradlePluginInstall()
-    // These tests only consume the Parcelize runtime's root metadata and JVM variant. Using its
-    // aggregate `install` task here would compile and publish every JS, Wasm, and Native target.
+    // Publish only the Parcelize runtime variants consumed by the selected tests.
     dependsOn(parcelizeRuntimeKmpPublication)
     dependsOn(":plugins:parcelize:parcelize-runtime:publishJvmPublicationToMavenLocal")
+    if (HostManager.hostIsMac && (name == "test" || name == "kgpAllParallelTests" || name.startsWith("kgpNativeTests"))) {
+        dependsOn(parcelizeRuntimeNativePublications)
+    }
     dependsOn(":gradle:android-test-fixes:install")
     dependsOn(":gradle:gradle-warnings-detector:install")
     dependsOn(":gradle:kotlin-compiler-args-properties:install")
