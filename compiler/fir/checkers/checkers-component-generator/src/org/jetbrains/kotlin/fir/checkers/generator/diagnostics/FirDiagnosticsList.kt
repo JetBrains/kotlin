@@ -845,7 +845,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Collection<Pair<Symbol, List<String>>>>("candidates")
         }
 
-        val INAPPLICABLE_CANDIDATE by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+        val INAPPLICABLE_CANDIDATE by warning<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Symbol>("candidate")
         }
 
