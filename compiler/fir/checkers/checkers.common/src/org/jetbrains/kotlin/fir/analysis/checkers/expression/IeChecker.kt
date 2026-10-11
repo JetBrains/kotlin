@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirSuperReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.isVisible
+import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.calls.syntheticNamesProvider
@@ -64,6 +67,7 @@ enum class SetterDifferentFromGetter {
 
 data class IeData(
     val funcName: String,
+    val funcId: String,
     val isStatic: Boolean,
     val canUsePropertySyntax: Boolean,
 
@@ -72,6 +76,7 @@ data class IeData(
     val getterExistsButWithDifferentPrefix: String?,
     val setterOverload: Boolean?,
     val matchingGetterExistsButInvisible: Boolean?,
+    val anyOverloadsExists: Boolean?,
 
     // Not null if it is function with prefix set from Kotlin
     val setPrefixFunctionFromKotlin: Boolean?,
@@ -82,6 +87,11 @@ object IeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     override fun check(expression: FirFunctionCall) {
         val reporter = IEReporter(expression.source, context, reporter, FirErrors.IE_WARNING)
         val funcName = expression.calleeReference.name.identifierOrNullIfSpecial ?: return
+        val funcId = (try {
+            (expression.calleeReference as? FirResolvedCallableReference)?.resolvedSymbol?.packageFqName()?.asString() ?: "_."
+        } catch (_: Throwable) {
+            "_."
+        } + funcName)
         if (funcName.length < 4 || !(funcName.startsWith("set") || funcName.startsWith("get")) || !funcName[3].isUpperCase()) return
         if (funcName.startsWith("set") && expression.arguments.size != 1) return
         if (funcName.startsWith("get") && expression.arguments.isNotEmpty()) return
@@ -101,7 +111,8 @@ object IeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
         )
-        val properties = if (receiverType != null && scope != null) syntheticProperties(expression, symbol, receiverType, scope) else emptyList()
+        val properties =
+            if (receiverType != null && scope != null) syntheticProperties(expression, symbol, receiverType, scope) else emptyList()
         val matchingProperties = properties.filter { property ->
             val accessor = if (isSetter) property.setterSymbol else property.getterSymbol
             accessor?.delegateFunctionSymbol?.unwrapFakeOverrides() == symbol.unwrapFakeOverrides()
@@ -158,17 +169,23 @@ object IeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
                 }
             }
         }
+        val anyOverloadsExists = scope?.getCallableNames()?.count { it.identifierOrNullIfSpecial == funcName } != 1
         reporter(
             IeData(
-                funcName, symbol.isStatic, canUsePropertySyntax, mismatch,
-                differentPrefixGetters.distinct().takeIf { it.isNotEmpty() }?.joinToString(", "),
-                if (isSetter && isJava) properties.any {
+                funcName = funcName,
+                funcId = funcId,
+                isStatic = symbol.isStatic,
+                canUsePropertySyntax = canUsePropertySyntax,
+                setterDifferentFromGetter = mismatch,
+                getterExistsButWithDifferentPrefix = differentPrefixGetters.distinct().takeIf { it.isNotEmpty() }?.joinToString(", "),
+                setterOverload = if (isSetter && isJava) properties.any {
                     val setter = it.setterSymbol?.delegateFunctionSymbol
                     it.getterSymbol?.delegateFunctionSymbol?.name in getterNames &&
                             setter != null && setter.unwrapFakeOverrides() != symbol.unwrapFakeOverrides()
                 } else null,
-                matchingGetterExistsButInvisible,
-                if (isSetter && !isJava) true else null,
+                matchingGetterExistsButInvisible = matchingGetterExistsButInvisible,
+                anyOverloadsExists = anyOverloadsExists,
+                setPrefixFunctionFromKotlin = if (isSetter && !isJava) true else null,
             )
         )
     }
