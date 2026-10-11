@@ -19,9 +19,7 @@ fun Session.insertPis() {
     for (info in narrowings) {
         for (v in info.values) {
             if (v.isNarrowable()) {
-                varNames.getOrPut(v) {
-                    if (v is ReadVar) v.variable else "pi$${count++}"
-                }
+                varNames[v] = if (v is ReadVar) v.variable else "pi$${count++}"
             }
         }
     }
