@@ -10,6 +10,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.DistributionWithImportMapTask.Companion.VENDORS_FOLDER
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.RUN_TASK_NAME
@@ -36,8 +37,8 @@ internal class NoBundleConfigurator(
     private val project = subTarget.project
 
     private val nodeJsRoot = subTarget.target.webTargetVariant(
-        { project.rootProject.kotlinNodeJsRootExtension },
-        { project.rootProject.wasmKotlinNodeJsRootExtension },
+        { project.jsToolingProject().kotlinNodeJsRootExtension },
+        { project.jsToolingProject().wasmKotlinNodeJsRootExtension },
     )
 
     private val nodeJs = subTarget.target.webTargetVariant(

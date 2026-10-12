@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.internal.jsToolingProject
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.KotlinWasmtimeSubtarget
@@ -83,8 +84,8 @@ internal constructor(
     @OptIn(ExperimentalWasmDsl::class)
     private val d8LazyDelegate = lazy {
         webTargetVariant(
-            { NodeJsRootPlugin.apply(project.rootProject) },
-            { WasmNodeJsRootPlugin.apply(project.rootProject) },
+            { NodeJsRootPlugin.apply(project.jsToolingProject()) },
+            { WasmNodeJsRootPlugin.apply(project.jsToolingProject()) },
         )
 
         addSubTarget(KotlinD8Ir::class.java) {
