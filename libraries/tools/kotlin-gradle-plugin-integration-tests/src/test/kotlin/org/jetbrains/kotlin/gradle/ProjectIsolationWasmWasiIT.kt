@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.PRINT_NPM_SHAR
 import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.assertNpmSharedDepsModeIsPerProject
 import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.realizeAllTasks
 import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.registerPrintNpmSharedDepsModeTask
+import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.sharedNpmDependenciesPerProject
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.includeBuild
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.DisplayName
 class ProjectIsolationWasmWasiIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(sharedNpmDependenciesPerProject = true)
+        get() = super.defaultBuildOptions.sharedNpmDependenciesPerProject()
 
     @DisplayName("Composite multi-module WasmWASI project with per-project tooling should be compatible with project isolation")
     @GradleTest

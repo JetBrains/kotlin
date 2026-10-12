@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.assertNpmShare
 import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.configurePlaywrightBrowsers
 import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.realizeAllTasks
 import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.registerPrintNpmSharedDepsModeTask
+import org.jetbrains.kotlin.gradle.ProjectIsolationJsIT.Companion.sharedNpmDependenciesPerProject
 import org.jetbrains.kotlin.gradle.dsl.KotlinBrowserBundler
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalMainFunctionArgumentsDsl
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -27,7 +28,7 @@ import org.junit.jupiter.api.DisplayName
 class ProjectIsolationWasmJsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(sharedNpmDependenciesPerProject = true)
+        get() = super.defaultBuildOptions.sharedNpmDependenciesPerProject()
 
     @DisplayName("Composite multi-module WasmJS project with per-project npm tooling should be compatible with project isolation")
     @GradleTest

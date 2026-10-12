@@ -17,6 +17,7 @@ plugins {
     id("gradle-plugin-common-configuration")
     id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("kotlin-git.gradle-build-conventions.kgp-npm-tooling-helper")
+    id("kgp-build-utils")
     id("kgp-jacoco-on-the-fly")
     id("kgp-jacoco-instrumenter")
     id("android-sdk-provisioner")
@@ -696,6 +697,28 @@ testing {
                 }
             }
         }
+
+        register<JvmTestSuite>("archTest") {
+            dependencies {
+                implementation(libs.archunit)
+            }
+
+            targets.configureEach {
+                testTask.configure {
+                    shouldRunAfter(test)
+                    configureArchUnit(
+                        task = this,
+                        sources = files(
+                            project.sourceSets.main.map { it.output.classesDirs },
+                            project.sourceSets.common.map { it.output.classesDirs },
+                            GradlePluginVariant.entries.map { variant ->
+                                project.sourceSets.named(variant.sourceSetName).map { it.output.classesDirs }
+                            },
+                        ),
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -773,6 +796,9 @@ configurations.named(lincheckTestCompilation.compileDependencyConfigurationName)
     // Reject the main source set Gradle API dependency brought transitevely via test fixtures
     exclude("dev.gradleplugins", "gradle-api")
 }
+
+val archTestCompilation = kotlin.target.compilations.getByName("archTest")
+archTestCompilation.associateWith(kotlin.target.compilations.getByName("common"))
 
 val acceptLicensesTask = with(androidSdkProvisioner) {
     registerAcceptLicensesTask()
