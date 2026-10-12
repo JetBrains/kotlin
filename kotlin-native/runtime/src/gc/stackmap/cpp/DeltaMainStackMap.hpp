@@ -57,6 +57,7 @@ struct DeltaMainStackMapBuilder {
 
     DeltaMainStackMapBuilder() : reader_(stackMap::deltaMainStackMapsSymbol()), sectionStart_(stackMap::deltaMainStackMapsSymbol()) {
         if (std::strcmp(Kotlin_gcStackMapScheme, compiler::DELTA_MAIN) == 0) {
+            RuntimeCheck(reader_.getP() != nullptr, "LLVM Stackmaps symbol is null");
             verifyMagic(reader_.getNextInt(1));
         }
     }

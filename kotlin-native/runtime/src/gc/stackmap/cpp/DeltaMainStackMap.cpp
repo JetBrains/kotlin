@@ -37,6 +37,7 @@ void DeltaMainStackMapBuilder::Reader::getRootsInfo(
     }
 
     for (const auto& [pc, deltaIdx] : pc2delta) {
+        RuntimeCheck(deltaIdx < deltas.size(), "Delta index is out of range");
         Delta callsiteDelta = base ^ deltas[deltaIdx];
         RootsInfo rootsInfo = callsiteDelta.toRootInfo(baseOffset);
         rootsInfo.log(functionAddress, functionAddress + pc);
@@ -52,7 +53,7 @@ void DeltaMainStackMapBuilder::verifyMagic(uint8_t magic) {
     // would break.
     uint8_t expected = (DELTA_MAIN_VERSION << 4) | LAZY_ENABLED_MAGIC;
 
-    RuntimeAssert(magic == expected,
+    RuntimeCheck(magic == expected,
                  "Delta-main stack map magic mismatch: section was built with incompatible "
                  "ENABLE_LAZY_STACKMAP/DELTA_MAIN_VERSION settings "
                  "(expected 0x%x, got 0x%x)",
