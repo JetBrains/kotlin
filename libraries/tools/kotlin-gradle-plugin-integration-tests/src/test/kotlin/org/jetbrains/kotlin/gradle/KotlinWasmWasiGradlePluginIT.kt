@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.kotlin.dsl.named
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
+import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
@@ -17,21 +20,27 @@ import org.jetbrains.kotlin.gradle.testbase.assertFileExists
 import org.jetbrains.kotlin.gradle.testbase.assertFileInProjectExists
 import org.jetbrains.kotlin.gradle.testbase.assertNoBuildWarnings
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
+import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksAreNotInTaskGraph
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.assertTasksFailed
 import org.jetbrains.kotlin.gradle.testbase.assertTasksUpToDate
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
+import org.jetbrains.kotlin.gradle.testbase.buildScriptInjection
 import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAndWasmKT75899
 import org.jetbrains.kotlin.gradle.testbase.modify
 import org.jetbrains.kotlin.gradle.testbase.printBuildOutput
 import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.gradle.testbase.settingsBuildScriptInjection
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -45,20 +54,166 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
 
-    @DisplayName("Check wasi target")
-    @GradleTest
-    fun wasiTarget(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-wasi-test", gradleVersion) {
-            wasmWasiTest("Node", "NodeJs")
-        }
-    }
-
     @DisplayName("Check wasi target with wasmtime")
     @GradleTest
     fun wasiWasmtimeTarget(gradleVersion: GradleVersion) {
         project("wasm-wasmtime-test", gradleVersion) {
             wasmWasiTest("Wasmtime")
         }
+    }
+
+    @DisplayName("Check wasi target with wasi adapter in disabled mode fails")
+    @GradleTest
+    fun wasiAdapterDisabledMode(gradleVersion: GradleVersion) {
+        project("wasm-wasmtime-test", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.wasm.wasiadapter.toolchain=DISABLE
+                """.trimMargin()
+            )
+
+            build(":compileProductionExecutableKotlinWasmWasi") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
+            }
+
+            buildAndFail(":compileProductionExecutableKotlinWasmWasiComponentize") {
+                assertOutputContains("WASI adapter toolchain is disabled")
+                assertOutputContains("kotlin.wasm.wasiadapter.toolchain=DOWNLOAD")
+            }
+        }
+    }
+
+    @DisplayName("Check wasi target with wasi adapter in preinstalled mode")
+    @GradleTest
+    fun wasiAdapterPreInstalledMode(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        val realTempDir = tempDir.toRealPath()
+        val fakeAdapter = realTempDir.resolve("wasi_snapshot_preview1.command.wasm").toFile()
+        copyMockWasiAdapter(fakeAdapter)
+
+        project("wasm-wasmtime-test", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.wasm.wasiadapter.toolchain=PREINSTALLED
+                |kotlin.wasm.wasiadapter.toolchain.local.path=${fakeAdapter.absolutePath}
+                """.trimMargin()
+            )
+
+            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
+                assertOutputDoesNotContain("Downloading WASI preview1 adapter")
+                val componentFile = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertFileInProjectExists("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertComponentNew(
+                    inputModule = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm").loggedPathString(),
+                    component = componentFile,
+                    adaptModule = fakeAdapter.toPath().loggedPathString(),
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
+    @DisplayName("Check wasi target with reactor flavor requests reactor adapter")
+    @GradleTest
+    fun wasiAdapterReactorFlavor(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        val realTempDir = tempDir.toRealPath()
+        val fakeRepoDir = realTempDir.resolve("mirror").toFile()
+        val fakeInstallDir = realTempDir.resolve("install").toFile()
+        val fakeReactorAdapterFile = fakeRepoDir.resolve("v49.0.1/wasi_snapshot_preview1.reactor.wasm")
+        copyMockWasiAdapter(fakeReactorAdapterFile)
+
+        val expectedInstalledAdapter = fakeInstallDir.resolve("v49.0.1/wasi_snapshot_preview1.reactor.wasm")
+
+        project("wasm-wasmtime-test", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    wasiAdapter {
+                        toolchainService {
+                            installationDir.set(File(fakeInstallDir.invariantSeparatorsPath))
+                            downloadBaseUrl.set(fakeRepoDir.toURI().toString().trimEnd('/'))
+                        }
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                project.tasks.named<WasmComponentizeTask>("compileProductionExecutableKotlinWasmWasiComponentize") {
+                    wasiAdapterRequest.get().flavor.set(org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor.REACTOR)
+                }
+            }
+
+            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
+                val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v49.0.1/wasi_snapshot_preview1.reactor.wasm"
+                assertOutputContains("Downloading WASI preview1 adapter REACTOR for Wasmtime 49.0.1 from $downloadUrl")
+                assertTrue(expectedInstalledAdapter.exists(), "Expected installed adapter to exist at $expectedInstalledAdapter")
+
+                val componentFile = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertFileInProjectExists("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertComponentNew(
+                    inputModule = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm").loggedPathString(),
+                    component = componentFile,
+                    adaptModule = expectedInstalledAdapter.toPath().loggedPathString(),
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
+    @DisplayName("Check wasi target with wasi adapter custom download base url from settings")
+    @GradleTest
+    fun wasiAdapterSettingsCustomDownloadBaseUrl(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        val realTempDir = tempDir.toRealPath()
+        val fakeRepoDir = realTempDir.resolve("mirror").toFile()
+        val fakeInstallDir = realTempDir.resolve("install").toFile()
+        val fakeAdapterFile = fakeRepoDir.resolve("v49.0.1/wasi_snapshot_preview1.command.wasm")
+        copyMockWasiAdapter(fakeAdapterFile)
+
+        val expectedInstalledAdapter = fakeInstallDir.resolve("v49.0.1/wasi_snapshot_preview1.command.wasm")
+
+        project("wasm-wasmtime-test", gradleVersion) {
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    wasiAdapter {
+                        toolchainService {
+                            installationDir.set(File(fakeInstallDir.invariantSeparatorsPath))
+                            downloadBaseUrl.set(fakeRepoDir.toURI().toString().trimEnd('/'))
+                        }
+                    }
+                }
+            }
+
+            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
+                val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v49.0.1/wasi_snapshot_preview1.command.wasm"
+                assertOutputContains("Downloading WASI preview1 adapter COMMAND for Wasmtime 49.0.1 from $downloadUrl")
+                assertTrue(expectedInstalledAdapter.exists(), "Expected installed adapter to exist at $expectedInstalledAdapter")
+
+                val componentFile = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertFileInProjectExists("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertComponentNew(
+                    inputModule = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm").loggedPathString(),
+                    component = componentFile,
+                    adaptModule = expectedInstalledAdapter.toPath().loggedPathString(),
+                )
+            }
+        }
+    }
+
+    private fun copyMockWasiAdapter(targetFile: File): File {
+        targetFile.parentFile.mkdirs()
+        val resourceStream = KotlinWasmWasiGradlePluginIT::class.java.classLoader.getResourceAsStream("wasm-adapter/wasi_snapshot_preview1.command.wasm")
+            ?: error("Could not find wasm-adapter/wasi_snapshot_preview1.command.wasm test resource")
+        resourceStream.use { input ->
+            targetFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+        return targetFile
     }
 
     private fun TestProject.wasmWasiTest(engine: String, engineSetup: String = engine) {
@@ -69,7 +224,8 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
 
         build(":wasmWasiTest") {
-            assertTasksUpToDate(":kotlinWasm${engineSetup}Setup", ":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
+            assertTasksUpToDate(":kotlinWasm${engineSetup}Setup")
+            assertTasksUpToDate(":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
         }
 
         projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
@@ -92,9 +248,6 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         build(":wasmWasi${engine}ProductionRun") {
             assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
             assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
-            if (engine == "Wasmtime") {
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
-            }
 
             assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
 
@@ -679,11 +832,16 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     /**
      * Asserts that `wasm-tools component new` turned [inputModule] into [component].
      */
-    private fun BuildResult.assertComponentNew(inputModule: String, component: Path) {
+    private fun BuildResult.assertComponentNew(
+        inputModule: String,
+        component: Path,
+        adaptModule: String = "[^\\r\\n]+",
+    ) {
+        val adaptRegex = if (adaptModule == "[^\\r\\n]+") adaptModule else Regex.escape(adaptModule)
         assertOutputContains(
             Regex(
                 Regex.escape("component new $inputModule") +
-                        " --adapt wasi_snapshot_preview1=[^\\r\\n]+ -o " +
+                        " --adapt wasi_snapshot_preview1=$adaptRegex -o " +
                         Regex.escape(component.loggedPathString())
             )
         )

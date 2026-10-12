@@ -667,69 +667,6 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
     protected open val compilationModeWarningIds: Set<String> = emptySet()
 
-    @DisplayName("Check wasi target")
-    @GradleTest
-    fun wasiTarget(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-wasi-test", gradleVersion) {
-            // Node.js is deprecated in the wasm-wasi target and doesn't count as an explicitly chosen environment
-            wasmWasiTest(
-                "Node",
-                "NodeJs",
-                expectedWarningIds = setOf(KotlinToolingDiagnostics.WasmWasiEnvironmentNotChosenExplicitly.id),
-            )
-        }
-    }
-
-    @DisplayName("Check wasi target with wasmtime")
-    @GradleTest
-    fun wasiWasmtimeTarget(gradleVersion: GradleVersion) {
-        project("wasm-wasmtime-test", gradleVersion) {
-            wasmWasiTest("Wasmtime")
-        }
-    }
-
-    private fun TestProject.wasmWasiTest(
-        engine: String,
-        engineSetup: String = engine,
-        expectedWarningIds: Set<String> = emptySet(),
-    ) {
-        build(":wasmWasiTest") {
-            assertTasksExecuted(":kotlinWasm${engineSetup}Setup")
-            assertTasksExecuted(":compileKotlinWasmWasi")
-            assertTasksExecuted(":wasmWasi${engine}Test")
-        }
-
-        build(":wasmWasiTest") {
-            assertTasksUpToDate(":kotlinWasm${engineSetup}Setup", ":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
-        }
-
-        projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
-            it.replace(
-                "fun test2() = assertEquals(foo(), 2)",
-                """
-                    |fun test2() = assertEquals(foo(), 2)
-                    |
-                    |@Test
-                    |fun test3() = assertEquals(foo(), 3)
-                    |""".trimMargin()
-            )
-        }
-
-        buildAndFail(":wasmWasiTest") {
-            assertTasksUpToDate(":compileKotlinWasmWasi")
-            assertTasksFailed(":wasmWasi${engine}Test")
-        }
-
-        build(":wasmWasi${engine}ProductionRun") {
-            assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
-            assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
-
-            assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
-
-            assertNoBuildWarnings(compilationModeWarningIds + expectedWarningIds)
-        }
-    }
-
     @DisplayName("Check js target")
     @GradleTest
     fun jsTarget(gradleVersion: GradleVersion) {

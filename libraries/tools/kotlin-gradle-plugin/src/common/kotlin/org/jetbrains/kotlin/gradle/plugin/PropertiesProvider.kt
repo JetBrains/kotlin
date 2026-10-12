@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainMode
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -777,6 +778,19 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nodeJsToolchainLocalPath: Provider<String>
         get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH)
 
+    val wasiAdapterToolchainMode: WasiAdapterToolchainMode
+        get() = property(PropertyNames.KOTLIN_WASM_WASIADAPTER_TOOLCHAIN).orNull
+            ?.let { WasiAdapterToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) } ?: WasiAdapterToolchainMode.DOWNLOAD
+
+    val wasiAdapterToolchainDefaultInstallPath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASIADAPTER_TOOLCHAIN_DEFAULT_INSTALL_PATH)
+
+    val wasiAdapterToolchainDefaultDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASIADAPTER_TOOLCHAIN_DEFAULT_DOWNLOAD_URL)
+
+    val wasiAdapterToolchainLocalPath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASIADAPTER_TOOLCHAIN_LOCAL_PATH)
+
     val wasmToolsToolchainMode: WasmToolsToolchainMode
         get() = property(PropertyNames.KOTLIN_WASM_WASMTOOLS_TOOLCHAIN).orNull
             ?.let { WasmToolsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) } ?: WasmToolsToolchainMode.DOWNLOAD
@@ -887,6 +901,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_NODEJS_TOOLCHAIN_DEFAULT_DOWNLOAD_URL = property("kotlin.js.nodejs.toolchain.default.download.url")
 
         val KOTLIN_JS_NODEJS_TOOLCHAIN_LOCAL_PATH = property("kotlin.js.nodejs.toolchain.local.path")
+        val KOTLIN_WASM_WASIADAPTER_TOOLCHAIN = property("kotlin.wasm.wasiadapter.toolchain")
+        val KOTLIN_WASM_WASIADAPTER_TOOLCHAIN_DEFAULT_INSTALL_PATH = property("kotlin.wasm.wasiadapter.toolchain.default.install.path")
+        val KOTLIN_WASM_WASIADAPTER_TOOLCHAIN_DEFAULT_DOWNLOAD_URL = property("kotlin.wasm.wasiadapter.toolchain.default.download.url")
+        val KOTLIN_WASM_WASIADAPTER_TOOLCHAIN_LOCAL_PATH = property("kotlin.wasm.wasiadapter.toolchain.local.path")
 
         val KOTLIN_WASM_WASMTOOLS_TOOLCHAIN = property("kotlin.wasm.wasmtools.toolchain")
         val KOTLIN_WASM_WASMTOOLS_TOOLCHAIN_DEFAULT_INSTALL_PATH = property("kotlin.wasm.wasmtools.toolchain.default.install.path")
