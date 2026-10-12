@@ -79,6 +79,12 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
     }
 
     @Test
+    @TestMetadata("bridgeWithThrows")
+    public void testBridgeWithThrows() {
+      runTest("jps/jps-plugin/testData/incremental/pureKotlin/bridgeWithThrows/");
+    }
+
+    @Test
     @TestMetadata("changeTopLevelTypeAlias")
     public void testChangeTopLevelTypeAlias() {
       runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeTopLevelTypeAlias/");

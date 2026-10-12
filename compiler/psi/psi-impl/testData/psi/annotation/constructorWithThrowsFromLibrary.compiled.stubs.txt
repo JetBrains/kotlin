@@ -1,0 +1,195 @@
+Retained.class:
+  FILE[kind=File[packageFqName=lib]]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=lib]
+    IMPORT_LIST
+    CLASS[classId=lib/Retained, fqName=lib.Retained, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=Retained, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+          valueArguments: [ value -> AnnotationRetention.BINARY ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Retention]
+                  isClassRef: true
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=value]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+                REFERENCE_EXPRESSION[referencedName=BINARY]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+          valueArguments: [ allowedTargets -> [AnnotationTarget.CONSTRUCTOR] ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=allowedTargets]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Retained]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
+      CLASS_BODY
+
+
+SourceOnly.class:
+  FILE[kind=File[packageFqName=lib]]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=lib]
+    IMPORT_LIST
+    CLASS[classId=lib/SourceOnly, fqName=lib.SourceOnly, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=SourceOnly, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Retention]
+          valueArguments: [ value -> AnnotationRetention.SOURCE ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Retention]
+                  isClassRef: true
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=value]
+              DOT_QUALIFIED_EXPRESSION
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=annotation]
+                  REFERENCE_EXPRESSION[referencedName=AnnotationRetention]
+                REFERENCE_EXPRESSION[referencedName=SOURCE]
+        ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]
+          valueArguments: [ allowedTargets -> [AnnotationTarget.CONSTRUCTOR] ]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Target]
+                  isClassRef: true
+          VALUE_ARGUMENT_LIST
+            VALUE_ARGUMENT[isSpread=false]
+              VALUE_ARGUMENT_NAME
+                REFERENCE_EXPRESSION[referencedName=allowedTargets]
+              COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=1]
+                DOT_QUALIFIED_EXPRESSION
+                  DOT_QUALIFIED_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=annotation]
+                    REFERENCE_EXPRESSION[referencedName=AnnotationTarget]
+                  REFERENCE_EXPRESSION[referencedName=CONSTRUCTOR]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=SourceOnly]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+                isClassRef: true
+      CLASS_BODY
+
+
+WithThrows.class:
+  FILE[kind=File[packageFqName=lib]]
+    PACKAGE_DIRECTIVE
+      REFERENCE_EXPRESSION[referencedName=lib]
+    IMPORT_LIST
+    CLASS[classId=lib/WithThrows, fqName=lib.WithThrows, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=WithThrows, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=WithThrows]
+        MODIFIER_LIST[public]
+          ANNOTATION_ENTRY[hasValueArguments=false, shortName=Retained]
+            valueArguments: [ ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=lib]
+                  REFERENCE_EXPRESSION[referencedName=Retained]
+                    isClassRef: true
+          ANNOTATION_ENTRY[hasValueArguments=true, shortName=Throws]
+            valueArguments: [ exceptionClasses -> [NormalClass(value=java/io/IOException), NormalClass(value=java/lang/IllegalStateException)] ]
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=jvm]
+                  REFERENCE_EXPRESSION[referencedName=Throws]
+                    isClassRef: true
+            VALUE_ARGUMENT_LIST
+              VALUE_ARGUMENT[isSpread=false]
+                VALUE_ARGUMENT_NAME
+                  REFERENCE_EXPRESSION[referencedName=exceptionClasses]
+                COLLECTION_LITERAL_EXPRESSION[innerExpressionCount=2]
+                  CLASS_LITERAL_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION[referencedName=java]
+                        REFERENCE_EXPRESSION[referencedName=io]
+                      REFERENCE_EXPRESSION[referencedName=IOException]
+                  CLASS_LITERAL_EXPRESSION
+                    DOT_QUALIFIED_EXPRESSION
+                      DOT_QUALIFIED_EXPRESSION
+                        REFERENCE_EXPRESSION[referencedName=java]
+                        REFERENCE_EXPRESSION[referencedName=lang]
+                      REFERENCE_EXPRESSION[referencedName=IllegalStateException]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=String]
+                  isClassRef: true
+      CLASS_BODY
+        PROPERTY[fqName=lib.WithThrows.value, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=value]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+                isClassRef: true
