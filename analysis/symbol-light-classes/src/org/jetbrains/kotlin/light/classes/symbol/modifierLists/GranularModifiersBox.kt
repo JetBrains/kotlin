@@ -59,17 +59,6 @@ internal class GranularModifiersBox(
                 false
             }.toPersistentHashMap()
 
-        internal fun computeVisibilityForMember(
-            useSiteModule: KaModule,
-            declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,
-        ): PersistentMap<String, Boolean> {
-            val visibility = declarationPointer.withSymbol(useSiteModule) {
-                it.toPsiVisibilityForMember()
-            }
-
-            return VISIBILITY_MODIFIERS_MAP.with(visibility)
-        }
-
         internal fun computeVisibilityForClass(
             useSiteModule: KaModule,
             declarationPointer: KaSymbolPointer<KaDeclarationSymbol>,

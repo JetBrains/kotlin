@@ -3,7 +3,7 @@ public abstract interface B /* B*/ extends Disabled, Enabled, NoCompatibility, j
 
   public static final class DefaultImpls /* B.DefaultImpls*/ {
     @org.jetbrains.annotations.NotNull()
-    protected static @org.jetbrains.annotations.NotNull() java.lang.Object clone(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  clone(@org.jetbrains.annotations.NotNull() B)
+    public static @org.jetbrains.annotations.NotNull() java.lang.Object clone(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  clone(@org.jetbrains.annotations.NotNull() B)
 
     @org.jetbrains.annotations.NotNull()
     public static @org.jetbrains.annotations.NotNull() kotlin.coroutines.CoroutineContext minusKey(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B, @org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() kotlin.coroutines.CoroutineContext.Key<?>);//  minusKey(@org.jetbrains.annotations.NotNull() B, @org.jetbrains.annotations.NotNull() kotlin.coroutines.CoroutineContext.Key<?>)
