@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsedInsteadOfImport
+import org.jetbrains.kotlin.fir.resolve.diagnostics.HomePackageResolutionMightBeUsedInsteadOfImport
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toArrayOfFactoryName
@@ -179,6 +180,26 @@ internal class KaFirResolver(
         is FirResolvedQualifier -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
         else -> toReference(analysisSession.firSession)?.isContextSensitive == true
     }
+
+    override fun homePackageResolutionStatus(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus =
+        simpleNameExpression.withPsiValidityAssertion {
+            val hintHolder = simpleNameExpression.qualifiedExpressionFir()
+                ?: simpleNameExpression.getOrBuildFir(analysisSession.resolutionFacade)
+                ?: return KaContextSensitiveResolutionNotAvailableImpl
+
+            val nonFatalDiagnostics = when (hintHolder) {
+                is FirQualifiedAccessExpression -> hintHolder.nonFatalDiagnostics
+                is FirResolvedQualifier -> hintHolder.nonFatalDiagnostics
+                is FirTypeOperatorCall -> hintHolder.nonFatalDiagnostics
+                else -> emptyList()
+            }
+
+            when {
+                nonFatalDiagnostics.isEmpty() -> KaContextSensitiveResolutionNotAvailableImpl
+                HomePackageResolutionMightBeUsedInsteadOfImport in nonFatalDiagnostics -> KaContextSensitiveResolutionImportCanBeRemovedImpl
+                else -> KaContextSensitiveResolutionNotAvailableImpl
+            }
+        }
 
     /**
      * For a [KtSimpleNameExpression] that is the selector of a [KtDotQualifiedExpression], returns the FIR of

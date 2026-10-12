@@ -119,6 +119,8 @@ public interface KaInternalsResolver {
 
     public fun contextSensitiveResolutionStatus(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus
 
+    public fun homePackageResolutionStatus(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus
+
     public fun resolveToSymbols(reference: KtReference): Collection<KaSymbol>
 
     public fun resolveToSymbol(reference: KtReference): KaSymbol?

@@ -236,6 +236,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
+        if (AnalysisFlags.ideMode.isSet() && result is FirQualifiedAccessExpression) {
+            result.appendHPRAlternativeDiagnosticIfNeeded()
+        }
+
         return result.addSmartcastIfNeeded(data)
     }
 
@@ -871,6 +875,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     return arrayOfCallTransformer.transformFunctionCall(result, session)
                 }
             }
+
+            if (AnalysisFlags.ideMode.isSet()) {
+                result.appendHPRAlternativeDiagnosticIfNeeded()
+            }
+
             return result.addSmartcastIfNeeded(data)
         }
 
@@ -2704,6 +2713,7 @@ private fun FirNamedReference.createCopyWithNewSource(newSource: KtSourceElement
             name = oldCalleeReference.name
             source = newSource
             resolvedSymbol = oldCalleeReference.resolvedSymbol
+            resolvedSymbolOrigin = oldCalleeReference.resolvedSymbolOrigin
         }
         is FirNamedReferenceWithCandidate -> FirNamedReferenceWithCandidate(
             newSource, oldCalleeReference.name, candidate = oldCalleeReference.candidate,
