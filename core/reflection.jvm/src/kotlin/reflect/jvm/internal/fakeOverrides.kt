@@ -242,7 +242,7 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
             // Workaround KT-13077: `javaMethod` doesn't work for builtins, so find the method manually, falling back to erased types.
             val method = when (this) {
                 is JavaKNamedFunction -> jMethod
-                is ReflectKFunction -> findOriginalJavaMethod(jvmNameIfFunction!!, jvmParameterTypes)
+                is ReflectKFunction -> findOriginalJavaMethod(jvmNameIfFunction!!, functionJvmDescriptor!!)
                 else -> null
             }
             method?.genericParameterTypes?.toList()?.alignWithKotlinParameters(isSuspend, hasReceiverInJvmSignature) ?: javaParameterTypes
@@ -258,8 +258,8 @@ internal fun <T : EqualityMode> ReflectKCallable<*>.toEquatableCallableSignature
 // a Java class implementing `Function1<String, Integer>`, `javaMethod` returns the synthetic bridge `invoke(Object): Object` declared
 // in the Java class, whose generic parameter types are erased, while this property returns `Function1.invoke(P1)` whose generic
 // parameter type is the type variable `P1`.
-private fun ReflectKFunction.findOriginalJavaMethod(name: String, parameterTypes: List<Class<*>>): Method? {
-    val method = container.findMethodBySignature(name, parameterTypes, returnType = null) ?: return null
+private fun ReflectKFunction.findOriginalJavaMethod(name: String, desc: String): Method? {
+    val method = container.findMethodBySignature(name, desc) ?: return null
     if (!method.isBridge) return method
     val originalContainer = overriddenStorage.originalContainerIfFakeOverride ?: return method
     val jvmName = signature.substringBeforeLast('(')
