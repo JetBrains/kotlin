@@ -313,7 +313,7 @@ internal abstract class SwiftExportTask @Inject constructor(
             KotlinToolingDiagnostics.ExperimentalFeatureWarning(
                 "Swift Export",
                 "https://kotl.in/1cr522",
-                "To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_SWIFT_EXPORT_EXPERIMENTAL_NOWARN}=true' to your gradle.properties"
+                "To suppress this message add '${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_SWIFT_EXPORT_EXPERIMENTAL_WARNING}=true' to your gradle.properties"
             )
         )
     }
