@@ -11,6 +11,7 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.internals.internals
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -136,4 +137,30 @@ public val KaFunctionSymbol.javaMethodName: String?
     get() {
         @OptIn(KaImplementationDetail::class)
         return internals.javaInteroperabilityComponent.javaMethodName(this)
+    }
+
+/**
+ * Whether the given interface is compiled in the JVM default mode, i.e., the implementations of its members are compiled to JVM `default`
+ * methods of the interface itself instead of static methods of its `DefaultImpls` class. In the JVM default mode, `DefaultImpls` can still
+ * be generated to hold compatibility delegates to the `default` methods.
+ *
+ * The mode is set by the `-jvm-default` compiler option: `enable` and `no-compatibility` are JVM default modes, while `disable` isn't.
+ * Without the option, the language version defines the mode: `disable` before Kotlin 2.2 and `enable` since then. For an interface from
+ * sources, the property reflects the mode of the module declaring the interface, regardless of the use-site module. For an interface from
+ * a library, the property reflects the mode the library was compiled with, which is recorded in the JVM metadata of the interface. For
+ * example, the JVM standard library is compiled with `-jvm-default=disable`, so the property is `false` for its interfaces.
+ *
+ * The property is `false` for classes other than Kotlin interfaces, including annotation classes and Java interfaces, as the
+ * `-jvm-default` mode applies only to Kotlin interfaces.
+ *
+ * The value is unspecified for declarations from non-JVM modules, for interfaces from library sources, and for library interfaces when
+ * the library itself is the use-site module. The latter two are built from PSI with the project-wide language settings for libraries
+ * instead of being deserialized from the compiled classes.
+ */
+@KaNonPublicApi
+context(session: KaSession)
+public val KaNamedClassSymbol.isCompiledInJvmDefaultMode: Boolean
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.javaInteroperabilityComponent.isCompiledInJvmDefaultMode(this)
     }

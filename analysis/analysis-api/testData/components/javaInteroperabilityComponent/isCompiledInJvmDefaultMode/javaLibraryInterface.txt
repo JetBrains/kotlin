@@ -1,0 +1,5 @@
+Class:
+java/lang/Runnable
+
+isCompiledInJvmDefaultMode:
+false
