@@ -141,10 +141,10 @@ internal class SymbolLightAccessorMethod private constructor(
     }
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
-        in GranularModifiersBox.VISIBILITY_MODIFIERS -> GranularModifiersBox.computeVisibilityForMember(
-            useSiteModule,
-            symbolPointer,
-        )
+        in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
+            val visibility = withAccessorSymbol { computeMethodVisibility(it, containingClass) }
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
+        }
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = when {

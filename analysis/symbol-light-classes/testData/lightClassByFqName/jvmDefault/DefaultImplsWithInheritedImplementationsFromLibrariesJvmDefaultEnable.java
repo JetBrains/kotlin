@@ -4,7 +4,7 @@ public abstract interface B /* B*/ extends Disabled, Enabled, NoCompatibility, j
   public static final class DefaultImpls /* B.DefaultImpls*/ {
     @java.lang.Deprecated()
     @org.jetbrains.annotations.NotNull()
-    protected static @org.jetbrains.annotations.NotNull() java.lang.Object clone(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  clone(@org.jetbrains.annotations.NotNull() B)
+    public static @org.jetbrains.annotations.NotNull() java.lang.Object clone(@org.jetbrains.annotations.NotNull() @org.jetbrains.annotations.NotNull() B);//  clone(@org.jetbrains.annotations.NotNull() B)
 
     @java.lang.Deprecated()
     @org.jetbrains.annotations.NotNull()

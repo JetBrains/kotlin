@@ -86,7 +86,8 @@ internal open class SymbolLightSimpleMethod protected constructor(
 
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
             ifInlineOnly { return modifiersForInlineOnlyCase() }
-            GranularModifiersBox.computeVisibilityForMember(useSiteModule, symbolPointer)
+            val visibility = withFunctionSymbol { computeMethodVisibility(it, containingClass) }
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
         }
 
         PsiModifier.STATIC -> {

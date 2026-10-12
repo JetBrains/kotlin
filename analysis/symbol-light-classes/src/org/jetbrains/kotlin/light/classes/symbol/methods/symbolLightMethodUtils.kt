@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInte
 import org.jetbrains.kotlin.light.classes.symbol.classes.jvmDefaultMode
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.utils.computeSimpleModality
+import org.jetbrains.kotlin.light.classes.symbol.utils.toPsiVisibilityForMember
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 /**
@@ -55,6 +56,22 @@ internal fun computeMethodModality(symbol: KaCallableSymbol, containingClass: Sy
         containingClass is SymbolLightClassForInterfaceDefaultImpls -> null
         isMovedToDefaultImpls() -> PsiModifier.ABSTRACT
         else -> symbol.computeSimpleModality()?.takeUnless { it.isSuppressedFinalModifier() }
+    }
+}
+
+/**
+ * Computes the JVM visibility modifier of the light method for [symbol] in [containingClass].
+ *
+ * The modifier follows the Kotlin visibility of [symbol], except that a non-private method of [SymbolLightClassForInterfaceDefaultImpls]
+ * is `public`, as the JVM backend generates it, see `org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations.getDefaultImplsFunction`.
+ * This matters for the bridge to the protected `clone` of `kotlin.Cloneable`, the only interface member which is neither public nor
+ * private.
+ */
+internal fun computeMethodVisibility(symbol: KaCallableSymbol, containingClass: SymbolLightClassBase): String {
+    val visibility = symbol.toPsiVisibilityForMember()
+    return when {
+        containingClass is SymbolLightClassForInterfaceDefaultImpls && visibility != PsiModifier.PRIVATE -> PsiModifier.PUBLIC
+        else -> visibility
     }
 }
 
