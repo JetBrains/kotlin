@@ -175,7 +175,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP: KtDiagnosticFactory0 = KtDiagnosticFactory0("BREAK_OR_CONTINUE_OUTSIDE_A_LOOP", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NOT_A_LOOP_LABEL: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_A_LOOP_LABEL", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY: KtDiagnosticFactory0 = KtDiagnosticFactory0("BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtExpressionWithLabel::class, getRendererFactory())
-    val VARIABLE_EXPECTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIABLE_EXPECTED", ERROR, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val VARIABLE_EXPECTED: KtDiagnosticFactory0 = KtDiagnosticFactory0("VARIABLE_EXPECTED", WARNING, SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED, PsiElement::class, getRendererFactory())
     val DELEGATION_IN_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("DELEGATION_IN_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val DELEGATION_NOT_TO_INTERFACE: KtDiagnosticFactory0 = KtDiagnosticFactory0("DELEGATION_NOT_TO_INTERFACE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NESTED_CLASS_NOT_ALLOWED: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("NESTED_CLASS_NOT_ALLOWED", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtNamedDeclaration::class, getRendererFactory())
