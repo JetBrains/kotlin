@@ -1,0 +1,45 @@
+FILE[kind=Script[packageFqName=<root>]]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  SCRIPT[fqName=ScriptDestructuringEntries, fqName=ScriptDestructuringEntries, name=ScriptDestructuringEntries]
+    CLASS[classId=/Ann, fqName=ScriptDestructuringEntries.Ann, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=Ann, superNames=[]]
+      MODIFIER_LIST[annotation]
+    CLASS[classId=/P, fqName=ScriptDestructuringEntries.P, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=P, superNames=[]]
+      MODIFIER_LIST[data]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=P]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=ScriptDestructuringEntries.P.first, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=first]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER[fqName=ScriptDestructuringEntries.P.second, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=second]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+    PROPERTY[fqName=ScriptDestructuringEntries.p, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=p]
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION[referencedName=P]
+        VALUE_ARGUMENT_LIST
+          VALUE_ARGUMENT[isSpread=false]
+            INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+          VALUE_ARGUMENT[isSpread=false]
+            STRING_TEMPLATE
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=true]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=false, isVar=false]
+    SCRIPT_INITIALIZER
+      REFERENCE_EXPRESSION[referencedName=p]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      REFERENCE_EXPRESSION[referencedName=p]
+    CLASS[classId=/C, fqName=ScriptDestructuringEntries.C, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=false, name=C, superNames=[]]
+      CLASS_BODY
+        DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+          REFERENCE_EXPRESSION[referencedName=p]

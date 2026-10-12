@@ -3008,6 +3008,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("scriptDestructuringEntries.kts")
+    public void testScriptDestructuringEntries() {
+      run("scriptDestructuringEntries.kts");
+    }
+
+    @Test
     @TestMetadata("shortNameBasedDestructuringWithRenaming.kt")
     public void testShortNameBasedDestructuringWithRenaming() {
       run("shortNameBasedDestructuringWithRenaming.kt");
