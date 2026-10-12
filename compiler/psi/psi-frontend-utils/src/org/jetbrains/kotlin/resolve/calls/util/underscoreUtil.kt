@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
-import com.intellij.psi.StubBasedPsiElement
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 /**
@@ -15,8 +14,8 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
  */
 val KtNamedDeclaration.isSingleUnderscore: Boolean
     get() {
-        // We don't want to call 'getNameIdentifier' on stubs to prevent text building
-        // But it's fine because one-underscore names are prohibited for non-local declarations (only lambda parameters, local vars are allowed)
-        if (this is StubBasedPsiElement<*> && this.stub != null) return false
-        return nameIdentifier?.text == "_"
+        // The name goes first: it is read from the stub, while the name identifier forces AST loading for stubs.
+        // The name identifier is needed only to tell `_` from `` `_` ``, which has the same name
+        if (name != "_") return false
+        return nameIdentifier?.textMatches("_") == true
     }

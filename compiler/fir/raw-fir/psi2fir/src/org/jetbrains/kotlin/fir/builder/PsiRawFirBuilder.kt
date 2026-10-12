@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -290,7 +291,7 @@ open class PsiRawFirBuilder(
 
         @Suppress("ConflictingExtensionProperty")
         override val KtDestructuringDeclarationEntry.name: Name
-            get() = if (nameIdentifier?.text == "_") {
+            get() = if (isSingleUnderscore) {
                 SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
             } else {
                 nameAsSafeName
@@ -2501,8 +2502,7 @@ open class PsiRawFirBuilder(
         ): FirProperty {
             val isInsideScript = context.containingScriptSymbol != null && context.className == FqName.ROOT
             val propertyName = when {
-                // The stub-based name goes first as the name identifier forces AST loading for script properties
-                (isLocal || isInsideScript) && name == "_" && nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                (isLocal || isInsideScript) && isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                 else -> nameAsSafeName
             }
             val propertySymbol = if (isLocal) {
@@ -3077,7 +3077,7 @@ open class PsiRawFirBuilder(
             var subjectVariable = when (ktSubjectExpression) {
                 is KtVariableDeclaration -> {
                     val name = when {
-                        ktSubjectExpression.nameIdentifier?.text == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                        ktSubjectExpression.isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                         else -> ktSubjectExpression.nameAsSafeName
                     }
                     buildProperty {
@@ -3308,7 +3308,7 @@ open class PsiRawFirBuilder(
                             source = ktParameter.toFirSourceElement(),
                             name = when {
                                 multiDeclaration != null -> SpecialNames.DESTRUCT
-                                ktParameter.nameIdentifier?.asText == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+                                ktParameter.isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
                                 else -> ktParameter.nameAsSafeName
                             },
                             initializer = buildFunctionCall {
