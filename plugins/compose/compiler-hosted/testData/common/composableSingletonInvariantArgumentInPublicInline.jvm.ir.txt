@@ -337,11 +337,9 @@ FILE fqName:<root> fileName:/composableSingletonInvariantArgumentInPublicInline.
           CALL 'public final fun rememberComposableLambda (key: kotlin.Int, tracked: kotlin.Boolean, block: kotlin.Any, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): androidx.compose.runtime.internal.ComposableLambda declared in androidx.compose.runtime.internal' type=androidx.compose.runtime.internal.ComposableLambda origin=null
             ARG key: CONST Int type=kotlin.Int value=1767442261
             ARG tracked: CONST Boolean type=kotlin.Boolean value=false
-            ARG block: FUN_EXPR type=kotlin.Function3<kotlin.collections.MutableList<kotlin.Any?>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=LAMBDA
+            ARG block: FUN_EXPR type=kotlin.Function3<kotlin.collections.MutableList<S of <root>.PublicInline>, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Unit
-                TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?] reified:false
-                TYPE_PARAMETER name:S index:1 variance: superTypes:[kotlin.Any?] reified:false
-                VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.collections.MutableList<S of <root>.PublicInline.<anonymous>>
+                VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.collections.MutableList<S of <root>.PublicInline>
                 VALUE_PARAMETER kind:Regular name:$composer index:1 type:androidx.compose.runtime.Composer? [assignable]
                 VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
                 annotations:
