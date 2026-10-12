@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsedInsteadOfImport
+import org.jetbrains.kotlin.fir.resolve.diagnostics.HomePackageResolutionMightBeUsedInsteadOfImport
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -213,7 +214,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     consumer.reportExpressionTypeDiagnostic(element)
                 }
 
-                if (element is FirPropertyAccessExpression) {
+                if (element is FirQualifiedAccessExpression) {
                     reportCSRMightBeUsed(element, element.nonFatalDiagnostics)
                 }
 
@@ -251,6 +252,11 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
                 if (ContextSensitiveResolutionMightBeUsedInsteadOfImport in nonFatalDiagnostics) {
                     consumer.report(KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT, element.source)
+                }
+
+                if (HomePackageResolutionMightBeUsedInsteadOfImport in nonFatalDiagnostics) {
+                    val source = (element as? FirQualifiedAccessExpression)?.calleeReference?.source ?: element.source
+                    consumer.report(KtDebugInfoDiagnostics.HPR_MIGHT_BE_USED_INSTEAD_OF_IMPORT, source)
                 }
             }
 
@@ -482,6 +488,7 @@ private class DebugDiagnosticConsumer(
         private val FORCE_REPORTING = setOf(
             KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED,
             KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT,
+            KtDebugInfoDiagnostics.HPR_MIGHT_BE_USED_INSTEAD_OF_IMPORT,
         )
     }
 
@@ -826,6 +833,7 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
     val DYNAMIC by debugInfo0()
     val CSR_MIGHT_BE_USED by debugInfo0()
     val CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT by debugInfo0()
+    val HPR_MIGHT_BE_USED_INSTEAD_OF_IMPORT by debugInfo0()
     val EXPRESSION_TYPE by debugInfo1()
     val CALL by debugInfo1()
     val CALLABLE_OWNER by debugInfo1()
@@ -837,6 +845,7 @@ private object KtDebugInfoDiagnostics : KtDiagnosticsContainer() {
             it.put(DYNAMIC, "")
             it.put(CSR_MIGHT_BE_USED, "")
             it.put(CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT, "")
+            it.put(HPR_MIGHT_BE_USED_INSTEAD_OF_IMPORT, "")
             it.put(EXPRESSION_TYPE, "{0}", TO_STRING)
             it.put(CALL, "{0}", TO_STRING)
             it.put(CALLABLE_OWNER, "{0}", TO_STRING)

@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.isDeprecationLevelHidden
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -326,6 +328,26 @@ fun FirQualifierWithContextSensitiveAlternative.appendCSRAlternativeDiagnosticIf
     return true
 }
 
+context(sessionHolder: SessionHolder)
+fun FirQualifiedAccessExpression.appendHPRAlternativeDiagnosticIfNeeded(): Boolean {
+    val origin = obtainOrigin_()
+    if (origin != FirResolvedSymbolOrigin.ExplicitImport && origin != FirResolvedSymbolOrigin.StarImport) return false
+
+    val symbol = obtainSymbol_() as? FirCallableSymbol<*> ?: return false
+    val symbolPackage = symbol.packageFqName()
+
+    val thisClassSymbol = symbol.resolvedReceiverType?.toClassLikeSymbol() ?: return false
+    val symbolsToCheck = [thisClassSymbol] + thisClassSymbol.getSuperTypes(sessionHolder.session).mapNotNull { it.toClassLikeSymbol() }
+    symbolsToCheck.forEach {
+        if (it.packageFqName() == symbolPackage) {
+            appendNonFatalDiagnostics(HomePackageResolutionMightBeUsedInsteadOfImport)
+            return true
+        }
+    }
+
+    return false
+}
+
 private fun FirCallableSymbol<*>.hadImplicitTypeInSource(): Boolean {
     val returnSource = fir.returnTypeRef.source ?: return true
     return returnSource.kind == KtFakeSourceElementKind.ImplicitTypeRef
@@ -337,8 +359,20 @@ private fun FirExpression.obtainSymbol(): FirBasedSymbol<*>? = when (this) {
     else -> null
 }
 
+private fun FirExpression.obtainSymbol_(): FirBasedSymbol<*>? = when (this) {
+    is FirResolvable -> toResolvedCallableSymbol()
+    is FirResolvedQualifier -> qualifierSymbol
+    else -> null
+}
+
 private fun FirExpression.obtainOrigin(): FirResolvedSymbolOrigin? = when (this) {
     is FirPropertyAccessExpression -> (calleeReference as? FirResolvedNamedReference)?.resolvedSymbolOrigin
+    is FirResolvedQualifier -> resolvedSymbolOrigin
+    else -> null
+}
+
+private fun FirExpression.obtainOrigin_(): FirResolvedSymbolOrigin? = when (this) {
+    is FirResolvable -> (calleeReference as? FirResolvedNamedReference)?.resolvedSymbolOrigin
     is FirResolvedQualifier -> resolvedSymbolOrigin
     else -> null
 }
