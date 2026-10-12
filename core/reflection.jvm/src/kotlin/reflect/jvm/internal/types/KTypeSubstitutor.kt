@@ -192,12 +192,17 @@ internal class KTypeSubstitutor(
                     if (isSuspendFunctionType) drop(1) else this
                 }
             else emptyList()
-            check(typeParameters.size == arguments.size) {
-                "Params vs args count mismatch (${typeParameters.size} != ${arguments.size}) for class '$klass' with args: ${arguments.joinToString()}"
+            val argumentsForSubstitution =
+                if (klass == KFunction::class && arguments.size > typeParameters.size) {
+                    // `KFunctionN` and `KSuspendFunctionN` are mapped to `KFunction`, whose only type parameter is the return type.
+                    arguments.takeLast(typeParameters.size)
+                } else arguments
+            check(typeParameters.size == argumentsForSubstitution.size) {
+                "Params vs args count mismatch (${typeParameters.size} != ${argumentsForSubstitution.size}) for class '$klass' with args: ${arguments.joinToString()}"
             }
             return when {
                 typeParameters.isEmpty() -> EMPTY.copy(isRaw)
-                else -> KTypeSubstitutor(typeParameters.zip(arguments).toMap(), eraseToUpperBoundsAfterSubstitution = isRaw)
+                else -> KTypeSubstitutor(typeParameters.zip(argumentsForSubstitution).toMap(), eraseToUpperBoundsAfterSubstitution = isRaw)
             }
         }
     }
