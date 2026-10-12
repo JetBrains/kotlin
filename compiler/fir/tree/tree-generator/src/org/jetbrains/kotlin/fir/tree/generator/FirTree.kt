@@ -86,6 +86,9 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("moduleData", firModuleDataType)
         +field("origin", declarationOriginType)
         +field("attributes", declarationAttributesType)
+
+        // Declarations are bound to their symbols, so declaration equality is based on symbol equality.
+        equalityBy("symbol")
     }
 
     val callableDeclaration: Element by sealedElement(Declaration) {
