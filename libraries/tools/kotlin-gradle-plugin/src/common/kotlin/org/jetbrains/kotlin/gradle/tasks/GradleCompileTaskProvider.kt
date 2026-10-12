@@ -63,7 +63,7 @@ abstract class GradleCompileTaskProvider @Inject constructor(
 
     @get:Internal
     val rootProjectName: Provider<String> = objectFactory
-        .property(project.rootProject.name.normalizeForFlagFile())
+        .property(project.rootProjectName().normalizeForFlagFile())
 
     @get:Internal
     val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = objectFactory
