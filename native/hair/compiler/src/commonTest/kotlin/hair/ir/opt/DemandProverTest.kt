@@ -12,7 +12,7 @@ import hair.inequality.PhiVertex
 import hair.inequality.Vertex
 import hair.inequality.VertexKey
 import hair.opt.DemandProver
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

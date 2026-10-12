@@ -178,6 +178,11 @@ val ArrayIndexCheck.index: Node
 val ArrayIndexCheck.indexOrNull: Node?
     get() = args.getOrNull(indexIndex)
 
+val ArrayIndexCheck.length: Node
+    get() = args[lengthIndex]
+val ArrayIndexCheck.lengthOrNull: Node?
+    get() = args.getOrNull(lengthIndex)
+
 val DirectMemoryOp.location: Node
     get() = args[locationIndex]
 val DirectMemoryOp.locationOrNull: Node?
@@ -504,6 +509,14 @@ interface ArgumentAccessor {
 
     val ArrayIndexCheck.indexOrNull: Node?
         get() = args.getOrNull(indexIndex)
+
+    
+
+    val ArrayIndexCheck.length: Node
+        get() = args[lengthIndex]
+
+    val ArrayIndexCheck.lengthOrNull: Node?
+        get() = args.getOrNull(lengthIndex)
 
     
 
@@ -866,6 +879,16 @@ interface ArgumentUpdater : ArgumentAccessor, ArgumentUpdaterBase {
     override var ArrayIndexCheck.indexOrNull: Node?
         get() = args.getOrNull(indexIndex)
         set(value) { args[indexIndex] = value }
+
+    
+
+    override var ArrayIndexCheck.length: Node
+        get() = args[lengthIndex]
+        set(value) { args[lengthIndex] = value }
+
+    override var ArrayIndexCheck.lengthOrNull: Node?
+        get() = args.getOrNull(lengthIndex)
+        set(value) { args[lengthIndex] = value }
 
     
 

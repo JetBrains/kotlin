@@ -155,14 +155,16 @@ class ArraySize internal constructor(form: Form, array: Node?) : NodeBase(form, 
 }
 
 
-class ArrayIndexCheck internal constructor(form: Form, control: Controlling?, array: Node?, index: Node?) : BlockBodyWithException(form, listOf(control, array, index)) {
+class ArrayIndexCheck internal constructor(form: Form, control: Controlling?, array: Node?, index: Node?, length: Node?) : BlockBodyWithException(form, listOf(control, array, index, length)) {
     val arrayIndex: Int = 1
     val indexIndex: Int = 2
+    val lengthIndex: Int = 3
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "control"
         1 -> "array"
         2 -> "index"
+        3 -> "length"
         else -> error("Unexpected arg index: $index")
     }
     

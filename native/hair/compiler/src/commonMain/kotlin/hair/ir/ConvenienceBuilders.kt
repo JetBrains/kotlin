@@ -171,3 +171,6 @@ fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<HairClass, context(NodeBui
         BlockEntry(*exits.toTypedArray())
     }
 }
+
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
+fun ArrayIndexCheck(array: Node?, index: Node?): Controlling = ArrayIndexCheck(array, index, ArraySize(array))

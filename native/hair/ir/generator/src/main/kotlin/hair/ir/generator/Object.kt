@@ -61,6 +61,7 @@ object Object : ModelDSL() {
     val arrayIndexCheck by node(ControlFlow.blockBodyWithException) {
         param("array")
         param("index")
+        param("length")
     }
 
 }

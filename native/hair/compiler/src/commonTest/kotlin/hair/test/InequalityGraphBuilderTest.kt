@@ -32,19 +32,6 @@ class InequalityGraphBuilderTest : BceTest {
     }
 
     @Test
-    fun lengthAndZeroAreSynthesizedWhenNoNodeProducesThem() {
-        lateinit var check: ArrayIndexCheck
-        val fc = bceIR(INT, REFERENCE) {
-            check = ArrayIndexCheck(Param(1), Param(0)) as ArrayIndexCheck
-            ReturnVoid()
-        }
-        val g = fc.graph()
-
-        assertTrue((g.lengthOf(check.array) as MinVertex).isSynthesized)
-        assertTrue((g.zero as MinVertex).isSynthesized)
-    }
-
-    @Test
     fun arraySizeAndConstZeroMaterializeThem() {
         lateinit var check: ArrayIndexCheck
         val fc = bceIR(INT, REFERENCE) {
@@ -185,5 +172,31 @@ class InequalityGraphBuilderTest : BceTest {
 
             assertEquals(expected, signature(g), "seed $seed")
         }
+    }
+
+    @Test
+    fun zeroIsSynthesizedWhenNoNodeProducesIt() {
+        lateinit var check: ArrayIndexCheck
+        val fc = bceIR(INT, REFERENCE) {
+            check = ArrayIndexCheck(Param(1), Param(0)) as ArrayIndexCheck
+            ReturnVoid()
+        }
+        val g = fc.graph()
+
+        assertFalse((g.lengthOf(check.array) as MinVertex).isSynthesized, "the  check's own length operand produces it")
+        assertTrue((g.zero as MinVertex).isSynthesized)
+    }
+
+    @Test
+    fun checkGivesLengthPiLowerBound() {
+        lateinit var check: ArrayIndexCheck
+        val fc = bceIR(INT, REFERENCE) {
+            check = ArrayIndexCheck(Param(1), Param(0)) as ArrayIndexCheck
+            ReturnVoid()
+        }
+        val g = fc.graph()
+        val piLen = g.vertexOf(fc.piOf(check, check.length))!!
+
+        assertTrue(piLen.hasPred(Bound.LOWER, g.vertexOf(check.index)!!, 1), "π(len) ≥ i + 1")
     }
 }

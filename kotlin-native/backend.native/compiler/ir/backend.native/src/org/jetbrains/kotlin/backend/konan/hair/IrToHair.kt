@@ -518,11 +518,14 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
 
             funCompilation.dumpHair("initial_ir")
 
+            buildSSA()
+            funCompilation.dumpHair("initial_ir_after_SSA")
+
             insertPis()
             funCompilation.dumpHair("after_pis_insertion")
 
             buildSSA()
-            funCompilation.dumpHair("initial_ir_after_SSA")
+            funCompilation.dumpHair("after_SSA")
 
             context(funCompilation) {
                 eliminateBoundsCheck()

@@ -112,7 +112,7 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitArraySize(node: ArraySize): ArraySize = context(nodeBuilder, NoControlFlowBuilder) { ArraySize(null) } as ArraySize
 
-    override fun visitArrayIndexCheck(node: ArrayIndexCheck): ArrayIndexCheck = context(nodeBuilder, NoControlFlowBuilder) { ArrayIndexCheck(null, null, null) } as ArrayIndexCheck
+    override fun visitArrayIndexCheck(node: ArrayIndexCheck): ArrayIndexCheck = context(nodeBuilder, NoControlFlowBuilder) { ArrayIndexCheck(null, null, null, null) } as ArrayIndexCheck
 
     override fun visitLoad(node: Load): Load = context(nodeBuilder, NoControlFlowBuilder) { Load(node.type)(null, null) } as Load
 

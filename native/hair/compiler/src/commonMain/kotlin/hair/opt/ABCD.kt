@@ -75,13 +75,16 @@ class DemandProver(private val bound: Bound) {
 }
 
 fun InequalityGraph.isUpperRedundant(check: ArrayIndexCheck): Boolean {
-    val len = lengthOf(check.array) ?: return false
     val idx = vertexOf(check.index) ?: return false
-    return DemandProver(Bound.UPPER).prove(
-        source = len,
-        target = idx,
-        c = -1
-    )
+    val upper = DemandProver(Bound.UPPER)
+    val lower = DemandProver(Bound.LOWER)
+    for (len in listOfNotNull(vertexOf(check.length), lengthOf(check.array)).distinct()) {
+        if (upper.prove(source = len, target = idx, c = -1)) return true
+        // `if (constant < len) a[constant]` constant doesn't get a pi node (can't be narrowed), so we ask
+        // is `pi(len) >= constant + 1` instead of the usual is `constant <= pi(len) - 1`
+        if (lower.prove(source = idx, target = len, c = 1)) return true
+    }
+    return false
 }
 
 fun InequalityGraph.isLowerRedundant(check: ArrayIndexCheck): Boolean {

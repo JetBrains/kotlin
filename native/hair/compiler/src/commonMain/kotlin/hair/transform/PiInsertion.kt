@@ -36,22 +36,22 @@ fun Session.insertPis() {
         }
     }
 
+    val checked = allNodes<ArrayIndexCheck>()
+        .flatMap { sequenceOf(it.index, it.length) }
+        .filter { it.isNarrowable() && it !is ReadVar }
+        .distinct()
+        .toList()
+    for (value in checked) value.replaceValueUsesByNewVar("pi$${count++}")
+
     withGCM {
         for (aic in allNodes<ArrayIndexCheck>().toList()) {
-            val index = aic.index
-            if (!index.isNarrowable()) continue
-
-            val varName: Any = if (index is ReadVar) {
-                index.variable
-            } else {
-                val fresh = "pi$${count++}"
-                index.replaceValueUsesByNewVar(fresh)
-                fresh
+            var cursor: Controlling = aic
+            for (value in listOf(aic.index, aic.length).distinct()) {
+                if (value !is ReadVar) continue
+                val read = insertAfter(cursor) { ReadVar(value.variable) as ReadVar }
+                val pi = insertAfter(read) { Pi(read, aic) as Pi }
+                cursor = insertAfter(pi) { AssignVar(value.variable)(pi) as AssignVar }
             }
-
-            val read = insertAfter(aic) { ReadVar(varName) as ReadVar }
-            val pi = insertAfter(read) { Pi(read, aic) as Pi }
-            insertAfter(pi) { AssignVar(varName)(pi) as AssignVar }
         }
     }
 }

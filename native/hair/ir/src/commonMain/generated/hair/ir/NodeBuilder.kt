@@ -348,10 +348,10 @@ context(nodeBuilder: NodeBuilder)
 fun ArraySize(array: Node?): Node = nodeBuilder.onNodeBuilt(ArraySize(nodeBuilder.session.arraySizeForm, array))
 
 context(nodeBuilder: NodeBuilder)
-fun ArrayIndexCheck(control: Controlling?, array: Node?, index: Node?): Controlling = nodeBuilder.onNodeBuilt(ArrayIndexCheck(nodeBuilder.session.arrayIndexCheckForm, control, array, index)) as Controlling
+fun ArrayIndexCheck(control: Controlling?, array: Node?, index: Node?, length: Node?): Controlling = nodeBuilder.onNodeBuilt(ArrayIndexCheck(nodeBuilder.session.arrayIndexCheckForm, control, array, index, length)) as Controlling
 
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ArrayIndexCheck(array: Node?, index: Node?): Controlling = controlBuilder.appendControlled { ctrl -> ArrayIndexCheck(ctrl, array, index) }
+fun ArrayIndexCheck(array: Node?, index: Node?, length: Node?): Controlling = controlBuilder.appendControlled { ctrl -> ArrayIndexCheck(ctrl, array, index, length) }
 
 context(nodeBuilder: NodeBuilder)
 fun Load(type: HairType): Load.Form = Load.Form(nodeBuilder.session.loadMetaForm, type).ensureFormUniq()

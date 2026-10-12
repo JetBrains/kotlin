@@ -148,19 +148,19 @@ class InequalityGraphBuilder private constructor(nodes: Sequence<Node>) : NodeVi
             CmpOp.S_GE -> scopedFact(b, a, 0)
 
             // TODO: check big unsigned values
-            CmpOp.U_LT -> if (cmp.rhs is ArraySize) {
+            CmpOp.U_LT -> if (cmp.rhs.isArrayLength()) {
                 scopedFact(a, b, -1)
                 scopedNonNegative(a)
             }
-            CmpOp.U_LE -> if (cmp.rhs is ArraySize) {
+            CmpOp.U_LE -> if (cmp.rhs.isArrayLength()) {
                 scopedFact(a, b, 0)
                 scopedNonNegative(a)
             }
-            CmpOp.U_GT -> if (cmp.lhs is ArraySize) {
+            CmpOp.U_GT -> if (cmp.lhs.isArrayLength()) {
                 scopedFact(b, a, -1)
                 scopedNonNegative(b)
             }
-            CmpOp.U_GE -> if (cmp.lhs is ArraySize) {
+            CmpOp.U_GE -> if (cmp.lhs.isArrayLength()) {
                 scopedFact(b, a, 0)
                 scopedNonNegative(b)
             }
@@ -169,10 +169,16 @@ class InequalityGraphBuilder private constructor(nodes: Sequence<Node>) : NodeVi
 
     // C5
     override fun visitArrayIndexCheck(node: ArrayIndexCheck) {
-        val pi = piOf(node, node.index) ?: return
-        val p = vertexFor(pi)
-        upper(lengthOf(node.array), p, -1)
-        lower(zero(), p, 0)
+        val index = vertexFor(node.index)
+        val length = vertexFor(node.length)
+        piOf(node, node.index)?.let { pi ->
+            val p = vertexFor(pi)
+            upper(length, p, -1)
+            lower(zero(), p, 0)
+        }
+        piOf(node, node.length)?.let { pi ->
+            lower(index, vertexFor(pi), 1)
+        }
     }
 
     override fun visitPi(node: Pi) {
@@ -205,6 +211,14 @@ class InequalityGraphBuilder private constructor(nodes: Sequence<Node>) : NodeVi
 }
 
 private val HairType.isTracked get() = this == HairType.INT
+
+// Pi and phi of lengths are lengths too
+private fun Node.isArrayLength(visiting: MutableSet<Node> = HashSet()): Boolean = when (this) {
+    is ArraySize -> true
+    is Pi -> value.isArrayLength(visiting)
+    is Phi -> !visiting.add(this) || joinedValues.all { it.isArrayLength(visiting) }
+    else -> false
+}
 
 // TODO: move to CmpOp.kt?
 private fun CmpOp.negated(): CmpOp = when (this) {
