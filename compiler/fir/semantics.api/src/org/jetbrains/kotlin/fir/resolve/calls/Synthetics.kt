@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
@@ -32,13 +35,27 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
  * Frontend IR creates this kind of symbol each time when x.foo should be resolved to x.getFoo() or x.setFoo().
  */
 class FirSimpleSyntheticPropertySymbol(
+    symbolId: FirSymbolId<FirSimpleSyntheticPropertySymbol>,
     propertyId: CallableId,
     getterId: CallableId
-) : FirSyntheticPropertySymbol(propertyId, getterId), SyntheticSymbol
+) : FirSyntheticPropertySymbol(symbolId, propertyId, getterId), SyntheticSymbol {
+    /**
+     * Creates a [FirSimpleSyntheticPropertySymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor(propertyId: CallableId, getterId: CallableId) : this(FirUniqueSymbolId(), propertyId, getterId)
+}
 
 class FirSyntheticFunctionSymbol(
+    symbolId: FirSymbolId<FirSyntheticFunctionSymbol>,
     callableId: CallableId
-) : FirNamedFunctionSymbol(callableId), SyntheticSymbol
+) : FirNamedFunctionSymbol(symbolId, callableId), SyntheticSymbol {
+    /**
+     * Creates a [FirSyntheticFunctionSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor(callableId: CallableId) : this(FirUniqueSymbolId(), callableId)
+}
 
 class FirSyntheticPropertiesScope private constructor(
     val session: FirSession,
