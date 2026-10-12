@@ -13,7 +13,7 @@ interface ConeDiagnostic {
     val readableDescriptionAsTypeConstructor: String get() = reason
 }
 
-class DivergingBareInference(val newType: ConeKotlinType) : ConeDiagnostic {
+class DivergingBareInference(val newType: ConeKotlinType?, val oldType: ConeKotlinType) : ConeDiagnostic {
     override val reason: String = "Diverging bare inference"
 }
 

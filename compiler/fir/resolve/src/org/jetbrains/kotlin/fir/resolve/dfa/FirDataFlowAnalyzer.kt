@@ -573,21 +573,19 @@ abstract class FirDataFlowAnalyzer(
      *   whereas the old type only produces a deprecated smart cast,
      *   see [org.jetbrains.kotlin.types.SmartcastStability.OLD_BARE_INFERENCE].
      */
-    fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, divergedNewBareInferenceType: ConeKotlinType? = null) {
+    fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, divergedOldBareInferenceType: ConeKotlinType? = null) {
         graphBuilder.exitTypeOperatorCall(typeOperatorCall).mergeIncomingFlow { _, flow ->
             if (typeOperatorCall.operation !in FirOperation.TYPES) return@mergeIncomingFlow
-            addTypeOperatorStatements(flow, typeOperatorCall, divergedNewBareInferenceType)
+            addTypeOperatorStatements(flow, typeOperatorCall, divergedOldBareInferenceType)
         }
     }
 
     private fun addTypeOperatorStatements(
         flow: MutableFlow,
         typeOperatorCall: FirTypeOperatorCall,
-        divergedNewBareInferenceType: ConeKotlinType? = null,
+        divergedOldBareInferenceType: ConeKotlinType? = null,
     ) {
-        val conversionType = typeOperatorCall.conversionTypeRef.coneType
-        val type = divergedNewBareInferenceType ?: conversionType
-        val deprecatedType = conversionType.takeIf { divergedNewBareInferenceType != null }
+        val type = typeOperatorCall.conversionTypeRef.coneType
         val operandVariable = flow.rememberVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
         val siblings = typeOperatorCall.conversionTypeRef.coneType
             .toRegularClassSymbol()?.getSealedSiblings()?.takeIf { it.isNotEmpty() }
@@ -606,9 +604,9 @@ abstract class FirDataFlowAnalyzer(
 
                         if (operandVariable.isReal()) {
                             flow.addImplication(variableIsTypeStatement implies (operandVariable typeEq type))
-                            flow.addImplication(variableNotIsTypeStatement implies (operandVariable typeNotEq conversionType))
-                            if (deprecatedType != null) {
-                                flow.addImplication(variableIsTypeStatement implies (operandVariable typeEqDeprecated deprecatedType))
+                            flow.addImplication(variableNotIsTypeStatement implies (operandVariable typeNotEq type))
+                            if (divergedOldBareInferenceType != null) {
+                                flow.addImplication(variableIsTypeStatement implies (operandVariable typeEqDeprecated divergedOldBareInferenceType))
                             }
 
                             if (type.classId == StandardClassIds.RichError) {
@@ -651,8 +649,8 @@ abstract class FirDataFlowAnalyzer(
             FirOperation.AS -> {
                 if (operandVariable.isReal()) {
                     flow.addTypeStatement(operandVariable typeEq type)
-                    if (deprecatedType != null) {
-                        flow.addTypeStatement(operandVariable typeEqDeprecated deprecatedType)
+                    if (divergedOldBareInferenceType != null) {
+                        flow.addTypeStatement(operandVariable typeEqDeprecated divergedOldBareInferenceType)
                     }
 
                     if (siblings != null) {
@@ -680,8 +678,8 @@ abstract class FirDataFlowAnalyzer(
                 flow.addImplication(variableNotEqNull implies (operandVariable notEq null))
                 if (operandVariable.isReal()) {
                     flow.addImplication(variableNotEqNull implies (operandVariable typeEq type))
-                    if (deprecatedType != null) {
-                        flow.addImplication(variableNotEqNull implies (operandVariable typeEqDeprecated deprecatedType))
+                    if (divergedOldBareInferenceType != null) {
+                        flow.addImplication(variableNotEqNull implies (operandVariable typeEqDeprecated divergedOldBareInferenceType))
                     }
 
                     if (type.classId == StandardClassIds.RichError) {

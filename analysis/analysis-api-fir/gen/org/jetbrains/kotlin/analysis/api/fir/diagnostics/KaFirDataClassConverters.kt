@@ -495,6 +495,12 @@ private fun KaDiagnosticConverterBuilder.addConversions4() {
             token,
         )
     }
+    add(FirErrors.NEW_BARE_INFERENCE_FAILED) { firDiagnostic ->
+        NewBareInferenceFailedImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.CAN_BE_VAL_DELAYED_INITIALIZATION) { firDiagnostic ->
         CanBeValDelayedInitializationImpl(
             firDiagnostic as KtDiagnosticWithSource,
