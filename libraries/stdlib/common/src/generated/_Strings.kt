@@ -2575,6 +2575,8 @@ public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> 
 
 /**
  * Creates an [Iterable] instance that wraps the original char sequence returning its characters when being iterated.
+ * 
+ * @sample samples.text.Strings.asIterable
  */
 public fun CharSequence.asIterable(): Iterable<Char> {
     if (this is String && isEmpty()) return emptyList()
@@ -2583,6 +2585,8 @@ public fun CharSequence.asIterable(): Iterable<Char> {
 
 /**
  * Creates a [Sequence] instance that wraps the original char sequence returning its characters when being iterated.
+ * 
+ * @sample samples.text.Strings.asSequence
  */
 public fun CharSequence.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
