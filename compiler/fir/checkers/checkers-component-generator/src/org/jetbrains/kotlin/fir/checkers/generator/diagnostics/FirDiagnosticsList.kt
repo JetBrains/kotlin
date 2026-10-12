@@ -918,7 +918,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
-        val ARGUMENT_TYPE_MISMATCH by error<PsiElement> {
+        val ARGUMENT_TYPE_MISMATCH by warning<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<ConeKotlinType>("expectedType")
             parameter<Boolean>("isMismatchDueToNullability")
@@ -948,7 +948,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
-        val ASSIGNMENT_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.REFERENCE_OR_OPERATOR) {
+        val ASSIGNMENT_TYPE_MISMATCH by warning<KtExpression>(PositioningStrategy.REFERENCE_OR_OPERATOR) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
