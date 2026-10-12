@@ -448,9 +448,9 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
     session: FirSession,
 ): List<KtDiagnostic> {
     fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {
-        return when (expression) {
+        return when (val unwrapped = expression.unwrapArgument()) {
             is FirCollectionLiteral, is FirCallableReferenceAccess, is FirAnonymousFunctionExpression -> false
-            else -> expression.resolvedType.hasError()
+            else -> unwrapped.resolvedType.hasError()
         }
     }
 
