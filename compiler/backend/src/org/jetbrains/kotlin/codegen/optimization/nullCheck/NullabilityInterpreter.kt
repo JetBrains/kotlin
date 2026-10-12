@@ -37,7 +37,7 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
         val resultType = defaultResult?.type
 
         return when {
-            insn.opcode == Opcodes.ACONST_NULL && !insn.isTypeOf() ->
+            insn.opcode == Opcodes.ACONST_NULL && !insn.isTypeOf() && !insn.isEnumEntries() ->
                 NullBasicValue
             insn.opcode == Opcodes.NEW ->
                 NotNullBasicValue(resultType)
@@ -80,6 +80,13 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
         val marker = previous as? MethodInsnNode ?: return false
         return ReifiedTypeInliner.isOperationReifiedMarker(marker)
                 && marker.operationKind == ReifiedTypeInliner.OperationKind.SAFE_AS
+    }
+
+    private fun AbstractInsnNode.isEnumEntries(): Boolean {
+        val marker = previous as? MethodInsnNode ?: return false
+        return ReifiedTypeInliner.isOperationReifiedMarker(marker)
+                && marker.operationKind == ReifiedTypeInliner.OperationKind.ENUM_REIFIED
+                && next?.opcode == CHECKCAST
     }
 
     override fun naryOperation(insn: AbstractInsnNode, values: List<BasicValue>): BasicValue? {
