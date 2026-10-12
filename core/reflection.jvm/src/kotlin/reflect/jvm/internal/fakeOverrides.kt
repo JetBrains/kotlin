@@ -11,6 +11,7 @@ import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.metadata.ClassKind
+import kotlin.metadata.Modality
 import kotlin.reflect.*
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.isSubtypeOf
@@ -109,7 +110,7 @@ private fun createIntersectionOverride(a: ReflectKCallable<*>, b: ReflectKCallab
     return result.shallowCopy(
         result.container,
         result.overriddenStorage.copy(
-            modality = minOf(a, b, modalityIntersectionOverrideComparator).modality,
+            modality = computeIntersectionOverrideModality(a, b),
             overridden = result.overriddenStorage.overridden + other.overriddenStorage.overridden,
             forceIsExternal = a.isExternal || b.isExternal,
             forceIsOperator = a.isOperator || b.isOperator,
@@ -119,6 +120,38 @@ private fun createIntersectionOverride(a: ReflectKCallable<*>, b: ReflectKCallab
     )
 }
 
+// See `OverridingUtil.determineModalityForFakeOverride`.
+private fun computeIntersectionOverrideModality(a: ReflectKFunction, b: ReflectKFunction): Modality {
+    val aModality = a.modality
+    val bModality = b.modality
+    if (aModality == bModality) return aModality
+    if (aModality == Modality.FINAL || bModality == Modality.FINAL) return Modality.FINAL
+
+    // One of the members is open, and the other is abstract. The result is open if there's an open declaration in the hierarchy which is
+    // not overridden by any abstract declaration. Otherwise, it's abstract.
+    val declarations = LinkedHashSet<ReflectKFunction>()
+    a.collectOverriddenDeclarations(declarations, transitively = false)
+    b.collectOverriddenDeclarations(declarations, transitively = false)
+    val overriddenByOtherDeclarations = HashSet<ReflectKFunction>()
+    for (declaration in declarations) {
+        for (overridden in declaration.overridden) {
+            overridden.collectOverriddenDeclarations(overriddenByOtherDeclarations, transitively = true)
+        }
+    }
+    return if (declarations.any { it.modality == Modality.OPEN && it !in overriddenByOtherDeclarations })
+        Modality.OPEN
+    else
+        Modality.ABSTRACT
+}
+
+private fun ReflectKFunction.collectOverriddenDeclarations(result: MutableSet<ReflectKFunction>, transitively: Boolean) {
+    if (!overriddenStorage.isFakeOverride) {
+        if (!result.add(this) || !transitively) return
+    }
+    for (overridden in overridden) {
+        overridden.collectOverriddenDeclarations(result, transitively)
+    }
+}
 internal fun computeOverriddenFunctions(callable: ReflectKFunction): Collection<ReflectKFunction> {
     if (callable.overriddenStorage.isFakeOverride) {
         return callable.overriddenStorage.overridden.map { it as ReflectKFunction }
@@ -159,14 +192,6 @@ private fun getSupertypeMembersByName(supertype: KType, supertypeKClass: KClassI
     }
     return supertypeKClass.getFakeOverrideMembersByName(name).values
 }
-
-private val modalityIntersectionOverrideComparator: Comparator<ReflectKCallable<*>> = compareBy(
-    // Deprioritize interfaces, prioritize classes
-    { (it.originalContainer as? KClass<*>)?.java?.isInterface == true },
-    // If there are multiple superclasses (not interfaces), deprioritize kotlin.Any.
-    // For instance, equals/hashCode/toString which come from interfaces have kotlin.Any container.
-    { it.originalContainer == Any::class },
-)
 
 internal val ReflectKCallable<*>.originalContainer: KDeclarationContainerImpl
     get() = overriddenStorage.originalContainerIfFakeOverride ?: container
