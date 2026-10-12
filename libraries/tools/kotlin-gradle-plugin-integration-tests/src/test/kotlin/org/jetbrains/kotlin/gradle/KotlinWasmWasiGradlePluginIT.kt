@@ -5,53 +5,34 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.named
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.BuildOptions
-import org.jetbrains.kotlin.gradle.testbase.GradleTest
-import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
-import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.TestProject
-import org.jetbrains.kotlin.gradle.testbase.append
-import org.jetbrains.kotlin.gradle.testbase.assertFileExists
-import org.jetbrains.kotlin.gradle.testbase.assertFileInProjectExists
-import org.jetbrains.kotlin.gradle.testbase.assertNoBuildWarnings
-import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
-import org.jetbrains.kotlin.gradle.testbase.assertTasksAreNotInTaskGraph
-import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
-import org.jetbrains.kotlin.gradle.testbase.assertTasksFailed
-import org.jetbrains.kotlin.gradle.testbase.assertTasksUpToDate
-import org.jetbrains.kotlin.gradle.testbase.build
-import org.jetbrains.kotlin.gradle.testbase.buildAndFail
-import org.jetbrains.kotlin.gradle.testbase.disableIsolatedProjectsBecauseOfJsAndWasmKT75899
-import org.jetbrains.kotlin.gradle.testbase.modify
-import org.jetbrains.kotlin.gradle.testbase.printBuildOutput
-import org.jetbrains.kotlin.gradle.testbase.project
+import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
+import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
-import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlin.text.replace
 
-@MppGradlePluginTests
+@WasmWasiGradlePluginTests
 class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
         get() = super.defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
-
-    @DisplayName("Check wasi target")
-    @GradleTest
-    fun wasiTarget(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-wasi-test", gradleVersion) {
-            wasmWasiTest("Node", "NodeJs")
-        }
-    }
 
     @DisplayName("Check wasi target with wasmtime")
     @GradleTest
@@ -59,6 +40,171 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         project("wasm-wasmtime-test", gradleVersion) {
             wasmWasiTest("Wasmtime")
         }
+    }
+
+    @DisplayName("Check wasi target with wasi adapter in disabled mode fails")
+    @GradleTest
+    fun wasiAdapterDisabledMode(gradleVersion: GradleVersion) {
+        project("wasm-wasmtime-test", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE}=${WasiAdapterToolchainMode.DISABLE.name}
+                """.trimMargin()
+            )
+
+            build(":compileProductionExecutableKotlinWasmWasi") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
+            }
+
+            buildAndFail(":compileProductionExecutableKotlinWasmWasiComponentize") {
+                assertOutputContains("WASI adapter toolchain is disabled")
+                assertOutputContains("${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE}=${WasiAdapterToolchainMode.DOWNLOAD.name}")
+            }
+        }
+    }
+
+    @DisplayName("Check wasi target with wasi adapter in preinstalled mode")
+    @GradleTest
+    fun wasiAdapterPreInstalledMode(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        val realTempDir = tempDir.toRealPath()
+        val fakeAdapter = realTempDir.resolve("wasi_snapshot_preview1.command.wasm").toFile()
+        copyMockWasiAdapter(fakeAdapter)
+
+        project("wasm-wasmtime-test", gradleVersion) {
+            gradleProperties.appendText(
+                """
+                |
+                |${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE}=${WasiAdapterToolchainMode.PREINSTALLED.name}
+                |${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH}=${fakeAdapter.absolutePath}
+                """.trimMargin()
+            )
+
+            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
+                assertOutputDoesNotContain("Downloading WASI preview1 adapter")
+                val componentFile =
+                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertFileInProjectExists("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertComponentNew(
+                    inputModule = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm")
+                        .loggedPathString(),
+                    component = componentFile,
+                    adaptModule = fakeAdapter.toPath().loggedPathString(),
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
+    @DisplayName("Check wasi target with reactor flavor requests reactor adapter")
+    @GradleTest
+    fun wasiAdapterReactorFlavor(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        val realTempDir = tempDir.toRealPath()
+        val fakeRepoDir = realTempDir.resolve("mirror").toFile()
+        val fakeInstallDir = realTempDir.resolve("install").toFile()
+        val fakeReactorAdapterFile = fakeRepoDir.resolve("v49.0.1/wasi_snapshot_preview1.reactor.wasm")
+        copyMockWasiAdapter(fakeReactorAdapterFile)
+
+        val expectedInstalledAdapter = fakeInstallDir.resolve("v49.0.1/wasi_snapshot_preview1.reactor.wasm")
+
+        project("wasm-wasmtime-test", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    wasiAdapter {
+                        toolchainService {
+                            installationDir.set(File(fakeInstallDir.invariantSeparatorsPath))
+                            downloadBaseUrl.set(fakeRepoDir.toURI().toString().trimEnd('/'))
+                        }
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                project.tasks.named<WasmComponentizeTask>("compileProductionExecutableKotlinWasmWasiComponentize") {
+                    wasiAdapterRequest.get().flavor.set(org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterFlavor.REACTOR)
+                }
+            }
+
+            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
+                val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v49.0.1/wasi_snapshot_preview1.reactor.wasm"
+                assertOutputContains("Downloading WASI preview1 adapter REACTOR for Wasmtime 49.0.1 from $downloadUrl")
+                assertTrue(expectedInstalledAdapter.exists(), "Expected installed adapter to exist at $expectedInstalledAdapter")
+
+                val componentFile =
+                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertFileInProjectExists("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertComponentNew(
+                    inputModule = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm")
+                        .loggedPathString(),
+                    component = componentFile,
+                    adaptModule = expectedInstalledAdapter.toPath().loggedPathString(),
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
+    @DisplayName("Check wasi target with wasi adapter custom download base url from settings")
+    @GradleTest
+    fun wasiAdapterSettingsCustomDownloadBaseUrl(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        val realTempDir = tempDir.toRealPath()
+        val fakeRepoDir = realTempDir.resolve("mirror").toFile()
+        val fakeInstallDir = realTempDir.resolve("install").toFile()
+        val fakeAdapterFile = fakeRepoDir.resolve("v49.0.1/wasi_snapshot_preview1.command.wasm")
+        copyMockWasiAdapter(fakeAdapterFile)
+
+        val expectedInstalledAdapter = fakeInstallDir.resolve("v49.0.1/wasi_snapshot_preview1.command.wasm")
+
+        project("wasm-wasmtime-test", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    wasiAdapter {
+                        toolchainService {
+                            installationDir.set(File(fakeInstallDir.invariantSeparatorsPath))
+                            downloadBaseUrl.set(fakeRepoDir.toURI().toString().trimEnd('/'))
+                        }
+                    }
+                }
+            }
+
+            build(":compileProductionExecutableKotlinWasmWasiComponentize") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
+                val downloadUrl = fakeRepoDir.toURI().toString().trimEnd('/') + "/v49.0.1/wasi_snapshot_preview1.command.wasm"
+                assertOutputContains("Downloading WASI preview1 adapter COMMAND for Wasmtime 49.0.1 from $downloadUrl")
+                assertTrue(expectedInstalledAdapter.exists(), "Expected installed adapter to exist at $expectedInstalledAdapter")
+
+                val componentFile =
+                    projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertFileInProjectExists("build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm")
+                assertComponentNew(
+                    inputModule = projectPath.resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm")
+                        .loggedPathString(),
+                    component = componentFile,
+                    adaptModule = expectedInstalledAdapter.toPath().loggedPathString(),
+                )
+            }
+        }
+    }
+
+    private fun copyMockWasiAdapter(targetFile: File): File {
+        targetFile.parentFile.mkdirs()
+        val resourceStream =
+            KotlinWasmWasiGradlePluginIT::class.java.classLoader.getResourceAsStream("wasm-adapter/wasi_snapshot_preview1.command.wasm")
+                ?: error("Could not find wasm-adapter/wasi_snapshot_preview1.command.wasm test resource")
+        resourceStream.use { input ->
+            targetFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+        return targetFile
     }
 
     private fun TestProject.wasmWasiTest(engine: String, engineSetup: String = engine) {
@@ -69,7 +215,8 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         }
 
         build(":wasmWasiTest") {
-            assertTasksUpToDate(":kotlinWasm${engineSetup}Setup", ":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
+            assertTasksUpToDate(":kotlinWasm${engineSetup}Setup")
+            assertTasksUpToDate(":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
         }
 
         projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
@@ -92,9 +239,6 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
         build(":wasmWasi${engine}ProductionRun") {
             assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
             assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
-            if (engine == "Wasmtime") {
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiComponentize")
-            }
 
             assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
 
@@ -232,103 +376,88 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     @DisplayName("Check wasi target with wasmtime and wit declarations extracted from klib")
     @GradleTest
     fun wasiWasmtimeWithKlibWitDeclarations(gradleVersion: GradleVersion) {
-        project("wasm-wasmtime-test", gradleVersion) {
-            val libDir = projectPath.resolve("lib").createDirectories()
-            libDir.resolve("build.gradle.kts").writeText(
-                """
-                plugins {
-                    kotlin("multiplatform")
-                    `maven-publish`
-                }
+        val lib = project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
 
-                group = "com.example.wasmlib"
-                version = "0.0.1"
+            plugins {
+                kotlin("multiplatform")
+            }
 
-                kotlin {
+            buildScriptInjection {
+                @OptIn(ExperimentalWasmDsl::class)
+                project.applyMultiplatform {
                     wasmWasi()
-                }
 
-                publishing {
-                    repositories {
-                        maven(rootDir.resolve("repo"))
-                    }
+                    sourceSets.wasmWasiMain.get().compileSource(
+                        """
+                            package com.example.wasmlib
+        
+                            fun getGreeting(): String = "Hello from Lib"
+                        """.trimIndent()
+                    )
                 }
-                """.trimIndent()
+            }
+        }
+
+        val libPublished = lib.publish(
+            publisherConfiguration = PublisherConfiguration(
+                group = "wasmlib",
+                version = "0.0.1",
             )
+        )
 
-            libDir.resolve("src/wasmWasiMain/kotlin/Lib.kt").apply {
-                parent.createDirectories()
-                writeText(
-                    """
-                    package com.example.wasmlib
+        val klibFile = libPublished.wasmWasiComponent.klib
 
-                    fun getGreeting(): String = "Hello from Lib"
-                    """.trimIndent()
-                )
-            }
-
-            val settingsGradleText = settingsGradleKts.readText()
-            settingsGradleKts.append("include(\":lib\")")
-
-            build(":lib:publish") {
-                assertTasksExecuted(":lib:compileKotlinWasmWasi")
-            }
-
-            val publishedKlib = projectPath
-                .resolve("repo/com/example/wasmlib/lib-wasm-wasi/0.0.1/lib-wasm-wasi-0.0.1.klib")
-            assertFileExists(publishedKlib)
-
-            FileSystems.newFileSystem(publishedKlib, null as ClassLoader?).use { fs ->
-                val witFolder = fs.getPath("wit")
-                Files.createDirectories(witFolder)
-                Files.write(
-                    witFolder.resolve("dep.wit"),
-                    """
+        FileSystems.newFileSystem(klibFile.toPath(), null as ClassLoader?).use { fs ->
+            val witFolder = fs.getPath("wit")
+            Files.createDirectories(witFolder)
+            Files.write(
+                witFolder.resolve("dep.wit"),
+                """
                     package com:example;
 
                     world dep {
                         import log: func(param: string);
                     }
                     """.trimIndent().toByteArray()
-                )
+            )
+        }
+
+        project("empty", gradleVersion) {
+
+            addKgpToBuildScriptCompilationClasspath()
+
+            plugins {
+                kotlin("multiplatform")
             }
 
-            settingsGradleKts.writeText(settingsGradleText)
-            settingsGradleKts.append(
-                """
-                dependencyResolutionManagement {
-                    repositories {
-                        maven(rootDir.resolve("repo").toURI())
+            addPublishedProjectToRepositories(libPublished)
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmWasi {
+                        wasmtime()
+                        binaries.executable()
+                    }
+                    @OptIn(ExperimentalWasmDsl::class)
+                    sourceSets.wasmWasiMain.get().apply {
+                        dependencies {
+                            implementation(libPublished.rootCoordinate)
+                        }
+
+                        compileSource(
+                            """
+                                package my.pack.name
+                                import com.example.wasmlib.getGreeting
+                                fun main() {
+                                    println(getGreeting() + ", Wasi")
+                                }
+                            """.trimIndent()
+                        )
                     }
                 }
-                """.trimIndent()
-            )
-
-            buildGradleKts.modify {
-                it.replace(
-                    "sourceSets {",
-                    """
-                    sourceSets {
-                        getByName("wasmWasiMain") {
-                            dependencies {
-                                implementation("com.example.wasmlib:lib-wasm-wasi:0.0.1")
-                            }
-                        }
-                    """.trimIndent()
-                )
             }
-
-            projectPath.resolve("src/wasmWasiMain/kotlin/foo.kt").writeText(
-                """
-                package my.pack.name
-
-                import com.example.wasmlib.getGreeting
-
-                fun main() {
-                    println(getGreeting() + ", Wasi")
-                }
-                """.trimIndent()
-            )
 
             build(":wasmWasiWasmtimeProductionRun") {
                 assertTasksExecuted(
@@ -336,13 +465,13 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                     ":wasmWasiWasmtimeProductionRun"
                 )
                 assertOutputContains("Hello from Lib, Wasi")
-                val componentFile = "build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm"
+                val componentFile = "build/compileSync/wasmWasi/main/productionExecutable/component/$projectName.wasm"
                 assertFileInProjectExists(componentFile)
 
                 val embeddedModule = assertComponentEmbed(
-                    witProjectPattern = "[^\\r\\n]+lib-wasm-wasi[^\\r\\n]*-wit",
+                    witProjectPattern = "[^\\r\\n]+${lib.projectName}-wasm-wasi[^\\r\\n]*-wit",
                     inputModule = projectPath
-                        .resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm")
+                        .resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/$projectName.wasm")
                         .loggedPathString()
                 )
 
@@ -357,32 +486,29 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     @DisplayName("Check wasi target with wasmtime and wit declarations from project dependency")
     @GradleTest
     fun wasiWasmtimeWithProjectDependencyWitDeclarations(gradleVersion: GradleVersion) {
-        project("wasm-wasmtime-test", gradleVersion) {
-            val libDir = projectPath.resolve("lib").createDirectories()
-            libDir.resolve("build.gradle.kts").writeText(
-                """
-                plugins {
-                    kotlin("multiplatform")
-                }
+        val lib = project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
 
-                kotlin {
-                    wasmWasi()
-                }
-                """.trimIndent()
-            )
-
-            libDir.resolve("src/wasmWasiMain/kotlin/Lib.kt").apply {
-                parent.createDirectories()
-                writeText(
-                    """
-                    package com.example.wasmlib
-
-                    fun getLibGreeting(): String = "Hello from Project Lib"
-                    """.trimIndent()
-                )
+            plugins {
+                kotlin("multiplatform")
             }
 
-            val libWit = libDir.resolve("wit")
+            buildScriptInjection {
+                @OptIn(ExperimentalWasmDsl::class)
+                project.applyMultiplatform {
+                    wasmWasi()
+
+                    sourceSets.wasmWasiMain.get().compileSource(
+                        """
+                        package com.example.wasmlib
+    
+                        fun getLibGreeting(): String = "Hello from Project Lib"
+                        """.trimIndent()
+                    )
+                }
+            }
+
+            val libWit = projectPath.resolve("wit")
             libWit.createDirectories()
             libWit.resolve("lib.wit").writeText(
                 """
@@ -393,8 +519,50 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                 }
                 """.trimIndent()
             )
+        }
 
-            settingsGradleKts.append("include(\":lib\")")
+        project("empty", gradleVersion) {
+            include(
+                lib,
+                "lib",
+                // need to compare output with regex
+                // in this case symlinks can confuse
+                useSymlink = false,
+            )
+
+            addKgpToBuildScriptCompilationClasspath()
+
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                @OptIn(ExperimentalWasmDsl::class)
+                project.applyMultiplatform {
+                    wasmWasi {
+                        wasmtime()
+                        binaries.executable()
+                    }
+
+                    sourceSets.wasmWasiMain.get().apply {
+                        dependencies {
+                            implementation(project(":lib"))
+                        }
+
+                        compileSource(
+                            """
+                        package my.pack.name
+        
+                        import com.example.wasmlib.getLibGreeting
+        
+                        fun main() {
+                            println(getLibGreeting() + ", Wasi")
+                        }
+                        """.trimIndent()
+                        )
+                    }
+                }
+            }
 
             val appWit = projectPath.resolve("wit")
             appWit.createDirectories()
@@ -408,32 +576,6 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            buildGradleKts.modify {
-                it.replace(
-                    "sourceSets {",
-                    """
-                    sourceSets {
-                        getByName("wasmWasiMain") {
-                            dependencies {
-                                implementation(project(":lib"))
-                            }
-                        }
-                    """.trimIndent()
-                )
-            }
-
-            projectPath.resolve("src/wasmWasiMain/kotlin/foo.kt").writeText(
-                """
-                package my.pack.name
-
-                import com.example.wasmlib.getLibGreeting
-
-                fun main() {
-                    println(getLibGreeting() + ", Wasi")
-                }
-                """.trimIndent()
-            )
-
             build(":wasmWasiWasmtimeProductionRun") {
                 assertTasksExecuted(
                     ":lib:compileKotlinWasmWasi",
@@ -441,13 +583,13 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                     ":wasmWasiWasmtimeProductionRun"
                 )
                 assertOutputContains("Hello from Project Lib, Wasi")
-                val componentFile = "build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm"
+                val componentFile = "build/compileSync/wasmWasi/main/productionExecutable/component/${projectName}.wasm"
                 assertFileInProjectExists(componentFile)
 
                 val moduleWithLibWit = assertComponentEmbed(
-                    witProject = libWit,
+                    witProject = subProject("lib").projectPath.resolve("wit"),
                     inputModule = projectPath
-                        .resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm")
+                        .resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/${projectName}.wasm")
                         .loggedPathString()
                 )
 
@@ -526,39 +668,35 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     @DisplayName("WASI component model function explicitly imported by a dependency")
     @GradleTest
     fun wasiWasmtimeWithWasiFunctionImportedByDependency(gradleVersion: GradleVersion) {
-        project("wasm-wasmtime-test", gradleVersion) {
-            val libDir = projectPath.resolve("lib").createDirectories()
-            libDir.resolve("build.gradle.kts").writeText(
-                """
-                plugins {
-                    kotlin("multiplatform")
-                }
+        val lib = project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
 
-                kotlin {
-                    wasmWasi()
-                }
-                """.trimIndent()
-            )
-
-            libDir.resolve("src/wasmWasiMain/kotlin/Lib.kt").apply {
-                parent.createDirectories()
-                writeText(
-                    """
-                    package com.example.wasmlib
-
-                    import kotlin.wasm.ExperimentalWasmInterop
-                    import kotlin.wasm.WasmImport
-
-                    @OptIn(ExperimentalWasmInterop::class)
-                    @WasmImport("wasi:clocks/monotonic-clock@$WASI_PACKAGES_VERSION", "now")
-                    private external fun monotonicNow(): Long
-
-                    fun isClockMonotonic(): Boolean = monotonicNow() <= monotonicNow()
-                    """.trimIndent()
-                )
+            plugins {
+                kotlin("multiplatform")
             }
 
-            val libWit = libDir.resolve("wit")
+            buildScriptInjection {
+                @OptIn(ExperimentalWasmDsl::class)
+                project.applyMultiplatform {
+                    wasmWasi()
+
+                    sourceSets.wasmWasiMain.get().compileSource(
+                        """
+                        package com.example.wasmlib
+    
+                        import kotlin.wasm.ExperimentalWasmInterop
+                        import kotlin.wasm.WasmImport
+    
+                        @OptIn(ExperimentalWasmInterop::class)
+                        @WasmImport("wasi:clocks/monotonic-clock@$WASI_PACKAGES_VERSION", "now")
+                        private external fun monotonicNow(): Long
+    
+                        fun isClockMonotonic(): Boolean = monotonicNow() <= monotonicNow()
+                    """.trimIndent()
+                    )
+                }
+            }
+            val libWit = projectPath.resolve("wit")
             libWit.createDirectories()
             libWit.resolve("lib.wit").writeText(
                 """
@@ -570,34 +708,51 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                 """.trimIndent()
             )
             libWit.addMonotonicClockWitDependency()
+        }
 
-            settingsGradleKts.append("include(\":lib\")")
+        project("empty", gradleVersion) {
+            addKgpToBuildScriptCompilationClasspath()
 
-            buildGradleKts.modify {
-                it.replace(
-                    "sourceSets {",
-                    """
-                    sourceSets {
-                        getByName("wasmWasiMain") {
-                            dependencies {
-                                implementation(project(":lib"))
-                            }
-                        }
-                    """.trimIndent()
-                )
+            plugins {
+                kotlin("multiplatform")
             }
 
-            projectPath.resolve("src/wasmWasiMain/kotlin/foo.kt").writeText(
-                """
-                package my.pack.name
-
-                import com.example.wasmlib.isClockMonotonic
-
-                fun main() {
-                    println("Monotonic clock is " + if (isClockMonotonic()) "monotonic" else "broken")
-                }
-                """.trimIndent()
+            include(
+                lib,
+                "lib",
+                // need to compare output with regex
+                // in this case symlinks can confuse
+                useSymlink = false,
             )
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    @OptIn(ExperimentalWasmDsl::class)
+                    wasmWasi {
+                        wasmtime()
+                        binaries.executable()
+                    }
+
+                    @OptIn(ExperimentalWasmDsl::class)
+                    sourceSets.wasmWasiMain.get().apply {
+                        dependencies {
+                            implementation(project(":lib"))
+                        }
+
+                        compileSource(
+                            """
+                            package my.pack.name
+            
+                            import com.example.wasmlib.isClockMonotonic
+            
+                            fun main() {
+                                println("Monotonic clock is " + if (isClockMonotonic()) "monotonic" else "broken")
+                            }
+                        """.trimIndent()
+                        )
+                    }
+                }
+            }
 
             build(":wasmWasiWasmtimeProductionRun") {
                 assertTasksExecuted(
@@ -607,13 +762,13 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
                 )
                 assertOutputContains("Monotonic clock is monotonic")
 
-                val componentFile = "build/compileSync/wasmWasi/main/productionExecutable/component/wasm-wasmtime-test.wasm"
+                val componentFile = "build/compileSync/wasmWasi/main/productionExecutable/component/$projectName.wasm"
                 assertFileInProjectExists(componentFile)
 
                 val embeddedModule = assertComponentEmbed(
-                    witProject = libWit,
+                    witProject = subProject("lib").projectPath.resolve("wit"),
                     inputModule = projectPath
-                        .resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/wasm-wasmtime-test.wasm")
+                        .resolve("build/compileSync/wasmWasi/main/productionExecutable/optimized/$projectName.wasm")
                         .loggedPathString()
                 )
 
@@ -679,11 +834,16 @@ class KotlinWasmWasiGradlePluginIT : KGPBaseTest() {
     /**
      * Asserts that `wasm-tools component new` turned [inputModule] into [component].
      */
-    private fun BuildResult.assertComponentNew(inputModule: String, component: Path) {
+    private fun BuildResult.assertComponentNew(
+        inputModule: String,
+        component: Path,
+        adaptModule: String = "[^\\r\\n]+",
+    ) {
+        val adaptRegex = if (adaptModule == "[^\\r\\n]+") adaptModule else Regex.escape(adaptModule)
         assertOutputContains(
             Regex(
                 Regex.escape("component new $inputModule") +
-                        " --adapt wasi_snapshot_preview1=[^\\r\\n]+ -o " +
+                        " --adapt wasi_snapshot_preview1=$adaptRegex -o " +
                         Regex.escape(component.loggedPathString())
             )
         )

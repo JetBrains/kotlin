@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DefaultNodeJsToolchainSe
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.DisabledNodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.PreInstalledNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.DefaultWasiAdapterToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.DisabledWasiAdapterToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.PreInstalledWasiAdapterToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.DefaultWasmToolsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.DisabledWasmToolsToolchainService
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.PreInstalledWasmToolsToolchainService
@@ -520,6 +524,23 @@ internal object NodeJsToolchainServiceMetrics : FusMetrics {
             }
 
             it.put(StringListMetrics.NODE_JS_TOOLCHAIN_SERVICE, metric)
+        }
+    }
+}
+
+internal object WasiAdapterToolchainServiceMetrics : FusMetrics {
+    @OptIn(ExperimentalWasmDsl::class)
+    internal fun collectServiceCreated(project: Project, serviceProvider: Provider<out WasiAdapterToolchainService<out WasiAdapterToolchainService.Parameters>>) {
+        project.addConfigurationMetrics {
+            val service = serviceProvider.orNull ?: return@addConfigurationMetrics
+            val metric = when (service) {
+                is DisabledWasiAdapterToolchainService -> "disable"
+                is PreInstalledWasiAdapterToolchainService -> "preinstalled"
+                is DefaultWasiAdapterToolchainService -> "download"
+                else -> "custom"
+            }
+
+            it.put(StringListMetrics.WASI_ADAPTER_TOOLCHAIN_SERVICE, metric)
         }
     }
 }

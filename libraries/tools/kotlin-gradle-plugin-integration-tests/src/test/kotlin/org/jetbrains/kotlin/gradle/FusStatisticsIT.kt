@@ -18,13 +18,19 @@ import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsExecutable
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsToolchainService
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapter
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterRequest
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.ecosystem.KotlinEcosystemExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.export.SwiftExportVisibility
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
 import org.jetbrains.kotlin.gradle.tasks.nodejs.UsesNodeJsToolchainService
+import org.jetbrains.kotlin.gradle.tasks.wasiadapter.UsesWasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
@@ -688,6 +694,124 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
+    @MppGradlePluginTests
+    @DisplayName("WASI adapter toolchain service is reported")
+    @GradleTest
+    fun testWasiAdapterToolchainServiceIsReported(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    wasiAdapter {
+                        toolchainService {
+                            downloadBaseUrl.set("some-invalid-url")
+                        }
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                registerTaskToPrintWasiAdapterToolchainService()
+            }
+
+            validateFusDirectory("printWasiAdapterToolchainService", buildAssertions = {
+                assertOutputContains("Wasi Adapter Toolchain Service is DefaultWasiAdapterToolchainServiceImpl\$Inject")
+            }) { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    StringListMetrics.WASI_ADAPTER_TOOLCHAIN_SERVICE.name,
+                    listOf("download")
+                )
+            }
+        }
+    }
+
+    @MppGradlePluginTests
+    @DisplayName("WASI adapter toolchain service from property is reported")
+    @GradleTest
+    fun testWasiAdapterToolchainServicePropertyIsReported(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            gradleProperties.appendText(
+                """
+                |${PropertiesProvider.PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE}=${WasiAdapterToolchainMode.DISABLE.name}
+                """.trimMargin()
+            )
+
+            buildScriptInjection {
+                registerTaskToPrintWasiAdapterToolchainService()
+            }
+
+            validateFusDirectory("printWasiAdapterToolchainService", buildAssertions = {
+                assertOutputContains("Wasi Adapter Toolchain Service is DisabledWasiAdapterToolchainServiceImpl\$Inject")
+            }) { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    StringListMetrics.WASI_ADAPTER_TOOLCHAIN_SERVICE.name,
+                    listOf("disable")
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalWasmDsl::class, ExperimentalNodeJsToolchainDsl::class)
+    @MppGradlePluginTests
+    @DisplayName("Custom WASI adapter toolchain service is reported")
+    @GradleTest
+    fun testWasiAdapterCustomToolchainServiceIsReported(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion,
+            buildOptions = defaultBuildOptions
+                // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+                .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            addKgpToBuildScriptCompilationClasspath()
+            addEcosystemPluginToBuildScriptCompilationClasspath()
+            settingsBuildScriptInjection {
+                settings.plugins.apply("org.jetbrains.kotlin.ecosystem")
+
+                abstract class CustomWasiAdapterToolchainService : WasiAdapterToolchainService<WasiAdapterToolchainService.Parameters> {
+                    override fun requestAdapter(adapterRequest: WasiAdapterRequest): Provider<WasiAdapter> {
+                        throw UnsupportedOperationException("CustomWasiAdapterToolchainService is not supported")
+                    }
+                }
+
+                settings.extensions.getByType(KotlinEcosystemExtension::class.java).toolchainManagement {
+                    wasiAdapter {
+                        toolchainService(CustomWasiAdapterToolchainService::class) {}
+                    }
+                }
+            }
+
+            buildScriptInjection {
+                registerTaskToPrintWasiAdapterToolchainService()
+            }
+
+            validateFusDirectory("printWasiAdapterToolchainService", buildAssertions = {
+                assertOutputContains("Wasi Adapter Toolchain Service is FusStatisticsIT\$testWasiAdapterCustomToolchainServiceIsReported\$1\$1\$CustomWasiAdapterToolchainService\$Inject")
+            }) { fusDirectory ->
+                fusDirectory.assertFusReportContainsMetricWithValues(
+                    StringListMetrics.WASI_ADAPTER_TOOLCHAIN_SERVICE.name,
+                    listOf("custom")
+                )
+            }
+        }
+    }
+
     @DisplayName("native compiler arguments")
     @GradleTest
     @NativeGradlePluginTests
@@ -1165,6 +1289,19 @@ private fun GradleProjectBuildScriptInjectionContext.registerTaskToPrintNodeJsTo
         }
     }
     project.tasks.register("printNodeJsToolchainService", PrintNodeJsToolchainServiceTask::class.java) {
+    }
+}
+
+@OptIn(ExperimentalWasmDsl::class)
+private fun GradleProjectBuildScriptInjectionContext.registerTaskToPrintWasiAdapterToolchainService() {
+    project.applyMultiplatform {} //kotlin plugin is required for FUS to be collected
+    abstract class PrintWasiAdapterToolchainServiceTask : DefaultTask(), UsesWasiAdapterToolchainService {
+        @TaskAction
+        fun action() {
+            println("Wasi Adapter Toolchain Service is ${wasiAdapterToolchainService.get().javaClass.simpleName}")
+        }
+    }
+    project.tasks.register("printWasiAdapterToolchainService", PrintWasiAdapterToolchainServiceTask::class.java) {
     }
 }
 

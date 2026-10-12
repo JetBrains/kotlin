@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.gradle.targets.js.typescript.KotlinJsDtsGenerationTa
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.component.WasmComponentizeTask
-import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimePlugin
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -382,17 +381,6 @@ internal class ExecutableWasmWasi(
         WasmComponentizeTask.register(compilation, componentTaskName()) {
             inputFile.set(wasmFileFromJsFileByMode())
             outputDirectory.set(outputDirBase.map { it.dir(COMPONENT_DIRECTORY_NAME) })
-            val wasmtimeEnv = WasmtimePlugin.applyWithEnvSpec(project)
-            env.set(wasmtimeEnv.env)
-            adapter =
-                wasmtimeEnv.version.map { version ->
-                    project.configurations.detachedConfiguration(
-                        project.dependencies.create(
-                            "bytecodealliance.wasmtime:wasi_snapshot_preview1.command:${version}@wasm"
-                        )
-                    )
-                        .also { conf -> conf.isTransitive = false }
-                }
         }
 
     override val mainWasmFile: Provider<RegularFile> = componentTask.flatMap {

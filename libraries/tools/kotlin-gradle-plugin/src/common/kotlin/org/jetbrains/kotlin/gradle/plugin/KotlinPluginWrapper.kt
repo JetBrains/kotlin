@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArt
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.registerWasiAdapterToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.registerWasmToolsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.registerNodeJsToolchainServiceIfAbsent
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
@@ -84,7 +85,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     private val logger = Logging.getLogger(DefaultKotlinBasePlugin::class.java)
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
-    @OptIn(ExperimentalNodeJsToolchainDsl::class)
+    @OptIn(ExperimentalNodeJsToolchainDsl::class, ExperimentalWasmDsl::class)
     override fun apply(project: Project) {
         project.checkCompilerEmbeddableInClasspath()
         project.registerDefaultVariantImplementations()
@@ -123,7 +124,8 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         registerNodeJsToolchainServiceIfAbsent(project)
 
-        @OptIn(ExperimentalWasmDsl::class)
+        registerWasiAdapterToolchainServiceIfAbsent(project)
+
         registerWasmToolsToolchainServiceIfAbsent(project)
     }
 
