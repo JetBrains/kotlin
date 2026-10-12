@@ -74,7 +74,7 @@ open class AbstractCustomJsCompilerSecondStageTest : AbstractTwoStageKotlinCompi
             useMetaTestConfigurators(::UnsupportedFeaturesTestConfigurator)
         }
         nonGroupingStage {
-            useGroupingTestIsolators(::JsGroupingTestIsolator)
+            useGroupingTestIsolators({ JsGroupingTestIsolator(it, customCompilerStage = CompilationStage.SECOND) })
             useSourcePreprocessor(::JsExportBoxPreprocessor)
 
             setUpDefaultDirectivesForJsBoxTest(FirParser.LightTree)
