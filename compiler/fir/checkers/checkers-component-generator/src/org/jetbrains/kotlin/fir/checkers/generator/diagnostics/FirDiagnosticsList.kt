@@ -844,7 +844,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
-        val NONE_APPLICABLE by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val NONE_APPLICABLE by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Collection<Pair<Symbol, List<String>>>>("candidates")
         }
 
@@ -867,7 +867,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
-        val MEMBER_PROJECTED_OUT by error<PsiElement> {
+        val MEMBER_PROJECTED_OUT by warning<PsiElement> {
             parameter<ConeKotlinType>("receiver")
             parameter<String>("projection")
             parameter<FirCallableSymbol<*>>("symbol")
