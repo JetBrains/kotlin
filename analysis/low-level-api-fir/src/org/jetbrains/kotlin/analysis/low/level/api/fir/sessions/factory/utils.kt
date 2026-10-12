@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.createAnnotationR
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.areSourceBasedSymbolIdsEnabled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentScopeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.LLCheckersFactory
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirR
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirJavaAnnotationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLSubstitutionScopeKeyFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbols.id.LLSymbolIdFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLJumpingPhaseComputationSessionForLocalClassesProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
@@ -41,7 +43,6 @@ import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSetti
 import org.jetbrains.kotlin.fir.scopes.SubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.symbols.id.FirSymbolIdFactory
-import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolIdFactory
 
 @SessionConfiguration
 internal fun LLFirSession.registerIdeComponents(
@@ -50,7 +51,7 @@ internal fun LLFirSession.registerIdeComponents(
     annotationSearchScope: GlobalSearchScope
 ) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
-    register(FirSymbolIdFactory::class, FirUniqueSymbolIdFactory)
+    register(FirSymbolIdFactory::class, LLSymbolIdFactory(this, isSourceBasedEnabled = areSourceBasedSymbolIdsEnabled))
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))
