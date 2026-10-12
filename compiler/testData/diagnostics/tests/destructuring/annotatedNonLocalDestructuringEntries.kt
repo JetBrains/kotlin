@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_DUMP
-// ISSUE: KT-74654, KT-89821
+// ISSUE: KT-74654, KT-90199
 
 annotation class Ann(val s: String)
 
