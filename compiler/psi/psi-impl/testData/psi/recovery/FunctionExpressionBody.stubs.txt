@@ -1,0 +1,49 @@
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionExpressionBodyKt]]
+  facadeFqName: FunctionExpressionBodyKt
+  partSimpleName: "FunctionExpressionBodyKt"
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  FUNCTION[fqName=expressionBody, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionBody]
+    VALUE_PARAMETER_LIST
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+  FUNCTION[fqName=lambdaBody, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=lambdaBody]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=blockBody, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=blockBody]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=noBody, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=noBody]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=whereClause, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=whereClause]
+    TYPE_PARAMETER_LIST
+      TYPE_PARAMETER[fqName=null, name=T]
+    VALUE_PARAMETER_LIST
+    TYPE_CONSTRAINT_LIST
+      TYPE_CONSTRAINT
+        REFERENCE_EXPRESSION[referencedName=T]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=Any]
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+  FUNCTION[fqName=contract, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=contract]
+    VALUE_PARAMETER_LIST
+    CONTRACT_EFFECT_LIST
+      CONTRACT_EFFECT
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION[referencedName=returns]
+          VALUE_ARGUMENT_LIST
+    INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+  FUNCTION[fqName=expressionWithoutEq, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=expressionWithoutEq]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=blockThenEq, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=blockThenEq]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=lambdaThenEq, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=lambdaThenEq]
+    VALUE_PARAMETER_LIST
+    BINARY_EXPRESSION
+      OPERATION_REFERENCE[operationToken=EQ, referencedName==]
+      INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
+  FUNCTION[fqName=doubleEq, hasBody=false, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=doubleEq]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=missingExpressionBeforeSemicolon, hasBody=false, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=missingExpressionBeforeSemicolon]
+    VALUE_PARAMETER_LIST
+  FUNCTION[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
+  FUNCTION[fqName=missingExpression, hasBody=false, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=missingExpression]
+    VALUE_PARAMETER_LIST
