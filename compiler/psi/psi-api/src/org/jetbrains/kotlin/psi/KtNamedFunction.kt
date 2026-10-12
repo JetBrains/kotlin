@@ -10,7 +10,6 @@ import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.containingScript
@@ -78,11 +77,12 @@ open class KtNamedFunction : KtTypeParameterListOwnerStub<KotlinFunctionStub>, K
     override fun getEqualsToken(): PsiElement? =
         findChildByType(KtTokens.EQ)
 
+    // Without a block body, the body is the expression after '='
     override fun getInitializer(): KtExpression? =
-        PsiTreeUtil.getNextSiblingOfType(/* sibling = */ equalsToken, /* aClass = */ KtExpression::class.java)
+        if (hasBlockBody()) null else bodyExpression
 
     override fun hasInitializer(): Boolean =
-        initializer != null
+        !hasBlockBody() && hasBody()
 
     override fun getPresentation(): ItemPresentation? =
         ItemPresentationProviders.getItemPresentation(/* element = */ this)
