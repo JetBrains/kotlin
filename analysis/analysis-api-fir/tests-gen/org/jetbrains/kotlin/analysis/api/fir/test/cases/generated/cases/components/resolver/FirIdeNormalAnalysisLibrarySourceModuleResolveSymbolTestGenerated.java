@@ -5257,6 +5257,122 @@ public class FirIdeNormalAnalysisLibrarySourceModuleResolveSymbolTestGenerated e
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/namedArgumentsInFailedCalls")
+  @TestDataPath("$PROJECT_ROOT")
+  public class NamedArgumentsInFailedCalls {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/namedArgumentsInFailedCalls/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInNamedArgumentsInFailedCalls() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/namedArgumentsInFailedCalls"), Pattern.compile("^(.+)\\.(kt)$"), null, true, "withTestCompilerPluginEnabled", "withErrors", "missingDependency", "cloneable", "companionExtensionAndBlock");
+    }
+
+    @Test
+    @TestMetadata("ambiguousCall.kt")
+    public void testAmbiguousCall() {
+      run("ambiguousCall.kt");
+    }
+
+    @Test
+    @TestMetadata("contextAndValueParameter.kt")
+    public void testContextAndValueParameter() {
+      run("contextAndValueParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("contextAndValueParameterWithoutExplicitContextArguments.kt")
+    public void testContextAndValueParameterWithoutExplicitContextArguments() {
+      run("contextAndValueParameterWithoutExplicitContextArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameter.kt")
+    public void testContextParameter() {
+      run("contextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("contextParameterWithoutExplicitContextArguments.kt")
+    public void testContextParameterWithoutExplicitContextArguments() {
+      run("contextParameterWithoutExplicitContextArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedConstructorCallWithSeveralInapplicableCandidates.kt")
+    public void testDelegatedConstructorCallWithSeveralInapplicableCandidates() {
+      run("delegatedConstructorCallWithSeveralInapplicableCandidates.kt");
+    }
+
+    @Test
+    @TestMetadata("namedSpreadArgument.kt")
+    public void testNamedSpreadArgument() {
+      run("namedSpreadArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedContextAndValueParameters.kt")
+    public void testSameNamedContextAndValueParameters() {
+      run("sameNamedContextAndValueParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedContextAndValueParametersWithoutExplicitContextArguments.kt")
+    public void testSameNamedContextAndValueParametersWithoutExplicitContextArguments() {
+      run("sameNamedContextAndValueParametersWithoutExplicitContextArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedParametersInAmbiguousCall.kt")
+    public void testSameNamedParametersInAmbiguousCall() {
+      run("sameNamedParametersInAmbiguousCall.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedParametersInInapplicableCandidates.kt")
+    public void testSameNamedParametersInInapplicableCandidates() {
+      run("sameNamedParametersInInapplicableCandidates.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedParametersInResolvedCall.kt")
+    public void testSameNamedParametersInResolvedCall() {
+      run("sameNamedParametersInResolvedCall.kt");
+    }
+
+    @Test
+    @TestMetadata("sameNamedParametersOfSameTypeInInapplicableCandidates.kt")
+    public void testSameNamedParametersOfSameTypeInInapplicableCandidates() {
+      run("sameNamedParametersOfSameTypeInInapplicableCandidates.kt");
+    }
+
+    @Test
+    @TestMetadata("severalInapplicableConstructors.kt")
+    public void testSeveralInapplicableConstructors() {
+      run("severalInapplicableConstructors.kt");
+    }
+
+    @Test
+    @TestMetadata("severalInapplicableFunctions.kt")
+    public void testSeveralInapplicableFunctions() {
+      run("severalInapplicableFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("severalInapplicableFunctionsWithSameParameterName.kt")
+    public void testSeveralInapplicableFunctionsWithSameParameterName() {
+      run("severalInapplicableFunctionsWithSameParameterName.kt");
+    }
+
+    @Test
+    @TestMetadata("singleInapplicableCandidate.kt")
+    public void testSingleInapplicableCandidate() {
+      run("singleInapplicableCandidate.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/nestedTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class NestedTypes {
