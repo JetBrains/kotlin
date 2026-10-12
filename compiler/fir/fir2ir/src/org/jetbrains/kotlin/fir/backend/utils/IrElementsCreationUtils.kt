@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -194,6 +195,7 @@ fun createSyntheticFirFileForFir2Ir(
     init: FirFileBuilder.() -> Unit,
 ): FirFile {
     return buildFile {
+        symbol = FirFileSymbol()
         origin = fileOrigin
         moduleData = fileModuleData
         packageDirective = buildPackageDirective {
