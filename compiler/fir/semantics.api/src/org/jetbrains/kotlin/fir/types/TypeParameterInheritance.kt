@@ -41,15 +41,14 @@ fun FirSession.staticallyKnownTypeArgumentsByTypeParameterInheritance(
 
     if (preparedType is ConeIntersectionType) {
         val parameterCount = castClass.fir.typeParameters.size
-        var result: Array<ConeTypeProjection>? = null
+        val result: Array<ConeTypeProjection> = Array(parameterCount) { ConeStarProjection }
         for (intersectedType in preparedType.intersectedTypes) {
             val fromIntersected =
                 staticallyKnownTypeArgumentsByTypeParameterInheritance(castClass, intersectedType, requireEqualBounds) ?: continue
-            val current = result ?: Array<ConeTypeProjection>(parameterCount) { ConeStarProjection }.also { result = it }
             for (index in 0 until parameterCount) {
                 // Prefer the first non-star argument available among the intersected types.
-                if (current[index] == ConeStarProjection && fromIntersected[index] != ConeStarProjection) {
-                    current[index] = fromIntersected[index]
+                if (result[index] == ConeStarProjection && fromIntersected[index] != ConeStarProjection) {
+                    result[index] = fromIntersected[index]
                 }
             }
         }
@@ -131,7 +130,13 @@ fun FirSession.staticallyKnownTypeArgumentsByTypeParameterInheritance(
 
     return Array(castTypeParameters.size) { index ->
         val originalIndex = inheritanceMapping[index]
-        if (originalIndex == -1) return null
+        if (originalIndex == -1) {
+            if (requireEqualBounds) {
+                return null
+            } else {
+                return@Array ConeStarProjection
+            }
+        }
         val originalArgument = originalArguments[originalIndex]
         val castParameterVariance = castTypeParameters[index].variance
         val originalParameterVariance = originalTypeParameters[originalIndex].variance
