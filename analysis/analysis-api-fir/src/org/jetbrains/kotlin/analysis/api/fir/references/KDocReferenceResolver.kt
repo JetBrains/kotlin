@@ -29,13 +29,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
-@Suppress("DuplicatedCode")
 internal object KDocReferenceResolver {
     fun resolveKdocFqName(
         analysisSession: KaSession,
@@ -86,7 +84,6 @@ internal object KDocReferenceResolver {
      * @return the set of [KaSymbol](s) resolved from the fully qualified name
      *         based on the selected FqName and context element
      */
-    @OptIn(KtImplementationDetail::class)
     internal fun resolveKdocFqName(
         analysisSession: KaSession,
         selectedFqName: FqName,
@@ -94,19 +91,7 @@ internal object KDocReferenceResolver {
         contextElement: KtElement,
         containedTagSectionIfSubject: KDocKnownTag?
     ): Set<KaSymbol> {
-        with(analysisSession) {
-            if (KotlinKDocResolutionStrategyProviderService
-                    .getService(useSiteModule.project)
-                    ?.shouldUseExperimentalStrategy() == false
-            ) {
-                return ClassicKDocReferenceResolver.resolveKdocFqName(
-                    analysisSession,
-                    selectedFqName,
-                    fullFqName,
-                    contextElement
-                ).toSet()
-            }
-
+        context(analysisSession) {
             val contextDeclarationOrSelf = contextElement.getContextElementOrSelf()
             val fullSymbolsResolved =
                 resolveKdocFqName(fullFqName, contextDeclarationOrSelf, containedTagSectionIfSubject)
