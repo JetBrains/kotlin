@@ -113,24 +113,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
-  @TestMetadata("defaultMethodInKotlinWithSettingDisable.kt")
-  public void testDefaultMethodInKotlinWithSettingDisable() {
-    run("defaultMethodInKotlinWithSettingDisable.kt");
-  }
-
-  @Test
-  @TestMetadata("defaultMethodInKotlinWithSettingEnable.kt")
-  public void testDefaultMethodInKotlinWithSettingEnable() {
-    run("defaultMethodInKotlinWithSettingEnable.kt");
-  }
-
-  @Test
-  @TestMetadata("defaultMethodInKotlinWithSettingNoCompatibility.kt")
-  public void testDefaultMethodInKotlinWithSettingNoCompatibility() {
-    run("defaultMethodInKotlinWithSettingNoCompatibility.kt");
-  }
-
-  @Test
   @TestMetadata("defaultParameterValue.kt")
   public void testDefaultParameterValue() {
     run("defaultParameterValue.kt");
@@ -263,18 +245,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   }
 
   @Test
-  @TestMetadata("interfaceWithOnlyPrivateImplementations.kt")
-  public void testInterfaceWithOnlyPrivateImplementations() {
-    run("interfaceWithOnlyPrivateImplementations.kt");
-  }
-
-  @Test
-  @TestMetadata("interfaceWithOnlyPrivateImplementationsWithSettingDisable.kt")
-  public void testInterfaceWithOnlyPrivateImplementationsWithSettingDisable() {
-    run("interfaceWithOnlyPrivateImplementationsWithSettingDisable.kt");
-  }
-
-  @Test
   @TestMetadata("jvmField.kt")
   public void testJvmField() {
     run("jvmField.kt");
@@ -362,18 +332,6 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
   @TestMetadata("overriddenReturnTypeNullability.kt")
   public void testOverriddenReturnTypeNullability() {
     run("overriddenReturnTypeNullability.kt");
-  }
-
-  @Test
-  @TestMetadata("privateMethodInInterfaceWithSettingDisable.kt")
-  public void testPrivateMethodInInterfaceWithSettingDisable() {
-    run("privateMethodInInterfaceWithSettingDisable.kt");
-  }
-
-  @Test
-  @TestMetadata("privateMethodInInterfaceWithSettingNoCompatibility.kt")
-  public void testPrivateMethodInInterfaceWithSettingNoCompatibility() {
-    run("privateMethodInInterfaceWithSettingNoCompatibility.kt");
   }
 
   @Test
@@ -1539,6 +1497,62 @@ public class JsSymbolLightClassesByPsiForSourceTestGenerated extends AbstractJsS
     @TestMetadata("jvmInlineWithFullValueClassesEnabled.kt")
     public void testJvmInlineWithFullValueClassesEnabled() {
       run("jvmInlineWithFullValueClassesEnabled.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("analysis/symbol-light-classes/testData/lightClassByPsi/jvmDefault")
+  @TestDataPath("$PROJECT_ROOT")
+  public class JvmDefault {
+    private void run(String fileName) {
+      runTest("analysis/symbol-light-classes/testData/lightClassByPsi/jvmDefault/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInJvmDefault() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/symbol-light-classes/testData/lightClassByPsi/jvmDefault"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("defaultMethodInKotlinWithSettingDisable.kt")
+    public void testDefaultMethodInKotlinWithSettingDisable() {
+      run("defaultMethodInKotlinWithSettingDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultMethodInKotlinWithSettingEnable.kt")
+    public void testDefaultMethodInKotlinWithSettingEnable() {
+      run("defaultMethodInKotlinWithSettingEnable.kt");
+    }
+
+    @Test
+    @TestMetadata("defaultMethodInKotlinWithSettingNoCompatibility.kt")
+    public void testDefaultMethodInKotlinWithSettingNoCompatibility() {
+      run("defaultMethodInKotlinWithSettingNoCompatibility.kt");
+    }
+
+    @Test
+    @TestMetadata("interfaceWithOnlyPrivateImplementations.kt")
+    public void testInterfaceWithOnlyPrivateImplementations() {
+      run("interfaceWithOnlyPrivateImplementations.kt");
+    }
+
+    @Test
+    @TestMetadata("interfaceWithOnlyPrivateImplementationsWithSettingDisable.kt")
+    public void testInterfaceWithOnlyPrivateImplementationsWithSettingDisable() {
+      run("interfaceWithOnlyPrivateImplementationsWithSettingDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("privateMethodInInterfaceWithSettingDisable.kt")
+    public void testPrivateMethodInInterfaceWithSettingDisable() {
+      run("privateMethodInInterfaceWithSettingDisable.kt");
+    }
+
+    @Test
+    @TestMetadata("privateMethodInInterfaceWithSettingNoCompatibility.kt")
+    public void testPrivateMethodInInterfaceWithSettingNoCompatibility() {
+      run("privateMethodInInterfaceWithSettingNoCompatibility.kt");
     }
   }
 
