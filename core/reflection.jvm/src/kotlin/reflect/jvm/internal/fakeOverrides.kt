@@ -7,6 +7,7 @@ package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import java.lang.reflect.Method
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
@@ -270,7 +271,7 @@ internal sealed class EqualityMode {
      * There is also the third kind of signatures: JVM signatures
      * JVM signature is a plain triple: (jvmName: String, parameters: List<Class<*>>, returnType: Class<*>)
      * Contrary to JVM signature, Java signature doesn't include `returnType`,
-     * and Java signatures respect class generics (but not method generics)
+     * and Java signatures respect non-raw generic parameter types (but not method generic bounds).
      */
     data object JavaSignature : EqualityMode()
 }
@@ -355,8 +356,19 @@ internal class EquatableCallableSignature<T : EqualityMode>(
                     // Since we don't have type substitutors for Java types, here we abuse KTypes for this purpose
                     areEqualKTypes(kotlinParameterTypes[i], other.kotlinParameterTypes[i])
         } else {
-            javaErasedParameterTypes[i] == other.javaErasedParameterTypes[i]
+            javaErasedParameterTypes[i] == other.javaErasedParameterTypes[i] &&
+                    areEqualGenericArgumentsIfBothParameterized(i, other)
         }
+
+    private fun areEqualGenericArgumentsIfBothParameterized(i: Int, other: EquatableCallableSignature<*>): Boolean {
+        // If one of parameter types is raw, they are considered equal, because in Java, it's possible to override generic with raw.
+        if (javaGenericParameterTypes[i] !is ParameterizedType || other.javaGenericParameterTypes[i] !is ParameterizedType) return true
+        val substitutor = typeParameters.substitutedWith(other.typeParameters) ?: return true
+        return areEqualKTypes(
+            substitutor.substituteTopLevelType(kotlinParameterTypes[i], name),
+            other.kotlinParameterTypes[i],
+        )
+    }
 
     private fun equalsByKotlinSignature(other: EquatableCallableSignature<*>): Boolean {
         if (name != other.name) return false
