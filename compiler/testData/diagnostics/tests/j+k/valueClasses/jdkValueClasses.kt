@@ -13,10 +13,10 @@ import java.time.ZoneId
 import java.util.Optional
 
 fun test(date: LocalDate, optional: Optional<String>, zone: ZoneId, number: Number) {
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>date<!>) {}
-    synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>optional<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>date<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>optional<!>) {}
     // A Java `Integer`, seen as `Int!`.
-    synchronized(<!IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>Integer.valueOf(1)<!>) {}
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>Integer.valueOf(1)<!>) {}
     // Value-based, but not a value class.
     synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>zone<!>) {}
     // A Kotlin class, which only maps to the Java value class `java.lang.Number`.
