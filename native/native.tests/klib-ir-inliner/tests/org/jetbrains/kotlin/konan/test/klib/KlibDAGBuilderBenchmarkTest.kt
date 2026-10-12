@@ -36,7 +36,9 @@ import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.EnumSource
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.PrintWriter
 import java.nio.file.Path
 import java.util.EnumMap
@@ -47,6 +49,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
+import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
@@ -89,13 +92,14 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries only (no roots)`(mode: KlibDAGBuildingMode) {
+    fun `stdlib and platform libs only (no roots)`(mode: KlibDAGBuildingBenchmarkMode) {
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = emptySet(),
             isRoot = { false },
             expectedRootsNumber = 0,
             mode,
+            configuration = null,
         )
     }
 
@@ -106,148 +110,61 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      */
     @ParameterizedTest
     @EnumSource
-    fun `stdlib and platform libraries only (roots = stdlib + Foundation)`(mode: KlibDAGBuildingMode) {
+    fun `stdlib and platform libs only (roots = stdlib + Foundation)`(mode: KlibDAGBuildingBenchmarkMode) {
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = emptySet(),
             isRoot = { it.isNativeStdlib || it.uniqueName.endsWith(".Foundation") },
             expectedRootsNumber = 2,
             mode,
+            configuration = null,
         )
     }
 
     /**
-     * roots: 20 regular user libs
-     * participating libraries: stdlib + <N> platform libs + 20 user libs
-     * resulting DAG size: 21
+     * roots: [KlibDAGUserLibsConfiguration.totalLibsNumber] user libs
+     * participating libraries: stdlib + <N> platform libs + [KlibDAGUserLibsConfiguration.totalLibsNumber] user libs
+     * resulting DAG size: 1+[KlibDAGUserLibsConfiguration.totalLibsNumber]
      */
     @ParameterizedTest
-    @EnumSource
-    fun `stdlib and platform libraries (roots = 20 + 0 user libs)`(mode: KlibDAGBuildingMode) {
-        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 20, cInteropLibsNumber = 0)
+    @MethodSource("modeAndUserLibsConfiguration")
+    fun `stdlib, platform and user libs`(
+        mode: KlibDAGBuildingBenchmarkMode,
+        userLibsConfiguration: KlibDAGUserLibsConfiguration,
+    ) {
+        val userLibraryPaths = generateUserLibraries(mode, userLibsConfiguration)
 
         benchmark(
             testName = testInfo.testMethod.get().name,
             extraLibraryPaths = userLibraryPaths,
             isRoot = { it.canonicalPath.pathString in userLibraryPaths },
-            expectedRootsNumber = 20,
+            expectedRootsNumber = userLibsConfiguration.totalLibsNumber,
             mode,
+            userLibsConfiguration,
         )
     }
 
-    /**
-     * roots: 15 regular + 5 C-interop user libs
-     * participating libraries: stdlib + <N> platform libs + 20 user libs
-     * resulting DAG size: 21
-     */
-    @ParameterizedTest
-    @EnumSource
-    fun `stdlib and platform libraries (roots = 15 + 5 user libs)`(mode: KlibDAGBuildingMode) {
-        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 15, cInteropLibsNumber = 5)
+    private fun generateUserLibraries(
+        mode: KlibDAGBuildingBenchmarkMode,
+        userLibsConfiguration: KlibDAGUserLibsConfiguration,
+    ): Set<String> = with(mode) {
+        with(userLibsConfiguration) {
+            val maxNumberOfDependencies = max(1, ((regularLibsNumber + cInteropLibsNumber) * density).toInt())
 
-        benchmark(
-            testName = testInfo.testMethod.get().name,
-            extraLibraryPaths = userLibraryPaths,
-            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
-            expectedRootsNumber = 20,
-            mode,
-        )
-    }
+            val cInteropLibraries: List<GeneratedCInteropLibrary> = generateAndCacheCInteropLibraries(cInteropLibsNumber, maxNumberOfDependencies)
+            assertEquals(cInteropLibsNumber, cInteropLibraries.size)
 
-    /**
-     * roots: 10 regular + 10 C-interop user libs
-     * participating libraries: stdlib + <N> platform libs + 20 user libs
-     * resulting DAG size: 21
-     */
-    @ParameterizedTest
-    @EnumSource
-    fun `stdlib and platform libraries (roots = 10 + 10 user libs)`(mode: KlibDAGBuildingMode) {
-        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 10, cInteropLibsNumber = 10)
+            val regularLibraries: List<GeneratedRegularLibrary> = generateAndCacheRegularLibraries(regularLibsNumber, maxNumberOfDependencies, cInteropLibraries)
+            assertEquals(regularLibsNumber, regularLibraries.size)
 
-        benchmark(
-            testName = testInfo.testMethod.get().name,
-            extraLibraryPaths = userLibraryPaths,
-            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
-            expectedRootsNumber = 20,
-            mode,
-        )
-    }
+            val allPaths = buildSet {
+                cInteropLibraries.mapTo(this) { it.path.toRealPath().pathString }
+                regularLibraries.mapTo(this) { it.path.toRealPath().pathString }
+            }
+            assertEquals(regularLibsNumber + cInteropLibsNumber, allPaths.size)
 
-    /**
-     * roots: 100 regular user libs
-     * participating libraries: stdlib + <N> platform libs + 100 user libs
-     * resulting DAG size: 101
-     */
-    @ParameterizedTest
-    @EnumSource
-    fun `stdlib and platform libraries (roots = 100 + 0 user libs)`(mode: KlibDAGBuildingMode) {
-        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 100, cInteropLibsNumber = 0)
-
-        benchmark(
-            testName = testInfo.testMethod.get().name,
-            extraLibraryPaths = userLibraryPaths,
-            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
-            expectedRootsNumber = 100,
-            mode,
-        )
-    }
-
-    /**
-     * roots: 75 regular and 25 C-interop user libs
-     * participating libraries: stdlib + <N> platform libs + 100 user libs
-     * resulting DAG size: 101
-     */
-    @ParameterizedTest
-    @EnumSource
-    fun `stdlib and platform libraries (roots = 75 + 25 user libs)`(mode: KlibDAGBuildingMode) {
-        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 75, cInteropLibsNumber = 25)
-
-        benchmark(
-            testName = testInfo.testMethod.get().name,
-            extraLibraryPaths = userLibraryPaths,
-            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
-            expectedRootsNumber = 100,
-            mode,
-        )
-    }
-
-    /**
-     * roots: 50 regular and 50 C-interop user libs
-     * participating libraries: stdlib + <N> platform libs + 100 user libs
-     * resulting DAG size: 101
-     */
-    @ParameterizedTest
-    @EnumSource
-    fun `stdlib and platform libraries (roots = 50 + 50 user libs)`(mode: KlibDAGBuildingMode) {
-        val userLibraryPaths = generateUserLibraries(regularLibsNumber = 50, cInteropLibsNumber = 50)
-
-        benchmark(
-            testName = testInfo.testMethod.get().name,
-            extraLibraryPaths = userLibraryPaths,
-            isRoot = { it.canonicalPath.pathString in userLibraryPaths },
-            expectedRootsNumber = 100,
-            mode,
-        )
-    }
-
-    private fun generateUserLibraries(regularLibsNumber: Int, cInteropLibsNumber: Int): Set<String> {
-        require(regularLibsNumber >= 0)
-        require(cInteropLibsNumber >= 0)
-        require(regularLibsNumber + cInteropLibsNumber > 0)
-
-        val cInteropLibraries: List<GeneratedCInteropLibrary> = generateAndCacheCInteropLibraries(cInteropLibsNumber)
-        assertEquals(cInteropLibsNumber, cInteropLibraries.size)
-
-        val regularLibraries: List<GeneratedRegularLibrary> = generateAndCacheRegularLibraries(regularLibsNumber, cInteropLibraries)
-        assertEquals(regularLibsNumber, regularLibraries.size)
-
-        val allPaths = buildSet {
-            cInteropLibraries.mapTo(this) { it.path.toRealPath().pathString }
-            regularLibraries.mapTo(this) { it.path.toRealPath().pathString }
+            return allPaths
         }
-        assertEquals(regularLibsNumber + cInteropLibsNumber, allPaths.size)
-
-        return allPaths
     }
 
     private interface GeneratedLibrary {
@@ -273,14 +190,18 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      * Note: The process of building of C-interop libraries is time-consuming. To speed it up, the libraries generated on
      * previous invocations of [generateAndCacheCInteropLibraries] with the same parameters are re-used.
      */
-    private fun generateAndCacheCInteropLibraries(cInteropLibsNumber: Int): List<GeneratedCInteropLibrary> {
+    private fun generateAndCacheCInteropLibraries(
+        cInteropLibsNumber: Int,
+        maxNumberOfDependencies: Int,
+    ): List<GeneratedCInteropLibrary> {
         require(cInteropLibsNumber >= 0)
+        require(maxNumberOfDependencies > 0)
 
         if (cInteropLibsNumber == 0) return emptyList()
 
         // Compute the directory where libraries should be cached:
         val generatedOrCachedLibraryBaseDir: Path = sharedTmpDir
-            .resolve("interop-libs")
+            .resolve("interop-libs-with-$maxNumberOfDependencies-deps")
             .createDirectories()
 
         // Compute the names and paths of C-interop libraries:
@@ -291,8 +212,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         // Generate the libraries that have not been yet generated, and cache them:
         for ((index, name, path) in generatedLibraries) {
             if (!path.exists()) {
-                // just take last 2 c-interop modules
-                val dependencies: List<GeneratedCInteropLibrary> = generatedLibraries.subList(0, index).takeLast(2)
+                // just take last `maxNumberOfDependencies` c-interop modules
+                val dependencies: List<GeneratedCInteropLibrary> = generatedLibraries.subList(0, index).takeLast(maxNumberOfDependencies)
 
                 newSourceModules(
                     customGeneratedSourcesDir = generatedOrCachedLibraryBaseDir,
@@ -351,15 +272,17 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
      */
     private fun generateAndCacheRegularLibraries(
         regularLibsNumber: Int,
+        maxNumberOfDependencies: Int,
         cInteropLibraries: List<GeneratedCInteropLibrary>,
     ): List<GeneratedRegularLibrary> {
         require(regularLibsNumber >= 0)
+        require(maxNumberOfDependencies > 0)
 
         if (regularLibsNumber == 0) return emptyList()
 
         // Compute the directory where libraries should be cached:
         val generatedOrCachedLibraryBaseDir: Path = sharedTmpDir
-            .resolve("regular-libs-for-${cInteropLibraries.size}-interop-libs")
+            .resolve("regular-libs-for-${cInteropLibraries.size}-interop-libs-with-$maxNumberOfDependencies-deps")
             .createDirectories()
 
         // Compute the names and paths of C-interop libraries:
@@ -371,8 +294,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             if (!path.exists()) {
 
                 val dependencies: List<GeneratedLibrary> = buildList {
-                    addAll(generatedLibraries.subList(0, index).takeLast(2)) // just take last 2 regular modules
-                    addAll(cInteropLibraries.takeLast(2 - size)) // for the first 2 modules also add deps on C-interop modules
+                    addAll(generatedLibraries.subList(0, index).takeLast(maxNumberOfDependencies)) // just take last `maxNumberOfDependencies` regular modules
+                    addAll(cInteropLibraries.takeLast(maxNumberOfDependencies - size)) // for the first `maxNumberOfDependencies` modules also add deps on C-interop modules
                 }
 
                 newSourceModules {
@@ -422,7 +345,8 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         extraLibraryPaths: Set<String>,
         isRoot: (KotlinLibrary) -> Boolean,
         expectedRootsNumber: Int, // Sanity check.
-        mode: KlibDAGBuildingMode,
+        mode: KlibDAGBuildingBenchmarkMode,
+        configuration: KlibDAGUserLibsConfiguration?,
     ) {
         repeat(2) {
             System.gc()
@@ -457,10 +381,10 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         runBenchWithWarmup(
             testName = testName,
             target = target,
-            numberOfLibraries = allLibraries.size,
             mode = mode,
+            configuration = configuration,
             warmupRounds = 10,
-            benchmarkRounds = 20,
+            benchmarkRounds = 40,
             pre = System::gc,
             post = {
                 println("The computed DAG size is: ${latestDag!!.librariesReverseTopoSorted.size}")
@@ -469,7 +393,7 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             latestDag = KlibDAGBuilder(
                 Parameters(libraries = allLibraries) { it in roots }.apply {
                     @OptIn(InternalKlibDAGApi::class)
-                    useSignatureIndices = mode.useSignatureIndices
+                    useSignatureIndices = mode.dagMode.useSignatureIndices
                 }
             ).build()
         }
@@ -479,15 +403,15 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     private fun runBenchWithWarmup(
         testName: String,
         target: KonanTarget,
-        numberOfLibraries: Int,
-        mode: KlibDAGBuildingMode,
+        mode: KlibDAGBuildingBenchmarkMode,
+        configuration: KlibDAGUserLibsConfiguration?,
         warmupRounds: Int,
         benchmarkRounds: Int,
         pre: () -> Unit,
         post: () -> Unit,
         bench: () -> Unit,
     ) {
-        val displayTestName = "$testName ($target, $numberOfLibraries libraries)"
+        val displayTestName = "$testName ($target${if (configuration != null) ", $configuration" else ""})"
 
         println("Run [$displayTestName] benchmark")
         println("Warmup: $warmupRounds times...")
@@ -521,10 +445,14 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         reporter.logMeasurements(
             testName = testName,
             target = target,
-            numberOfLibraries = numberOfLibraries,
             mode = mode,
+            configuration = configuration,
             medianDuration = medianDuration,
         )
+    }
+
+    fun modeAndUserLibsConfiguration(): List<Arguments> = KlibDAGUserLibsConfiguration.entries.flatMap { configuration ->
+        KlibDAGBuildingBenchmarkMode.entries.map { mode -> Arguments.of(mode, configuration) }
     }
 }
 
@@ -547,26 +475,28 @@ private fun Duration.toPrettyString(): String {
 private class BenchmarkResultsReporter(private val reportPath: Path) {
     private data class TestKey(
         val testName: String,
-        val rootsNumber: Int,
+        val configuration: KlibDAGUserLibsConfiguration?,
         val target: KonanTarget,
     ) : Comparable<TestKey> {
         override fun compareTo(other: TestKey): Int {
-            rootsNumber.compareTo(other.rootsNumber).let { if (it != 0) return it }
             testName.compareTo(other.testName).let { if (it != 0) return it }
+            compareValues(configuration, other.configuration).let { if (it != 0) return it }
             return target.name.compareTo(other.target.name)
         }
     }
 
-    private val measurements: MutableMap<TestKey, MutableMap<KlibDAGBuildingMode, Duration>> = hashMapOf()
+    private val measurements: MutableMap<TestKey, MutableMap<KlibDAGBuildingBenchmarkMode, Duration>> = hashMapOf()
 
     fun logMeasurements(
         testName: String,
         target: KonanTarget,
-        numberOfLibraries: Int,
-        mode: KlibDAGBuildingMode,
+        mode: KlibDAGBuildingBenchmarkMode,
+        configuration: KlibDAGUserLibsConfiguration?,
         medianDuration: Duration,
     ) {
-        measurements.getOrPut(TestKey(testName, numberOfLibraries, target)) { EnumMap(KlibDAGBuildingMode::class.java) }[mode] = medianDuration
+        measurements.getOrPut(TestKey(testName, configuration, target)) {
+            EnumMap(KlibDAGBuildingBenchmarkMode::class.java)
+        }[mode] = medianDuration
     }
 
     fun writeReport() {
@@ -597,11 +527,11 @@ private class BenchmarkResultsReporter(private val reportPath: Path) {
                 writer.println()
                 writer.println("### Target: $currentTarget")
 
-                printHeader("Test name", KlibDAGBuildingMode.entries.map { "$it<br/>(median time)" })
+                printHeader("Test name", KlibDAGBuildingBenchmarkMode.entries.map { "$it<br/>(median time)" })
 
                 for (testKey in measurements.keys.filter { it.target == currentTarget }.sorted()) {
-                    val modeAndDuration: Map<KlibDAGBuildingMode, Duration> = measurements.getValue(testKey)
-                    val durations: List<Duration?> = KlibDAGBuildingMode.entries.map(modeAndDuration::get)
+                    val modeAndDuration: Map<KlibDAGBuildingBenchmarkMode, Duration> = measurements.getValue(testKey)
+                    val durations: List<Duration?> = KlibDAGBuildingBenchmarkMode.entries.map(modeAndDuration::get)
 
                     val renderedDurations = durations.mapIndexed { index, duration ->
                         if (duration == null)
@@ -628,11 +558,57 @@ private class BenchmarkResultsReporter(private val reportPath: Path) {
                         }
                     }
 
-                    printRow(testKey.testName, renderedDurations)
+                    printRow(testKey.testName + testKey.configuration?.let { "<br/>${it}" }.orEmpty(), renderedDurations)
                 }
             }
         }
 
         println("Benchmarks report is available here: ${reportPath.absolute().toUri().toASCIIString()}")
+    }
+}
+
+@Suppress("unused") // Enum entries are not used directly in the source code.
+enum class KlibDAGBuildingBenchmarkMode(
+    val dagMode: KlibDAGBuildingMode,
+    val density: Double,
+) {
+    NO_INDICES(dagMode = KlibDAGBuildingMode.NO_INDICES, density = 0.1),
+    LOW_DENSITY(dagMode = KlibDAGBuildingMode.WITH_INDICES, density = 0.1),
+    MEDIUM_DENSITY(dagMode = KlibDAGBuildingMode.WITH_INDICES, density = 0.5),
+    HIGH_DENSITY(dagMode = KlibDAGBuildingMode.WITH_INDICES, density = 0.9);
+
+    init {
+        check(density > 0 && density <= 1.0)
+    }
+
+    override fun toString() = "$dagMode${"/d=%.2f".format(density)}"
+}
+
+@Suppress("unused") // Enum entries are not used directly in the source code.
+enum class KlibDAGUserLibsConfiguration(
+    val regularLibsNumber: Int,
+    val cInteropLibsNumber: Int,
+) {
+    REGULAR_20(20, 0),
+    REGULAR_15_CINTEROP_5(15, 5),
+    REGULAR_10_CINTEROP_10(10, 10),
+    REGULAR_100(100, 0),
+    REGULAR_75_CINTEROP_25(75, 25),
+    REGULAR_50_CINTEROP_50(50, 50),
+    ;
+
+    init {
+        check(regularLibsNumber > 0)
+        check(cInteropLibsNumber >= 0)
+    }
+
+    val totalLibsNumber get() = regularLibsNumber + cInteropLibsNumber
+
+    override fun toString() = buildString {
+        append("roots = $regularLibsNumber regular")
+        if (cInteropLibsNumber > 0) {
+            append(" + $cInteropLibsNumber C-interop")
+        }
+        append(" libs")
     }
 }

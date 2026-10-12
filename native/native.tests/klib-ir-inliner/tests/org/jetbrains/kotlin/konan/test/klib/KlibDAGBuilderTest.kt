@@ -543,12 +543,10 @@ class KlibDAGBuilderTest : AbstractNativeSimpleTest() {
     }
 }
 
-enum class KlibDAGBuildingMode(
-    private val alias: String,
-    val useSignatureIndices: Boolean,
-) {
-    NO_INDICES("no indices", useSignatureIndices = false),
-    WITH_INDICES("with indices", useSignatureIndices = true);
+@Suppress("unused") // Enum entries are not used directly in the source code.
+enum class KlibDAGBuildingMode(val useSignatureIndices: Boolean) {
+    NO_INDICES(useSignatureIndices = false),
+    WITH_INDICES(useSignatureIndices = true);
 
-    override fun toString() = alias
+    override fun toString() = if (useSignatureIndices) "with-indices" else "no-indices"
 }
