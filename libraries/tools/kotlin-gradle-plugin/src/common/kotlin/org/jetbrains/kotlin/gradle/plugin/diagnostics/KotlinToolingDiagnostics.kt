@@ -2030,7 +2030,10 @@ internal object KotlinToolingDiagnostics {
     internal object DeprecatedSwiftExportDsl : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
         operator fun invoke() = build {
             title("Deprecated 'swiftExport { }' DSL")
-                .description("The 'swiftExport { }' DSL is deprecated and will be removed in Kotlin 2.7.")
+                .description(
+                    "The 'swiftExport { }' DSL is deprecated. It will become an error in Kotlin 2.5.20 " +
+                            "and will be removed in Kotlin 2.6.0."
+                )
                 .solution(
                     "Move the configuration to 'export { swift { } }'. Rename 'flattenPackage' to 'rootPackage' " +
                             "and call 'xcodeIntegration()' to register the task that embeds Swift Export's " +
