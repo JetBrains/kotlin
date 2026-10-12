@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.buildDir
 import org.jetbrains.kotlin.konan.test.blackbox.generateTestCaseWithSingleFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CInteropCompilation
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.GivenLibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact.KLIB
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
@@ -17,12 +18,13 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.name
+import kotlin.io.path.pathString
 import kotlin.io.path.writeText
 
-interface KlibTestSourceModule {
+sealed interface KlibTestModule {
     val name: String
     val kind: Kind
-    val dependencies: List<KlibTestSourceModule>
+    val dependencies: List<KlibTestModule>
 
     enum class Kind {
         REGULAR,
@@ -30,21 +32,37 @@ interface KlibTestSourceModule {
     }
 }
 
-interface RegularKlibTestSourceModule : KlibTestSourceModule {
+sealed interface RegularKlibTestSourceModule : KlibTestModule {
+    override val kind get() = KlibTestModule.Kind.REGULAR
     val sourceFile: Path
 }
 
-interface CInteropKlibTestSourceModule : KlibTestSourceModule {
-    val defFile: Path
+sealed interface RegularKlibExistingModule : ExistingKlibModule {
+    override val kind get() = KlibTestModule.Kind.REGULAR
+}
+
+sealed interface CInteropKlibModule : KlibTestModule {
+    override val kind get() = KlibTestModule.Kind.CINTEROP
     val headerFile: Path
 }
 
+sealed interface CInteropKlibTestSourceModule : CInteropKlibModule {
+    val defFile: Path
+}
+
+sealed interface CInteropKlibExistingModule : CInteropKlibModule, ExistingKlibModule
+
+interface ExistingKlibModule : KlibTestModule {
+    val path: Path
+}
+
 class KlibTestSourceModules(
-    val modules: List<KlibTestSourceModule>
+    val modules: List<KlibTestModule>
 )
 
 internal interface KlibTestSourceModuleBuilder {
     fun dependsOn(dependencyName: String, vararg otherDependencyNames: String)
+    fun dependsOn(dependencyNames: List<String>)
 }
 
 internal interface RegularKlibTestSourceModuleBuilder : KlibTestSourceModuleBuilder {
@@ -58,43 +76,55 @@ internal interface CInteropKlibTestSourceModuleBuilder : KlibTestSourceModuleBui
 
 internal interface KlibTestSourceModulesBuilder {
     fun addRegularModule(name: String, init: RegularKlibTestSourceModuleBuilder.() -> Unit = {})
+    fun addRegularModule(name: String, path: Path)
     fun addCInteropModule(name: String, init: CInteropKlibTestSourceModuleBuilder.() -> Unit = {})
+    fun addCInteropModule(name: String, path: Path, headerFilePath: Path)
 }
+
+// Private module implementation.
+
+private sealed class BaseModuleImpl(
+    override val name: String,
+    val dependencyNames: List<String>,
+) : KlibTestModule {
+    override lateinit var dependencies: List<KlibTestModule>
+
+    final override fun toString(): String = "Module \"$name\""
+    final override fun hashCode() = name.hashCode()
+    final override fun equals(other: Any?) = (other as? BaseModuleImpl)?.name == name
+}
+
+private class RegularSourceModuleImpl(
+    name: String,
+    val sourceFileAddend: String,
+    dependencyNames: List<String>,
+) : RegularKlibTestSourceModule, BaseModuleImpl(name, dependencyNames) {
+    override lateinit var sourceFile: Path
+}
+
+private class RegularExistingModuleImpl(
+    name: String,
+    override val path: Path,
+) : RegularKlibExistingModule, BaseModuleImpl(name, dependencyNames = emptyList())
+
+private class CInteropSourceModuleImpl(
+    name: String,
+    val defFileAddend: String,
+    val headerFileAddend: String,
+    dependencyNames: List<String>,
+) : CInteropKlibTestSourceModule, BaseModuleImpl(name, dependencyNames) {
+    override lateinit var defFile: Path
+    override lateinit var headerFile: Path
+}
+
+private class CInteropExistingModuleImpl(
+    name: String,
+    override val path: Path,
+    override val headerFile: Path,
+) : CInteropKlibExistingModule, BaseModuleImpl(name, dependencyNames = emptyList())
 
 context(testRunner: AbstractNativeSimpleTest)
 internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): KlibTestSourceModules {
-    // Private module implementation.
-    abstract class BaseModuleImpl(
-        override val name: String,
-        val dependencyNames: List<String>,
-    ) : KlibTestSourceModule {
-        override lateinit var dependencies: List<KlibTestSourceModule>
-
-        final override fun toString(): String = "Module \"$name\""
-        final override fun hashCode() = name.hashCode()
-        final override fun equals(other: Any?) = (other as? BaseModuleImpl)?.name == name
-    }
-
-    class RegularModuleImpl(
-        name: String,
-        val sourceFileAddend: String,
-        dependencyNames: List<String>,
-    ) : RegularKlibTestSourceModule, BaseModuleImpl(name, dependencyNames) {
-        override lateinit var sourceFile: Path
-        override val kind get() = KlibTestSourceModule.Kind.REGULAR
-    }
-
-    class CInteropModuleImpl(
-        name: String,
-        val defFileAddend: String,
-        val headerFileAddend: String,
-        dependencyNames: List<String>,
-    ) : CInteropKlibTestSourceModule, BaseModuleImpl(name, dependencyNames) {
-        override lateinit var defFile: Path
-        override lateinit var headerFile: Path
-        override val kind get() = KlibTestSourceModule.Kind.CINTEROP
-    }
-
     // The list of source modules being built.
     val modules = mutableListOf<BaseModuleImpl>()
 
@@ -104,6 +134,10 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
 
         override fun dependsOn(dependencyName: String, vararg otherDependencyNames: String) {
             dependencyNames = listOf(dependencyName) + otherDependencyNames.toList()
+        }
+
+        override fun dependsOn(dependencyNames: List<String>) {
+            this.dependencyNames = dependencyNames
         }
     }
 
@@ -133,13 +167,21 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
         override fun addRegularModule(name: String, init: RegularKlibTestSourceModuleBuilder.() -> Unit) {
             val builder = RegularModuleBuilderImpl()
             builder.init()
-            modules += RegularModuleImpl(name, builder.sourceFileAddend, builder.dependencyNames)
+            modules += RegularSourceModuleImpl(name, builder.sourceFileAddend, builder.dependencyNames)
+        }
+
+        override fun addRegularModule(name: String, path: Path) {
+            modules += RegularExistingModuleImpl(name, path)
         }
 
         override fun addCInteropModule(name: String, init: CInteropKlibTestSourceModuleBuilder.() -> Unit) {
             val builder = CInteropModuleBuilderImpl()
             builder.init()
-            modules += CInteropModuleImpl(name, builder.defFileAddend, builder.headerFileAddend, builder.dependencyNames)
+            modules += CInteropSourceModuleImpl(name, builder.defFileAddend, builder.headerFileAddend, builder.dependencyNames)
+        }
+
+        override fun addCInteropModule(name: String, path: Path, headerFilePath: Path) {
+            modules += CInteropExistingModuleImpl(name, path, headerFilePath)
         }
     }
 
@@ -147,7 +189,7 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
     val builder = ModulesBuilderImpl()
     builder.init()
 
-    val nameToModuleMapping: Map<String, BaseModuleImpl> = modules.groupBy(KlibTestSourceModule::name).mapValues {
+    val nameToModuleMapping: Map<String, BaseModuleImpl> = modules.groupBy(KlibTestModule::name).mapValues {
         it.value.singleOrNull() ?: error("Duplicated modules: ${it.value}")
     }
 
@@ -160,7 +202,7 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
     // Generate sources.
     modules.forEach { module ->
         when (module) {
-            is RegularModuleImpl -> {
+            is RegularSourceModuleImpl -> {
                 module.sourceFile = generatedSourcesDir.resolve(module.name + ".kt")
                 module.sourceFile.writeText(
                     buildString {
@@ -170,7 +212,7 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
                         appendLine("    repeat(indent) { print(\"  \") }")
                         appendLine("    println(\"${module.name}\")")
                         module.dependencies.forEach { dependency ->
-                            if (dependency.kind == KlibTestSourceModule.Kind.CINTEROP) {
+                            if (dependency.kind == KlibTestModule.Kind.CINTEROP) {
                                 appendLine("    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)")
                             }
                             appendLine("    ${dependency.name}.${dependency.name}(indent + 1)")
@@ -185,8 +227,8 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
                 )
             }
 
-            is CInteropModuleImpl -> {
-                val onlyCInteropDependencies = module.dependencies.filterIsInstance<CInteropKlibTestSourceModule>()
+            is CInteropSourceModuleImpl -> {
+                val onlyCInteropDependencies = module.dependencies.filterIsInstance<CInteropKlibModule>()
 
                 module.headerFile = generatedSourcesDir.resolve(module.name + ".h")
                 module.headerFile.writeText(
@@ -230,7 +272,7 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
                 )
             }
 
-            else -> error("Unknown module type: $module, ${module::class.java}")
+            is ExistingKlibModule -> Unit // Do nothing.
         }
     }
 
@@ -241,7 +283,7 @@ context(testRunner: AbstractNativeSimpleTest)
 internal fun KlibTestSourceModules.compileToKlibsViaCli(
     produceUnpackedKlibs: Boolean = true,
     extraCliArgs: List<String> = emptyList(),
-    transform: ((module: KlibTestSourceModule, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
+    transform: ((module: KlibTestModule, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
 ) {
     val klibFilesDir = testRunner.buildDir.resolve(
         listOf(
@@ -252,9 +294,13 @@ internal fun KlibTestSourceModules.compileToKlibsViaCli(
     )
     klibFilesDir.mkdirs()
 
-    fun KlibTestSourceModule.computeArtifactPath(): String {
-        val basePath: String = klibFilesDir.resolve(name).path
-        return if (produceUnpackedKlibs) basePath else "$basePath.klib"
+    fun KlibTestModule.computeArtifactPath(): String {
+        return if (this is ExistingKlibModule)
+            path.pathString
+        else {
+            val basePath: String = klibFilesDir.resolve(name).path
+            if (produceUnpackedKlibs) basePath else "$basePath.klib"
+        }
     }
 
     modules.forEach { module ->
@@ -308,7 +354,9 @@ internal fun KlibTestSourceModules.compileToKlibsViaCli(
                 )
             }
 
-            else -> error("Unknown module type: $module, ${module::class.java}")
+            is ExistingKlibModule -> GivenLibraryCompilation(
+                givenArtifact = KLIB(module.path.toFile())
+            )
         }
 
         val success = compilation.result.assertSuccess()
