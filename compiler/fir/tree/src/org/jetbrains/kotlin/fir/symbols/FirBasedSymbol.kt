@@ -21,10 +21,12 @@ import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.types.classLikeLookupTagIfAny
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdentifierEntry
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 /**
  * The symbol of a [FIR declaration][FirDeclaration] of type [E].
@@ -38,6 +40,9 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  *
  * Each symbol has a [symbol ID][FirSymbolId] ([symbolId][org.jetbrains.kotlin.fir.symbols.symbolId]), which identifies the symbol and
  * references it. The symbol binds itself to its symbol ID on construction.
+ *
+ * Symbol equality is based on the symbol ID: two symbols are equal if their symbol IDs are equal. With unique symbol IDs, this is
+ * equivalent to identity. Since FIR declarations are bound to their symbols, [FirDeclaration] equality is based on symbol equality as well.
  *
  * ### Default constructors
  *
@@ -101,6 +106,27 @@ abstract class FirBasedSymbol<out E : FirDeclaration>(symbolId: FirSymbolId<FirB
 
     val resolvedAnnotationClassIds: List<ClassId>
         get() = fir.resolvedAnnotationClassIds(this)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is FirBasedSymbol<*>) return false
+        if (backingSymbolId != other.backingSymbolId) return false
+
+        requireWithAttachment(
+            javaClass == other.javaClass,
+            {
+                "Suspicious symbol equality: This `${this::class.simpleName}` and the other `${other::class.simpleName}` are not of the" +
+                        " same type but have an equal symbol ID."
+            }
+        ) {
+            withFirSymbolIdEntry("thisSymbolId", backingSymbolId)
+            withFirSymbolIdEntry("otherSymbolId", other.backingSymbolId)
+        }
+
+        return true
+    }
+
+    override fun hashCode(): Int = backingSymbolId.hashCode()
 }
 
 /**
