@@ -89,14 +89,17 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             else -> l.originalType
         }
 
-        val oldErased = isCastErased(lhsType, r)
         val divergingInference = expression.nonFatalDiagnostics.find { it is DivergingBareInference } as DivergingBareInference?
-        val newErased = if (divergingInference != null) {
-            isCastErasedByTypeParameterInheritance(lhsType, divergingInference.newType)
-        } else {
-            isCastErasedByTypeParameterInheritance(lhsType, r)
+        if (divergingInference != null && divergingInference.newType == null) {
+            reporter.reportOn(
+                expression.conversionTypeRef.source,
+                FirErrors.NEW_BARE_INFERENCE_FAILED,
+            )
+            return
         }
 
+        val oldErased = isCastErased(lhsType, r)
+        val newErased = isCastErasedByTypeParameterInheritance(lhsType, r)
         when {
             oldErased == newErased -> {}
             newErased -> reporter.reportOn(
