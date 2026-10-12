@@ -515,6 +515,11 @@ object ContextSensitiveResolutionMightBeUsedInsteadOfImport : ConeDiagnostic {
         get() = "Resolved through import, but context-sensitive resolution might be used"
 }
 
+object HomePackageResolutionMightBeUsedInsteadOfImport : ConeDiagnostic {
+    override val reason: String
+        get() = "Resolved through import, but home-package resolution might be used"
+}
+
 object ConeResolvedToCompanionObjectWasRecentlyFixed : ConeDiagnostic {
     override val reason: String
         get() = "resolvedToCompanionObject was incorrectly lost until recently"

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsed
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ContextSensitiveResolutionMightBeUsedInsteadOfImport
+import org.jetbrains.kotlin.fir.resolve.diagnostics.HomePackageResolutionMightBeUsedInsteadOfImport
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
@@ -104,6 +105,26 @@ private fun FirElement.isResolvedThroughContextSensitiveResolution(): Boolean = 
     is FirResolvedTypeRef -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
     is FirResolvedQualifier -> resolvedSymbolOrigin == FirResolvedSymbolOrigin.ContextSensitive
     else -> toReference(analysisSession.firSession)?.isContextSensitive == true
+}
+
+context(resolver: KaFirResolver)
+internal fun homePackageResolutionStatusImpl(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus {
+    val hintHolder = simpleNameExpression.qualifiedExpressionFir()
+        ?: simpleNameExpression.getOrBuildFir(analysisSession.resolutionFacade)
+        ?: return KaContextSensitiveResolutionNotAvailableImpl
+
+    val nonFatalDiagnostics = when (hintHolder) {
+        is FirQualifiedAccessExpression -> hintHolder.nonFatalDiagnostics
+        is FirResolvedQualifier -> hintHolder.nonFatalDiagnostics
+        is FirTypeOperatorCall -> hintHolder.nonFatalDiagnostics
+        else -> emptyList()
+    }
+
+    return when {
+        nonFatalDiagnostics.isEmpty() -> KaContextSensitiveResolutionNotAvailableImpl
+        HomePackageResolutionMightBeUsedInsteadOfImport in nonFatalDiagnostics -> KaContextSensitiveResolutionImportCanBeRemovedImpl
+        else -> KaContextSensitiveResolutionNotAvailableImpl
+    }
 }
 
 /**

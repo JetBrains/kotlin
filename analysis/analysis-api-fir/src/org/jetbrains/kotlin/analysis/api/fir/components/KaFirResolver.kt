@@ -396,6 +396,11 @@ internal class KaFirResolver(
             contextSensitiveResolutionStatusImpl(simpleNameExpression)
         }
 
+    override fun homePackageResolutionStatus(simpleNameExpression: KtSimpleNameExpression): KaContextSensitiveResolutionStatus =
+        simpleNameExpression.withPsiValidityAssertion {
+            homePackageResolutionStatusImpl(simpleNameExpression)
+        }
+
     private fun performSymbolResolution(psi: KtElement): KaSymbolResolutionAttempt? = wrapError(psi) {
         when (psi) {
             // A user type redirects to its inner reference expression, which is cached on its own,
