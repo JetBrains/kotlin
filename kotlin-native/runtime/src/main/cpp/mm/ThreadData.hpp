@@ -106,12 +106,6 @@ public:
         frameAnchors_.emplace_back(anchor);
     }
 
-    void pushLastStackMapAnchor() noexcept {
-        RuntimeAssert(lastFrame_.fp != nullptr, "Trying push last anchor, but last anchor is not initialized");
-        RuntimeLogInfo({logging::Tag::kLogging}, "Pushing last frame anchor: fp=%p pc=%p", lastFrame_.fp, lastFrame_.pc);
-        frameAnchors_.emplace_back(lastFrame_);
-    }
-
     void popStackMapAnchor() noexcept {
         RuntimeLogInfo({logging::Tag::kLogging}, "Poping last anchor: fp=%p pc=%p", frameAnchors_.back().fp, frameAnchors_.back().pc);
         frameAnchors_.pop_back();
@@ -121,9 +115,13 @@ public:
         return frameAnchors_;
     }
 
-    void setLastFrame(KotlinFrameAnchor anchor) noexcept {
-        RuntimeLogInfo({logging::Tag::kLogging}, "Setting last frame anchor: fp=%p pc=%p", anchor.fp, anchor.pc);
-        lastFrame_ = anchor;
+    
+    bool cameFromNative() {
+        return cameFromNative_;
+    }
+
+    void setCameFromNative(bool val) {
+        cameFromNative_ = val;
     }
 #endif
 
@@ -140,7 +138,8 @@ private:
     ThreadSuspensionData suspensionData_;
 #if defined(__aarch64__)
     std::vector<KotlinFrameAnchor> frameAnchors_;
-    KotlinFrameAnchor lastFrame_ = {};
+    // True only while the thread runs the safepoint of a Native -> Runnable.
+    bool cameFromNative_ = false;
 #endif
 };
 

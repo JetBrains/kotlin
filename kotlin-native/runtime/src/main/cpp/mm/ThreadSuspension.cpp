@@ -47,7 +47,7 @@ PERFORMANCE_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() n
     RuntimeLogInfo({logging::Tag::kPause}, "Resuming mutation after %" PRIu64 " microseconds of suspension (%s)", pauseTimeMicros, reason_);
     resumed = true;
 #if defined(__aarch64__)
-    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
+    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain && !threadData_.cameFromNative()) {
         threadData_.popStackMapAnchor();
     }
 #endif
@@ -65,7 +65,13 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
         // or would have changed `internal::gSuspensionRequested` (with seq_cst),
         // so, loading SP here, or checking `internal::gSuspensionRequested` in
         // `suspendIfRequested` is enough.
+#if defined(__aarch64__)
+        threadData_.setCameFromNative(true);
+#endif
         safePoint(threadData_, std::memory_order_seq_cst);
+#if defined(__aarch64__)
+        threadData_.setCameFromNative(false);
+#endif
     }
     return oldState;
 }
@@ -94,8 +100,9 @@ void mm::ThreadSuspensionData::requestThreadsSuspension(const char* reason) noex
 PERFORMANCE_INLINE mm::ThreadSuspensionData::MutatorPauseHandle mm::ThreadSuspensionData::pauseMutationInScope(
         const char* reason) noexcept {
 #if defined(__aarch64__)
-    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain) {
-        threadData_.pushLastStackMapAnchor();
+    if (compiler::gcStackMapScheme() == compiler::GCStackMapScheme::kDeltaMain && !threadData_.cameFromNative()) {
+        auto frame = captureCallerFrameAnchor();
+        threadData_.pushStackMapAnchor(frame);
     }
 #endif
     return MutatorPauseHandle(reason, threadData_);
