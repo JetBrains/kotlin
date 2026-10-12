@@ -144,6 +144,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
         object DelegateExpression : DelegatedPropertyAccessor()
 
         /**
+         * The delegate field of a delegated property. Its source refers to the call that creates the delegate.
+         */
+        object DelegatedPropertyDelegateField : DelegatedPropertyAccessor()
+
+        /**
          * A delegated property getter. Its real source is the explicit getter declaration if present, or otherwise the call that creates
          * the delegate.
          */
@@ -820,6 +825,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      */
     sealed class ScriptParameter : KtFakeSourceElementKind() {
         /**
+         * A receiver parameter generated from the base class configuration.
+         */
+        object BaseClassReceiverParameter : ScriptParameter()
+
+        /**
          * A parameter generated from a base class constructor value parameter.
          */
         class BaseClassConstructorParameter(val index: Int) : ScriptParameter() {
@@ -860,11 +870,6 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
          */
         object ExplainField : ScriptParameter()
     }
-
-    /**
-     * For script base class
-     */
-    object ScriptBaseClass : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     /**
      * For repl base class.
@@ -1035,14 +1040,15 @@ object KtMissingSourceElement : AbstractKtSourceElement() {
  *
  * ### Distinct source elements
  *
- * **Constraint:** To support the unambiguous source-based equality of FIR symbols, each FIR declaration should have a distinct
- * `(realSource, sourceElementKind)` pair as its source element. This includes local declarations.
+ * **Constraint:** Each FIR declaration should have a distinct `(realSource, sourceElementKind)` pair as its source element. This includes
+ * local declarations. Source-based symbol IDs (see `FirSymbolId`) are based on the source element, so the constraint ensures that they
+ * identify their declarations unambiguously.
  *
  * This constraint can be checked per file because source elements from different files can never be equal, as real source nodes are
  * distinct between files.
  *
- * When the constraint is violated, we can have two different FIR declarations with the same source element. Source-based equality would
- * then break, because these FIR declarations would be unexpectedly equal.
+ * When the constraint is violated, we can have two different FIR declarations with the same source element. Their source-based symbol IDs
+ * would then be equal, so the declarations couldn't be told apart as cache keys or references.
  *
  * This constraint does not (yet) apply to non-declaration FIR elements, so, for example, it is currently legal for multiple FIR expressions
  * to share the same source element.
@@ -1053,12 +1059,12 @@ object KtMissingSourceElement : AbstractKtSourceElement() {
  * test for distinct source elements, nor for them to have exhaustive test data. Nor is it good to place such a burden on compiler plugin
  * developers, who may not have an intricate knowledge of FIR internals.
  *
- * Due to this exemption, FIR file/declaration caches which rely on source-based equality must not contain plugin-generated declarations.
- * This is currently satisfied as follows:
+ * Due to this exemption, plugin-generated declarations have unique symbol IDs, so FIR file/declaration caches must not discard them. This
+ * is currently satisfied as follows:
  *
- * - `FirExtensionDeclarationsSymbolProvider` stores plugin-generated FIR declarations uniquely and does not rely on source-based equality.
- * - Additionally, in compiler mode, plugin-generated FIR declarations are materialzied into new FIR files, but FIR declarations remain
- *   unique. Thus, we have no caches which rely on source-based equality.
+ * - `FirExtensionDeclarationsSymbolProvider` stores plugin-generated FIR declarations for the lifetime of its session.
+ * - Additionally, in compiler mode, plugin-generated FIR declarations are materialized into new FIR files, but all symbol IDs are unique
+ *   and no cache discards FIR declarations.
  * - In Analysis API mode, plugin-generated FIR declarations are only materialized for FIR dump checking in tests. Hence, plugin-generated
  *   declarations are not cached outside `FirExtensionDeclarationsSymbolProvider`.
  *

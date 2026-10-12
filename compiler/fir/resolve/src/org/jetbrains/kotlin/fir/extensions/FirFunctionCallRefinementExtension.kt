@@ -116,6 +116,7 @@ abstract class FirFunctionCallRefinementExtension(session: FirSession) : FirExte
 @OptIn(FirExtensionApiInternals::class)
 val FirExtensionService.callRefinementExtensions: List<FirFunctionCallRefinementExtension> by FirExtensionService.registeredExtensions()
 
+// TODO KT-87719: `OriginalCallData` is stored as a declaration attribute, so it should reference the original symbol via its symbol ID.
 @OptIn(FirExtensionApiInternals::class)
 internal class OriginalCallData(val originalSymbol: FirNamedFunctionSymbol, val extension: FirFunctionCallRefinementExtension)
 

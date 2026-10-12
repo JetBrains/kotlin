@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
@@ -66,12 +68,13 @@ class FirScriptConfiguratorExtensionImpl(
     @OptIn(SymbolInternals::class)
     override fun FirScriptBuilder.configure(sourceFile: KtSourceFile?, context: Context<*>) {
         fun addErrorElement(message: String) {
+            // the initializer is generated, so it gets a fake source to keep the declaration sources distinct from the script's one
+            val initializerSource = this@configure.source.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
             declarations.add(
                 0,
                 buildAnonymousInitializer {
-                    symbol = FirAnonymousInitializerSymbol()
-                    // the initializer is generated, so it gets a fake source to keep the declaration sources distinct from the script's one
-                    source = this@configure.source.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
+                    symbol = FirAnonymousInitializerSymbol(session.symbolIdFactory.sourceBased(initializerSource))
+                    source = initializerSource
                     moduleData = this@configure.moduleData
                     origin = FirDeclarationOrigin.ScriptCustomization.Default
                     body = buildSingleExpressionBlock(
@@ -95,15 +98,18 @@ class FirScriptConfiguratorExtensionImpl(
             }
 
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
+            val receiverParameterSourceElement = source.fakeElement(KtFakeSourceElementKind.ScriptParameter.BaseClassReceiverParameter)
+
             val baseClassTypeRef =
-                tryResolveOrBuildParameterTypeRefFromKotlinType(baseClass, source.fakeElement(KtFakeSourceElementKind.ScriptBaseClass))
+                tryResolveOrBuildParameterTypeRefFromKotlinType(baseClass, receiverParameterSourceElement)
 
             receivers.add(
                 buildScriptReceiverParameter {
                     typeRef = baseClassTypeRef
                     isBaseClassReceiver = true
-                    symbol = FirReceiverParameterSymbol()
+                    symbol = FirReceiverParameterSymbol(session.symbolIdFactory.sourceBased(receiverParameterSourceElement))
                     moduleData = session.moduleData
+                    source = receiverParameterSourceElement
                     origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
                     containingDeclarationSymbol = this@configure.symbol
                 }
@@ -119,16 +125,17 @@ class FirScriptConfiguratorExtensionImpl(
 
                 baseClassPrimaryConstructor?.fir?.valueParameters?.forEachIndexed { index, baseCtorParameter ->
                     val sourceElementKind = KtFakeSourceElementKind.ScriptParameter.BaseClassConstructorParameter(index)
+                    val sourceElement = this@configure.source.fakeElement(sourceElementKind)
 
                     parameters.add(
                         buildProperty {
                             moduleData = session.moduleData
-                            source = this@configure.source.fakeElement(sourceElementKind)
+                            source = sourceElement
                             origin = FirDeclarationOrigin.ScriptCustomization.ParameterFromBaseClass
                             // TODO: copy type parameters?
                             returnTypeRef = baseCtorParameter.returnTypeRef
                             name = baseCtorParameter.name
-                            symbol = FirRegularPropertySymbol(CallableId(name))
+                            symbol = FirRegularPropertySymbol(session.symbolIdFactory.sourceBased(sourceElement), CallableId(name))
                             status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                             isLocal = true
                             isVar = false
@@ -139,15 +146,15 @@ class FirScriptConfiguratorExtensionImpl(
         }
 
         configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEachIndexed { index, implicitReceiver ->
+            val sourceElement = this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ImplicitReceiver(index))
+
             receivers.add(
                 buildScriptReceiverParameter {
-                    typeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(
-                        implicitReceiver,
-                        this@configure.source.fakeElement(KtFakeSourceElementKind.ScriptParameter.ImplicitReceiver(index)),
-                    )
+                    typeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(implicitReceiver, sourceElement)
                     isBaseClassReceiver = false
-                    symbol = FirReceiverParameterSymbol()
+                    symbol = FirReceiverParameterSymbol(session.symbolIdFactory.sourceBased(sourceElement))
                     moduleData = session.moduleData
+                    source = sourceElement
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     containingDeclarationSymbol = this@configure.symbol
                 }
@@ -164,7 +171,7 @@ class FirScriptConfiguratorExtensionImpl(
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     returnTypeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(propertyType, sourceElement)
                     name = Name.identifier(propertyName)
-                    symbol = FirLocalPropertySymbol()
+                    symbol = FirLocalPropertySymbol(session.symbolIdFactory.sourceBased(sourceElement))
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                     isVar = false
@@ -182,7 +189,7 @@ class FirScriptConfiguratorExtensionImpl(
                     origin = FirDeclarationOrigin.ScriptCustomization.Parameter
                     returnTypeRef = tryResolveOrBuildParameterTypeRefFromKotlinType(KotlinType(MutableMap::class), sourceElement)
                     name = Name.identifier(it)
-                    symbol = FirLocalPropertySymbol()
+                    symbol = FirLocalPropertySymbol(session.symbolIdFactory.sourceBased(sourceElement))
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     isLocal = true
                     isVar = false
@@ -203,23 +210,33 @@ class FirScriptConfiguratorExtensionImpl(
                 lastExpression.takeUnless { it is FirLazyExpression }?.coneTypeOrNull?.toFirResolvedTypeRef()
                     ?: FirImplicitTypeRefImplWithoutSource
 
+            val sourceElement = lastScriptBlock.source
+
             declarations.add(
                 buildProperty {
                     this.name = Name.identifier(resultFieldName)
-                    this.symbol = FirRegularPropertySymbol(CallableId(context.packageFqName, this.name))
-                    source = lastScriptBlock.source
+                    this.symbol = FirRegularPropertySymbol(
+                        session.symbolIdFactory.sourceBasedOrUnique(sourceElement),
+                        CallableId(context.packageFqName, this.name),
+                    )
+                    source = sourceElement
                     moduleData = session.moduleData
                     origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty
                     initializer = lastExpression
                     returnTypeRef = lastExpressionTypeRef
+
+                    val getterSourceElement =
+                        sourceElement?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter)
+
                     getter = FirDefaultPropertyGetter(
-                        source = lastScriptBlock.source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
+                        source = getterSourceElement,
                         moduleData = session.moduleData,
                         origin = FirDeclarationOrigin.ScriptCustomization.ResultProperty,
                         propertyTypeRef = lastExpressionTypeRef,
                         visibility = Visibilities.Public,
                         propertySymbol = this.symbol,
                         modality = Modality.FINAL,
+                        symbol = FirPropertyAccessorSymbol(session.symbolIdFactory.sourceBasedOrUnique(getterSourceElement)),
                     )
 
                     status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
