@@ -1292,6 +1292,9 @@ public interface KaResolver : KaSessionComponent {
     @KaExperimentalApi
     public val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSensitiveResolutionStatus
 
+    @KaExperimentalApi
+    public val KtSimpleNameExpression.homePackageResolutionStatus: KaContextSensitiveResolutionStatus
+
     /**
      * Resolves the given [KtElement] to a [KaCallInfo] object. [KaCallInfo] either contains a successfully resolved call or an error with
      * a list of candidate calls and a diagnostic.

@@ -62,6 +62,14 @@ public val KtSimpleNameExpression.contextSensitiveResolutionStatus: KaContextSen
         return internals.resolver.contextSensitiveResolutionStatus(this)
     }
 
+@KaExperimentalApi
+context(session: KaSession)
+public val KtSimpleNameExpression.homePackageResolutionStatus: KaContextSensitiveResolutionStatus
+    get() {
+        @OptIn(KaImplementationDetail::class)
+        return internals.resolver.homePackageResolutionStatus(this)
+    }
+
 /**
  * Whether the value of the given [KtExpression] is used. In other words, `true` if the value of the expression is not safe to discard.
  *

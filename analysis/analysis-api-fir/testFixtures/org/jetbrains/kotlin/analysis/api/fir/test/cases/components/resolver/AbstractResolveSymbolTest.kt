@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.test.cases.components.resolver
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.KaResolver
 import org.jetbrains.kotlin.analysis.api.expressions.contextSensitiveResolutionStatus
+import org.jetbrains.kotlin.analysis.api.expressions.homePackageResolutionStatus
 import org.jetbrains.kotlin.analysis.api.expressions.isImplicitReferenceToCompanion
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.assertStableResult
 import org.jetbrains.kotlin.analysis.api.fir.test.cases.components.findSpecializedResolveFunctions
@@ -68,6 +69,9 @@ internal fun AbstractResolveByElementTest.generateSymbolOutput(mainElement: KtEl
         if (mainElement is KtSimpleNameExpression) {
             appendLine("isImplicitReferenceToCompanion: ${mainElement.isImplicitReferenceToCompanion}")
             appendLine("contextSensitiveResolutionStatus: ${mainElement.contextSensitiveResolutionStatus}")
+            if (mainElement.homePackageResolutionStatus !is KaContextSensitiveResolutionStatus.NotAvailable) {
+                appendLine("homePackageResolutionStatus: ${mainElement.homePackageResolutionStatus}")
+            }
             appendLine("lookupLocally: ${localLookup != null}")
         }
 

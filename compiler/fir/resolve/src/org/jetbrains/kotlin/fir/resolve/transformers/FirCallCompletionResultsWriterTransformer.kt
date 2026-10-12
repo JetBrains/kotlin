@@ -1512,6 +1512,7 @@ class FirCallCompletionResultsWriterTransformer(
                     source = this@toResolvedReference.source
                     name = this@toResolvedReference.name
                     resolvedSymbol = this@toResolvedReference.candidateSymbol
+                    resolvedSymbolOrigin = this@toResolvedReference.candidate.originScope?.toResolvedSymbolOrigin()
                 }
             }
 
