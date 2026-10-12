@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NESTED_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NESTED_JS_EXPORT
@@ -127,5 +128,10 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(INAPPLICABLE_EAGER_INITIALIZATION, "'@EagerInitialization' is only applicable to a top-level property with an initializer.")
+        map.put(
+            NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN,
+            "Annotation ''{0}'' is only allowed on member functions of external declarations.",
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
     }
 }

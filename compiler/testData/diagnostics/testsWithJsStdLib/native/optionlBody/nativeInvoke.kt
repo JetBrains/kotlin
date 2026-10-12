@@ -1,10 +1,9 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEPRECATION
-@nativeInvoke
-fun String.foo(): Int
-@nativeInvoke
-fun String.bar(): Int = definedExternally
-
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeInvoke
+fun String.foo(): Int<!>
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeInvoke
+fun String.bar(): Int<!> = definedExternally
 
 external object O {
     @nativeInvoke
