@@ -426,6 +426,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_COMPANION_BLOCK
@@ -2577,6 +2578,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             IDENTITY_BASED_MEMBER_IN_WILL_BECOME_VALUE_CLASS,
             "Class annotated with ''@WillBecomeValue'' must override ''{0}''. The identity-based implementation inherited from ''Any'' will not be used once the class becomes a ''value'' class.",
             STRING,
+        )
+        map.put(
+            IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE,
+            "Identity-sensitive operation on an instance of value type ''{0}'' may cause unexpected behavior or errors.",
+            RENDER_TYPE,
         )
         map.put(
             IDENTITY_SENSITIVE_OPERATION_ON_WILL_BECOME_VALUE_CLASS,

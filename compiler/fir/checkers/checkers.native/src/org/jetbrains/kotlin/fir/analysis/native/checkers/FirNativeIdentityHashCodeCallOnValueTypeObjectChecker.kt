@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isValueClass
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
@@ -44,7 +45,7 @@ internal object FirNativeIdentityHashCodeCallOnValueTypeObjectChecker : FirFunct
                 val argument = expression.resolvedArgumentMapping?.entries?.firstOrNull { it.value.symbol == resourceParameter }?.key ?: return
                 val argumentType = argument.resolvedType
                 if (argumentType.isValueType()) {
-                    reporter.reportOn(argument.source, FirNativeErrors.IDENTITY_SENSITIVE_OPERATION_ON_VALUE_TYPE, argumentType)
+                    reporter.reportOn(argument.source, FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE, argumentType)
                 }
             }
         }

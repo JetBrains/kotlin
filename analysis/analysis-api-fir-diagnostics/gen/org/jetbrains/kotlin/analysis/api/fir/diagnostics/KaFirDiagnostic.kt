@@ -3030,6 +3030,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface IdentitySensitiveOperationsWithValueType : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<IdentitySensitiveOperationsWithValueType>
+            get() = IdentitySensitiveOperationsWithValueType::class
+
+        public val type: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface IdentitySensitiveOperationOnWillBecomeValueClass : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<IdentitySensitiveOperationOnWillBecomeValueClass>
             get() = IdentitySensitiveOperationOnWillBecomeValueClass::class
@@ -9484,15 +9493,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
             get() = InapplicableJvmFieldWarning::class
 
         public val message: String
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface IdentitySensitiveOperationsWithValueType : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<IdentitySensitiveOperationsWithValueType>
-            get() = IdentitySensitiveOperationsWithValueType::class
-
-        public val type: KaType
     }
 
     @KaUnstableDiagnosticApi
