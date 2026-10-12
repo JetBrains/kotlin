@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.konan.library.KlibNativeDistributionLibraryProvider
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
@@ -18,32 +19,44 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInfo
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.fail
+import org.junit.jupiter.api.io.CleanupMode
 import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.io.PrintWriter
 import java.nio.file.Path
+import java.util.EnumMap
+import kotlin.io.path.absolute
+import kotlin.io.path.bufferedWriter
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.pathString
 import kotlin.io.path.relativeTo
+import kotlin.time.Clock
 import kotlin.time.Duration
+import kotlin.time.DurationUnit
 import kotlin.time.measureTime
 
 @Disabled // The test is disabled by default because it's not intended to be executed on every CI run.
 @Tag("klib")
 @Isolated
 @Execution(ExecutionMode.SAME_THREAD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
 
     companion object {
@@ -51,20 +64,28 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
         private lateinit var sharedTmpDir: Path
     }
 
+    private lateinit var reporter: BenchmarkResultsReporter
     private lateinit var testInfo: TestInfo
 
+    @BeforeAll
+    fun setUpOnce(@TempDir(cleanup = CleanupMode.NEVER) permanentTempDir: Path) {
+        reporter = BenchmarkResultsReporter(permanentTempDir.resolve("KlibDAGBuilderBenchmarkTest.md"))
+    }
+
     @BeforeEach
-    fun setUp(testInfo: TestInfo) {
+    fun setUpForEach(testInfo: TestInfo) {
         this.testInfo = testInfo
     }
 
+    @AfterAll
+    fun tearDownOnce() {
+        reporter.writeReport()
+    }
+
     /**
-     * Benchmarking results (Apple M2 Max):
-     * - roots: []
-     * - target: macos_arm64
-     * - number of libraries: 177 (stdlib + platform libs)
-     * - resulting DAG size: 1
-     * - median duration: < 1ms (any mode)
+     * roots: []
+     * participating libraries: stdlib + <N> platform libs
+     * resulting DAG size: 1
      */
     @ParameterizedTest
     @EnumSource
@@ -79,14 +100,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     /**
-     * Benchmarking results (Apple M2 Max):
-     * - roots: [stdlib, Foundation]
-     * - target: macos_arm64
-     * - number of libraries: 177 (stdlib + platform libs)
-     * - resulting DAG size: 10
-     * - median duration:
-     *   - no indices: 665 ms
-     *   - with indices: 4 ms
+     * roots: [stdlib, Foundation]
+     * participating libraries: stdlib + <N> platform libs
+     * resulting DAG size: 10
      */
     @ParameterizedTest
     @EnumSource
@@ -101,14 +117,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     /**
-     * Benchmarking results (Apple M2 Max):
-     * - roots: 20 regular user libs
-     * - target: macos_arm64
-     * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
-     * - resulting DAG size: 21
-     * - median duration:
-     *   - no indices: 10 ms
-     *   - with indices: 5 ms
+     * roots: 20 regular user libs
+     * participating libraries: stdlib + <N> platform libs + 20 user libs
+     * resulting DAG size: 21
      */
     @ParameterizedTest
     @EnumSource
@@ -125,14 +136,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     /**
-     * Benchmarking results (Apple M2 Max):
-     * - roots: 15 regular + 5 C-interop user libs
-     * - target: macos_arm64
-     * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
-     * - resulting DAG size: 21
-     * - median duration:
-     *   - no indices: 74 ms
-     *   - with indices: 6 ms
+     * roots: 15 regular + 5 C-interop user libs
+     * participating libraries: stdlib + <N> platform libs + 20 user libs
+     * resulting DAG size: 21
      */
     @ParameterizedTest
     @EnumSource
@@ -149,14 +155,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     /**
-     * Benchmarking results (Apple M2 Max):
-     * - roots: 10 regular + 10 C-interop user libs
-     * - target: macos_arm64
-     * - number of libraries: 197 (stdlib + platform libs + 20 user libs)
-     * - resulting DAG size: 21
-     * - median duration:
-     *   - no indices: 155 ms
-     *   - with indices: 9 ms
+     * roots: 10 regular + 10 C-interop user libs
+     * participating libraries: stdlib + <N> platform libs + 20 user libs
+     * resulting DAG size: 21
      */
     @ParameterizedTest
     @EnumSource
@@ -173,14 +174,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     /**
-     * Benchmarking results (Apple M2 Max):
-     * - roots: 100 regular user libs
-     * - target: macos_arm64
-     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
-     * - resulting DAG size: 101
-     * - median duration:
-     *   - no indices: 54 ms
-     *   - with indices: 25 ms
+     * roots: 100 regular user libs
+     * participating libraries: stdlib + <N> platform libs + 100 user libs
+     * resulting DAG size: 101
      */
     @ParameterizedTest
     @EnumSource
@@ -197,14 +193,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     /**
-     * Benchmarking results (Apple M2 Max):
-     * - roots: 75 regular and 25 C-interop user libs
-     * - target: macos_arm64
-     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
-     * - resulting DAG size: 101
-     * - median duration:
-     *   - no indices: 1.15 s
-     *   - with indices: 35 ms
+     * roots: 75 regular and 25 C-interop user libs
+     * participating libraries: stdlib + <N> platform libs + 100 user libs
+     * resulting DAG size: 101
      */
     @ParameterizedTest
     @EnumSource
@@ -221,14 +212,9 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     /**
-     * Benchmarking results (Apple M2 Max):
-     * - roots: 50 regular and 50 C-interop user libs
-     * - target: macos_arm64
-     * - number of libraries: 277 (stdlib + platform libs + 100 user libs)
-     * - resulting DAG size: 101
-     * - median duration:
-     *   - no indices: 5.19 s
-     *   - with indices: 66 ms
+     * roots: 50 regular and 50 C-interop user libs
+     * participating libraries: stdlib + <N> platform libs + 100 user libs
+     * resulting DAG size: 101
      */
     @ParameterizedTest
     @EnumSource
@@ -469,7 +455,10 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
 
         // Run the benchmark.
         runBenchWithWarmup(
-            name = "$testName ($target, ${allLibraries.size} libraries)",
+            testName = testName,
+            target = target,
+            numberOfLibraries = allLibraries.size,
+            mode = mode,
             warmupRounds = 10,
             benchmarkRounds = 20,
             pre = System::gc,
@@ -488,14 +477,19 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
 
     @Suppress("SameParameterValue")
     private fun runBenchWithWarmup(
-        name: String,
+        testName: String,
+        target: KonanTarget,
+        numberOfLibraries: Int,
+        mode: KlibDAGBuildingMode,
         warmupRounds: Int,
         benchmarkRounds: Int,
         pre: () -> Unit,
         post: () -> Unit,
         bench: () -> Unit,
     ) {
-        println("Run [$name] benchmark")
+        val displayTestName = "$testName ($target, $numberOfLibraries libraries)"
+
+        println("Run [$displayTestName] benchmark")
         println("Warmup: $warmupRounds times...")
 
         repeat(warmupRounds) {
@@ -518,10 +512,127 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
             measurements += duration
         }
 
-        val averageDuration = measurements.fold(Duration.ZERO) { a, b -> a + b } / benchmarkRounds
+        val averageDuration = (measurements.fold(Duration.ZERO) { a, b -> a + b } / benchmarkRounds)
         val medianDuration = measurements.sorted()[benchmarkRounds / 2]
 
-        println("[$name] average duration is $averageDuration")
-        println("[$name] median duration is $medianDuration")
+        println("[$displayTestName] average duration is ${averageDuration.toPrettyString()}")
+        println("[$displayTestName] median duration is ${medianDuration.toPrettyString()}")
+
+        reporter.logMeasurements(
+            testName = testName,
+            target = target,
+            numberOfLibraries = numberOfLibraries,
+            mode = mode,
+            medianDuration = medianDuration,
+        )
+    }
+}
+
+private fun Duration.toPrettyString(): String {
+    val displayUnit = listOf(
+        DurationUnit.DAYS,
+        DurationUnit.HOURS,
+        DurationUnit.MINUTES,
+        DurationUnit.SECONDS,
+        DurationUnit.MILLISECONDS,
+        DurationUnit.MICROSECONDS,
+        DurationUnit.NANOSECONDS,
+    ).firstOrNull { absoluteValue.toDouble(it) >= 1.0 } ?: DurationUnit.NANOSECONDS
+
+    val stringValue = toString(displayUnit, decimals = 2)
+    val i = stringValue.indexOfFirst { it.isLetter() }
+    return if (i != -1) stringValue.substring(0, i) + " " + stringValue.substring(i) else stringValue
+}
+
+private class BenchmarkResultsReporter(private val reportPath: Path) {
+    private data class TestKey(
+        val testName: String,
+        val rootsNumber: Int,
+        val target: KonanTarget,
+    ) : Comparable<TestKey> {
+        override fun compareTo(other: TestKey): Int {
+            rootsNumber.compareTo(other.rootsNumber).let { if (it != 0) return it }
+            testName.compareTo(other.testName).let { if (it != 0) return it }
+            return target.name.compareTo(other.target.name)
+        }
+    }
+
+    private val measurements: MutableMap<TestKey, MutableMap<KlibDAGBuildingMode, Duration>> = hashMapOf()
+
+    fun logMeasurements(
+        testName: String,
+        target: KonanTarget,
+        numberOfLibraries: Int,
+        mode: KlibDAGBuildingMode,
+        medianDuration: Duration,
+    ) {
+        measurements.getOrPut(TestKey(testName, numberOfLibraries, target)) { EnumMap(KlibDAGBuildingMode::class.java) }[mode] = medianDuration
+    }
+
+    fun writeReport() {
+        PrintWriter(reportPath.bufferedWriter()).use { writer ->
+            fun printRow(items: List<String>) {
+                writer.println(items.joinToString(prefix = "| ", postfix = " |", separator = " | "))
+            }
+
+            fun printRow(first: String, others: List<String>) {
+                printRow(listOf(first) + others)
+            }
+
+            fun printHeader(first: String, others: List<String>) {
+                val items = listOf(first) + others
+                printRow(items)
+                writer.println(items.joinToString(prefix = "|", postfix = "|", separator = "|") { "---" })
+            }
+
+            writer.println("# Measurements of KLIB DAG generation")
+            writer.println()
+            writer.println("* Date & time: ${Clock.System.now()}")
+            writer.println("* OS: ${System.getProperty("os.name")} (${System.getProperty("os.version")}), ${System.getProperty("os.arch")}")
+            writer.println("* CPU cores: ${Runtime.getRuntime().availableProcessors()}")
+            writer.println("* Max heap: ${Runtime.getRuntime().maxMemory() / (1024 * 1024)} MiB")
+
+            val allTargets = measurements.keys.mapToSetOrEmpty { it.target }
+            for (currentTarget in allTargets) {
+                writer.println()
+                writer.println("### Target: $currentTarget")
+
+                printHeader("Test name", KlibDAGBuildingMode.entries.map { "$it<br/>(median time)" })
+
+                for (testKey in measurements.keys.filter { it.target == currentTarget }.sorted()) {
+                    val modeAndDuration: Map<KlibDAGBuildingMode, Duration> = measurements.getValue(testKey)
+                    val durations: List<Duration?> = KlibDAGBuildingMode.entries.map(modeAndDuration::get)
+
+                    val renderedDurations = durations.mapIndexed { index, duration ->
+                        if (duration == null)
+                            ""
+                        else buildString {
+                            append(duration.toPrettyString())
+
+                            val firstDuration = durations.first()
+                            if (firstDuration != null) {
+                                append("<br/>")
+                                if (index == 0)
+                                    append("100")
+                                else {
+                                    val ratio = duration / firstDuration
+                                    when {
+                                        ratio < 1.0 -> append("↓ ")
+                                        ratio > 1.0 -> append("↑ ")
+                                        else -> Unit
+                                    }
+                                    append(String.format("%.2f", ratio * 100.0))
+                                }
+                                append("%")
+                            }
+                        }
+                    }
+
+                    printRow(testKey.testName, renderedDurations)
+                }
+            }
+        }
+
+        println("Benchmarks report is available here: ${reportPath.absolute().toUri().toASCIIString()}")
     }
 }
