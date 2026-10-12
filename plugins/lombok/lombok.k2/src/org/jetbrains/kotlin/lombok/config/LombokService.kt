@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.AllArgsConstruct
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Builder
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Data
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.EqualsAndHashCode
+import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.FieldDefaults
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Getter
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Log
 import org.jetbrains.kotlin.lombok.config.ConeLombokAnnotations.Slf4jLog
@@ -82,6 +83,10 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
         Value.getOrNull(symbol, session)
     }
 
+    private val fieldDefaultsCache: Cache<FieldDefaults?> = cachesFactory.createCache { symbol ->
+        FieldDefaults.getOrNull(symbol, session)
+    }
+
     private val builderCache: Cache<Builder?> = cachesFactory.createCache { symbol ->
         Builder.getOrNull(symbol, session)
     }
@@ -128,6 +133,7 @@ class LombokService(session: FirSession, configFile: File?) : FirExtensionSessio
     fun getRequiredArgsConstructor(symbol: FirBasedSymbol<*>): RequiredArgsConstructor? = requiredArgsConstructorCache.getValue(symbol)
     fun getData(symbol: FirBasedSymbol<*>): Data? = dataCache.getValue(symbol)
     fun getValue(symbol: FirBasedSymbol<*>): Value? = valueCache.getValue(symbol)
+    fun getFieldDefaults(symbol: FirBasedSymbol<*>): FieldDefaults? = fieldDefaultsCache.getValue(symbol)
     fun getBuilder(symbol: FirBasedSymbol<*>): Builder? = builderCache.getValue(symbol)
     fun getSuperBuilder(symbol: FirBasedSymbol<*>): SuperBuilder? = superBuilderCache.getValue(symbol)
     fun getSingular(symbol: FirBasedSymbol<*>): Singular? = singularCache.getValue(symbol)
