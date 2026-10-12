@@ -1,5 +1,7 @@
 // TARGET_BACKEND: NATIVE
 // DISABLE_NATIVE: isAppleTarget=false
+// DISABLE_NATIVE: target=watchos_arm64
+// ^^^ CGFloat is Float rather than Double on watchos_arm64
 // WITH_PLATFORM_LIBS
 // IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4
 // ^^^ KT-89463: Unable to compile C bridge
