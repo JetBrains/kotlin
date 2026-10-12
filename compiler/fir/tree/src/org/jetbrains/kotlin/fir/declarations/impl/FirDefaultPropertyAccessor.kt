@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -73,28 +74,34 @@ abstract class FirDefaultPropertyAccessor(
             isGetter: Boolean,
             parameterAnnotations: List<FirAnnotation> = emptyList(),
             parameterSource: KtSourceElement? = null,
-        ): FirDefaultPropertyAccessor = if (isGetter) {
-            FirDefaultPropertyGetter(
-                source = source,
-                moduleData = moduleData,
-                origin = origin,
-                propertyTypeRef = propertyTypeRef,
-                visibility = visibility,
-                propertySymbol = propertySymbol,
-                modality = null,
-            )
-        } else {
-            FirDefaultPropertySetter(
-                source = source,
-                moduleData = moduleData,
-                origin = origin,
-                propertyTypeRef = propertyTypeRef,
-                visibility = visibility,
-                propertySymbol = propertySymbol,
-                modality = null,
-                parameterAnnotations = parameterAnnotations,
-                parameterSource = parameterSource,
-            )
+        ): FirDefaultPropertyAccessor {
+            val symbolIdFactory = moduleData.session.symbolIdFactory
+
+            return if (isGetter) {
+                FirDefaultPropertyGetter(
+                    source = source,
+                    moduleData = moduleData,
+                    origin = origin,
+                    propertyTypeRef = propertyTypeRef,
+                    visibility = visibility,
+                    symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBasedOrUnique(source)),
+                    propertySymbol = propertySymbol,
+                    modality = null,
+                )
+            } else {
+                FirDefaultPropertySetter(
+                    source = source,
+                    moduleData = moduleData,
+                    origin = origin,
+                    propertyTypeRef = propertyTypeRef,
+                    visibility = visibility,
+                    propertyAccessorSymbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBasedOrUnique(source)),
+                    propertySymbol = propertySymbol,
+                    modality = null,
+                    parameterAnnotations = parameterAnnotations,
+                    parameterSource = parameterSource,
+                )
+            }
         }
     }
 }
@@ -106,7 +113,7 @@ class FirDefaultPropertyGetter(
     propertyTypeRef: FirTypeRef,
     propertySymbol: FirPropertySymbol,
     status: FirDeclarationStatus,
-    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+    symbol: FirPropertyAccessorSymbol,
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 ) : FirDefaultPropertyAccessor(
@@ -134,7 +141,7 @@ class FirDefaultPropertyGetter(
         isInline: Boolean = false,
         isOverride: Boolean = false,
         isStatic: Boolean = false,
-        symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+        symbol: FirPropertyAccessorSymbol,
         resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
         attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     ) : this(
@@ -161,7 +168,7 @@ class FirDefaultPropertySetter(
     propertyTypeRef: FirTypeRef,
     propertySymbol: FirPropertySymbol,
     status: FirDeclarationStatus,
-    propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+    propertyAccessorSymbol: FirPropertyAccessorSymbol,
     parameterSource: KtSourceElement? = null,
     parameterAnnotations: List<FirAnnotation> = emptyList(),
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
@@ -173,14 +180,17 @@ class FirDefaultPropertySetter(
     FirImplicitUnitTypeRef(source),
     valueParameters = mutableListOf(
         buildDefaultSetterValueParameter builder@{
+            val valueParameterSource =
+                (parameterSource ?: source)
+                    ?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter.ValueParameter)
+
             this@builder.resolvePhase = resolvePhase
-            this@builder.source =
-                (parameterSource ?: source)?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter.ValueParameter)
+            this@builder.source = valueParameterSource
             this@builder.containingDeclarationSymbol = propertyAccessorSymbol
             this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
-            this@builder.symbol = FirValueParameterSymbol()
+            this@builder.symbol = FirValueParameterSymbol(moduleData.session.symbolIdFactory.sourceBasedOrUnique(valueParameterSource))
             this@builder.annotations += parameterAnnotations
         }
     ),
@@ -203,7 +213,7 @@ class FirDefaultPropertySetter(
         isInline: Boolean = false,
         isOverride: Boolean = false,
         isStatic: Boolean = false,
-        propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+        propertyAccessorSymbol: FirPropertyAccessorSymbol,
         parameterSource: KtSourceElement? = null,
         parameterAnnotations: List<FirAnnotation> = emptyList(),
         resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,

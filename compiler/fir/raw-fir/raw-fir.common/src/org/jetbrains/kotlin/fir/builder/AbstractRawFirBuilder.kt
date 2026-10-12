@@ -37,6 +37,8 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolIdFactory
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -72,6 +74,8 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     }
 
     protected val baseModuleData: FirModuleData = baseSession.moduleData
+
+    protected val symbolIdFactory: FirSymbolIdFactory = baseSession.symbolIdFactory
 
     protected val implicitType: FirImplicitTypeRef = FirImplicitTypeRefImplWithoutSource
     protected val implicitUnitType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.unitType
@@ -251,8 +255,10 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                 diagnostic = ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
             }
 
+            val getterSource = source.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter)
             getter = FirDefaultPropertyGetter(
-                source = source.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Getter),
+                symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBased(getterSource)),
+                source = getterSource,
                 moduleData = baseModuleData,
                 origin = origin,
                 propertyTypeRef = returnTypeRef,
@@ -268,8 +274,8 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
         }
     }
 
-    protected fun createNonLocalDestructuringDeclarationContainerSymbol(): FirRegularPropertySymbol =
-        FirRegularPropertySymbol(callableIdForName(SpecialNames.DESTRUCT))
+    protected fun createNonLocalDestructuringDeclarationContainerSymbol(source: KtSourceElement): FirRegularPropertySymbol =
+        FirRegularPropertySymbol(symbolIdFactory.sourceBased(source), callableIdForName(SpecialNames.DESTRUCT))
 
     protected fun buildExpressionHandlingLabelErrors(
         element: FirElement?,
@@ -1256,7 +1262,10 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                         isOperator = true
                     }
                     isLocal = firPrimaryConstructor.isLocal
-                    symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
+                    symbol = FirNamedFunctionSymbol(
+                        symbolIdFactory.sourceBased(componentSource),
+                        CallableId(packageFqName, classFqName, name),
+                    )
                     dispatchReceiverType = currentDispatchReceiverType()
                     // Refer to FIR backend ClassMemberGenerator for body generation.
                 }.also {
@@ -1278,6 +1287,7 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                     { src, kind -> src.toFirSourceElement(kind) },
                     addValueParameterAnnotations,
                     { it.isVararg },
+                    symbolIdFactory,
                 )
             )
         }
@@ -1417,17 +1427,27 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
     ): FirReplSnippet {
         val snippetName = firSnippetName(fileName)
         val snippetClassName = NameUtils.getSnippetTargetClassName(snippetName)
-        val classSymbol = FirRegularClassSymbol(ClassId(context.packageFqName, snippetClassName))
 
-        val snippetSymbol = FirReplSnippetSymbol(classSymbol)
+        val classSource = script.toFirSourceElement(KtFakeSourceElementKind.ReplBaseClass)
+        val classSymbol = FirRegularClassSymbol(
+            symbolIdFactory.sourceBased(classSource),
+            ClassId(context.packageFqName, snippetClassName),
+        )
+
+        val snippetSymbol = FirReplSnippetSymbol(symbolIdFactory.sourceBased(scriptSource), classSymbol)
 
         val evalName = Name.identifier($$$"$$eval")
+        val evalFunctionSource = script.toFirSourceElement(KtFakeSourceElementKind.ReplEvalFunction)
         val [klass, evalSymbol] = withContainerReplSymbol(snippetSymbol) {
             context.withChildClassName(snippetClassName, isExpect = false) {
                 context.withContainerSymbol(classSymbol) {
-                    val evalSymbol = FirNamedFunctionSymbol(callableIdForName(evalName))
+                    val evalSymbol = FirNamedFunctionSymbol(
+                        symbolIdFactory.sourceBased(evalFunctionSource),
+                        callableIdForName(evalName),
+                    )
+
                     val klass = buildRegularClass {
-                        source = script.toFirSourceElement(KtFakeSourceElementKind.ReplBaseClass)
+                        source = classSource
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Synthetic.ReplContainerClass
                         name = snippetClassName
@@ -1476,8 +1496,12 @@ abstract class AbstractRawFirBuilder<Node : Any, Type : Any>(
                             }
                         }
 
-                        val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
                         val constructorSource = script.toFirSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
+                        val constructorSymbol = FirConstructorSymbol(
+                            symbolIdFactory.sourceBased(constructorSource),
+                            callableIdForClassConstructor(),
+                        )
+
                         val constructor = buildPrimaryConstructor {
                             source = constructorSource
                             moduleData = baseModuleData
@@ -1634,6 +1658,7 @@ fun <Node : Any> FirRegularClassBuilder.createDataClassCopyFunction(
     toFirSource: (Node, KtFakeSourceElementKind) -> KtSourceElement,
     addValueParameterAnnotations: FirValueParameterBuilder.(Node) -> Unit,
     isVararg: (Node) -> Boolean,
+    symbolIdFactory: FirSymbolIdFactory,
 ): FirNamedFunction {
     fun generateComponentAccess(
         parameterSource: KtSourceElement?,
@@ -1672,7 +1697,10 @@ fun <Node : Any> FirRegularClassBuilder.createDataClassCopyFunction(
         origin = declarationOrigin
         returnTypeRef = classTypeRef
         name = StandardNames.DATA_CLASS_COPY
-        symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
+        symbol = FirNamedFunctionSymbol(
+            symbolIdFactory.sourceBased(copySourceElement),
+            CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY),
+        )
         dispatchReceiverType = dispatchReceiver
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
         // We need to resolve annotations on the data class. It's not possible to do it in the RAW_FIR phase.
@@ -1700,7 +1728,7 @@ fun <Node : Any> FirRegularClassBuilder.createDataClassCopyFunction(
                 origin = declarationOrigin
                 returnTypeRef = propertyReturnTypeRef
                 name = propertyName
-                symbol = FirValueParameterSymbol()
+                symbol = FirValueParameterSymbol(symbolIdFactory.sourceBased(parameterSource))
                 defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
                 isCrossinline = false
                 isNoinline = false

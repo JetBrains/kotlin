@@ -116,6 +116,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
@@ -1122,7 +1123,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
     }
 
     private fun addNonLocalDestructuringDeclaration(destination: MutableList<FirDeclaration>, node: Node) {
-        val symbol = createNonLocalDestructuringDeclarationContainerSymbol()
+        val symbol = createNonLocalDestructuringDeclarationContainerSymbol(node.toFirSourceElement())
 
         // The annotations are converted later along with the container, and the entries' ones are copied to the entries
         val destructuringDeclaration = context.withContainerSymbol(symbol) {
@@ -1652,6 +1653,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
 
                 receiverParameter = receiverTypeNode?.let {
                     createReceiverParameter(
+                        FirReceiverParameterSymbol(),
                         { convertType(it) },
                         context,
                         moduleData,
@@ -1738,6 +1740,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                 propertyTypeRef = returnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.Getter),
                                 visibility = propertyVisibility,
                                 propertySymbol = symbol,
+                                symbol = FirPropertyAccessorSymbol(),
                                 modality = calculatedModifiers.getModality(isClassOrObject = false),
                             ).also {
                                 it.status = defaultAccessorStatus()
@@ -1756,6 +1759,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                                     visibility = propertyVisibility,
                                     propertySymbol = symbol,
                                     modality = calculatedModifiers.getModality(isClassOrObject = false),
+                                    propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                                     parameterAnnotations = propertyAnnotations.filterUseSiteTarget(SETTER_PARAMETER),
                                 ).also {
                                     it.status = defaultAccessorStatus()
@@ -2079,6 +2083,7 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 annotations = annotationsFromProperty.toMutableList(),
                 returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar = isVar,
+                symbol = FirBackingFieldSymbol(),
                 propertySymbol = propertySymbol,
                 status = status,
             )
@@ -2230,7 +2235,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
             val functionBuilder = if (isAnonymousFunction) {
                 FirAnonymousFunctionBuilder().apply {
                     source = functionSource
-                    receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, context, baseModuleData, functionSymbol) }
+                    receiverParameter = receiverTypeCalculator?.let {
+                        createReceiverParameter(FirReceiverParameterSymbol(), it, context, baseModuleData, functionSymbol)
+                    }
                     symbol = functionSymbol as FirAnonymousFunctionSymbol
                     isLambda = false
                     hasExplicitParameterList = true
@@ -2268,7 +2275,9 @@ class TreeRawFirDeclarationBuilderProxy<Node : Any, Type : Any>(
                 target = FirFunctionTarget(labelName, isLambda = false)
                 FirNamedFunctionBuilder().apply {
                     source = functionSource
-                    receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, context, baseModuleData, functionSymbol) }
+                    receiverParameter = receiverTypeCalculator?.let {
+                        createReceiverParameter(FirReceiverParameterSymbol(), it, context, baseModuleData, functionSymbol)
+                    }
                     name = functionName
                     this.isLocal = context.inLocalContext
                     status = FirDeclarationStatusImpl(

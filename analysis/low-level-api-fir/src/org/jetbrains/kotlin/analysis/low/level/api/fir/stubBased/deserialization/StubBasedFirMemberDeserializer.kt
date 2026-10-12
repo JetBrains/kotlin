@@ -340,6 +340,7 @@ internal class StubBasedFirMemberDeserializer(
                     origin = initialOrigin,
                     propertyTypeRef = propertyTypeRef,
                     propertySymbol = propertySymbol,
+                    symbol = FirPropertyAccessorSymbol(),
                     status = status,
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
                 )
@@ -350,6 +351,7 @@ internal class StubBasedFirMemberDeserializer(
                     origin = initialOrigin,
                     propertyTypeRef = propertyTypeRef,
                     propertySymbol = propertySymbol,
+                    propertyAccessorSymbol = FirPropertyAccessorSymbol(),
                     status = status,
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
                 )
@@ -428,8 +430,9 @@ internal class StubBasedFirMemberDeserializer(
                 ).toMutableList(),
                 returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar,
-                symbol,
-                status,
+                symbol = FirBackingFieldSymbol(),
+                propertySymbol = symbol,
+                status = status,
             ).apply {
                 containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
             }
@@ -574,8 +577,9 @@ internal class StubBasedFirMemberDeserializer(
                 backingFieldAnnotations.toMutableList(),
                 returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor.BackingField),
                 isVar,
-                symbol,
-                status,
+                symbol = FirBackingFieldSymbol(),
+                propertySymbol = symbol,
+                status = status,
             ).apply {
                 containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
             }
