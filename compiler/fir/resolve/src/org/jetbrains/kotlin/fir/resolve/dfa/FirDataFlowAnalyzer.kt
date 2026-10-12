@@ -574,21 +574,19 @@ abstract class FirDataFlowAnalyzer(
      *   whereas the old type only produces a deprecated smart cast,
      *   see [org.jetbrains.kotlin.types.SmartcastStability.OLD_BARE_INFERENCE].
      */
-    fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, divergedNewBareInferenceType: ConeKotlinType? = null) {
+    fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, divergedOldBareInferenceType: ConeKotlinType? = null) {
         graphBuilder.exitTypeOperatorCall(typeOperatorCall).mergeIncomingFlow { _, flow ->
             if (typeOperatorCall.operation !in FirOperation.TYPES) return@mergeIncomingFlow
-            addTypeOperatorStatements(flow, typeOperatorCall, divergedNewBareInferenceType)
+            addTypeOperatorStatements(flow, typeOperatorCall, divergedOldBareInferenceType)
         }
     }
 
     private fun addTypeOperatorStatements(
         flow: MutableFlow,
         typeOperatorCall: FirTypeOperatorCall,
-        divergedNewBareInferenceType: ConeKotlinType? = null,
+        divergedOldBareInferenceType: ConeKotlinType? = null,
     ) {
-        val conversionType = typeOperatorCall.conversionTypeRef.coneType
-        val type = divergedNewBareInferenceType ?: conversionType
-        val deprecatedType = conversionType.takeIf { divergedNewBareInferenceType != null }
+        val type = typeOperatorCall.conversionTypeRef.coneType
         val operandVariable = flow.rememberVariableIfUsedOrReal(typeOperatorCall.argument) ?: return
         val siblings = typeOperatorCall.conversionTypeRef.coneType
             .toRegularClassSymbol()?.getSealedSiblings()?.takeIf { it.isNotEmpty() }
@@ -604,9 +602,9 @@ abstract class FirDataFlowAnalyzer(
                         val expressionVariable = SyntheticVariable(typeOperatorCall)
                         if (operandVariable.isReal()) {
                             flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEq type))
-                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq conversionType))
-                            if (deprecatedType != null) {
-                                flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEqDeprecated deprecatedType))
+                            flow.addImplication((expressionVariable eq !isType) implies (operandVariable typeNotEq type))
+                            if (divergedOldBareInferenceType != null) {
+                                flow.addImplication((expressionVariable eq isType) implies (operandVariable typeEqDeprecated divergedOldBareInferenceType))
                             }
 
                             if (siblings != null) {
@@ -627,8 +625,8 @@ abstract class FirDataFlowAnalyzer(
             FirOperation.AS -> {
                 if (operandVariable.isReal()) {
                     flow.addTypeStatement(operandVariable typeEq type)
-                    if (deprecatedType != null) {
-                        flow.addTypeStatement(operandVariable typeEqDeprecated deprecatedType)
+                    if (divergedOldBareInferenceType != null) {
+                        flow.addTypeStatement(operandVariable typeEqDeprecated divergedOldBareInferenceType)
                     }
 
                     if (siblings != null) {
@@ -649,8 +647,8 @@ abstract class FirDataFlowAnalyzer(
                 flow.addImplication((expressionVariable notEq null) implies (operandVariable notEq null))
                 if (operandVariable.isReal()) {
                     flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEq type))
-                    if (deprecatedType != null) {
-                        flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEqDeprecated deprecatedType))
+                    if (divergedOldBareInferenceType != null) {
+                        flow.addImplication((expressionVariable notEq null) implies (operandVariable typeEqDeprecated divergedOldBareInferenceType))
                     }
 
                     if (siblings != null) {
