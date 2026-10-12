@@ -97,7 +97,9 @@ projectTests {
             excludeTags("nightly")
         }
 
-        forkEvery = 1
+        if (!dryRun.get()) {
+            forkEvery = 1
+        }
     }
 
     testTask("nightlyTests", javaLauncher = JdkMajorVersion.JDK_21_0, skipInLocalBuild = false) {
