@@ -9,8 +9,12 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
     CLASS_BODY
-      DESTRUCTURING_DECLARATION[hasInitializer=false, isVar=false]
+      DESTRUCTURING_DECLARATION[hasInitializer=false, hasSquareBrackets=false, isFullForm=false, isVar=false]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=firstProperty]
+          REFERENCE_EXPRESSION[referencedName=]
   CLASS[classId=/InitOrderDemo2, fqName=InitOrderDemo2, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=InitOrderDemo2, superNames=[]]
     CLASS_BODY
-      DESTRUCTURING_DECLARATION[hasInitializer=false, isVar=false]
+      DESTRUCTURING_DECLARATION[hasInitializer=false, hasSquareBrackets=false, isFullForm=false, isVar=false]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=firstProperty]
+          REFERENCE_EXPRESSION[referencedName=]
       FUNCTION[fqName=InitOrderDemo2.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]

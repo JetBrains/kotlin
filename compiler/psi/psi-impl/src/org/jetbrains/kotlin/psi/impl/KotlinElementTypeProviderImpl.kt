@@ -84,6 +84,9 @@ internal object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val destructuringDeclarationType: KtNodeType
         get() = KtStubElementTypes.DESTRUCTURING_DECLARATION
 
+    override val destructuringDeclarationEntryType: KtNodeType
+        get() = KtStubElementTypes.DESTRUCTURING_DECLARATION_ENTRY
+
     override val initializerListType: KtNodeType
         get() = KtStubElementTypes.INITIALIZER_LIST
 

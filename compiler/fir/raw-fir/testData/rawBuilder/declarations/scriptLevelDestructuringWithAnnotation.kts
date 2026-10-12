@@ -1,4 +1,3 @@
-// IGNORE_TREE_ACCESS: KT-89821
 package util
 
 @DestrAnno("destr 1 $prop")

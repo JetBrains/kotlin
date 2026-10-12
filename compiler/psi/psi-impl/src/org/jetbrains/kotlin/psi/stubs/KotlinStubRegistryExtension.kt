@@ -81,6 +81,11 @@ internal object KtStubElementFactories {
         )
 
         registerStubSerializingFactory(
+            type = KtStubElementTypes.DESTRUCTURING_DECLARATION_ENTRY,
+            factory = KtDestructuringDeclarationEntryStubSerializingElementFactory,
+        )
+
+        registerStubSerializingFactory(
             type = KtStubElementTypes.TYPEALIAS,
             factory = KtTypeAliasStubSerializingElementFactory,
         )

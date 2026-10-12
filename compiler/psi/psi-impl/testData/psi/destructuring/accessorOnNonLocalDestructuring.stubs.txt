@@ -3,29 +3,39 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AccessorOnNonLocalDestructur
   partSimpleName: "AccessorOnNonLocalDestructuringKt"
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=a]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=b]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-  DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=c]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=d]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
   MODIFIER_LIST[value]
   FUNCTION[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
-  DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=e]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=f]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-  DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=g]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=h]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-  DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+  DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=i]
+    DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=j]
     BINARY_EXPRESSION
       INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
       OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
@@ -34,12 +44,16 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AccessorOnNonLocalDestructur
     INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isInterface=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY
-      DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+      DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=l]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=m]
         BINARY_EXPRESSION
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
-      DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=true]
+      DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=true]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=n]
+        DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=true, name=o]
         BINARY_EXPRESSION
           INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
           OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
