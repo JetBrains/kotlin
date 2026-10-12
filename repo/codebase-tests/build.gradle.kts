@@ -1,3 +1,4 @@
+import org.gradle.internal.classpath.Instrumented.systemProperty
 import org.jetbrains.kotlin.testFederation.testFederation
 
 plugins {
@@ -113,6 +114,8 @@ tasks.register<JavaExec>("updateTestLifecycleTaskDump") {
     classpath = project.files(sourceSets.test.map { it.runtimeClasspath })
     mainClass.set($$"org.jetbrains.kotlin.code.TestLifecycleTaskTest$Update")
     workingDir = rootDir
+
+    requireKotlinNativeEnabled()
 }
 
 tasks.register<JavaExec>("updateDomainsDump") {
@@ -123,18 +126,19 @@ tasks.register<JavaExec>("updateDomainsDump") {
     mainClass = $$"org.jetbrains.kotlin.code.DomainsDumpTest$Update"
 }
 
-tasks.configureEach {
-    if (this !is JavaForkOptions) return@configureEach
-
+private fun Task.requireKotlinNativeEnabled() {
     /* The dump includes tests from Kotlin/Native, updating it requires those parts of the build to be enabled */
     val isKotlinNativeEnabled = kotlinBuildProperties.isKotlinNativeEnabled
     val projectPath = project.path
+
     doFirst {
         if (!isKotlinNativeEnabled.get()) error(
             "Running '$projectPath' requires Kotlin/Native to be enabled (-Pkotlin.native.enabled=true)"
         )
     }
+}
 
+private fun Task.setupIdeaDebugger() {
     /* Nested/Deep debugging support */
     val debuggerDispatchPort = providers.systemProperty("idea.debugger.dispatch.port")
     inputs.property("idea.debugger.dispatch.port", debuggerDispatchPort).optional(true)
@@ -144,4 +148,9 @@ tasks.configureEach {
             systemProperty("idea.debugger.dispatch.port", debuggerDispatchPort.get())
         }
     }
+}
+
+tasks.configureEach {
+    if (this !is JavaForkOptions) return@configureEach
+    setupIdeaDebugger()
 }
