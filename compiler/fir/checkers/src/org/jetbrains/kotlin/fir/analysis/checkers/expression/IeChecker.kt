@@ -92,6 +92,7 @@ object IeChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
         } catch (_: Throwable) {
             "_."
         } + funcName)
+
         if (funcName.length < 4 || !(funcName.startsWith("set") || funcName.startsWith("get")) || !funcName[3].isUpperCase()) return
         if (funcName.startsWith("set") && expression.arguments.size != 1) return
         if (funcName.startsWith("get") && expression.arguments.isNotEmpty()) return
