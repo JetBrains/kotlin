@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.symbols.id.symbolIdFactory
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -73,30 +74,34 @@ abstract class FirDefaultPropertyAccessor(
             isGetter: Boolean,
             parameterAnnotations: List<FirAnnotation> = emptyList(),
             parameterSource: KtSourceElement? = null,
-        ): FirDefaultPropertyAccessor = if (isGetter) {
-            FirDefaultPropertyGetter(
-                source = source,
-                moduleData = moduleData,
-                origin = origin,
-                propertyTypeRef = propertyTypeRef,
-                visibility = visibility,
-                symbol = FirPropertyAccessorSymbol(),
-                propertySymbol = propertySymbol,
-                modality = null,
-            )
-        } else {
-            FirDefaultPropertySetter(
-                source = source,
-                moduleData = moduleData,
-                origin = origin,
-                propertyTypeRef = propertyTypeRef,
-                visibility = visibility,
-                propertyAccessorSymbol = FirPropertyAccessorSymbol(),
-                propertySymbol = propertySymbol,
-                modality = null,
-                parameterAnnotations = parameterAnnotations,
-                parameterSource = parameterSource,
-            )
+        ): FirDefaultPropertyAccessor {
+            val symbolIdFactory = moduleData.session.symbolIdFactory
+
+            return if (isGetter) {
+                FirDefaultPropertyGetter(
+                    source = source,
+                    moduleData = moduleData,
+                    origin = origin,
+                    propertyTypeRef = propertyTypeRef,
+                    visibility = visibility,
+                    symbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBasedOrUnique(source)),
+                    propertySymbol = propertySymbol,
+                    modality = null,
+                )
+            } else {
+                FirDefaultPropertySetter(
+                    source = source,
+                    moduleData = moduleData,
+                    origin = origin,
+                    propertyTypeRef = propertyTypeRef,
+                    visibility = visibility,
+                    propertyAccessorSymbol = FirPropertyAccessorSymbol(symbolIdFactory.sourceBasedOrUnique(source)),
+                    propertySymbol = propertySymbol,
+                    modality = null,
+                    parameterAnnotations = parameterAnnotations,
+                    parameterSource = parameterSource,
+                )
+            }
         }
     }
 }
@@ -175,14 +180,17 @@ class FirDefaultPropertySetter(
     FirImplicitUnitTypeRef(source),
     valueParameters = mutableListOf(
         buildDefaultSetterValueParameter builder@{
+            val valueParameterSource =
+                (parameterSource ?: source)
+                    ?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter.ValueParameter)
+
             this@builder.resolvePhase = resolvePhase
-            this@builder.source =
-                (parameterSource ?: source)?.fakeElement(KtFakeSourceElementKind.DefaultAccessor.Setter.ValueParameter)
+            this@builder.source = valueParameterSource
             this@builder.containingDeclarationSymbol = propertyAccessorSymbol
             this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
-            this@builder.symbol = FirValueParameterSymbol()
+            this@builder.symbol = FirValueParameterSymbol(moduleData.session.symbolIdFactory.sourceBasedOrUnique(valueParameterSource))
             this@builder.annotations += parameterAnnotations
         }
     ),

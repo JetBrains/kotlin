@@ -154,6 +154,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
         object DelegateExpression : DelegatedPropertyAccessor()
 
         /**
+         * The delegate field of a delegated property. Its source refers to the call that creates the delegate.
+         */
+        object DelegatedPropertyDelegateField : DelegatedPropertyAccessor()
+
+        /**
          * A delegated property getter. Its real source is the explicit getter declaration if present, or otherwise the call that creates
          * the delegate.
          */
@@ -836,6 +841,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      */
     sealed class ScriptParameter : KtFakeSourceElementKind() {
         /**
+         * A receiver parameter generated from the base class configuration.
+         */
+        object BaseClassReceiverParameter : ScriptParameter()
+
+        /**
          * A parameter generated from a base class constructor value parameter.
          */
         class BaseClassConstructorParameter(val index: Int) : ScriptParameter() {
@@ -876,11 +886,6 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
          */
         object ExplainField : ScriptParameter()
     }
-
-    /**
-     * For script base class
-     */
-    object ScriptBaseClass : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     /**
      * For repl base class.
