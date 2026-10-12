@@ -1,0 +1,5 @@
+KtNameReferenceExpression(131,132): 'x'
+  isImplicitReferenceToCompanion: false
+  contextSensitiveResolutionStatus: NotAvailable
+  lookupLocally: false
+  null
