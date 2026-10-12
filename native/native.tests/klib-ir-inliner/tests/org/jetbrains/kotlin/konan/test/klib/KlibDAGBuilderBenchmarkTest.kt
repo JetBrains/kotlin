@@ -25,12 +25,18 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInfo
 import org.junit.jupiter.api.fail
+import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 import org.junit.jupiter.api.parallel.Isolated
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.exists
+import kotlin.io.path.name
 import kotlin.io.path.pathString
+import kotlin.io.path.relativeTo
 import kotlin.time.Duration
 import kotlin.time.measureTime
 
@@ -39,6 +45,11 @@ import kotlin.time.measureTime
 @Isolated
 @Execution(ExecutionMode.SAME_THREAD)
 class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
+
+    companion object {
+        @TempDir
+        private lateinit var sharedTmpDir: Path
+    }
 
     private lateinit var testInfo: TestInfo
 
@@ -234,67 +245,188 @@ class KlibDAGBuilderBenchmarkTest : AbstractNativeSimpleTest() {
     }
 
     private fun generateUserLibraries(regularLibsNumber: Int, cInteropLibsNumber: Int): Set<String> {
+        require(regularLibsNumber >= 0)
+        require(cInteropLibsNumber >= 0)
         require(regularLibsNumber + cInteropLibsNumber > 0)
 
-        val generatedLibraries = hashSetOf<String>()
+        val cInteropLibraries: List<GeneratedCInteropLibrary> = generateAndCacheCInteropLibraries(cInteropLibsNumber)
+        assertEquals(cInteropLibsNumber, cInteropLibraries.size)
 
-        /*
-         * Build `regularLibsNumber` regular modules and `cInteropLibsNumber` C-interop modules in the following way:
-         * - C-Interop module "I0"
-         * - C-Interop module "I1", depends on "I0"
-         * - C-Interop module "I2", depends on "I1" and "I0"
-         * - C-Interop module "I3", depends on "I2" and "I1"
-         * ...
-         * - C-interop module "I<cInteropLibsNumber-1>", depends on "I<cInteropLibsNumber-2>" and "I<cInteropLibsNumber-3>"
-         * - Regular module "R0", depends on "I<cInteropLibsNumber-1>" and "I<cInteropLibsNumber-2>"
-         * - Regular module "R1", depends on "R0" and "I<cInteropLibsNumber-1>"
-         * - Regular module "R2", depends on "R1" and "R0"
-         * ...
-         * - Regular module "R<regularLibsNumber-1>", depends on "R<regularLibsNumber-2>" and "R<regularLibsNumber-3>"
-         */
-        newSourceModules {
-            val interopModuleNames = mutableListOf<String>()
+        val regularLibraries: List<GeneratedRegularLibrary> = generateAndCacheRegularLibraries(regularLibsNumber, cInteropLibraries)
+        assertEquals(regularLibsNumber, regularLibraries.size)
 
-            for (moduleIndex in 0 until cInteropLibsNumber) {
-                val thisModuleName = "I$moduleIndex"
-                val dependencyModuleNames = interopModuleNames.takeLast(2) // just take last 2 c-interop modules
+        val allPaths = buildSet {
+            cInteropLibraries.mapTo(this) { it.path.toRealPath().pathString }
+            regularLibraries.mapTo(this) { it.path.toRealPath().pathString }
+        }
+        assertEquals(regularLibsNumber + cInteropLibsNumber, allPaths.size)
 
-                addCInteropModule(thisModuleName) {
-                    for (dependency in dependencyModuleNames) dependsOn(dependency)
+        return allPaths
+    }
 
-                    // add 2k declarations to add "weight" to the library
-                    headerFileAddend(
-                        List(2000) { index -> "void ${thisModuleName}_$index() {}" }.joinToString("\n")
-                    )
+    private interface GeneratedLibrary {
+        val name: String
+        val path: Path
+    }
+
+    private class GeneratedCInteropLibrary(val index: Int, basePath: Path) : GeneratedLibrary {
+        override val name = "I$index"
+        override val path: Path = basePath.resolve(name)
+        val headerFilePath: Path = basePath.resolve(path.name + ".h")
+    }
+
+    /**
+     * Builds `cInteropLibsNumber` C-interop modules in the following way:
+     * - C-Interop module "I0"
+     * - C-Interop module "I1", depends on "I0"
+     * - C-Interop module "I2", depends on "I1" and "I0"
+     * - C-Interop module "I3", depends on "I2" and "I1"
+     * ...
+     * - C-interop module "I<cInteropLibsNumber-1>", depends on "I<cInteropLibsNumber-2>" and "I<cInteropLibsNumber-3>"
+     *
+     * Note: The process of building of C-interop libraries is time-consuming. To speed it up, the libraries generated on
+     * previous invocations of [generateAndCacheCInteropLibraries] with the same parameters are re-used.
+     */
+    private fun generateAndCacheCInteropLibraries(cInteropLibsNumber: Int): List<GeneratedCInteropLibrary> {
+        require(cInteropLibsNumber >= 0)
+
+        if (cInteropLibsNumber == 0) return emptyList()
+
+        // Compute the directory where libraries should be cached:
+        val generatedOrCachedLibraryBaseDir: Path = sharedTmpDir
+            .resolve("interop-libs")
+            .createDirectories()
+
+        // Compute the names and paths of C-interop libraries:
+        val generatedLibraries = (0 until cInteropLibsNumber).map { libraryIndex ->
+            GeneratedCInteropLibrary(libraryIndex, generatedOrCachedLibraryBaseDir)
+        }
+
+        // Generate the libraries that have not been yet generated, and cache them:
+        for ((index, name, path) in generatedLibraries) {
+            if (!path.exists()) {
+                // just take last 2 c-interop modules
+                val dependencies: List<GeneratedCInteropLibrary> = generatedLibraries.subList(0, index).takeLast(2)
+
+                newSourceModules(
+                    customGeneratedSourcesDir = generatedOrCachedLibraryBaseDir,
+                ) {
+                    // Register already existing modules. They won't be compiled but will be used as the dependencies.
+                    for (dependency in dependencies) {
+                        addCInteropModule(dependency.name, dependency.path, dependency.headerFilePath)
+                    }
+
+                    addCInteropModule(name) {
+                        dependsOn(dependencies.map { it.name })
+
+                        // add 2k declarations to add "weight" to the library
+                        headerFileAddend(
+                            List(2000) { index -> "void ${name}_$index() {}" }.joinToString("\n")
+                        )
+                    }
+                }.compileToKlibsViaCli(
+                    customGeneratedKlibsDir = generatedOrCachedLibraryBaseDir,
+                ) { module, successKlib ->
+                    when (module) {
+                        is CInteropKlibTestSourceModule -> {
+                            assertEquals(path, successKlib.resultingArtifact.klibFile.toPath())
+                            println("Generated C-interop library ${module.name}: ${path.relativeTo(generatedOrCachedLibraryBaseDir)}")
+                        }
+
+                        is CInteropKlibExistingModule -> {
+                            // Do nothing.
+                            println("Re-used C-interop library ${module.name}: ${path.relativeTo(generatedOrCachedLibraryBaseDir)}")
+                        }
+
+                        else -> fail("Unexpected module ${module.name}")
+                    }
                 }
-
-                interopModuleNames += thisModuleName
             }
+        }
 
-            val regularModuleNames = mutableListOf<String>()
+        return generatedLibraries
+    }
 
-            for (moduleIndex in 0 until regularLibsNumber) {
-                val thisModuleName = "R$moduleIndex"
-                val dependencyModuleNames = buildList {
-                    addAll(regularModuleNames.takeLast(2)) // just take last 2 regular modules
-                    addAll(interopModuleNames.takeLast(2 - size)) // for the first 2 modules also add deps on C-interop modules
+    private class GeneratedRegularLibrary(val index: Int, basePath: Path) : GeneratedLibrary {
+        override val name = "R$index"
+        override val path: Path = basePath.resolve(name)
+    }
+
+    /**
+     * Build `regularLibsNumber` regular modules in the following way:
+     * - Regular module "R0", depends on "I<cInteropLibsNumber-1>" and "I<cInteropLibsNumber-2>"
+     * - Regular module "R1", depends on "R0" and "I<cInteropLibsNumber-1>"
+     * - Regular module "R2", depends on "R1" and "R0"
+     * ...
+     * - Regular module "R<regularLibsNumber-1>", depends on "R<regularLibsNumber-2>" and "R<regularLibsNumber-3>"
+     *
+     * Note: The process of building of C-interop libraries is time-consuming. To speed it up, the libraries generated on
+     * previous invocations of [generateAndCacheRegularLibraries] with the same parameters are re-used.
+     */
+    private fun generateAndCacheRegularLibraries(
+        regularLibsNumber: Int,
+        cInteropLibraries: List<GeneratedCInteropLibrary>,
+    ): List<GeneratedRegularLibrary> {
+        require(regularLibsNumber >= 0)
+
+        if (regularLibsNumber == 0) return emptyList()
+
+        // Compute the directory where libraries should be cached:
+        val generatedOrCachedLibraryBaseDir: Path = sharedTmpDir
+            .resolve("regular-libs-for-${cInteropLibraries.size}-interop-libs")
+            .createDirectories()
+
+        // Compute the names and paths of C-interop libraries:
+        val generatedLibraries = (0 until regularLibsNumber).map { libraryIndex ->
+            GeneratedRegularLibrary(libraryIndex, generatedOrCachedLibraryBaseDir)
+        }
+
+        for ((index, name, path) in generatedLibraries) {
+            if (!path.exists()) {
+
+                val dependencies: List<GeneratedLibrary> = buildList {
+                    addAll(generatedLibraries.subList(0, index).takeLast(2)) // just take last 2 regular modules
+                    addAll(cInteropLibraries.takeLast(2 - size)) // for the first 2 modules also add deps on C-interop modules
                 }
 
-                addRegularModule(thisModuleName) {
-                    for (dependency in dependencyModuleNames) dependsOn(dependency)
+                newSourceModules {
+                    // Register already existing modules. They won't be compiled but will be used as the dependencies.
+                    for (dependency in dependencies) {
+                        when (dependency) {
+                            is GeneratedRegularLibrary -> addRegularModule(dependency.name, dependency.path)
+                            is GeneratedCInteropLibrary -> addCInteropModule(dependency.name, dependency.path, dependency.headerFilePath)
+                            else -> fail("Unexpected dependency ${dependency.name}")
+                        }
+                    }
 
-                    // add 2k declarations to add "weight" to the library
-                    // (it's approx. the number of declarations in the coroutines-core library)
-                    sourceFileAddend(
-                        List(2000) { index -> "fun ${thisModuleName}_$index() {}" }.joinToString("\n")
-                    )
+                    addRegularModule(name) {
+                        dependsOn(dependencies.map { it.name })
+
+                        // add 2k declarations to add "weight" to the library
+                        // (it's approx. the number of declarations in the coroutines-core library)
+                        sourceFileAddend(
+                            List(2000) { index -> "fun ${name}_$index() {}" }.joinToString("\n")
+                        )
+                    }
+                }.compileToKlibsViaCli(
+                    customGeneratedKlibsDir = generatedOrCachedLibraryBaseDir,
+                ) { module, successKlib ->
+                    when (module) {
+                        is RegularKlibTestSourceModule -> {
+                            assertEquals(path, successKlib.resultingArtifact.klibFile.toPath())
+                            println("Generated regular library ${module.name}: ${path.relativeTo(generatedOrCachedLibraryBaseDir)}")
+                        }
+
+                        is ExistingKlibModule -> {
+                            // Do nothing.
+                            println("Re-used regular library ${module.name}: ${path.relativeTo(generatedOrCachedLibraryBaseDir)}")
+                        }
+
+                        else -> fail("Unexpected module ${module.name}")
+                    }
                 }
-
-                regularModuleNames += thisModuleName
             }
-        }.compileToKlibsViaCli { _, successKlib -> generatedLibraries.add(successKlib.resultingArtifact.klibFile.canonicalPath) }
-
-        assertEquals(regularLibsNumber + cInteropLibsNumber, generatedLibraries.size)
+        }
 
         return generatedLibraries
     }
