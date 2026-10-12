@@ -1554,6 +1554,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     }
 
     @Test
+    @TestMetadata("constructorWithThrowsFromLibrary.kt")
+    public void testConstructorWithThrowsFromLibrary() {
+      run("constructorWithThrowsFromLibrary.kt");
+    }
+
+    @Test
     @TestMetadata("differentDefaultValues.kt")
     public void testDifferentDefaultValues() {
       run("differentDefaultValues.kt");
@@ -1593,6 +1599,12 @@ public class CompiledJsStubsTestGenerated extends AbstractCompiledJsStubsTest {
     @TestMetadata("oldAnnotationsRecovery.kt")
     public void testOldAnnotationsRecovery() {
       run("oldAnnotationsRecovery.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyAccessorsWithThrowsFromLibrary.kt")
+    public void testPropertyAccessorsWithThrowsFromLibrary() {
+      run("propertyAccessorsWithThrowsFromLibrary.kt");
     }
 
     @Test
