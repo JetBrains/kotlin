@@ -1,0 +1,1 @@
+no\ classes\ should\ call\ method\ Project.getRootProject(),\ because\ Project.rootProject\ is\ incompatible\ with\ Isolated\ Projects.=project-root-project-usages.txt

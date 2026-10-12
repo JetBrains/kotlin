@@ -26,7 +26,7 @@ import kotlin.test.assertTrue
 class ProjectIsolationJsIT : KGPBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(sharedNpmDependenciesPerProject = true)
+        get() = super.defaultBuildOptions.sharedNpmDependenciesPerProject()
 
     @DisplayName("Composite multi-module JS project with per-project npm tooling should be compatible with project isolation")
     @GradleTest
@@ -52,6 +52,9 @@ class ProjectIsolationJsIT : KGPBaseTest() {
     }
 
     companion object {
+        internal fun BuildOptions.sharedNpmDependenciesPerProject(): BuildOptions =
+            copy(freeArgs = freeArgs + "-Pkotlin.internal.npm.sharedNpmDependenciesProjectMode=PER-PROJECT")
+
         internal const val PRINT_NPM_SHARED_DEPS_MODE_TASK = "printNpmSharedDepsMode"
         private const val NPM_SHARED_DEPS_MODE_PREFIX = "npmSharedDepsMode: "
 

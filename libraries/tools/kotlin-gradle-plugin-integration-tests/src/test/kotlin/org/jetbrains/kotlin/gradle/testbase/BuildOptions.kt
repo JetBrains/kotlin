@@ -107,8 +107,6 @@ data class BuildOptions(
     val fusReportDirectory: () -> Path? = { null },
     val gradleDaemonMemoryLimitInMb: Int? = null,
     val kotlinDaemonMemoryLimitInMb: Int? = null,
-    /** Temporary, see `jsToolingProject()` in KGP. Must be removed after KT-80311. */
-    val sharedNpmDependenciesPerProject: Boolean = false,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -232,10 +230,6 @@ data class BuildOptions(
             } else {
                 arguments.add("--no-isolated-projects")
             }
-        }
-
-        if (sharedNpmDependenciesPerProject) {
-            arguments.add("-Pkotlin.internal.npm.sharedNpmDependenciesProjectMode=PER-PROJECT")
         }
 
         if (parallel) {
