@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.*
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getQualifierSelected
-import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsByNameArgumentExpression
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsByResolvedImport
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsForResolvedQualifier
 import org.jetbrains.kotlin.analysis.api.fir.references.FirReferenceResolveHelper.getSymbolsForResolvedTypeRef
@@ -49,6 +48,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnreportedDuplicateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
@@ -273,11 +274,69 @@ internal class KaFirResolver(
 
     private fun resolveSymbol(psi: KtElement): KaSymbolResolutionAttempt? = when (psi) {
         is KDocName -> resolveKDocName(psi)
-        is KtNameReferenceExpression if psi.parent is KtValueArgumentName -> {
-            getSymbolsByNameArgumentExpression(psi, analysisSession, firSymbolBuilder).ifNotEmpty(::KaBaseSimpleSymbolResolutionSuccess)
+        is KtNameReferenceExpression if psi.parent is KtValueArgumentName -> resolveValueArgumentName(psi)
+        else -> psi.getOrBuildFirWithAdjustments()?.toKaSymbolResolutionAttempt(psi)
+    }
+
+    private fun resolveValueArgumentName(psi: KtNameReferenceExpression): KaSymbolResolutionAttempt? {
+        val valueArgument = psi.parent.parent as? KtValueArgument ?: return null
+        val call = getCallByValueArgument(valueArgument) ?: return null
+        call.findCorrespondingParameter(psi.getReferencedNameAsName())?.let {
+            return KaBaseSimpleSymbolResolutionSuccess(firSymbolBuilder.buildSymbol(it))
         }
 
-        else -> psi.getOrBuildFirWithAdjustments()?.toKaSymbolResolutionAttempt(psi)
+        // Without a resolved argument mapping, no candidate is chosen (e.g., the call is ambiguous),
+        // so the call error is reported with the parameters that the candidates map the argument to
+        val calleeReference = (call as? FirResolvable)?.calleeReference as? FirDiagnosticHolder ?: return null
+        val candidateParameters = calleeReference.diagnostic.findCandidateParameters(valueArgument)
+        if (candidateParameters.isEmpty()) return null
+
+        return KaBaseSimpleSymbolResolutionError(
+            backingDiagnostic = calleeReference.createKaDiagnostic(),
+            backingCandidateSymbols = candidateParameters.map(firSymbolBuilder::buildSymbol),
+        )
+    }
+
+    /**
+     * Returns the call that receives [argument], e.g., `foo(x = 1)` for `x = 1`.
+     */
+    private fun getCallByValueArgument(argument: KtValueArgument): FirCall? {
+        val ktValueArgumentList = argument.parent as? KtValueArgumentList ?: return null
+        val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return null
+
+        return ktCallExpression.getOrBuildFir(resolutionFacade)?.unwrapSafeCall() as? FirCall
+    }
+
+    /**
+     * Returns the parameter that the argument named [name] is mapped to,
+     * or `null` if the call has no resolved argument mapping (e.g., the call is ambiguous).
+     */
+    private fun FirCall.findCorrespondingParameter(name: Name): FirValueParameter? {
+        return resolvedArgumentMappingIncludingContextArguments?.values?.firstOrNull { it.name == name }
+    }
+
+    /**
+     * Returns the distinct parameters that the candidates of [this] diagnostic map [argument] to.
+     *
+     * The mappings are built by the compiler, so a candidate with several parameters named as the argument
+     * contributes only the one the compiler maps the argument to.
+     */
+    private fun ConeDiagnostic.findCandidateParameters(argument: KtValueArgument): List<FirValueParameter> {
+        val candidates = when (this) {
+            is ConeHiddenCandidateError -> return emptyList()
+            is ConeDiagnosticWithCandidates -> candidates
+            is ConeUnreportedDuplicateDiagnostic -> return original.findCandidateParameters(argument)
+            else -> return emptyList()
+        }
+
+        return candidates
+            .mapNotNull { (it as? Candidate)?.findParameterMappedTo(argument) }
+            .distinct()
+    }
+
+    private fun Candidate.findParameterMappedTo(argument: KtValueArgument): FirValueParameter? {
+        if (!argumentMappingInitialized) return null
+        return argumentMapping.entries.firstOrNull { it.key.expression.realPsi == argument }?.value
     }
 
     private fun resolveKDocName(psi: KDocName): KaSymbolResolutionAttempt? {
