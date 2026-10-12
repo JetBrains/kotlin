@@ -14,6 +14,7 @@ import org.gradle.kotlin.dsl.support.serviceOf
 
 @JvmOverloads
 fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
+    if (project.kotlinBuildProperties.isInIdeaSync.get()) return
     val projectPath = project.path
     project.configurations.findByName(embeddedConfigurationName)?.let { embedded ->
         val archiveOperations = project.serviceOf<ArchiveOperations>()
