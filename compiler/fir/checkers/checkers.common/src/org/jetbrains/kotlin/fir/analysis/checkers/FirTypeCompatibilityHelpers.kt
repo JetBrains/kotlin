@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.isJavaValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.collectUpperBounds
 import org.jetbrains.kotlin.fir.declarations.isFullValueClass
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.isInlineClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.isPlatformValueClass
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
@@ -81,7 +81,7 @@ fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isBuiltin = boundsSymbols.any { it.isBuiltin },
         isFullValueClassOrObject = boundsSymbols.any { symbol ->
             symbol is FirRegularClassSymbol &&
-                (symbol.isFullValueClass || symbol.isJavaValueClass(session) || symbol.isMappedToJavaValueClass(session))
+                (symbol.isFullValueClass || symbol.isPlatformValueClass(session) || symbol.isMappedToPlatformValueClass(session))
         },
         isInlineValueClass = boundsSymbols.any { (it as? FirRegularClassSymbol)?.isInlineClass == true },
         isAnnotationClass = boundsSymbols.any { it.isAnnotationClass },

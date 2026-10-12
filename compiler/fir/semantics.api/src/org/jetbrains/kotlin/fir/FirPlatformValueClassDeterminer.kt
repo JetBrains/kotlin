@@ -27,14 +27,15 @@ val FirSession.platformValueClassDeterminer: FirPlatformValueClassDeterminer
  * JVM target.
  */
 @OptIn(SymbolInternals::class)
-val FirRegularClassSymbol.isDeclaredJavaValueClass: Boolean
+val FirRegularClassSymbol.isJavaValueClass: Boolean
     get() = fir.isJavaValueClass == true
 
 /**
- * Whether this class is a Java value class in this compilation: declared as a value class in Java ([isDeclaredJavaValueClass]), or a JDK
- * class that is a value class with the current JVM target and preview features ([FirPlatformValueClassDeterminer]).
+ * Whether this class is a value class of the platform in this compilation: a Java value class ([isJavaValueClass]), or a platform class
+ * that is a value class with the current target, like a JDK class with JVM target 28 and preview features
+ * ([FirPlatformValueClassDeterminer]).
  *
  * Only the class itself is checked, unlike `ConeKotlinType.isValueClass` in the checkers, which also looks through type-parameter bounds.
  */
-fun FirRegularClassSymbol.isJavaValueClass(session: FirSession): Boolean =
-    isDeclaredJavaValueClass || session.platformValueClassDeterminer.isPlatformValueClass(this)
+fun FirRegularClassSymbol.isPlatformValueClass(session: FirSession): Boolean =
+    isJavaValueClass || session.platformValueClassDeterminer.isPlatformValueClass(this)

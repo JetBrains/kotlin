@@ -139,31 +139,33 @@ private fun ConeKotlinType.isKotlinValueClass(session: FirSession): Boolean {
 }
 
 /**
- * Whether this type is a value class type: a Kotlin inline or full value class, or a Java value class type (see [isJavaValueClassType]).
+ * Whether this type is a value class type: a Kotlin inline or full value class, or a value class type of the platform
+ * (see [isPlatformValueClassType]).
  */
 fun ConeKotlinType.isValueClass(session: FirSession): Boolean =
-    isKotlinValueClass(session) || isJavaValueClassType(session)
+    isKotlinValueClass(session) || isPlatformValueClassType(session)
 
 /**
- * Whether this type is a Java value class type. Like javac, this includes type parameters, captured types and intersection types
- * bounded by a Java value class. A Kotlin class whose Java class is a value class, like `kotlin.Number` for `java.lang.Number` or
- * `kotlin.Int` for `java.lang.Integer`, is one too.
+ * Whether this type is a value class type of the platform, like a Java value class. Like javac, this includes type parameters, captured
+ * types and intersection types bounded by such a class. A Kotlin class whose platform class is a value class, like `kotlin.Number` for
+ * `java.lang.Number` or `kotlin.Int` for `java.lang.Integer`, is one too.
  *
- * Unlike [FirRegularClassSymbol.isJavaValueClass], which checks only the class itself.
+ * Unlike [FirRegularClassSymbol.isPlatformValueClass], which checks only the class itself.
  */
-private fun ConeKotlinType.isJavaValueClassType(
+private fun ConeKotlinType.isPlatformValueClassType(
     session: FirSession,
     visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
-): Boolean = unwrapToSimpleTypeUsingLowerBound().isJavaValueClassType(session, visited)
+): Boolean = unwrapToSimpleTypeUsingLowerBound().isPlatformValueClassType(session, visited)
 
-private fun ConeSimpleKotlinType.isJavaValueClassType(session: FirSession, visited: MutableSet<FirTypeParameterSymbol>): Boolean =
+private fun ConeSimpleKotlinType.isPlatformValueClassType(session: FirSession, visited: MutableSet<FirTypeParameterSymbol>): Boolean =
     when (this) {
-        is ConeIntersectionType -> intersectedTypes.any { it.isJavaValueClassType(session, visited) }
+        is ConeIntersectionType -> intersectedTypes.any { it.isPlatformValueClassType(session, visited) }
         is ConeTypeParameterType ->
-            visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.isJavaValueClassType(session, visited) }
-        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isJavaValueClassType(session, visited) }
+            visited.add(lookupTag.symbol) &&
+                    lookupTag.symbol.resolvedBounds.any { it.coneType.isPlatformValueClassType(session, visited) }
+        is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isPlatformValueClassType(session, visited) }
         is ConeClassLikeType -> toRegularClassSymbol(session)?.let {
-            it.isJavaValueClass(session) || it.isMappedToJavaValueClass(session)
+            it.isPlatformValueClass(session) || it.isMappedToPlatformValueClass(session)
         } == true
         is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
             -> false
@@ -173,9 +175,9 @@ fun ConeKotlinType.isFlexiblePrimitive(): Boolean {
     return this is ConeFlexibleType && lowerBound.isPrimitiveOrNullablePrimitive && upperBound.isPrimitiveOrNullablePrimitive
 }
 
-fun FirRegularClassSymbol.isMappedToJavaValueClass(session: FirSession): Boolean {
+fun FirRegularClassSymbol.isMappedToPlatformValueClass(session: FirSession): Boolean {
     val platformClassId = session.platformClassMapper.getCorrespondingPlatformClass(classId) ?: return false
-    return (platformClassId.toSymbol(session) as? FirRegularClassSymbol)?.isJavaValueClass(session) == true
+    return (platformClassId.toSymbol(session) as? FirRegularClassSymbol)?.isPlatformValueClass(session) == true
 }
 
 fun ConeKotlinType.isInlineClass(session: FirSession): Boolean =

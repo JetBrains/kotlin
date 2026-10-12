@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.isJavaValueClass
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.isPlatformValueClass
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -536,5 +536,5 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext)
     private fun FirRegularClassSymbol.isValueClassSupertype(): Boolean =
-        isFullValueClass || isJavaValueClass(context.session) || classId.isRecordId() || isMappedToJavaValueClass(context.session)
+        isFullValueClass || isPlatformValueClass(context.session) || classId.isRecordId() || isMappedToPlatformValueClass(context.session)
 }
