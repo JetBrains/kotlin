@@ -16,11 +16,14 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.getCompilerRequiredAnnotationByClassId
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.config.AccessLevel
 import org.jetbrains.kotlin.lombok.config.lombokService
 
 class DeclarationWithValueAnnStatusTransformer(session: FirSession) : FirStatusTransformerExtension(session) {
@@ -34,13 +37,18 @@ class DeclarationWithValueAnnStatusTransformer(session: FirSession) : FirStatusT
         containingClass: FirClassLikeSymbol<*>?,
         isLocal: Boolean,
     ): FirDeclarationStatus {
-        return when {
-            containingClass == null -> status
-            status.visibility != JavaVisibilities.PackageVisibility -> status
-            session.lombokService.config.fieldDefaultPrivate -> status.copy(visibility = Visibilities.Private)
-            session.lombokService.getValue(containingClass) == null -> status
-            else -> status.copy(visibility = Visibilities.Private)
-        }
+        if (containingClass == null) return status
+        val lombokService = session.lombokService
+        val fieldDefaults = lombokService.getFieldDefaults(containingClass)
+        val visibility = when {
+            status.visibility != JavaVisibilities.PackageVisibility -> null
+            field.symbol.getCompilerRequiredAnnotationByClassId(LombokNames.PACKAGE_PRIVATE_ID) != null -> null
+            fieldDefaults != null && fieldDefaults.level != AccessLevel.NONE -> fieldDefaults.level.toVisibility(field.symbol)
+            session.lombokService.config.fieldDefaultPrivate -> Visibilities.Private
+            session.lombokService.getValue(containingClass) == null -> null
+            else -> Visibilities.Private
+        } ?: return status
+        return status.copy(visibility = visibility)
     }
 
     override fun transformStatus(

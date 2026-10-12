@@ -68,6 +68,9 @@ import org.jetbrains.kotlin.lombok.config.LombokConfigNames.ALL_ARGS_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.EQUALS_AND_HASH_CODE_ONLY_EXPLICITLY_INCLUDED_CONFIG
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.FIELD_DEFAULTS_PRIVATE
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.FIELD_DEFAULTS_FINAL
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.LEVEL
+import org.jetbrains.kotlin.lombok.config.LombokConfigNames.MAKE_FINAL
 import org.jetbrains.kotlin.lombok.config.LombokConfigNames.TO_STRING_DO_NOT_USE_GETTERS_CONFIG
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -140,6 +143,7 @@ class GlobalConfig(
     val allArgsConstructorFlagUsage: FlagUsageValue?,
     val requiredArgsConstructorFlagUsage: FlagUsageValue?,
     val fieldDefaultPrivate: Boolean,
+    val fieldDefaultFinal: Boolean,
 ) {
     companion object {
         fun extract(config: LombokConfig): GlobalConfig {
@@ -185,6 +189,7 @@ class GlobalConfig(
                 allArgsConstructorFlagUsage = parseFlagUsage(config, ALL_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
                 requiredArgsConstructorFlagUsage = parseFlagUsage(config, REQUIRED_ARGS_CONSTRUCTOR_FLAG_USAGE_CONFIG),
                 fieldDefaultPrivate = config.getBoolean(FIELD_DEFAULTS_PRIVATE) ?: false,
+                fieldDefaultFinal = config.getBoolean(FIELD_DEFAULTS_FINAL) ?: false,
             )
         }
     }
@@ -311,6 +316,20 @@ object ConeLombokAnnotations {
                     staticConstructor = annotation.getNonBlankStringArgument(STATIC_CONSTRUCTOR),
                     annotation = annotation,
                 )
+        }
+    }
+
+    class FieldDefaults(
+        val level: AccessLevel,
+        val makeFinal: Boolean,
+        annotation: FirAnnotation,
+    ) : ConeLombokAnnotation(annotation) {
+        companion object : ConeAnnotationCompanion<FieldDefaults>(LombokNames.FIELD_DEFAULTS_ID) {
+            override fun extract(annotation: FirAnnotation, session: FirSession): FieldDefaults = FieldDefaults(
+                level = annotation.getAccessLevel(LEVEL, defaultAccessLevel = AccessLevel.NONE),
+                makeFinal = annotation.getBooleanArgument(MAKE_FINAL) ?: false,
+                annotation = annotation,
+            )
         }
     }
 

@@ -30,8 +30,11 @@ FILE fqName:test fileName:/main.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:test.Derived
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in test.Derived'
-          CALL 'public open fun getId (): kotlin.Int declared in test.Derived' type=kotlin.Int origin=GET_PROPERTY
-            ARG <this>: GET_VAR '<this>: test.Derived declared in test.Derived.foo' type=test.Derived origin=IMPLICIT_ARGUMENT
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:id type:kotlin.Int visibility:protected/*protected and package*/ declared in test.java.IdContainer.Nested' type=kotlin.Int superQualifierSymbol=test.Derived origin=null
+            receiver: GET_VAR '<this>: test.Derived declared in test.Derived.foo' type=test.Derived origin=IMPLICIT_ARGUMENT
+    PROPERTY FAKE_OVERRIDE name:id visibility:protected/*protected and package*/ modality:FINAL [fake_override,var]
+      overridden:
+        protected/*protected and package*/ final id: kotlin.Int declared in test.java.IdContainer.Nested
   CLASS CLASS name:DerivedContainer modality:FINAL visibility:public superTypes:[test.java.IdContainer]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:test.DerivedContainer
     CONSTRUCTOR visibility:public returnType:test.DerivedContainer [primary]
