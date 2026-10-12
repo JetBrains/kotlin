@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationS
 import org.jetbrains.kotlin.fir.scopes.FirLookupDefaultStarImportsInSourcesSettingHolder
 import org.jetbrains.kotlin.fir.scopes.SubstitutionScopeKeyFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolIdFactory
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolIdFactory
 import org.jetbrains.kotlin.fir.syntax.FirSyntaxComponent
 
 @SessionConfiguration
@@ -50,6 +52,7 @@ internal fun LLFirSession.registerIdeComponents(
     annotationSearchScope: Lazy<GlobalSearchScope>,
 ) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory(project))
+    register(FirSymbolIdFactory::class, FirUniqueSymbolIdFactory)
     register(SealedClassInheritorsProvider::class, LLSealedInheritorsProvider(project))
     register(FirExceptionHandler::class, LLFirExceptionHandler)
     register(CodeFragmentScopeProvider::class, CodeFragmentScopeProvider(this))

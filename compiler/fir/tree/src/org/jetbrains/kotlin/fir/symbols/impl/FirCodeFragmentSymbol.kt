@@ -7,5 +7,13 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 
-class FirCodeFragmentSymbol : FirBasedSymbol<FirCodeFragment>()
+class FirCodeFragmentSymbol(symbolId: FirSymbolId<FirCodeFragmentSymbol>) : FirBasedSymbol<FirCodeFragment>(symbolId) {
+    /**
+     * Creates a [FirCodeFragmentSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor() : this(FirUniqueSymbolId())
+}

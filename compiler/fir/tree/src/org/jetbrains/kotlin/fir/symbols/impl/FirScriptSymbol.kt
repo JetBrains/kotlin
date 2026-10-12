@@ -7,8 +7,16 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.name.FqName
 
-class FirScriptSymbol(val fqName: FqName) : FirBasedSymbol<FirScript>() {
+class FirScriptSymbol(symbolId: FirSymbolId<FirScriptSymbol>, val fqName: FqName) : FirBasedSymbol<FirScript>(symbolId) {
+    /**
+     * Creates a [FirScriptSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor(fqName: FqName) : this(FirUniqueSymbolId(), fqName)
+
     override fun toString(): String = "${this::class.simpleName} ${fqName.asString()}"
 }

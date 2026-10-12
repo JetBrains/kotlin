@@ -9,17 +9,27 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.mpp.TypeParameterSymbolMarker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>(), TypeParameterSymbolMarker {
+class FirTypeParameterSymbol(
+    symbolId: FirSymbolId<FirTypeParameterSymbol>,
+) : FirClassifierSymbol<FirTypeParameter>(symbolId), TypeParameterSymbolMarker {
     val name: Name
         get() = fir.name
 
     private val lookupTag = ConeTypeParameterLookupTag(this)
+
+    /**
+     * Creates a [FirTypeParameterSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor() : this(FirUniqueSymbolId())
 
     override fun toLookupTag(): ConeTypeParameterLookupTag = lookupTag
 
@@ -44,4 +54,3 @@ class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>(), TypePara
     val containingDeclarationSymbol: FirBasedSymbol<*>
         get() = fir.containingDeclarationSymbol
 }
-

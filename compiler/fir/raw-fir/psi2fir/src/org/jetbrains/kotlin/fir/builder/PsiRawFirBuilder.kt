@@ -1375,6 +1375,7 @@ open class PsiRawFirBuilder(
 
             val psiSourceFile = KtPsiSourceFile(file)
             return buildFile {
+                symbol = FirFileSymbol()
                 source = file.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -2702,6 +2703,7 @@ open class PsiRawFirBuilder(
             allowLazyBody: Boolean = true,
             isLocal: Boolean = false,
         ): FirAnonymousInitializer = buildAnonymousInitializer {
+            symbol = FirAnonymousInitializerSymbol()
             this@PsiRawFirBuilder.context.withContainerSymbol(symbol, isLocal) {
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData

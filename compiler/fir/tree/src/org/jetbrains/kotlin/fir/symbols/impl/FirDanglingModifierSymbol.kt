@@ -7,7 +7,17 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.id.FirSymbolId
+import org.jetbrains.kotlin.fir.symbols.id.FirUniqueSymbolId
 
-class FirDanglingModifierSymbol : FirBasedSymbol<FirDanglingModifierList>() {
+class FirDanglingModifierSymbol(
+    symbolId: FirSymbolId<FirDanglingModifierSymbol>,
+) : FirBasedSymbol<FirDanglingModifierList>(symbolId) {
+    /**
+     * Creates a [FirDanglingModifierSymbol] with a [unique symbol ID][FirUniqueSymbolId].
+     * See [FirBasedSymbol] for when to use this default constructor.
+     */
+    constructor() : this(FirUniqueSymbolId())
+
     override fun toString(): String = "${this::class.simpleName}"
 }
