@@ -300,17 +300,11 @@ internal class KaFirCompilerFacility(
                 }
             }
 
-            val generateClassFilter = SelectedFilesGenerateClassFilter(
-                files = chunk.files.map { it.ktFile },
-                inlinedClasses = compilationPeerData.inlinedClasses
-            )
-
             val result = compileChunk(
                 module,
                 chunk,
                 options,
                 codeFragmentMappings?.takeIf { chunk.hasCodeFragments },
-                generateClassFilter,
                 KaFirDelegatingCompiledCodeProvider(registeredCodeProviders),
                 contextDeclarationCache,
                 disabledIrExtensions,
@@ -867,7 +861,6 @@ internal class KaFirCompilerFacility(
         options: KaBaseCompilationOptions,
         codeFragmentMappings: CodeFragmentMappings?,
         codegenFactory: JvmIrCodegenFactory,
-        generateClassFilter: GenerationState.GenerateClassFilter,
         diagnosticsCollector: BaseDiagnosticsCollector,
         compiledCodeProvider: CompiledCodeProvider,
     ): KaCompilationResult {
@@ -893,7 +886,6 @@ internal class KaFirCompilerFacility(
             fir2IrResult.irModuleFragment.descriptor,
             configuration,
             classBuilderFactory,
-            generateDeclaredClassFilter = generateClassFilter,
             jvmBackendClassResolver = FirJvmBackendClassResolver(fir2IrResult.components),
             diagnosticReporter = diagnosticsCollector,
             compiledCodeProvider = compiledCodeProvider
@@ -917,8 +909,6 @@ internal class KaFirCompilerFacility(
             return className in matchingClassNames || matchingClassNames.any { className.startsWith("$it$") }
         }
 
-        // Generate class filter makes the backend skip class bodies, but classes are still generated.
-        // Here we filter the unnecessary output.
         val compiledFiles = generationState.factory.asList()
             .filter { isMatchingRelativeClassPath(it.relativePath) }
             .map(::KaBaseCompiledFileForOutputFile)
@@ -964,7 +954,6 @@ internal class KaFirCompilerFacility(
         chunk: ChunkToCompile,
         options: KaBaseCompilationOptions,
         codeFragmentMappings: CodeFragmentMappings?,
-        generateClassFilter: GenerationState.GenerateClassFilter,
         compiledCodeProvider: CompiledCodeProvider,
         contextDeclarationCache: CodeFragmentContextDeclarationCache?,
         disabledIrExtensions: List<Class<out IrGenerationExtension>>,
@@ -1054,7 +1043,6 @@ internal class KaFirCompilerFacility(
             options,
             codeFragmentMappings,
             codegenFactory,
-            generateClassFilter,
             diagnosticsCollector,
             compiledCodeProvider
         )
@@ -1354,22 +1342,6 @@ internal class KaFirCompilerFacility(
             return inlineLambdaParametersMapping[parameter]
         }
 
-    }
-
-    private class SelectedFilesGenerateClassFilter(
-        private val files: List<KtFile>,
-        private val inlinedClasses: Set<KtClassOrObject>
-    ) : GenerationState.GenerateClassFilter() {
-        private val filesWithInlinedClasses = inlinedClasses.mapTo(mutableSetOf()) { it.containingKtFile }
-
-        override fun shouldGeneratePackagePart(ktFile: KtFile): Boolean {
-            return ktFile in files || ktFile in filesWithInlinedClasses
-        }
-
-        override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
-            return processingClassOrObject.containingKtFile in files ||
-                    processingClassOrObject is KtObjectDeclaration && processingClassOrObject in inlinedClasses
-        }
     }
 
     private fun createJvmIrCodegenFactory(configuration: CompilerConfiguration, evaluatorData: JvmEvaluatorData?): JvmIrCodegenFactory {
