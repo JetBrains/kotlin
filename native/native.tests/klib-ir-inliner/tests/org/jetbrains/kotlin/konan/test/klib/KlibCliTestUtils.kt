@@ -124,7 +124,10 @@ private class CInteropExistingModuleImpl(
 ) : CInteropKlibExistingModule, BaseModuleImpl(name, dependencyNames = emptyList())
 
 context(testRunner: AbstractNativeSimpleTest)
-internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): KlibTestSourceModules {
+internal fun newSourceModules(
+    customGeneratedSourcesDir: Path? = null,
+    init: KlibTestSourceModulesBuilder.() -> Unit
+): KlibTestSourceModules {
     // The list of source modules being built.
     val modules = mutableListOf<BaseModuleImpl>()
 
@@ -196,7 +199,7 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
     // Initialize dependencies.
     modules.forEach { it.dependencies = it.dependencyNames.map(nameToModuleMapping::getValue) }
 
-    val generatedSourcesDir = testRunner.buildDir.resolve("generated-sources").toPath()
+    val generatedSourcesDir = customGeneratedSourcesDir ?: testRunner.buildDir.resolve("generated-sources").toPath()
     generatedSourcesDir.createDirectories()
 
     // Generate sources.
@@ -283,9 +286,10 @@ context(testRunner: AbstractNativeSimpleTest)
 internal fun KlibTestSourceModules.compileToKlibsViaCli(
     produceUnpackedKlibs: Boolean = true,
     extraCliArgs: List<String> = emptyList(),
+    customGeneratedKlibsDir: Path? = null,
     transform: ((module: KlibTestModule, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
 ) {
-    val klibFilesDir = testRunner.buildDir.resolve(
+    val klibFilesDir = customGeneratedKlibsDir?.toFile() ?: testRunner.buildDir.resolve(
         listOf(
             "klib-files",
             if (produceUnpackedKlibs) "unpacked" else "packed",
