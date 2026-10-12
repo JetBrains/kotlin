@@ -93,7 +93,14 @@ projectTests {
         testFederation {
             smokeTests { includeAll() }
         }
-        forkEvery = 1
+
+        useJUnitPlatform {
+            excludeTags("nightly")
+        }
+
+        if (!dryRun.get()) {
+            forkEvery = 1
+        }
     }
 
     testTask("nightlyTests", javaLauncher = JdkMajorVersion.JDK_21_0, skipInLocalBuild = false) {

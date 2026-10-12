@@ -18,5 +18,12 @@ internal fun Project.configureTestDryRun() {
 
     tasks.withType<Test>().configureEach {
         dryRun.value(testDryRun)
+        doFirst {
+            if (dryRun.get() && forkEvery > 0) {
+                logger.warn(
+                    "⚠️[WARN] Task $path has dry-run mode enabled with forkEvery=$forkEvery, set forkEvery to 0 for dry runs"
+                )
+            }
+        }
     }
 }
