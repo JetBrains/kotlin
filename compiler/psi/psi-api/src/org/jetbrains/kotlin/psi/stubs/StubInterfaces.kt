@@ -294,6 +294,27 @@ interface KotlinDestructuringDeclarationStub : KotlinStubElement<KtDestructuring
 
     @KtImplementationDetail
     val hasInitializer: Boolean
+
+    @KtImplementationDetail
+    val hasSquareBrackets: Boolean
+
+    @KtImplementationDetail
+    val isFullForm: Boolean
+}
+
+@SubclassOptInRequired(KtImplementationDetail::class)
+interface KotlinDestructuringDeclarationEntryStub : KotlinStubWithFqName<KtDestructuringDeclarationEntry> {
+    /**
+     * Whether the entry is mutable, either via its own `var` keyword or via the `var` keyword of its destructuring declaration.
+     */
+    @KtImplementationDetail
+    val isVar: Boolean
+
+    /**
+     * Whether the entry is named by a single underscore (`_`) that is not quoted with backticks, so it is an unused entry.
+     */
+    @KtImplementationDetail
+    val isSingleUnderscore: Boolean
 }
 
 @SubclassOptInRequired(KtImplementationDetail::class)

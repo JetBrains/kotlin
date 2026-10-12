@@ -1,0 +1,30 @@
+FILE: [ResolvedTo(BODY_RESOLVE)] brokenRenamedDestructuringScript.kts
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-brokenRenamedDestructuringScript.kts>
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] <script receiver parameter>: R|kotlin/script/experimental/templates/ScriptWithArgs|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-brokenRenamedDestructuringScript.kts>, ScriptTopLevelDeclaration=true] class Tuple : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Tuple] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Tuple.first] first: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Tuple.second] second: R|kotlin/Int|): R|Tuple| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val first: R|kotlin/String| = R|<local>/first|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Tuple] get(): R|kotlin/String|
+
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val second: R|kotlin/Int| = R|<local>/second|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Tuple] get(): R|kotlin/Int|
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val m: <ERROR TYPE REF: Unresolved name: m> = R|<local>/<destruct>|.<Unresolved name: m>#
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: m>
+
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
+
+        [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableMarkerKey=true, ScriptTopLevelDeclaration=true] lval <destruct>: <ERROR TYPE REF: Unresolved name: x> = <Unresolved name: x>#
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val n: <ERROR TYPE REF: Unresolved name: > = R|<local>/<destruct>|.<Unresolved name: >#
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: >
+
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val o: <ERROR TYPE REF: Unresolved name: x> = <Unresolved name: x>#
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: x>

@@ -2,14 +2,18 @@ FILE[kind=Script[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   SCRIPT[fqName=AccessorOnScriptDestructuring, fqName=AccessorOnScriptDestructuring, name=AccessorOnScriptDestructuring]
-    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=a]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=b]
       BINARY_EXPRESSION
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=2]
     SCRIPT_INITIALIZER
       REFERENCE_EXPRESSION[referencedName=get]
-    DESTRUCTURING_DECLARATION[hasInitializer=true, isVar=false]
+    DESTRUCTURING_DECLARATION[hasInitializer=true, hasSquareBrackets=false, isFullForm=false, isVar=false]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=c]
+      DESTRUCTURING_DECLARATION_ENTRY[fqName=null, isSingleUnderscore=false, isVar=false, name=d]
       BINARY_EXPRESSION
         INTEGER_CONSTANT[kind=INTEGER_CONSTANT, value=1]
         OPERATION_REFERENCE[operationToken=IDENTIFIER, referencedName=to]

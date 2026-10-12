@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.TokenType;
+import com.intellij.psi.impl.ResolveScopeManager;
 import com.intellij.psi.search.LocalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.IncorrectOperationException;
 import kotlin.DeprecationLevel;
 import kotlin.ReplaceWith;
 import kotlin.SubclassOptInRequired;
@@ -19,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
+import org.jetbrains.kotlin.psi.stubs.KotlinDestructuringDeclarationEntryStub;
 import org.jetbrains.kotlin.resolution.KtResolvableCall;
 
 import java.util.Collections;
@@ -36,18 +38,39 @@ import static org.jetbrains.kotlin.lexer.KtTokens.EQ;
  * //   ^
  * }</pre>
  */
-@SuppressWarnings("deprecation")
 @SubclassOptInRequired(markerClass = KtImplementationDetail.class)
-public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration, KtResolvableCall {
+public class KtDestructuringDeclarationEntry extends KtNamedDeclarationStub<KotlinDestructuringDeclarationEntryStub>
+        implements KtVariableDeclaration, KtResolvableCall {
+    /** A shared empty array, which can be reused to avoid unnecessary allocations. */
+    public static final KtDestructuringDeclarationEntry[] EMPTY_ARRAY = new KtDestructuringDeclarationEntry[0];
 
     @KtImplementationDetail
     public KtDestructuringDeclarationEntry(@NotNull ASTNode node) {
         super(node);
     }
 
+    @KtImplementationDetail
+    public KtDestructuringDeclarationEntry(@NotNull KotlinDestructuringDeclarationEntryStub stub) {
+        super(stub, KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY);
+    }
+
+    /**
+     * Keeps the non-stubbed renaming behavior: the new name is not quoted, and a missing name identifier is an error.
+     */
+    @Override
+    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
+        KtPsiMutationService mutationService = KtPsiMutationService.getInstanceOrNull();
+        if (mutationService != null) return mutationService.setNamedDeclarationName(this, name);
+
+        PsiElement identifier = getNameIdentifier();
+        if (identifier == null) throw new IncorrectOperationException();
+
+        return identifier.replace(new KtPsiFactory(getProject()).createNameIdentifier(name));
+    }
+
     @Override
     public KtTypeReference getTypeReference() {
-        return TypeRefHelpersKt.getTypeReference(this);
+        return getStubOrPsiChild(KtNodeTypes.TYPE_REFERENCE, KtTypeReference.class);
     }
 
     /**
@@ -131,12 +154,26 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
 
     @Override
     public boolean isVar() {
+        KotlinDestructuringDeclarationEntryStub stub = getGreenStub();
+        if (stub != null) {
+            return stub.isVar();
+        }
+
         return findChildByType(KtTokens.VAR_KEYWORD) != null || getParentNode().findChildByType(KtTokens.VAR_KEYWORD) != null;
     }
 
+    /**
+     * Returns the name reference after {@code =} which renames the entry in a name-based destructuring declaration
+     * (e.g., {@code first} in {@code (val a = first) = pair}), or {@code null} if the entry is not renamed.
+     */
     @Nullable
     @Override
     public KtNameReferenceExpression getInitializer() {
+        if (getGreenStub() != null) {
+            // The only name reference child of an entry is its initializer
+            return getStubOrPsiChild(KtNodeTypes.REFERENCE_EXPRESSION, KtNameReferenceExpression.class);
+        }
+
         return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), KtNameReferenceExpression.class);
     }
 
@@ -199,6 +236,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
         }
         if (enclosingBlock != null) return new LocalSearchScope(enclosingBlock);
 
-        return super.getUseScope();
+        // Not KtNamedDeclarationStub.getUseScope: its rules are for declarations that can be private or class members
+        return ResolveScopeManager.getElementUseScope(this);
     }
 }
