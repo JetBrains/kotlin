@@ -4047,6 +4047,13 @@ private fun KaDiagnosticConverterBuilder.addConversions86() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions87() {
+    add(FirWebCommonErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN) { firDiagnostic ->
+        NativeAnnotationsAllowedOnlyOnMemberFunImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS) { firDiagnostic ->
         DelegatedPropertyInsideValueClassImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -8715,13 +8722,6 @@ private fun KaDiagnosticConverterBuilder.addConversions188() {
 private fun KaDiagnosticConverterBuilder.addConversions189() {
     add(FirErrors.ANNOTATION_CLASS_MEMBER) { firDiagnostic ->
         AnnotationClassMemberImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
-    add(FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN) { firDiagnostic ->
-        NativeAnnotationsAllowedOnlyOnMemberOrExtensionFunImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

@@ -1982,15 +1982,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun>
-            get() = NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun::class
-
-        public val type: KaType
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NativeIndexerKeyShouldBeStringOrNumber : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NativeIndexerKeyShouldBeStringOrNumber>
             get() = NativeIndexerKeyShouldBeStringOrNumber::class
@@ -2157,6 +2148,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface InapplicableEagerInitializationWarning : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<InapplicableEagerInitializationWarning>
             get() = InapplicableEagerInitializationWarning::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NativeAnnotationsAllowedOnlyOnMemberFun : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<NativeAnnotationsAllowedOnlyOnMemberFun>
+            get() = NativeAnnotationsAllowedOnlyOnMemberFun::class
+
+        public val type: KaType
     }
 
     @KaUnstableDiagnosticApi
