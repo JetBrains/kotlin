@@ -68,6 +68,8 @@ projectTests {
             this.jvmArgs(paramRegex.findAll(modularizedJvmArgs.get()).map<MatchResult, String> { it.groupValues[1] }.toList<String>())
         }
         systemProperties["junit.jupiter.execution.parallel.enabled"] = true
+        // Allow accessing `ManagementFactoryHelper` because we're accessing some HotSpot-specific stuff.
+        jvmArgs("--add-opens=java.management/sun.management=ALL-UNNAMED")
     }
 
     testGenerator(
