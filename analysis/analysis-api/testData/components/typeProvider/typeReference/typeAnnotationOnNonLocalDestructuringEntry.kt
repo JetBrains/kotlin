@@ -1,5 +1,5 @@
 // KT-74654
-// KT-89821: InvalidFirElementTypeException, the type reference has no FIR
+// KT-90199: InvalidFirElementTypeException, the type reference has no FIR
 // IGNORE_FIR
 @Target(AnnotationTarget.TYPE)
 annotation class Ann
