@@ -545,6 +545,12 @@ public class FirSourceLikeLazyDeclarationResolveTestGenerated extends AbstractFi
   }
 
   @Test
+  @TestMetadata("entryInBrokenFullFormScriptDestructuring.kts")
+  public void testEntryInBrokenFullFormScriptDestructuring() {
+    run("entryInBrokenFullFormScriptDestructuring.kts");
+  }
+
+  @Test
   @TestMetadata("entryInScriptDestructuringDeclarationMutable.kts")
   public void testEntryInScriptDestructuringDeclarationMutable() {
     run("entryInScriptDestructuringDeclarationMutable.kts");
