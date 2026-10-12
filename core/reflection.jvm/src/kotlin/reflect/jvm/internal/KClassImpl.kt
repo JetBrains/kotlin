@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.components.RuntimeModuleData
@@ -94,11 +95,14 @@ internal class KClassImpl<T : Any>(
                 if (jClass == Cloneable::class.java) {
                     return@lazy createCloneableKmClass()
                 }
-                if (descriptor is ClassDescriptorImpl) {
-                    return@lazy createEmptyKmClass()
-                }
-                (descriptor as? DeserializedClassDescriptor)?.let { descriptor ->
-                    descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+                when (descriptor) {
+                    is EnumEntrySyntheticClassDescriptor -> {
+                        val metadata = jClass.getAnnotation(Metadata::class.java) ?: return@lazy createEmptyKmClass()
+                        (KotlinClassMetadata.readLenient(metadata) as? KotlinClassMetadata.Class)?.kmClass ?: createEmptyKmClass()
+                    }
+                    is ClassDescriptorImpl -> createEmptyKmClass()
+                    is DeserializedClassDescriptor -> descriptor.classProto.toKmClass(descriptor.c.nameResolver)
+                    else -> null
                 }
             }
         }
