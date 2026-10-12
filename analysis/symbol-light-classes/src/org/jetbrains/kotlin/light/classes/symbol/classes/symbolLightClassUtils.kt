@@ -11,9 +11,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReferenceList
+import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
 import org.jetbrains.kotlin.analysis.api.javaInterop.asPsiClass
+import org.jetbrains.kotlin.analysis.api.javaInterop.isCompiledInJvmDefaultMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaScriptModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -700,6 +702,7 @@ private fun SymbolLightClassForInterface.hasDefaultImpls(interfaceSymbol: KaName
  *
  * @param jvmDefaultMode the `-jvm-default` mode of the interface light class
  */
+@OptIn(KaNonPublicApi::class)
 context(_: KaSession)
 internal fun inheritedDefaultImplsCallables(
     interfaceSymbol: KaNamedClassSymbol,
@@ -719,13 +722,8 @@ internal fun inheritedDefaultImplsCallables(
             // The members of `Any`, as an interface has no other superclass
             declaringClass.classKind != KaClassKind.INTERFACE -> false
 
-            // Outside the compatibility mode of `-jvm-default=enable`, implementations compiled to JVM `default` methods aren't bridged.
-            // A library module has no language settings, so its interfaces are assumed to be compiled in the default mode.
-            jvmDefaultMode != JvmDefaultMode.ENABLE && when (val module = declaringClass.containingModule) {
-                is KaSourceModule -> module.languageVersionSettings
-                is KaScriptModule -> module.languageVersionSettings
-                else -> LanguageVersionSettingsImpl.DEFAULT
-            }.jvmDefaultMode.isEnabled -> false
+            // Outside the compatibility mode of `-jvm-default=enable`, implementations compiled to JVM `default` methods aren't bridged
+            jvmDefaultMode != JvmDefaultMode.ENABLE && declaringClass.isCompiledInJvmDefaultMode -> false
 
             // The JDK provides the implementations of `@PlatformDependent` members, e.g., of `kotlin.collections.Map.getOrDefault`
             StandardNames.FqNames.platformDependentClassId in originalCallable.annotations -> false
