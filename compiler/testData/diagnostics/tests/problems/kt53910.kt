@@ -14,9 +14,9 @@ fun overloadedFunction(args: Iterable<Int>, func: () -> Unit) {}
 fun foo() {
     // Bug: ::referencedFunction should produce UNRESOLVED_REFERENCE but doesn't
     overloadedFunction(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_PASSED_TWICE!>func<!> = ::<!UNRESOLVED_REFERENCE!>referencedFunction<!>)
-    overloadedFunction(listOf(1, 2), func = ::<!UNRESOLVED_REFERENCE!>referencedFunction<!>)
+    <!NONE_APPLICABLE!>overloadedFunction<!>(listOf(1, 2), func = ::<!UNRESOLVED_REFERENCE!>referencedFunction<!>)
     overloadedFunction(<!ARGUMENT_TYPE_MISMATCH!>"a"<!>, <!ARGUMENT_TYPE_MISMATCH!>"b"<!>, <!ARGUMENT_PASSED_TWICE!>func<!> = ::<!UNRESOLVED_REFERENCE!>referencedFunction<!>)
-    overloadedFunction(listOf("a", "b"), func = ::<!UNRESOLVED_REFERENCE!>referencedFunction<!>)
+    <!NONE_APPLICABLE!>overloadedFunction<!>(listOf("a", "b"), func = ::<!UNRESOLVED_REFERENCE!>referencedFunction<!>)
 
     // These correctly produce UNRESOLVED_REFERENCE
     overloadedFunction(1, 2, func = <!UNRESOLVED_REFERENCE!>itIsNotEvenDecalredButAlsoIsNotReferenced<!>)
