@@ -6993,6 +6993,13 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface NewBareInferenceFailed : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass: KClass<NewBareInferenceFailed>
+            get() = NewBareInferenceFailed::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NewCheckForErasedBecameNotErased : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass: KClass<NewCheckForErasedBecameNotErased>
             get() = NewCheckForErasedBecameNotErased::class

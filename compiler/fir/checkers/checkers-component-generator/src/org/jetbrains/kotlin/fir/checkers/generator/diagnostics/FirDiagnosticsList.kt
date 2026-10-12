@@ -2049,6 +2049,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NEW_CHECK_FOR_ERASED_BECAME_ERASED by warning<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
+        val NEW_BARE_INFERENCE_FAILED by warning<PsiElement>()
         val NEW_CHECK_FOR_ERASED_BECAME_NOT_ERASED by warning<PsiElement> {
             parameter<ConeKotlinType>("type")
         }

@@ -4947,6 +4947,11 @@ internal class NewCheckForErasedBecameErasedImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NewCheckForErasedBecameErased
 
+internal class NewBareInferenceFailedImpl(
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NewBareInferenceFailed
+
 internal class NewCheckForErasedBecameNotErasedImpl(
     override val type: KaType,
     firDiagnostic: KtDiagnosticWithSource,
