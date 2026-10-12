@@ -80,7 +80,8 @@ fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = boundsSymbols.any { it.isBuiltin },
         isFullValueClassOrObject = boundsSymbols.any { symbol ->
-            symbol is FirRegularClassSymbol && (symbol.isFullValueClass || symbol.isJavaValueClass(session))
+            symbol is FirRegularClassSymbol &&
+                (symbol.isFullValueClass || symbol.isJavaValueClass(session) || symbol.isMappedToJavaValueClass(session))
         },
         isInlineValueClass = boundsSymbols.any { (it as? FirRegularClassSymbol)?.isInlineClass == true },
         isAnnotationClass = boundsSymbols.any { it.isAnnotationClass },

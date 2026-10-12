@@ -146,23 +146,25 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean =
 
 /**
  * Whether this type is a Java value class type. Like javac, this includes type parameters, captured types and intersection types
- * bounded by a Java value class, and a flexible primitive type like `Int!` whose Java box, like `java.lang.Integer`, is a value class.
+ * bounded by a Java value class. A Kotlin class whose Java class is a value class, like `kotlin.Number` for `java.lang.Number` or
+ * `kotlin.Int` for `java.lang.Integer`, is one too.
  *
  * Unlike [FirRegularClassSymbol.isJavaValueClass], which checks only the class itself.
  */
 private fun ConeKotlinType.isJavaValueClassType(
     session: FirSession,
     visited: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
-): Boolean =
+): Boolean = unwrapToSimpleTypeUsingLowerBound().isJavaValueClassType(session, visited)
+
+private fun ConeSimpleKotlinType.isJavaValueClassType(session: FirSession, visited: MutableSet<FirTypeParameterSymbol>): Boolean =
     when (this) {
-        is ConeFlexibleType -> lowerBound.isJavaValueClassType(session, visited) ||
-                isFlexiblePrimitive() && lowerBound.toRegularClassSymbol(session)?.isMappedToJavaValueClass(session) == true
-        is ConeDefinitelyNotNullType -> original.isJavaValueClassType(session, visited)
         is ConeIntersectionType -> intersectedTypes.any { it.isJavaValueClassType(session, visited) }
         is ConeTypeParameterType ->
             visited.add(lookupTag.symbol) && lookupTag.symbol.resolvedBounds.any { it.coneType.isJavaValueClassType(session, visited) }
         is ConeCapturedType -> constructor.supertypes.orEmpty().any { it.isJavaValueClassType(session, visited) }
-        is ConeClassLikeType -> toRegularClassSymbol(session)?.isJavaValueClass(session) == true
+        is ConeClassLikeType -> toRegularClassSymbol(session)?.let {
+            it.isJavaValueClass(session) || it.isMappedToJavaValueClass(session)
+        } == true
         is ConeUnionType, is ConeTypeVariableType, is ConeStubTypeForTypeVariableInSubtyping, is ConeIntegerLiteralType,
             -> false
     }

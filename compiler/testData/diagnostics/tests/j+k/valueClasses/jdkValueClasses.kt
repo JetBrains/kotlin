@@ -19,8 +19,8 @@ fun test(date: LocalDate, optional: Optional<String>, zone: ZoneId, number: Numb
     synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>Integer.valueOf(1)<!>) {}
     // Value-based, but not a value class.
     synchronized(<!SYNCHRONIZED_BLOCK_ON_JAVA_VALUE_BASED_CLASS!>zone<!>) {}
-    // A Kotlin class, which only maps to the Java value class `java.lang.Number`.
-    synchronized(number) {}
+    // A Kotlin class whose Java class `java.lang.Number` is a value class.
+    synchronized(<!SYNCHRONIZED_BLOCK_ON_VALUE_CLASS_OR_PRIMITIVE_ERROR!>number<!>) {}
 }
 
 value class ValueNumber(val x: Int) : Number() {
