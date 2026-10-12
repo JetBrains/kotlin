@@ -270,19 +270,21 @@ private fun findStaticallyKnownSubtypeByTypeParameterInheritance(
         requireEqualBounds = false,
     )
 
-    // If some arguments are not statically known, it means that these arguments are lost,
-    // let's put ConeStubType instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
-    val arguments = Array(subTypeClassSymbol.typeParameterSymbols.size) { index ->
-        when (val argument = knownArguments?.get(index)) {
-            null ->
-                subTypeClassSymbol.defaultType().typeArguments[index]
-            is ConeStarProjection ->
-                ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", null), isMarkedNullable = true)
-            else -> argument
-        }
+    if (knownArguments == null) {
+        return subTypeClassSymbol.constructType(Array(subTypeClassSymbol.typeParameterSymbols.size) { ConeStarProjection })
     }
 
-    return subTypeClassSymbol.constructType(arguments)
+    // If some arguments are not statically known, it means that these arguments are lost,
+    // let's put ConeStubType instead, so that we can only cast to something like List<*>, e.g. (a: Any) as List<*>
+//    val arguments = Array(subTypeClassSymbol.typeParameterSymbols.size) { index ->
+//        when (val argument = knownArguments[index]) {
+//            is ConeStarProjection -> subTypeClassSymbol.defaultType().typeArguments[index]
+//            // ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", null), isMarkedNullable = true)
+//            else -> argument
+//        }
+//    }
+
+    return subTypeClassSymbol.constructType(knownArguments)
 }
 
 fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
