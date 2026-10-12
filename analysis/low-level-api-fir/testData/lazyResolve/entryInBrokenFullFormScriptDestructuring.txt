@@ -324,8 +324,8 @@ FILE: [ResolvedTo(IMPORTS)] entryInBrokenFullFormScriptDestructuring.kts
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: <ERROR TYPE REF: Unresolved name: <no name provided>> = R|<local>/<destruct>|.<Unresolved name: <no name provided>>#
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: <no name provided>>
 
 
 CONSTANT_EVALUATION:
@@ -357,8 +357,8 @@ FILE: [ResolvedTo(IMPORTS)] entryInBrokenFullFormScriptDestructuring.kts
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
-            public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int|
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: <ERROR TYPE REF: Unresolved name: <no name provided>> = R|<local>/<destruct>|.<Unresolved name: <no name provided>>#
+            public [ResolvedTo(CONSTANT_EVALUATION)] get(): <ERROR TYPE REF: Unresolved name: <no name provided>>
 
 
 ANNOTATION_ARGUMENTS:
@@ -390,8 +390,8 @@ FILE: [ResolvedTo(IMPORTS)] entryInBrokenFullFormScriptDestructuring.kts
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
-            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: <ERROR TYPE REF: Unresolved name: <no name provided>> = R|<local>/<destruct>|.<Unresolved name: <no name provided>>#
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: <no name provided>>
 
 
 BODY_RESOLVE:
@@ -423,8 +423,8 @@ FILE: [ResolvedTo(IMPORTS)] entryInBrokenFullFormScriptDestructuring.kts
         public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: <ERROR TYPE REF: Unresolved name: <no name provided>> = R|<local>/<destruct>|.<Unresolved name: <no name provided>>#
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: <no name provided>>
 
 
 FILE RAW TO BODY:
@@ -456,5 +456,5 @@ FILE: [ResolvedTo(BODY_RESOLVE)] entryInBrokenFullFormScriptDestructuring.kts
         public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val a: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.a|
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: R|kotlin/Int| = R|<local>/<destruct>|.R|/X.component2|()
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+        public final [ResolvedTo(BODY_RESOLVE)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>, ScriptTopLevelDeclaration=true] val <no name provided>: <ERROR TYPE REF: Unresolved name: <no name provided>> = R|<local>/<destruct>|.<Unresolved name: <no name provided>>#
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: <no name provided>>

@@ -142,10 +142,9 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 moduleData = baseModuleData,
                 container = container,
                 element,
-                kind = destructuringKindOf(
-                    hasSquareBrackets = (element.parent as KtDestructuringDeclaration).hasSquareBrackets(),
-                    isFullForm = element.ownValOrVarKeyword != null
-                ),
+                kind = with(element.parent as KtDestructuringDeclaration) {
+                    destructuringKindOf(hasSquareBrackets = hasSquareBrackets(), isFullForm = isFullForm)
+                },
                 forceLocal = false,
                 index = element.index(),
                 configure = { configureScriptDestructuringDeclarationEntry(it, container) },
