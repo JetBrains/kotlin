@@ -7191,15 +7191,15 @@ private fun KaDiagnosticConverterBuilder.addConversions152() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions153() {
-    add(FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER) { firDiagnostic ->
-        PropertyFieldDeclarationMissingInitializerImpl(
+    add(FirErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE) { firDiagnostic ->
+        IdentitySensitiveOperationsWithValueTypeImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
     }
-    add(FirJvmErrors.IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE) { firDiagnostic ->
-        IdentitySensitiveOperationsWithValueTypeImpl(
-            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+    add(FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER) { firDiagnostic ->
+        PropertyFieldDeclarationMissingInitializerImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )

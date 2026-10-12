@@ -2155,6 +2155,12 @@ internal class IdentityBasedMemberInWillBecomeValueClassImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.IdentityBasedMemberInWillBecomeValueClass
 
+internal class IdentitySensitiveOperationsWithValueTypeImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationsWithValueType
+
 internal class IdentitySensitiveOperationOnWillBecomeValueClassImpl(
     override val type: KaType,
     firDiagnostic: KtDiagnosticWithSource,
@@ -6701,12 +6707,6 @@ internal class InapplicableJvmFieldWarningImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.InapplicableJvmFieldWarning
-
-internal class IdentitySensitiveOperationsWithValueTypeImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.IdentitySensitiveOperationsWithValueType
 
 internal class SynchronizedBlockOnJavaValueBasedClassImpl(
     override val type: KaType,
