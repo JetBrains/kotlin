@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode
 import org.jetbrains.kotlin.gradle.targets.wasm.WasmCompilationMode.Companion.toArgument
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.WasiAdapterToolchainMode
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.WasmToolsToolchainMode
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.toolchain.NodeJsToolchainMode
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -788,9 +789,46 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nodeJsToolchainPreinstalledExecutablePath: Provider<String>
         get() = property(PropertyNames.KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
 
+    val wasiAdapterToolchainMode: WasiAdapterToolchainMode
+        get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE).orNull
+            ?.let { WasiAdapterToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
+            ?.also { mode ->
+                if (mode != WasiAdapterToolchainMode.DISABLE) {
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                            "Wasi Adapter toolchain",
+                            "https://kotl.in/experimental-wasm-toolchains",
+                        ),
+                        key = "WasiAdapterToolchain"
+                    )
+                }
+            }
+            ?: WasiAdapterToolchainMode.DOWNLOAD
+
+    val wasiAdapterToolchainInstallationDir: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_INSTALLATION_DIR)
+
+    val wasiAdapterToolchainDefaultDownloadUrl: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_DOWNLOAD_URL)
+
+    val wasiAdapterToolchainPreinstalledExecutablePath: Provider<String>
+        get() = property(PropertyNames.KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH)
+
     val wasmToolsToolchainMode: WasmToolsToolchainMode
         get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_MODE).orNull
-            ?.let { WasmToolsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) } ?: WasmToolsToolchainMode.DOWNLOAD
+            ?.let { WasmToolsToolchainMode.valueOf(it.toUpperCaseAsciiOnly()) }
+            ?.also { mode ->
+                if (mode != WasmToolsToolchainMode.DISABLE) {
+                    project.reportDiagnosticOncePerBuild(
+                        KotlinToolingDiagnostics.ExperimentalFeatureWarning(
+                            "Wasm Tools toolchain",
+                            "https://kotl.in/experimental-wasm-toolchains",
+                        ),
+                        key = "WasmToolsToolchain"
+                    )
+                }
+            }
+            ?: WasmToolsToolchainMode.DOWNLOAD
 
     val wasmToolsToolchainInstallationDir: Provider<String>
         get() = property(PropertyNames.KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_INSTALLATION_DIR)
@@ -897,6 +935,10 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_JS_NODEJS_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.js.nodeJsToolchainInstallationDir")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.js.nodeJsToolchainDownloadUrl")
         val KOTLIN_JS_NODEJS_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.js.nodeJsToolchainPreinstalledExecutablePath")
+        val KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_MODE = property("kotlin.wasm.wasiAdapterToolchainMode")
+        val KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.wasm.wasiAdapterToolchainInstallationDir")
+        val KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_DOWNLOAD_URL = property("kotlin.wasm.wasiAdapterToolchainDownloadUrl")
+        val KOTLIN_WASM_WASI_ADAPTER_TOOLCHAIN_PREINSTALLED_EXECUTABLE_PATH = property("kotlin.wasm.wasiAdapterToolchainPreinstalledExecutablePath")
 
         val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_MODE = property("kotlin.wasm.wasmToolsToolchainMode")
         val KOTLIN_WASM_WASM_TOOLS_TOOLCHAIN_INSTALLATION_DIR = property("kotlin.wasm.wasmToolsToolchainInstallationDir")

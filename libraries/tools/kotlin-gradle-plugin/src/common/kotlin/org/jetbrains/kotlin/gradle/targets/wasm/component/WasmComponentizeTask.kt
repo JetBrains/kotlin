@@ -6,30 +6,28 @@
 package org.jetbrains.kotlin.gradle.targets.wasm.component
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.dsl.toolchain.wasiadapter.WasiAdapterRequest
 import org.jetbrains.kotlin.gradle.dsl.toolchain.wasmtools.WasmToolsRequest
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.wasm.wasmtime.WasmtimeEnv
+import org.jetbrains.kotlin.gradle.targets.wasm.wasiadapter.toolchain.requestDefaultWasiAdapter
 import org.jetbrains.kotlin.gradle.targets.wasm.wasmtools.toolchain.requestDefaultWasmTools
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.wasiadapter.UsesWasiAdapterToolchainService
 import org.jetbrains.kotlin.gradle.tasks.wasmtools.UsesWasmToolsToolchainService
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
-import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import java.io.File
-import java.net.URI
 import javax.inject.Inject
 
 /**
@@ -52,7 +50,10 @@ import javax.inject.Inject
 @ExperimentalWasmDsl
 @DisableCachingByDefault
 abstract class WasmComponentizeTask
-internal constructor() : DefaultTask(), UsesWasmToolsToolchainService {
+internal constructor() :
+    DefaultTask(),
+    UsesWasmToolsToolchainService,
+    UsesWasiAdapterToolchainService {
     @get:Inject
     internal abstract val execOperations: ExecOperations
 
@@ -65,22 +66,11 @@ internal constructor() : DefaultTask(), UsesWasmToolsToolchainService {
     @get:Nested
     abstract val wasmToolsRequest: Property<WasmToolsRequest>
 
-    @get:Internal
-    internal abstract val env: Property<WasmtimeEnv>
-
-    @get:Input
-    internal val allowInsecureProtocol: Provider<Boolean> = env.map {
-        it.allowInsecureProtocol
-    }
-
-    @get:Input
-    @get:Optional
-    internal val downloadBaseUrlProvider: Provider<String> = env.mapOrNull(project.providers) {
-        it.downloadBaseUrl
-    }
-
-    @get:Input
-    internal val ivyDependencyProvider: Provider<String> = env.map { it.ivyDependency }
+    /**
+     * The WASI preview1 adapter requested from the WASI adapter toolchain service.
+     */
+    @get:Nested
+    abstract val wasiAdapterRequest: Property<WasiAdapterRequest>
 
     /**
      * Core Wasm module to be turned into a component.
@@ -127,17 +117,6 @@ internal constructor() : DefaultTask(), UsesWasmToolsToolchainService {
     @get:OutputDirectory
     abstract val outputDirectory: DirectoryProperty
 
-    @get:Internal
-    abstract var adapter: Provider<Configuration>
-
-    @get:Classpath
-    @get:Optional
-    internal val dist: File by lazy {
-        withUrlRepo {
-            adapter.get().files.single()
-        }
-    }
-
     @TaskAction
     fun componentize() {
         val wasmTools = wasmToolsToolchainService.get()
@@ -145,6 +124,12 @@ internal constructor() : DefaultTask(), UsesWasmToolsToolchainService {
             .get()
             .executable
             .get()
+
+        val adaptFile = wasiAdapterToolchainService.get()
+            .requestAdapter(wasiAdapterRequest.get())
+            .get()
+            .adapterFile
+            .getFile()
 
         val inputModule = inputFile.getFile()
 
@@ -180,12 +165,6 @@ internal constructor() : DefaultTask(), UsesWasmToolsToolchainService {
 
             newOutput
         }
-
-        val adaptFile = temporaryDir
-            .resolve("wasi_snapshot_preview1.command.wasm")
-            .also {
-                dist.copyTo(it, overwrite = true)
-            }
 
         val componentDirectory = outputDirectory.getFile()
         componentDirectory.mkdirs()
@@ -225,27 +204,6 @@ internal constructor() : DefaultTask(), UsesWasmToolsToolchainService {
             }
             .reversed()
 
-    private fun <T> withUrlRepo(action: () -> T): T {
-        val repo = downloadBaseUrlProvider.orNull?.let {
-            project.repositories.ivy { repo ->
-                repo.name = "Distributions at $it"
-                repo.url = URI(it)
-
-                repo.isAllowInsecureProtocol = allowInsecureProtocol.get()
-
-                repo.patternLayout {
-                    it.artifact("v[revision]/[artifact].[ext]")
-                }
-                repo.metadataSources { it.artifact() }
-                repo.content { it.includeModule("bytecodealliance.wasmtime", "wasi_snapshot_preview1.command") }
-            }
-        }
-
-        return action().also {
-            repo?.let { project.repositories.remove(it) }
-        }
-    }
-
     internal companion object {
         private const val EMBED_DIRECTORY_NAME = "embed"
 
@@ -260,6 +218,7 @@ internal constructor() : DefaultTask(), UsesWasmToolsToolchainService {
                 name,
             ) {
                 it.wasmToolsRequest.convention(project.requestDefaultWasmTools())
+                it.wasiAdapterRequest.convention(project.requestDefaultWasiAdapter())
                 it.witProjects.from(project.layout.projectDirectory.dir(WIT_DIRECTORY_NAME))
                 it.witProjects.from(witDirectories)
                 it.configuration()

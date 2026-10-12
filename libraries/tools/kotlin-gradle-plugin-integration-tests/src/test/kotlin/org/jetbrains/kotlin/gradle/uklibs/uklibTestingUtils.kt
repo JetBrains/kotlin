@@ -69,6 +69,7 @@ data class PublishedProject(
         val swiftPmMetadata: File get() = path.resolve("${artifactsPrefix}-swiftpm-metadata.json")
         val swiftExportMetadata: File get() = path.resolve("${artifactsPrefix}-swift-export-metadata.json")
         val kar: File get() = path.resolve("${artifactsPrefix}.kar.xz")
+        val klib: File get() = path.resolve("${artifactsPrefix}.klib")
     }
 
     val rootCoordinate: String = "$group:$name:$version"
@@ -86,6 +87,12 @@ data class PublishedProject(
         get() = Component(
             repository.resolve(group).resolve("${name}-android").resolve(version),
             "${name}-android-${version}",
+        )
+
+    val wasmWasiComponent: Component
+        get() = Component(
+            repository.resolve(group).resolve("${name}-wasm-wasi").resolve(version),
+            "${name}-wasm-wasi-${version}",
         )
 }
 

@@ -124,6 +124,8 @@ internal abstract class DefaultNodeJsToolchainServiceImpl @Inject internal const
                     return kotlinPropertiesProvider.nodeJsToolchainInstallationDir.map { File(it) }
                 }
 
+                val userKotlinPersistentDir = userKotlinPersistentDir
+
                 return providers.provider { userKotlinPersistentDir.resolve(NODE_JS_TOOLCHAINS_DIR_NAME) }
             }
     }
