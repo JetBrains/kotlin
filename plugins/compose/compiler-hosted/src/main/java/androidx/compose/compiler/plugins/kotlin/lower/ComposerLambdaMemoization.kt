@@ -1025,7 +1025,7 @@ class ComposerLambdaMemoization(
      * in the order of declaration: from the outermost container, by index within a container.
      */
     private fun IrFunction.collectReferencedOuterTypeParameters(): List<IrTypeParameter> {
-        val outerContainers = parents.filterIsInstance<IrTypeParametersContainer>().filter { it.typeParameters.isNotEmpty() }.toList().asReversed()
+        val outerContainers = parents.filter { it is IrTypeParametersContainer && it.typeParameters.isNotEmpty() }.toList()
         // The common case: nothing to reference, don't walk the body.
         if (outerContainers.isEmpty()) return emptyList()
         val function = this
@@ -1039,7 +1039,7 @@ class ComposerLambdaMemoization(
                 }
             }
         })
-        return referenced.sortedWith(compareBy({ outerContainers.indexOf(it.parent) }, { it.index }))
+        return referenced.sortedWith(compareBy({ -outerContainers.indexOf(it.parent) }, { it.index }))
     }
 
     private fun rememberExpression(
