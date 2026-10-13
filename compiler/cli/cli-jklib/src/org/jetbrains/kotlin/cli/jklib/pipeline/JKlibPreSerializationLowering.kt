@@ -297,7 +297,7 @@ fun jklibLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<JKlibPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> {
     fun createUpgradeCallableReferences(context: JKlibPreSerializationLoweringContext) =
-        UpgradeCallableReferences(context, upgradeSamConversions = true)
+        UpgradeCallableReferences(context, upgradeSamConversions = true, upgradeSamConversionsOfPropertyReferences = true)
 
     // The cross-module inliner already runs on the main IR tree, so the pre-processed functions do not need their own.
     fun createInlineFunctionSerializationPreProcessing(@Suppress("UNUSED_PARAMETER") context: JKlibPreSerializationLoweringContext) =
