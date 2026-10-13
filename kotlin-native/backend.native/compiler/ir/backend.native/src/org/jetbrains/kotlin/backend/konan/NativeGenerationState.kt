@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedObjCAdapter
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedTrivialGetter
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.konan.config.konanHome
 import org.jetbrains.kotlin.util.PerformanceManager
 
 internal class FileLowerState {
@@ -93,7 +92,6 @@ internal class NativeGenerationState(
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 
     override val llvmContext = run {
-        loadLLVMStubs(config.configuration.konanHome)
         LLVMContextCreate()!!
     }
     val runtime by runtimeDelegate
