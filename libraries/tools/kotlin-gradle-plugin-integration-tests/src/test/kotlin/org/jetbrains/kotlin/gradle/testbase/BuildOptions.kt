@@ -33,7 +33,7 @@ data class BuildOptions(
     val logLevel: LogLevel = DEFAULT_LOG_LEVEL,
     val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
-    val warningMode: WarningMode = WarningMode.Fail,
+    val warningMode: WarningMode = WarningMode.All,
     val ignoreWarningModeSeverityOverride: Boolean? = null, // Do not change ToolingDiagnostic severity when warningMode is defined as Fail
     val configurationCache: ConfigurationCacheValue = ConfigurationCacheValue.ENABLED,
     val isolatedProjects: IsolatedProjectsMode = IsolatedProjectsMode.ENABLED,
