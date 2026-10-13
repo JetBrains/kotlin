@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.redundantDependsOnEdgesTracker
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -36,6 +38,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.utils.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import javax.inject.Inject
 
@@ -126,6 +129,80 @@ internal constructor(
             project,
             configure
         )
+
+    /**
+     * The machine this build runs on, as Kotlin/Native sees it.
+     *
+     * Use it to declare targets or configure tasks per host:
+     *
+     * ```kotlin
+     * kotlin {
+     *     if (nativeHost.isMacOs) {
+     *         iosArm64()
+     *     }
+     * }
+     * ```
+     *
+     * Also available as [KotlinNativeHost.current].
+     *
+     * @since 2.5.20
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val nativeHost: KotlinNativeHost
+        get() = KotlinNativeHost.current()
+
+    /**
+     * Declares the Kotlin/Native target for the current host, such as `macosArm64` on an Apple Silicon Mac or
+     * `linuxX64` on Linux x86_64, and applies [configure] to it.
+     *
+     * Without [name] the target keeps its preset name, so on an Apple Silicon Mac this call equals `macosArm64 { }`.
+     * A custom name such as `"native"` gives host-independent task and source set names, but `native` clashes with
+     * the `nativeMain` source set of the default hierarchy template.
+     *
+     * On an unsupported host nothing is declared: a warning is reported and `null` is returned, and the other targets
+     * of the project still configure.
+     *
+     * @since 2.5.20
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun hostNativeTarget(
+        name: String? = null,
+        configure: KotlinNativeTargetWithHostTests.() -> Unit = {},
+    ): KotlinNativeTargetWithHostTests? {
+        val host = nativeHost
+        // Host targets are registered under their preset name by KotlinNativeTargetWithHostTestsPreset.
+        val presetName = host.konanTarget?.presetName
+        if (presetName == null) {
+            project.reportDiagnosticOncePerProject(
+                KotlinToolingDiagnostics.HostNativeTargetUnavailable(host.name, supportedNativeHosts)
+            )
+            return null
+        }
+        return presetFunctions.configureOrCreate(
+            name ?: presetName,
+            presetFunctions.presets.getByName(presetName) as KotlinNativeTargetWithHostTestsPreset,
+            project,
+            configure,
+        )
+    }
+
+    /** @since 2.5.20 */
+    @ExperimentalKotlinGradlePluginApi
+    fun hostNativeTarget(): KotlinNativeTargetWithHostTests? = hostNativeTarget(null) { }
+
+    /** @since 2.5.20 */
+    @ExperimentalKotlinGradlePluginApi
+    fun hostNativeTarget(name: String): KotlinNativeTargetWithHostTests? = hostNativeTarget(name) { }
+
+    /** @since 2.5.20 */
+    @ExperimentalKotlinGradlePluginApi
+    fun hostNativeTarget(configure: Action<KotlinNativeTargetWithHostTests>): KotlinNativeTargetWithHostTests? =
+        hostNativeTarget(null) { configure.execute(this) }
+
+    /** @since 2.5.20 */
+    @ExperimentalKotlinGradlePluginApi
+    fun hostNativeTarget(name: String, configure: Action<KotlinNativeTargetWithHostTests>): KotlinNativeTargetWithHostTests? =
+        hostNativeTarget(name) { configure.execute(this) }
 
     fun dependencies(configure: Action<KotlinDependencies>) = dependencies { configure.execute(this) }
 
