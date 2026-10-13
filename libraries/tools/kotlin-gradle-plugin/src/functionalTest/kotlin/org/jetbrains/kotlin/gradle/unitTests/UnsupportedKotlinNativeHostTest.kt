@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.mpp.supportedHosts
+import org.jetbrains.kotlin.gradle.plugin.mpp.supportedNativeHosts
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.util.assertContainsNoTaskWithName
 import org.jetbrains.kotlin.gradle.util.assertNoDiagnostics
@@ -143,9 +144,8 @@ class UnsupportedKotlinNativeHostTest {
 
     @Test
     fun `test all supported hosts have explicit formatted names`() {
-        // This test ensures that the formattedHostName switch is exhaustive for all known hosts.
-        // If a new host is added to HostManager.enabledByHost but not to the switch,
-        // it will fall back to visibleName (e.g., "linux_x64") instead of a human-readable format.
+        // supportedNativeHosts comes from KotlinNativeHost.supportedHosts(), which keeps its own copy of the host list.
+        // This fails when HostManager learns a host that the copy lacks. The expected names below are kept by hand.
         val expectedFormattedNames = setOf(
             "Linux (x86_64)",
             "Windows (x86_64)",
@@ -153,7 +153,8 @@ class UnsupportedKotlinNativeHostTest {
         )
 
         val hostManager = HostManager()
-        val actualFormattedNames = hostManager.supportedHosts.toSet()
+        assertEquals(hostManager.enabledByHost.keys.size, supportedNativeHosts.size, "HostManager knows a host that supportedNativeHosts does not list")
+        val actualFormattedNames = supportedNativeHosts.toSet()
 
         // Verify counts match - if a new host is added, this will fail
         assertEquals(

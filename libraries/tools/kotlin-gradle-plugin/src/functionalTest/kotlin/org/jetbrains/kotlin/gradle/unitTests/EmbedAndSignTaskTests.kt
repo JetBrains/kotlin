@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CopyDsymDuringArchiving
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
@@ -17,7 +19,6 @@ import org.jetbrains.kotlin.gradle.util.assertIsInstance
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
 import java.io.File
@@ -30,7 +31,7 @@ class EmbedAndSignTaskTests {
 
     @BeforeEach
     fun runOnlyOnMacOS() {
-        Assumptions.assumeTrue(HostManager.hostIsMac)
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs)
     }
 
     @Test

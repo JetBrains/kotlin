@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import com.android.build.api.variant.impl.capitalizeFirstChar
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.internal.project.ProjectInternal
@@ -36,7 +38,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
@@ -47,7 +48,7 @@ import kotlin.test.*
 class SwiftExportUnitTests {
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs, "macOS host required for this test")
     }
 
     @Test

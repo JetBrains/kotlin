@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.supportedHosts
+import org.jetbrains.kotlin.gradle.plugin.mpp.supportedNativeHosts
 import org.jetbrains.kotlin.gradle.utils.withType
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 
 internal object SupportedNativeHostChecker : KotlinGradleProjectChecker {
 
@@ -25,11 +25,12 @@ internal object SupportedNativeHostChecker : KotlinGradleProjectChecker {
         val nativeTargets = extension.awaitTargets().withType<KotlinNativeTarget>()
         if (nativeTargets.isEmpty()) return
 
-        if (HostManager.hostIsSupported) return
+        val host = KotlinNativeHost.current()
+        if (host.isSupported) return
         collector.reportOncePerGradleProject(diagnosticsContext,
             KotlinToolingDiagnostics.NativeHostNotSupportedError(
-                HostManager.platformName(),
-                HostManager().supportedHosts
+                host.name,
+                supportedNativeHosts
             )
         )
     }

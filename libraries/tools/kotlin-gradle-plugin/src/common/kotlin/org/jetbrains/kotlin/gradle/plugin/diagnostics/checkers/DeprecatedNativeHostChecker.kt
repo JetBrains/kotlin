@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportOncePerGradleBuild
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.utils.withType
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.konanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal object DeprecatedNativeHostChecker : KotlinGradleProjectChecker {
@@ -23,7 +24,7 @@ internal object DeprecatedNativeHostChecker : KotlinGradleProjectChecker {
         val nativeTargets = extension.awaitTargets().withType<KotlinNativeTarget>()
         if (nativeTargets.isEmpty()) return
 
-        val host = HostManager.hostOrNull ?: return
+        val host = KotlinNativeHost.current().konanTarget ?: return
         if (host !in KonanTarget.deprecatedTargets) return
 
         collector.reportOncePerGradleBuild(

@@ -31,7 +31,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.export.internal.SwiftExportConfigu
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import java.io.Serializable
 
 /**
@@ -72,8 +73,9 @@ internal fun swiftPackagePlatforms(families: Iterable<Family>): List<SwiftPackag
 internal fun Project.registerSwiftPackageExportPipeline(exportExtension: ExportExtension) {
     val integration = exportExtension.swiftExportConfiguration.activatedSwiftPackageIntegration ?: return
     // The tasks are still registered but get skipped here, and Gradle only says why at --info.
-    if (!HostManager.hostIsMac && kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
-        reportDiagnostic(KotlinToolingDiagnostics.SwiftPackageExportUnsupportedHost(HostManager.platformName()))
+    val host = KotlinNativeHost.current()
+    if (!host.isSupportedMacOs && kotlinPropertiesProvider.ignoreDisabledNativeTargets != true) {
+        reportDiagnostic(KotlinToolingDiagnostics.SwiftPackageExportUnsupportedHost(host.name))
     }
     // The setup action doesn't get here without Apple targets.
     val appleTargets = multiplatformExtension.supportedAppleTargets().toList()
@@ -164,7 +166,7 @@ private fun Project.registerSwiftPackageSync(
         task.description = "Exports the $configuration Swift package into swiftPackageIntegration.outputDirectory/$configuration"
         task.group = SwiftExportDSLConstants.TASK_GROUP
         // On other hosts there is nothing to copy, and a Sync of nothing empties its destination.
-        task.onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { HostManager.hostIsMac }
+        task.onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { KotlinNativeHost.current().isSupportedMacOs }
 
         task.from(generateTask.flatMap { it.packagePath })
         task.from(assembleTask.flatMap { it.binaryDirectory })

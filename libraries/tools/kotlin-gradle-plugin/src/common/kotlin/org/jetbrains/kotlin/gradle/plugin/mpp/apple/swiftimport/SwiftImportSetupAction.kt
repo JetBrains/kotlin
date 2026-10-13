@@ -41,7 +41,8 @@ import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -62,7 +63,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
     }
 
-    val isMacOSHost = HostManager.hostIsMac
+    val isMacOSHost = KotlinNativeHost.current().isSupportedMacOs
     val ideaSyncEnabled = project.isInIdeaSync
 
     inheritSwiftPMDependenciesFromAppleCompilationDependencies()
@@ -491,7 +492,7 @@ internal fun Project.syntheticImportProjectProductTypeFromFrameworkTypes() = pro
 
 
 private fun Project.getIdentifierLockFilesMetadataProvider(): Provider<List<SwiftPMImportMetadataForLockFiles>> {
-    if (!HostManager.hostIsMac) return provider { emptyList() }
+    if (!KotlinNativeHost.current().isSupportedMacOs) return provider { emptyList() }
     return swiftPMDependenciesForLockFilesResolvableMetadataConfiguration()
         .incoming.artifacts.resolvedArtifacts
         .map { artifacts ->
@@ -570,7 +571,7 @@ private fun Project.updateDependenciesWithAggregatedResults(
     aggregationService: Provider<SwiftPMLockTaskAggregationBuildService>,
     packageResolvedSynchronizationIdentifier: String,
 ) {
-    if (!HostManager.hostIsMac) return
+    if (!KotlinNativeHost.current().isSupportedMacOs) return
     project.swiftPMDependenciesForLockFilesScopeConfiguration().dependencies.addAllLater(
         project.provider {
             aggregationService.get().buildAggregatedResultDependencies(
