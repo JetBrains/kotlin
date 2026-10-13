@@ -356,7 +356,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     ) {
         firstProject.build(
             *tasksToExecute.toTypedArray(),
-            buildOptions = firstProject.buildOptions.suppressAgpWarningIsProperty(firstProject.gradleVersion)
         ) {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
             additionalAssertions()

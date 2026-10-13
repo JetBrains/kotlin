@@ -202,7 +202,7 @@ class SubpluginsIT : KGPBaseTest() {
         project(
             "kapt/android-dagger",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressAgpWarningIsProperty(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = providedJdk.location
         ) {
             subProject("app").buildGradle.modify {
