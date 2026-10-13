@@ -55,7 +55,7 @@ internal object CommonBackendDomainInfo : DomainInfo {
 
 internal object JvmDomainInfo : DomainInfo {
     override val domain = Domain.Jvm
-    override val include: List<String> = listOf("compiler/android-tests", "compiler/backend", "compiler/backend.common.jvm", "compiler/ir/backend.jvm", "compiler/ir/serialization.jvm", "compiler/tests-different-jdk")
+    override val include: List<String> = listOf("compiler/android-tests", "compiler/backend", "compiler/backend.common.jvm", "compiler/config.jvm", "compiler/ir/backend.jvm", "compiler/ir/serialization.jvm", "compiler/tests-different-jdk", "compiler/tests-java8", "core/metadata.jvm")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo) }
     override val team: String = "Kotlin JVM"
@@ -73,7 +73,7 @@ internal object WasmDomainInfo : DomainInfo {
 
 internal object JsDomainInfo : DomainInfo {
     override val domain = Domain.Js
-    override val include: List<String> = listOf("js", "compiler/ir/backend.js", "compiler/ir/serialization.js", "libraries/tools/analysis-api-based-klib-reader", "libraries/tools/dukat")
+    override val include: List<String> = listOf("js", "compiler/cli/cli-js", "compiler/ir/backend.js", "compiler/ir/serialization.js", "libraries/tools/analysis-api-based-klib-reader", "libraries/tools/dukat")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo) }
     override val team: String = "Kotlin JS"

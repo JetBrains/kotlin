@@ -108,9 +108,12 @@ Jvm:
     - "compiler/android-tests"
     - "compiler/backend"
     - "compiler/backend.common.jvm"
+    - "compiler/config.jvm"
     - "compiler/ir/backend.jvm"
     - "compiler/ir/serialization.jvm"
     - "compiler/tests-different-jdk"
+    - "compiler/tests-java8"
+    - "core/metadata.jvm"
   mustRunAllTestsOnChangesIn:
     - CoreLibs
     - CompilerInfrastructure
@@ -145,6 +148,7 @@ Js:
     - sergej.jaskiewicz@jetbrains.com
   include:
     - "js"
+    - "compiler/cli/cli-js"
     - "compiler/ir/backend.js"
     - "compiler/ir/serialization.js"
     - "libraries/tools/analysis-api-based-klib-reader"
