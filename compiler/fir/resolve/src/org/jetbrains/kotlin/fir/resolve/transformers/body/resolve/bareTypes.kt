@@ -90,7 +90,8 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareTypeByInheritance(
     val newArguments = session.staticallyKnownTypeArgumentsByTypeParameterInheritance(
         castClass,
         originalType,
-        requireEqualBounds = true,
+        requireEqualBounds = false,
+        failIfNothingInferred = true
     ) ?: return null
 
     return expandedCastType.withArguments(newArguments)
