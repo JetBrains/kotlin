@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugi
 import org.jetbrains.kotlin.ir.expressions.IrBranch
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -133,7 +134,9 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
                 parameter.name in singularFieldNames ->
                     buildSingularResult(field, thisParameter, parameter.type, build.useGuavaForSingular)
                 else -> builderClass.defaultFlagField(parameter.name)?.let { flagField ->
-                    buildDefaultOrSetValue(declaration, parameter, flagField, thisParameter, fieldRead, resolvedValues)
+                    buildDefaultOrSetValue(
+                        declaration, parameter.defaultValue, parameter.type, flagField, thisParameter, fieldRead, resolvedValues
+                    )
                 } ?: fieldRead
             }
             val temp = irTemporary(value, nameHint = parameter.name.identifier)
@@ -160,9 +163,17 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             if (!entityProperty.isVar) continue
             instanceInitialized = true
             val fieldRead = irGetField(irGet(thisParameter), field)
+            val value = builderClass.defaultFlagField(entityProperty.name)?.let { flagField ->
+                buildDefaultOrSetValue(
+                    declaration,
+                    entityProperty.backingField?.initializer,
+                    entityProperty.backingField?.type ?: entityProperty.getter!!.returnType,
+                    flagField, thisParameter, fieldRead, resolvedValues
+                )
+            } ?: fieldRead
             +irCall(entityProperty.setter!!.symbol, pluginContext.irBuiltIns.unitType).apply {
                 arguments[0] = irGet(tempInstance)
-                arguments[1] = fieldRead
+                arguments[1] = value
             }
         }
         if (instanceInitialized) {
@@ -175,18 +186,19 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
     /** `if ($set) field else <default expression, with earlier-parameter references resolved to their temps>`. */
     private fun IrBlockBodyBuilder.buildDefaultOrSetValue(
         declaration: IrSimpleFunction,
-        parameter: IrValueParameter,
+        defaultValue: IrExpressionBody?,
+        valueType: IrType,
         flagField: IrField,
         thisParameter: IrValueParameter,
         fieldRead: IrExpression,
         resolvedValues: Map<IrValueSymbol, IrValueSymbol>,
     ): IrExpression {
-        val defaultExpression = parameter.defaultValue?.expression ?: return fieldRead
+        val defaultExpression = defaultValue?.expression ?: return fieldRead
         val copiedDefault = defaultExpression
             .deepCopyWithSymbols(initialParent = declaration)
             .transform(ValueRemapper(resolvedValues), null)
         return irIfThenElse(
-            parameter.type,
+            valueType,
             irGetField(irGet(thisParameter), flagField),
             fieldRead,
             copiedDefault,
