@@ -42,7 +42,7 @@ sealed class WasmNpmToolingDependenciesIT(
     }
 
     @GradleTest
-    @MppGradlePluginTests
+    @WasmJsGradlePluginTests
     fun `can override versions of Wasm npm tooling dependencies`(
         gradleVersion: GradleVersion,
     ) {
