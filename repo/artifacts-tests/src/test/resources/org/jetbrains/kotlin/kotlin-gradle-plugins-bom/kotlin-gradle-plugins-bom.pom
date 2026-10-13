@@ -51,6 +51,11 @@
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>build-tools-native-host</artifactId>
+        <version>ArtifactsTest.version</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-tooling-core</artifactId>
         <version>ArtifactsTest.version</version>
       </dependency>
