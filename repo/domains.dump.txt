@@ -322,6 +322,7 @@ Unknown:
  - prepare/compiler-client-embeddable
  - prepare/compiler-embeddable
  - prepare/compiler-native-image
+ - prepare/compiler-plugin-api
  - prepare/jklib-compiler
  - prepare/kotlin-compiler-internal-test-framework
  - prepare/kotlin-daemon-embeddable
