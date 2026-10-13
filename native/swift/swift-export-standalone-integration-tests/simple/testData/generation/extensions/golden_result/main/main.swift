@@ -443,7 +443,7 @@ extension ExportedKotlinPackages.foo {
         arg: Swift.Bool
     ) -> Swift.Int32 {
         let (bar) = context
-        return foo_contextExtFun__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool_main_Bar__(receiver.__externalRCRef(), arg, bar.__externalRCRef())
+        return foo_contextExtFun__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool__(bar.__externalRCRef(), receiver.__externalRCRef(), arg)
     }
     @_spi(ExperimentalApi)
     public static func getContextProp(
@@ -451,7 +451,7 @@ extension ExportedKotlinPackages.foo {
         _ receiver: any ExportedKotlinPackages.foo.Foo
     ) -> Swift.Int32 {
         let (bar) = context
-        return foo_contextProp_get__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_main_Bar__(receiver.__externalRCRef(), bar.__externalRCRef())
+        return foo_contextProp_get__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo__(bar.__externalRCRef(), receiver.__externalRCRef())
     }
     public static func getNullableProp(
         _ receiver: (any ExportedKotlinPackages.foo.Foo)?
@@ -480,7 +480,7 @@ extension ExportedKotlinPackages.foo {
         `_`: Swift.Int32
     ) -> Swift.Void {
         let (bar) = context
-        return { foo_contextProp_set__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32_main_Bar__(receiver.__externalRCRef(), `_`, bar.__externalRCRef()); return () }()
+        return { foo_contextProp_set__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__(bar.__externalRCRef(), receiver.__externalRCRef(), `_`); return () }()
     }
     public static func setNullableProp(
         _ receiver: (any ExportedKotlinPackages.foo.Foo)?,

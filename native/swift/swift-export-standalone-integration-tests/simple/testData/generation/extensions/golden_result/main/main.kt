@@ -266,31 +266,31 @@ public fun foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar__(self
     return _result
 }
 
-@ExportedBridge("foo_contextExtFun__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool_main_Bar__")
+@ExportedBridge("foo_contextExtFun__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool__")
 @OptIn(ExperimentalApi::class)
-public fun foo_contextExtFun__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool_main_Bar__(`receiver`: kotlin.native.internal.NativePtr, arg: Boolean, bar: kotlin.native.internal.NativePtr): Int {
+public fun foo_contextExtFun__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool__(bar: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, arg: Boolean): Int {
+    val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val __arg = arg
-    val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
     val _result = context(__bar) { __receiver.foo_contextExtFun(__arg) }
     return _result
 }
 
-@ExportedBridge("foo_contextProp_get__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_main_Bar__")
+@ExportedBridge("foo_contextProp_get__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo__")
 @OptIn(ExperimentalApi::class)
-public fun foo_contextProp_get__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_main_Bar__(`receiver`: kotlin.native.internal.NativePtr, bar: kotlin.native.internal.NativePtr): Int {
-    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
+public fun foo_contextProp_get__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo__(bar: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
     val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
+    val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val _result = context(__bar) { __receiver.foo_contextProp }
     return _result
 }
 
-@ExportedBridge("foo_contextProp_set__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32_main_Bar__")
+@ExportedBridge("foo_contextProp_set__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__")
 @OptIn(ExperimentalApi::class)
-public fun foo_contextProp_set__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32_main_Bar__(`receiver`: kotlin.native.internal.NativePtr, `_`: Int, bar: kotlin.native.internal.NativePtr): Boolean {
+public fun foo_contextProp_set__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__(bar: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, `_`: Int): Boolean {
+    val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
     val __receiver = kotlin.native.internal.ref.dereferenceExternalRCRef(`receiver`) as foo.Foo
     val `___` = `_`
-    val __bar = kotlin.native.internal.ref.dereferenceExternalRCRef(bar) as Bar
     context(__bar) { __receiver.foo_contextProp = `___` }
     return true
 }

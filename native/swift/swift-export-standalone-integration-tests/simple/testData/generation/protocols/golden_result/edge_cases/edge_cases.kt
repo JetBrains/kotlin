@@ -47,16 +47,16 @@ public fun InterfaceB_bar__reverse(self: InterfaceB): Unit {
     return run<Unit> { _result }
 }
 
-@ImportedBridge("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift")
-internal external fun SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, count: Int, _2: kotlin.native.internal.NativePtr, _3: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr
+@ImportedBridge("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift")
+internal external fun SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift(self: kotlin.native.internal.NativePtr, _0: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, count: Int): kotlin.native.internal.NativePtr
 
 @BindReverseBridgeToMethod(SomeInterface::class, "repeatWithContext")
-public fun SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse(self: SomeInterface, `receiver`: kotlin.String, count: Int, _2: Baz, _3: conflictingTypealiases.Foo): kotlin.collections.List<kotlin.String> {
+public fun SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse(self: SomeInterface, _0: Baz, _1: conflictingTypealiases.Foo, `receiver`: kotlin.String, count: Int): kotlin.collections.List<kotlin.String> {
     val __self = kotlin.native.internal.ref.createRetainedExternalRCRef(self)
+    val ___0 = kotlin.native.internal.ref.createRetainedExternalRCRef(_0)
+    val ___1 = kotlin.native.internal.ref.createRetainedExternalRCRef(_1)
     val __receiver = `receiver`.objcPtr()
-    val ___2 = kotlin.native.internal.ref.createRetainedExternalRCRef(_2)
-    val ___3 = kotlin.native.internal.ref.createRetainedExternalRCRef(_3)
-    val _result = SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift(__self, __receiver, count, ___2, ___3)
+    val _result = SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift(__self, ___0, ___1, __receiver, count)
     return interpretObjCPointer<kotlin.collections.List<kotlin.String>>(_result)
 }
 
@@ -109,35 +109,35 @@ public fun SomeInterface_repeat__TypesOfArgumentsE__Swift_String_Swift_Int32__(s
     return _result.objcPtr()
 }
 
-@ExportedBridge("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__")
-public fun SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, count: Int, _2: kotlin.native.internal.NativePtr, _3: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32__")
+public fun SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32__(self: kotlin.native.internal.NativePtr, _0: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, count: Int): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
+    val ___0 = kotlin.native.internal.ref.dereferenceExternalRCRef(_0) as Baz
+    val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as conflictingTypealiases.Foo
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __count = count
-    val ___2 = kotlin.native.internal.ref.dereferenceExternalRCRef(_2) as Baz
-    val ___3 = kotlin.native.internal.ref.dereferenceExternalRCRef(_3) as conflictingTypealiases.Foo
-    val _result = context(___2, ___3) { __self.run { __receiver.repeatWithContext(__count) } }
+    val _result = context(___0, ___1) { __self.run { __receiver.repeatWithContext(__count) } }
     return _result.objcPtr()
 }
 
-@ExportedBridge("SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__Swift_String_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__")
-public fun SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__Swift_String_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, _2: kotlin.native.internal.NativePtr): Int {
+@ExportedBridge("SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String__")
+public fun SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String__(self: kotlin.native.internal.NativePtr, _0: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
+    val ___0 = kotlin.native.internal.ref.dereferenceExternalRCRef(_0) as Baz
+    val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as conflictingTypealiases.Foo
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
-    val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as Baz
-    val ___2 = kotlin.native.internal.ref.dereferenceExternalRCRef(_2) as conflictingTypealiases.Foo
-    val _result = context(___1, ___2) { __self.run { __receiver.somethingWithContext } }
+    val _result = context(___0, ___1) { __self.run { __receiver.somethingWithContext } }
     return _result
 }
 
-@ExportedBridge("SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__")
-public fun SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int, _2: kotlin.native.internal.NativePtr, _3: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32__")
+public fun SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32__(self: kotlin.native.internal.NativePtr, _0: kotlin.native.internal.NativePtr, _1: kotlin.native.internal.NativePtr, `receiver`: kotlin.native.internal.NativePtr, value: Int): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as SomeInterface
+    val ___0 = kotlin.native.internal.ref.dereferenceExternalRCRef(_0) as Baz
+    val ___1 = kotlin.native.internal.ref.dereferenceExternalRCRef(_1) as conflictingTypealiases.Foo
     val __receiver = interpretObjCPointer<kotlin.String>(`receiver`)
     val __value = value
-    val ___2 = kotlin.native.internal.ref.dereferenceExternalRCRef(_2) as Baz
-    val ___3 = kotlin.native.internal.ref.dereferenceExternalRCRef(_3) as conflictingTypealiases.Foo
-    context(___2, ___3) { __self.run { __receiver.somethingWithContext = __value } }
+    context(___0, ___1) { __self.run { __receiver.somethingWithContext = __value } }
     return true
 }
 

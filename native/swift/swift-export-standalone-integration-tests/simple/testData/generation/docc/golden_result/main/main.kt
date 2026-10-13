@@ -136,11 +136,11 @@ public fun Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBrid
     return _result
 }
 
-@ExportedBridge("Foo_e_set__TypesOfArgumentsC1__Swift_Int32_anyU20KotlinRuntimeSupport__KotlinBridgeable__")
-public fun Foo_e_set__TypesOfArgumentsC1__Swift_Int32_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, `_`: Int, c: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__")
+public fun Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__(self: kotlin.native.internal.NativePtr, c: kotlin.native.internal.NativePtr, `_`: Int): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val `___` = `_`
     val __c = kotlin.native.internal.ref.dereferenceExternalRCRef(c) as kotlin.Any
+    val `___` = `_`
     context(__c) { __self.e = `___` }
     return true
 }
@@ -152,11 +152,11 @@ public fun Foo_f_get(self: kotlin.native.internal.NativePtr): kotlin.native.inte
     return _result.objcPtr()
 }
 
-@ExportedBridge("Foo_foo__TypesOfArgumentsC1__Swift_Int32_Swift_String__")
-public fun Foo_foo__TypesOfArgumentsC1__Swift_Int32_Swift_String__(self: kotlin.native.internal.NativePtr, c: Int, a: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Foo_foo__TypesOfArgumentsC1__Swift_String_Swift_Int32__")
+public fun Foo_foo__TypesOfArgumentsC1__Swift_String_Swift_Int32__(self: kotlin.native.internal.NativePtr, a: kotlin.native.internal.NativePtr, c: Int): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Foo
-    val __c = c
     val __a = interpretObjCPointer<kotlin.String>(a)
+    val __c = c
     context(__a) { __self.foo(__c) }
     return true
 }

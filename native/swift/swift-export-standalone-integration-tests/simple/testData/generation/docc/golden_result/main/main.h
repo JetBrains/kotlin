@@ -35,11 +35,11 @@ _Bool Foo_d_set__TypesOfArguments__Swift_Bool__(void * self, _Bool newValue);
 
 int32_t Foo_e_get__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * c);
 
-_Bool Foo_e_set__TypesOfArgumentsC1__Swift_Int32_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, int32_t _, void * c);
+_Bool Foo_e_set__TypesOfArgumentsC1__anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int32__(void * self, void * c, int32_t _);
 
 NSString * Foo_f_get(void * self);
 
-_Bool Foo_foo__TypesOfArgumentsC1__Swift_Int32_Swift_String__(void * self, int32_t c, NSString * a);
+_Bool Foo_foo__TypesOfArgumentsC1__Swift_String_Swift_Int32__(void * self, NSString * a, int32_t c);
 
 int32_t Foo_g_get__TypesOfArgumentsE__Swift_String__(void * self, NSString * receiver);
 
