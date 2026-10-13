@@ -3,8 +3,6 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.util.toObsoleteKind
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.nativeBinaryOptions.AndroidProgramType
-import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
@@ -39,31 +37,6 @@ private fun List<String>.asLinkerArgs(useCompilerDriverAsLinker: Boolean): List<
         }
     }
 }
-
-internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOutputKind =
-        when (context.config.produce) {
-            CompilerOutputKind.FRAMEWORK -> {
-                val staticFramework = context.config.produceStaticFramework
-                if (staticFramework) LinkerOutputKind.STATIC_LIBRARY else LinkerOutputKind.DYNAMIC_LIBRARY
-            }
-            CompilerOutputKind.TEST_BUNDLE,
-            CompilerOutputKind.DYNAMIC_CACHE,
-            CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
-            CompilerOutputKind.STATIC_CACHE,
-            CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
-            CompilerOutputKind.PROGRAM -> run {
-                if (context.config.target.family == Family.ANDROID) {
-                    val configuration = context.config.configuration
-                    val androidProgramType = configuration.get(BinaryOptions.androidProgramType) ?: AndroidProgramType.Default
-                    return@run when (androidProgramType) {
-                        AndroidProgramType.Standalone -> LinkerOutputKind.EXECUTABLE
-                        AndroidProgramType.NativeActivity -> LinkerOutputKind.DYNAMIC_LIBRARY
-                    }
-                }
-                LinkerOutputKind.EXECUTABLE
-            }
-            else -> TODO("${context.config.produce} should not reach native linker stage")
-        }
 
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(

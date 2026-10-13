@@ -520,7 +520,7 @@ internal class ObjCExportCodeGenerator(
     }
 
     private fun emitKt42254Hint() {
-        if (determineLinkerOutput(context) == LinkerOutputKind.STATIC_LIBRARY) {
+        if (context.config.linkerOutputKind == LinkerOutputKind.STATIC_LIBRARY) {
             // Might be affected by https://youtrack.jetbrains.com/issue/KT-42254.
             // The code below generally follows [replaceExternalWeakOrCommonGlobal] implementation.
             if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
