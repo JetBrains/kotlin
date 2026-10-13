@@ -1403,8 +1403,13 @@ open class KaptIT : KaptBaseIT() {
             javaSourcesDir().resolve("invalid.kt").writeText("TopLevelDeclarationExpected")
 
             buildAndFail(":kaptGenerateStubsKotlin") {
-                assertOutputContains("invalid.kt:1:1")
-                assertOutputContains("Expecting a top level declaration")
+                if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_7)) {
+                    assertOutputContains("invalid.kt:1:1")
+                    assertOutputContains("Expecting a top level declaration")
+                } else {
+                    assertOutputContains("Syntax error: Expecting a top level declaration.")
+                    assertOutputContains("Location: .*invalid.kt".toRegex())
+                }
             }
         }
     }

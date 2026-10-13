@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.test
 
+import org.gradle.api.GradleException
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
@@ -19,12 +20,14 @@ internal abstract class GradleWarningsReporter : BuildService<BuildServiceParame
     internal var executeAtBuildFinish: (() -> Unit)? = null
 
     private val hasWarnings = AtomicBoolean(false)
+    private val warningReasons = ConcurrentHashMap.newKeySet<String>()
     private val ignoredWarningReasons = ConcurrentHashMap.newKeySet<String>()
 
     internal fun report(description: String, stackTraceClassNames: List<String>) {
         val ignoredWarning = KNOWN_THIRD_PARTY_WARNINGS.firstMatching(description, stackTraceClassNames)
         if (ignoredWarning == null) {
             hasWarnings.set(true)
+            warningReasons.add(description)
         } else {
             ignoredWarningReasons.add(ignoredWarning.reason)
         }
@@ -34,11 +37,12 @@ internal abstract class GradleWarningsReporter : BuildService<BuildServiceParame
         executeAtBuildFinish?.invoke()
         if (ignoredWarningReasons.isNotEmpty()) {
             logger.info(
-                "[$marker] Ignored deprecation warnings caused by third-party plugins: ${ignoredWarningReasons.sorted()}"
+                "[$marker] Ignored deprecation warnings caused by third-party plugins:\n${ignoredWarningReasons.joinToString("\n")}"
             )
         }
         if (hasWarnings.get()) {
-            logger.warn("[$marker] Some deprecation warnings were found during this build.")
+            logger.warn("[$marker] Deprecation warnings were found during this build:\n${warningReasons.joinToString("\n")}")
+            throw GradleException("Unexpected warnings were detected in the build!")
         }
     }
 
