@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.gradle.test
 
 import org.gradle.api.Plugin
+import org.gradle.api.flow.FlowScope
 import org.gradle.api.initialization.Settings
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.internal.operations.BuildOperationListenerManager
 import javax.inject.Inject
 
 class GradleWarningsDetectorPlugin @Inject constructor(
-    private val buildOperationListenerManager: BuildOperationListenerManager
+    private val buildOperationListenerManager: BuildOperationListenerManager,
+    private val flowScope: FlowScope,
+    private val providers: ProviderFactory,
 ) : Plugin<Settings> {
     private val logger: Logger = Logging.getLogger(this.javaClass)
 
@@ -24,6 +28,14 @@ class GradleWarningsDetectorPlugin @Inject constructor(
         buildOperationListenerManager.addListener(deprecationBuildOperationListener)
         warningsReporter.get().executeAtBuildFinish = {
             buildOperationListenerManager.removeListener(deprecationBuildOperationListener)
+        }
+
+        // The reporter is shared by all builds in the build tree, so only the root build reports its warnings
+        if (target.gradle.parent != null) return
+        flowScope.always(GradleWarningsReportFlowAction::class.java) { spec ->
+            spec.parameters.warningsReporter.set(warningsReporter)
+            spec.parameters.configurationTimeWarnings.set(providers.provider { warningsReporter.get().warnings })
+            spec.parameters.configurationTimeIgnoredReasons.set(providers.provider { warningsReporter.get().ignoredReasons })
         }
     }
 }
