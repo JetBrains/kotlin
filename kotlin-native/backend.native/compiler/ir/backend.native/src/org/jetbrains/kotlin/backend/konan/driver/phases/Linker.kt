@@ -19,7 +19,7 @@ import kotlin.io.path.pathString
 internal data class LinkerPhaseInput(
         val outputFile: String,
         val outputKind: LinkerOutputKind,
-        val objectFiles: List<ObjectFile>,
+        val objectFiles: List<String>,
         val dependenciesTrackingResult: DependenciesTrackingResult,
         val outputFiles: OutputFiles,
         val tempFiles: TempFiles,
