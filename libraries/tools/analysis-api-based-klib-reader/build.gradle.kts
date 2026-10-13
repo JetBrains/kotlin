@@ -1,8 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("common-configuration")
@@ -33,7 +31,7 @@ projectTests {
                 attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
                 attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
                 attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-                attribute(KotlinNativeTarget.konanTargetAttribute, HostManager.host.name)
+                hostKonanTargetAttribute()
             }
         }
 

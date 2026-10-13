@@ -343,6 +343,37 @@ class CodeConformanceTest {
         }
     }
 
+    /**
+     * Build logic must not fail on hosts unsupported by Kotlin/Native, e.g. linux-aarch64 (KT-86717).
+     * `HostManager.host` and `HostManager.hostName` throw there.
+     */
+    @Test
+    fun testNoThrowingHostManagerCallsInBuildLogic() {
+        val root = nonSourcesMatcher.root
+        val throwingCall = Regex("""HostManager\.(host|hostName)\b""")
+        val excluded = FileMatcher(
+            root,
+            listOf(
+                // Kotlin/Native build logic, which needs a supported host anyway
+                "kotlin-native",
+                "repo/gradle-build-conventions/project-tests-convention/src/main/kotlin/nativeTest.kt",
+                // Test projects, not part of this build
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources",
+            )
+        )
+
+        val files = nonSourcesMatcher.excludeWalkTopDown(Pattern.compile(".+\\.(gradle\\.kts|kt)"))
+            .filter { it.name.endsWith(".gradle.kts") || it.relativeTo(root).invariantSeparatorsPath.startsWith("repo/") }
+            .filter { !excluded.matchWithContains(it) && throwingCall.containsMatchIn(it.readText()) }
+            .map { it.relativeTo(root).invariantSeparatorsPath }
+            .sorted()
+            .toList()
+
+        if (files.isNotEmpty()) {
+            fail("Use HostManager.hostOrNull or hostKonanTargetAttribute() instead of HostManager.host and HostManager.hostName in:\n" + files.joinToString("\n"))
+        }
+    }
+
     private fun loadKnownThirdPartyCodeList(): List<String> {
         File("license/README.md").useLines { lineSequence ->
             return lineSequence
