@@ -11,11 +11,12 @@ import org.gradle.api.initialization.Settings
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.internal.operations.BuildOperationListenerManager
+import org.gradle.build.event.BuildEventsListenerRegistry
+import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
 import javax.inject.Inject
 
 class GradleWarningsDetectorPlugin @Inject constructor(
-    private val buildOperationListenerManager: BuildOperationListenerManager,
+    private val buildEventsListenerRegistry: BuildEventsListenerRegistry,
     private val flowScope: FlowScope,
     private val providers: ProviderFactory,
 ) : Plugin<Settings> {
@@ -24,11 +25,8 @@ class GradleWarningsDetectorPlugin @Inject constructor(
     override fun apply(target: Settings) {
         logger.warn("[${GradleWarningsDetectorPlugin::class.java.simpleName}] The plugin is being applied")
         val warningsReporter = GradleWarningsReporter.registerIfAbsent(target.gradle)
-        val deprecationBuildOperationListener = DeprecationBuildOperationListener(warningsReporter)
-        buildOperationListenerManager.addListener(deprecationBuildOperationListener)
-        warningsReporter.get().executeAtBuildFinish = {
-            buildOperationListenerManager.removeListener(deprecationBuildOperationListener)
-        }
+        // Keeps the reporter alive during the execution phase
+        (buildEventsListenerRegistry as BuildEventListenerRegistryInternal).onOperationCompletion(warningsReporter)
 
         // The reporter is shared by all builds in the build tree, so only the root build reports its warnings
         if (target.gradle.parent != null) return

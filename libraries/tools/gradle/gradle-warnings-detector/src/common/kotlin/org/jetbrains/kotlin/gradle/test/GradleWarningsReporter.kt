@@ -6,16 +6,36 @@
 package org.jetbrains.kotlin.gradle.test
 
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.internal.operations.BuildOperationDescriptor
+import org.gradle.internal.operations.BuildOperationListener
+import org.gradle.internal.operations.BuildOperationListenerManager
+import org.gradle.internal.operations.OperationFinishEvent
+import org.gradle.internal.operations.OperationIdentifier
+import org.gradle.internal.operations.OperationProgressEvent
+import org.gradle.internal.operations.OperationStartEvent
 import java.util.concurrent.ConcurrentHashMap
+import javax.inject.Inject
 
-internal abstract class GradleWarningsReporter : BuildService<BuildServiceParameters.None>, AutoCloseable {
-    internal var executeAtBuildFinish: (() -> Unit)? = null
+internal abstract class GradleWarningsReporter : BuildService<BuildServiceParameters.None>, BuildOperationListener,
+    AutoCloseable {
+    @get:Inject
+    abstract val objects: ObjectFactory
 
     private val warningReasons = ConcurrentHashMap.newKeySet<String>()
     private val ignoredWarningReasons = ConcurrentHashMap.newKeySet<String>()
+
+    private val buildOperationListenerManager = objects
+        .newInstance(BuildOperationListenerManagerProvider::class.java)
+        .buildOperationListenerManager
+    private val deprecationBuildOperationListener = DeprecationBuildOperationListener(this)
+
+    init {
+        buildOperationListenerManager.addListener(deprecationBuildOperationListener)
+    }
 
     internal val warnings: Set<String> get() = warningReasons.toSet()
     internal val ignoredReasons: Set<String> get() = ignoredWarningReasons.toSet()
@@ -29,8 +49,29 @@ internal abstract class GradleWarningsReporter : BuildService<BuildServiceParame
         }
     }
 
+    override fun started(
+        buildOperation: BuildOperationDescriptor,
+        startEvent: OperationStartEvent
+    ) {
+        // no-op
+    }
+
+    override fun progress(
+        operationIdentifier: OperationIdentifier,
+        progressEvent: OperationProgressEvent
+    ) {
+        // no-op
+    }
+
+    override fun finished(
+        buildOperation: BuildOperationDescriptor,
+        finishEvent: OperationFinishEvent
+    ) {
+        // no-op
+    }
+
     override fun close() {
-        executeAtBuildFinish?.invoke()
+        buildOperationListenerManager.removeListener(deprecationBuildOperationListener)
     }
 
     internal companion object {
@@ -40,4 +81,9 @@ internal abstract class GradleWarningsReporter : BuildService<BuildServiceParame
         fun registerIfAbsent(gradle: Gradle): Provider<GradleWarningsReporter> =
             gradle.sharedServices.registerIfAbsent(serviceName, GradleWarningsReporter::class.java) {}
     }
+}
+
+internal abstract class BuildOperationListenerManagerProvider {
+    @get:Inject
+    abstract val buildOperationListenerManager: BuildOperationListenerManager
 }
