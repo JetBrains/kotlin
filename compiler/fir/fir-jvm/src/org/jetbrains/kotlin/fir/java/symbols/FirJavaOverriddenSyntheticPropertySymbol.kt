@@ -44,6 +44,4 @@ import org.jetbrains.kotlin.name.CallableId
 class FirJavaOverriddenSyntheticPropertySymbol(
     propertyId: CallableId,
     getterId: CallableId
-) : FirSyntheticPropertySymbol(propertyId, getterId) {
-    override fun copy(): FirSyntheticPropertySymbol = FirJavaOverriddenSyntheticPropertySymbol(callableId, getterId)
-}
+) : FirSyntheticPropertySymbol(propertyId, getterId)
