@@ -153,15 +153,12 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
 
         val builderProperties = builderClass.declarations.filterIsInstance<IrProperty>()
         val entityProperties = entityClass.declarations.filterIsInstance<IrProperty>()
-        // Either tempInstance is initialized and instanceInitialized is true, or vice versa for both
-        val tempInstance by lazy { irTemporary(call, nameHint = builderClass.name.asString().decapitalize()) }
-        var instanceInitialized = false
+        val entityPropertyValues = mutableMapOf<IrProperty, IrExpression>()
         for (builderProperty in builderProperties) {
             if (builderProperty.name in processedNames) continue
             val field = builderProperty.backingField ?: continue
             val entityProperty = entityProperties.firstOrNull { it.name == builderProperty.name } ?: continue
             if (!entityProperty.isVar) continue
-            instanceInitialized = true
             val fieldRead = irGetField(irGet(thisParameter), field)
             val value = builderClass.defaultFlagField(entityProperty.name)?.let { flagField ->
                 buildDefaultOrSetValue(
@@ -171,12 +168,16 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
                     flagField, thisParameter, fieldRead, resolvedValues
                 )
             } ?: fieldRead
-            +irCall(entityProperty.setter!!.symbol, pluginContext.irBuiltIns.unitType).apply {
-                arguments[0] = irGet(tempInstance)
-                arguments[1] = value
-            }
+            entityPropertyValues[entityProperty] = value
         }
-        if (instanceInitialized) {
+        if (entityPropertyValues.isNotEmpty()) {
+            val tempInstance = irTemporary(call, nameHint = builderClass.name.asString().decapitalize())
+            for ([entityProperty, value] in entityPropertyValues.entries) {
+                +irCall(entityProperty.setter!!.symbol, pluginContext.irBuiltIns.unitType).apply {
+                    arguments[0] = irGet(tempInstance)
+                    arguments[1] = value
+                }
+            }
             +irReturn(irGet(tempInstance))
         } else {
             +irReturn(call)
