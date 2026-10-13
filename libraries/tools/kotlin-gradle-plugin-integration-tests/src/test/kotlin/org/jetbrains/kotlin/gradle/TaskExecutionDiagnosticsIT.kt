@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSe
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.gradle.util.useCompilerVersion
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
@@ -25,6 +27,7 @@ import kotlin.io.path.createFile
 import kotlin.io.path.pathString
 
 @DisplayName("Execution time diagnostics")
+@MustRunOnChangesInGradle
 class TaskExecutionDiagnosticsIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
@@ -114,6 +117,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
     @GradleTestVersions(
         maxVersion = TestVersions.Gradle.G_9_6 // Gradle 9.7+ brings Kotlin runtime 2.4.0 which metadata is not compatible with Kotlin compiler 2.2.10
     )
+    @MustRunOnChangesInBuildToolsApi
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslCustomVersionDeprecation(gradleVersion: GradleVersion) =
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(
             gradleVersion,
@@ -126,6 +130,7 @@ class TaskExecutionDiagnosticsIT : KGPBaseTest() {
     @DisplayName("KT-79851: emit unsupported language version kotlin-dsl diagnostic, custom compiler via BTA without deprecation")
     @JvmGradlePluginTests
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun emitDiagnosticOnUnsupportedVersionAlongKotlinDslCustomVersion(gradleVersion: GradleVersion) =
         emitDiagnosticOnUnsupportedVersionAlongKotlinDsl(gradleVersion, btaVersion = "2.1.20", expectedSeverity = null)
 
