@@ -9,10 +9,12 @@ import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCoreLibs
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Stdlib 1.8+ version alignment")
+@MustRunOnChangesInCoreLibs
 class StdlibAlignmentIT : KGPBaseTest() {
 
     val constrainedAlignmentVersion = "1.8.0"
