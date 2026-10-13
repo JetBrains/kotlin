@@ -10,7 +10,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
@@ -18,6 +18,7 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.writeText
 
 @DisplayName("JVM tasks target validation")
+@MustRunOnChangesInGradle
 class JvmTargetValidationTest : KGPBaseTest() {
 
     @JvmGradlePluginTests
