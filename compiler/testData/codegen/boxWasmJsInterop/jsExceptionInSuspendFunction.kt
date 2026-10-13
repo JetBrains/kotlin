@@ -4,6 +4,8 @@
 // ^^ For JS_IR and JS_IR_ES6, the test doesn't work since we don't expect that non Error could came to the catch block
 // IGNORE_BACKEND: WASM_JS, WASM_WASI
 // ^^ Ignore for now, because the test works, but truncates the frames too much. See KT-71725, KT-88798
+// WASM_STANDALONE
+// ^^^ Do not rename packages since stacktrace is checked for exact FQN of <main>
 
 import helpers.*
 import kotlin.coroutines.*

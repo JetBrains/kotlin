@@ -18,18 +18,23 @@ import org.jetbrains.kotlin.test.services.targetPlatform
 import org.jetbrains.kotlin.test.diagnostics.DiagnosticsCollectorStub
 import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.wasm.config.wasmTestBoxFunctionToExport
+import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmTarget
+import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.platform.wasm.WasmPlatformWithTarget
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.isSingleTestBatch
 import org.jetbrains.kotlin.test.klib.getTransitivesAndFriendsWithoutReflectionPackageNameHelper
 import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import org.jetbrains.kotlin.wasm.test.blackbox.AbstractWasmSecondStageGroupingFacade
+import org.jetbrains.kotlin.wasm.test.blackbox.WASM_JS_GROUPED_TESTS_ENTRY_POINT_NAME
 import org.jetbrains.kotlin.wasm.test.blackbox.DependencyPaths
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
 import java.io.File
@@ -101,8 +106,21 @@ class WasmInProcessSecondStageFacade {
             // Step 2: Link and lower in-process
             val services = inputArtifact.nonGroupingStageOutputs.first().testServices
             val configuration = services.compilerConfigurationProvider.getCompilerConfiguration(launcherModule, CompilationStage.SECOND)
+            // The synthetic launcher must be the executable main module. Closed-world multi-module linking keeps
+            // the original test KLIB as the main module instead, dropping this launcher and its entry point.
+            // Closed-world compilation is still used for the original test KLIBs in the first stage.
+            configuration.wasmGenerateClosedWorldMultimodule = false
             configuration.includes = launcherKlibFile.absolutePath
             configuration.friendLibraries = settings.friendDependencies.toList()
+
+            // Drive this batch through the launcher's entry point rather than through `box()`, and tell the
+            // backend to export it. `WasmLoweringFacade` only fills this key in with the per-test `box` when the
+            // caller has left it unset, so setting it here is what distinguishes a grouped batch from a
+            // standalone box test - the lowering facade itself cannot tell, as it runs with a single test's
+            // `TestServices` and so has no access to the batch's `GroupingStageInputsHolder`.
+            if (configuration.wasmTarget == WasmTarget.JS) {
+                configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOf(WASM_JS_GROUPED_TESTS_ENTRY_POINT_NAME))
+            }
 
             val runtimeKlibs = WasmEnvironmentConfigurator.getRuntimePathsForModule(configuration.wasmTarget, services)
             configuration.libraries = runtimeKlibs + cleanedRegularDependencies.toList() + settings.friendDependencies.toList() +

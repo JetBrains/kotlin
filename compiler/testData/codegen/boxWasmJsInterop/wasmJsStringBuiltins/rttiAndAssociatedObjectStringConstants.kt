@@ -1,5 +1,7 @@
 // TARGET_BACKEND: WASM
 // WITH_STDLIB
+// WASM_STANDALONE
+// ^^^ Do not rename packages since `.qualifiedName` would change
 
 @file:OptIn(ExperimentalAssociatedObjects::class)
 

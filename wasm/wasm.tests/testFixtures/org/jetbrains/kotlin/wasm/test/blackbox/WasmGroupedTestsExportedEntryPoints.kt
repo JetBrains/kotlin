@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.wasm.test.blackbox
 
+/** Name of the wasm-js export of a grouped batch, see [wasmJsGroupedTestsEntryPointSource]. */
+internal const val WASM_JS_GROUPED_TESTS_ENTRY_POINT_NAME = "runGroupedTests"
+
 /** The wasm-js export of a grouped batch: `test.mjs` calls it to run the result-collecting driver. */
 internal fun wasmJsGroupedTestsEntryPointSource(runAllFunctionName: String): String =
     """
     @JsExport
-    fun runGroupedTests() {
+    fun $WASM_JS_GROUPED_TESTS_ENTRY_POINT_NAME() {
         $runAllFunctionName()
     }
     """.trimIndent()
