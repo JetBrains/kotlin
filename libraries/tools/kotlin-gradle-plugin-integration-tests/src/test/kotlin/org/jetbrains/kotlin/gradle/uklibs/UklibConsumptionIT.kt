@@ -307,7 +307,6 @@ class UklibConsumptionIT : KGPBaseTest() {
                     androidVersion = androidVersion,
                 )
                 .disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
-                .suppressAgpWarningIsProperty(gradleVersion)
         ) {
             if (androidVersion != null) addAgpToBuildScriptCompilationClasspath(androidVersion)
             addKgpToBuildScriptCompilationClasspath()

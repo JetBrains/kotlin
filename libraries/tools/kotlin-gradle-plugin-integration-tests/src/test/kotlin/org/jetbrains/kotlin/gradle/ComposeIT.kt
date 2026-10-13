@@ -43,8 +43,7 @@ class ComposeIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
         ) {
             build("assembleDebug") {
                 assertOutputContains("Detected Android Gradle Plugin compose compiler configuration")
@@ -77,8 +76,7 @@ class ComposeIT : KGPBaseTest() {
         )
 
         project1.build(
-            "assembleDebug",
-            buildOptions = project1.buildOptions.suppressAgpWarningIsProperty(gradleVersion)
+            "assembleDebug"
         ) {
             assertTasksExecuted(":compileDebugKotlin")
         }
@@ -195,8 +193,7 @@ class ComposeIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
         ) {
             buildGradle.modify { originalBuildScript ->
                 """
@@ -552,7 +549,7 @@ class ComposeIT : KGPBaseTest() {
                 androidVersion = agpVersion,
                 buildCacheEnabled = true,
                 configurationCache = ENABLED
-            ).suppressAgpWarningIsProperty(gradleVersion)
+            )
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
@@ -655,8 +652,7 @@ class ComposeIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressAgpWarningIsProperty(gradleVersion),
+                .copy(androidVersion = agpVersion),
         ) {
             buildScriptInjection {
                 val appExtension = project.extensions.getByType<ApplicationAndroidComponentsExtension>()
