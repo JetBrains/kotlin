@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 // This file was generated automatically. See the README.md file
 // DO NOT MODIFY IT MANUALLY.
 
@@ -39,7 +44,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.WhenExpressionsMode a
  * A value needs converting whenever the two sides declare its type separately, as they do for the mirrored argument enums.
  */
 internal object JvmCompilerArgumentValueAdapter {
-  public fun toApi(`value`: Any?): Any? = when (value) {
+  fun toApi(`value`: Any?): Any? = when (value) {
     is List<*> if value.firstOrNull() is Enum<*> -> value.map { toApi(it) }
     is CompatArgumentsEnumsAbiStabilityMode -> value.toApiEnum<ApiArgumentsEnumsAbiStabilityMode>()
     is CompatArgumentsEnumsAssertionsMode -> value.toApiEnum<ApiArgumentsEnumsAssertionsMode>()
@@ -55,7 +60,7 @@ internal object JvmCompilerArgumentValueAdapter {
     else -> value
   }
 
-  public fun toImpl(`value`: Any?): Any? = when (value) {
+  fun toImpl(`value`: Any?): Any? = when (value) {
     is List<*> if value.firstOrNull() is Enum<*> -> value.map { toImpl(it) }
     is ApiArgumentsEnumsAbiStabilityMode -> value.toImplEnum<CompatArgumentsEnumsAbiStabilityMode>()
     is ApiArgumentsEnumsAssertionsMode -> value.toImplEnum<CompatArgumentsEnumsAssertionsMode>()

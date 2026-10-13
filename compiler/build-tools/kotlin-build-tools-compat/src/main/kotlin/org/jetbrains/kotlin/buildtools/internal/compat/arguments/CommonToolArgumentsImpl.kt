@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 // This file was generated automatically. See the README.md file
 // DO NOT MODIFY IT MANUALLY.
 
@@ -17,19 +22,11 @@ import kotlin.collections.MutableMap
 import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.HELP
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.NOWARN
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.VERBOSE
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.VERSION
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.WERROR
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.WEXTRA
-import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.CommonToolArgumentsImpl.Companion.X
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonToolArguments
-import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION as KC_VERSION
 
 internal abstract class CommonToolArgumentsImpl() : ArgumentsCommonToolArguments,
