@@ -217,6 +217,9 @@ interface MyInterface {
     fun ExperimentalLibClass.bazFun(): Boolean
 
     var ExperimentalLibClass.bazProp: Boolean
+
+    @MyOptInApi
+    val String.optInExtPropWithDefault: String get() = TODO()
 }
 
 // FILE: internal_optin.kt
