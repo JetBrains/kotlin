@@ -20,11 +20,13 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 
+@MustRunOnChangesInGradle
 @DisplayName("Build cache relocation")
 class BuildCacheRelocationIT : KGPBaseTest() {
 
@@ -71,7 +73,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     }
 
     @JsGradlePluginTests
-    @DisplayName("works with JS/DCE project")
+    @DisplayName("works with JS project")
     @GradleTest
     fun testRelocationKotlinJs(gradleVersion: GradleVersion) {
         val (firstProject, secondProject) = prepareTestProjects(
