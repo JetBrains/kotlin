@@ -109,18 +109,15 @@ class KaptIT : KotlinMavenTestBase() {
     }
 
     @MavenTest
-    @DisplayName("KAPT processes Dagger annotations on JDK 8")
-    fun testDaggerAnnotationProcessingJdk8(mavenVersion: TestVersions.Maven) {
+    @DisplayName("KAPT processes Dagger annotations on JDK 17")
+    fun testDaggerAnnotationProcessing(mavenVersion: TestVersions.Maven) {
         testProject("java8/test-dagger-maven-example", mavenVersion) {
             build(
                 "package",
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
-                ).withoutKotlinDaemon(
-                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
-                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
+                    javaVersion = TestVersions.Java.JDK_17,
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_17))
                 )
             ) {
                 assertJarExistsAndNotEmpty("target/dagger-maven-example-1.0-SNAPSHOT.jar")
@@ -191,11 +188,8 @@ class KaptIT : KotlinMavenTestBase() {
                 "package",
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
-                ).withoutKotlinDaemon(
-                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
-                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
+                    javaVersion = TestVersions.Java.JDK_17,
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_17))
                 )
             ) {
                 assertJarExistsAndNotEmpty("target/dagger-maven-example-1.0-SNAPSHOT.jar")
@@ -236,11 +230,8 @@ class KaptIT : KotlinMavenTestBase() {
                 "package",
                 expectedToFail = false,
                 buildOptions = buildOptions.copy(
-                    javaVersion = TestVersions.Java.JDK_1_8,
-                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_1_8))
-                ).withoutKotlinDaemon(
-                    "https://youtrack.jetbrains.com/issue/KT-71048: Dagger 2.9 hits ConcurrentModificationException in HashMap.computeIfAbsent on JDK 9+. " +
-                            "The daemon may reuse a JDK 17+ process, so we force in-process compilation on JDK 8."
+                    javaVersion = TestVersions.Java.JDK_17,
+                    extraMavenProperties = mapOf("kotlinCompilerJdk" to context.getJavaHomeString(TestVersions.Java.JDK_17))
                 )
             ) {
                 assertJarExistsAndNotEmpty("target/test-enable-extensions-kapt-allopen-1.0-SNAPSHOT.jar")
