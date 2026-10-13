@@ -60,7 +60,7 @@ internal class BitcodeCompiler(
                         debug -> configurables.clangDebugFlags
                         else -> configurables.clangNooptFlags
                     })
-                    addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
+                    addNonEmpty(context.config.getCurrentRelocationModeFrom(configurables).translateToClangCc1Flag())
                 }
         val bitcodePath = bitcodeFile.absoluteFile.normalize().path
         val objectPath = objectFile.absoluteFile.normalize().path

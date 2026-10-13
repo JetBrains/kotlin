@@ -442,7 +442,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
 ) {
     val compilationResult = temporaryFiles.createObjectFile(Path(outputFiles.nativeBinaryFile).name)
     runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile.toFile(), compilationResult.toFile()))
-    val linkerOutputKind = determineLinkerOutput(context)
+    val linkerOutputKind = context.config.linkerOutputKind
     val [linkerInput, cacheBinaries] = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
         when {

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.toCValues
-import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.NativeBackendContext
@@ -300,9 +299,6 @@ internal class ConstFloat64(llvm: CodegenLlvmHelpers, val value: Double) : Const
 internal open class BasicLlvmHelpers(bitcodeContext: BitcodePostProcessingContext, val module: LLVMModuleRef) {
 
     val llvmContext = bitcodeContext.llvmContext
-    val targetTriple by lazy {
-        LLVMGetTarget(module)!!.toKString()
-    }
 
     val runtimeAnnotationMap by lazy {
         StaticData.getGlobal(module, "llvm.global.annotations")
@@ -410,7 +406,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     init {
         LLVMSetDataLayout(module, runtime.dataLayout)
-        LLVMSetTarget(module, runtime.target)
+        LLVMSetTarget(module, context.config.llvmTargetTriple)
     }
 
     private fun importRtFunction(name: String, returnsObjectType: Boolean) = importFunction(name, runtime.llvmModule, returnsObjectType)
