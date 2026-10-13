@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.modules.TargetId
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -36,7 +34,6 @@ class GenerationState(
     val module: ModuleDescriptor,
     configuration: CompilerConfiguration,
     builderFactory: ClassBuilderFactory = ClassBuilderFactories.BINARIES,
-    val generateDeclaredClassFilter: GenerateClassFilter? = null,
     val targetId: TargetId? = null,
     moduleName: String? = configuration.moduleName,
     val jvmBackendClassResolver: JvmBackendClassResolver,
@@ -47,11 +44,6 @@ class GenerationState(
         private set
     var configuration: CompilerConfiguration = configuration
         private set
-
-    abstract class GenerateClassFilter {
-        abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
-        abstract fun shouldGeneratePackagePart(ktFile: KtFile): Boolean
-    }
 
     val config = JvmBackendConfig(configuration)
 

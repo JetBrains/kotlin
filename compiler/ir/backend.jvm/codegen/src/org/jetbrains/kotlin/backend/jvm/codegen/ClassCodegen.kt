@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -57,8 +56,6 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.TRANSIENT_ANNOTATION_FQ_NAM
 import org.jetbrains.kotlin.name.JvmStandardClassIds.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -150,9 +147,6 @@ class ClassCodegen private constructor(
         if (generated) return
         generated = true
 
-        // Respect the [GenerateClassFilter] installed in the generation state
-        if (shouldSkipCodeGenerationAccordingToGenerationFilter()) return
-
         // Generate PermittedSubclasses attribute for sealed class.
         if (config.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
             irClass.modality == Modality.SEALED &&
@@ -206,14 +200,6 @@ class ClassCodegen private constructor(
         visitor.done(config.generateSmapCopyToAnnotation)
         jvmMethodSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
         jvmFieldSignatureClashDetector.reportErrorsTo(context.diagnosticReporter)
-    }
-
-    private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {
-        val filter = state.generateDeclaredClassFilter
-        val ktFile = PsiSourceManager.findPsiElement(irClass, irClass, KtFile::class)
-        val ktClass = PsiSourceManager.findPsiElement(irClass, irClass, KtClassOrObject::class)
-        return (ktFile != null && filter != null && !filter.shouldGeneratePackagePart(ktFile))
-                || (ktClass != null && filter != null && !filter.shouldGenerateClass(ktClass))
     }
 
     private fun generatePermittedSubclasses() {
