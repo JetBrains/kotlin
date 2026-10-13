@@ -1,6 +1,7 @@
 $schema: domains.schema.json
 
 CompilerInfrastructure:
+  team: "Kotlin Frontend"
   include:
     - "core"
     - "build-common"
@@ -42,6 +43,7 @@ CompilerInfrastructure:
     - CoreLibs
 
 Frontend:
+  team: "Kotlin Frontend"
   include:
     - "compiler/fir"
     - "compiler/frontend"
@@ -66,6 +68,7 @@ Frontend:
     - CompilerInfrastructure
 
 CommonBackend:
+  team: "Kotlin Common Backend"
   include:
     - "compiler/ir/ir.actualization"
     - "compiler/ir/ir.inline"
@@ -85,6 +88,7 @@ CommonBackend:
     - Frontend
 
 Jvm:
+  team: "Kotlin JVM"
   include:
     - "compiler/android-tests"
     - "compiler/backend"
@@ -100,6 +104,7 @@ Jvm:
     - CommonBackend
 
 Wasm:
+  team: "Kotlin Wasm"
   include:
     - "compiler/ir/backend.wasm"
     - "wasm"
@@ -117,6 +122,7 @@ Wasm:
     - CommonBackend
 
 Js:
+  team: "Kotlin JS"
   include:
     - "js"
     - "compiler/ir/backend.js"
@@ -130,6 +136,7 @@ Js:
     - CommonBackend
 
 Native:
+  team: "Kotlin Native"
   include:
     - "compiler/ir/backend.native"
     - "compiler/ir/ir.objcinterop"
@@ -145,6 +152,7 @@ Native:
     - CommonBackend
 
 CoreLibs:
+  team: "Kotlin Libraries"
   include:
     - "libraries/stdlib"
     - "libraries/tools/kotlin-annotations-jvm"
@@ -158,6 +166,7 @@ CoreLibs:
     - "libraries/tools/jdk-api-validator"
 
 AnalysisApi:
+  team: "Kotlin Analysis API"
   include:
     - "analysis"
     - "compiler/psi"
@@ -172,6 +181,7 @@ AnalysisApi:
     - CoreLibs
 
 BuildToolsApi:
+  team: "Build Tools API"
   include:
     - "build-common"
     - "compiler/build-tools"
@@ -183,6 +193,7 @@ BuildToolsApi:
     - CompilerInfrastructure
 
 BuildToolsLibraries:
+  team: "Kotlin Build Tools"
   include:
     - "build-tools/libraries"
   mustRunAllTestsOnChangesIn:
@@ -190,6 +201,7 @@ BuildToolsLibraries:
     - BuildToolsApi
 
 SwiftExport:
+  team: "Kotlin Native"
   include:
     - "native/swift"
     - "libraries/tools/analysis-api-based-klib-reader"
@@ -198,6 +210,7 @@ SwiftExport:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @MustRunOnChangesInAnalysisApi tests
 
 CompilerPlugins:
+  team: "Kotlin Frontend"
   include:
     - "compiler/plugin-api"
     - "plugins"
@@ -211,22 +224,26 @@ CompilerPlugins:
     - CoreLibs
 
 DocumentationModel:
+  team: "Dokka"
   include:
     - "libraries/tools/kotlin-documentation-model"
 
 Gradle:
+  team: "Kotlin Build Tools"
   include:
     - "build-common"
     - "libraries/tools/*gradle*"
     - "compiler/build-tools/kotlin-build-statistics"
 
 Maven:
+  team: "Kotlin Build Tools"
   include:
     - "libraries/tools/*maven*"
 
 # The IntelliJ domain has no owned files in this repository.
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
+  team: "Kotlin Analysis API"
   include:
     - "prepare/ide-plugin-dependencies"
   mustRunAllTestsOnChangesIn:
@@ -238,6 +255,7 @@ IntelliJ:
     - CompilerPlugins
 
 BuildInfrastructure:
+  team: "Kotlin Build Infrastructure"
   include:
     - "repo"
     - "gradle"
@@ -249,6 +267,7 @@ BuildInfrastructure:
     - ".idea"
 
 Unknown:
+  team: "Kotlin"
   # Files not matching other domains will be sorted into 'Unknown' by default.
   include: [ ]
   mustRunAllTestsOnChangesIn:

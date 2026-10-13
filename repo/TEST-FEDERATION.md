@@ -55,6 +55,7 @@ Use `include` and `exclude` in [domains.yaml](./domains.yaml) to specify which f
 
 ```yaml
 Js:
+  team: "Kotlin JS"
   include:
     - "js"
     - "compiler/ir/backend.js"
@@ -87,6 +88,15 @@ Native:
     - "!native/swift/baz"  # has no effect: 'native/swift/baz' is inside the excluded directory 'native/swift'
     - "!js"                # has no effect: 'exclude' entries cannot add paths to a domain
 ```
+
+Every domain also declares its owners as its first two entries, before `include`:
+
+```yaml
+Jvm:
+  team: "Kotlin JVM"
+```
+
+`team` (required) is the Space team responsible for the domain, named as in `.space/CODEOWNERS`.
 
 ## Running all tests on changes in another domain
 

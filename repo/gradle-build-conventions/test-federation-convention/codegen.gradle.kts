@@ -78,6 +78,7 @@ private object DomainSourcesGenerator {
                     this += "|    override val include: List<String> = listOf(${domain.includes.joinToString { "\"$it\"" }})"
                     this += "|    override val exclude: List<String> = listOf(${domain.excludes.joinToString { "\"$it\"" }})"
                     this += "|    override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(${domain.mustRunAllTestsOnChangesIn.joinToString { "${it}DomainInfo" }}) }"
+                    this += "|    override val team: String = \"${domain.team}\""
                     this += "|}"
                     this += "|"
                 }
@@ -132,6 +133,7 @@ private object DomainSourcesGenerator {
             includes = get("include")?.valueStream()?.toList().orEmpty().map { it.asText() },
             excludes = get("exclude")?.valueStream()?.toList().orEmpty().map { it.asText() },
             mustRunAllTestsOnChangesIn = get("mustRunAllTestsOnChangesIn")?.valueStream()?.toList().orEmpty().map { it.asText() },
+            team = get("team")?.asText() ?: error("Domain '$key' is missing 'team'"),
         )
     }
 
@@ -140,6 +142,7 @@ private object DomainSourcesGenerator {
         val includes: List<String>,
         val excludes: List<String>,
         val mustRunAllTestsOnChangesIn: List<String>,
+        val team: String,
     )
 
     private operator fun StringBuilder.plusAssign(s: String) {
