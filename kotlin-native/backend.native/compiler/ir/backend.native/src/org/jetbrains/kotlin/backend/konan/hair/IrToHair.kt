@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.backend.konan.hair
 
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -48,9 +47,6 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.isUnsignedArray
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-
-internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
-
 private fun IrCall.isVirtual(): Boolean = superQualifierSymbol?.owner == null && symbol.owner.isOverridable
 
 internal val GenerateHairPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, Map<IrFunction, FunctionCompilation>>(
@@ -68,10 +64,6 @@ internal fun generateHair(generationState: NativeGenerationState, irModule: IrMo
     hairGenerator.lower(irModule)
     return hairGenerator.funCompilations.toMap()
 }
-
-// FIXME move to utils?
-context(controlBuilder: ControlFlowBuilder)
-val controlBuilder get() = controlBuilder
 
 // FIXME copy-pasted from BCEFroLoopBodyTransformer
 private fun IrType.isBasicArray() = isPrimitiveArray() || isArray() || isUnsignedArray()
@@ -317,37 +309,13 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                     }
 
                     override fun visitWhen(expression: IrWhen, data: Unit): Node {
-                        // FIXME reuse convenience builder somehow
-                        var exhaustive = false
-                        val pairs = expression.branches.map {
-                            if (it.isUnconditional()) {
-                                exhaustive = true
-                                val value = it.result.accept(this, Unit)
-                                // FIXME check for unreachable instead?
-                                val exit = if (controlBuilder.lastControl != null) Goto() else null
-                                value to exit
-                            } else {
-                                val [trueExit, falseExit] = IfExits(it.condition.accept(this, Unit))
-
-                                BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
-                                val trueValue = it.result.accept(this, Unit)
-                                val trueGoto = if (controlBuilder.lastControl != null) Goto() else null
-
-                                BlockEntry(falseExit).ensuring { controlBuilder.lastControl == it }
-
-                                trueValue to trueGoto
+                        return branch(expression.branches.map { irBranch ->
+                            val conditionBuilder: ExprBuilder? = if (irBranch.isUnconditional()) null else {
+                                { irBranch.condition.accept(this, Unit) }
                             }
-                        } + listOf(NoValue() to (if (exhaustive) null else Goto()))
-
-                        val [values, exits] = pairs.filter { it.second != null }.unzip()
-
-                        val result = if (exits.isNotEmpty()) {
-                            require(exits.size == values.size)
-                            val merge = BlockEntry(*exits.toTypedArray())
-                            Phi(merge, *values.zip(exits) { value, exit -> ValueAndExit(value, exit!!) }.toTypedArray())
-                        } else NoValue()
-
-                        return result
+                            val resultBuilder: ExprBuilder = { irBranch.result.accept(this, Unit) }
+                            conditionBuilder to resultBuilder
+                        })
                     }
 
                     val loopBreaks = mutableMapOf<IrLoop, MutableList<BlockExit>>()
@@ -360,8 +328,7 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
 
                         BlockEntry(trueExit)
                         loop.body?.accept(this, Unit)
-                        val trueGoto = Goto()
-                        condBlock.preds[1] = trueGoto // FIXME sha t if no exit?
+                        condBlock.preds[1] = Goto()
 
                         val breakExits = loopBreaks[loop] ?: mutableListOf()
                         BlockEntry(falseExit, *breakExits.toTypedArray())
@@ -385,7 +352,7 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         val [trueExit, falseExit] = IfExits(cond)
 
                         BlockEntry(trueExit)
-                        entryBlock.preds[1] = Goto() // FIXME what if no exit
+                        entryBlock.preds[1] = Goto()
 
                         val breakExits = loopBreaks[loop] ?: mutableListOf()
                         val exitBlock = BlockEntry(falseExit, *breakExits.toTypedArray())
@@ -419,8 +386,8 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         val value = expression.value.accept(this, Unit)
                         val target = expression.returnTargetSymbol
                         if (target is IrReturnableBlockSymbol) {
-                            val goto = Goto()
-                            returns.getOrPut(target) { mutableListOf() } += ValueAndExit(value, goto)
+                            returns.getOrPut(target) { mutableListOf() }
+                                    .add(ValueAndExit(value, Goto()))
                         } else {
                             // FIXME what if return Unit?
                             Return(value)
@@ -432,8 +399,8 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                     override fun visitReturnableBlock(expression: IrReturnableBlock, data: Unit): Node {
                         returns[expression.symbol] = mutableListOf()
                         val mainResult = super.visitReturnableBlock(expression, data)
-                        val mainExit = if (controlBuilder.lastControl !is Unreachable) Goto() else null
-                        val results = returns[expression.symbol]!! + listOfNotNull(mainExit?.let { ValueAndExit(mainResult, it) })
+                        val mainExit = Goto()
+                        val results = (returns[expression.symbol]!! + listOf(ValueAndExit(mainResult, mainExit)))
                         val exitBlock = BlockEntry(*results.map { it.exit }.toTypedArray())
                         return Phi(exitBlock, *results.toTypedArray())
                     }

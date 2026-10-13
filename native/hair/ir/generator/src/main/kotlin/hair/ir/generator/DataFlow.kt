@@ -10,7 +10,9 @@ object DataFlow : ModelDSL() {
         formParam("variable", Any::class)
     }
 
-    val readVar by node(varOp)
+    val readVar by node(varOp) {
+        interfaces(valueNode)
+    }
 
     val assignVar by node(varOp) {
         param("assignedValue")
@@ -23,6 +25,7 @@ object DataFlow : ModelDSL() {
     }
 
     val phiPlaceholder by node {
+        interfaces(valueNode)
         formParam("origin", Any::class)
         param("block", ControlFlow.blockEntry)
         variadicParam("joinedValues")
