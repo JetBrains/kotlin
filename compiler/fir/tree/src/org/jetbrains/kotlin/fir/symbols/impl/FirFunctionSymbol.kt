@@ -121,8 +121,6 @@ class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstr
  * a getter which exists in sources and is either from Java or overrides another getter from Java.
  */
 abstract class FirSyntheticPropertySymbol(propertyId: CallableId, val getterId: CallableId) : FirRegularPropertySymbol(propertyId) {
-    abstract fun copy(): FirSyntheticPropertySymbol
-
     @SymbolInternals
     val syntheticProperty: FirSyntheticProperty
         get() = fir as FirSyntheticProperty

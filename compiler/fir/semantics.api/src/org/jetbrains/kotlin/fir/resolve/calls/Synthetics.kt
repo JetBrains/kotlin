@@ -34,9 +34,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 class FirSimpleSyntheticPropertySymbol(
     propertyId: CallableId,
     getterId: CallableId
-) : FirSyntheticPropertySymbol(propertyId, getterId), SyntheticSymbol {
-    override fun copy(): FirSyntheticPropertySymbol = FirSimpleSyntheticPropertySymbol(callableId, getterId)
-}
+) : FirSyntheticPropertySymbol(propertyId, getterId), SyntheticSymbol
 
 class FirSyntheticFunctionSymbol(
     callableId: CallableId
@@ -406,4 +404,3 @@ private var FirSyntheticProperty.deprecatedOverrideOfHidden: Boolean? by FirDecl
 
 val FirSimpleSyntheticPropertySymbol.deprecatedOverrideOfHidden: Boolean
     get() = (fir as FirSyntheticProperty).deprecatedOverrideOfHidden == true
-
