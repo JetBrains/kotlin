@@ -350,7 +350,10 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                             (declaration as? FirJavaField)?.takeIf { !it.isStatic }
                         }
                     } else {
-                        entityClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
+                        entityClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.takeIf { it.isNotEmpty() }?.map { it.fir }
+                            ?: entityClass.declarations.mapNotNull { declaration ->
+                                (declaration as? FirProperty)?.takeIf { it.isVar }
+                            }
                     }
                 }
                 is FirConstructor -> declaration.valueParameters
