@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.test
 
+import org.gradle.StartParameter
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -28,9 +30,12 @@ internal abstract class GradleWarningsReporter : BuildService<BuildServiceParame
     private val warningReasons = ConcurrentHashMap.newKeySet<String>()
     private val ignoredWarningReasons = ConcurrentHashMap.newKeySet<String>()
 
-    private val buildOperationListenerManager = objects
-        .newInstance(BuildOperationListenerManagerProvider::class.java)
-        .buildOperationListenerManager
+    private val gradleServices = objects.newInstance(GradleServices::class.java)
+    private val buildOperationListenerManager = gradleServices.buildOperationListenerManager
+
+    // Tests switch to the 'summary' warning mode to temporarily suppress deprecation warnings they can't fix.
+    // Read in every build, as changing the warning mode doesn't invalidate the configuration cache entry.
+    internal val failOnWarnings: Boolean = gradleServices.startParameter.warningMode != WarningMode.Summary
     private val deprecationBuildOperationListener = DeprecationBuildOperationListener(this)
 
     init {
@@ -83,7 +88,10 @@ internal abstract class GradleWarningsReporter : BuildService<BuildServiceParame
     }
 }
 
-internal abstract class BuildOperationListenerManagerProvider {
+internal abstract class GradleServices {
     @get:Inject
     abstract val buildOperationListenerManager: BuildOperationListenerManager
+
+    @get:Inject
+    abstract val startParameter: StartParameter
 }

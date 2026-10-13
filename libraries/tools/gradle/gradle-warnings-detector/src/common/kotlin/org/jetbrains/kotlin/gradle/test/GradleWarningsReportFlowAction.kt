@@ -24,10 +24,6 @@ internal abstract class GradleWarningsReportFlowAction : FlowAction<GradleWarnin
 
         @get:Input
         val configurationTimeIgnoredReasons: SetProperty<String>
-
-        // Tests switch to the 'summary' warning mode to temporarily suppress deprecation warnings they can't fix
-        @get:Input
-        val failOnWarnings: Property<Boolean>
     }
 
     override fun execute(parameters: Parameters) {
@@ -42,7 +38,7 @@ internal abstract class GradleWarningsReportFlowAction : FlowAction<GradleWarnin
         }
         if (warnings.isNotEmpty()) {
             logger.warn("[$marker] Deprecation warnings were found during this build:\n${warnings.joinToString("\n")}")
-            if (parameters.failOnWarnings.get()) {
+            if (warningsReporter.failOnWarnings) {
                 throw GradleException("Unexpected warnings were detected in the build!")
             }
         }

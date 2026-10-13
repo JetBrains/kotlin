@@ -10,7 +10,6 @@ import org.gradle.api.flow.FlowScope
 import org.gradle.api.initialization.Settings
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.build.event.BuildEventsListenerRegistry
 import org.gradle.internal.build.event.BuildEventListenerRegistryInternal
@@ -35,7 +34,6 @@ class GradleWarningsDetectorPlugin @Inject constructor(
             spec.parameters.warningsReporter.set(warningsReporter)
             spec.parameters.configurationTimeWarnings.set(providers.provider { warningsReporter.get().warnings })
             spec.parameters.configurationTimeIgnoredReasons.set(providers.provider { warningsReporter.get().ignoredReasons })
-            spec.parameters.failOnWarnings.set(target.gradle.startParameter.warningMode != WarningMode.Summary)
         }
     }
 }
