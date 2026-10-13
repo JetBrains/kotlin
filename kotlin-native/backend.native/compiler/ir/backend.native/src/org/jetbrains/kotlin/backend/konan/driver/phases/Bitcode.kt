@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.driver.BasicNativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmBackendContext
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmFunctionAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.addLlvmFunctionEnumAttribute
 import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
@@ -74,18 +75,22 @@ internal val CallsChecker = optimizationPipelinePass(
 
 internal class OptimizationState(
         config: NativeSecondStageCompilationConfig,
-        val llvmConfig: LlvmPipelineConfig,
+        val llvmConfig: LlvmPassesPipelineConfig,
+        val llvmBackendContext: LlvmBackendContext,
         override val performanceManager: PerformanceManager?,
 ) : BasicNativeBackendPhaseContext(config)
 
-internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, PerformanceManager?, LoggingContext) -> LlvmOptimizationPipeline) =
+internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPassesPipelineConfig, LlvmBackendContext, PerformanceManager?, LoggingContext) -> LlvmOptimizationPipeline) =
         createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
                 name = name,
                 postactions = getDefaultLlvmModuleActions(),
         ) { context, module ->
-            pipeline(context.llvmConfig.copyConfiguringSaveIr(context, name), context.performanceManager, context).use {
-                it.execute(module)
-            }
+            pipeline(
+                    context.llvmConfig.copyConfiguringSaveIr(context, name),
+                    context.llvmBackendContext,
+                    context.performanceManager,
+                    context
+            ).execute(module)
         }
 
 internal val MandatoryBitcodeLLVMPostprocessingPhase = optimizationPipelinePass(
@@ -169,14 +174,17 @@ internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<NativeBackendPha
         op = { _, llvmModule -> LLVMDumpModule(llvmModule) }
 )
 
-internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostProcessing() {
-    val optimizationConfig = createLTOFinalPipelineConfig(
-            context,
-            context.config.llvmTargetTriple,
+/**
+ * Runs LLVM postprocessing of [BitcodePostProcessingContext.llvmModule].
+ * Please note that [llvmBackendContext] is borrowed: it is owned (and disposed) by the caller.
+ */
+internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostProcessing(llvmBackendContext: LlvmBackendContext) {
+    val optimizationConfig = createLTOFinalPipelineConfigFrom(
+            context = context,
             closedWorld = context.config.isFinalBinary,
             timePasses = context.config.phaseConfig.needProfiling,
     )
-    useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
+    useContext(OptimizationState(context.config, optimizationConfig, llvmBackendContext, context.performanceManager)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
         if (context.config.checkStateAtExternalCalls) {
             // Instrument functions before running any lowerings and optimizations, that could complicate the callgraph.
