@@ -31,6 +31,8 @@ internal object CompilerInfrastructureDomainInfo : DomainInfo {
     override val include: List<String> = listOf("core", "build-common", "compiler/arguments", "compiler/arguments.common", "compiler/cli/bin", "compiler/arguments.common", "compiler/cli/cli-arguments-generator", "compiler/cli/cli-base", "compiler/cli/cli-js", "compiler/cli/cli-jvm", "compiler/cli/cli-metadata", "compiler/cli/cli-native-klib", "compiler/cli/cli-runner", "compiler/cli/src", "compiler/cli/resources", "compiler/cli/build.gradle.kts", "compiler/compiler.version", "compiler/config", "compiler/config.jvm", "compiler/container", "compiler/preloader", "compiler/test-infrastructure", "compiler/test-infrastructure-utils", "compiler/test-infrastructure-utils.common", "compiler/testResources", "compiler/testData", "compiler/tests", "compiler/tests-common", "compiler/tests-common-new", "compiler/tests-compiler-utils", "compiler/tests-integration", "compiler/tests-mutes", "compiler/util", "compiler/util-io", "compiler/build.gradle.kts", "jps")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
+    override val team: String = "Kotlin Frontend"
+    override val firstResponders: List<String> = listOf("dmitriy.novozhilov@jetbrains.com", "kirill.rakhman@jetbrains.com")
 }
 
 internal object FrontendDomainInfo : DomainInfo {
@@ -38,6 +40,8 @@ internal object FrontendDomainInfo : DomainInfo {
     override val include: List<String> = listOf("compiler/fir", "compiler/frontend", "compiler/frontend.common", "compiler/frontend.common.jvm", "compiler/frontend.common-psi", "compiler/frontend.java", "compiler/ir/ir.psi2ir", "compiler/java-direct", "compiler/multiplatform-parsing", "compiler/psi/parser", "compiler/resolution", "compiler/resolution.common", "compiler/resolution.common.jvm", "compiler/resolution.common.js", "compiler/serialization", "compiler/serialization.common", "compiler/tests-java8", "compiler/tests-spec")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo) }
+    override val team: String = "Kotlin Frontend"
+    override val firstResponders: List<String> = listOf("kirill.rakhman@jetbrains.com", "ilya.chernikov@jetbrains.com", "mikhail.glukhikh@jetbrains.com")
 }
 
 internal object CommonBackendDomainInfo : DomainInfo {
@@ -45,6 +49,8 @@ internal object CommonBackendDomainInfo : DomainInfo {
     override val include: List<String> = listOf("compiler/ir/ir.actualization", "compiler/ir/ir.inline", "compiler/ir/ir.tree", "compiler/ir/ir.validation", "compiler/ir/serialization.common", "compiler/ir/backend.common", "compiler/util-klib", "compiler/util-klib-abi", "compiler/util-klib-metadata", "compiler/cli/cli-jklib", "compiler/jklib.tests", "compiler/ir/serialization.jklib")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo, FrontendDomainInfo) }
+    override val team: String = "Kotlin Common Backend"
+    override val firstResponders: List<String> = listOf("dmitriy.dolovov@jetbrains.com", "ivan.kylchik@jetbrains.com", "milosz.piekutowski@jetbrains.com")
 }
 
 internal object JvmDomainInfo : DomainInfo {
@@ -52,6 +58,8 @@ internal object JvmDomainInfo : DomainInfo {
     override val include: List<String> = listOf("compiler/android-tests", "compiler/backend", "compiler/backend.common.jvm", "compiler/ir/backend.jvm", "compiler/ir/serialization.jvm", "compiler/tests-different-jdk")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo) }
+    override val team: String = "Kotlin JVM"
+    override val firstResponders: List<String> = listOf("alexander.udalov@jetbrains.com", "ilmir.usmanov@jetbrains.com", "maksim.verevkin@jetbrains.com")
 }
 
 internal object WasmDomainInfo : DomainInfo {
@@ -59,6 +67,8 @@ internal object WasmDomainInfo : DomainInfo {
     override val include: List<String> = listOf("compiler/ir/backend.wasm", "wasm", "js/js.translator/testData", "js/js.sourcemap", "js/typescript-export-model", "js/typescript-printer", "libraries/tools/dukat", "js/js.tests/testFixtures/org/jetbrains/kotlin", "js/js.config/src/org/jetbrains/kotlin/js/config")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo) }
+    override val team: String = "Kotlin Wasm"
+    override val firstResponders: List<String> = listOf("zalim.bashorov@jetbrains.com", "jim.teichgraeber@jetbrains.com")
 }
 
 internal object JsDomainInfo : DomainInfo {
@@ -66,6 +76,8 @@ internal object JsDomainInfo : DomainInfo {
     override val include: List<String> = listOf("js", "compiler/ir/backend.js", "compiler/ir/serialization.js", "libraries/tools/analysis-api-based-klib-reader", "libraries/tools/dukat")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo) }
+    override val team: String = "Kotlin JS"
+    override val firstResponders: List<String> = listOf("artem.kobzar@jetbrains.com", "sergej.jaskiewicz@jetbrains.com")
 }
 
 internal object NativeDomainInfo : DomainInfo {
@@ -73,6 +85,8 @@ internal object NativeDomainInfo : DomainInfo {
     override val include: List<String> = listOf("compiler/ir/backend.native", "compiler/ir/ir.objcinterop", "compiler/ir/serialization.native", "native", "kotlin-native")
     override val exclude: List<String> = listOf("native/swift")
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo) }
+    override val team: String = "Kotlin Native"
+    override val firstResponders: List<String> = listOf("svyatoslav.scherbina@jetbrains.com", "igor.chevdar@jetbrains.com", "alexander.shabalin@jetbrains.com")
 }
 
 internal object CoreLibsDomainInfo : DomainInfo {
@@ -80,6 +94,8 @@ internal object CoreLibsDomainInfo : DomainInfo {
     override val include: List<String> = listOf("libraries/stdlib", "libraries/tools/kotlin-annotations-jvm", "core/metadata*", "core/reflect*", "core/descriptors.runtime", "libraries/kotlinx-metadata", "libraries/reflect", "libraries/kotlin.test", "libraries/tools/jdk-api-validator")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf() }
+    override val team: String = "Kotlin Libraries"
+    override val firstResponders: List<String> = listOf("ilya.gorbunov@jetbrains.com", "filipp.zhinkin@jetbrains.com")
 }
 
 internal object AnalysisApiDomainInfo : DomainInfo {
@@ -87,6 +103,8 @@ internal object AnalysisApiDomainInfo : DomainInfo {
     override val include: List<String> = listOf("analysis", "compiler/psi", "prepare/analysis-api", "plugins/plugin-sandbox", "plugins/scripting")
     override val exclude: List<String> = listOf("compiler/psi/parser")
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CompilerInfrastructureDomainInfo, FrontendDomainInfo, CoreLibsDomainInfo) }
+    override val team: String = "Kotlin Analysis API"
+    override val firstResponders: List<String> = listOf("dmitry.gridin@jetbrains.com", "yan.zhulanow@jetbrains.com")
 }
 
 internal object BuildToolsApiDomainInfo : DomainInfo {
@@ -94,6 +112,8 @@ internal object BuildToolsApiDomainInfo : DomainInfo {
     override val include: List<String> = listOf("build-common", "compiler/build-tools", "compiler/incremental-compilation-*", "compiler/daemon", "compiler/compiler-runner", "compiler/compiler-runner-unshaded")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CompilerInfrastructureDomainInfo) }
+    override val team: String = "Build Tools API"
+    override val firstResponders: List<String> = listOf("wojciech.kalicinski@jetbrains.com", "alexander.likhachev@jetbrains.com", "iveta.kovalenko@jetbrains.com")
 }
 
 internal object SwiftExportDomainInfo : DomainInfo {
@@ -101,6 +121,8 @@ internal object SwiftExportDomainInfo : DomainInfo {
     override val include: List<String> = listOf("native/swift", "libraries/tools/analysis-api-based-klib-reader")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo, AnalysisApiDomainInfo) }
+    override val team: String = "Kotlin Native"
+    override val firstResponders: List<String> = listOf("artem.olkov@jetbrains.com", "gleb.lukianets@jetbrains.com")
 }
 
 internal object CompilerPluginsDomainInfo : DomainInfo {
@@ -108,6 +130,8 @@ internal object CompilerPluginsDomainInfo : DomainInfo {
     override val include: List<String> = listOf("compiler/plugin-api", "plugins", "libraries/tools/kotlin-main-kts", "libraries/tools/kotlin-main-kts-test", "libraries/scripting")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CompilerInfrastructureDomainInfo, FrontendDomainInfo, CommonBackendDomainInfo, CoreLibsDomainInfo) }
+    override val team: String = "Kotlin Frontend"
+    override val firstResponders: List<String> = listOf("dmitriy.novozhilov@jetbrains.com", "ilya.chernikov@jetbrains.com", "brian.norman@jetbrains.com")
 }
 
 internal object DocumentationModelDomainInfo : DomainInfo {
@@ -115,6 +139,8 @@ internal object DocumentationModelDomainInfo : DomainInfo {
     override val include: List<String> = listOf("libraries/tools/kotlin-documentation-model")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf() }
+    override val team: String = "Dokka"
+    override val firstResponders: List<String> = listOf("vadim.mishenev@jetbrains.com", "oleg.yukhnevich@jetbrains.com")
 }
 
 internal object GradleDomainInfo : DomainInfo {
@@ -122,6 +148,8 @@ internal object GradleDomainInfo : DomainInfo {
     override val include: List<String> = listOf("build-common", "libraries/tools/*gradle*", "compiler/build-tools/kotlin-build-statistics")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf() }
+    override val team: String = "Kotlin Build Tools"
+    override val firstResponders: List<String> = listOf("yahor.berdnikau@jetbrains.com", "anton.lakotka@jetbrains.com")
 }
 
 internal object MavenDomainInfo : DomainInfo {
@@ -129,6 +157,8 @@ internal object MavenDomainInfo : DomainInfo {
     override val include: List<String> = listOf("libraries/tools/*maven*")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf() }
+    override val team: String = "Kotlin Build Tools"
+    override val firstResponders: List<String> = listOf("aleksei.cherepanov@jetbrains.com", "yahor.berdnikau@jetbrains.com")
 }
 
 internal object IntelliJDomainInfo : DomainInfo {
@@ -136,6 +166,8 @@ internal object IntelliJDomainInfo : DomainInfo {
     override val include: List<String> = listOf("prepare/ide-plugin-dependencies")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CompilerInfrastructureDomainInfo, FrontendDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo, BuildToolsApiDomainInfo, CompilerPluginsDomainInfo) }
+    override val team: String = "Kotlin Analysis API"
+    override val firstResponders: List<String> = listOf("dmitry.gridin@jetbrains.com", "yan.zhulanow@jetbrains.com")
 }
 
 internal object BuildInfrastructureDomainInfo : DomainInfo {
@@ -143,6 +175,8 @@ internal object BuildInfrastructureDomainInfo : DomainInfo {
     override val include: List<String> = listOf("repo", "gradle", "build.gradle.kts", "settings.gradle.kts", "gradle.properties", "scripts", ".space", ".idea")
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf() }
+    override val team: String = "Kotlin Build Infrastructure"
+    override val firstResponders: List<String> = listOf("cristian.garcia-marin@jetbrains.com", "radoslaw.panuszewski@jetbrains.com", "sebastian.sellmair@jetbrains.com")
 }
 
 internal object UnknownDomainInfo : DomainInfo {
@@ -150,6 +184,8 @@ internal object UnknownDomainInfo : DomainInfo {
     override val include: List<String> = listOf()
     override val exclude: List<String> = listOf()
     override val mustRunAllTestsOnChangesIn: List<DomainInfo> by lazy { listOf(CompilerInfrastructureDomainInfo) }
+    override val team: String = "Kotlin"
+    override val firstResponders: List<String> = listOf("sebastian.sellmair@jetbrains.com", "dmitriy.novozhilov@jetbrains.com")
 }
 
 

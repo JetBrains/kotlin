@@ -13,7 +13,7 @@ import java.nio.file.Path
 sealed interface DomainInfo {
 
     /**
-     * The corresponsing [Domain] this info belongs to
+     * The corresponding [Domain] this info belongs to
      */
     val domain: Domain
 
@@ -31,6 +31,16 @@ sealed interface DomainInfo {
      * @see DeclaredDomain.mustRunAllTestsOnChangesIn
      */
     val mustRunAllTestsOnChangesIn: List<DomainInfo>
+
+    /**
+     * @see DeclaredDomain.team
+     */
+    val team: String
+
+    /**
+     * @see DeclaredDomain.firstResponders
+     */
+    val firstResponders: List<String>
 
     companion object
 }

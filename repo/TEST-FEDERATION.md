@@ -54,6 +54,9 @@ Use `include` and `exclude` in [domains.yaml](./domains.yaml) to specify which f
 
 ```yaml
 Js:
+  team: "Kotlin JS"
+  firstResponders:
+    - artem.kobzar@jetbrains.com
   include:
     - "js"
     - "compiler/ir/backend.js"
@@ -64,6 +67,19 @@ Js:
 Entries under `include` and `exclude` can be directory paths or glob patterns. A directory path matches the directory and all its
 descendants. When entries overlap, the most specific matching entry takes precedence.
 A domain is changed when any file belonging to it is changed.
+
+Every domain also declares its owners as its first two entries, before `include`:
+
+```yaml
+Jvm:
+  team: "Kotlin JVM"
+  firstResponders:
+    - alexander.udalov@jetbrains.com
+    - ilmir.usmanov@jetbrains.com
+```
+
+`team` (required) is the Space team responsible for the domain, named as in `.space/CODEOWNERS`.
+`firstResponders` lists the emails of the people to contact first, for example about CI failures, ordered by priority.
 
 ## Running all tests on changes in another domain
 

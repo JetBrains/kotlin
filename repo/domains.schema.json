@@ -40,9 +40,18 @@
           "items": {
             "type": "string"
           }
+        },
+        "team": {
+          "type": "string"
+        },
+        "firstResponders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
-      "required": ["include"]
+      "required": ["include", "team"]
     }
   }
 }
