@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     kotlin("multiplatform")
@@ -10,13 +10,9 @@ repositories {
 }
 
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-    val nativeTarget = when {
-        HostManager.hostIsMac -> macosArm64("native")
-        HostManager.hostIsMingw -> mingwX64("native")
-        HostManager.hostIsLinux -> linuxX64("native")
-        else -> error("Unexpected host: ${HostManager.host}")
-    }
+    val nativeTarget = hostNativeTarget("native") ?: error("Unexpected host: ${nativeHost.name}")
 
     nativeTarget.compilations["main"].cinterops.create("sampleInterop") {
         header(file("src/nativeInterop/cinterop/sampleInterop.h"))

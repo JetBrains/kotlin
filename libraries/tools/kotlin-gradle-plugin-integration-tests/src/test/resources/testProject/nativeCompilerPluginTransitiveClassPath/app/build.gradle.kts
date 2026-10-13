@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     kotlin("multiplatform")
@@ -9,12 +9,9 @@ repositories {
     mavenCentral()
 }
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-    when {
-        HostManager.hostIsMac && System.getProperty("os.arch") == "aarch64" -> macosArm64("native")
-        HostManager.hostIsLinux -> linuxX64("native")
-        else -> error("Unexpected host: ${HostManager.host}")
-    }
+    hostNativeTarget("native") ?: error("Unexpected host: ${nativeHost.name}")
 }
 
 dependencies {
