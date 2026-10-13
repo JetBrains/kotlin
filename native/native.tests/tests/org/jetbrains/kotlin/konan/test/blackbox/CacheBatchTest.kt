@@ -258,10 +258,93 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
         val batches = output.lines().filter { "CACHING BATCH:" in it }
             .map { line -> line.substringAfter("CACHING BATCH:").split(",").map { it.trim() }.toSet() }
         assertTrue(Regex("SPLITTING BATCH: lib[12] and lib[12] share a top-level signature").containsMatchIn(output)) { output }
-        assertEquals(setOf("core", "lib1", "lib2", "main"), batches.flatten().toSet()) { output }
-        assertTrue(batches.none { "lib1" in it && "lib2" in it }) { output }
-        assertTrue(batches.all { it.size >= 2 }) { output }
+        // main depends on both lib1 and lib2, so its compilation loads the clashing pair whatever the batch is;
+        // it must not be batched with either of them being deserialized exhaustively.
+        assertTrue(Regex("SPLITTING BATCH: main and lib[12] share a top-level signature.*\\(via lib[12] and lib[12]\\)").containsMatchIn(output)) { output }
+        assertEquals(listOf(setOf("core", "lib1"), setOf("lib2"), setOf("main")), batches) { output }
         verifyOutput(executable, "5")
+    }
+
+    @Test
+    fun batchRebuildWithConflictingCachedInlineDependencies() = doConflictingCachedInlineDependenciesTest(overlappingClosures = false)
+
+    @Test
+    fun batchRebuildWithConflictingSignaturesInOverlappingClosures() = doConflictingCachedInlineDependenciesTest(overlappingClosures = true)
+
+    private fun doConflictingCachedInlineDependenciesTest(overlappingClosures: Boolean) {
+        assumeTrue(HostManager.host.family == Family.OSX || HostManager.host.family == Family.LINUX)
+        assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
+
+        val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
+        val lib1 = buildDir.resolve("lib1.klib")
+        val lib2 = buildDir.resolve("lib2.klib")
+        val consumer1 = buildDir.resolve("consumer1.klib")
+        val consumer2 = buildDir.resolve("consumer2.klib")
+        val main = buildDir.resolve("main.klib")
+        val executable = buildDir.resolve("main.kexe")
+
+        val lib1Source = buildDir.resolve("lib1.kt").apply {
+            writeText("""
+                package app
+                @PublishedApi internal inline fun tagged() = 10
+                inline fun left() = tagged()
+            """.trimIndent())
+        }
+        compileKlib(lib1Source.path, "-o", lib1.path)
+        val lib2Source = buildDir.resolve("lib2.kt").apply {
+            writeText("""
+                package app
+                @PublishedApi internal inline fun tagged() = 20
+                inline fun right() = tagged()
+                fun marker() = 1
+            """.trimIndent())
+        }
+        compileKlib(lib2Source.path, "-o", lib2.path)
+        // Referencing marker() puts both conflicting libraries in consumer1's dependency closure, but only
+        // lib1's tagged() body is needed to compile consumer1 on its own. Consumer2 needs lib2's body instead.
+        val consumer1Source = buildDir.resolve("consumer1.kt").apply {
+            writeText("package app\nfun consumeLeft() = left()${if (overlappingClosures) " + marker() - 1" else ""}")
+        }
+        compileKlib(
+            consumer1Source.path, "-l", lib1.path,
+            "-l".takeIf { overlappingClosures }, lib2.path.takeIf { overlappingClosures },
+            "-o", consumer1.path,
+        )
+        val consumer2Source = buildDir.resolve("consumer2.kt").apply { writeText("package app\nfun consumeRight() = right()") }
+        compileKlib(consumer2Source.path, "-l", lib2.path, "-o", consumer2.path)
+        val mainSource = buildDir.resolve("main.kt").apply {
+            writeText("import app.*\nfun main() { println(consumeLeft()); println(consumeRight()) }")
+        }
+        compileKlib(mainSource.path, "-l", lib1.path, "-l", lib2.path, "-l", consumer1.path, "-l", consumer2.path, "-o", main.path)
+
+        fun link() = compile(
+            "-g", "-verbose", "-Xenable-incremental-compilation", "-Xic-cache-dir=${cacheDir.path}",
+            "-Xinclude=${main.path}", "-l", lib1.path, "-l", lib2.path, "-l", consumer1.path, "-l", consumer2.path,
+            "-o", executable.path,
+        )
+
+        link()
+        verifyOutput(executable, "10\n20")
+
+        // Keep both conflicting libraries cached. The consumers have distinct declarations, but rebuilding them
+        // together must still keep the two tagged() bodies separate when deserializing their cached inline dependencies.
+        for (libraryName in listOf("consumer1", "consumer2")) {
+            val libraryCaches = cacheDir.walkTopDown().filter { it.isDirectory && it.name == "$libraryName-per-file-cache" }.toList()
+            assertEquals(1, libraryCaches.size)
+            assertTrue(libraryCaches.single().deleteRecursively())
+        }
+
+        val output = link()
+        verifyOutput(executable, "10\n20")
+        if (overlappingClosures) {
+            // consumer1 alone loads both lib1 and lib2: the clash is pre-existing, but no other library may join its batch.
+            assertTrue(Regex("SEALING BATCH: consumer1 loads lib[12] and lib[12] sharing a top-level signature").containsMatchIn(output)) { output }
+        } else {
+            assertTrue(Regex("SPLITTING BATCH: consumer[12] and consumer[12] share a top-level signature.*\\(via lib[12] and lib[12]\\)").containsMatchIn(output)) { output }
+        }
+        // Both consumers end up in groups of their own, so they are cached separately rather than as a batch.
+        assertFalse("CACHING BATCH:" in output) { output }
+        assertTrue("CACHING ${consumer1.path}" in output && "CACHING ${consumer2.path}" in output) { output }
     }
 
     @Test
