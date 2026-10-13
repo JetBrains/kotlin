@@ -322,7 +322,8 @@ private object FreeListAllocator {
 
         // the free list does not know about zero-size allocations
         if (size == 0)
-            return MemorySlot(Pointer(globalFirstValidAddress), 0u)
+            // even when allocating size 0, we need to grow to ensure the address is <= wasm_memory_size(), otherwise the VM might trap
+            return MemorySlot(Pointer(globalFirstValidAddress), 0u).growRealMemoryIfNeeded()
 
         val result = FreeList.allocate(size.toUInt())
             ?: throw OutOfMemoryError("Out of linear memory. All available address space (2gb) is used.")
