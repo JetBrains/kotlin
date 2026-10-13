@@ -3,6 +3,8 @@
 
 import lombok.Builder
 import kotlin.properties.Delegates
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @Builder
 class Mutable {
@@ -40,10 +42,9 @@ class Mutable {
 
 fun box(): String {
     val m = Mutable.create()
-    return when {
-        m.x != 4 -> "Fail x: ${m.x}"
-        m.w != 1 -> "Fail w: ${m.w}"
-        m.z[0] || !m.z[1] || !m.z[2] -> "Fail z: ${m.z}"
-        else -> m.res()
-    }
+    assertEquals(4, m.x, "Fail x: ${m.x}")
+    assertEquals(1, m.w, "Fail x: ${m.w}")
+    assertTrue(!m.z[0] && m.z[1] && m.z[2], "Fail z: ${m.z}")
+
+    return m.res()
 }

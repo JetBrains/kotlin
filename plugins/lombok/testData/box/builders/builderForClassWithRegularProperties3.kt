@@ -1,6 +1,8 @@
 // ISSUE: KT-89739
 
 import lombok.Builder
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @Builder
 class Mutable {
@@ -22,9 +24,7 @@ class Mutable {
 
 fun box(): String {
     val m = Mutable.create()
-    return when {
-        m.x != 1 -> "Fail x: ${m.x}"
-        m.z[0] || !m.z[1] -> "Fail z: ${m.z}"
-        else -> m.y
-    }
+    assertEquals(1, m.x, "Fail x: ${m.x}")
+    assertTrue(!m.z[0] && m.z[1], "Fail z: ${m.z}")
+    return m.y
 }

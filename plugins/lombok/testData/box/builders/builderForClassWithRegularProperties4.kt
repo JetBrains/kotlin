@@ -2,6 +2,7 @@
 
 import lombok.Builder
 import lombok.Singular
+import kotlin.test.assertTrue
 
 @Builder
 class Mutable {
@@ -24,9 +25,7 @@ class Mutable {
 
 fun box(): String {
     val m = Mutable.create()
-    return when {
-        m.integers[0] != 1 || m.integers[1] != 2 -> "Fail x: ${m.integers}"
-        m.booleans[0] || !m.booleans[1] -> "Fail z: ${m.booleans}"
-        else -> m.strings[0] + m.strings[1]
-    }
+    assertTrue(m.integers[0] == 1 && m.integers[1] == 2, "Fail integers: ${m.integers}")
+    assertTrue(!m.booleans[0] && m.booleans[1], "Fail booleans: ${m.booleans}")
+    return m.strings[0] + m.strings[1]
 }
