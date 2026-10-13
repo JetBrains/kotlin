@@ -646,6 +646,15 @@ internal abstract class FunctionGenerationContext(
         return LLVMBuildAddrSpaceCast(builder, value, type, name)!!
     }
 
+    fun castBetweenRefAndPointer(expectedType: LLVMTypeRef, value: LLVMValueRef): LLVMValueRef {
+        val type = LLVMTypeOf(value)
+        val isRefPointerPair = type == llvm.refPointerType && expectedType == llvm.pointerType ||
+                type == llvm.pointerType && expectedType == llvm.refPointerType
+        if (!useLateShadowStack || !isRefPointerPair) return value
+        if (LLVMIsNull(value) != 0) return LLVMConstNull(expectedType)!!
+        return addrspacecast(expectedType, value)
+    }
+
     private val prologueBb = basicBlockInFunction("prologue", null)
     private val localsInitBb = basicBlockInFunction("locals_init", null)
     private val stackLocalsInitBb = basicBlockInFunction("stack_locals_init", null)
@@ -858,12 +867,7 @@ internal abstract class FunctionGenerationContext(
             }
             val expectedParamTypes = llvmCallable.paramTypes
             withSlot.mapIndexed { index, arg ->
-                val expectedType = expectedParamTypes.getOrNull(index)
-                if (expectedType != null && LLVMTypeOf(arg) == llvm.refPointerType && expectedType == llvm.pointerType) {
-                    addrspacecast(expectedType, arg)
-                } else {
-                    arg
-                }
+                expectedParamTypes.getOrNull(index)?.let { castBetweenRefAndPointer(it, arg) } ?: arg
             }
         } else {
             if (verbatim || !llvmCallable.returnsObjectType) {
@@ -1276,7 +1280,7 @@ internal abstract class FunctionGenerationContext(
         assignPhis(resultPhi to thenValue)
 
         appendingTo(bbElse) {
-            val elseValue = elseBlock()
+            val elseValue = castBetweenRefAndPointer(resultType, elseBlock())
             br(bbExit)
             assignPhis(resultPhi to elseValue)
         }
@@ -1515,11 +1519,12 @@ internal abstract class FunctionGenerationContext(
     protected abstract fun processReturns()
 
     protected fun retValue(value: LLVMValueRef): LLVMValueRef {
+        val returnValue = castBetweenRefAndPointer(function.returnType, value)
         if (returnSlot != null) {
-            updateReturnRef(value, returnSlot!!)
+            updateReturnRef(returnValue, returnSlot!!)
         }
         onReturn()
-        return rawRet(value)
+        return rawRet(returnValue)
     }
 
     protected fun rawRet(value: LLVMValueRef): LLVMValueRef = LLVMBuildRet(builder, value)!!.also {
@@ -1717,6 +1722,7 @@ internal class DefaultFunctionGenerationContext(
     }
 
     override fun ret(value: LLVMValueRef?): LLVMValueRef {
+        val returnValue = value?.let { v -> returnType?.let { castBetweenRefAndPointer(it, v) } ?: v }
         val res = br(epilogueBb)
 
         if (returns.containsKey(currentBlock)) {
@@ -1724,8 +1730,8 @@ internal class DefaultFunctionGenerationContext(
             throw Error("ret() in the same basic block twice! in ${function.name}")
         }
 
-        if (value != null)
-            returns[currentBlock] = value
+        if (returnValue != null)
+            returns[currentBlock] = returnValue
 
         return res
     }
