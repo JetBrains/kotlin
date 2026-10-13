@@ -1929,13 +1929,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface JsModuleProhibitedOnNonNative : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<JsModuleProhibitedOnNonNative>
-            get() = JsModuleProhibitedOnNonNative::class
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface JsModuleProhibitedOnVarInModuleFileError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileError>
             get() = JsModuleProhibitedOnVarInModuleFileError::class
@@ -2140,9 +2133,30 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnNonExternal : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnNonExternal>
+            get() = JsModuleProhibitedOnNonExternal::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface NestedJsModuleProhibited : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NestedJsModuleProhibited>
             get() = NestedJsModuleProhibited::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnMember : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnMember>
+            get() = JsModuleProhibitedOnMember::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnExternalInterface : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnExternalInterface>
+            get() = JsModuleProhibitedOnExternalInterface::class
     }
 
     @KaUnstableDiagnosticApi

@@ -11,3 +11,7 @@ typealias JsM = JsModule
 
 <!JS_MODULE_PROHIBITED_ON_VAR!>@JsM("bar")
 external var bar2: Int<!> = definedExternally
+
+<!JS_MODULE_PROHIBITED_ON_VAR!>@JsModule("bar")
+@JsQualifier("a.b")
+external var qualifiedBar: Int<!> = definedExternally

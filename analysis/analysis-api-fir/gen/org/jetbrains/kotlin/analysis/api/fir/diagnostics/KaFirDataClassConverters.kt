@@ -471,6 +471,12 @@ private fun KaDiagnosticConverterBuilder.addConversions3() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions4() {
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER) { firDiagnostic ->
+        JsModuleProhibitedOnMemberImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY) { firDiagnostic ->
         LateinitIntrinsicCallOnNonAccessiblePropertyImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
@@ -548,12 +554,6 @@ private fun KaDiagnosticConverterBuilder.addConversions5() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions6() {
-    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE) { firDiagnostic ->
-        JsModuleProhibitedOnNonNativeImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS) { firDiagnostic ->
         ClassLiteralLhsNotAClassImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -808,6 +808,12 @@ private fun KaDiagnosticConverterBuilder.addConversions12() {
     add(FirErrors.REDUNDANT_ANNOTATION) { firDiagnostic ->
         RedundantAnnotationImpl(
             firDiagnostic.a,
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE) { firDiagnostic ->
+        JsModuleProhibitedOnExternalInterfaceImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4757,6 +4763,12 @@ private fun KaDiagnosticConverterBuilder.addConversions102() {
     }
     add(FirJsErrors.JS_NAME_ON_ACCESSOR_AND_PROPERTY) { firDiagnostic ->
         JsNameOnAccessorAndPropertyImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL) { firDiagnostic ->
+        JsModuleProhibitedOnNonExternalImpl(
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
