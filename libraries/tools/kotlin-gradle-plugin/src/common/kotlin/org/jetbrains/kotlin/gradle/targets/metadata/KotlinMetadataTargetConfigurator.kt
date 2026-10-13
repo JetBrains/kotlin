@@ -89,7 +89,7 @@ class KotlinMetadataTargetConfigurator :
 
             val sourceSetsWithMetadataCompilations: Map<KotlinSourceSet, KotlinCompilation<*>> = publishedCommonSourceSets
                 .associateWith { sourceSet ->
-                    createMetadataCompilation(target, sourceSet, sourceSet in hostSpecificSourceSets)
+                    createMetadataCompilation(target, sourceSet)
                 }
                 .onEach { (sourceSet, compilation) ->
                     if (!isMetadataCompilationSupported(sourceSet)) {
@@ -170,7 +170,6 @@ class KotlinMetadataTargetConfigurator :
     private suspend fun createMetadataCompilation(
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
-        isHostSpecific: Boolean,
     ): KotlinCompilation<*> {
         val project = target.project
 
@@ -196,7 +195,7 @@ class KotlinMetadataTargetConfigurator :
             configureMetadataDependenciesForCompilation(this@apply)
 
             project.launch {
-                if (isHostSpecific) {
+                if (isNativeSourceSet) {
                     // This logic can be simplified, see KT-64523
                     val shouldBeDisabled = platformCompilations
                         .filterIsInstance<KotlinNativeCompilation>()
