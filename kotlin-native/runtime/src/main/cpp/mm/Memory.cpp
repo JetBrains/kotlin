@@ -167,7 +167,8 @@ extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRe
 
 extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
 #if defined(__aarch64__)
-    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain)
+    // Kotlin callers pass no return slot under delta-main. Runtime callers pass the slot of their `ObjHolder`.
+    if (kotlin::compiler::gcStackMapScheme() == kotlin::compiler::GCStackMapScheme::kDeltaMain && returnSlot == nullptr)
         return;
 #endif
     UpdateStackRef(returnSlot, object);

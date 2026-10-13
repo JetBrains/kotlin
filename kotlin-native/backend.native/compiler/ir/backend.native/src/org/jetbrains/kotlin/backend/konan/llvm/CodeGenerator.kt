@@ -757,11 +757,14 @@ internal abstract class FunctionGenerationContext(
         }
     }
 
-    private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
-        if (context.config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
-            return
-        }
+    // Nothing in Kotlin code needs the return slot under delta-main (callers pass null). The exceptions are
+    // the functions that the C++ runtime calls with the slot of an `ObjHolder`: they still fill it, so the
+    // holder is a root of the result (the GC scans `ObjHolder` frames).
+    private val writesReturnSlot: Boolean
+        get() = context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN
+                || irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true
 
+    private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
         call(llvm.updateReturnRefFunction, listOf(address, value))
     }
 
@@ -1382,7 +1385,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     internal fun prologue() {
-        if (function.returnsObjectType && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+        if (function.returnsObjectType && writesReturnSlot) {
             returnSlot = function.param(function.numParams - 1)
         }
 
@@ -1491,7 +1494,7 @@ internal abstract class FunctionGenerationContext(
     protected abstract fun processReturns()
 
     protected fun retValue(value: LLVMValueRef): LLVMValueRef {
-        if (returnSlot != null && context.config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN) {
+        if (returnSlot != null && writesReturnSlot) {
             updateReturnRef(value, returnSlot!!)
         }
         onReturn()
