@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/simple.kt
+-g
+-opt
