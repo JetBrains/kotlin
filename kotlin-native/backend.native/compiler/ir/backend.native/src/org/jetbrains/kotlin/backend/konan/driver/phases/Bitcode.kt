@@ -172,7 +172,7 @@ internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<NativeBackendPha
 internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostProcessing() {
     val optimizationConfig = createLTOFinalPipelineConfig(
             context,
-            context.llvm.targetTriple,
+            context.config.llvmTargetTriple,
             closedWorld = context.config.isFinalBinary,
             timePasses = context.config.phaseConfig.needProfiling,
     )

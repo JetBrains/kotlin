@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.base.StandardSystemProperty
 import com.intellij.openapi.project.Project
+import llvm.LLVMRelocMode
+import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.konan.ir.BridgesPolicy
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder
 import org.jetbrains.kotlin.backend.konan.library.KlibDAGBuilder.Parameters
 import org.jetbrains.kotlin.backend.konan.library.deserialize
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmTargetSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.objcexport.readObjCEntryPoints
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
@@ -39,6 +42,8 @@ import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.name
 
+private const val GENERIC_TARGET_CPU: String = "generic"
+
 class NativeSecondStageCompilationConfig(
         val project: Project,
         override val configuration: CompilerConfiguration
@@ -55,6 +60,60 @@ class NativeSecondStageCompilationConfig(
             configuration.report(CliDiagnostics.KONAN_ARGUMENT_STRONG_WARNING, "macabi is only supported for iosArm64 target")
             false
         } else macabi
+    }
+
+    val llvmTargetTriple: String by lazy {
+        val configurables = platform.configurables
+        val triple = when {
+            configurables is AppleConfigurables -> platform.targetTriple.withOSVersion(configurables.osVersionMin)
+            else -> platform.targetTriple
+        }
+        triple.toString()
+    }
+
+    val llvmTargetSpec: LlvmTargetSpec by lazy {
+        val cpuModel: String = run {
+            val target = target
+            val configurables = platform.configurables
+            configurables.targetCpu ?: GENERIC_TARGET_CPU.also {
+                configuration.report(
+                        NativeBackendDiagnostics.LLVM_WARNING,
+                        "targetCpu for target $target was not set. Targeting `$GENERIC_TARGET_CPU` cpu."
+                )
+            }
+        }
+        val cpuFeatures: String = platform.configurables.targetCpuFeatures.orEmpty()
+        val relocMode: LLVMRelocMode = getCurrentRelocationModeFrom(platform.configurables).toLLVMRelocMode()
+        LlvmTargetSpec(
+                targetTriple = llvmTargetTriple,
+                cpuModel = cpuModel,
+                cpuFeatures = cpuFeatures,
+                relocMode = relocMode,
+        )
+    }
+
+    internal val linkerOutputKind: LinkerOutputKind by lazy {
+        when (produce) {
+            CompilerOutputKind.FRAMEWORK if produceStaticFramework -> LinkerOutputKind.STATIC_LIBRARY
+            CompilerOutputKind.FRAMEWORK if !produceStaticFramework -> LinkerOutputKind.DYNAMIC_LIBRARY
+            CompilerOutputKind.TEST_BUNDLE,
+            CompilerOutputKind.DYNAMIC_CACHE,
+            CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
+            CompilerOutputKind.STATIC_CACHE,
+            CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY
+            CompilerOutputKind.PROGRAM -> run {
+                if (target.family == Family.ANDROID) {
+                    val configuration = configuration
+                    val androidProgramType = configuration[BinaryOptions.androidProgramType] ?: AndroidProgramType.Default
+                    return@run when (androidProgramType) {
+                        AndroidProgramType.Standalone -> LinkerOutputKind.EXECUTABLE
+                        AndroidProgramType.NativeActivity -> LinkerOutputKind.DYNAMIC_LIBRARY
+                    }
+                }
+                LinkerOutputKind.EXECUTABLE
+            }
+            else -> TODO("$produce should not reach native linker stage")
+        }
     }
 
     internal val distribution = run {
@@ -733,4 +792,17 @@ private fun String.isRelease(): Boolean {
             ?: throw IllegalStateException("Cannot parse Kotlin/Native version: $this")
 
     return metaString.isEmpty() && build.isEmpty()
+}
+
+internal fun NativeSecondStageCompilationConfig.getCurrentRelocationModeFrom(flags: RelocationModeFlags): RelocationModeFlags.Mode =
+        when (linkerOutputKind) {
+            LinkerOutputKind.DYNAMIC_LIBRARY -> flags.dynamicLibraryRelocationMode
+            LinkerOutputKind.STATIC_LIBRARY -> flags.staticLibraryRelocationMode
+            LinkerOutputKind.EXECUTABLE -> flags.executableRelocationMode
+        }
+
+private fun RelocationModeFlags.Mode.toLLVMRelocMode() = when (this) {
+    RelocationModeFlags.Mode.PIC -> LLVMRelocMode.LLVMRelocPIC
+    RelocationModeFlags.Mode.STATIC -> LLVMRelocMode.LLVMRelocStatic
+    RelocationModeFlags.Mode.DEFAULT -> LLVMRelocMode.LLVMRelocDefault
 }

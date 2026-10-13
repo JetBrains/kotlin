@@ -17,18 +17,6 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.Closeable
 
-enum class LlvmOptimizationLevel(val value: Int) {
-    NONE(0),
-    DEFAULT(1),
-    AGGRESSIVE(3)
-}
-
-enum class LlvmSizeLevel(val value: Int) {
-    NONE(0),
-    DEFAULT(1),
-    AGGRESSIVE(2)
-}
-
 /**
  * Incorporates everything that is used to tune a [LlvmOptimizationPipeline].
  */
@@ -87,18 +75,6 @@ data class LlvmPipelineConfig(
     }
 }
 
-private fun getCpuModel(context: NativeBackendPhaseContext): String {
-    val target = context.config.target
-    val configurables: Configurables = context.config.platform.configurables
-    return configurables.targetCpu ?: run {
-        context.diagnosticReporter.report(NativeBackendDiagnostics.LLVM_WARNING, "targetCpu for target $target was not set. Targeting `generic` cpu.")
-        "generic"
-    }
-}
-
-private fun getCpuFeatures(context: NativeBackendPhaseContext): String =
-        context.config.platform.configurables.targetCpuFeatures ?: ""
-
 private fun tryGetInlineThreshold(context: NativeBackendPhaseContext): Int? {
     val configurables: Configurables = context.config.platform.configurables
     return configurables.llvmInlineThreshold?.let {
@@ -120,14 +96,15 @@ private fun tryGetInlineThreshold(context: NativeBackendPhaseContext): Int? {
 internal fun createLTOPipelineConfigForRuntime(generationState: NativeGenerationState): LlvmPipelineConfig {
     val config = generationState.config
     val configurables: Configurables = config.platform.configurables
+    val targetSpec = config.llvmTargetSpec
     return LlvmPipelineConfig(
-            generationState.llvm.targetTriple,
-            getCpuModel(generationState),
-            getCpuFeatures(generationState),
+            targetSpec.targetTriple,
+            targetSpec.cpuModel,
+            targetSpec.cpuFeatures,
             LlvmOptimizationLevel.AGGRESSIVE,
             if (config.smallBinary) LlvmSizeLevel.AGGRESSIVE else LlvmSizeLevel.NONE,
             LLVMCodeGenOptLevel.LLVMCodeGenLevelAggressive,
-            configurables.currentRelocationMode(generationState).translateToLlvmRelocMode(),
+            targetSpec.relocMode,
             LLVMCodeModel.LLVMCodeModelDefault,
             globalDce = false,
             internalize = false,
@@ -158,8 +135,8 @@ internal fun createLTOFinalPipelineConfig(
     val config = context.config
     val target = config.target
     val configurables: Configurables = config.platform.configurables
-    val cpuModel = getCpuModel(context)
-    val cpuFeatures = getCpuFeatures(context)
+    val cpuModel = config.llvmTargetSpec.cpuModel
+    val cpuFeatures = config.llvmTargetSpec.cpuFeatures
     val optimizationLevel: LlvmOptimizationLevel = when {
         context.shouldOptimize() -> LlvmOptimizationLevel.AGGRESSIVE
         context.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
@@ -175,7 +152,7 @@ internal fun createLTOFinalPipelineConfig(
         context.shouldContainDebugInfo() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelNone
         else -> LLVMCodeGenOptLevel.LLVMCodeGenLevelDefault
     }
-    val relocMode: LLVMRelocMode = configurables.currentRelocationMode(context).translateToLlvmRelocMode()
+    val relocMode: LLVMRelocMode = config.llvmTargetSpec.relocMode
     val codeModel: LLVMCodeModel = LLVMCodeModel.LLVMCodeModelDefault
     val globalDce = true
     // Since we are in a "closed world" internalization can be safely used
@@ -406,17 +383,4 @@ class CallsCheckerPipeline(config: LlvmPipelineConfig, performanceManager: Perfo
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-calls-checker"
     override val passes = listOf("function(kotlin-calls-checker)")
-}
-
-internal fun RelocationModeFlags.currentRelocationMode(context: NativeBackendPhaseContext): RelocationModeFlags.Mode =
-        when (determineLinkerOutput(context)) {
-            LinkerOutputKind.DYNAMIC_LIBRARY -> dynamicLibraryRelocationMode
-            LinkerOutputKind.STATIC_LIBRARY -> staticLibraryRelocationMode
-            LinkerOutputKind.EXECUTABLE -> executableRelocationMode
-        }
-
-private fun RelocationModeFlags.Mode.translateToLlvmRelocMode() = when (this) {
-    RelocationModeFlags.Mode.PIC -> LLVMRelocMode.LLVMRelocPIC
-    RelocationModeFlags.Mode.STATIC -> LLVMRelocMode.LLVMRelocStatic
-    RelocationModeFlags.Mode.DEFAULT -> LLVMRelocMode.LLVMRelocDefault
 }
