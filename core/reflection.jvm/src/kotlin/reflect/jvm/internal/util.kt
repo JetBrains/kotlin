@@ -428,12 +428,24 @@ internal fun Class<*>.getDeclaredMethodOrNull(name: String, vararg parameterType
         null
     }
 
-internal fun Class<*>.getDeclaredFieldOrNull(name: String): Field? =
-    try {
-        getDeclaredField(name)
-    } catch (e: NoSuchFieldException) {
-        null
+internal fun Class<*>.getDeclaredFieldOrNull(name: String, isStatic: Boolean): Field? {
+    fun Class<*>.lookup(name: String): Field? =
+        try {
+            getDeclaredField(name)
+        } catch (e: NoSuchFieldException) {
+            null
+        }
+
+    lookup(name)?.let { return it }
+    if (isInterface && isStatic) {
+        val classLoader = safeClassLoader
+        classLoader.tryLoadClass(this.name + "$" + JvmAbi.INTERFACE_PRIVATE_FIELDS1_CLASS_NAME)
+            ?.lookup(name)?.let { return it }
+        classLoader.tryLoadClass(this.name + "$" + JvmAbi.INTERFACE_PRIVATE_FIELDS2_CLASS_NAME)
+            ?.lookup(name)?.let { return it }
     }
+    return null
+}
 
 /**
  * Returns `true` if this type allows `null` values. Based on `TypeUtils.isNullableType` (K1), `ConeKotlinType.canBeNull` (K2).
