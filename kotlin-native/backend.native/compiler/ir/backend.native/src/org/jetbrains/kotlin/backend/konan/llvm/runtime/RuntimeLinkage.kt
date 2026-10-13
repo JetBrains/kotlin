@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.backend.konan.MandatoryOptimizationPipeline
 import org.jetbrains.kotlin.backend.konan.ModuleOptimizationPipeline
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.config.nativeBinaryOptions.RuntimeLinkageStrategy
-import org.jetbrains.kotlin.backend.konan.createLTOPipelineConfigForRuntime
+import org.jetbrains.kotlin.backend.konan.createLTOPipelineConfigForRuntimeFrom
 import org.jetbrains.kotlin.backend.konan.llvm.BasicLlvmHelpers
+import org.jetbrains.kotlin.backend.konan.llvm.createLlvmBackendConfigForRuntimeFrom
 import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmLinkModules2
+import org.jetbrains.kotlin.backend.konan.llvm.withLlvmBackendContext
 import org.jetbrains.kotlin.backend.konan.optimizations.handlePerformanceInlineAnnotation
 import kotlin.collections.forEach
 
@@ -38,13 +40,14 @@ internal fun linkRuntimeModules(generationState: NativeGenerationState, runtimeN
             throw Error("Failed to link ${it.getName()}")
         }
     }
-    val config = createLTOPipelineConfigForRuntime(generationState)
 
-    MandatoryOptimizationPipeline(config, generationState.performanceManager, generationState).use {
-        it.execute(runtimeModule)
-    }
-    ModuleOptimizationPipeline(config, generationState.performanceManager, generationState).use {
-        it.execute(runtimeModule)
+    withLlvmBackendContext(createLlvmBackendConfigForRuntimeFrom(generationState)) {
+        val pipelineConfig = createLTOPipelineConfigForRuntimeFrom(generationState)
+        val llvmBackendContext = this
+        MandatoryOptimizationPipeline(pipelineConfig, llvmBackendContext, generationState.performanceManager, generationState)
+                .execute(runtimeModule)
+        ModuleOptimizationPipeline(pipelineConfig, llvmBackendContext, generationState.performanceManager, generationState)
+                .execute(runtimeModule)
     }
 
     return listOf(runtimeModule)
