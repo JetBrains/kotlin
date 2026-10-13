@@ -1,5 +1,5 @@
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     kotlin("multiplatform") apply true
@@ -10,13 +10,9 @@ repositories {
     mavenCentral()
 }
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-    val nativePlatform = when {
-        HostManager.hostIsMac -> macosArm64("nativePlatform")
-        HostManager.hostIsLinux -> linuxX64("nativePlatform")
-        HostManager.hostIsMingw -> mingwX64("nativePlatform")
-        else -> throw IllegalStateException("Unsupported host")
-    }
+    val nativePlatform = hostNativeTarget("nativePlatform") ?: throw IllegalStateException("Unsupported host")
 
     val commonMain = sourceSets.getByName("commonMain")
     val nativePlatformMain = sourceSets.getByName("nativePlatformMain")

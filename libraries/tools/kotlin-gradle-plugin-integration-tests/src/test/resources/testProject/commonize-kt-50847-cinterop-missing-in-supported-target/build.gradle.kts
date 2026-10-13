@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     kotlin("multiplatform")
@@ -9,6 +9,7 @@ repositories {
     mavenCentral()
 }
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     val linuxTarget1 = linuxArm64("target1")
     val linuxTarget2 = linuxX64("target2")
@@ -17,7 +18,7 @@ kotlin {
 
     /* This test only makes sense if all targets ar 'officially supported' */
     targets.forEach { target ->
-        if (!HostManager().isEnabled(target.konanTarget)) {
+        if (!nativeHost.canLinkBinaries(target.konanTarget.name)) {
             error("Expected all targets in this test to be enabled. ${target.konanTarget} is not supported.")
         }
     }
