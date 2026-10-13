@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
-import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.io.File
@@ -24,6 +24,7 @@ import kotlin.test.assertEquals
 @OptIn(ExperimentalKotlinGradlePluginApi::class)
 @DisplayName("KMP JVM target binaries DSL")
 @MppGradlePluginTests
+@MustRunOnChangesInGradle
 class JvmBinariesDslIT : KGPBaseTest() {
 
     @DisplayName("Default binary is runnable")
