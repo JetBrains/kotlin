@@ -86,6 +86,10 @@ sealed class ClangArgs(
             add(listOf("-fuse-ld=lld"))
         }
         add(listOf("-fno-stack-protector"))
+        if (target.supportsDeltaMainStackMaps()) {
+            // Delta-main walks the frame-pointer chain through frames (callbacks into Kotlin).
+            add(listOf("-fno-omit-frame-pointer", "-momit-leaf-frame-pointer"))
+        }
         if (configurables is GccConfigurables) {
             add(listOf("--gcc-toolchain=${configurables.absoluteGccToolchain}"))
         }

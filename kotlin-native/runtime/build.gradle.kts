@@ -152,11 +152,19 @@ bitcode {
             (konanOptions + otherOptions).map { "-D$it" } + fixBrokenMacroExpansionInXcode15_3 + ignoreUnknownSdkAttributesInXcode27
         }
 
+        // Same condition as KonanTarget.supportsDeltaMainStackMaps() (native/utils/.../KonanTargetExtenstions.kt).
+        val supportsDeltaMain = target.family.isAppleFamily &&
+                target.architecture == org.jetbrains.kotlin.konan.target.Architecture.ARM64 &&
+                target != KonanTarget.WATCHOS_ARM64
+
         defaultCompilerArgs.addAll(listOfNotNull(
                 "-gdwarf-2".takeIf { kotlinBuildProperties.isNativeRuntimeDebugInfoEnabled },
                 "-std=c++17",
                 "-Werror",
                 "-O2",
+                // -mframe-pointer= is a cc1-only option, the driver rejects it: use the driver flags (they mean "non-leaf").
+                "-fno-omit-frame-pointer".takeIf { supportsDeltaMain },
+                "-momit-leaf-frame-pointer".takeIf { supportsDeltaMain },
                 "-fno-aligned-allocation", // TODO: Remove when all targets support aligned allocation in C++ runtime.
                 "-Wall",
                 "-Wextra",
