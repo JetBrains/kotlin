@@ -32,33 +32,9 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isImmutable
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name.identifier
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import java.util.ArrayDeque
-
-/**
- * How the inliner remaps the non-reified type parameters that are not accessible after inlining.
- */
-enum class NonReifiedTypeParameterRemappingMode {
-    /**
-     * Replace them with their erasure.
-     *
-     * Substituting the type arguments of the call site could reify them by accident (see KT-60174), so this is what the KLIB-based
-     * backends do.
-     */
-    ERASE,
-
-    /**
-     * Replace them with the type arguments of the call site, including the ones inherited by the dispatch receiver type, and erase the
-     * ones without a known type argument.
-     *
-     * This keeps the types in the inlined body as precise as at the call site, at the cost of the accidental reification described in
-     * KT-60174: if the value of a type parameter does not actually conform to its type argument (heap pollution), a consumer that checks
-     * the substituted types can fail where the JVM backend does not.
-     */
-    SUBSTITUTE,
-}
 
 @PhasePrerequisites(
     ArrayConstructorLowering::class,
@@ -68,7 +44,6 @@ enum class NonReifiedTypeParameterRemappingMode {
 abstract class FunctionInlining(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
-    private val nonReifiedTypeParameterRemappingMode: NonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.ERASE,
     /**
      * Whether the arguments without side effects (see [isPure]) are substituted directly at each use of their parameter, instead of
      * being stored in temporary variables.
@@ -128,7 +103,6 @@ abstract class FunctionInlining(
             currentFileEntry = fileEntriesStack.getLast(),
             currentFile = data.file,
             parent = data as? IrDeclarationParent ?: data.parent,
-            nonReifiedTypeParameterRemappingMode = nonReifiedTypeParameterRemappingMode,
             substitutePureArguments = substitutePureArguments,
         ).inline(expression, actualCallee)
     }
@@ -144,7 +118,6 @@ private class CallInlining(
     private val currentFileEntry: IrFileEntry,
     private val currentFile: IrFile,
     private val parent: IrDeclarationParent,
-    private val nonReifiedTypeParameterRemappingMode: NonReifiedTypeParameterRemappingMode,
     private val substitutePureArguments: Boolean,
 ) {
     private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: setOf(parent)
@@ -182,27 +155,6 @@ private class CallInlining(
                 for ([index, typeArgument] in callSite.typeArguments.withIndex()) {
                     if (!callee.typeParameters[index].isReified || typeArgument == null) continue
                     put(callee.typeParameters[index].symbol, typeArgument)
-                }
-
-                if (nonReifiedTypeParameterRemappingMode == NonReifiedTypeParameterRemappingMode.SUBSTITUTE) {
-                    // Substitute the erased type parameters whose type argument is known.
-                    val knownTypeArguments = callSite.computeTypeArgumentsOf(callee)
-                    for ([typeParameter, type] in knownTypeArguments) {
-                        if (containsKey(typeParameter) && get(typeParameter) == null) put(typeParameter, type)
-                    }
-                    // The prepared copies of the inline functions get copies of the type parameters of their outer classes (see
-                    // `InlineFunctionSerializationPreProcessing`).
-                    for ([outerClassTypeParameter, copiedTypeParameter] in callee.outerClassTypeParameters()) {
-                        val type = knownTypeArguments[outerClassTypeParameter.symbol]
-                        if (type != null) {
-                            put(copiedTypeParameter.symbol, type)
-                        } else {
-                            // The copied type parameter can't be erased directly, as its super types can be unbound in a copy deserialized
-                            // from a KLIB. Replace it with the outer class type parameter, which has the same bounds, and erase that one.
-                            put(copiedTypeParameter.symbol, outerClassTypeParameter.defaultType)
-                            put(outerClassTypeParameter.symbol, null)
-                        }
-                    }
                 }
 
                 // Leave every other parameter as is, they are visible in the inlined scope.
@@ -526,47 +478,3 @@ private class CallInlining(
     }
 }
 
-/**
- * Returns the type arguments of the type parameters of [callee] and of the classes of the dispatch receiver type hierarchy. The type
- * parameters with a star projection or an `in` projection are omitted.
- */
-private fun IrFunctionAccessExpression.computeTypeArgumentsOf(callee: IrFunction): Map<IrTypeParameterSymbol, IrType> {
-    val result = mutableMapOf<IrTypeParameterSymbol, IrType>()
-    val receiver = dispatchReceiver
-    // The frontend can add an implicit cast on the dispatch receiver, losing its type arguments.
-    val receiverType =
-        ((receiver as? IrTypeOperatorCall)?.takeIf { it.operator == IrTypeOperator.IMPLICIT_CAST }?.argument ?: receiver)?.type
-    // The receiver type and its super types, with the type arguments of their subclasses substituted.
-    val typesToVisit = ArrayDeque(listOfNotNull(receiverType))
-    val visitedClasses = mutableSetOf<IrClassSymbol>()
-    while (typesToVisit.isNotEmpty()) {
-        val type = typesToVisit.removeFirst() as? IrSimpleType ?: continue
-        val irClass = type.classOrNull?.owner ?: continue
-        if (!visitedClasses.add(irClass.symbol)) continue
-        val classTypeArguments = irClass.typeConstructorParameters.map { it.symbol }.zip(type.arguments.asSequence()).toMap()
-        for ([typeParameter, typeArgument] in classTypeArguments) {
-            // With `in X`, the value is only known to be of a supertype of `X`. With `out X`, it is an `X`.
-            if (typeArgument is IrTypeProjection && typeArgument.variance != Variance.IN_VARIANCE) {
-                result[typeParameter] = typeArgument.type
-            }
-        }
-        val substitutor = IrTypeSubstitutor(classTypeArguments, allowEmptySubstitution = true)
-        irClass.superTypes.mapTo(typesToVisit, substitutor::substitute)
-    }
-    for ([index, typeArgument] in typeArguments.withIndex()) {
-        if (typeArgument != null) result[callee.typeParameters[index].symbol] = typeArgument
-    }
-    return result
-}
-
-/**
- * Returns the type parameters of the outer classes of the original function paired with their copies, which follow the type parameters of
- * this prepared copy (see `InlineFunctionSerializationPreProcessing`).
- */
-private fun IrFunction.outerClassTypeParameters(): List<Pair<IrTypeParameter, IrTypeParameter>> {
-    val original = (this as? IrSimpleFunction)?.originalOfPreparedInlineFunctionCopy ?: return emptyList()
-    val outerClassTypeParameters = extractTypeParameters(original).filter { it.parent != original }
-    val copiedTypeParameters = typeParameters.drop(original.typeParameters.size)
-    if (copiedTypeParameters.size != outerClassTypeParameters.size) return emptyList()
-    return outerClassTypeParameters.zip(copiedTypeParameters)
-}
