@@ -33,7 +33,7 @@ dependencies {
     jacocoAggregation(project(":compiler:fir:fir-deserialization"))
     jacocoAggregation(project(":compiler:fir:fir-jvm"))
     jacocoAggregation(project(":compiler:fir:fir-native"))
-    jacocoAggregation(project(":compiler:fir:checkers"))
+    jacocoAggregation(project(":compiler:fir:checkers:checkers.common"))
     jacocoAggregation(project(":compiler:fir:checkers:checkers.jvm"))
     jacocoAggregation(project(":compiler:fir:checkers:checkers.js"))
     jacocoAggregation(project(":compiler:fir:checkers:checkers.native"))

@@ -20,7 +20,7 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
 
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.common"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.native"))

@@ -23,7 +23,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(project(":compiler:cli"))
-    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.common"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.native"))

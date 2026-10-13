@@ -3,16 +3,16 @@
 ## Checkers structure
 
 There are five kinds of checkers:
-- [DeclarationChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker.kt)
-- [ExpressionChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker.kt)
-- [FirTypeChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/type/FirTypeChecker.kt)
-- [FirLanguageVersionSettingsChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/config/FirLanguageVersionSettingsChecker.kt)
-- [FirControlFlowChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/cfa/FirControlFlowChecker.kt)
+- [DeclarationChecker](./checkers.api/src/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker.kt)
+- [ExpressionChecker](./checkers.api/src/org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker.kt)
+- [FirTypeChecker](./checkers.api/src/org/jetbrains/kotlin/fir/analysis/checkers/type/FirTypeChecker.kt)
+- [FirLanguageVersionSettingsChecker](./checkers.api/src/org/jetbrains/kotlin/fir/analysis/checkers/config/FirLanguageVersionSettingsChecker.kt)
+- [FirControlFlowChecker](./checkers.api/src/org/jetbrains/kotlin/fir/analysis/checkers/cfa/FirControlFlowChecker.kt)
 
 The first three kinds are typed and may be restricted to checking only a specific type of declaration, expression, or type reference. To simplify working with checkers for different FIR elements, there are several typed typealiases:
-- Declarations: [FirDeclarationCheckerAliases.kt](./gen/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationCheckerAliases.kt)
-- Expressions: [FirExpressionCheckerAliases.kt](./gen/org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionCheckerAliases.kt)
-- Type refs: [FirTypeCheckerAliases.kt](./gen/org/jetbrains/kotlin/fir/analysis/checkers/type/FirTypeCheckerAliases.kt)
+- Declarations: [FirDeclarationCheckerAliases.kt](./checkers.api/gen/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationCheckerAliases.kt)
+- Expressions: [FirExpressionCheckerAliases.kt](./checkers.api/gen/org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionCheckerAliases.kt)
+- Type refs: [FirTypeCheckerAliases.kt](./checkers.api/gen/org/jetbrains/kotlin/fir/analysis/checkers/type/FirTypeCheckerAliases.kt)
 
 The next kind, `FirLanguageVersionSettingsChecker`, is used to check language version settings independently of particular code pieces.
 
@@ -35,17 +35,17 @@ These contracts imply the following:
 4. If a checker is supposed to check anonymous initializers, it's better to create a `FirAnonymousInitializerChecker` that is separately run for each `init` block in the class, rather than creating a `FirClassChecker` that manually iterates over each `init` block in the class. There are several reasons for this:
     - The diagnostic suppression mechanism is implemented in the checkers dispatcher, so reporting something on a sub-element can cause false-positive diagnostics if there is a `@Suppress` annotation between the root element (passed to the checker) and the sub-element. While there is a mechanism to fix this, it is not recommended to use it.
     - Checkers with a smaller scope improve IDE performance because they require fewer elements to be resolved in order to perform checks.
-5. The FIR compiler is designed to be syntax-agnostic and can work with different parsers and syntax trees (at present, it already supports PSI and LightTree syntax trees). Therefore, checkers should not rely on any syntax implementation details. Instead, checkers should use [positioning strategies](../../frontend.common-psi/src/org/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategies.kt) for more precise positioning of diagnostics for specific elements (e.g., this allows diagnostics to be rendered on a class name while using the source of the entire class). The only exception to this rule is inheritors of [FirSyntaxChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/syntax/FirSyntaxChecker.kt), which work directly with a syntax tree and must support several implementations for different ASTs.
+5. The FIR compiler is designed to be syntax-agnostic and can work with different parsers and syntax trees (at present, it already supports PSI and LightTree syntax trees). Therefore, checkers should not rely on any syntax implementation details. Instead, checkers should use [positioning strategies](../../frontend.common-psi/src/org/jetbrains/kotlin/diagnostics/SourceElementPositioningStrategies.kt) for more precise positioning of diagnostics for specific elements (e.g., this allows diagnostics to be rendered on a class name while using the source of the entire class). The only exception to this rule is inheritors of [FirSyntaxChecker](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/syntax/FirSyntaxChecker.kt), which work directly with a syntax tree and must support several implementations for different ASTs.
 
 ## Checkers pipeline
 
-All checkers are collected in special containers named [DeclarationCheckers](./gen/org/jetbrains/kotlin/fir/analysis/checkers/declaration/DeclarationCheckers.kt), [ExpressionCheckers](./gen/org/jetbrains/kotlin/fir/analysis/checkers/expression/ExpressionCheckers.kt), and [TypeCheckers](./gen/org/jetbrains/kotlin/fir/analysis/checkers/type/TypeCheckers.kt). These containers have fields with sets of checkers for each possible type of checker of the corresponding kind.
+All checkers are collected in special containers named [DeclarationCheckers](./checkers.api/gen/org/jetbrains/kotlin/fir/analysis/checkers/declaration/DeclarationCheckers.kt), [ExpressionCheckers](./checkers.api/gen/org/jetbrains/kotlin/fir/analysis/checkers/expression/ExpressionCheckers.kt), and [TypeCheckers](./checkers.api/gen/org/jetbrains/kotlin/fir/analysis/checkers/type/TypeCheckers.kt). These containers have fields with sets of checkers for each possible type of checker of the corresponding kind.
 
 There are several different container groups:
 - Common checkers, which always run on any platform:
-    - [CommonDeclarationCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/CommonDeclarationCheckers.kt)
-    - [CommonExpressionCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/CommonExpressionCheckers.kt)
-    - [CommonTypeCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/CommonTypeCheckers.kt)
+    - [CommonDeclarationCheckers](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/CommonDeclarationCheckers.kt)
+    - [CommonExpressionCheckers](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/CommonExpressionCheckers.kt)
+    - [CommonTypeCheckers](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/CommonTypeCheckers.kt)
 - Checkers for a specific platform (located in the corresponding `:compiler:fir:checkers:checkers.platform` modules):
     - JVM:
         - [JvmDeclarationCheckers](./checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/jvm/checkers/JvmDeclarationCheckers.kt)
@@ -58,19 +58,14 @@ There are several different container groups:
         - [NativeDeclarationCheckers](./checkers.native/src/org/jetbrains/kotlin/fir/analysis/native/checkers/NativeDeclarationCheckers.kt)
         - [NativeExpressionCheckers](./checkers.native/src/org/jetbrains/kotlin/fir/analysis/native/checkers/NativeExpressionCheckers.kt)
 - Extra checkers: These checkers are disabled by default and can be enabled with the `-Wextra` compiler flag. This group includes less performant checkers that are not crucial for regular compilation.
-    - [ExtraDeclarationCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraDeclarationCheckers.kt)
-    - [ExtraExpressionCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraExpressionCheckers.kt)
-    - [ExtraTypeCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraTypeCheckers.kt)
-- Experimental checkers: These checkers are disabled by default and can be enabled with the `-Xuse-fir-experimental-checkers` compiler flag. This group includes experimental checkers and exists to support the development of checkers that are not yet production-ready.
-    - [ExtraDeclarationCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraDeclarationCheckers.kt)
-    - [ExtraExpressionCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraExpressionCheckers.kt)
-    - [ExtraTypeCheckers](./src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraTypeCheckers.kt)
+    - [ExtraDeclarationCheckers](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraDeclarationCheckers.kt)
+    - [ExtraExpressionCheckers](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/ExtraExpressionCheckers.kt)
 
-At the beginning of compilation, during the initialization phase, all required checker containers are collected in a session component named [CheckersComponent](./src/org/jetbrains/kotlin/fir/analysis/CheckersComponent.kt). When the checker phase starts, the compiler [creates](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/entrypoint/src/org/jetbrains/kotlin/fir/pipeline/analyse.kt#L23) an instance of [AbstractDiagnosticCollector](./src/org/jetbrains/kotlin/fir/analysis/collectors/AbstractDiagnosticCollector.kt), which is responsible for running all checkers. The `DiagnosticCollector` traverses the entire FIR tree, collects `CheckerContext` during the traversal, and runs all checkers that match the element type on each element.
+At the beginning of compilation, during the initialization phase, all required checker containers are collected in a session component named [CheckersComponent](./checkers.api/src/org/jetbrains/kotlin/fir/analysis/CheckersComponent.kt). When the checker phase starts, the compiler [creates](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/entrypoint/src/org/jetbrains/kotlin/fir/pipeline/analyse.kt#L23) an instance of [AbstractDiagnosticCollector](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/collectors/AbstractDiagnosticCollector.kt), which is responsible for running all checkers. The `DiagnosticCollector` traverses the entire FIR tree, collects `CheckerContext` during the traversal, and runs all checkers that match the element type on each element.
 
 ## Checker Context
 
-[CheckerContext](./src/org/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext.kt) contains all the information that checkers can use, including:
+[CheckerContext](./checkers.api/src/org/jetbrains/kotlin/fir/analysis/checkers/context/CheckerContext.kt) contains all the information that checkers can use, including:
 - `session` and `scopeSession`
 - the list of `containingDeclarations`
 - various details about the body being analyzed
@@ -81,11 +76,11 @@ At the beginning of compilation, during the initialization phase, all required c
 
 ## Diagnostic reporting
 
-All diagnostics that can be reported by the compiler are stored within the [FirErrors](./gen/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors.kt), [FirJvmErrors](./checkers.jvm/gen/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrors.kt), [FirJsErrors](./checkers.js/gen/org/jetbrains/kotlin/fir/analysis/diagnostics/js/FirJsErrors.kt), and [FirNativeErrors](./checkers.native/gen/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrors.kt) objects. These diagnostics are auto-generated based on diagnostic descriptions in one of the diagnostic lists in [checkers-component-generator](./checkers-component-generator/src/org/jetbrains/kotlin/fir/checkers/generator/diagnostics).
+All diagnostics that can be reported by the compiler are stored within the [FirErrors](./checkers.common/gen/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrors.kt), [FirJvmErrors](./checkers.jvm/gen/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrors.kt), [FirJsErrors](./checkers.js/gen/org/jetbrains/kotlin/fir/analysis/diagnostics/js/FirJsErrors.kt), and [FirNativeErrors](./checkers.native/gen/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrors.kt) objects. These diagnostics are auto-generated based on diagnostic descriptions in one of the diagnostic lists in [checkers-component-generator](./checkers-component-generator/src/org/jetbrains/kotlin/fir/checkers/generator/diagnostics).
 
 This generation process is necessary because the Analysis API (AA), which is used in the IDE, generates a separate class for each compiler diagnostic with proper conversions of arguments for parameterized diagnostics. The goal of the code generator is to automate the creation of these classes and conversions. To run diagnostic generation, use the `Generators -> Generate FIR Checker Components and FIR/IDE Diagnostics` run configuration.
 
-Diagnostic messages must be added manually to [FirErrorsDefaultMessages](./src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt), [FirJvmErrorsDefaultMessages](./checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt), [FirJsErrorsDefaultMessages](./checkers.js/src/org/jetbrains/kotlin/fir/analysis/diagnostics/js/FirJsErrorsDefaultMessages.kt), and [FirNativeErrorsDefaultMessages](./checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt) respectively. Guidelines for writing diagnostic messages are described in the header of `FirErrorsDefaultMessages`.
+Diagnostic messages must be added manually to [FirErrorsDefaultMessages](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/diagnostics/FirErrorsDefaultMessages.kt), [FirJvmErrorsDefaultMessages](./checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/jvm/FirJvmErrorsDefaultMessages.kt), [FirJsErrorsDefaultMessages](./checkers.js/src/org/jetbrains/kotlin/fir/analysis/diagnostics/js/FirJsErrorsDefaultMessages.kt), and [FirNativeErrorsDefaultMessages](./checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt) respectively. Guidelines for writing diagnostic messages are described in the header of `FirErrorsDefaultMessages`.
 
 To report diagnostics, each checker takes an instance of [DiagnosticReporter](../../frontend.common/src/org/jetbrains/kotlin/diagnostics/DiagnosticReporter.kt) as a parameter. To reduce the boilerplate needed to instantiate a diagnostic from the given factory and ensure it’s not missed due to reporting on the null source, one should use utilities from [KtDiagnosticReportHelpers](../../frontend.common/src/org/jetbrains/kotlin/diagnostics/KtDiagnosticReportHelpers.kt).
 
@@ -112,7 +107,7 @@ To handle such diagnostics, the following mechanism is in place:
 - Certain FIR nodes, mostly those with the word `Error` in their name (e.g., [FirResolvedErrorReference](../tree/gen/org/jetbrains/kotlin/fir/references/FirResolvedErrorReference.kt)), include a property that contains a `ConeDiagnostic`.
 - [ConeDiagnostic](../cones/src/org/jetbrains/kotlin/fir/diagnostics/ConeDiagnostic.kt) is an indicator that something went wrong during resolution.
     - There are many types of `ConeDiagnostic` to represent different possible issues. Refer to [ConeDiagnostics.kt](../semantics.api/src/org/jetbrains/kotlin/fir/resolve/diagnostics/ConeDiagnostics.kt) for details.
-- `ConeDiagnostic` objects are stored in the FIR tree. The special checker component ([ErrorNodeDiagnosticCollectorComponent](./src/org/jetbrains/kotlin/fir/analysis/collectors/components/ErrorNodeDiagnosticCollectorComponent.kt)) scans all FIR nodes and reports the appropriate diagnostics based on the found `ConeDiagnostic`.
+- `ConeDiagnostic` objects are stored in the FIR tree. The special checker component ([ErrorNodeDiagnosticCollectorComponent](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/collectors/components/ErrorNodeDiagnosticCollectorComponent.kt)) scans all FIR nodes and reports the appropriate diagnostics based on the found `ConeDiagnostic`.
 
 ## Platform and Common checkers
 
@@ -135,7 +130,7 @@ In this example, `class B` exists in the `common` module, and from the point of 
 actualization, supertype `A` resolves to `actual interface A`, which introduces an `abstract fun foo()` into the scope, making `class B` invalid
 because it doesn’t implement this abstract function.
 
-To address this issue, all checkers are divided into two groups: `Common` and `Platform` (see the [MppCheckerKind](compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind.kt) enum):
+To address this issue, all checkers are divided into two groups: `Common` and `Platform` (see the [MppCheckerKind](./checkers.api/src/org/jetbrains/kotlin/fir/analysis/checkers/MppCheckerKind.kt) enum):
 - `MppCheckerKind.Common` means that the checker should run in the same session to which the corresponding declaration belongs.
 - `MppCheckerKind.Platform` means that, in the case of KMP compilation, the checker should run with the session of the leaf platform module for sources of all modules.
 
@@ -170,4 +165,4 @@ To handle such cases, it is recommended to split platform checkers into two part
 - `Regular`: Platform checkers that run for everything except `expect` declarations.
 - `ForExpect(Class)`: Common checkers that run exclusively for `expect` declarations.
 
-As an example, refer to the implementation of the [FirImplementationMismatchChecker](compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirImplementationMismatchChecker.kt) checker.
+As an example, refer to the implementation of the [FirImplementationMismatchChecker](./checkers.common/src/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirImplementationMismatchChecker.kt) checker.

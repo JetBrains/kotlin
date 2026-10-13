@@ -26,7 +26,7 @@ dependencies {
     testFixturesApi(project(":compiler:fir:cones"))
     testFixturesApi(project(":compiler:fir:resolve"))
     testFixturesApi(project(":compiler:fir:semantics.api"))
-    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.common"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
