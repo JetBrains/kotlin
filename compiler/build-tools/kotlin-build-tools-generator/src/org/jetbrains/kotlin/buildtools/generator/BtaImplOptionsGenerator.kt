@@ -144,6 +144,17 @@ internal class BtaImplOptionsGenerator(
 
                 generateOptionsMap()
 
+                // The implementation class holds all the arguments of the level, while the API may expose only a part of them
+                // (e.g., when there's no synthetic interface for some compiler phase)
+                val apiLevels = if (syntheticInterfaces.isEmpty()) {
+                    listOf(level)
+                } else {
+                    syntheticInterfaces.map { syntheticLevels.getValue(it.name) }
+                }
+                val apiArgumentIds = apiLevels.flatMapTo(mutableSetOf()) { apiLevel ->
+                    apiLevel.transformApiArguments().map { it.getOptionId() }
+                }
+
                 if (syntheticInterfaces.isEmpty()) {
                     val argumentTypeName = ClassName(API_ARGUMENTS_PACKAGE, apiClassName, argumentTypeNameString)
                     generateGetPutFunctions(argumentTypeName, level, adapterClassName, arguments)
@@ -166,7 +177,8 @@ internal class BtaImplOptionsGenerator(
                     toCompilerConverterFun = toCompilerConverterFun,
                     toCompilerArgumentsAffectingOutcomeFun = toCompilerArgumentsAffectingOutcomeFun,
                     level = level,
-                    adapterClassName
+                    adapterClassName = adapterClassName,
+                    apiArgumentIds = apiArgumentIds,
                 )
 
                 outputs += generateValueAdapterFile(
@@ -341,6 +353,10 @@ internal class BtaImplOptionsGenerator(
         addStatement("this.argumentParseDiagnostics += argumentParseDiagnostics")
     }.build()
 
+    /**
+     * @param apiArgumentIds the ids of the arguments exposed by the API
+     * @return the generated enums that have a counterpart in the API, i.e., the ones used by at least one of the [apiArgumentIds]
+     */
     private fun TypeSpec.Builder.generateOptions(
         arguments: Collection<BtaCompilerArgument<*>>,
         applyCompilerArgumentsFun: FunSpec.Builder,
@@ -348,16 +364,21 @@ internal class BtaImplOptionsGenerator(
         toCompilerArgumentsAffectingOutcomeFun: FunSpec.Builder,
         level: KotlinCompilerArgumentsLevel,
         adapterClassName: ClassName,
+        apiArgumentIds: Set<String>,
     ): Set<KClass<*>> {
         val knownOptionIds: CodeBlock.Builder = CodeBlock.builder()
         val enumsToGenerate = mutableMapOf<KClass<*>, TypeSpec.Builder>()
+        val mirroredEnums = mutableSetOf<KClass<*>>()
 
         /**
          * Marks enum to be generated and returns its name
          */
-        fun generatedEnumType(type: KClass<*>): ClassName {
+        fun generatedEnumType(type: KClass<*>, isExposedByApi: Boolean): ClassName {
             require(WithStringRepresentation::class in type.allSuperclasses) {
                 "Compiler enum ${type.qualifiedName} must implement ${WithStringRepresentation::class.qualifiedName} to be used with BTA."
+            }
+            if (isExposedByApi) {
+                mirroredEnums += type
             }
             val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
             @Suppress("UNCHECKED_CAST")
@@ -369,6 +390,7 @@ internal class BtaImplOptionsGenerator(
 
         arguments.forEach { argument ->
             val name = argument.getOptionId()
+            val isExposedByApi = name in apiArgumentIds
 
             // generate impl mirror of arguments
             val argumentTypeParameter = when (argument) {
@@ -377,10 +399,10 @@ internal class BtaImplOptionsGenerator(
                     val classifier = type.classifier as? KClass<*> ?: error("Type is not a KClass: $type")
                     when {
                         classifier.java.isEnum -> {
-                            generatedEnumType(classifier)
+                            generatedEnumType(classifier, isExposedByApi)
                         }
                         classifier == List::class && (type.arguments.first().type?.classifier as? KClass<*>)?.java?.isEnum == true -> {
-                            listTypeNameOf(generatedEnumType(type.arguments.first().type?.classifier as KClass<*>))
+                            listTypeNameOf(generatedEnumType(type.arguments.first().type?.classifier as KClass<*>, isExposedByApi))
                         }
                         else -> {
                             type.asTypeName()
@@ -452,7 +474,7 @@ internal class BtaImplOptionsGenerator(
         enumsToGenerate.forEach { [type, typeSpecBuilder] ->
             outputs += writeEnumFile(typeSpecBuilder.build(), type, targetPackage)
         }
-        return enumsToGenerate.keys
+        return mirroredEnums
     }
 
     private fun generateCustomRepresentation(
@@ -1203,4 +1225,3 @@ private fun catchCompilerArgumentsParseException(): CodeBlock = CodeBlock.of(
     MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
     "Error parsing compiler arguments",
 )
-

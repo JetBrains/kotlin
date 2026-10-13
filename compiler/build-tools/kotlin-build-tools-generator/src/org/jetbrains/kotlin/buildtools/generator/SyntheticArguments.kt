@@ -60,6 +60,8 @@ object SyntheticArgumentNames {
     const val wasmCompilerArguments = "WasmCompilerArguments"
     const val wasmCompilerKlibArguments = "WasmCompilerKlibArguments"
     const val wasmCompilerLinkingArguments = "WasmCompilerLinkingArguments"
+    const val nativeCompilerArguments = "NativeCompilerArguments"
+    const val nativeCompilerKlibArguments = "NativeCompilerKlibArguments"
 }
 
 internal val syntheticArgumentInterfaces = buildList {
@@ -67,6 +69,7 @@ internal val syntheticArgumentInterfaces = buildList {
     val commonJsAndWasmArguments = findMergedLevel(CompilerArgumentsLevelNames.commonJsAndWasmArguments)
     val jsArguments = findMergedLevel(CompilerArgumentsLevelNames.jsArguments)
     val wasmArguments = findMergedLevel(CompilerArgumentsLevelNames.wasmArguments)
+    val nativeArguments = findMergedLevel(CompilerArgumentsLevelNames.nativeArguments)
 
     val commonKlibBasedCompilerArguments = SyntheticArgumentInterface(
         SyntheticArgumentNames.commonKlibBasedArguments,
@@ -156,6 +159,22 @@ internal val syntheticArgumentInterfaces = buildList {
         listOf(wasmCompilerArguments, commonJsAndWasmCompilerLinkingArguments),
         "WasmArgumentsImpl",
         KotlinCompilerPhase.BACKEND_COMPILATION
+    ).also(::add)
+
+    val nativeCompilerArguments = SyntheticArgumentInterface(
+        SyntheticArgumentNames.nativeCompilerArguments,
+        nativeArguments,
+        listOf(commonKlibBasedCompilerArguments),
+        "NativeArgumentsImpl",
+    ).also(::add)
+
+    // There is no Kotlin/Native linking operation yet, so the linking arguments interface is not generated
+    SyntheticArgumentInterface(
+        SyntheticArgumentNames.nativeCompilerKlibArguments,
+        nativeArguments,
+        listOf(nativeCompilerArguments, commonKlibBasedCompilerKlibArguments),
+        "NativeArgumentsImpl",
+        KotlinCompilerPhase.KLIB_COMPILATION
     ).also(::add)
 }
 
