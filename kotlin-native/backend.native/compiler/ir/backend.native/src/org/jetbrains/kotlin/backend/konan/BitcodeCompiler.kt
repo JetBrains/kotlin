@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
+import org.jetbrains.kotlin.config.nativeBinaryOptions.GCStackMapScheme
 import org.jetbrains.kotlin.konan.config.overrideClangOptions
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
@@ -61,6 +62,10 @@ internal class BitcodeCompiler(
                         else -> configurables.clangNooptFlags
                     })
                     addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
+                    // An outlined call has no stack-map entry (the map is keyed by the return pc), so its roots would be lost.
+                    if (config.gcStackMapScheme == GCStackMapScheme.DELTA_MAIN) {
+                        addNonEmpty(listOf("-mllvm", "-enable-machine-outliner=never"))
+                    }
                 }
         val bitcodePath = bitcodeFile.absoluteFile.normalize().path
         val objectPath = objectFile.absoluteFile.normalize().path
