@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
@@ -48,7 +49,16 @@ internal fun ClassName.toNonLocalSimpleName(): String {
 }
 
 internal fun ClassLoader.loadKClass(name: ClassName, forceWrapperClass: Boolean = false): KClass<*>? =
-    loadClass(name.toClassId())?.let { if (forceWrapperClass) it else it.primitiveByWrapper ?: it }?.kotlin
+    loadClass(name.toClassId())
+        ?.let {
+            // For Kotlin code that uses Java wrappers (like Integer), don't return the primitive
+            if (forceWrapperClass || JvmPrimitiveType.isWrapperClassInternalName(name)) {
+                it
+            } else {
+                it.primitiveByWrapper ?: it
+            }
+        }
+        ?.kotlin
 
 /**
  * Provides the access to the type parameters of a Kotlin declaration, and allows to obtain a type parameter given its id.
