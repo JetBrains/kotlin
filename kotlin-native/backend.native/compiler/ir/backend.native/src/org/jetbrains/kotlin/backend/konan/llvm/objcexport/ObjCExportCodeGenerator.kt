@@ -668,7 +668,7 @@ private fun ObjCExportCodeGenerator.generateUnitContinuationToRetainedCompletion
         check(arguments.size == 1)
 
         val errorArgument = arguments[0]
-        val resultArgument = ifThenElse(icmpNe(errorArgument, llvm.kNull), llvm.kNull) {
+        val resultArgument = ifThenElse(icmpNe(errorArgument, llvm.kNull), llvm.kNullRef) {
             codegen.theUnitInstanceRef.llvm
         }
 
