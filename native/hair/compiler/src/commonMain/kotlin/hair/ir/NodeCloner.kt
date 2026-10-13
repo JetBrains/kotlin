@@ -10,7 +10,11 @@ fun Session.cloneNodes(originals: Sequence<Node>, replacementProvider: (Node) ->
     val destinationSession = this
     val clones = mutableMapOf<Node, Node>()
     val replacements = mutableMapOf<Node, Node>()
-    val shallowCloner = ShallowNodeCloner(RawNodeBuilder(this))
+    val rawNodeBuilder: NodeBuilder = object : NodeBuilder {
+        override val session: Session = this@cloneNodes
+        override fun onNodeBuilt(node: Node): Node = node
+    }
+    val shallowCloner = ShallowNodeCloner(rawNodeBuilder)
     fun cloneShallow(original: Node): Node = clones.getOrPut(original) {
         val replacement = replacementProvider(original)
         require(replacement == null || replacement.session == destinationSession)

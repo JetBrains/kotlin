@@ -56,7 +56,6 @@ fun Node.unwireFromGraphAndDeregister() {
     session.unwireFromGraphAndDeregister(this)
 }
 
-// TODO
 interface NodeBuilder {
     val session: Session
     fun onNodeBuilt(node: Node): Node

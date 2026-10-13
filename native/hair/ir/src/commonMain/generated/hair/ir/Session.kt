@@ -3,7 +3,7 @@ package hair.ir
 import hair.ir.nodes.*
 import hair.sym.*
 
-class Session: SessionBase() {
+abstract class Session: SessionBase() {
     // Simple forms
 
     internal val useForm = Use.form(this).also { register(it) }

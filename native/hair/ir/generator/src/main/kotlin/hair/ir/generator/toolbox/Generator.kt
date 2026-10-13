@@ -50,7 +50,7 @@ class Generator(private val generationPath: File) {
             appendLine("import hair.sym.*")
             appendLine()
             appendLine(
-                renderClass(name = session, superClass = sessionBase()) {
+                renderClass(modifiers = listOf("abstract"), name = session, superClass = sessionBase()) {
                     member("// Simple forms")
                     for (node in sessionForms) {
                         member("internal val ${formNameInSession(node)} = ${refName(node)}.form(this).also { register(it) }")

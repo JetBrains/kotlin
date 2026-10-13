@@ -133,19 +133,17 @@ fun tryCatch(
     catches: List<Pair<HairClass, CatchBuilder>>,
 ): Node {
     val throwers = mutableListOf<Throwing>()
-    val throwersCollector = object : NodeBuilder by nodeBuilder {
-        override fun onNodeBuilt(node: Node): Node {
-            return nodeBuilder.onNodeBuilt(node).also {
-                if (it is Throwing) throwers += it
-            }
-        }
-    }
 
-    val [tryExit, tryResult] = context(throwersCollector, controlBuilder) {
-        require(contextOf<NodeBuilder>() == throwersCollector)
-        val result = tryBody()
-        Goto() to result
-    }
+    // FIXME provide better accessor?
+    val session = nodeBuilder.session
+
+    val [tryExit, tryResult] = session.observingBuiltNodes(
+        { if (it is Throwing) throwers += it },
+        {
+            val result = tryBody()
+            Goto() to result
+        }
+    )
 
     if (catches.isNotEmpty() && throwers.isNotEmpty()) {
         val unwinds = throwers.map {
