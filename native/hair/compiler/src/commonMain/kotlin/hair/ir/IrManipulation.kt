@@ -35,8 +35,8 @@ open class NormalizingGvnNodeBuilder(session: Session) : NormalizingNodeBuilder(
 
 class RegisteringNodeBuilder(session: Session) : NormalizingGvnNodeBuilder(session) {
     override fun onNodeBuilt(node: Node): Node = super.onNodeBuilt(node).also {
-        if (!it.registered) session.register(it)
-        require(it.registered)
+        if (!it.inGraph) session.wireToGraph(it)
+        require(it.inGraph)
     }
 }
 
@@ -179,7 +179,7 @@ context(_: ArgumentUpdater)
 fun Node.kill() {
     require(uses.isEmpty())
     args.withIndex().forEach { [index, _] -> args[index] = null }
-    deregister()
+    unwireFromGraphAndDeregister()
 }
 
 context(_: ArgumentUpdater)

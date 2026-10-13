@@ -62,8 +62,8 @@ class Generator(private val generationPath: File) {
                     }
                     blankLine()
                     // FIXME gvn result is always the same just add node into lists
-                    member("val entry by lazy { ${ControlFlow.blockEntry.name}(${formNameInSession(ControlFlow.blockEntry)}).also{ register(gvn(it)) } }")
-                    member("val unreachable by lazy { ${ControlFlow.unreachable.name}(${formNameInSession(ControlFlow.unreachable)}).also{ register(gvn(it)) } }")
+                    member("val entry by lazy { ${ControlFlow.blockEntry.name}(${formNameInSession(ControlFlow.blockEntry)}).also{ wireToGraph(gvn(it)) } }")
+                    member("val unreachable by lazy { ${ControlFlow.unreachable.name}(${formNameInSession(ControlFlow.unreachable)}).also{ wireToGraph(gvn(it)) } }")
                 }
             )
         })

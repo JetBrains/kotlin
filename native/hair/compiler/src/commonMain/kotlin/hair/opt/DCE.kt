@@ -20,7 +20,7 @@ fun Session.eliminateDead(): Boolean {
     if (deadBlocks.isNotEmpty()) {
         modifyIR(runDCE = false) {
             for (block in deadBlocks) {
-                if (!block.registered) continue
+                if (!block.inGraph) continue
                 block.nextOrNull?.let {
                     it.control = unreachable
                 }
@@ -39,17 +39,17 @@ private fun Session.eliminateDeadFoam(): Boolean {
         if (alive.add(node)) addAll(node.args.filterNotNull())
     }
 
-    val dead = allNodes().filter { it.registered && it !is ControlFlow && it !in alive }.toList()
+    val dead = allNodes().filter { it.inGraph && it !is ControlFlow && it !in alive }.toList()
     if (dead.isEmpty()) return false
 
     // The dead set is closed under uses: every user of a dead node is itself dead.
     // So we first sever all argument edges leaving the set,
-    // which empties every dead node's use list even across cycles, and only then deregister.
+    // which empties every dead node's use list even across cycles, and only then unwire.
     for (node in dead) {
         for (arg in node.args) arg?.removeUse(node)
     }
     for (node in dead) {
-        node.deregister()
+        node.unwireFromGraphAndDeregister()
     }
     return true
 }

@@ -106,7 +106,7 @@ fun Session.simplify(): Boolean {
         }
 
         for (node in allNodes().toList()) {
-            if (!node.registered) continue
+            if (!node.inGraph) continue
             node.accept(simplifier)
         }
     }

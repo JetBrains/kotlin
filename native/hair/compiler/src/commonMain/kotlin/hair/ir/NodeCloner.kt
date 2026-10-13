@@ -36,8 +36,8 @@ fun Session.cloneNodes(originals: Sequence<Node>, replacementProvider: (Node) ->
 
     val normalization = normalization
     forEachInWorklist(clones.values) {
-        val registered = it// TODO.register()
-        val normal = normalization.normalize(registered)
+        val wired = it// TODO.wire()
+        val normal = normalization.normalize(wired)
         if (normal != it) {
             it.replaceValueUses(normal)
         }

@@ -23,25 +23,25 @@ abstract class SessionBase {
         return node.ensureUnique() as N
     }
 
-    fun register(node: Node) {
+    fun wireToGraph(node: Node) {
         require(node in allNodes())
-        if (node.registered) return
+        if (node.inGraph) return
         node as NodeBase
         node.id = -node.id
-        require(node.registered)
+        require(node.inGraph)
         for (arg in node.args) {
             arg?.addUse(node)
         }
     }
 
-    fun unregister(node: Node) {
-        require(node.registered)
+    fun unwireFromGraphAndDeregister(node: Node) {
+        require(node.inGraph)
         require(node.uses.isEmpty())
         node as NodeBase
         node.id = -node.id
-        require(!node.registered)
+        require(!node.inGraph)
 
-        // FIXME is not symmetrical with the register
+        // deregister (asymmetrical with wireToGraph)
         node.form.deregister(node)
 
         for (arg in node.args) {
@@ -52,8 +52,8 @@ abstract class SessionBase {
     }
 }
 
-fun Node.deregister() {
-    session.unregister(this)
+fun Node.unwireFromGraphAndDeregister() {
+    session.unwireFromGraphAndDeregister(this)
 }
 
 // TODO
