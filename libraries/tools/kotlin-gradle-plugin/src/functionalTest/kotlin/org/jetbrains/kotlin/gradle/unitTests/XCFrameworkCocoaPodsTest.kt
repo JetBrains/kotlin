@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
@@ -13,7 +15,6 @@ import org.jetbrains.kotlin.gradle.util.applyCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.cocoapods
 import org.jetbrains.kotlin.gradle.util.kotlin
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -23,7 +24,7 @@ class XCFrameworkCocoaPodsTest {
 
     @BeforeTest
     fun runOnMacOSOnly() {
-        Assumptions.assumeTrue(HostManager.hostIsMac)
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs)
     }
 
     @Test

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
@@ -12,7 +14,6 @@ import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeNativePlatformDependencyResolver
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.withTemporaryKotlinNativeHome
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.LINUX_X64
 import org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_ARM64
 import org.junit.jupiter.api.Assumptions
@@ -49,7 +50,7 @@ class IdeNativePlatformDependencyResolverTest {
 
     @Test
     fun `test - CoreFoundation on macos`() {
-        Assumptions.assumeTrue(HostManager.hostIsMac, "Macos host required for this test")
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs, "Macos host required for this test")
         val project = buildProjectWithMPP(preApplyCode = {
             withTemporaryKotlinNativeHome()
         })

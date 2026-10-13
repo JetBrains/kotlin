@@ -14,7 +14,8 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.jetbrains.kotlin.gradle.util.resourcesRoot
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
@@ -155,7 +156,7 @@ class SerializationToolsTest {
     @Test
     fun `test a base directory reached through a symlink still contains its files`(@TempDir tempDir: Path) {
         // Swift Export only runs on macOS, and Windows agents can't always create symlinks.
-        Assumptions.assumeTrue(HostManager.hostIsMac, "macOS host required for this test")
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs, "macOS host required for this test")
         val realDirectory = tempDir.resolve("real").createDirectories()
         val linkedDirectory = Files.createSymbolicLink(tempDir.resolve("link"), realDirectory)
         val swiftApi = realDirectory.resolve("files/A/SwiftFile.swift").createParentDirectories().createFile()

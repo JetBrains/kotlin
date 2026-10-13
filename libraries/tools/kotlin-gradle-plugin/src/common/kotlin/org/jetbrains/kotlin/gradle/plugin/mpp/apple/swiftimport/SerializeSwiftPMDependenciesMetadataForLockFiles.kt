@@ -17,7 +17,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.ObjectOutputStream
 
@@ -32,7 +33,7 @@ internal fun Project.locateOrRegisterSwiftPMDependenciesMetadataTaskForLockFiles
     val swiftPMDependenciesMetadata = project.locateOrRegisterTask<SerializeSwiftPMDependenciesMetadataForLockFiles>(
         SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME,
     ) {
-        it.enabled = HostManager.hostIsMac
+        it.enabled = KotlinNativeHost.current().isSupportedMacOs
         it.configureWithExtension(swiftPMImportExtension)
         it.transitiveSwiftPMMetadata.set(transitiveDependencies)
         it.konanTargets.add(konanTarget)

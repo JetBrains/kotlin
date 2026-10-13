@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.XcodeVersion
 
 internal val XcodeVersionSetupAction = KotlinProjectSetupAction {
@@ -48,7 +49,7 @@ internal interface UsesXcodeVersion : Task {
 
     @get:Internal
     val xcodeVersion: XcodeVersion?
-        get() = if (HostManager.hostIsMac) {
+        get() = if (KotlinNativeHost.current().isSupportedMacOs) {
             val version = _xcodeVersion.getFile().readText()
             XcodeVersion.parse(version) ?: error("Couldn't parse Xcode version from '$version'")
         } else {
@@ -64,7 +65,7 @@ internal abstract class XcodeVersionTask : DefaultTask() {
         fun locateOrRegister(project: Project): Provider<XcodeVersionTask> {
 
             return project.locateOrRegisterTask("xcodeVersion") { task ->
-                if (!HostManager.hostIsMac) {
+                if (!KotlinNativeHost.current().isSupportedMacOs) {
                     task.onlyIf("Task can be run only on MacOS") { false }
                     return@locateOrRegisterTask
                 }

@@ -1216,6 +1216,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget 
 	public fun getPublishable ()Z
 	public final fun getRELEASE ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
 	public final fun getSTATIC ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
+	public final fun isCompilableOnCurrentHost ()Lorg/gradle/api/provider/Provider;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget$Companion {

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 
 /**
  * Function signature needs to be kept stable since this is used during import
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 @JvmName("isAllowCommonizer")
 internal fun Project.isAllowCommonizer(): Boolean {
     assert(state.executed) { "'isAllowCommonizer' can only be called after project evaluation" }
-    if (!HostManager.hostIsSupported) return false
+    if (!KotlinNativeHost.current().isSupported) return false
     multiplatformExtensionOrNull ?: return false
 
     return multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }

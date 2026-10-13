@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -130,7 +131,7 @@ internal constructor(
     projectLayout: ProjectLayout,
 ) : DefaultTask() {
     init {
-        onlyIf { HostManager.hostIsMac }
+        onlyIf { KotlinNativeHost.current().isSupportedMacOs }
     }
 
     @get:Input

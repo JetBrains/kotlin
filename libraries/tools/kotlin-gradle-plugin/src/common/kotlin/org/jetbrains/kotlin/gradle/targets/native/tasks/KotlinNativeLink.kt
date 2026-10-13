@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerR
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.UsesKotlinNativeToolParallelismProbe
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.tooling.core.toKotlinVersion
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -404,7 +404,7 @@ constructor(
                         binaryBuildType.get(),
                         binaryName.get(),
                         konanTarget.visibleName,
-                        HostManager.platformName()
+                        KotlinNativeHost.current().name
                     )
                 } else {
                     val version = simpleKotlinNativeVersion.map { version ->

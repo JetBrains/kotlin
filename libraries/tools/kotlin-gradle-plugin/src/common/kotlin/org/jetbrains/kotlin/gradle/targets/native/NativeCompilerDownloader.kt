@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGene
 import org.jetbrains.kotlin.gradle.targets.native.konanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.internal.compilerRunner.native.nativeCompilerClasspath
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -82,7 +82,7 @@ class NativeCompilerDownloader(
         }
 
 
-        private val simpleOsName = HostManager.platformName()
+        private val simpleOsName = KotlinNativeHost.current().name
 
         private fun getCompilerVersion(project: Project): String {
             return project.nativeProperties.kotlinNativeVersion.get()
@@ -105,7 +105,7 @@ class NativeCompilerDownloader(
                 "tar.gz"
             }
 
-        private val useZip = HostManager.hostIsMingw
+        private val useZip = KotlinNativeHost.current().isWindows
 
     }
 

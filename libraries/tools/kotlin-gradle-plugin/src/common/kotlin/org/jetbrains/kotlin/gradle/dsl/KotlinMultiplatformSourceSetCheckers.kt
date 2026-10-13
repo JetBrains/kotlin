@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.konan.target.Family
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 
 internal object PlatformSourceSetConventionsChecker : KotlinGradleProjectChecker {
@@ -39,8 +39,7 @@ internal object PlatformSourceSetConventionsChecker : KotlinGradleProjectChecker
         matches = matches
     )
 
-    private val nativeTargetPresets get() = HostManager()
-            .targetValues
+    private val nativeTargetPresets get() = KonanTarget.predefinedTargets.values
             .map { konanTarget -> CheckedPlatformInfo<KotlinNativeTarget>(konanTarget.presetName) { it.konanTarget == konanTarget } }
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {

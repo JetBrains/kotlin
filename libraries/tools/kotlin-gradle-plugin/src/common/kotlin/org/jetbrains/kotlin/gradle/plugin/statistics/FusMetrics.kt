@@ -49,7 +49,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.runMetricMethodSafely
 import org.jetbrains.kotlin.gradle.utils.withType
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.canLinkBinaries
 import org.jetbrains.kotlin.statistics.metrics.*
 
 internal sealed interface FusMetrics
@@ -411,9 +412,7 @@ internal object KotlinStdlibConfigurationMetrics : FusMetrics {
 internal object KotlinCrossCompilationMetrics : FusMetrics {
     internal fun collectMetrics(project: Project, compilation: KotlinNativeCompilation) {
         val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
-        val isSupportedHost = runCatching {
-            HostManager().isEnabled(compilation.target.konanTarget)
-        }.getOrDefault(false)
+        val isSupportedHost = KotlinNativeHost.current().canLinkBinaries(compilation.target.konanTarget)
 
         if (isSupportedHost || !crossCompilationEnabled) return
 

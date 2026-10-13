@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.CFLAGS_PROPERTY
@@ -18,7 +20,6 @@ import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.assertContainsDiagnostic
 import org.jetbrains.kotlin.gradle.utils.withType
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.Assumptions
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -49,7 +50,7 @@ class CocoapodsUnitTests {
 
     @Test
     fun `warning is reported on non-mac machines`() {
-        Assumptions.assumeTrue(!HostManager.hostIsMac)
+        Assumptions.assumeTrue(!KotlinNativeHost.current().isSupportedMacOs)
 
         buildProjectWithCocoapods {
             assertContainsDiagnostic(CocoapodsPluginDiagnostics.UnsupportedOs)
@@ -132,7 +133,7 @@ class CocoapodsUnitTests {
 
     @Test
     fun `KT-67666 regression -- don't crash with eagerly created link tasks`() {
-        Assumptions.assumeTrue(HostManager.hostIsMac)
+        Assumptions.assumeTrue(KotlinNativeHost.current().isSupportedMacOs)
 
         buildProjectWithCocoapods {
             kotlin {

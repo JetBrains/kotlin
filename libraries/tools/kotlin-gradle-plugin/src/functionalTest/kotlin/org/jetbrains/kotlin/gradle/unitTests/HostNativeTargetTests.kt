@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeHost
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.konanTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget

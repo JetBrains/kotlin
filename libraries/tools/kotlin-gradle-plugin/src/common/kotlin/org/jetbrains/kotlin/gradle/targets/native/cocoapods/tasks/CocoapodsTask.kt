@@ -10,7 +10,8 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 
 val CocoapodsDependency.schemeName: String
     get() = name.split("/")[0]
@@ -19,7 +20,7 @@ val CocoapodsDependency.schemeName: String
 open class CocoapodsTask : DefaultTask() {
     init {
         onlyIf {
-            HostManager.hostIsMac
+            KotlinNativeHost.current().isSupportedMacOs
         }
     }
 }
