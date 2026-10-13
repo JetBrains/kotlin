@@ -11,6 +11,7 @@ import kotlinx.cinterop.usingJvmCInteropCallbacks
 import llvm.*
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmEnvironment
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
@@ -37,6 +38,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks(config.configuration.konanHome) {
                 PhaseEngine.startTopLevel(config) { engine ->
+                    LlvmEnvironment.init(config.configuration.konanHome)
                     if (!config.compileFromBitcode.isNullOrEmpty()) produceBinaryFromBitcode(engine, config, config.compileFromBitcode!!)
                     else when (config.produce) {
                         CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
@@ -121,7 +123,6 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, bitcodeFilePath: String) {
-        loadLLVMStubs(config.configuration.konanHome)
         val llvmContext = LLVMContextCreate()!!
         var llvmModule: CPointer<LLVMOpaqueModule>? = null
         try {
