@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.arguments.description.removed
 
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
@@ -34,6 +35,7 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             deprecatedVersion = KotlinReleaseVersion.v1_5_20,
             removedVersion = KotlinReleaseVersion.v2_4_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -72,6 +74,7 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             deprecatedVersion = KotlinReleaseVersion.v2_0_20,
             removedVersion = KotlinReleaseVersion.v2_4_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -85,6 +88,7 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             deprecatedVersion = KotlinReleaseVersion.v2_4_20,
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -103,6 +107,7 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             introducedVersion = introducedVersion,
             removedVersion = removedVersion,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -125,6 +130,7 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             deprecatedVersion = deprecatedVersion,
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -137,5 +143,6 @@ val removedNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             removedVersion = KotlinReleaseVersion.v2_5_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 }
