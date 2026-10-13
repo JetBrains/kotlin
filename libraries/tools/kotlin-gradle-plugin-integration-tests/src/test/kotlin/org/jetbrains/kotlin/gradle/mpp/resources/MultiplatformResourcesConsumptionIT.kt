@@ -179,7 +179,6 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 deriveBuildOptions = {
                     buildOptions
                         .copy(androidVersion = androidVersion)
-                        .suppressAgpWarningIsProperty(gradleVersion)
                         .copy(warningMode = WarningMode.None)
                 }
             )
