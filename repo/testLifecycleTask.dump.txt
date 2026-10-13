@@ -724,6 +724,7 @@ Not connected to any 'lifecycleTestTask':
   - :compiler:tests-different-jdk:test [Jvm]
   - :compiler:tests-spec:specConsistencyTests [Frontend]
   - :gradle:generators:native-cache-kotlin-version:test [Gradle]
+  - :gradle:gradle-warnings-detector:test [Gradle]
   - :jps:jps-common:test [CompilerInfrastructure]
   - :js:js.tests:invalidationTest [Js]
   - :js:js.tests:klib-compatibility:test [Js]
