@@ -163,3 +163,128 @@ These options affect native code generation, LLVM optimization passes, garbage c
 - **Both Phases:**
   - `klibZipFileAccessorCacheLimit` (`-Xklib-zip-file-accessor-cache-limit`): Limits open zip file handlers when reading `.klib` files.
   - `skipLibrarySpecialCompatibilityChecks` (`-Xklib-skip-library-special-compatibility-checks`): Controls compatibility verification checks for pre-release library versions.
+
+
+
+
+Now I'm reading the native.md file in the kotlin-build-tools-generator folder to understand the native build tools setup and how it integrates with the compiler.
+
+**Kotlin/Native Compiler Arguments Analysis: Enums and Paths**
+
+Based on the inspection of `compiler/arguments/src/org/jetbrains/kotlin/arguments/description/NativeCompilerArguments.kt`, `K2NativeCompilerArguments.kt`, `SetupConfiguration.kt`, and `NativeConfigurationPhase.kt`, below is the complete analysis identifying which arguments should be enums and which deal with paths (`Path` or `List<Path>`).
+
+---
+
+**1. Arguments That Should Be Enums**
+
+These arguments accept a constrained, finite set of string values representing specific modes, strategies, or targets.
+
+**Core Value Enums**
+
+| Argument Name | CLI Flag | Accepted Values / Description | Recommended Enum Name & Entries |
+|---|---|---|---|
+| `produce` | `-produce` / `-p` | `{program\|static\|dynamic\|framework\|library\|bitcode}` | `CompilerOutputKind` / `NativeOutputKind` (`PROGRAM`, `STATIC`, `DYNAMIC`, `FRAMEWORK`, `LIBRARY`, `BITCODE`) |
+| `target` | `-target` | Hardware target string (e.g., `ios_arm64`, `macos_arm64`, `linux_x64`, `mingw_x64`, etc.) | `KonanTarget` / `NativeTarget` (representing the supported targets defined in `KonanTarget.predefinedTargets`) |
+| `allocator` | `-Xallocator` | `std \| mimalloc \| custom` | `NativeAllocationMode` / `AllocationMode` (`STD`, `MIMALLOC`, `CUSTOM`) |
+| `gc` | `-Xgc` | `'noop'`, `'stms'`, `'cms'` | `NativeGcMode` / `GC` (`NOOP`, `STMS`, `CMS`) |
+| `memoryModel` | `-memory-model` | `'strict'`, `'experimental'` | `NativeMemoryModel` (`STRICT`, `EXPERIMENTAL`) *(deprecated)* |
+| `manifestNativeTargets` | `-Xmanifest-native-targets` | Comma-separated list of native target names | `List<KonanTarget>` / `EnumListType<KonanTarget>` |
+
+**Enable / Disable Mode Enums**
+
+In the CLI these options take `=enable` or `=disable` rather than simple flags to support default/unset states. In the argument DSL, these follow the pattern established by `PartialLinkageModeType`:
+
+| Argument Name | CLI Flag | Accepted Values | Recommended Enum |
+|---|---|---|---|
+| `lightDebugString` | `-Xadd-light-debug` | `{disable\|enable}` | `EnableDisableMode` or dedicated `LightDebugMode` (`ENABLE`, `DISABLE`) |
+| `generateDebugTrampolineString` | `-Xg-generate-debug-trampoline` | `{disable\|enable}` | `EnableDisableMode` or dedicated `DebugTrampolineMode` (`ENABLE`, `DISABLE`) |
+| `propertyLazyInitialization` | `-Xir-property-lazy-initialization` | `{disable\|enable}` | `EnableDisableMode` or dedicated `PropertyLazyInitMode` (`ENABLE`, `DISABLE`) |
+| `preLinkCaches` | `-Xpre-link-caches` | `{disable\|enable}` | `EnableDisableMode` or dedicated `PreLinkCachesMode` (`ENABLE`, `DISABLE`) |
+
+**Enums in Removed / Historical Arguments (`removedNativeCompilerArguments.kt`)**
+
+| Argument Name | CLI Flag | Accepted Values | Recommended Enum |
+|---|---|---|---|
+| `Xworker-exception-handling` | `-Xworker-exception-handling` | `'legacy'`, `'use-hook'` | `WorkerExceptionHandlingMode` (`LEGACY`, `USE_HOOK`) |
+| `Xdestroy-runtime-mode` | `-Xdestroy-runtime-mode` | `'legacy'`, `'on-shutdown'` | `DestroyRuntimeMode` (`LEGACY`, `ON_SHUTDOWN`) |
+
+**Special / Hybrid Cases**
+
+- `llvmVariant` (`-Xllvm-variant`): Accepts predefined variants `{user, dev, dev-with-asserts}` **or** an absolute `Path` to a custom LLVM distribution. In a strictly typed DSL, this is a discriminated union / sealed hierarchy (`LlvmVariant.User`, `LlvmVariant.Dev`, `LlvmVariant.Custom(val path: Path)`), or remains a `String` if kept unified.
+- `debugInfoFormatVersion` (`-Xdebug-info-version`): Currently configured as `IntType` (`1` or `2`). Could optionally be an enum (`V1`, `V2`).
+
+---
+
+**2. Arguments That Deal with Paths (`Path`)**
+
+These arguments represent a single file or directory destination or input source. In the arguments DSL, these should specify `argumentType = PathType.defaultNull`.
+
+**Output Paths and Dumps**
+
+- `outputName` (`-output` / `-o`): Primary output file or directory (KLIB bundle, framework directory, executable binary).
+- `headerKlibPath` (`-Xheader-klib-path`): Destination path for generated public ABI header KLIB.
+- `emitLazyObjCHeader` (`-Xemit-lazy-objc-header`): Destination path for generated lazy Objective-C header file.
+- `writeDependenciesOfProducedKlibTo` (`-Xwrite-dependencies-of-produced-klib-to`): File path to record KLIB dependency paths.
+- `saveDependenciesPath` (`-Xwrite-dependencies-to`): File path for serialized backend dependencies.
+- `dumpBuiltCachesTo` (`-Xdump-built-caches-to`): File path to dump list of built cache archives.
+- `testDumpOutputPath` (`-Xdump-tests-to`): File path to dump list of discovered unit tests.
+
+**Input Files**
+
+- `manifestFile` (`-manifest`): Path to custom manifest addend file.
+- `runtimeFile` (`-Xruntime`): Path overriding standard `runtime.bc` bitcode library.
+- `compileFromBitcode` (`-Xcompile-from-bitcode`): Path to input bitcode file to continue compilation from.
+- `serializedDependencies` (`-Xread-dependencies-from`): Path to read pre-serialized dependencies from.
+- `externalDependencies` (`-Xexternal-dependencies`): Path to dependency graph file for caching/build system.
+- `libraryToAddToCache` (`-Xadd-cache`): Path to a specific library to be compiled into cache.
+
+**Directories**
+
+- `konanDataDir` (`-Xkonan-data-dir`): Root directory containing Kotlin/Native distribution dependencies (sysroots, toolchain, LLVM).
+- `temporaryFilesDir` (`-Xtemporary-files-dir`): Directory for intermediate compiler and object files.
+- `autoCacheDir` (`-Xauto-cache-dir`): Directory where auto-cache artifacts are stored.
+- `incrementalCacheDir` (`-Xic-cache-dir`): Directory where backend incremental compilation caches are stored.
+- `saveLlvmIrDirectory` (`-Xsave-llvm-ir-directory`): Directory for LLVM IR dumps.
+
+---
+
+**3. Arguments That Deal with Paths (`List<Path>`)**
+
+These arguments provide collections of file or directory paths.
+
+**Passed as Repeated Options or Arrays (`PathListType`)**
+
+In the arguments DSL, these use `argumentType = PathListType.defaultEmpty` (CLI type `Array<String>`):
+
+- `libraries` (`-library` / `-l`): Paths to dependency `.klib` libraries.
+- `nativeLibraries` (`-native-library` / `-nl`): Paths to external bitcode (`.bc`) libraries to bundle or link.
+- `includeBinaries` (`-include-binary` / `-ib`): Paths to external native static/dynamic binaries to embed into `.klib`.
+- `includes` (`-Xinclude`): Paths to intermediate `.klib` libraries to treat as source modules.
+- `exportedLibraries` (`-Xexport-library`): Paths to libraries whose declarations are exported into the C/Objective-C framework header.
+- `cacheDirectories` (`-Xcache-directory`): Paths to directories containing precompiled binary caches.
+- `autoCacheableFrom` (`-Xauto-cache-from`): Root directory paths from which dependencies are automatically cached.
+- `filesToCache` (`-Xfile-to-cache`): Paths to files or libraries to compile into cache.
+- `refinesPaths` (`-Xrefines-paths`): Output directory paths for refined modules.
+
+**Passed as System Path-Separator Delimited String (`SearchPathType`)**
+
+- `friendModules` (`-friend-modules`): Paths to friend modules separated by system `File.pathSeparator`. In `CommonJsAndWasmArguments.kt`, this exact option is modeled with `argumentType = SearchPathType.defaultNull` (which evaluates to `List<Path>`).
+
+---
+
+**4. Special Path Mappings (Pairs / Key-Value Pairs)**
+
+These options handle paths but cannot be represented as simple `Path` or `List<Path>` without dedicated structured modeling:
+
+- `cachedLibraries` (`-Xcached-library`): Each entry is a comma-separated pair `<library path>,<cache path>`. In a rich API, this would be represented as `Map<Path, Path>` or `List<Pair<Path, Path>>`.
+- `debugPrefixMap` (`-Xdebug-prefix-map`): Each entry is `<old-dir-path>=<new-dir-path>`. Modeled as `Map<Path, Path>` or `List<Pair<Path, Path>>`.
+
+---
+
+**5. Inherited KLIB Arguments Reference (`CommonKlibBasedCompilerArguments.kt`)**
+
+For reference, `K2NativeCompilerArguments` inherits from `CommonKlibBasedCompilerArguments`, where the path and enum typings are already defined:
+- `relativePathBases` (`-Xklib-relative-path-bases`): `PathListType.defaultEmpty` (`List<Path>`)
+- `partialLinkageMode` (`-Xpartial-linkage`): `PartialLinkageModeType` (Enum: `ENABLE`, `DISABLE`)
+- `partialLinkageLogLevel` (`-Xpartial-linkage-loglevel`): `PartialLinkageLogLevelType` (Enum: `INFO`, `WARNING`, `ERROR`)
+- `duplicatedUniqueNameStrategy` (`-Xklib-duplicated-unique-name-strategy`): `DuplicatedUniqueNameStrategyType` (Enum: `DENY`, `ALLOW_ALL_WITH_WARNING`, `ALLOW_FIRST_WITH_WARNING`)
