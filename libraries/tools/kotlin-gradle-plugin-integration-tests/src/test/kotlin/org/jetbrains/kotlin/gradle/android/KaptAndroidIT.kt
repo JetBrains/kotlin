@@ -13,6 +13,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KaptBaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
@@ -20,6 +22,8 @@ import kotlin.io.path.writeText
 
 @DisplayName("Android with kapt tests")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
+@MustRunOnChangesInCompilerPlugins
 class KaptAndroidIT : KaptBaseIT() {
     @DisplayName("KT-15001")
     @GradleAndroidTest
@@ -114,6 +118,7 @@ class KaptAndroidIT : KaptBaseIT() {
 
     @DisplayName("KT-45532: kapt tasks shouldn't create outputs at configuration time")
     @GradleAndroidTest
+    @MustRunOnChangesInGradle
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun kaptTasksShouldNotCreateOutputsOnConfigurationPhase(
         gradleVersion: GradleVersion,
@@ -259,6 +264,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("agp annotation processor nested arguments are not evaluated at configuration time")
     @GradleAndroidTest
     fun testAgpNestedArgsNotEvaluatedDuringConfiguration(
@@ -304,6 +310,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("KT-55334: Kapt generate stubs and related KotlinCompile tasks are using similar -module-name value")
     @GradleAndroidTest
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
@@ -341,6 +348,7 @@ class KaptAndroidIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("KT-71233 Kapt does not cause build to fail if no annotation processors are defined")
     @GradleAndroidTest
     fun testNoProcessors(
