@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import llvm.LLVMDumpModule
 import llvm.LLVMIsDeclaration
 import llvm.LLVMModuleRef
-import llvm.LLVMWriteBitcodeToFile
 import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
@@ -29,17 +28,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.valueName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
-import org.jetbrains.kotlin.io.canonicalPathString
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
-import java.nio.file.Path
 import kotlin.sequences.forEach
-
-
-internal data class WriteBitcodeFileInput(
-        override val llvmModule: LLVMModuleRef,
-        val outputPath: Path,
-) : LlvmIrHolder
 
 internal data class InsertEntryPointAliasInput(
         override val llvmModule: LLVMModuleRef,
@@ -51,16 +42,6 @@ internal val InsertEntryPointAliasPhase = createSimpleNamedCompilerPhase<NativeB
 ) { _, (llvmModule, entryPointName) ->
     // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
     insertAliasToEntryPoint(llvmModule, entryPointName)
-}
-
-/**
- * Write in-memory LLVM module to filesystem as a bitcode.
- */
-internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, WriteBitcodeFileInput>(
-        "WriteBitcodeFile",
-        postactions = getDefaultLlvmModuleActions(),
-) { _, (llvmModule, outputPath) ->
-    LLVMWriteBitcodeToFile(llvmModule, outputPath.canonicalPathString())
 }
 
 internal val ModuleCallsChecker = optimizationPipelinePass(

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmEnvironment
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.llvm.createLlvmBackendConfigForOutputModuleFrom
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.backend.konan.llvm.withLlvmBackendContext
@@ -125,7 +126,10 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, bitcodeFilePath: String) {
-        withLlvmBackendContext(createLlvmBackendConfigForOutputModuleFrom(engine.context)) {
+        val tempFiles = createTempFiles(config, null)
+        val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
+        // The LLVM context, the module and the target machine are disposed before linking, only the object file is needed there.
+        val moduleCompilationOutput = withLlvmBackendContext(createLlvmBackendConfigForOutputModuleFrom(engine.context)) {
             val llvmContext = LLVMContextCreate()!!
             var llvmModule: CPointer<LLVMOpaqueModule>? = null
             try {
@@ -134,13 +138,16 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 val depsPath = config.readSerializedDependencies
                 val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
                     config.configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "No backend dependencies provided.")
-                } else DependenciesTrackingResult.deserialize(depsPath, Path(depsPath).readLines(), config)
-                engine.runBitcodeBackend(context, this, dependencies)
+                } else {
+                    DependenciesTrackingResult.deserialize(depsPath, Path(depsPath).readLines(), config)
+                }
+                engine.runBitcodeBackend(context, this, dependencies, outputFiles, tempFiles)
             } finally {
                 llvmModule?.let { LLVMDisposeModule(it) }
                 LLVMContextDispose(llvmContext)
             }
         }
+        engine.linkModule(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
     }
 
     /**

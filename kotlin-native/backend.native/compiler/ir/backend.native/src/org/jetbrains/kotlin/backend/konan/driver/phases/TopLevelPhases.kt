@@ -56,8 +56,8 @@ import kotlin.io.path.createFile
 import kotlin.io.path.name
 import kotlin.io.path.writeLines
 
-private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc")
-private fun TempFiles.createObjectFile(fileName: String) = create(fileName, ".o")
+internal fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc")
+internal fun TempFiles.createObjectFile(fileName: String) = create(fileName, ".o")
 
 internal fun PhaseEngine<NativeBackendPhaseContext>.runK1Frontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): K1FrontendPhaseOutput? {
     val languageVersion = config.languageVersionSettings.languageVersion
@@ -74,8 +74,8 @@ internal fun PhaseEngine<NativeBackendPhaseContext>.linkKlibs(frontendOutput: K1
 }
 
 internal fun <T> PhaseEngine<NativeBackendPhaseContext>.linkKlibs(
-    frontendOutput: K1FrontendPhaseOutput,
-    produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
+        frontendOutput: K1FrontendPhaseOutput,
+        produceAdditionalOutput: (PhaseEngine<out LinkKlibsContext>) -> T
 ): Pair<LinkKlibsOutput, T> {
     val config = this.context.config
     val psiToIrContext = LinkKlibsContextImpl(config, frontendOutput.moduleDescriptor, frontendOutput.disposeCallback)
@@ -210,8 +210,9 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             }
             try {
                 fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
-                backendEngine.useContext(generationState, copyState = true) { generationStateEngine ->
-                    val bitcodeFile = tempFiles.createBitcodeFile(generationState.llvmModuleName)
+                // All the LLVM state of the fragment (context, module, target machine) is disposed when this block ends,
+                // only the object file leaves it.
+                val moduleCompilationOutput = backendEngine.useContext(generationState, copyState = true) { generationStateEngine ->
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
                                 cppAdapter = tempFiles.create("api", ".cpp").toFile(),
@@ -220,21 +221,24 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                                 def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.toFile() else null,
                         )
                     } else null
-                    // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
                     // One LLVM backend context per fragment, so that fragments compiled in parallel never share a target machine.
                     withLlvmBackendContext(createLlvmBackendConfigForOutputModuleFrom(generationState)) {
                         val llvmBackendContext = this
-                        generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles, llvmBackendContext)
+                        generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, cExportFiles, llvmBackendContext)
+
+                        val bitcodeCompiler = generationState.createBitcodeCompiler(llvmBackendContext, tempFiles, generationState.llvmModuleName)
+                        generationStateEngine.emitObjectFile(
+                                generationState.llvm.module,
+                                bitcodeCompiler,
+                                generationStateEngine.collectAndMaybeSerializeDependencies(),
+                                outputFiles,
+                                tempFiles,
+                        )
                     }
-                    // Split here
-                    val dependenciesTrackingResult = generationStateEngine.collectAndMaybeSerializeDependencies()
-                    val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
-                    generationStateEngine.compileAndLink(
-                            moduleCompilationOutput,
-                            outputFiles.mainFileName,
-                            outputFiles,
-                            tempFiles,
-                    )
+                }
+                // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
+                backendEngine.useContext(LinkingContext(config, fragment.performanceManager), copyState = true) { linkingEngine ->
+                    linkingEngine.linkModule(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
                 }
             } finally {
                 tempFiles.dispose()
@@ -290,26 +294,22 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
 }
 
 /**
- * Post-processes the LLVM module of [context], then compiles and links it.
+ * Post-processes the LLVM module of [context] and compiles it into an object file.
  *
- * [llvmBackendContext] is borrowed: it is owned by the caller.
+ * [llvmBackendContext] is borrowed: it is owned by the caller. Only the object file outlives this call,
+ * link it with [linkModule].
  */
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
         context: BitcodePostProcessingContext,
         llvmBackendContext: LlvmBackendContext,
         dependencies: DependenciesTrackingResult,
-) {
-    useContext(context) { bitcodeEngine ->
-        val tempFiles = createTempFiles(context.config, null)
-        val bitcodeFile = tempFiles.createBitcodeFile(context.config.shortModuleName ?: "out")
-        val outputPath = context.config.outputPath
-        val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
-        bitcodeEngine.runBitcodePostProcessing(llvmBackendContext)
-        runInsertEntryPointAliasPhaseIfNeededTo(context.llvm.module)
-        runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
-        val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
-        compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
-    }
+        outputFiles: OutputFiles,
+        tempFiles: TempFiles,
+): ModuleCompilationOutput = useContext(context) { bitcodeEngine ->
+    bitcodeEngine.runBitcodePostProcessing(llvmBackendContext)
+    bitcodeEngine.runInsertEntryPointAliasPhaseIfNeededTo(context.llvm.module)
+    val bitcodeCompiler = context.createBitcodeCompiler(llvmBackendContext, tempFiles, context.config.shortModuleName ?: "out")
+    bitcodeEngine.emitObjectFile(context.llvm.module, bitcodeCompiler, dependencies, outputFiles, tempFiles)
 }
 
 private fun PhaseEngine<NativeGenerationState>.collectAndMaybeSerializeDependencies(): DependenciesTrackingResult {
@@ -405,8 +405,8 @@ private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runInsertEntryPointAl
     runAndMeasurePhase(InsertEntryPointAliasPhase, InsertEntryPointAliasInput(llvmModule, entryPointName))
 }
 
-internal data class ModuleCompilationOutput(
-        val bitcodeFile: Path,
+internal class ModuleCompilationOutput(
+        val objectFile: Path,
         val dependenciesTrackingResult: DependenciesTrackingResult,
 )
 
@@ -415,21 +415,20 @@ internal data class ModuleCompilationOutput(
  * 2. Runs LTO.
  * 3. Translates IR to LLVM IR.
  * 4. Optimizes it.
- * 5. Serializes it to a bitcode file.
+ *
+ * The object file is emitted separately, with [emitObjectFile].
  *
  * [llvmBackendContext] is borrowed: it is owned by the caller.
  */
 internal fun PhaseEngine<NativeGenerationState>.compileModule(
         module: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
-        bitcodeFile: Path,
         cExportFiles: CExportFiles?,
         llvmBackendContext: LlvmBackendContext,
 ) {
     runBackendCodegen(module, irBuiltIns, cExportFiles)
     runPostCodegen(llvmBackendContext)
     runInsertEntryPointAliasPhaseIfNeededTo(context.llvm.module)
-    runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runPostCodegen(llvmBackendContext: LlvmBackendContext) {
@@ -439,14 +438,25 @@ internal fun PhaseEngine<NativeGenerationState>.runPostCodegen(llvmBackendContex
     }
 }
 
-internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
+private fun <C : NativeBackendPhaseContext> PhaseEngine<C>.emitObjectFile(
+        llvmModule: LLVMModuleRef,
+        bitcodeCompiler: BitcodeCompiler,
+        dependenciesTrackingResult: DependenciesTrackingResult,
+        outputFiles: OutputFiles,
+        temporaryFiles: TempFiles,
+): ModuleCompilationOutput {
+    val objectFile = temporaryFiles.createObjectFile(Path(outputFiles.nativeBinaryFile).name)
+    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesInput(llvmModule, bitcodeCompiler, objectFile))
+    return ModuleCompilationOutput(objectFile, dependenciesTrackingResult)
+}
+
+internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.linkModule(
         moduleCompilationOutput: ModuleCompilationOutput,
         linkerOutputFile: String,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
 ) {
-    val compilationResult = temporaryFiles.createObjectFile(Path(outputFiles.nativeBinaryFile).name)
-    runAndMeasurePhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile.toFile(), compilationResult.toFile()))
+    val compilationResult = moduleCompilationOutput.objectFile
     val linkerOutputKind = context.config.linkerOutputKind
     val [linkerInput, cacheBinaries] = run {
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
