@@ -5,28 +5,24 @@
 
 package org.jetbrains.kotlin.gradle.test
 
-import org.gradle.api.GradleException
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.logging.Logger
-import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicBoolean
 
 internal abstract class GradleWarningsReporter : BuildService<BuildServiceParameters.None>, AutoCloseable {
-    private val logger: Logger = Logging.getLogger(this.javaClass)
     internal var executeAtBuildFinish: (() -> Unit)? = null
 
-    private val hasWarnings = AtomicBoolean(false)
     private val warningReasons = ConcurrentHashMap.newKeySet<String>()
     private val ignoredWarningReasons = ConcurrentHashMap.newKeySet<String>()
+
+    internal val warnings: Set<String> get() = warningReasons.toSet()
+    internal val ignoredReasons: Set<String> get() = ignoredWarningReasons.toSet()
 
     internal fun report(description: String, stackTraceClassNames: List<String>) {
         val ignoredWarning = KNOWN_THIRD_PARTY_WARNINGS.firstMatching(description, stackTraceClassNames)
         if (ignoredWarning == null) {
-            hasWarnings.set(true)
             warningReasons.add(description)
         } else {
             ignoredWarningReasons.add(ignoredWarning.reason)
@@ -35,20 +31,9 @@ internal abstract class GradleWarningsReporter : BuildService<BuildServiceParame
 
     override fun close() {
         executeAtBuildFinish?.invoke()
-        if (ignoredWarningReasons.isNotEmpty()) {
-            logger.info(
-                "[$marker] Ignored deprecation warnings caused by third-party plugins:\n${ignoredWarningReasons.joinToString("\n")}"
-            )
-        }
-        if (hasWarnings.get()) {
-            logger.warn("[$marker] Deprecation warnings were found during this build:\n${warningReasons.joinToString("\n")}")
-            throw GradleException("Unexpected warnings were detected in the build!")
-        }
     }
 
     internal companion object {
-        private val marker = GradleWarningsDetectorPlugin::class.java.simpleName
-
         private val serviceName =
             "${GradleWarningsReporter::class.java.canonicalName}_${GradleWarningsReporter::class.java.classLoader.hashCode()}"
 
