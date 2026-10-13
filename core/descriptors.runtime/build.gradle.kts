@@ -43,12 +43,7 @@ projectTests {
     withTestJar()
     withAnnotations()
 
-    testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
-        maxHeapSize = testMaxHeapSizeLarge,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
-    )
+    testTask(maxHeapSize = testMaxHeapSizeLarge)
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt", generateTestsInBuildDirectory = true)
 }
 
