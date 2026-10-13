@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinProjectSharedDataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.CrossCompilationData
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
 import java.io.File
 import java.io.OutputStream
 import java.util.zip.Deflater
@@ -161,7 +161,7 @@ internal abstract class AssembleKotlinArchiveTask @Inject constructor(
 
         val diagnostic = KotlinToolingDiagnostics.IncompleteKotlinArchivePublication(
             allNonPublishableTargets,
-            HostManager.platformName(),
+            KotlinNativeHost.current().name,
         )
 
         reportDiagnostic(diagnostic)

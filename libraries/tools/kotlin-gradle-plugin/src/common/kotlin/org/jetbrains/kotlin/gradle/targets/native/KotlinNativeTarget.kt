@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -22,7 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.canLinkBinaries
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -69,9 +71,10 @@ abstract class KotlinNativeTarget @Inject constructor(
      * Indicates whether cross-compilation is supported on the current host for the associated Kotlin Native Target.
      */
     internal val crossCompilationOnCurrentHostSupported: Future<Boolean> = project.future {
-        if (!HostManager.hostIsSupported) return@future false
+        val host = KotlinNativeHost.current()
+        if (!host.isSupported) return@future false
         val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
-        val isSupportedHost = hostManager.isEnabled(konanTarget)
+        val isSupportedHost = host.canLinkBinaries(konanTarget)
 
         // Supported hosts can always compile
         if (isSupportedHost) return@future true
@@ -79,6 +82,26 @@ abstract class KotlinNativeTarget @Inject constructor(
         // Unsupported hosts require cross-compilation enabled and no cinterops
         KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
         crossCompilationEnabled && compilations.none { it.cinterops.isNotEmpty() }
+    }
+
+    /**
+     * Whether the current host can compile this target: it can link it, or klib cross-compilation is enabled and no
+     * compilation of the target has cinterops.
+     *
+     * Known only after the target's compilations are finalised, so read it from task actions or wire it into task inputs.
+     *
+     * [KotlinNativeHost.canLinkBinaries] answers the host-only question. [KotlinNativeCompilation.crossCompilationSupported]
+     * also checks the metadata of the compilation's dependencies.
+     *
+     * @since 2.5.20
+     */
+    @ExperimentalKotlinGradlePluginApi
+    val isCompilableOnCurrentHost: Provider<Boolean> = project.provider {
+        crossCompilationOnCurrentHostSupported.lenient.getOrNull()
+            ?: error(
+                "'isCompilableOnCurrentHost' of target '$targetName' is not available yet: it is known once the compilations " +
+                        "of the target are finalised. Read it from a task action or wire it into a task input."
+            )
     }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
@@ -164,9 +187,9 @@ abstract class KotlinNativeTarget @Inject constructor(
     }
 }
 
-private val hostManager by lazy { HostManager() }
-
-private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.reduce { acc, targets -> acc intersect targets } }
+private val targetsEnabledOnAllHosts by lazy {
+    KonanTarget.predefinedTargets.values.filterTo(mutableSetOf()) { target -> KotlinNativeHost.supportedHosts().all { it.canLinkBinaries(target) } }
+}
 
 /**
  * The set of konanTargets is considered 'host specific' if the shared compilation of said set can *not* be built

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -15,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarge
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.validateKgpModelIsUklibCompliantAndCreateKgpFragments
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -209,7 +210,7 @@ class UklibFromKGPFragmentsTests {
             }
         }.evaluate().assertContainsDiagnostic(
             KotlinToolingDiagnostics.UklibPublicationWithoutCrossCompilation(
-                if (HostManager.hostIsMac) WARNING else ERROR
+                if (KotlinNativeHost.current().isSupportedMacOs) WARNING else ERROR
             )
         )
     }

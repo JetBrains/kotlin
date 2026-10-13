@@ -10,28 +10,19 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.TargetSupportException
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.canLinkBinaries
 
 internal object CinteropCrossCompilationChecker : KotlinGradleProjectChecker {
 
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         if (multiplatformExtension == null || !kotlinPropertiesProvider.enableKlibsCrossCompilation) return
 
+        val host = KotlinNativeHost.current()
         multiplatformExtension.targets
             .withType(KotlinNativeTarget::class.java)
-            .matching { target ->
-                try {
-                    // This is the normal path:
-                    // The host is supported, and we are checking if it can
-                    // compile the specific 'target.konanTarget'.
-                    // We match if it's NOT enabled (i.e., it's a cross-compilation target).
-                    !HostManager().isEnabled(target.konanTarget)
-                } catch (_: TargetSupportException) {
-                    // This means the HostManager().isEnabled failed because the *host itself* is unsupported.
-                    false
-                }
-            }
+            // Cross-compilation targets: the host is supported but cannot link this target.
+            .matching { target -> host.isSupported && !host.canLinkBinaries(target.konanTarget) }
             .configureEach { target ->
                 var reportDiagnosticOncePerTarget = true
                 target.compilations.configureEach { compilation ->
@@ -49,7 +40,7 @@ internal object CinteropCrossCompilationChecker : KotlinGradleProjectChecker {
                                     projectName,
                                     target.targetName,
                                     allCinterops,
-                                    HostManager.hostName
+                                    host.name
                                 )
                             )
                         }

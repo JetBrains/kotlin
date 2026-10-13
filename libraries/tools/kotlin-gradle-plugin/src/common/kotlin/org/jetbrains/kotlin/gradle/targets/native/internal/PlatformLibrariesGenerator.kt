@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeLibraryGe
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.canLinkBinaries
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -182,7 +183,7 @@ internal class PlatformLibrariesGenerator(
     }
 
     fun generatePlatformLibsIfNeeded() {
-        if (!HostManager().isEnabled(konanTarget)) {
+        if (!KotlinNativeHost.current().canLinkBinaries(konanTarget)) {
             // We cannot generate libs on a machine that doesn't support the requested target.
             return
         }

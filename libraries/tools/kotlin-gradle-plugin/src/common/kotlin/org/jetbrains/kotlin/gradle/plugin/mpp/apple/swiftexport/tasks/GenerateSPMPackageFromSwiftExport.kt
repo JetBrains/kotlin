@@ -41,9 +41,10 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.normalizedAbsoluteFile
 import org.jetbrains.kotlin.gradle.utils.resolveInside
 import org.jetbrains.kotlin.incremental.createDirectory
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSupportedMacOs
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConstants
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
@@ -81,7 +82,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     private val fileSystem: FileSystemOperations,
 ) : DefaultTask() {
     init {
-        onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { HostManager.hostIsMac }
+        onlyIf(SwiftExportConstants.MACOS_HOST_REQUIRED) { KotlinNativeHost.current().isSupportedMacOs }
         collectIncludes.convention(false)
     }
 

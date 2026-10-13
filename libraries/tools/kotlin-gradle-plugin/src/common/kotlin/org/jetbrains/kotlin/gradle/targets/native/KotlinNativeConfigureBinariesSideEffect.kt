@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.attributes.KlibPackaging
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.archive.KarLayout
-import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.buildtools.nativehost.KotlinNativeHost
+import org.jetbrains.kotlin.gradle.dsl.konanTarget
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinNativeCacheMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeLinkTaskMetrics
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
@@ -173,7 +174,7 @@ private fun Project.createRunTask(binary: Executable) {
         isEnabledOnCurrentHost = isCurrentHost,
         taskName = taskName,
         targetName = binary.konanTarget.name,
-        currentHost = HostManager.hostOrNull?.name ?: "unsupported",
+        currentHost = KotlinNativeHost.current().konanTarget?.name ?: "unsupported",
         reason = "executable can only run on ${binary.konanTarget.name}",
     )
     registerTask<Exec>(taskName) { exec ->
