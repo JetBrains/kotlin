@@ -85,11 +85,7 @@ internal abstract class KotlinKProperty<out V>(
                 originalContainer.jClass.enclosingClass
             else
                 originalContainer.jClass
-        try {
-            owner.getDeclaredField(fieldSignature.name)
-        } catch (_: NoSuchFieldException) {
-            null
-        }
+        owner.getDeclaredFieldOrNull(fieldSignature.name, isStatic)
     }
 
     private fun isPropertyWithBackingFieldInOuterClass(): Boolean {
