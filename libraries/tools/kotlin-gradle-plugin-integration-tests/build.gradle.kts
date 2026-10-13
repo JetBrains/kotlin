@@ -1,3 +1,4 @@
+import JunitTag.Companion.excludeTags
 import gradle.GradlePluginVariant
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
@@ -285,25 +286,52 @@ val gradleVersions = listOf(
 )
 
 // Keep in sync with testTags.kt
-enum class JunitTag {
+enum class JunitTag(
+    val parent: JunitTag? = null,
+    /**
+     * Whether this tag should be included in the grouped-by-Gradle-version TeamCity tests.
+     *
+     * Tags must be excluded from the batch tests if:
+     * - Their parent is included (e.g. `WasmKGP` already runs the child tags).
+     * - They are run with specialised TC config (e.g. Swift tags).
+     */
+    val includeInBatchedGradleVersionTests: Boolean = parent == null,
+) {
     JvmKGP,
     DaemonsKGP,
     JsKGP,
     JsBrowserKGP,
+    WasmKGP,
+    WasmJsKGP(parent = WasmKGP),
+    WasmWasiKGP(parent = WasmKGP),
     NativeKGP,
     MppKGP,
     AndroidKGP,
     OtherKGP,
-    SwiftExportKGP,
-    SwiftPMImportKGP
+    SwiftExportKGP(includeInBatchedGradleVersionTests = false),
+    SwiftPMImportKGP(includeInBatchedGradleVersionTests = false);
+
+    /** This tag, its [parent], and its children. */
+    val relatedTags: Set<JunitTag>
+        get() = setOfNotNull(this, parent) + entries.filter { it.parent == this }
+
+    /** Everything except [relatedTags], used to avoid re-running the same tests multiple times in different tasks. */
+    val excludedTags: Set<JunitTag>
+        get() = entries subtract relatedTags
+
+    companion object {
+        fun JUnitPlatformOptions.excludeTags(tags: Collection<JunitTag>) {
+            excludeTags(*tags.map { it.name }.toTypedArray())
+        }
+    }
 }
 
 if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
-    val junitTags = JunitTag.values().filter { it !in setOf(JunitTag.SwiftExportKGP, JunitTag.SwiftPMImportKGP) }.map { it.name }
+    val junitTags = JunitTag.entries.filter { it.includeInBatchedGradleVersionTests }
     val gradleVersionTaskGroup = "Kotlin Gradle Plugin Verification grouped by Gradle version"
 
     junitTags.forEach { junitTag ->
-        val taskPrefix = "kgp${junitTag.substringBefore("KGP")}"
+        val taskPrefix = "kgp${junitTag.name.substringBefore("KGP")}"
         val tasksByGradleVersion = gradleVersions.map { gradleVersion ->
             tasks.register<Test>("${taskPrefix}TestsForGradle_${gradleVersion.replace(".", "_")}") {
                 group = gradleVersionTaskGroup
@@ -316,8 +344,8 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
                 systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 
                 useJUnitPlatform {
-                    includeTags(junitTag)
-                    excludeTags(*(junitTags - junitTag).toTypedArray())
+                    includeTags(junitTag.name)
+                    excludeTags(junitTag.excludedTags)
                 }
             }
         }
@@ -357,7 +385,7 @@ fun JunitTag.taskConfiguration(
 ) = TaskConfiguration(description, taskName, this, maxParallelForks)
 
 if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
-    val perTagJunitTasks = JunitTag.values().map { junitTag ->
+    val perTagJunitTasks = JunitTag.entries.map { junitTag ->
         when (junitTag) {
             JunitTag.JvmKGP -> junitTag.taskConfiguration(
                 "Run tests for Kotlin/JVM part of Gradle plugin",
@@ -379,6 +407,18 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
             JunitTag.JsBrowserKGP -> junitTag.taskConfiguration(
                 "Run tests for Kotlin/JS part of Gradle plugin",
                 "kgpJsBrowserTests",
+            )
+            JunitTag.WasmKGP -> junitTag.taskConfiguration(
+                "Run tests for Kotlin/Wasm part of Gradle plugin, including wasmJs and wasmWasi tests",
+                "kgpWasmTests",
+            )
+            JunitTag.WasmJsKGP -> junitTag.taskConfiguration(
+                "Run tests for Kotlin/Wasm part of Gradle plugin covering the wasmJs target",
+                "kgpWasmJsTests",
+            )
+            JunitTag.WasmWasiKGP -> junitTag.taskConfiguration(
+                "Run tests for Kotlin/Wasm part of Gradle plugin covering the wasmWasi target",
+                "kgpWasmWasiTests",
             )
             JunitTag.NativeKGP -> junitTag.taskConfiguration(
                 "Run tests for Kotlin/Native part of Gradle plugin",
@@ -402,7 +442,7 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
                 maxParallelForks = 1,
             )
         }
-    }.map { junitTask ->
+    }.associateWith { junitTask ->
         tasks.register<Test>(junitTask.taskName) {
             group = KGP_TEST_TASKS_GROUP
             description = junitTask.description
@@ -410,13 +450,14 @@ if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.ge
 
             useJUnitPlatform {
                 includeTags(junitTask.junitTag.name)
-                excludeTags(*JunitTag.values().filterNot { it == junitTask.junitTag }.map { it.name }.toTypedArray())
+                excludeTags(junitTask.junitTag.excludedTags)
             }
         }
     }
 
     tasks.named<Task>("check") {
-        dependsOn(perTagJunitTasks)
+        // Tests of child tags are already run by the parent tag task
+        dependsOn(perTagJunitTasks.filterKeys { it.junitTag.parent == null }.values)
     }
 }
 

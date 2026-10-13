@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJs
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInNative
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInSwiftExport
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.Tag
 
 /**
@@ -59,6 +60,50 @@ annotation class JsGradlePluginTests
 @Tag("JsBrowserKGP")
 @MustRunOnChangesInJs
 annotation class JsBrowserGradlePluginTests
+
+/**
+ * Add it to tests covering Kotlin Gradle Plugin/Wasm platform that are not specific to a single Wasm target.
+ * Tests specific to a single Wasm target should be tagged with [WasmJsGradlePluginTests] or [WasmWasiGradlePluginTests].
+ *
+ * Tests annotated with [WasmJsGradlePluginTests] or [WasmWasiGradlePluginTests] are also tagged with "WasmKGP".
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("WasmKGP")
+@MustRunOnChangesInWasm
+annotation class WasmGradlePluginTests
+
+/**
+ * Add it to tests covering Kotlin Gradle Plugin/Wasm platform with the `wasmJs` target.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("WasmKGP")
+@Tag("WasmJsKGP")
+@MustRunOnChangesInWasm
+annotation class WasmJsGradlePluginTests
+
+/**
+ * Add it to tests covering Kotlin Gradle Plugin/Wasm platform with the `wasmWasi` target.
+ *
+ * You could add tag onto test suite once, but then all tests
+ * in test suite should be for the related tag.
+ * Preferably add tag for each test.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.RUNTIME)
+@Tag("WasmKGP")
+@Tag("WasmWasiKGP")
+@MustRunOnChangesInWasm
+annotation class WasmWasiGradlePluginTests
 
 /**
  * Add it to tests covering Kotlin Gradle Plugin/Native platform.
