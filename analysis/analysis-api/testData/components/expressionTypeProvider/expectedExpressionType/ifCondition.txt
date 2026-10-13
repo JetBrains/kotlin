@@ -1,5 +1,14 @@
-expression: xy
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Boolean
+expression:
+  xy
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Boolean

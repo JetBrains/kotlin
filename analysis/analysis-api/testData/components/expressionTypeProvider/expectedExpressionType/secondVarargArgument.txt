@@ -1,14 +1,32 @@
-expression: { it -> }
-expected type: KaFunctionType:
-  annotations: []
-  typeArguments: [
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/String
-    KaUsualClassType:
-      annotations: []
-      typeArguments: []
-      type: kotlin/Unit
-  ]
-  type: (kotlin/String) -> kotlin/Unit
+expression:
+  { it -> }
+
+expectedType:
+  KaFunctionType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Unit
+    ]
+    type: (kotlin/String) -> kotlin/Unit
+
+inferredExpectedType:
+  KaFunctionType:
+    annotations: []
+    typeArguments: [
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/String
+      KaUsualClassType:
+        annotations: []
+        typeArguments: []
+        type: kotlin/Unit
+    ]
+    type: (kotlin/String) -> kotlin/Unit

@@ -1,5 +1,14 @@
-expression: exception
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: []
-  type: kotlin/Throwable
+expression:
+  exception
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Throwable
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: []
+    type: kotlin/Throwable

@@ -1,5 +1,11 @@
-expression: { a: Int ->
-    val b = 1
-    a + b
-}
-expected type: null
+expression:
+  { a: Int ->
+      val b = 1
+      a + b
+  }
+
+expectedType:
+  null
+
+inferredExpectedType:
+  null

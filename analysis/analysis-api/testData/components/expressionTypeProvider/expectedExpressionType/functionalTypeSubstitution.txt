@@ -1,11 +1,24 @@
-expression: {
-            s: String -> 0
-    }
-expected type: KaUsualClassType:
-  annotations: []
-  typeArguments: [
-    KaFlexibleType:
-      annotations: []
-      type: kotlin/String!
-  ]
-  type: java/lang/Comparable<kotlin/String!>
+expression:
+  {
+              s: String -> 0
+      }
+
+expectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaFlexibleType:
+        annotations: []
+        type: kotlin/String!
+    ]
+    type: java/lang/Comparable<kotlin/String!>
+
+inferredExpectedType:
+  KaUsualClassType:
+    annotations: []
+    typeArguments: [
+      KaFlexibleType:
+        annotations: []
+        type: kotlin/String!
+    ]
+    type: java/lang/Comparable<kotlin/String!>
