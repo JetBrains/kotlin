@@ -44,4 +44,9 @@ internal data class DeclaredDomain(
      * The relationship is one-way: listing another domain here does not require that domain's tests for changes in this domain.
      */
     val mustRunAllTestsOnChangesIn: List<String>,
+
+    /**
+     * The Space team owning this domain, named as in '.space/CODEOWNERS' (e.g. 'Kotlin JVM').
+     */
+    val team: String,
 )

@@ -46,9 +46,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "team": {
+          "type": "string"
         }
       },
-      "required": ["include"]
+      "required": ["include", "team"]
     }
   }
 }
