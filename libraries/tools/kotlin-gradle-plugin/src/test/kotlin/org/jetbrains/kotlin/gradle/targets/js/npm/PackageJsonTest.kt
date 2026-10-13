@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import kotlinx.serialization.json.JsonPrimitive
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import kotlin.test.assertNull
 import java.nio.file.FileSystemException
 
 class PackageJsonTest {
@@ -42,5 +44,85 @@ class PackageJsonTest {
         assertTrue(target.isFile, "Expected $target to be a file.")
         val parsed = fromSrcPackageJson(target)
         assertEquals("foo", parsed?.name)
+    }
+
+    @Test
+    fun `saveTo rewrites an unparseable existing file`(@TempDir tempDir: File) {
+        val target = tempDir.resolve("package.json")
+        // what an interrupted write leaves behind
+        target.writeText("{\"name\": \"fo")
+
+        PackageJson(name = "foo", version = "1.0.0").saveTo(target)
+
+        assertEquals("foo", fromSrcPackageJson(target)?.name)
+    }
+
+    @Test
+    fun `saveTo reads back a file with a byte order mark`(@TempDir tempDir: File) {
+        val target = tempDir.resolve("package.json")
+        PackageJson(name = "foo", version = "1.0.0").saveTo(target)
+        target.writeText("\uFEFF" + target.readText())
+        val stamp = target.lastModified()
+
+        PackageJson(name = "foo", version = "1.0.0").saveTo(target)
+
+        assertEquals(stamp, target.lastModified(), "Expected an unchanged package.json to not be rewritten.")
+    }
+
+    @Test
+    fun `a package json without a name is ignored`(@TempDir tempDir: File) {
+        val target = tempDir.resolve("package.json")
+        target.writeText("{\"version\": \"1.0.0\"}")
+
+        assertNull(fromSrcPackageJson(target))
+    }
+
+    @Test
+    fun `moduleName falls back to the directory name`(@TempDir tempDir: File) {
+        val directory = tempDir.resolve("some-module").also { it.mkdirs() }
+        // a private package may legitimately have no "name"
+        directory.resolve("package.json").writeText("{\"private\": true}")
+
+        assertEquals("some-module", moduleName(directory))
+    }
+
+    @Test
+    fun `customField rejects a value with no JSON representation`(@TempDir tempDir: File) {
+        val target = tempDir.resolve("package.json")
+        val pj = PackageJson(name = "foo", version = "1.0.0")
+        pj.customField("broken", Any())
+
+        assertThrows<IllegalArgumentException> {
+            pj.saveTo(target)
+        }
+    }
+
+    @Test
+    fun `customField writes a Char as a string`(@TempDir tempDir: File) {
+        val target = tempDir.resolve("package.json")
+        PackageJson(name = "foo", version = "1.0.0").apply { customField("separator", '/') }.saveTo(target)
+
+        assertEquals(JsonPrimitive("/"), parsePackageJsonObject(target)["separator"])
+    }
+
+    @Test
+    fun `a dependency package json without a name keeps its dependencies`(@TempDir tempDir: File) {
+        val target = tempDir.resolve("package.json")
+        target.writeText("{\"main\": \"lib.js\", \"dependencies\": {\"left-pad\": \"1.3.0\"}}")
+
+        val parsed = parsePackageJson(target, defaultName = "my-module")
+
+        assertEquals("my-module", parsed?.name)
+        assertEquals("lib.js", parsed?.main)
+        assertEquals(mapOf("left-pad" to "1.3.0"), parsed?.dependencies)
+    }
+
+    @Test
+    fun `a malformed dependency package json fails`(@TempDir tempDir: File) {
+        val target = tempDir.resolve("package.json")
+        target.writeText("{\"name\": \"fo")
+
+        assertThrows<IllegalArgumentException> { parsePackageJson(target, defaultName = "my-module") }
+        assertNull(fromSrcPackageJson(target))
     }
 }

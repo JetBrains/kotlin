@@ -1,15 +1,13 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2026 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.google.gson.GsonBuilder
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
-import com.google.gson.stream.JsonWriter
+import kotlinx.serialization.Serializable
 import org.gradle.internal.hash.FileHasher
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.targets.js.internal.toHex
 import java.io.File
 
@@ -30,67 +28,25 @@ internal open class ProcessedFilesCache(
     stateFileName: String,
     val version: String,
 ) : AutoCloseable {
-    private fun readFrom(json: JsonReader): State? {
+    /** On-disk form of [State]: elements keyed by the hex-encoded hash of their source file. */
+    @Serializable
+    private class StateJson(
+        val version: String,
+        val items: Map<String, Element>,
+    )
+
+    private fun readFrom(text: String): State? {
+        val json = KgpJson.default.decodeFromString(StateJson.serializer(), text)
+        if (json.version != version) return null
+
         val result = State()
-
-        json.obj {
-            check(json.nextName() == "version")
-            val version = json.nextString()
-            if (version != this.version) return null
-
-            check(json.nextName() == "items")
-            json.obj {
-                while (json.peek() == JsonToken.NAME) {
-                    val key = json.nextName()
-                    json.beginObject()
-                    check(json.nextName() == "src")
-                    val src = json.nextString()
-
-                    var target: String? = null
-                    if (json.peek() == JsonToken.NAME) {
-                        check(json.nextName() == "target")
-                        if (json.peek() != JsonToken.NULL) {
-                            target = json.nextString()
-                        }
-                    }
-                    json.endObject()
-
-                    result[decodeHexString(key)] = Element(src, target)
-                }
-            }
-        }
-
+        json.items.forEach { (hash, element) -> result[decodeHexString(hash)] = element }
         return result
     }
 
-    private fun State.writeTo(json: JsonWriter) {
-        json.obj {
-            json.name("version").value(version)
-            json.name("items")
-            json.obj {
-                byHash.forEach {
-                    json.name(it.key.contents.toHex())
-                    json.obj {
-                        json.name("src").value(it.value.src)
-                        json.name("target")
-                        if (it.value.target == null) json.nullValue() else json.value(it.value.target)
-                    }
-                }
-            }
-
-        }
-    }
-
-    private inline fun JsonReader.obj(body: () -> Unit) {
-        beginObject()
-        body()
-        endObject()
-    }
-
-    private inline fun JsonWriter.obj(body: () -> Unit) {
-        beginObject()
-        body()
-        endObject()
+    private fun State.toJsonText(): String {
+        val json = StateJson(version, byHash.entries.associate { (hash, element) -> hash.contents.toHex() to element })
+        return KgpJson.prettyPrinted.encodeToString(StateJson.serializer(), json)
     }
 
     private fun decodeHexString(hexString: String): ByteArray {
@@ -148,9 +104,10 @@ internal open class ProcessedFilesCache(
         }
     }
 
+    @Serializable
     data class Element(
         val src: String,
-        val target: String?,
+        val target: String? = null,
     )
 
     private val stateFile = targetDir.resolve(stateFileName)
@@ -161,7 +118,7 @@ internal open class ProcessedFilesCache(
 
         state = (if (stateFile.exists()) {
             try {
-                GsonBuilder().setPrettyPrinting().create().newJsonReader(stateFile.reader()).use { readFrom(it) }
+                readFrom(stateFile.readText())
             } catch (e: Throwable) {
                 System.err.println("Cannot read $stateFile")
                 e.printStackTrace()
@@ -214,8 +171,6 @@ internal open class ProcessedFilesCache(
 
     override fun close() {
         stateFile.parentFile.mkdirs()
-        GsonBuilder().setPrettyPrinting().create().newJsonWriter(stateFile.writer()).use {
-            state.writeTo(it)
-        }
+        stateFile.writeText(state.toJsonText())
     }
 }
