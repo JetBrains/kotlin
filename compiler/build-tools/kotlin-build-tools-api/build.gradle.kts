@@ -57,7 +57,7 @@ generatedSourcesTask(
             generationRoot.toString(),
             version.toString(),
             "api",
-            "jvmCompilerArguments,wasmArguments,jsArguments,metadataArguments",
+            "jvmCompilerArguments,wasmArguments,jsArguments,metadataArguments,nativeArguments",
         )
     }
 )
