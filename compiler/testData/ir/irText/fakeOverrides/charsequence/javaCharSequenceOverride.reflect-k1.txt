@@ -5,6 +5,7 @@ KClass: abstract interface A : CharSequence, Any
     public open fun A.codePoints(): java.util.stream.IntStream!
     public open operator fun A.equals(kotlin.Any?): kotlin.Boolean
     public open fun A.hashCode(): kotlin.Int
+    public open fun A.isEmpty(): kotlin.Boolean
     public abstract fun A.length(): kotlin.Int
     public abstract fun A.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
     public open fun A.toString(): kotlin.String
@@ -18,6 +19,7 @@ KClass: class B : A, Any
     public open fun B.codePoints(): java.util.stream.IntStream!
     public open operator fun B.equals(kotlin.Any?): kotlin.Boolean
     public open fun B.hashCode(): kotlin.Int
+    public open fun B.isEmpty(): kotlin.Boolean
     public open fun B.length(): kotlin.Int
     public open fun B.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun B.toString(): kotlin.String
@@ -34,6 +36,7 @@ KClass: class C : Java1
     public open operator fun C.equals(kotlin.Any?): kotlin.Boolean
     public open operator fun C.get(kotlin.Int): kotlin.Char
     public open fun C.hashCode(): kotlin.Int
+    public open fun C.isEmpty(): kotlin.Boolean
     public open fun C.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun C.toString(): kotlin.String
     public open val C.length: kotlin.Int
@@ -47,6 +50,7 @@ KClass: class D : Java1
     public open operator fun D.equals(kotlin.Any?): kotlin.Boolean
     public open operator fun D.get(kotlin.Int): kotlin.Char
     public open fun D.hashCode(): kotlin.Int
+    public open fun D.isEmpty(): kotlin.Boolean
     public open fun D.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun D.toString(): kotlin.String
     public open val D.length: kotlin.Int
@@ -62,6 +66,7 @@ KClass: class E : Java1, Java2
     public open operator fun E.equals(kotlin.Any?): kotlin.Boolean
     public open operator fun E.get(kotlin.Int): kotlin.Char
     public open fun E.hashCode(): kotlin.Int
+    public open fun E.isEmpty(): kotlin.Boolean
     public open fun E.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun E.toString(): kotlin.String
     public open val E.length: kotlin.Int
@@ -77,11 +82,13 @@ KClass: class F : Java1, KotlinInterface
     public open operator fun F.get(kotlin.Int): kotlin.Char
     public open operator fun F.get(kotlin.Number): kotlin.Char
     public open fun F.hashCode(): kotlin.Int
+    public open fun F.isEmpty(): kotlin.Boolean
     public open fun F.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun F.toString(): kotlin.String
     public open val F.length: kotlin.Int
   declaredMembers:
     public open operator fun F.get(kotlin.Number): kotlin.Char
+    public open fun F.isEmpty(): kotlin.Boolean
 KClass: class G : Java1, KotlinInterface
   constructors:
     public final fun `<init>`(): G
@@ -92,6 +99,7 @@ KClass: class G : Java1, KotlinInterface
     public open operator fun G.get(kotlin.Int): kotlin.Char
     public open operator fun G.get(kotlin.Number): kotlin.Char
     public open fun G.hashCode(): kotlin.Int
+    public open fun G.isEmpty(): kotlin.Boolean
     public open fun G.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun G.toString(): kotlin.String
     public open val G.length: kotlin.Int
@@ -108,6 +116,7 @@ KClass: class H : Java1, Java2, KotlinInterface
     public open operator fun H.get(kotlin.Int): kotlin.Char
     public open operator fun H.get(kotlin.Number): kotlin.Char
     public open fun H.hashCode(): kotlin.Int
+    public open fun H.isEmpty(): kotlin.Boolean
     public open fun H.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun H.toString(): kotlin.String
     public open val H.length: kotlin.Int
@@ -123,6 +132,7 @@ KClass: class I : Java1, Java2, Java3
     public open operator fun I.equals(kotlin.Any?): kotlin.Boolean
     public open operator fun I.get(kotlin.Int): kotlin.Char
     public open fun I.hashCode(): kotlin.Int
+    public open fun I.isEmpty(): kotlin.Boolean
     public open fun I.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun I.toString(): kotlin.String
     public open val I.length: kotlin.Int
@@ -137,6 +147,7 @@ KClass: abstract class J : Java4
     public open fun J.codePoints(): java.util.stream.IntStream!
     public open operator fun J.equals(kotlin.Any?): kotlin.Boolean
     public open fun J.hashCode(): kotlin.Int
+    public open fun J.isEmpty(): kotlin.Boolean
     public abstract fun J.length(): kotlin.Int
     public abstract fun J.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
     public open fun J.toString(): kotlin.String
@@ -150,6 +161,7 @@ KClass: class Java1 : CharSequence, Any
     public open operator fun Java1.equals(kotlin.Any?): kotlin.Boolean
     public open operator fun Java1.get(kotlin.Int): kotlin.Char
     public open fun Java1.hashCode(): kotlin.Int
+    public open fun Java1.isEmpty(): kotlin.Boolean
     public open fun Java1.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun Java1.toString(): kotlin.String
     public open val Java1.length: kotlin.Int
@@ -182,6 +194,7 @@ KClass: abstract class Java4 : A, Any
     public open fun Java4.codePoints(): java.util.stream.IntStream!
     public open operator fun Java4.equals(kotlin.Any?): kotlin.Boolean
     public open fun Java4.hashCode(): kotlin.Int
+    public open fun Java4.isEmpty(): kotlin.Boolean
     public abstract fun Java4.length(): kotlin.Int
     public abstract fun Java4.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence!
     public open fun Java4.toString(): kotlin.String
@@ -195,6 +208,7 @@ KClass: class K : Java4
     public open fun K.codePoints(): java.util.stream.IntStream!
     public open operator fun K.equals(kotlin.Any?): kotlin.Boolean
     public open fun K.hashCode(): kotlin.Int
+    public open fun K.isEmpty(): kotlin.Boolean
     public open fun K.length(): kotlin.Int
     public open fun K.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun K.toString(): kotlin.String
@@ -222,6 +236,7 @@ KClass: abstract class L : Java1, A
     public open operator fun L.equals(kotlin.Any?): kotlin.Boolean
     public open operator fun L.get(kotlin.Int): kotlin.Char
     public open fun L.hashCode(): kotlin.Int
+    public open fun L.isEmpty(): kotlin.Boolean
     public abstract fun L.length(): kotlin.Int
     public open fun L.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun L.toString(): kotlin.String
@@ -229,6 +244,7 @@ KClass: abstract class L : Java1, A
   declaredMembers:
     public open fun L.chars(): java.util.stream.IntStream
     public open fun L.codePoints(): java.util.stream.IntStream
+    public open fun L.isEmpty(): kotlin.Boolean
 KClass: abstract class M : Java1, CharSequence
   constructors:
     public final fun `<init>`(): M
@@ -239,6 +255,7 @@ KClass: abstract class M : Java1, CharSequence
     public open operator fun M.equals(kotlin.Any?): kotlin.Boolean
     public open operator fun M.get(kotlin.Int): kotlin.Char
     public open fun M.hashCode(): kotlin.Int
+    public open fun M.isEmpty(): kotlin.Boolean
     public abstract fun M.length(): kotlin.Int
     public open fun M.subSequence(kotlin.Int, kotlin.Int): kotlin.CharSequence
     public open fun M.toString(): kotlin.String
@@ -246,5 +263,6 @@ KClass: abstract class M : Java1, CharSequence
   declaredMembers:
     public open fun M.chars(): java.util.stream.IntStream
     public open fun M.codePoints(): java.util.stream.IntStream
+    public open fun M.isEmpty(): kotlin.Boolean
 KPackage: _1Kt
   public final fun test(A, B, C, D, E, F, G, H, I, J, K, L, M): kotlin.Unit
