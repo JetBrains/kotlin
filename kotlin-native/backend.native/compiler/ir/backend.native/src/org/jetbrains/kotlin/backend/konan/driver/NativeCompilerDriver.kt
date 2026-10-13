@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.llvm.LlvmEnvironment
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.llvm.createLlvmBackendConfigForOutputModuleFrom
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
+import org.jetbrains.kotlin.backend.konan.llvm.withLlvmBackendContext
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -133,19 +135,21 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
     }
 
     private fun produceBinaryFromBitcode(engine: PhaseEngine<NativeBackendPhaseContext>, config: NativeSecondStageCompilationConfig, bitcodeFilePath: String) {
-        val llvmContext = LLVMContextCreate()!!
-        var llvmModule: CPointer<LLVMOpaqueModule>? = null
-        try {
-            llvmModule = parseBitcodeFile(engine.context, engine.context.diagnosticReporter, llvmContext, bitcodeFilePath)
-            val context = BitcodePostProcessingContextImpl(config, llvmModule, llvmContext)
-            val depsPath = config.readSerializedDependencies
-            val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
-                config.configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "No backend dependencies provided.")
-            } else DependenciesTrackingResult.deserialize(depsPath, Path(depsPath).readLines(), config)
-            engine.runBitcodeBackend(context, dependencies)
-        } finally {
-            llvmModule?.let { LLVMDisposeModule(it) }
-            LLVMContextDispose(llvmContext)
+        withLlvmBackendContext(createLlvmBackendConfigForOutputModuleFrom(engine.context)) {
+            val llvmContext = LLVMContextCreate()!!
+            var llvmModule: CPointer<LLVMOpaqueModule>? = null
+            try {
+                llvmModule = parseBitcodeFile(engine.context, engine.context.diagnosticReporter, llvmContext, bitcodeFilePath)
+                val context = BitcodePostProcessingContextImpl(config, llvmModule, llvmContext)
+                val depsPath = config.readSerializedDependencies
+                val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
+                    config.configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "No backend dependencies provided.")
+                } else DependenciesTrackingResult.deserialize(depsPath, Path(depsPath).readLines(), config)
+                engine.runBitcodeBackend(context, this, dependencies)
+            } finally {
+                llvmModule?.let { LLVMDisposeModule(it) }
+                LLVMContextDispose(llvmContext)
+            }
         }
     }
 

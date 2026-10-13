@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.backend.konan.driver.PerformanceManagerContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmBackendContext
+import org.jetbrains.kotlin.backend.konan.llvm.createLlvmBackendConfigForOutputModuleFrom
+import org.jetbrains.kotlin.backend.konan.llvm.withLlvmBackendContext
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
@@ -222,7 +225,11 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
+                    // One LLVM backend context per fragment, so that fragments compiled in parallel never share a target machine.
+                    withLlvmBackendContext(createLlvmBackendConfigForOutputModuleFrom(generationState)) {
+                        val llvmBackendContext = this
+                        generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles, llvmBackendContext)
+                    }
                     // Split here
                     val dependenciesTrackingResult = generationStateEngine.collectAndMaybeSerializeDependencies()
                     val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
@@ -287,15 +294,22 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
     }
 }
 
+/**
+ * Post-processes the LLVM module of [context], then compiles and links it.
+ *
+ * [llvmBackendContext] is borrowed: it is owned by the caller.
+ */
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
-        context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult,
+        context: BitcodePostProcessingContext,
+        llvmBackendContext: LlvmBackendContext,
+        dependencies: DependenciesTrackingResult,
 ) {
     useContext(context) { bitcodeEngine ->
         val tempFiles = createTempFiles(context.config, null)
         val bitcodeFile = tempFiles.createBitcodeFile(context.config.shortModuleName ?: "out")
         val outputPath = context.config.outputPath
         val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
-        bitcodeEngine.runBitcodePostProcessing()
+        bitcodeEngine.runBitcodePostProcessing(llvmBackendContext)
         runInsertEntryPointAliasPhaseIfNeededTo(context.llvm.module)
         runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
         val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
@@ -413,21 +427,24 @@ internal data class ModuleCompilationOutput(
  * 3. Translates IR to LLVM IR.
  * 4. Optimizes it.
  * 5. Serializes it to a bitcode file.
+ *
+ * [llvmBackendContext] is borrowed: it is owned by the caller.
  */
 internal fun PhaseEngine<NativeGenerationState>.compileModule(
         module: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         bitcodeFile: Path,
         cExportFiles: CExportFiles?,
+        llvmBackendContext: LlvmBackendContext,
 ) {
     runBackendCodegen(module, irBuiltIns, cExportFiles)
-    runPostCodegen()
+    runPostCodegen(llvmBackendContext)
     runInsertEntryPointAliasPhaseIfNeededTo(context.llvm.module)
     runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runPostCodegen() {
-    newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
+internal fun PhaseEngine<NativeGenerationState>.runPostCodegen(llvmBackendContext: LlvmBackendContext) {
+    newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing(llvmBackendContext) }
     if (context.config.produce.isFullCache) {
         runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
     }
