@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.invoke
 import org.gradle.kotlin.dsl.kotlin
@@ -346,7 +347,12 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
             buildAndFail(
                 ":assemble",
-                buildOptions = buildOptions.copy(continueAfterFailure = true, separateCompilation = true)
+                buildOptions = buildOptions.copy(
+                    continueAfterFailure = true,
+                    separateCompilation = true,
+                    // FIXME: KT-89618
+                    warningMode = WarningMode.Summary,
+                )
             ) {
                 // ensures no unexpected task dependencies are added
                 val libraryTasks = setOf(

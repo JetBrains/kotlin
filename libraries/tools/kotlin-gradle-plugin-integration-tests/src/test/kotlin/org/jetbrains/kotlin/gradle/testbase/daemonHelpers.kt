@@ -12,6 +12,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.deleteIfExists
 import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.notExists
 import kotlin.jvm.optionals.getOrNull
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -37,6 +38,8 @@ fun awaitKotlinDaemonTermination(
     periodicCheckTime: Duration = 100.milliseconds,
     forceKillWaitTime: Duration = 1.seconds,
 ) {
+    if (runFilesDirectory.notExists()) return // Compilation is running in-process mode
+
     require(Files.isDirectory(runFilesDirectory)) { "${runFilesDirectory.toAbsolutePath().normalize()} is not a directory." }
     require(maxWaitTime >= periodicCheckTime) { "$periodicCheckTime must be >= $maxWaitTime" }
 

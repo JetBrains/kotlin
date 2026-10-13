@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -17,7 +18,11 @@ class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
     @DisplayName("EnumEntries should not be accessible without kotlin.enums.EnumEntries")
     @GradleTest
     fun enumEntriesNotAccessible(gradleVersion: GradleVersion) {
-        project("enumEntriesNotAccessible", gradleVersion) {
+        project(
+            "enumEntriesNotAccessible",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail),
+        ) {
             // FIXME(KT-69597): Previously hardcoded to language version 2.0.
             buildGradleKts.replaceText("<language-version>", "KotlinVersion.${KotlinVersion.DEFAULT.name}")
 
