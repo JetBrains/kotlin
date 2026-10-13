@@ -1,8 +1,6 @@
 // ISSUE: KT-89739
-// IGNORE_BACKEND: JVM
-// (currently all properties are left unchanged, as given in their initializers)
 
-import lombok.Builder;
+import lombok.Builder
 
 @Builder
 class Mutable {
