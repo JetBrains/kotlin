@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
@@ -114,6 +115,7 @@ abstract class KaptBaseIT : KGPBaseTest() {
 /**
  * Runs the whole [KaptIT] suite with the annotation processor classloaders cache enabled.
  */
+@MustRunOnChangesInCompilerPlugins
 @DisplayName("Kapt with classloaders cache")
 class KaptClassLoadersCacheIT : KaptIT() {
     override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
@@ -152,6 +154,8 @@ class KaptClassLoadersCacheIT : KaptIT() {
 @MustRunOnChangesInGradle
 @MustRunOnChangesInCompilerPlugins
 open class KaptIT : KaptBaseIT() {
+
+    @MustRunOnChangesInGradle
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
@@ -163,6 +167,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("KT-63366: Adding kapt AP dependency in afterEvaluate for custom SourceSet")
     @GradleTest
     fun testKaptCustomSourceSetDependencyAfterEvaluate(gradleVersion: GradleVersion) {
@@ -189,6 +194,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Kapt is not skipped when all annotation processors are declared as indirect dependencies")
     @GradleTest
     fun testKaptNotSkippedWithIndirectDependencies(gradleVersion: GradleVersion) {
@@ -256,6 +262,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Additional Kapt jvm arguments are passed to the process")
     @GradleTest
     internal fun additionalJvmArgumentsArePassed(gradleVersion: GradleVersion) {
@@ -285,6 +292,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Warning is produced on additional Kapt jvm arguments and 'none' workers isolation mode")
     @GradleTest
     internal fun warningOnNoneIsolationModeAndAdditionalJvmArguments(gradleVersion: GradleVersion) {
@@ -337,6 +345,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Kapt tasks is up-to-date on the second run")
     @GradleTest
     fun testSimple(gradleVersion: GradleVersion) {
@@ -390,6 +399,7 @@ open class KaptIT : KaptBaseIT() {
 
     @DisplayName("Kapt is working with incremental compilation")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testSimpleWithIC(gradleVersion: GradleVersion) {
         project(
             "simple".withPrefix,
@@ -421,6 +431,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Disabled incremental compilation should disable it also for generate stubs task")
     @GradleTest
     fun testDisableIcForGenerateStubs(gradleVersion: GradleVersion) {
@@ -471,6 +482,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("generated directory is up-to-date on binary annotation remove")
     @GradleTest
     fun testGeneratedDirectoryIsUpToDate(gradleVersion: GradleVersion) {
@@ -516,6 +528,7 @@ open class KaptIT : KaptBaseIT() {
 
     @DisplayName("Should incrementally rebuild on java class deletion")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testRemoveJavaClassICRebuild(gradleVersion: GradleVersion) {
         testICRebuild(gradleVersion) { project ->
             project.javaSourcesDir().resolve("foo/Foo.java").deleteExisting()
@@ -524,6 +537,7 @@ open class KaptIT : KaptBaseIT() {
 
     @DisplayName("Should incrementally rebuild on classpath change")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     open fun testChangeClasspathICRebuild(gradleVersion: GradleVersion) {
         testICRebuild(gradleVersion) { project ->
             project.buildGradle.modify {
@@ -535,6 +549,7 @@ open class KaptIT : KaptBaseIT() {
     @DisplayName("Should incrementally rebuild on annotation processor arguments change")
     @GradleTest
     @TestMetadata("kapt/arguments")
+    @MustRunOnChangesInBuildToolsApi
     fun testChangeAPArgumentsICRebuild(gradleVersion: GradleVersion) {
         project("arguments".withPrefix, gradleVersion) {
             build("build") {
@@ -603,6 +618,7 @@ open class KaptIT : KaptBaseIT() {
 
     @DisplayName("Should run processing incrementally on annotation removal")
     @GradleTest
+    @MustRunOnChangesInBuildToolsApi
     fun testRemoveAnnotationIC(gradleVersion: GradleVersion) {
         project(
             "simple".withPrefix,
@@ -649,6 +665,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("compile arguments are properly copied from compileKotlin to kaptTask")
     @GradleTest
     fun testCopyCompileArguments(gradleVersion: GradleVersion) {
@@ -725,6 +742,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("should fail to add dependency into 'kapt' configuration when plugin is not applied")
     @GradleTest
     fun testNoKaptPluginApplied(gradleVersion: GradleVersion) {
@@ -736,6 +754,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Should re-run kapt on changes in local annotation processor")
     @GradleTest
     open fun testChangesInLocalAnnotationProcessor(gradleVersion: GradleVersion) {
@@ -860,6 +879,7 @@ open class KaptIT : KaptBaseIT() {
         Regex("""kapt-probe-host (\S+)""").find(output)?.groupValues?.get(1)
             ?: error("The annotation processor did not report the hosting process")
 
+    @MustRunOnChangesInGradle
     @DisplayName("should not resolve 'kapt' configuration during build configuration phase")
     @GradleTest
     fun testKaptConfigurationLazyResolution(gradleVersion: GradleVersion) {
@@ -874,6 +894,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Should be possible to disable discovery in compile classpath")
     @GradleTest
     open fun testDisableDiscoveryInCompileClasspath(gradleVersion: GradleVersion) {
@@ -902,6 +923,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("up-to-date checks are working")
     @GradleTest
     fun testKaptAvoidance(gradleVersion: GradleVersion) {
@@ -1056,6 +1078,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Dependency on kapt module should not resolve all configurations")
     @GradleTest
     fun testDependencyOnKaptModule(gradleVersion: GradleVersion) {
@@ -1198,6 +1221,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("KT-46651: kapt is tracking source files properly with configuration cache enabled")
     @GradleTest
     open fun kaptGenerateStubsShouldNotCaptureSourcesStateInConfigurationCache(gradleVersion: GradleVersion) {
@@ -1219,6 +1243,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("KT-47347: kapt processors should not be an input files for stub generation")
     @GradleTest
     open fun testChangesToKaptConfigurationDoNotTriggerStubGeneration(gradleVersion: GradleVersion) {
@@ -1247,6 +1272,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("KT-52392: Setup with different windows disks does not fail configuration")
     @GradleTest
     @OsCondition(supportedOn = [OS.WINDOWS], enabledOnCI = [OS.WINDOWS])
@@ -1300,6 +1326,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("Generated sources attached to KotlinSourceSet are also used by generate stubs task")
     @GradleTest
     fun testGeneratedSourcesUsedInGenerateStubsTask(gradleVersion: GradleVersion) {
@@ -1370,6 +1397,7 @@ open class KaptIT : KaptBaseIT() {
         }
     }
 
+    @MustRunOnChangesInGradle
     @DisplayName("KT-59256: kapt generated files are included into the test runtime classpath")
     @GradleTest
     fun testKaptGeneratedInTestRuntimeClasspath(gradleVersion: GradleVersion) {
