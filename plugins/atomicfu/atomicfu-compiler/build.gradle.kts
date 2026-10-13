@@ -1,9 +1,7 @@
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.konan.target.HostManager
 
 description = "Atomicfu Compiler Plugin"
 val buildFeatures = serviceOf<BuildFeatures>()
@@ -16,9 +14,6 @@ plugins {
     id("test-inputs-check")
     id("java-test-fixtures")
 }
-
-// WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
-val nativeTargetName = HostManager.host.name
 
 val antLauncherJar = configurations.create("antLauncherJar")
 val testJsRuntime = configurations.create("testJsRuntime") {
@@ -40,8 +35,7 @@ val atomicfuJvmClasspath = configurations.create("atomicfuJvmClasspath")
 val atomicfuNativeKlib = configurations.create("atomicfuNativeKlib") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
-        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        hostKonanTargetAttribute()
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
     }

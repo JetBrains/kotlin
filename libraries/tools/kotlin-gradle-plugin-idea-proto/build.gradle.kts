@@ -90,7 +90,7 @@ run {
         protoc(libs.protoc) {
             artifact {
                 type = "exe"
-                classifier = when (HostManager.host) {
+                classifier = when (HostManager.hostOrNull) {
                     MACOS_ARM64 -> "osx-aarch_64"
                     MACOS_X64 -> "osx-x86_64"
                     MINGW_X64 -> "windows-x86_64"
