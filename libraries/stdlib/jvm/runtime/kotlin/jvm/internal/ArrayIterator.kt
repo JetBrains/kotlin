@@ -5,7 +5,7 @@
 
 package kotlin.jvm.internal
 
-private class ArrayIterator<T>(val array: Array<T>) : Iterator<T> {
+private class ArrayIterator<T>(private val array: Array<T>) : Iterator<T> {
     private var index = 0
     override fun hasNext() = index < array.size
     override fun next() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
