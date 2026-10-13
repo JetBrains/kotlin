@@ -711,8 +711,8 @@ class WasmGroupedStageBoxRunnerAttributionTest {
 
     @Test
     fun `given test infos with colliding package hashes then launcher names remain distinct`() {
-        val first = KotlinTestInfo("org.jetbrains.kotlin.wasm.test.Aa", "test", emptySet())
-        val second = KotlinTestInfo("org.jetbrains.kotlin.wasm.test.BB", "test", emptySet())
+        val first = KotlinTestInfo("org.jetbrains.kotlin.wasm.test.Test", "testAa", emptySet())
+        val second = KotlinTestInfo("org.jetbrains.kotlin.wasm.test.Test", "testBB", emptySet())
 
         assertEquals(computePackage(first).hashCode(), computePackage(second).hashCode())
         assertNotEquals(
