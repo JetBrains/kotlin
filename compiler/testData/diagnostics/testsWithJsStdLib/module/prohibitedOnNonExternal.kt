@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
-
+// RENDER_DIAGNOSTICS_FULL_TEXT
 package foo
 
 @JsModule("A")
@@ -14,3 +13,6 @@ fun foo()<!> = 23
 
 <!JS_MODULE_PROHIBITED_ON_NON_EXTERNAL!>@JsModule("bar")
 val bar<!> = 42
+
+<!JS_MODULE_PROHIBITED_ON_NON_EXTERNAL!>@JsNonModule
+val baz<!> = 99

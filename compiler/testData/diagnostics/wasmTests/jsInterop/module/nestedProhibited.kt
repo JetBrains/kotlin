@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+// RENDER_DIAGNOSTICS_FULL_TEXT
 @file:JsModule("foo")
 package foo
 

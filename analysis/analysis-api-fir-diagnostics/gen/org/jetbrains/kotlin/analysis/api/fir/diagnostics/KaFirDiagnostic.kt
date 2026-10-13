@@ -1929,13 +1929,6 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
-    public interface JsModuleProhibitedOnNonNative : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass: KClass<JsModuleProhibitedOnNonNative>
-            get() = JsModuleProhibitedOnNonNative::class
-    }
-
-    @KaUnstableDiagnosticApi
-    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface JsModuleProhibitedOnVarInModuleFileError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<JsModuleProhibitedOnVarInModuleFileError>
             get() = JsModuleProhibitedOnVarInModuleFileError::class
@@ -2127,6 +2120,17 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface JsModuleProhibitedOnVar : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<JsModuleProhibitedOnVar>
             get() = JsModuleProhibitedOnVar::class
+
+        public val annotation: KaType
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnNonExternal : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnNonExternal>
+            get() = JsModuleProhibitedOnNonExternal::class
+
+        public val annotation: KaType
     }
 
     @KaUnstableDiagnosticApi
@@ -2134,6 +2138,8 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     public interface NestedJsModuleProhibited : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<NestedJsModuleProhibited>
             get() = NestedJsModuleProhibited::class
+
+        public val annotation: KaType
     }
 
     @KaUnstableDiagnosticApi

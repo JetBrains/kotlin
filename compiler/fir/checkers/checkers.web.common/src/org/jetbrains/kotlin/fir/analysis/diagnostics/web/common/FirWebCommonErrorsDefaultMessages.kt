@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErro
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.WRONG_JS_EXPORT_TARGET_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors.NAMED_COMPANION_IN_EXTERNAL_INTERFACE
@@ -117,10 +118,20 @@ object FirWebCommonErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "External type extends non-external type ''{0}''.",
             FirDiagnosticRenderers.RENDER_TYPE
         )
-        map.put(JS_MODULE_PROHIBITED_ON_VAR, "'@JsModule' annotation is prohibited for 'var' declarations. Use 'val' instead.")
+        map.put(
+            JS_MODULE_PROHIBITED_ON_VAR,
+            "''@{0}'' annotation is prohibited for ''var'' declarations. Use ''val'' instead.",
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
+        map.put(
+            JS_MODULE_PROHIBITED_ON_NON_EXTERNAL,
+            "''@{0}'' annotation is prohibited for non-external declarations.",
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
         map.put(
             NESTED_JS_MODULE_PROHIBITED,
-            "'@JsModule' and '@JsNonModule' cannot appear here since the file is already marked by either '@JsModule' or '@JsNonModule'."
+            "''@{0}'' cannot appear here since the file is already marked with a module annotation.",
+            FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
