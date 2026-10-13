@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.lombok.generators.BuilderDeclarationType
 import org.jetbrains.kotlin.lombok.generators.BuilderGeneratorKey
 import org.jetbrains.kotlin.lombok.LombokNames
+import org.jetbrains.kotlin.lombok.generators.decapitalize
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -124,6 +125,7 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
         val regularParameters = callable.parameters.filter { it.kind == IrParameterKind.Regular }
 
         val resolvedValues = mutableMapOf<IrValueSymbol, IrValueSymbol>()
+        val processedNames = mutableSetOf<Name>()
         for (parameter in regularParameters) {
             val field = builderClass.findBuilderField(parameter.name) ?: continue
             val fieldRead = irGetField(irGet(thisParameter), field)
@@ -136,6 +138,7 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             }
             val temp = irTemporary(value, nameHint = parameter.name.identifier)
             resolvedValues[parameter.symbol] = temp.symbol
+            processedNames.add(parameter.name)
         }
 
         val call = irInvokeEntityCallable(declaration, builderClass, entityClass, callable)
@@ -145,7 +148,28 @@ object BuilderBodyBuilder : IrBodyBuilder<BuilderGeneratorKey>() {
             call.arguments[index] = irGet(tempSymbol.owner)
         }
 
-        +irReturn(call)
+        val builderProperties = builderClass.declarations.filterIsInstance<IrProperty>()
+        val entityProperties = entityClass.declarations.filterIsInstance<IrProperty>()
+        // Either tempInstance is initialized and instanceInitialized is true, or vice versa for both
+        val tempInstance by lazy { irTemporary(call, nameHint = builderClass.name.asString().decapitalize()) }
+        var instanceInitialized = false
+        for (builderProperty in builderProperties) {
+            if (builderProperty.name in processedNames) continue
+            val field = builderProperty.backingField ?: continue
+            val entityProperty = entityProperties.firstOrNull { it.name == builderProperty.name } ?: continue
+            if (!entityProperty.isVar) continue
+            instanceInitialized = true
+            val fieldRead = irGetField(irGet(thisParameter), field)
+            +irCall(entityProperty.setter!!.symbol, pluginContext.irBuiltIns.unitType).apply {
+                arguments[0] = irGet(tempInstance)
+                arguments[1] = fieldRead
+            }
+        }
+        if (instanceInitialized) {
+            +irReturn(irGet(tempInstance))
+        } else {
+            +irReturn(call)
+        }
     }
 
     /** `if ($set) field else <default expression, with earlier-parameter references resolved to their temps>`. */
