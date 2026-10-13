@@ -15,20 +15,19 @@ external class JsObject {
 
     @nativeSetter
     fun put(a: Int, v: Any?): Unit = definedExternally
+
+    @nativeGetter
+    operator fun get(a: Int): Any? = definedExternally
+
+    @nativeSetter
+    operator fun set(a: Int, v: Any?): Unit = definedExternally
+
+    @nativeGetter
+    fun take(a: String): Any? = definedExternally
+
+    @nativeSetter
+    fun put(a: String, v: Any?): Unit = definedExternally
 }
-
-@nativeGetter
-operator fun JsObject.get(a: Int): Any? = definedExternally
-
-@nativeSetter
-operator fun JsObject.set(a: Int, v: Any?): Unit = definedExternally
-
-@nativeGetter
-fun JsObject.take(a: String): Any? = definedExternally
-
-@nativeSetter
-fun JsObject.put(a: String, v: Any?): Unit = definedExternally
-
 
 object t{}
 
@@ -50,7 +49,7 @@ fun test(obj: JsObject, key: Int, oldValue: Any?, newValue: Any) {
     assertEquals(null, obj.take(key))
 }
 
-fun testExtensions(obj: JsObject, key: Int, oldValue: Any?, newValue: Any) {
+fun testOverloads(obj: JsObject, key: Int, oldValue: Any?, newValue: Any) {
     assertEquals(oldValue, obj[key])
     obj[key] = newValue
     assertEquals(newValue, obj[key])
@@ -58,7 +57,7 @@ fun testExtensions(obj: JsObject, key: Int, oldValue: Any?, newValue: Any) {
     assertEquals(null, obj[key])
 }
 
-fun testExtensions(obj: JsObject, key: String, oldValue: Any?, newValue: Any) {
+fun testOverloads(obj: JsObject, key: String, oldValue: Any?, newValue: Any) {
     assertEquals(oldValue, obj.take(key))
     obj.put(key, newValue)
     assertEquals(newValue, obj.take(key))
@@ -80,14 +79,14 @@ fun box(): String {
 
     val b = getTestObject()
 
-    testExtensions(b, "foo", "boo", "moo")
-    testExtensions(b, "bar", 35, 67)
-    testExtensions(b, "baz", undefined, 34)
-    testExtensions(b, "qoox", undefined, t)
-    testExtensions(b, 0, "ok", "OK!")
-    testExtensions(b, 1, 2, 3)
-    testExtensions(b, 2, undefined, "HI")
-    testExtensions(b, 5, undefined, t)
+    testOverloads(b, "foo", "boo", "moo")
+    testOverloads(b, "bar", 35, 67)
+    testOverloads(b, "baz", undefined, 34)
+    testOverloads(b, "qoox", undefined, t)
+    testOverloads(b, 0, "ok", "OK!")
+    testOverloads(b, 1, 2, 3)
+    testOverloads(b, 2, undefined, "HI")
+    testOverloads(b, 5, undefined, t)
 
     return "OK"
 }

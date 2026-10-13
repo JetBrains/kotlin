@@ -22,9 +22,6 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
             LanguageFeature.ProhibitVarInJsModuleFile,
             PositioningStrategy.VAL_OR_VAR_NODE,
         )
-        val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
-            parameter<ConeKotlinType>("type")
-        }
     }
 
     val EXTERNALS by object : DiagnosticGroup("Externals") {

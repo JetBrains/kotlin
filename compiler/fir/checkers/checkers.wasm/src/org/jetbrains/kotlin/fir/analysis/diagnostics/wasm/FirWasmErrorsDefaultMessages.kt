@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_W
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NESTED_WASM_EXPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NESTED_WASM_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE
@@ -40,11 +39,6 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE,
             "'var' declarations are prohibited in files annotated with '@JsModule' without '@JsQualifier'. Instead, use 'val' or add '@JsQualifier'."
-        )
-        map.put(
-            NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN,
-            "Annotation ''{0}'' is only allowed on member functions of declarations annotated with ''kotlin.js.native'' functions.",
-            FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
             NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE,

@@ -1,9 +1,9 @@
-// RUN_PIPELINE_TILL: CODEGEN
+// RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -DEPRECATION
-@nativeGetter
-fun String.foo(n: Int): Int?
-@nativeGetter
-fun String.bar(n: Int): Int? = definedExternally
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeGetter
+fun String.foo(n: Int): Int?<!>
+<!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN!>@nativeGetter
+fun String.bar(n: Int): Int?<!> = definedExternally
 
 
 external interface T {

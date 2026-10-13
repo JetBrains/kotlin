@@ -10,13 +10,13 @@ external interface Function {
 
     @nativeInvoke
     fun baz(a: Any?, b: Any? = definedExternally, c: Any? = definedExternally): Any?
+
+    @nativeInvoke
+    operator fun invoke(a: Any?, b: Any?): Any?
+
+    @nativeInvoke
+    fun bar(a: Any?, b: Any? = definedExternally, c: Any? = definedExternally): Any?
 }
-
-@nativeInvoke
-operator fun Function.invoke(a: Any?, b: Any?): Any? = definedExternally
-
-@nativeInvoke
-fun Function.bar(a: Any?, b: Any? = definedExternally, c: Any? = definedExternally): Any? = definedExternally
 
 object t{}
 

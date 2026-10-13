@@ -1419,12 +1419,6 @@ internal class RuntimeAnnotationOnExternalDeclarationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RuntimeAnnotationOnExternalDeclaration
 
-internal class NativeAnnotationsAllowedOnlyOnMemberOrExtensionFunImpl(
-    override val type: KaType,
-    firDiagnostic: KtDiagnosticWithSource,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun
-
 internal class NativeIndexerKeyShouldBeStringOrNumberImpl(
     override val kind: String,
     firDiagnostic: KtDiagnosticWithSource,
@@ -1544,6 +1538,12 @@ internal class InapplicableEagerInitializationWarningImpl(
     firDiagnostic: KtDiagnosticWithSource,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.InapplicableEagerInitializationWarning
+
+internal class NativeAnnotationsAllowedOnlyOnMemberFunImpl(
+    override val type: KaType,
+    firDiagnostic: KtDiagnosticWithSource,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.NativeAnnotationsAllowedOnlyOnMemberFun
 
 internal class UnresolvedEqualityBoundArgumentImpl(
     firDiagnostic: KtDiagnosticWithSource,
