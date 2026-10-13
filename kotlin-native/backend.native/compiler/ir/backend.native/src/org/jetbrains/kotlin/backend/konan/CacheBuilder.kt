@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromKlibWithIndices
+import org.jetbrains.kotlin.backend.common.IdSignaturesExtractorFromRegularKlib
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgume
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
@@ -407,15 +410,18 @@ class CacheBuilder(
     }
 
     /**
-     * Builds in a single spawned compilation the per-file caches of all the libraries that need a full rebuild:
+     * Builds in spawned batched compilations the per-file caches of all the libraries that need a full rebuild:
      * the ones having no cache at all (on a clean build that is every library) and the ones from [needFullRebuild].
      *
      * A batched compilation creates the IR linker once and thus deserializes the common dependencies
      * (like stdlib) once instead of multiple times (once per library).
      *
+     * The linker maps every signature to a single declaration, and all the libraries of a batch are deserialized exhaustively,
+     * so two libraries sharing a top-level signature (e.g. identical `internal` top-level functions in the same package) would clash
+     * with "symbol is already bound". Such libraries are put into separate batches, built one after another in the dependency order.
+     *
      * Returns the libraries built together with their binary archives, or null if batching is not applicable.
      */
-    @OptIn(ExperimentalPathApi::class)
     private fun tryBuildCacheBatch(
             libraries: List<KotlinLibrary>,
             needFullRebuild: Set<KotlinLibrary>,
@@ -441,10 +447,77 @@ class CacheBuilder(
         }
         val batchSet = batch.toSet()
         (candidates - batchSet).takeIf { it.isNotEmpty() }?.let { excluded ->
-            configuration.reportLog("NOT BATCHING (a dependency has pending rebuilds): ${excluded.joinToString { it.uniqueName }}")
+            configuration.reportLog("EXCLUDED FROM BATCH (a dependency has pending rebuilds): ${excluded.joinToString { it.uniqueName }}")
         }
         if (batch.size < 2) return null
 
+        val groups = splitIntoNonConflictingGroups(batch, batchSet)
+        if (groups.all { it.size < 2 }) return null // Nothing left to batch.
+
+        val builtLibraries = mutableListOf<KotlinLibrary>()
+        val builtArchives = mutableListOf<Path>()
+        for (group in groups) {
+            val archives = buildCacheBatch(group)
+            builtLibraries.addAll(group)
+            builtArchives.addAll(archives)
+        }
+        return builtLibraries to builtArchives
+    }
+
+    /**
+     * Splits [batch] (in the reverse topo-order) into groups having no common cross-library top-level signatures.
+     * The groups are ordered so that each library goes after all its dependencies from [batch]: a library joins
+     * the first group it does not conflict with among the groups not preceding those of its dependencies.
+     */
+    private fun splitIntoNonConflictingGroups(batch: List<KotlinLibrary>, batchSet: Set<KotlinLibrary>): List<List<KotlinLibrary>> {
+        class Group {
+            val libraries = mutableListOf<KotlinLibrary>()
+            val signatureOwners = mutableMapOf<IdSignature, KotlinLibrary>()
+        }
+
+        // The groups are built in order (groups[0] is built first, groups[1] is the next, ...)
+        val groups = mutableListOf<Group>()
+        val groupIndices = mutableMapOf<KotlinLibrary, Int>()
+        for (library in batch) {
+            val signatures = library.getTopLevelNonPrivateSignatures()
+            val firstAllowedIndex = klibDag.getAllDependencies(library)
+                    .filter { it in batchSet }
+                    // A library can't be placed into a group built before its dependencies.
+                    .maxOfOrNull { groupIndices.getValue(it) } ?: 0
+            var groupIdx = firstAllowedIndex
+            while (groupIdx < groups.size) {
+                val group = groups[groupIdx]
+                val conflict = signatures.firstNotNullOfOrNull { signature ->
+                    group.signatureOwners[signature]?.let { signature to it }
+                } ?: break
+                configuration.reportLog(
+                        "SPLITTING BATCH: ${library.uniqueName} and ${conflict.second.uniqueName}" +
+                                " share a top-level signature: ${conflict.first}")
+                ++groupIdx
+            }
+            if (groupIdx == groups.size)
+                groups.add(Group())
+            val group = groups[groupIdx]
+            group.libraries.add(library)
+            signatures.forEach { group.signatureOwners[it] = library }
+            groupIndices[library] = groupIdx
+        }
+
+        return groups.map { it.libraries }
+    }
+
+    /**
+     * The signatures of the library's top-level declarations that might clash across libraries.
+     */
+    private fun KotlinLibrary.getTopLevelNonPrivateSignatures(): Set<IdSignature> =
+            IdSignaturesExtractorFromKlibWithIndices(this, IdSignaturesExtractorFromRegularKlib(this))
+                    .extractOnlyTopLevelPublicSignatures() // Internal are also included in the result.
+                    .declaredSignatures
+
+    /** Builds the per-file caches of [batch] in a single spawned compilation and returns their binary archives. */
+    @OptIn(ExperimentalPathApi::class)
+    private fun buildCacheBatch(batch: List<KotlinLibrary>): List<Path> {
+        val batchSet = batch.toSet()
         val cacheDirectory = config.incrementalCacheDirectory!!
         val outputs = batch.associateWith { cacheDirectory.resolve(CachedLibraries.getPerFileCachedLibraryName(it)) }
         val dependencies = batch.flatMap { klibDag.getAllDependencies(it) }.distinct().filter { it !in batchSet }
@@ -476,7 +549,7 @@ class CacheBuilder(
 
             recordRebuiltCacheFiles(library, makePerFileCache = true, emptyList())
         }
-        return batch to rebuiltArchives
+        return rebuiltArchives
     }
 
     private fun KotlinLibrary.getPerFileCachedBinaryFilePaths(cacheRoot: Path, filesToCache: List<String>): List<Path> {

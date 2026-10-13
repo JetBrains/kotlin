@@ -273,6 +273,48 @@ class CacheBatchTest : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun batchSplitsLibrariesWithConflictingSignatures() {
+        assumeTrue(HostManager.host.family == Family.OSX)
+        assumeFalse(testRunSettings.get<ForcedNoopTestRunner>().value)
+
+        val cacheDir = buildDir.resolve("cache").apply { mkdirs() }
+        val core = buildDir.resolve("core.klib")
+        val lib1 = buildDir.resolve("lib1.klib")
+        val lib2 = buildDir.resolve("lib2.klib")
+        val main = buildDir.resolve("main.klib")
+        val executable = buildDir.resolve("main.kexe")
+
+        val coreSource = buildDir.resolve("core.kt").apply { writeText("package app\n\nclass Data(val n: Int)") }
+        compileKlib(coreSource.path, "-o", core.path)
+        // KT-75928: sibling libraries declaring the same internal extension get the same top-level signature.
+        // The IR linker cannot deserialize both exhaustively in one compilation, so they must not share a batch.
+        val lib1Source = buildDir.resolve("lib1.kt").apply {
+            writeText("package app\n\ninternal fun Data.tagged() = n + 1\n\nfun aValue(d: Data) = d.tagged()")
+        }
+        compileKlib(lib1Source.path, "-l", core.path, "-o", lib1.path)
+        val lib2Source = buildDir.resolve("lib2.kt").apply {
+            writeText("package app\n\ninternal fun Data.tagged() = n + 1\n\nfun bValue(d: Data) = d.tagged()")
+        }
+        compileKlib(lib2Source.path, "-l", core.path, "-o", lib2.path)
+        val mainSource = buildDir.resolve("main.kt").apply {
+            writeText("import app.*\n\nfun main() { println(aValue(Data(1)) + bValue(Data(2))) }")
+        }
+        compileKlib(mainSource.path, "-l", core.path, "-l", lib1.path, "-l", lib2.path, "-o", main.path)
+
+        val output = compile(
+            "-g", "-verbose", "-Xenable-incremental-compilation", "-Xic-cache-dir=${cacheDir.path}",
+            "-Xinclude=${main.path}", "-l", core.path, "-l", lib1.path, "-l", lib2.path, "-o", executable.path,
+        )
+        val batches = output.lines().filter { "CACHING BATCH:" in it }
+            .map { line -> line.substringAfter("CACHING BATCH:").split(",").map { it.trim() }.toSet() }
+        assertTrue(Regex("SPLITTING BATCH: lib[12] and lib[12] share a top-level signature").containsMatchIn(output)) { output }
+        assertEquals(setOf("core", "lib1", "lib2", "main"), batches.flatten().toSet()) { output }
+        assertTrue(batches.none { "lib1" in it && "lib2" in it }) { output }
+        assertTrue(batches.all { it.size >= 2 }) { output }
+        verifyOutput(executable, "5")
+    }
+
+    @Test
     fun cleanBatchProducesSameCachesAsSeparateBuilds() = doSameCachesTest(backendThreads = 1)
 
     @Test
