@@ -30,6 +30,8 @@ dependencies {
 
     mainModules.registerDependencies { project(it) }
     testFixturesModules.registerDependencies { testFixtures(project(it)) }
+
+    runtimeOnly(project(":kotlin-scripting-compiler"))
 }
 
 publish()
