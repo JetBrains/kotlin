@@ -22,25 +22,17 @@ import org.jetbrains.kotlin.name.SpecialNames
 object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirAnonymousFunction) {
-        context.lambdaBodyContext?.checkUnusedParams(declaration)
-    }
+        val lambdaBodyContext = context.lambdaBodyContext ?: return
 
-    class LambdaBodyContext(private val outermostLambda: FirAnonymousFunction) {
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        internal fun checkUnusedParams(
-            declaration: FirAnonymousFunction,
-        ) {
-            // We need to check only outermost Lambda which will detect unused params of nested Lambdas too.
-            if (declaration != outermostLambda)
-                return
+        // We need to check only outermost Lambda which will detect unused params of nested Lambdas too.
+        if (declaration != lambdaBodyContext.outermostLambda) return
 
-            val unusedParams = declaration.getReportableParameters()
+        val unusedParams = declaration.getReportableParameters()
 
-            declaration.body?.accept(unusedParamsVisitor, unusedParams)
+        declaration.body?.accept(unusedParamsVisitor, unusedParams)
 
-            unusedParams.forEach {
-                reporter.reportOn(it.source, UNUSED_ANONYMOUS_PARAMETER, it)
-            }
+        unusedParams.forEach {
+            reporter.reportOn(it.source, UNUSED_ANONYMOUS_PARAMETER, it)
         }
     }
 
@@ -76,8 +68,4 @@ object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKi
                 anonymousFunction.acceptChildren(this, data)
             }
         }
-}
-
-fun createLambdaBodyContext(lambda: FirAnonymousFunction, context: CheckerContext): FirAnonymousUnusedParamChecker.LambdaBodyContext {
-    return context.lambdaBodyContext ?: FirAnonymousUnusedParamChecker.LambdaBodyContext(lambda)
 }

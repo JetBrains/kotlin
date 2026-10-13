@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.InlineFunctionBodyContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.lessVisibleVisibilityOrNull
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -29,7 +31,7 @@ object FirInlineExposedLessVisibleTypeChecker : FirResolvedTypeRefChecker(MppChe
     internal fun check(
         coneType: ConeKotlinType,
         source: KtSourceElement?,
-        inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext,
+        inlineFunctionBodyContext: InlineFunctionBodyContext,
     ) {
         if (context.callsOrAssignments.any { it is FirAnnotation }) return
         val fullyExpandedType = coneType.fullyExpandedType()
