@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import kotlin.random.Random
 
 private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
 private typealias IntrinsicMap = MutableMap<IrSymbol, IrCallTransformer<*>>
@@ -378,6 +380,19 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 } else {
                     JsIntLiteral(backendContext.signaturesPool.getSignatureId(signatureString.value as String))
                 }
+            }
+
+            add(symbols.compileTimeRandomNumber) { call, _ ->
+                val from = call.arguments[0] as? IrConst ?: compilationException(
+                    "Call of the compileTimeRandomNumber doesn't contain first argument a number literal",
+                    call
+                )
+                val to = call.arguments[1] as? IrConst ?: compilationException(
+                    "Call of the compileTimeRandomNumber doesn't contain second argument a number literal",
+                    call
+                )
+
+                JsIntLiteral(Random.nextInt(from.value as Int, to.value as Int))
             }
 
             add(symbols.jsClass) { call, context ->

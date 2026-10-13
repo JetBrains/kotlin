@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.isLoweredTrivialEnum
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
@@ -41,10 +42,6 @@ import kotlin.collections.plusAssign
 
 internal val BOXES_CREATION_ORIGIN by IrStatementOriginImpl
 
-/**
- * Whether the class was an enum class that has been lowered into an inline class by [TrivialEnumClassLowering].
- */
-var IrClass.isLoweredTrivialEnum: Boolean by irFlag(copyByDefault = true)
 var IrClass.namesContainer: IrField? by irAttribute(copyByDefault = true)
 var IrClass.boxesContainer: IrField? by irAttribute(copyByDefault = true)
 
@@ -108,6 +105,7 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
     private val irBuiltIns = context.irBuiltIns
     private val arrayGetFunction = irBuiltIns.arrayClass.getSimpleFunction("get")!!
     private val enumClass = irBuiltIns.enumClass.owner
+    private val enumHashCodeRandomizer = context.symbols.enumHashCodeRandomizer
     private val boxIntrinsic = context.symbols.jsBoxIntrinsic
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
@@ -206,7 +204,16 @@ class TrivialEnumClassLowering(private val context: JsIrBackendContext) : Declar
                 }
             irClass.findFakeOverrideFunction("hashCode")
                 .overrideDeclarationWithFollowingReturn(IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER) {
-                    irGetOrdinal(it)
+                    irCall(irBuiltIns.intPlusSymbol).apply {
+                        arguments[0] = irGetOrdinal(it)
+                        arguments[1] = irGetField(
+                            null,
+                            enumHashCodeRandomizer.owner.backingField ?: compilationException(
+                                "ENUM_HASHCODE_RANDOMIZER should have a backing field",
+                                enumHashCodeRandomizer.owner
+                            )
+                        )
+                    }
                 }
 
             for ([ordinal, enumEntry] in enumEntries.withIndex()) {

@@ -41,6 +41,20 @@ fun testNonTrivialOperation(operation: Operation): String = "${operation.symbol}
 
 fun testNonTrivialEquals(a: Shape, b: Shape): Boolean = a == b
 
+// Null checks of a nullable trivial enum should not box the value
+// CHECK_NOT_CALLED_IN_SCOPE: scope=testTrivialIsNull function=Day$asBoxed
+fun testTrivialIsNull(day: Day?): Boolean = day == null
+
+// CHECK_NOT_CALLED_IN_SCOPE: scope=testTrivialIsNotNull function=Day$asBoxed
+fun testTrivialIsNotNull(day: Day?): Boolean = day != null
+
+// CHECK_NOT_CALLED_IN_SCOPE: scope=testTrivialWhenNull function=Day$asBoxed
+fun testTrivialWhenNull(day: Day?): String = when (day) {
+    Day.MONDAY -> "monday"
+    null -> "null"
+    else -> "other"
+}
+
 // Access all the `Enum` members through an upcast to `Enum`
 fun <E : Enum<E>> testUpcastToEnum(value: Enum<E>, other: E): String {
     val name = value.name
@@ -65,6 +79,14 @@ fun box(): String {
     if (!testTrivialEquals(Day.TUESDAY, Day.TUESDAY)) return "Fail testTrivialEquals(TUESDAY, TUESDAY)"
     if (testTrivialEquals(Day.MONDAY, Day.TUESDAY)) return "Fail testTrivialEquals(MONDAY, TUESDAY)"
 
+    if (!testTrivialIsNull(null)) return "Fail testTrivialIsNull(null)"
+    if (testTrivialIsNull(Day.MONDAY)) return "Fail testTrivialIsNull(MONDAY)"
+    if (testTrivialIsNotNull(null)) return "Fail testTrivialIsNotNull(null)"
+    if (!testTrivialIsNotNull(Day.MONDAY)) return "Fail testTrivialIsNotNull(MONDAY)"
+    if (testTrivialWhenNull(null) != "null") return "Fail testTrivialWhenNull(null)"
+    if (testTrivialWhenNull(Day.MONDAY) != "monday") return "Fail testTrivialWhenNull(MONDAY)"
+    if (testTrivialWhenNull(Day.TUESDAY) != "other") return "Fail testTrivialWhenNull(TUESDAY)"
+
     if (Day.values().joinToString(",") { it.name } != "MONDAY,TUESDAY,WEDNESDAY") return "Fail Day.values()"
     if (Day.entries.joinToString(",") { it.ordinal.toString() } != "0,1,2") return "Fail Day.entries"
     if (HttpCode.valueOf("FORBIDDEN").code != 403) return "Fail HttpCode.valueOf(FORBIDDEN)"
@@ -73,21 +95,21 @@ fun box(): String {
     val boxed: Any = Day.TUESDAY
     if (boxed !is Day || boxed != Day.TUESDAY) return "Fail boxed Day"
     if (boxed.toString() != "TUESDAY") return "Fail boxed Day.toString(): $boxed"
-    if (Day.TUESDAY.hashCode() != 1) return "Fail Day.hashCode(): ${Day.TUESDAY.hashCode()}"
+    if (Day.TUESDAY.hashCode() == Day.MONDAY.hashCode()) return "Fail Day.hashCode(): ${Day.TUESDAY.hashCode()}"
     if (Day.MONDAY.compareTo(Day.WEDNESDAY) >= 0) return "Fail Day.compareTo"
 
     val upcastDay = testUpcastToEnum(Day.TUESDAY, Day.WEDNESDAY)
-    if (upcastDay != "TUESDAY:1:TUESDAY:1:true:false:-1") return "Fail testUpcastToEnum(Day.TUESDAY, Day.WEDNESDAY): $upcastDay"
+    if (upcastDay != "TUESDAY:1:TUESDAY:${Day.TUESDAY.hashCode()}:true:false:-1") return "Fail testUpcastToEnum(Day.TUESDAY, Day.WEDNESDAY): $upcastDay"
     val upcastDaySame = testUpcastToEnum(Day.WEDNESDAY, Day.WEDNESDAY)
-    if (upcastDaySame != "WEDNESDAY:2:WEDNESDAY:2:true:true:0") return "Fail testUpcastToEnum(Day.WEDNESDAY, Day.WEDNESDAY): $upcastDaySame"
+    if (upcastDaySame != "WEDNESDAY:2:WEDNESDAY:${Day.WEDNESDAY.hashCode()}:true:true:0") return "Fail testUpcastToEnum(Day.WEDNESDAY, Day.WEDNESDAY): $upcastDaySame"
     val upcastHttpCode = testUpcastToEnum(HttpCode.FORBIDDEN, HttpCode.NOT_FOUND)
-    if (upcastHttpCode != "FORBIDDEN:1:FORBIDDEN:1:true:false:1") return "Fail testUpcastToEnum(HttpCode.FORBIDDEN, HttpCode.NOT_FOUND): $upcastHttpCode"
+    if (upcastHttpCode != "FORBIDDEN:1:FORBIDDEN:${HttpCode.FORBIDDEN.hashCode()}:true:false:1") return "Fail testUpcastToEnum(HttpCode.FORBIDDEN, HttpCode.NOT_FOUND): $upcastHttpCode"
     if (testUpcastToEnumNullable(Day.MONDAY) != "MONDAY") return "Fail testUpcastToEnumNullable(Day.MONDAY)"
     if (testUpcastToEnumNullable(null) != "null") return "Fail testUpcastToEnumNullable(null)"
     val upcastList = testUpcastToEnumList(listOf(Day.MONDAY, HttpCode.FORBIDDEN, Shape.SQUARE, Operation.PLUS))
     if (upcastList != "MONDAY:0,FORBIDDEN:1,SQUARE:1,PLUS:0") return "Fail testUpcastToEnumList: $upcastList"
     val upcastNonTrivial = testUpcastToEnum(Shape.TRIANGLE, Shape.SQUARE)
-    if (!upcastNonTrivial.startsWith("TRIANGLE:0:TRIANGLE:") || !upcastNonTrivial.endsWith(":true:false:-1")) return "Fail testUpcastToEnum(Shape.TRIANGLE, Shape.SQUARE): $upcastNonTrivial"
+    if (upcastNonTrivial != "TRIANGLE:0:TRIANGLE:${Shape.TRIANGLE.hashCode()}:true:false:-1") return "Fail testUpcastToEnum(Shape.TRIANGLE, Shape.SQUARE): $upcastNonTrivial"
 
     if (testNonTrivialShape(Shape.TRIANGLE) != "TRIANGLE:0:3:triangle") return "Fail testNonTrivialShape(TRIANGLE): ${testNonTrivialShape(Shape.TRIANGLE)}"
     if (testNonTrivialShape(Shape.SQUARE) != "SQUARE:1:4:square") return "Fail testNonTrivialShape(SQUARE): ${testNonTrivialShape(Shape.SQUARE)}"

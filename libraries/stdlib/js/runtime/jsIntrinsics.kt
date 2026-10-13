@@ -433,3 +433,12 @@ internal fun jsLongToString(value: Long, radix: Int): String {
     @OptIn(BoxedLongApi::class)
     return value.toStringImpl(radix)
 }
+
+@UsedFromCompilerGeneratedCode
+@Effects(EffectsKind.PURE)
+internal fun compileTimeRandomNumber(from: Int, to: Int): Int {
+    // TODO: Remove body after bootstrap
+    val maximum = to - from
+    return js("Math.round(Math.random() * maximum) + from")
+}
+

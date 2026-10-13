@@ -73,6 +73,7 @@ class BackendJsSymbols(
     override val getContinuation by CallableIds.getContinuation.functionSymbol()
 
     val coroutineEmptyContinuation: IrPropertySymbol by CallableIds.EmptyContinuation.propertySymbol()
+    val enumHashCodeRandomizer: IrPropertySymbol by CallableIds.enumHashCodeRandomizer.propertySymbol()
 
     override val returnIfSuspended by CallableIds.returnIfSuspended.functionSymbol()
 
@@ -403,6 +404,8 @@ class BackendJsSymbols(
 
     val jsEnsureNonNull by CallableIds.ensureNotNull.functionSymbol()
 
+    val compileTimeRandomNumber by CallableIds.compileTimeRandomNumber.functionSymbol()
+
     // Arrays:
     val jsArrayLength by CallableIds.jsArrayLength.functionSymbol()
     val jsArrayGet by CallableIds.jsArrayGet.functionSymbol()
@@ -725,6 +728,9 @@ private object CallableIds {
     val getLocalDelegateReference = "getLocalDelegateReference".jsCallableId
     val signatureIdIntrinsic = "signatureId".jsCallableId
     val constructCallableReference = "constructCallableReference".jsCallableId
+
+    val compileTimeRandomNumber = "compileTimeRandomNumber".jsCallableId
+    val enumHashCodeRandomizer = "ENUM_HASHCODE_RANDOMIZER".kotlinCallableId
 
     // JS Long functions
     private val String.jsBoxedLongId get() = CallableId(JsStandardClassIds.BOXED_LONG_PACKAGE, Name.identifier(this))

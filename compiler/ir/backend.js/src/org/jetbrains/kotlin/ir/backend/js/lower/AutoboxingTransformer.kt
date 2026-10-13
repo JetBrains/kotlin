@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
@@ -30,9 +31,11 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 
 // Copied and adapted from Kotlin/Native
+val SAFE_NULLABLE_BOXING by IrStatementOriginImpl
 
 abstract class AbstractValueUsageLowering(
     val context: JsCommonBackendContext,
@@ -209,23 +212,35 @@ open class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesIn
 
         return JsIrBuilder.run {
             // TODO: Set parent of local variables
-            val tmp = buildVar(actualType, parent = null, initializer = arg)
+            val tmp = runIf(arg !is IrGetValue && arg !is IrGetField) {
+                buildVar(
+                    actualType,
+                    parent = null,
+                    initializer = arg,
+                    origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+                )
+            }
+
             val nullCheck = buildIfElse(
                 type = resultType,
                 cond = buildCall(irBuiltIns.eqeqSymbol).apply {
-                    arguments[0] = buildGetValue(tmp.symbol)
+                    arguments[0] = tmp?.symbol?.let(::buildGetValue) ?: arg
                     arguments[1] = buildNull(irBuiltIns.nothingNType)
                 },
                 thenBranch = buildNull(irBuiltIns.nothingNType),
-                elseBranch = call(buildGetValue(tmp.symbol))
+                elseBranch = call(tmp?.symbol?.let(::buildGetValue) ?: arg),
+                origin = SAFE_NULLABLE_BOXING
             )
-            buildBlock(
-                type = resultType,
-                statements = listOf(
-                    tmp,
-                    nullCheck
+
+            if (tmp != null) {
+                buildBlock(
+                    type = resultType,
+                    statements = listOf(
+                        tmp,
+                        nullCheck
+                    )
                 )
-            )
+            } else nullCheck
         }
     }
 
