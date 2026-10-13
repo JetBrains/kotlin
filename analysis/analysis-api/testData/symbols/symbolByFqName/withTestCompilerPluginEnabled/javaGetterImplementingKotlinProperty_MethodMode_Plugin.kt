@@ -10,7 +10,7 @@ interface A { val foo: Int }
 
 package test;
 
-@@org.jetbrains.kotlin.plugin.sandbox.JavaClassWithGeneratedGetter
+@org.jetbrains.kotlin.plugin.sandbox.JavaClassWithGeneratedGetter
 public class B implements A {
 }
 

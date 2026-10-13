@@ -5,6 +5,6 @@
 interface A { val foo: Int }
 
 // FILE: B.java
-@@org.jetbrains.kotlin.plugin.sandbox.JavaClassWithGeneratedGetter
+@org.jetbrains.kotlin.plugin.sandbox.JavaClassWithGeneratedGetter
 public class B implements A {
 }
