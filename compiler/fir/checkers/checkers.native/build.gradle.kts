@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:checkers:checkers.common"))
     api(project(":native:base"))
     api(project(":compiler:frontend.common"))
     api(project(":core:compiler.common"))

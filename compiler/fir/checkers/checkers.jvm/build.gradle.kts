@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:checkers:checkers.common"))
     api(project(":compiler:fir:fir-jvm"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:descriptors.jvm"))
