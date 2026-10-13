@@ -295,26 +295,36 @@ kotlin {
                         .single()
 
                     inputFileProperty.set(devBinary.mainFileSyncPath)
+                    useMocha {
+                        timeout = "10s"
+                    }
                 }
             }
         }
 
+        val jsAllTestTask = tasks.named("jsTest")
 
         if(!buildFeatures.isolatedProjects.active.get()) {
             if (!kotlinBuildProperties.isTeamcityBuild.get()) {
                 browser {
                     val latestJsRun = latestTargetRunRegistering()
-
-                    testTask {
+                    jsAllTestTask {
                         dependsOn(latestJsRun.executionTask)
+                    }
+                    testTask {
+                        useMocha {
+                            timeout = "10s"
+                        }
                     }
                 }
             }
             nodejs {
                 val latestJsRun = latestTargetRunRegistering()
+                jsAllTestTask {
+                    dependsOn(latestJsRun.executionTask)
+                }
 
                 testTask {
-                    dependsOn(latestJsRun.executionTask)
                     useMocha {
                         timeout = "10s"
                     }
