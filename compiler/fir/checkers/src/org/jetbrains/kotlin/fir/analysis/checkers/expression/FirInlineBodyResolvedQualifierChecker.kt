@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.checkAccessedDeclaration
 import org.jetbrains.kotlin.fir.analysis.checkers.isDispatchReceiver
 import org.jetbrains.kotlin.fir.analysis.checkers.isExplicitParentOfResolvedQualifier
 import org.jetbrains.kotlin.fir.analysis.checkers.resolvedSymbolOrCompanionSymbol

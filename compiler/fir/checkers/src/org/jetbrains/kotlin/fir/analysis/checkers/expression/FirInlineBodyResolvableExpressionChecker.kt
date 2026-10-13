@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.InlinableParameterContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.check
 import org.jetbrains.kotlin.fir.analysis.checkers.isArrayLambdaConstructor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -33,171 +35,163 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
         inlineFunctionBodyContext?.check(expression, targetSymbol)
         inlinableParameterContext.check(expression, targetSymbol)
     }
+}
 
-    class InlinableParameterContext(
-        private val inlineFunction: FirFunctionSymbol<*>,
-        private val inlinableParameters: List<FirValueParameterSymbol>,
-        private val session: FirSession,
-    ) {
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        fun check(statement: FirStatement, targetSymbol: FirCallableSymbol<*>) {
-            val source = statement.source ?: return
+context(context: CheckerContext, reporter: DiagnosticReporter)
+fun InlinableParameterContext.check(statement: FirStatement, targetSymbol: FirCallableSymbol<*>) {
+    val source = statement.source ?: return
+    val inlinableParameters = inlineFunction.valueParameterSymbols.filter { it.isInlinable(context.session) }
 
-            if (targetSymbol in inlinableParameters) {
-                if (!statement.partOfCall()) {
-                    reporter.reportOn(source, FirErrors.USAGE_IS_NOT_INLINABLE, targetSymbol)
-                }
-                if (context.containingDeclarations.any { it in inlinableParameters }) {
-                    reporter.reportOn(
-                        source,
-                        FirErrors.NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE,
-                        targetSymbol as FirValueParameterSymbol
-                    )
-                }
-            }
-
-            if (statement is FirQualifiedAccessExpression) {
-                checkReceiver(statement, statement.dispatchReceiver, targetSymbol)
-                checkReceiver(statement, statement.extensionReceiver, targetSymbol)
-            }
-
-            if (statement is FirCall) {
-                checkArgumentsOfCall(statement, targetSymbol)
-            }
+    if (targetSymbol in inlinableParameters) {
+        if (!statement.partOfCall()) {
+            reporter.reportOn(source, FirErrors.USAGE_IS_NOT_INLINABLE, targetSymbol)
         }
-
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        private fun checkReceiver(
-            qualifiedAccessExpression: FirQualifiedAccessExpression,
-            receiverExpression: FirExpression?,
-            targetSymbol: FirBasedSymbol<*>,
-        ) {
-            if (receiverExpression == null) return
-            val receiverSymbol =
-                receiverExpression.unwrapErrorExpression().toResolvedCallableSymbol(session) as? FirValueParameterSymbol ?: return
-            if (receiverSymbol in inlinableParameters) {
-                if (!targetSymbol.isInvokeOfSomeFunctionType() || qualifiedAccessExpression is FirCallableReferenceAccess) {
-                    reporter.reportOn(
-                        receiverExpression.source ?: qualifiedAccessExpression.source,
-                        FirErrors.USAGE_IS_NOT_INLINABLE,
-                        receiverSymbol,
-                    )
-                } else if (!receiverSymbol.isCrossinline && !isNonLocalReturnAllowed()) {
-                    reporter.reportOn(
-                        receiverExpression.source ?: qualifiedAccessExpression.source,
-                        FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED,
-                        receiverSymbol,
-                    )
-                }
-            }
+        if (context.containingDeclarations.any { it in inlinableParameters }) {
+            reporter.reportOn(
+                source,
+                FirErrors.NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE,
+                targetSymbol as FirValueParameterSymbol
+            )
         }
+    }
 
-        context(context: CheckerContext)
-        private fun isNonLocalReturnAllowed(): Boolean {
-            val declarations = context.containingDeclarations
-            val inlineFunctionIndex = declarations.indexOf(inlineFunction)
-            if (inlineFunctionIndex == -1) return true
+    if (statement is FirQualifiedAccessExpression) {
+        checkReceiver(inlineFunction, inlinableParameters, statement, statement.dispatchReceiver, targetSymbol)
+        checkReceiver(inlineFunction, inlinableParameters, statement, statement.extensionReceiver, targetSymbol)
+    }
 
-            for (i in (inlineFunctionIndex + 1) until declarations.size) {
-                val declaration = declarations[i]
+    if (statement is FirCall) {
+        checkArgumentsOfCall(inlineFunction, inlinableParameters, statement, targetSymbol)
+    }
+}
 
-                // Only consider containers which can change locality.
-                if (declaration !is FirFunctionSymbol && declaration !is FirClassSymbol) continue
-
-                // Anonymous functions are allowed if they are an argument to an inline function call,
-                // and the associated anonymous function parameter allows non-local returns. Everything
-                // else changes locality, and must not be allowed.
-                val anonymousFunction = declaration as? FirAnonymousFunctionSymbol ?: return false
-                val [call, parameter] = extractCallAndParameter(anonymousFunction) ?: return false
-                val callable = call.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return false
-                if (!callable.isInline && !callable.isArrayLambdaConstructor()) return false
-                if (parameter.isNoinline || parameter.isCrossinline) return false
-            }
-
-            return true
-        }
-
-        context(context: CheckerContext)
-        private fun extractCallAndParameter(anonymousFunction: FirAnonymousFunctionSymbol): Pair<FirFunctionCall, FirValueParameter>? {
-            for (call in context.callsOrAssignments) {
-                if (call is FirFunctionCall) {
-                    val mapping = call.resolvedArgumentMapping ?: continue
-                    for ([argument, parameter] in mapping) {
-                        if ((argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction?.symbol === anonymousFunction) {
-                            return call to parameter
-                        }
-                    }
-                }
-            }
-            return null
-        }
-
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        private fun checkArgumentsOfCall(
-            functionCall: FirCall,
-            targetSymbol: FirBasedSymbol<*>,
-        ) {
-            if (context.isContractBody) return
-            val calledFunctionSymbol = targetSymbol as? FirFunctionSymbol ?: return
-            val argumentMapping = functionCall.resolvedArgumentMapping ?: return
-            for ([wrappedArgument, valueParameter] in argumentMapping) {
-                val argument = wrappedArgument.unwrapToPotentialParameterUsage()
-                val resolvedArgumentSymbol = argument.toResolvedCallableSymbol(session) as? FirVariableSymbol<*> ?: continue
-
-                val valueParameterOfOriginalInlineFunction = inlinableParameters.firstOrNull { it == resolvedArgumentSymbol }
-                if (valueParameterOfOriginalInlineFunction != null) {
-                    val calledFunctionIsInline = calledFunctionSymbol.isInline ||
-                            LanguageFeature.ConsiderLambdaArrayConstructorsInlinableInBodiesOfInlineFunctions.isEnabled() &&
-                            calledFunctionSymbol.isArrayLambdaConstructor()
-                    val factory = when {
-                        calledFunctionIsInline -> when {
-                            !valueParameter.symbol.isInlinable(session) -> {
-                                FirErrors.USAGE_IS_NOT_INLINABLE
-                            }
-                            !valueParameterOfOriginalInlineFunction.isCrossinline &&
-                                    (valueParameter.isCrossinline || !isNonLocalReturnAllowed()) -> {
-                                FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED
-                            }
-                            else -> continue
-                        }
-                        else -> FirErrors.USAGE_IS_NOT_INLINABLE
-                    }
-                    reporter.reportOn(argument.source, factory, valueParameterOfOriginalInlineFunction)
-                }
-            }
-        }
-
-        private fun FirBasedSymbol<*>.isInvokeOfSomeFunctionType(): Boolean {
-            if (this !is FirNamedFunctionSymbol) return false
-            return this.name == OperatorNameConventions.INVOKE &&
-                    this.dispatchReceiverType?.isSomeFunctionType(session) == true
-        }
-
-        context(context: CheckerContext)
-        private fun FirStatement.partOfCall(): Boolean {
-            if (this !is FirExpression) return false
-            val containingQualifiedAccess = context.callsOrAssignments.getOrNull(
-                context.callsOrAssignments.size - 2
-            ) ?: return false
-            if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver?.unwrapErrorExpression()) return true
-            val call = containingQualifiedAccess as? FirCall ?: return false
-            return call.arguments.any { it.unwrapToPotentialParameterUsage() == this }
-        }
-
-        private fun FirExpression.unwrapToPotentialParameterUsage(): FirExpression {
-            unwrapErrorExpression().unwrapArgument().takeIf { it !== this }?.let {
-                return it.unwrapToPotentialParameterUsage()
-            }
-
-            return (this as? FirFunctionTypeConversionExpression)?.expression?.unwrapToPotentialParameterUsage() ?: this
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun checkReceiver(
+    inlineFunction: FirFunctionSymbol<*>,
+    inlinableParameters: List<FirValueParameterSymbol>,
+    qualifiedAccessExpression: FirQualifiedAccessExpression,
+    receiverExpression: FirExpression?,
+    targetSymbol: FirBasedSymbol<*>,
+) {
+    if (receiverExpression == null) return
+    val receiverSymbol =
+        receiverExpression.unwrapErrorExpression().toResolvedCallableSymbol(context.session) as? FirValueParameterSymbol ?: return
+    if (receiverSymbol in inlinableParameters) {
+        if (!targetSymbol.isInvokeOfSomeFunctionType() || qualifiedAccessExpression is FirCallableReferenceAccess) {
+            reporter.reportOn(
+                receiverExpression.source ?: qualifiedAccessExpression.source,
+                FirErrors.USAGE_IS_NOT_INLINABLE,
+                receiverSymbol,
+            )
+        } else if (!receiverSymbol.isCrossinline && !isNonLocalReturnAllowed(inlineFunction)) {
+            reporter.reportOn(
+                receiverExpression.source ?: qualifiedAccessExpression.source,
+                FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED,
+                receiverSymbol,
+            )
         }
     }
 }
 
-fun createInlinableParameterContext(
-    function: FirFunctionSymbol<*>,
-    session: FirSession,
-): FirInlineBodyResolvableExpressionChecker.InlinableParameterContext {
-    val inlinableParameters = function.valueParameterSymbols.filter { it.isInlinable(session) }
-    return FirInlineBodyResolvableExpressionChecker.InlinableParameterContext(function, inlinableParameters, session)
+context(context: CheckerContext)
+private fun isNonLocalReturnAllowed(inlineFunction: FirFunctionSymbol<*>): Boolean {
+    val declarations = context.containingDeclarations
+    val inlineFunctionIndex = declarations.indexOf(inlineFunction)
+    if (inlineFunctionIndex == -1) return true
+
+    for (i in (inlineFunctionIndex + 1) until declarations.size) {
+        val declaration = declarations[i]
+
+        // Only consider containers which can change locality.
+        if (declaration !is FirFunctionSymbol && declaration !is FirClassSymbol) continue
+
+        // Anonymous functions are allowed if they are an argument to an inline function call,
+        // and the associated anonymous function parameter allows non-local returns. Everything
+        // else changes locality, and must not be allowed.
+        val anonymousFunction = declaration as? FirAnonymousFunctionSymbol ?: return false
+        val [call, parameter] = extractCallAndParameter(anonymousFunction) ?: return false
+        val callable = call.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return false
+        if (!callable.isInline && !callable.isArrayLambdaConstructor()) return false
+        if (parameter.isNoinline || parameter.isCrossinline) return false
+    }
+
+    return true
+}
+
+context(context: CheckerContext)
+private fun extractCallAndParameter(anonymousFunction: FirAnonymousFunctionSymbol): Pair<FirFunctionCall, FirValueParameter>? {
+    for (call in context.callsOrAssignments) {
+        if (call is FirFunctionCall) {
+            val mapping = call.resolvedArgumentMapping ?: continue
+            for ([argument, parameter] in mapping) {
+                if ((argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction?.symbol === anonymousFunction) {
+                    return call to parameter
+                }
+            }
+        }
+    }
+    return null
+}
+
+context(context: CheckerContext, reporter: DiagnosticReporter)
+private fun checkArgumentsOfCall(
+    inlineFunction: FirFunctionSymbol<*>,
+    inlinableParameters: List<FirValueParameterSymbol>,
+    functionCall: FirCall,
+    targetSymbol: FirBasedSymbol<*>,
+) {
+    if (context.isContractBody) return
+    val calledFunctionSymbol = targetSymbol as? FirFunctionSymbol ?: return
+    val argumentMapping = functionCall.resolvedArgumentMapping ?: return
+    for ([wrappedArgument, valueParameter] in argumentMapping) {
+        val argument = wrappedArgument.unwrapToPotentialParameterUsage()
+        val resolvedArgumentSymbol = argument.toResolvedCallableSymbol(context.session) as? FirVariableSymbol<*> ?: continue
+
+        val valueParameterOfOriginalInlineFunction = inlinableParameters.firstOrNull { it == resolvedArgumentSymbol }
+        if (valueParameterOfOriginalInlineFunction != null) {
+            val calledFunctionIsInline = calledFunctionSymbol.isInline ||
+                    LanguageFeature.ConsiderLambdaArrayConstructorsInlinableInBodiesOfInlineFunctions.isEnabled() &&
+                    calledFunctionSymbol.isArrayLambdaConstructor()
+            val factory = when {
+                calledFunctionIsInline -> when {
+                    !valueParameter.symbol.isInlinable(context.session) -> {
+                        FirErrors.USAGE_IS_NOT_INLINABLE
+                    }
+                    !valueParameterOfOriginalInlineFunction.isCrossinline &&
+                            (valueParameter.isCrossinline || !isNonLocalReturnAllowed(inlineFunction)) -> {
+                        FirErrors.NON_LOCAL_RETURN_NOT_ALLOWED
+                    }
+                    else -> continue
+                }
+                else -> FirErrors.USAGE_IS_NOT_INLINABLE
+            }
+            reporter.reportOn(argument.source, factory, valueParameterOfOriginalInlineFunction)
+        }
+    }
+}
+
+context(holder: SessionHolder)
+private fun FirBasedSymbol<*>.isInvokeOfSomeFunctionType(): Boolean {
+    if (this !is FirNamedFunctionSymbol) return false
+    return this.name == OperatorNameConventions.INVOKE &&
+            this.dispatchReceiverType?.isSomeFunctionType(holder.session) == true
+}
+
+context(context: CheckerContext)
+private fun FirStatement.partOfCall(): Boolean {
+    if (this !is FirExpression) return false
+    val containingQualifiedAccess = context.callsOrAssignments.getOrNull(
+        context.callsOrAssignments.size - 2
+    ) ?: return false
+    if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver?.unwrapErrorExpression()) return true
+    val call = containingQualifiedAccess as? FirCall ?: return false
+    return call.arguments.any { it.unwrapToPotentialParameterUsage() == this }
+}
+
+private fun FirExpression.unwrapToPotentialParameterUsage(): FirExpression {
+    unwrapErrorExpression().unwrapArgument().takeIf { it !== this }?.let {
+        return it.unwrapToPotentialParameterUsage()
+    }
+
+    return (this as? FirFunctionTypeConversionExpression)?.expression?.unwrapToPotentialParameterUsage() ?: this
 }

@@ -13,15 +13,12 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlineBodyResolvableExpressionChecker
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -44,9 +41,9 @@ abstract class CheckerContext : DiagnosticContext, SessionAndScopeSessionHolder 
     abstract val annotationContainers: List<FirAnnotationContainer>
     abstract val containingElements: List<FirElement>
     abstract val isContractBody: Boolean
-    abstract val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?
-    abstract val inlinableParameterContext: FirInlineBodyResolvableExpressionChecker.InlinableParameterContext?
-    abstract val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?
+    abstract val inlineFunctionBodyContext: InlineFunctionBodyContext?
+    abstract val inlinableParameterContext: InlinableParameterContext?
+    abstract val lambdaBodyContext: LambdaBodyContext?
 
     // Suppress
     abstract val suppressedDiagnostics: Set<String>

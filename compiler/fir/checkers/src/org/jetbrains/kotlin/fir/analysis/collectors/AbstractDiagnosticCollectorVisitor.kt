@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirDestructuringDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.createInlineFunctionBodyContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.createInlinableParameterContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extra.createLambdaBodyContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.createInlineFunctionBodyContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.createInlinableParameterContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.createLambdaBodyContext
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLazyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -349,8 +349,8 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val oldInlinableParameterContext = context.inlinableParameterContext
         return try {
             if (isInline) {
-                val bodyContext = createInlineFunctionBodyContext(function, context.session, oldBodyContext)
-                val parameterContext = createInlinableParameterContext(function, context.session)
+                val bodyContext = createInlineFunctionBodyContext(function, oldBodyContext)
+                val parameterContext = createInlinableParameterContext(function)
                 context = context.setInlineFunctionBodyContext(bodyContext).setInlinableParameterContext(parameterContext)
             }
             block()

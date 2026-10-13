@@ -11,14 +11,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirInlineDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.extra.FirAnonymousUnusedParamChecker
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirInlineBodyResolvableExpressionChecker
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
@@ -30,9 +27,9 @@ class PersistentCheckerContext private constructor(
     override val annotationContainers: PersistentList<FirAnnotationContainer>,
     override val containingElements: PersistentList<FirElement>,
     override val isContractBody: Boolean,
-    override val inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext?,
-    override val inlinableParameterContext: FirInlineBodyResolvableExpressionChecker.InlinableParameterContext?,
-    override val lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext?,
+    override val inlineFunctionBodyContext: InlineFunctionBodyContext?,
+    override val inlinableParameterContext: InlinableParameterContext?,
+    override val lambdaBodyContext: LambdaBodyContext?,
     sessionHolder: SessionAndScopeSessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
     override val suppressedDiagnostics: PersistentSet<String>,
@@ -110,9 +107,9 @@ class PersistentCheckerContext private constructor(
         containingElements: PersistentList<FirElement> = this.containingElements,
         containingDeclarations: PersistentList<FirBasedSymbol<*>> = this.containingDeclarations,
         isContractBody: Boolean = this.isContractBody,
-        inlineFunctionBodyContext: FirInlineDeclarationChecker.InlineFunctionBodyContext? = this.inlineFunctionBodyContext,
-        inlinableParameterContext: FirInlineBodyResolvableExpressionChecker.InlinableParameterContext? = this.inlinableParameterContext,
-        lambdaBodyContext: FirAnonymousUnusedParamChecker.LambdaBodyContext? = this.lambdaBodyContext,
+        inlineFunctionBodyContext: InlineFunctionBodyContext? = this.inlineFunctionBodyContext,
+        inlinableParameterContext: InlinableParameterContext? = this.inlinableParameterContext,
+        lambdaBodyContext: LambdaBodyContext? = this.lambdaBodyContext,
         allInfosSuppressed: Boolean = this.allInfosSuppressed,
         allWarningsSuppressed: Boolean = this.allWarningsSuppressed,
         allErrorsSuppressed: Boolean = this.allErrorsSuppressed,
@@ -146,13 +143,13 @@ class PersistentCheckerContext private constructor(
 
     override fun exitContractBody(): CheckerContextForProvider = toggleContractBody(newValue = false)
 
-    override fun setInlineFunctionBodyContext(context: FirInlineDeclarationChecker.InlineFunctionBodyContext?): PersistentCheckerContext =
+    override fun setInlineFunctionBodyContext(context: InlineFunctionBodyContext?): PersistentCheckerContext =
         copy(inlineFunctionBodyContext = context)
 
-    override fun setInlinableParameterContext(context: FirInlineBodyResolvableExpressionChecker.InlinableParameterContext?): CheckerContextForProvider =
+    override fun setInlinableParameterContext(context: InlinableParameterContext?): CheckerContextForProvider =
         copy(inlinableParameterContext = context)
 
-    override fun setLambdaBodyContext(context: FirAnonymousUnusedParamChecker.LambdaBodyContext?): CheckerContextForProvider =
+    override fun setLambdaBodyContext(context: LambdaBodyContext?): CheckerContextForProvider =
         copy(lambdaBodyContext = context)
 
     override fun enterFile(file: FirFile): CheckerContextForProvider = copy(containingFileSymbol = file.symbol)
