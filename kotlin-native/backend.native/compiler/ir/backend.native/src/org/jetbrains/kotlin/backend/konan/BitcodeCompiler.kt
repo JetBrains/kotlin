@@ -1,88 +1,37 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.konan
 
+import llvm.LLVMModuleRef
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
-import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
-import org.jetbrains.kotlin.konan.config.overrideClangOptions
-import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.target.*
-import java.io.File
+import org.jetbrains.kotlin.backend.konan.llvm.LlvmBackendContext
+import org.jetbrains.kotlin.konan.TempFiles
+import java.nio.file.Path
 
-typealias ObjectFile = String
+/**
+ * Compiles an LLVM module into an object file.
+ */
+internal interface BitcodeCompiler {
+    fun makeObjectFile(llvmModule: LLVMModuleRef, outputFilePath: Path)
+}
 
-internal class BitcodeCompiler(
-    private val context: NativeBackendPhaseContext,
-) {
-
-    private val config = context.config
-    private val platform = config.platform
-    private val optimize = context.shouldOptimize()
-    private val debug = config.debug
-
-    private val overrideClangOptions =
-            config.configuration.overrideClangOptions
-
-    private fun MutableList<String>.addNonEmpty(elements: List<String>) {
-        addAll(elements.filter { it.isNotEmpty() })
+/**
+ * Chooses how object files are emitted: in-process with the target machine of [llvmBackendContext]
+ * if [NativeSecondStageCompilationConfig.inProcessObjEmission] is set, with clang otherwise.
+ *
+ * The result borrows [llvmBackendContext] and [tempFiles], so it must not outlive them.
+ */
+internal fun NativeBackendPhaseContext.createBitcodeCompiler(
+        llvmBackendContext: LlvmBackendContext,
+        tempFiles: TempFiles,
+        llvmModuleName: String,
+): BitcodeCompiler {
+    return if (config.inProcessObjEmission) {
+        LlvmBitcodeCompiler(llvmBackendContext)
+    } else {
+        ClangBitcodeCompiler(this, tempFiles, llvmModuleName)
     }
-
-    private fun runTool(vararg command: String) =
-            Command(*command)
-                    .logWith(context::log)
-                    .execute()
-
-    private fun targetTool(tool: String, vararg arg: String) {
-        val absoluteToolName = "${platform.absoluteTargetToolchain}/bin/$tool"
-        runTool(absoluteToolName, *arg)
-    }
-
-    private fun hostLlvmTool(tool: String, vararg arg: String) {
-        val absoluteToolName = "${platform.absoluteLlvmHome}/bin/$tool"
-        runTool(absoluteToolName, *arg)
-    }
-
-    private fun clang(configurables: ClangFlags, bitcodeFile: File, objectFile: File) {
-        val targetTriple = if (configurables is AppleConfigurables) {
-            platform.targetTriple.withOSVersion(configurables.osVersionMin)
-        } else {
-            platform.targetTriple
-        }
-        val flags = overrideClangOptions.takeIf(List<String>::isNotEmpty)
-                ?: mutableListOf<String>().apply {
-                    addNonEmpty(configurables.clangFlags)
-                    addNonEmpty(listOf("-triple", targetTriple.toString()))
-                    addNonEmpty(when {
-                        optimize -> configurables.clangOptFlags
-                        debug -> configurables.clangDebugFlags
-                        else -> configurables.clangNooptFlags
-                    })
-                    addNonEmpty(context.config.getCurrentRelocationModeFrom(configurables).translateToClangCc1Flag())
-                }
-        val bitcodePath = bitcodeFile.absoluteFile.normalize().path
-        val objectPath = objectFile.absoluteFile.normalize().path
-        if (configurables is AppleConfigurables && config.configuration.get(BinaryOptions.compileBitcodeWithXcodeLlvm) == true) {
-            targetTool("clang++", *flags.toTypedArray(), bitcodePath, "-o", objectPath)
-        } else {
-            hostLlvmTool("clang++", *flags.toTypedArray(), bitcodePath, "-o", objectPath)
-        }
-    }
-
-    private fun RelocationModeFlags.Mode.translateToClangCc1Flag() = when (this) {
-        RelocationModeFlags.Mode.PIC -> listOf("-mrelocation-model", "pic")
-        RelocationModeFlags.Mode.STATIC -> listOf("-mrelocation-model", "static")
-        RelocationModeFlags.Mode.DEFAULT -> emptyList()
-    }
-
-    /**
-     * Compile [bitcodeFile] to [objectFile].
-     */
-    fun makeObjectFile(bitcodeFile: File, objectFile: File) =
-            when (val configurables = platform.configurables) {
-                is ClangFlags -> clang(configurables, bitcodeFile, objectFile)
-                else -> error("Unsupported configurables kind: ${configurables::class.simpleName}!")
-            }
 }

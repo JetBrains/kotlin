@@ -55,7 +55,7 @@ internal class Linker(
 
     fun linkCommands(
             outputFile: String,
-            objectFiles: List<ObjectFile>,
+            objectFiles: List<String>,
             dependenciesTrackingResult: DependenciesTrackingResult,
             caches: ResolvedCacheBinaries,
             extraLinkerFlags: List<String> = emptyList()
@@ -120,7 +120,7 @@ internal class Linker(
 
     private fun runLinker(
             outputFile: String,
-            objectFiles: List<ObjectFile>,
+            objectFiles: List<String>,
             includedBinaries: List<String>,
             libraryProvidedLinkerFlags: List<String>,
             extraLinkerFlags: List<String>,
