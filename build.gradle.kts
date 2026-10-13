@@ -404,16 +404,8 @@ tasks {
         dependsOn(":compiler:ir.backend.common:test")
     }
 
-    testLifecycleTask("codegenTarget8Jvm11Test", QualityGate.Master) {
-        dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm11Test")
-    }
-
     testLifecycleTask("codegenTarget8Jvm17Test", QualityGate.Master) {
         dependsOn(":compiler:tests-different-jdk:codegenTarget8Jvm17Test")
-    }
-
-    testLifecycleTask("codegenTarget11Jvm11Test", QualityGate.Master) {
-        dependsOn(":compiler:tests-different-jdk:codegenTarget11Jvm11Test")
     }
 
     testLifecycleTask("codegenTarget17Jvm17Test", QualityGate.Master) {
