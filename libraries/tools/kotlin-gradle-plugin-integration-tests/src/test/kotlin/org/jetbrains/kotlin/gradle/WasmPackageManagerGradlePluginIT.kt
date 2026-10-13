@@ -46,7 +46,7 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
         get() = "yarn"
 
     @GradleTest
-    @MppGradlePluginTests
+    @WasmJsGradlePluginTests
     @TestMetadata("kotlin-wasm-package-lock-project")
     fun `given project without npm dependencies - when lockfile tasks run - expect tasks succeed - and do not create yarn lock file`(
         gradleVersion: GradleVersion,
@@ -65,7 +65,7 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     }
 
     @GradleTest
-    @MppGradlePluginTests
+    @WasmJsGradlePluginTests
     @TestMetadata("kotlin-wasm-package-lock-project")
     fun `given project with npm dependency - when 'store lockfile' task runs - expect task succeeds - and creates yarn lock file`(
         gradleVersion: GradleVersion,
@@ -83,7 +83,7 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     }
 
     @GradleTest
-    @MppGradlePluginTests
+    @WasmJsGradlePluginTests
     @TestMetadata("kotlin-wasm-package-lock-project")
     fun `given project with npm dependency and non-empty lock file - when npm dependency is removed - expect KGP deletes empty lock file`(
         gradleVersion: GradleVersion,
@@ -119,7 +119,7 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
      * We may want to change this in future, to allow users to manually define an empty lockfile.
      */
     @GradleTest
-    @MppGradlePluginTests
+    @WasmJsGradlePluginTests
     @TestMetadata("kotlin-wasm-package-lock-project")
     fun `given project with npm dependency and empty lock file - when npm dependency is removed - expect KGP deletes empty lock file`(
         gradleVersion: GradleVersion,
@@ -185,7 +185,7 @@ class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     }
 }
 
-@MppGradlePluginTests
+@WasmJsGradlePluginTests
 abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
 
     abstract val yarn: Boolean

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.junit.jupiter.api.DisplayName
 
-@MppGradlePluginTests
+@WasmJsGradlePluginTests
 class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
