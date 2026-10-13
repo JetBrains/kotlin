@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.konan.target
 // so they are excluded from the stdlib's native targets manifest.
 // Matched by name so this keeps compiling after the bootstrap drops the KonanTarget constants.
 // todo: KT-78078
-val removedTargetNames = setOf("watchos_arm32")
+val removedTargetNames = setOf("watchos_arm32", "android_x64", "android_x86", "android_arm32", "android_arm64")
 
 // Targets no longer supported by the in-tree compiler but still present in the bootstrap.
 // Matched by name so this keeps compiling after the bootstrap drops the KonanTarget constants.
