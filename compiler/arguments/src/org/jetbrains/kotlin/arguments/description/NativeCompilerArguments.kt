@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
@@ -33,6 +34,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -45,6 +47,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -58,6 +61,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -72,6 +76,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
             deprecatedVersion = KotlinReleaseVersion.v2_5_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -84,6 +89,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -99,6 +105,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -127,6 +134,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -140,6 +148,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -152,6 +161,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -205,6 +215,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -216,6 +227,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -231,6 +243,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -245,6 +258,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -268,6 +282,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -296,6 +311,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -309,6 +325,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -336,6 +353,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -349,6 +367,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -363,6 +382,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -375,6 +395,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -388,6 +409,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -401,6 +423,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_20
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -412,6 +435,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -423,6 +447,7 @@ By default caches will be placed into the kotlin-native system cache directory."
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -437,6 +462,7 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -456,6 +482,7 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -468,6 +495,7 @@ This library must be one of the ones passed with '-library'.""".asReleaseDepende
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -482,6 +510,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -494,6 +523,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -507,6 +537,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -520,6 +551,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -530,6 +562,7 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -544,6 +577,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -569,6 +603,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -580,6 +615,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -603,6 +639,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -614,6 +651,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -627,6 +665,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -639,6 +678,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -650,6 +690,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -660,6 +701,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -673,6 +715,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -683,6 +726,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -695,6 +739,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -705,6 +750,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -728,6 +774,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -739,6 +786,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -749,6 +797,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -761,6 +810,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -772,6 +822,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -782,6 +833,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_24
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -793,6 +845,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -804,6 +857,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -818,6 +872,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -829,6 +884,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_30,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -841,6 +897,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -852,6 +909,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -864,6 +922,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -875,6 +934,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_6_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -887,6 +947,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -897,6 +958,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_8_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -908,6 +970,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -920,6 +983,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -931,6 +995,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -941,6 +1006,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -951,6 +1017,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -961,6 +1028,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -972,6 +1040,7 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     compilerArgument {
@@ -983,5 +1052,6 @@ The default value is 1.""".asReleaseDependent()
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 }
