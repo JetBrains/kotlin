@@ -10,21 +10,21 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-public enum class TestPlatform {
-    Jvm,
-    Js,
-    Native,
-    WasmJs,
-    WasmWasi;
+public sealed class TestPlatform {
+    data class Jvm(val version: Int) : TestPlatform()
+    data object Js : TestPlatform()
+    data object Native : TestPlatform()
+    data object WasmJs : TestPlatform()
+    data object WasmWasi : TestPlatform()
+
     companion object
 
-    fun isJvm(version: Int? = null): Boolean = this == Jvm && (version == null || jvmVersion == version)
-    fun isJvmEarlierThan(version: Int): Boolean = this == Jvm && jvmVersion!! < version
+    fun isJvm(version: Int? = null): Boolean = this is Jvm && (version == null || this.version == version)
+    fun isJvmEarlierThan(version: Int): Boolean = this is Jvm && this.version < version
     fun isJsOrWasmJs(): Boolean = this == Js || this == WasmJs
 }
 
 public expect val TestPlatform.Companion.current: TestPlatform
-public expect val TestPlatform.Companion.jvmVersion: Int?
 
 
 public fun testOn(platformPredicate: (TestPlatform) -> Boolean, action: () -> Unit) {

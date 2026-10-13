@@ -133,7 +133,7 @@ class CharCategoryTest {
             test(expectedCategoryCode, codePoint.category.code, "CodePoint.category")
             if (expectedCategoryCode != codePoint.category.code &&
                 (expectedCategoryCode == CharCategory.UNASSIGNED.code || codePoint.category == CharCategory.UNASSIGNED) &&
-                TestPlatform.current == TestPlatform.Jvm) continue
+                TestPlatform.current.isJvm()) continue
 
             test(expectedIsDigit, codePoint.isDigit(), "CodePoint.isDigit()")
             test(expectedIsLetter, codePoint.isLetter(), "CodePoint.isLetter()")

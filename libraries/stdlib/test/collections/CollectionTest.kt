@@ -1310,10 +1310,10 @@ class CollectionTest {
         assertTrue("toArray1" in coll.invocations || "toArray2" in coll.invocations)
 
         val arr2: Array<String> = coll.toArray(Array(coll.size + 1) { "" })
-        testOnlyOn(TestPlatform.Jvm) {
+        testOn(TestPlatform::isJvm) {
             assertEquals(data + listOf(null), arr2.asList())
         }
-        testExceptOn(TestPlatform.Jvm) {
+        testExceptOn(TestPlatform::isJvm) {
             assertEquals(data + listOf(""), arr2.asList())
         }
     }

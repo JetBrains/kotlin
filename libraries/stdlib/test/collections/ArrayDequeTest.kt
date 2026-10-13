@@ -716,7 +716,7 @@ class ArrayDequeTest {
 
             val expectedDest = buildList {
                 addAll(expected)
-                if (TestPlatform.current == TestPlatform.Jvm) {
+                if (TestPlatform.current.isJvm()) {
                     add(null)
                 } else {
                     add(expected.size + 100)

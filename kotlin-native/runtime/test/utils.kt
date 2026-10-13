@@ -17,7 +17,6 @@ public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
 }
 
 public actual val TestPlatform.Companion.current: TestPlatform get() = TestPlatform.Native
-public actual val TestPlatform.Companion.jvmVersion: Int? get() = null
 
 
 public actual val isFloat32RangeEnforced: Boolean get() = true

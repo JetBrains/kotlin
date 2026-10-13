@@ -8,6 +8,7 @@ package test.text
 import test.TestPlatform
 import test.testOnlyOn
 import test.testExceptOn
+import test.testOn
 import kotlin.random.Random
 import kotlin.test.*
 import kotlin.text.*
@@ -41,11 +42,11 @@ class StringBuilderTest {
     fun deprecatedAppend() {
         val chars = charArrayOf('a', 'b', 'c', 'd')
         val sb = StringBuilder()
-        testOnlyOn(TestPlatform.Jvm) {
+        testOn(TestPlatform::isJvm) {
             sb.append(chars, 1, 2) // Should fail after KT-15220 gets fixed
             assertEquals("bc", sb.toString())
         }
-        testExceptOn(TestPlatform.Jvm) {
+        testExceptOn(TestPlatform::isJvm) {
             assertFailsWith<NotImplementedError> {
                 sb.append(chars, 1, 2)
             }

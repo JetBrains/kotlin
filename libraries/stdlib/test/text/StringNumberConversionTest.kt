@@ -228,7 +228,7 @@ class StringNumberConversionTest {
             assertProduces("-9.9e-325", -0.0)
 
             // JVM is excluded because of a known JDK 8 bug: https://bugs.openjdk.org/browse/JDK-8043740
-            testExceptOn(TestPlatform.Jvm) {
+            testExceptOn(TestPlatform::isJvm) {
                 assertProduces("0.${"0".repeat(324)}1e324", 0.1)
                 assertProduces("0.${"0".repeat(50)}1e50", 0.1)
                 assertProduces("0.${"0".repeat(1000)}1e1000", 0.1)

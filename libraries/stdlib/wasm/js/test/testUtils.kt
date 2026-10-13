@@ -6,4 +6,3 @@
 package test
 
 public actual val TestPlatform.Companion.current: TestPlatform get() = TestPlatform.WasmJs
-public actual val TestPlatform.Companion.jvmVersion: Int? get() = null

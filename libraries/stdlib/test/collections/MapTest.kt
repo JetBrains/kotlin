@@ -604,7 +604,7 @@ class MapTest {
             assertFailsWith<ConcurrentModificationException>(mapLabel) { entry.equals(mapEntryOf("b", 20)) }
         }
 
-        testExceptOn(TestPlatform.Jvm) {
+        testExceptOn(TestPlatform::isJvm) {
             val entries = arrayOf("a" to 1, "b" to 2, "c" to 3)
             val maps = listOf(
                 "HashMap" to hashMapOf(*entries),
