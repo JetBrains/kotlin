@@ -98,6 +98,10 @@ internal class Linker(
         return runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, extraLinkerFlags, caches)
     }
 
+    private val stackMapLinkerFlags: List<String>
+        get() = if (target.family.isAppleFamily && config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)
+            listOf("-U", "__LLVM_StackMaps") else emptyList()
+
     private fun resolveExecutableTarget(outputFile: String): ExecutableTarget = when (config.produce) {
         CompilerOutputKind.TEST_BUNDLE -> {
             require(target.family.isAppleFamily) {
@@ -109,7 +113,7 @@ internal class Linker(
 
             ExecutableTarget(
                     path = bundleDir.resolve(bundleRelativePath).absolutePathString(),
-                    flags = listOf("-bundle", "-dead_strip")
+                    flags = listOf("-bundle", "-dead_strip") + stackMapLinkerFlags
             )
         }
         CompilerOutputKind.FRAMEWORK -> {
@@ -123,22 +127,18 @@ internal class Linker(
 
             ExecutableTarget(
                     path = framework.resolve(dylibRelativePath).absolutePathString(),
-                    flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+                    flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath") + stackMapLinkerFlags
             )
         }
         else -> {
             val flags = if (target.family.isAppleFamily) {
-                val baseFlags = when (config.produce) {
+                when (config.produce) {
                     CompilerOutputKind.DYNAMIC_CACHE -> listOf("-install_name", outputFiles.dynamicCacheInstallName)
                     else -> listOf("-dead_strip")
                 }
-                val stackMapFlags = if (config.gcStackMapScheme != GCStackMapScheme.DELTA_MAIN)
-                    listOf("-U", "__LLVM_StackMaps")
-                else emptyList()
-                baseFlags + stackMapFlags
             } else emptyList()
 
-            ExecutableTarget(outputFiles.nativeBinaryFile, flags)
+            ExecutableTarget(outputFiles.nativeBinaryFile, flags + stackMapLinkerFlags)
         }
     }
 
