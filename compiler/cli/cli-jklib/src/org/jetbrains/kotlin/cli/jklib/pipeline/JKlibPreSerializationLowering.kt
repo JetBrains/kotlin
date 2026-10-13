@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineDeclarationCheckerLowering
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
 import org.jetbrains.kotlin.ir.inline.InlineFunctionSerializationPreProcessing
-import org.jetbrains.kotlin.ir.inline.NonReifiedTypeParameterRemappingMode
 import org.jetbrains.kotlin.ir.inline.OuterThisInInlineFunctionsSpecialAccessorLowering
 import org.jetbrains.kotlin.ir.inline.SyntheticAccessorLowering
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
@@ -273,14 +272,12 @@ private class UnboundFieldSymbolBinder(private val symbolFinder: SymbolFinder) :
 private class JKlibPrivateFunctionInlining(context: PreSerializationLoweringContext) : FunctionInlining(
     context,
     JKlibPrivateInlineFunctionResolver(),
-    nonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.SUBSTITUTE,
     substitutePureArguments = true,
 )
 
 private class JKlibNonPrivateFunctionInlining(context: PreSerializationLoweringContext) : FunctionInlining(
     context,
     JKlibNonPrivateInlineFunctionResolver(context),
-    nonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.SUBSTITUTE,
     substitutePureArguments = true,
 )
 
@@ -301,10 +298,7 @@ fun jklibLoweringsOfTheFirstPhase(
 
     // The cross-module inliner already runs on the main IR tree, so the pre-processed functions do not need their own.
     fun createInlineFunctionSerializationPreProcessing(@Suppress("UNUSED_PARAMETER") context: JKlibPreSerializationLoweringContext) =
-        InlineFunctionSerializationPreProcessing(
-            crossModuleFunctionInliner = null,
-            nonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.SUBSTITUTE,
-        )
+        InlineFunctionSerializationPreProcessing(crossModuleFunctionInliner = null)
 
     fun createSyntheticAccessorGeneration(context: JKlibPreSerializationLoweringContext) =
         SyntheticAccessorLowering(context, isExecutedOnFirstPhase = true)

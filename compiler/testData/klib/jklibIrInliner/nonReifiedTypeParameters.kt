@@ -1,4 +1,4 @@
-// The non-reified type parameters are substituted with the type arguments of the call site.
+// The non-reified type parameters are erased to their upper bounds rather than substituted with the type arguments of the call site.
 
 inline fun <T> id(x: T): T {
     val y: T = x
