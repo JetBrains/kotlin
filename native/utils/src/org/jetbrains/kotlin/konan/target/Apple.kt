@@ -47,6 +47,15 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> "${absolute(toolchainDependency)}/usr"
     }
 
+    override val swiftLibraryDirectory: String
+        get() {
+            val relativePath = when (xcodePartsProvider) {
+                is XcodePartsProvider.Local -> "usr/lib/swift"
+                XcodePartsProvider.InternalServer -> "lib/swift"
+            }
+            return "$absoluteTargetToolchain/$relativePath"
+        }
+
     override val absoluteAdditionalToolsDir: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.additionalTools
         XcodePartsProvider.InternalServer -> absolute(additionalToolsDir)
