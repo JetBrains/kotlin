@@ -506,27 +506,6 @@ fun BuildOptions.suppressWarningForOldKotlinVersion(
         """.trimIndent()
 )
 
-// Lint tasks produces deprecation warning since Gradle 8.14: https://issuetracker.google.com/issues/408334529
-// On a non-first run if WarningMode was not changed, the Lint task does not produce a deprecation warning!
-// Fixed in AGP 8.12-alpha06
-fun BuildOptions.suppressAgpWarningSinceGradle814(
-    currentGradleVersion: GradleVersion,
-    currentAgpVersion: TestVersions.AgpCompatibilityMatrix,
-    warningMode: WarningMode = WarningMode.Summary,
-): BuildOptions {
-    return when {
-        warningMode == WarningMode.Summary &&
-                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> suppressDeprecationWarningsSinceGradleVersion(
-            gradleVersion = TestVersions.Gradle.G_8_14,
-            currentGradleVersion = currentGradleVersion,
-            reason = "AGP produces deprecation warning on resolve: https://issuetracker.google.com/issues/408334529"
-        )
-        currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) &&
-                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> copy(warningMode = warningMode)
-        else -> this
-    }
-}
-
 fun BuildOptions.suppressDeprecatedJdkWarningWithGradle814(
     currentGradleVersion: GradleVersion,
     jdk: JdkVersions.ProvidedJdk
