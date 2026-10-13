@@ -471,7 +471,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val publicationFormat: Provider<KotlinPublicationFormat>
         get() = enumProvider<KotlinPublicationFormat>(KOTLIN_PUBLICATION_FORMAT)
-            .orElse(KotlinPublicationFormat.LEGACY_MULTIPLE_PUBLICATIONS)
+            .orElse(KotlinPublicationFormat.KOTLIN_ARCHIVE)
 
     val allowIncompleteKotlinArchivePublication: Boolean
         get() = booleanProperty(KOTLIN_ALLOW_INCOMPLETE_KOTLIN_ARCHIVE_PUBLICATION) ?: false
