@@ -23,6 +23,7 @@ import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInBuildToolsApi
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
@@ -32,6 +33,7 @@ import kotlin.test.assertTrue
 // todo: test daemon start (does not start every build)
 // todo: test daemon shutdown when gradle daemon dies
 @DisplayName("Kotlin daemon base behaviour")
+@MustRunOnChangesInBuildToolsApi
 class KotlinDaemonIT : KGPDaemonsBaseTest() {
 
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
