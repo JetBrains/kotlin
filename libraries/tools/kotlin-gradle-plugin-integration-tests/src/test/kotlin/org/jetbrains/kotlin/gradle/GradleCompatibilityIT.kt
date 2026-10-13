@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -37,6 +38,7 @@ import kotlin.test.assertEquals
 
 @DisplayName("Tests on compatibility with various Gradle versions")
 @JvmGradlePluginTests
+@MustRunOnChangesInGradle
 class GradleCompatibilityIT : KGPBaseTest() {
     @DisplayName("Proper Gradle plugin variant is used")
     @GradleTestVersions(
