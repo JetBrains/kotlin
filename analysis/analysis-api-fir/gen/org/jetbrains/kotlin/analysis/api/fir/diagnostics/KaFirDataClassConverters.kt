@@ -548,12 +548,6 @@ private fun KaDiagnosticConverterBuilder.addConversions5() {
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions6() {
-    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE) { firDiagnostic ->
-        JsModuleProhibitedOnNonNativeImpl(
-            firDiagnostic as KtDiagnosticWithSource,
-            token,
-        )
-    }
     add(FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS) { firDiagnostic ->
         ClassLiteralLhsNotAClassImpl(
             firDiagnostic as KtDiagnosticWithSource,
@@ -3879,6 +3873,7 @@ private fun KaDiagnosticConverterBuilder.addConversions83() {
     }
     add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
         JsModuleProhibitedOnVarImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
@@ -4768,8 +4763,16 @@ private fun KaDiagnosticConverterBuilder.addConversions102() {
             token,
         )
     }
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_NON_EXTERNAL) { firDiagnostic ->
+        JsModuleProhibitedOnNonExternalImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirWebCommonErrors.NESTED_JS_MODULE_PROHIBITED) { firDiagnostic ->
         NestedJsModuleProhibitedImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtDiagnosticWithSource,
             token,
         )
