@@ -37,12 +37,13 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
         val browserTestDsl = browser.test as KotlinJsBrowserTestImpl
 
         val browserRunners = browserTestDsl.browserRunners
-        KotlinJsBrowserTestMetrics.collectMetrics(project, browserRunners)
 
         if (browserRunners.isEmpty()) {
             project.reportDiagnostic(KotlinToolingDiagnostics.NoBrowserSpecifiedForJsBrowserTestFramework(targetName = target.name))
             browserTestDsl.setUpDefaultBrowserRunner()
         }
+
+        KotlinJsBrowserTestMetrics.collectMetrics(project, browserRunners)
 
         // TODO: KT-86706 Implement different browser runners as independent test runs
         //  so it is aligned with KGP API
