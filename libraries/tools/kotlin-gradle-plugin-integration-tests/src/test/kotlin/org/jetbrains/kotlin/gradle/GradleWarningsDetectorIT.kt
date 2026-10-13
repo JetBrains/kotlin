@@ -62,6 +62,22 @@ class GradleWarningsDetectorIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Deprecation warning doesn't fail the build with the summary warning mode")
+    @GradleTest
+    fun testDeprecationWithWarningModeSummary(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            emitDeprecationAtConfigurationTime()
+            build("help", buildOptions = buildOptions.copy(warningMode = WarningMode.Summary)) {
+                assertReportedDeprecations(CONFIGURATION_TIME_DEPRECATION)
+            }
+
+            // The configuration cache entry stored with the summary warning mode must not be reused
+            buildAndFail("help") {
+                assertDetectorFailedBuild(CONFIGURATION_TIME_DEPRECATION)
+            }
+        }
+    }
+
     @DisplayName("Execution time deprecation warning fails the build with configuration cache")
     @GradleTest
     fun testExecutionTimeDeprecationWithConfigurationCache(gradleVersion: GradleVersion) {
@@ -116,12 +132,16 @@ class GradleWarningsDetectorIT : KGPBaseTest() {
             .toSet()
     }
 
-    private fun BuildResult.assertDetectorFailedBuild(vararg expectedActions: String) {
+    private fun BuildResult.assertReportedDeprecations(vararg expectedActions: String) {
         assertEquals(
             expectedActions.map { "$it has been deprecated." }.toSet(),
             // The removal details are worded differently between Gradle versions: "Gradle 10.0." vs "Gradle 10."
             reportedDeprecations()?.map { it.substringBefore(" This will fail with an error in Gradle") }?.toSet(),
         )
+    }
+
+    private fun BuildResult.assertDetectorFailedBuild(vararg expectedActions: String) {
+        assertReportedDeprecations(*expectedActions)
         assertEquals(
             "Unexpected warnings were detected in the build!",
             output.lines().dropWhile { it != "* What went wrong:" }.drop(1).firstOrNull(),
