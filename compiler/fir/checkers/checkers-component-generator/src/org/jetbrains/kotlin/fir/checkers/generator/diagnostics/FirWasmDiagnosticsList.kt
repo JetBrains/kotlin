@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.util.PrivateForInline
 @OptIn(PrivateForInline::class)
 object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
     val ANNOTATIONS by object : DiagnosticGroup("Annotations") {
-        val JS_MODULE_PROHIBITED_ON_NON_EXTERNAL by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE by deprecationError<KtElement>(
             LanguageFeature.ProhibitVarInJsModuleFile,
             PositioningStrategy.VAL_OR_VAR_NODE,
