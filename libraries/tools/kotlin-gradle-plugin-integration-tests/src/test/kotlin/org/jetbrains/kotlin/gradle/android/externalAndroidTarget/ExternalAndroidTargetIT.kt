@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.AndroidGradlePluginVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
@@ -39,6 +41,7 @@ import kotlin.test.fail
     ],
 )
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class ExternalAndroidTargetIT : KGPBaseTest() {
 
     // Uses `com.android.kotlin.multiplatform.library`, requires AGP new DSL.
@@ -181,6 +184,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
 
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
     @GradleAndroidTest
+    @MustRunOnChangesInCompilerPlugins
     fun `KT-81249 - works with parcelize`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
     ) {
@@ -214,6 +218,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
 
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811)
     @GradleAndroidTest
+    @MustRunOnChangesInCompilerPlugins
     fun `parcelize runtime annotations are available in commonMain`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
     ) {
