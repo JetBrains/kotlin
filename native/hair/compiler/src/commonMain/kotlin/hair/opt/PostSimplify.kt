@@ -12,7 +12,7 @@ import hair.ir.nodes.*
 fun Session.simplify(): Boolean {
     var changed = false
 
-    modifyControlFlow(unreachable) {
+    modifyControlFlow {
         // TODO walk everything in use-def order
         val simplifier = object : NodeVisitor<Unit>() {
             override fun visitNode(node: Node) {}

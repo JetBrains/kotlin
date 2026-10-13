@@ -12,7 +12,7 @@ fun Compilation.inline(call: InvokeStatic) {
     val calleeCompilation = getCompilation(call.function)
 
     with (callerSession) {
-        modifyIR {
+        modifyControlFlow {
             val toClone = calleeCompilation.session.allNodes().filterNot { it is Return }
             val clones = callerSession.cloneNodes(toClone) {
                 when (it) {

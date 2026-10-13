@@ -15,7 +15,7 @@ fun Session.buildSSA() {
     val cfg = cfg()
     val doms = Dominators.sfda(cfg)
 
-    modifyIR {
+    modifyControlFlow {
         val defs = allNodes<AssignVar>().groupBy { it.variable }
         // FIXME find some general terms to do this?
         val handlersWithPossibleRedefs = allNodes<Unwind>().map { it.handler }.filter { it.preds.size > 1 }.toSet()

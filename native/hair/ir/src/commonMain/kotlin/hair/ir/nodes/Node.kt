@@ -1,6 +1,7 @@
 package hair.ir.nodes
 
 import hair.ir.NodeVisitor
+import hair.ir.Session
 import hair.sym.HairType
 
 interface Node {
@@ -59,22 +60,19 @@ sealed class NodeBase(final override val form: Form, args: List<Node?>) : Node {
 }
 
 
-// FIXME move?
-class ControlFlowBuilder(at: Controlling) {
-    var lastControl: Controlling = at
+class ControlBuilder(private val editor: ControlEditor, at: Controlling) : ControlEditor by editor {
+    var control: Controlling = at
 
     // TODO make scoped?
     fun at(pos: Controlling) {
-        lastControl = pos
+        control = pos
     }
 
-    inline fun <N : Controlling> appendControl(next: () -> N): N = next().also { lastControl = it }
+    inline fun <N : Controlling> appendControl(next: () -> N): N = next().also { control = it }
 
     inline fun <N : Node> appendControlled(next: (Controlling) -> N): N =
-        next(lastControl).also {
+        next(control).also {
             // TODO make separate appendBlockBody ?
-            lastControl = it as? Controlling ?: it.session.unreachable
+            control = it as? Controlling ?: it.session.unreachable
         }
 }
-
-object NoControlFlowBuilder

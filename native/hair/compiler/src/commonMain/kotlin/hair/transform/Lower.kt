@@ -8,11 +8,8 @@ package hair.transform
 import hair.ir.*
 import hair.ir.nodes.ArrayIndexCheck
 import hair.ir.nodes.CheckCast
-import hair.ir.nodes.InvokeStatic
 import hair.ir.nodes.IsInstanceOf
 import hair.ir.nodes.Node
-import hair.ir.nodes.NodeBuilder
-import hair.ir.nodes.replaceValueUses
 import hair.sym.CmpOp
 import hair.sym.HairType
 import hair.sym.RuntimeInterface
@@ -29,23 +26,9 @@ fun Session.lower() {
         withWorklist(allNodes()) {
             val worklist = this
 
-            // FIXME create a proper tool, maybe teach insertAfter to add to a worklist from context or smth.
-            context(baseBuilder: NodeBuilder)
-            fun addingToWorklist(action: context(NodeBuilder) () -> Unit) {
-                val collectNewNodes = object : NodeBuilder by baseBuilder {
-                    override fun onNodeBuilt(node: Node): Node {
-                        return baseBuilder.onNodeBuilt(node).also {
-                            worklist.add(it)
-                        }
-                    }
-                }
-                context(collectNewNodes) {
-                    action()
-                }
-            }
-
-            modifyControlFlow(unreachable) {
-                addingToWorklist {
+            modifyControlFlow {
+                // New nodes, e.g. those of a lowering sub-graph, are lowered as well.
+                observingBuiltNodes({ worklist.add(it) }) {
                     val lowering = object : NodeVisitor<Unit>() {
                         override fun visitNode(node: Node) = Unit
 
@@ -55,11 +38,11 @@ fun Session.lower() {
                             // TODO fast type checks
 
                             // FIXME it's a nonthrowing runtime call - create a separate node  for such things
-                            val replacement = insertAfter(control) {
+                            val replacement = control.insertAfter {
                                 InvokeStatic(RuntimeInterface.isSubtype)(
                                     TypeInfo(node.obj),
                                     ConstTypeInfo(node.targetType)
-                                ) as InvokeStatic
+                                )
                             }
                             node.replaceValueNodeWith(replacement)
                         }

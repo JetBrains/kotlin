@@ -41,7 +41,7 @@ class ReplaceNodeTest : IrTest {
         val thrower = allNodes<InvokeStatic>().first { it.unwind != null }
 
         val failure = assertFailsWith<IllegalArgumentException> {
-            modifyIR {
+            modifyControlFlow {
                 thrower.replaceWith(thrower.control, NoValue())
             }
         }
@@ -61,7 +61,7 @@ class ReplaceNodeTest : IrTest {
         val original = allNodes<InvokeStatic>().first { it.unwind != null }
         val handlerBefore = original.unwind!!.handler
 
-        modifyIR {
+        modifyControlFlow {
             val replacement = InvokeStatic(g)(original.control, callArgs = arrayOf<Node>()) as InvokeStatic
             original.replaceThrowing(replacement)
         }
@@ -86,7 +86,7 @@ class ReplaceNodeTest : IrTest {
         val obj = cast.obj
         val predecessor = cast.control
 
-        modifyIR {
+        modifyControlFlow {
             cast.spliceOut(obj)
         }
 
@@ -120,12 +120,29 @@ class ReplaceNodeTest : IrTest {
         )
     }
 
+    /** [insertAfter] splices the built nodes in between a spine node and its successor. */
+    @Test
+    fun testInsertAfter() = withTestSession {
+        lateinit var ret: Return
+        buildInitialIR {
+            ret = Return(Param(0)) as Return
+        }
+
+        val call = modifyControlFlow {
+            entry.insertAfter { InvokeStatic(Fun("f"))(callArgs = arrayOf<Node>()) }
+        }
+
+        assertTrue(call is InvokeStatic)
+        assertSame(entry, call.control, "the inserted node must follow the insertion point")
+        assertSame(call, ret.control, "the former successor must follow the inserted node")
+    }
+
     /** Builds `if (p0) {} else {}; return`, returning the If and the merge block. */
     private fun Session.buildDiamond(): Pair<If, BlockEntry> {
         lateinit var merge: BlockEntry
         buildInitialIR {
             branch(Param(0), {}, {})
-            merge = contextOf<ControlFlowBuilder>().lastControl as BlockEntry
+            merge = contextOf<ControlBuilder>().control as BlockEntry
             ReturnVoid()
         }
         return allNodes<If>().single() to merge
@@ -137,7 +154,7 @@ class ReplaceNodeTest : IrTest {
         val [_, merge] = buildDiamond()
         val [first, second] = merge.preds.toList()
 
-        modifyIR(runDCE = false) {
+        modifyControlFlow(runDCE = false) {
             second.replaceWith(unreachable)
         }
 
@@ -153,7 +170,7 @@ class ReplaceNodeTest : IrTest {
         val takenBlock = ifNode.trueExit.next
         val droppedBlock = ifNode.falseExit.next
 
-        modifyIR(runDCE = false) {
+        modifyControlFlow(runDCE = false) {
             ifNode.fold(ifNode.trueExit)
         }
 
@@ -176,7 +193,7 @@ class ReplaceNodeTest : IrTest {
             ret = Return(Param(0)) as Return
         }
 
-        modifyIR {
+        modifyControlFlow {
             val control = goto.control
             goto.replaceWith(unreachable)
             block.replaceWith(control)

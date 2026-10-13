@@ -315,11 +315,12 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                     }
 
                     override fun visitWhen(expression: IrWhen, data: Unit): Node {
+                        val visitor = this
                         return branch(expression.branches.map { irBranch ->
                             val conditionBuilder: ExprBuilder? = if (irBranch.isUnconditional()) null else {
-                                { irBranch.condition.accept(this, Unit) }
+                                { irBranch.condition.accept(visitor, Unit) }
                             }
-                            val resultBuilder: ExprBuilder = { irBranch.result.accept(this, Unit) }
+                            val resultBuilder: ExprBuilder = { irBranch.result.accept(visitor, Unit) }
                             conditionBuilder to resultBuilder
                         })
                     }

@@ -58,7 +58,19 @@ fun Node.unwireFromGraphAndDeregister() {
     session.unwireFromGraphAndDeregister(this)
 }
 
+/**
+ * The scope of an IR modification, and the capability to build nodes and edit the IR within it.
+ * Edits that restructure the control flow additionally require a [ControlEditor].
+ */
 interface NodeBuilder : ArgumentUpdater {
     val session: Session
     fun onNodeBuilt(node: Node): Node
 }
+
+/**
+ * The scope of an IR modification that may restructure the control flow, and the capability that the operations
+ * doing so require.
+ *
+ * It decides what may be done, not where: control-flow nodes are appended at a [ControlBuilder].
+ */
+interface ControlEditor : NodeBuilder

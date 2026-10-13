@@ -14,7 +14,7 @@ class Normalization(val session: SessionImpl) {
         return node.accept(normalizer).ensuring { it.accept(normalizer) == it }
     }
 
-    private val normalizer: NodeVisitor<Node> = context(session.nodeBuilder, NoControlFlowBuilder) {
+    private val normalizer: NodeVisitor<Node> = context(session.nodeBuilder) {
         object : NodeVisitor<Node>() {
             override fun visitNode(node: Node): Node = node
 

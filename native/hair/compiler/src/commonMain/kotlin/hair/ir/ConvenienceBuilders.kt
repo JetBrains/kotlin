@@ -10,8 +10,8 @@ import hair.utils.ensuring
 context(nodeBuilder: NodeBuilder)
 fun ReturnVoid(control: Controlling?) = Return(control, UnitValue())
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun ReturnVoid() = Return(UnitValue())
+fun ControlBuilder.ReturnVoid() = Return(UnitValue())
+
 
 context(nodeBuilder: NodeBuilder)
 fun Const(type: ArithmeticType, value: Number) = Const(type.toHairType(), value)
@@ -28,12 +28,9 @@ fun Const(type: HairType, value: Number) = when (type) {
 }
 
 // FIXME make Unreachable value-numbered
-context(controlBuilder: ControlFlowBuilder)
-fun Session.unreachable() = controlBuilder.at(unreachable)
+fun ControlBuilder.unreachable() = at(session.unreachable)
 
-
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
+fun ControlBuilder.IfExits(cond: Node): Pair<BlockExit, BlockExit> {
     val ifNode = If(cond)
     if (ifNode is Unreachable) return ifNode to ifNode
     ifNode as If
@@ -54,8 +51,7 @@ fun Phi(block: Controlling, vararg inputs: ValueAndExit): Node = when (block) {
     else -> inputs.single().value
 }
 
-context(_: NodeBuilder, _: ControlFlowBuilder)
-fun Session.breakControlFlowWithUnreachable() {
+fun ControlBuilder.breakControlFlowWithUnreachable() {
     // terminate existing control flow with a block end
     Halt()
     // everythig that comes after is unreachable
@@ -63,13 +59,12 @@ fun Session.breakControlFlowWithUnreachable() {
 }
 
 // CFG structures
-typealias ExprBuilder = context(NodeBuilder, ControlFlowBuilder) () -> Node
+typealias ExprBuilder = ControlBuilder.() -> Node
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun branch(
+fun ControlBuilder.branch(
     cond: Node,
-    trueInit: context(NodeBuilder, ControlFlowBuilder) () -> Unit,
-    falseInit: context(NodeBuilder, ControlFlowBuilder) () -> Unit
+    trueInit: ControlBuilder.() -> Unit,
+    falseInit: ControlBuilder.() -> Unit
 ) {
     val condBuilder: ExprBuilder = { cond }
     branch(listOf(
@@ -78,8 +73,7 @@ fun branch(
     ))
 }
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun branch(branches: List<Pair<ExprBuilder?, ExprBuilder>>): Node {
+fun ControlBuilder.branch(branches: List<Pair<ExprBuilder?, ExprBuilder>>): Node {
     require(branches.isNotEmpty())
 
     // A non-exhaustive branching (the last branch is conditional) falls through without a value
@@ -95,11 +89,11 @@ fun branch(branches: List<Pair<ExprBuilder?, ExprBuilder>>): Node {
         } else {
             val [trueExit, falseExit] = IfExits(cond())
 
-            BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
+            BlockEntry(trueExit).ensuring { control == it }
             val value = body()
             val trueGoto = Goto()
 
-            BlockEntry(falseExit).ensuring { controlBuilder.lastControl == it }
+            BlockEntry(falseExit).ensuring { control == it }
 
             ValueAndExit(value, trueGoto)
         }
@@ -113,8 +107,7 @@ fun branch(branches: List<Pair<ExprBuilder?, ExprBuilder>>): Node {
 }
 
 // FIXME cond should be a builder
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgumentUpdaterBase)
-fun whileLoop(cond: Node, body: context(NodeBuilder, ControlFlowBuilder) () -> Unit) {
+fun ControlBuilder.whileLoop(cond: Node, body: ControlBuilder.() -> Unit) {
     val condBlock = BlockEntry(Goto(), null) as BlockEntry
     val [trueExit, falseExit] = IfExits(cond)
 
@@ -125,16 +118,15 @@ fun whileLoop(cond: Node, body: context(NodeBuilder, ControlFlowBuilder) () -> U
     BlockEntry(falseExit)
 }
 
-typealias CatchBuilder = context(NodeBuilder, ControlFlowBuilder) (Node) -> Node
+typealias CatchBuilder = ControlBuilder.(Node) -> Node
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgumentUpdaterBase)
-fun tryCatch(
+fun ControlBuilder.tryCatch(
     tryBody: ExprBuilder,
     catches: List<Pair<HairClass, CatchBuilder>>,
 ): Node {
     val throwers = mutableListOf<Throwing>()
 
-    val [tryExit, tryResult] = nodeBuilder.session.observingBuiltNodes(
+    val [tryExit, tryResult] = session.observingBuiltNodes(
         { if (it is Throwing) throwers += it },
         {
             val result = tryBody()

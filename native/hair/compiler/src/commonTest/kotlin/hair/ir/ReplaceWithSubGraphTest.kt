@@ -23,16 +23,18 @@ class ReplaceWithSubGraphTest : IrTest {
         val array = check.array
         val index = check.index
 
-        check.replaceWithSubGraph {
-            val size = ArraySize(array)
-            branch(
-                cond = Cmp(HairType.INT, CmpOp.U_GE)(index, size),
-                trueInit = {
-                    InvokeStatic(RuntimeInterface.throwArrayIndexOutOfBounds)()
-                },
-                falseInit = { },
-            )
-            null
+        modifyControlFlow {
+            check.replaceWithSubGraph {
+                val size = ArraySize(array)
+                branch(
+                    cond = Cmp(HairType.INT, CmpOp.U_GE)(index, size),
+                    trueInit = {
+                        InvokeStatic(RuntimeInterface.throwArrayIndexOutOfBounds)()
+                    },
+                    falseInit = { },
+                )
+                null
+            }
         }
 
         verify()

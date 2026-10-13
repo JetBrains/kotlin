@@ -36,10 +36,8 @@ class ValueNumberingTest : IrTest {
 
             ReturnVoid()
 
-            modifyIR {
-                assertSame(a2.lhs, p2)
-                a2.lhs = p1
-            }
+            assertSame(a2.lhs, p2)
+            a2.lhs = p1
             assertSame(u1.value, u2.value)
         }
     }

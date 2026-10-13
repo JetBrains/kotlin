@@ -109,9 +109,7 @@ class Generator(private val generationPath: File) {
             val session = "$nodeBuilder.session"
             val nodeBuilderContext = listOf(nodeBuilder to "NodeBuilder")
             val controlBuilder = "controlBuilder"
-            val controlBuilderContext = nodeBuilderContext + listOf(
-                controlBuilder to "ControlFlowBuilder",
-            )
+            val controlBuilderReceiver = "ControlBuilder"
             for (node in generatedElements.filterIsInstance<Node>()) {
                 //if (node.nestedIn != null) continue
 
@@ -161,16 +159,14 @@ class Generator(private val generationPath: File) {
                             params = formParams,
                             returnType = refName(node) + ".Form",
                             value = (formBuilderName + formBuilderNameSuffix)(formArgs),
-                            context = nodeBuilderContext + listOf(
-                                "_" to "NoControlFlowBuilder"
-                            ),
+                            context = nodeBuilderContext,
                         )
                         method(
+                            extension = controlBuilderReceiver,
                             name = formBuilderName,
                             params = formParams,
                             returnType = resultNodeType,
                             value = (formBuilderName + formBuilderNameSuffix)(formArgs)(),
-                            context = controlBuilderContext,
                         )
                     }
                 }
@@ -186,8 +182,8 @@ class Generator(private val generationPath: File) {
                 }
 
                 fun appendCtrl(builder: () -> String): String = when {
-                    node.hasControlInput() -> "$controlBuilder.appendControlled { ctrl -> ${builder()} }"
-                    node.producesControl() -> "$controlBuilder.appendControl { ${builder()} }"
+                    node.hasControlInput() -> "appendControlled { ctrl -> ${builder()} }"
+                    node.producesControl() -> "appendControl { ${builder()} }"
                     else -> error("Should not reach here $node")
                 }
 
@@ -207,9 +203,7 @@ class Generator(private val generationPath: File) {
                             params = node.nodeParamsList(dropControl = false),
                             returnType = resultNodeType,
                             value = noCtrlBuilder(nodeArgs),
-                            context = nodeBuilderContext + listOf(
-                                "_" to "NoControlFlowBuilder"
-                            ),
+                            context = nodeBuilderContext,
                         )
                     } else {
                         method(
@@ -222,11 +216,11 @@ class Generator(private val generationPath: File) {
                     }
                     if (requireControlBuilder) {
                         method(
+                            extension = controlBuilderReceiver,
                             name = builderName(node),
                             params = node.nodeParamsList(dropControl = true),
                             returnType = resultNodeType,
                             value = appendCtrl { noCtrlBuilder(nodeArgsNoCtrl) },
-                            context = controlBuilderContext,
                         )
                     }
                 } else {
@@ -259,13 +253,17 @@ class Generator(private val generationPath: File) {
 
                     if (formKind == FormKind.SIMPLE) {
                     } else {
+                        // The only cursor-anchored builder left on a context parameter: an invoke needs both
+                        // the form and the cursor, which a single extension receiver cannot carry.
                         method(
                             modifiers = listOf("operator"),
                             name = refName(node) + ".Form.invoke",
                             params = node.nodeParamsList(dropControl = true),
                             returnType = resultNodeType,
-                            value = appendCtrl { "this@invoke"(nodeArgsNoCtrl) },
-                            context = controlBuilderContext,
+                            value = "$controlBuilder." + appendCtrl { "this@invoke"(nodeArgsNoCtrl) },
+                            // The cursor is itself a NodeBuilder, so listing nodeBuilder here would give
+                            // the inner detached call two candidates.
+                            context = listOf(controlBuilder to "ControlBuilder"),
                         )
                     }
                 }
@@ -315,9 +313,9 @@ class Generator(private val generationPath: File) {
                             name = "visit${builderName(node)}",
                             params = listOf("node" to refName(node)),
                             returnType = refName(node),
-                            value = "context(nodeBuilder, NoControlFlowBuilder) { ${
-                                builderName(node) + formArgs + nodeArgs
-                            } }" + cast,
+                        value = "context(nodeBuilder) { ${
+                            builderName(node) + formArgs + nodeArgs
+                        } }" + cast,
                         )
                     }
                 }
