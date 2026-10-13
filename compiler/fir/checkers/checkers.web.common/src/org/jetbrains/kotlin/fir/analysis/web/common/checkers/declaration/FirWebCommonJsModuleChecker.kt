@@ -38,6 +38,17 @@ abstract class FirWebCommonJsModuleChecker : FirBasicDeclarationChecker(MppCheck
 
         val isExternal = isExternal(declaration)
 
+        if (!context.isTopLevel) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_MEMBER)
+        }
+
+        // An external interface has no runtime value, unless its companion object is imported from the module.
+        if (context.isTopLevel && isExternal && declaration is FirRegularClass && declaration.isInterface &&
+            declaration.companionObjectSymbol == null
+        ) {
+            reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_EXTERNAL_INTERFACE)
+        }
+
         if (declaration is FirProperty && declaration.isVar) {
             reporter.reportOn(declaration.source, FirWebCommonErrors.JS_MODULE_PROHIBITED_ON_VAR)
         }

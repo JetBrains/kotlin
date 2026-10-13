@@ -2147,6 +2147,20 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnMember : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnMember>
+            get() = JsModuleProhibitedOnMember::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface JsModuleProhibitedOnExternalInterface : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass: KClass<JsModuleProhibitedOnExternalInterface>
+            get() = JsModuleProhibitedOnExternalInterface::class
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface InapplicableEagerInitializationError : KaFirDiagnostic<KtElement> {
         override val diagnosticClass: KClass<InapplicableEagerInitializationError>
             get() = InapplicableEagerInitializationError::class
