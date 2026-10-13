@@ -37,7 +37,7 @@ fun Compilation.inline(call: InvokeStatic) {
                 call.replaceValueUsesAndKill(
                     Phi(
                         resultBlock,
-                        *returns.map { it.first to it.second!! }.toTypedArray()
+                        *returns.map { ValueAndExit(it.second!!, it.first) }.toTypedArray()
                     )
                 )
             }

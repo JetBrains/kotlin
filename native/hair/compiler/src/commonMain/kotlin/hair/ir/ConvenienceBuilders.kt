@@ -44,12 +44,12 @@ fun IfExits(cond: Node): Pair<BlockExit, BlockExit> {
 }
 
 context(nodeBuilder: NodeBuilder)
-fun Phi(block: Controlling, vararg inputs: Pair<BlockExit, Node>): Node = when (block) {
+fun Phi(block: Controlling, vararg inputs: ValueAndExit): Node = when (block) {
     is BlockEntry -> {
-        val joinedValues = block.preds.map { exit -> inputs.single { it.first == exit }.second }.toTypedArray()
+        val joinedValues = block.preds.map { exit -> inputs.single { it.exit == exit }.value }.toTypedArray()
         Phi(block, *joinedValues)
     }
-    else -> inputs.single().second
+    else -> inputs.single().value
 }
 
 context(_: NodeBuilder, _: ControlFlowBuilder)

@@ -344,7 +344,7 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         val result = if (exits.isNotEmpty()) {
                             require(exits.size == values.size)
                             val merge = BlockEntry(*exits.toTypedArray())
-                            Phi(merge, *((exits.map { it!! }).zip(values)).toTypedArray())
+                            Phi(merge, *values.zip(exits) { value, exit -> ValueAndExit(value, exit!!) }.toTypedArray())
                         } else NoValue()
 
                         return result
@@ -413,14 +413,14 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         return NoValue()
                     }
 
-                    val returns = mutableMapOf<IrReturnableBlockSymbol, MutableList<Pair<BlockExit, Node>>>()
+                    val returns = mutableMapOf<IrReturnableBlockSymbol, MutableList<ValueAndExit>>()
 
                     override fun visitReturn(expression: IrReturn, data: Unit): Node {
                         val value = expression.value.accept(this, Unit)
                         val target = expression.returnTargetSymbol
                         if (target is IrReturnableBlockSymbol) {
                             val goto = Goto()
-                            returns.getOrPut(target) { mutableListOf() } += goto to value
+                            returns.getOrPut(target) { mutableListOf() } += ValueAndExit(value, goto)
                         } else {
                             // FIXME what if return Unit?
                             Return(value)
@@ -433,9 +433,8 @@ internal class HairGenerator(val context: NativeBackendContext, val module: IrMo
                         returns[expression.symbol] = mutableListOf()
                         val mainResult = super.visitReturnableBlock(expression, data)
                         val mainExit = if (controlBuilder.lastControl !is Unreachable) Goto() else null
-                        @Suppress("UNCHECKED_CAST")
-                        val results = (returns[expression.symbol]!! + listOf(mainExit to mainResult)).filter { it.first != null } as List<Pair<BlockExit, Node>>
-                        val exitBlock = BlockEntry(*results.map { it.first }.toTypedArray())
+                        val results = returns[expression.symbol]!! + listOfNotNull(mainExit?.let { ValueAndExit(mainResult, it) })
+                        val exitBlock = BlockEntry(*results.map { it.exit }.toTypedArray())
                         return Phi(exitBlock, *results.toTypedArray())
                     }
 
