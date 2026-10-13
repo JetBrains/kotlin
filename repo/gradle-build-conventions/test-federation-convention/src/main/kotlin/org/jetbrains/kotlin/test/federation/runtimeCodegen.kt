@@ -88,6 +88,7 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 this += "|"
                 this += "|enum class TestSubset {"
                 this += "|    AllTests,"
+                this += "|    PlainTests,"
                 this += "|    SmokeTests,"
                 for (domain in domains) {
                     this += "|    ContractTestsFor${domain.name},"
@@ -103,6 +104,7 @@ abstract class GenerateTestFederationRuntimeCodeTask : DefaultTask() {
                 this += "|"
                 this += "|fun contractTagOf(subset: TestSubset): String? = when (subset) {"
                 this += "|    TestSubset.AllTests -> null"
+                this += "|    TestSubset.PlainTests -> null"
                 this += "|    TestSubset.SmokeTests -> null"
                 for (domain in domains) {
                     this += "|    TestSubset.ContractTestsFor${domain.name} -> \"contract:${domain.name}\""

@@ -31,12 +31,12 @@ class PseudoTest {
     }
 
     @Test
-    fun `domain test`() {
+    fun `plain test`() {
         if (autoSmokeTestPercentage == 0) {
             val subsets = testFederationSubsets
             assertTrue(
-                AllTests in subsets,
-                "Expected 'AllTests' in requested subsets, but was: $subsets"
+                PlainTests in subsets,
+                "Expected 'PlainTests' in requested subsets, but was: $subsets"
             )
         }
     }
@@ -50,24 +50,24 @@ class PseudoTest {
     @MustRunOnChangesInJs
     @Test
     fun `js contract test`() {
-        if (testFederationSubsets.containsNone(ContractTestsForJs, AllTests) && autoSmokeTestPercentage == 0) {
-            error("Expected ContractTestsForJs or AllTests in requested subsets, but was: $testFederationSubsets")
+        if (testFederationSubsets.containsNone(ContractTestsForJs, PlainTests, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForJs or PlainTests or AllTests in requested subsets, but was: $testFederationSubsets")
         }
     }
 
     @MustRunOnChangesInWasm
     @Test
     fun `wasm contract test`() {
-        if (testFederationSubsets.containsNone(ContractTestsForWasm, AllTests) && autoSmokeTestPercentage == 0) {
-            error("Expected ContractTestsForWasm or AllTests in requested subsets, but was: $testFederationSubsets")
+        if (testFederationSubsets.containsNone(ContractTestsForWasm, PlainTests, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForWasm or PlainTests or AllTests in requested subsets, but was: $testFederationSubsets")
         }
     }
 
     @MustRunOnChangesInGradle
     @Test
     fun `gradle contract test`() {
-        if (testFederationSubsets.containsNone(ContractTestsForGradle, AllTests) && autoSmokeTestPercentage == 0) {
-            error("Expected ContractTestsForGradle or AllTests in requested subsets, but was: $testFederationSubsets")
+        if (testFederationSubsets.containsNone(ContractTestsForGradle, PlainTests, AllTests) && autoSmokeTestPercentage == 0) {
+            error("Expected ContractTestsForGradle or PlainTests or AllTests in requested subsets, but was: $testFederationSubsets")
         }
     }
 
