@@ -11,6 +11,9 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInCompilerPlugins
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInJvm
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
 import kotlin.io.path.appendText
@@ -22,9 +25,11 @@ import kotlin.test.assertContains
 
 @DisplayName("base kotlin-android tests")
 @AndroidGradlePluginTests
+@MustRunOnChangesInGradle
 class KotlinAndroidIT : KGPBaseTest() {
 
     @DisplayName("android project compilation smoke test")
+    @MustRunOnChangesInJvm
     @GradleAndroidTest
     fun testSimpleCompile(
         gradleVersion: GradleVersion,
@@ -94,6 +99,7 @@ class KotlinAndroidIT : KGPBaseTest() {
 
     @DisplayName("KT-12303: compilation works fine with icepick")
     @GradleAndroidTest
+    @MustRunOnChangesInCompilerPlugins
     fun testAndroidIcepickProject(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -114,6 +120,7 @@ class KotlinAndroidIT : KGPBaseTest() {
 
     @DisplayName("compilation works fine with parcelize")
     @GradleAndroidTest
+    @MustRunOnChangesInCompilerPlugins
     fun testParcelize(
         gradleVersion: GradleVersion,
         agpVersion: String,
