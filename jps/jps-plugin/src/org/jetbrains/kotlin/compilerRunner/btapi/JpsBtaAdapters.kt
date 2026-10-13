@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.CompilerMessageRenderer
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCache
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerIncrementalCompilationComponents
-import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerPackagePartData
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.CompilerTargetId
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerEnumWhenTracker
 import org.jetbrains.kotlin.buildtools.api.jps.jvm.incremental.trackers.CompilerExpectActualTracker
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
-import java.io.File
 import java.nio.file.Path
 
 /*
@@ -167,24 +165,7 @@ internal class JpsBtaImportTracker(private val delegate: ImportTracker) : Compil
 internal class JpsBtaIncrementalCache(private val delegate: IncrementalCache) : CompilerIncrementalCache {
     override fun getObsoletePackageParts(): Collection<String> = delegate.getObsoletePackageParts()
 
-    override fun getObsoleteMultifileClasses(): Collection<String> = delegate.getObsoleteMultifileClasses()
-
-    override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? =
-        delegate.getStableMultifileFacadeParts(facadeInternalName)
-
-    override fun getPackagePartData(partInternalName: String): CompilerPackagePartData? =
-        delegate.getPackagePartData(partInternalName)?.let {
-            CompilerPackagePartData(it.data, it.strings)
-        }
-
     override fun getModuleMappingData(): ByteArray? = delegate.getModuleMappingData()
-
-    override fun getMetadata(fragmentName: String): Map<String, ByteArray> =
-        delegate.getMetadata(fragmentName).mapKeys { it.key.path }
-
-    override fun getClassFilePath(internalClassName: String): String = delegate.getClassFilePath(internalClassName)
-
-    override fun close() = delegate.close()
 }
 
 /**
