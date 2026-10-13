@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.jetbrains.kotlin.testFederation.MustRunOnChangesInWasm
 import org.junit.jupiter.api.DisplayName
 
-@MppGradlePluginTests
+@WasmJsGradlePluginTests
 @MustRunOnChangesInGradle
 @MustRunOnChangesInWasm
 class KotlinWasmBuiltinTasksGradlePluginIT : KGPBaseTest() {
