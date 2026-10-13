@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.test
 
-import org.gradle.api.provider.Provider
-
 internal class DeprecationBuildOperationListener(
-    private val warningsReporter: Provider<GradleWarningsReporter>
+    private val warningsReporter: GradleWarningsReporter
 ) : org.gradle.internal.operations.BuildOperationListener {
     override fun started(
         buildOperation: org.gradle.internal.operations.BuildOperationDescriptor,
@@ -23,7 +21,7 @@ internal class DeprecationBuildOperationListener(
     ) {
         val details = progressEvent.details
         if (details is org.gradle.internal.featurelifecycle.DeprecatedUsageProgressDetails) {
-            warningsReporter.get().report(
+            warningsReporter.report(
                 description = describeDeprecationWarning(
                     details.summary,
                     details.removalDetails,
