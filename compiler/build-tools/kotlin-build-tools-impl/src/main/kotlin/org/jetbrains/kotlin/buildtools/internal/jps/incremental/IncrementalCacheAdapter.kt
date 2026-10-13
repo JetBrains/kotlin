@@ -11,26 +11,29 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import java.io.File
 
+/**
+ * The compiler doesn't read the members missing from [CompilerIncrementalCache] when the cache is managed by JPS.
+ */
 @OptIn(InternalBuildToolsApi::class)
 internal class IncrementalCacheAdapter(private val cache: CompilerIncrementalCache) : IncrementalCache {
     override fun getObsoletePackageParts(): Collection<String> = cache.getObsoletePackageParts()
 
-    override fun getObsoleteMultifileClasses(): Collection<String> = cache.getObsoleteMultifileClasses()
+    override fun getObsoleteMultifileClasses(): Collection<String> = unsupported()
 
-    override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String>? =
-        cache.getStableMultifileFacadeParts(facadeInternalName)
+    override fun getStableMultifileFacadeParts(facadeInternalName: String): Collection<String> = unsupported()
 
-    override fun getPackagePartData(partInternalName: String): JvmPackagePartProto? =
-        cache.getPackagePartData(partInternalName)?.let { JvmPackagePartProto(it.data, it.strings) }
+    override fun getPackagePartData(partInternalName: String): JvmPackagePartProto = unsupported()
 
     override fun getModuleMappingData(): ByteArray? = cache.getModuleMappingData()
 
-    override fun getMetadata(fragmentName: String): Map<File, ByteArray> =
-        cache.getMetadata(fragmentName).mapKeys { File(it.key) }
+    override fun getMetadata(fragmentName: String): Map<File, ByteArray> = unsupported()
 
-    override fun getClassFilePath(internalClassName: String): String = cache.getClassFilePath(internalClassName)
+    override fun getClassFilePath(internalClassName: String): String = unsupported()
 
+    // JPS owns the lifetime of its caches
     override fun close() {
-        cache.close()
     }
+
+    private fun unsupported(): Nothing =
+        throw UnsupportedOperationException("Not provided by the JPS incremental cache through the Build Tools API")
 }

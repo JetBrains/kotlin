@@ -28,24 +28,12 @@ public final class org/jetbrains/kotlin/buildtools/api/jps/jvm/JvmJpsManagedIncr
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerIncrementalCache {
-	public abstract fun close ()V
-	public abstract fun getClassFilePath (Ljava/lang/String;)Ljava/lang/String;
-	public abstract fun getMetadata (Ljava/lang/String;)Ljava/util/Map;
 	public abstract fun getModuleMappingData ()[B
-	public abstract fun getObsoleteMultifileClasses ()Ljava/util/Collection;
 	public abstract fun getObsoletePackageParts ()Ljava/util/Collection;
-	public abstract fun getPackagePartData (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerPackagePartData;
-	public abstract fun getStableMultifileFacadeParts (Ljava/lang/String;)Ljava/util/Collection;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerIncrementalCompilationComponents {
 	public abstract fun getIncrementalCache (Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerTargetId;)Lorg/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerIncrementalCache;
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerPackagePartData {
-	public fun <init> ([B[Ljava/lang/String;)V
-	public final fun getData ()[B
-	public final fun getStrings ()[Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/jps/jvm/incremental/CompilerTargetId {
