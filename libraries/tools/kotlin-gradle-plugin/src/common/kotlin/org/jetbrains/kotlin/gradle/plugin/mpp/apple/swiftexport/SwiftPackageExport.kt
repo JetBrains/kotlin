@@ -81,14 +81,15 @@ internal fun Project.registerSwiftPackageExportPipeline(exportExtension: ExportE
         )
     }
 
-    val swiftPMDependencies = importedSwiftPMDependencies()
+    val swiftPMDependencies = directlyImportedSwiftPMDependencies()
+    val transitiveSwiftPMDependencies = transitivelyImportedSwiftPMDependencies()
     NativeBuildType.entries.forEach { buildType ->
         val outputs = appleTargets.map { target ->
             target to registerSwiftExportRunAndBinary(
                 configurations.getValue(target), SwiftExportDSLConstants.TASK_GROUP, buildType, target, SwiftExportNames.SWIFT_PACKAGE
             )
         }
-        registerSwiftPackageExport(integration, buildType, outputs, swiftPMDependencies)
+        registerSwiftPackageExport(integration, buildType, outputs, swiftPMDependencies, transitiveSwiftPMDependencies)
     }
 }
 
@@ -97,6 +98,7 @@ private fun Project.registerSwiftPackageExport(
     buildType: NativeBuildType,
     outputs: List<Pair<KotlinNativeTarget, SwiftExportBuildOutputs>>,
     swiftPMDependencies: Provider<Set<SwiftPMDependency>>,
+    transitiveSwiftPMDependencies: Provider<Map<String, Set<SwiftPMDependency>>>,
 ) {
     val configuration = buildType.configuration
     val swiftApiModuleName = outputs.first().second.swiftApiModuleName
@@ -115,6 +117,7 @@ private fun Project.registerSwiftPackageExport(
         task.kotlinBinaryTargetName.set(kotlinBinaryTargetName)
         task.platforms.set(swiftPackagePlatforms(outputs.map { it.first.konanTarget.family }))
         task.swiftPMDependencies.set(swiftPMDependencies)
+        task.transitiveSwiftPMDependencies.set(transitiveSwiftPMDependencies)
         task.exportDirectoryPath.set(integration.outputDirectory.map { it.dir(configuration).asFile.absolutePath })
         outputs.forEach { (target, output) ->
             task.targetOutputs.add(objects.SwiftExportTargetOutput(target, output.swiftExportTask))
@@ -170,12 +173,23 @@ private fun Project.registerSwiftPackageSync(
 }
 
 /**
- * The SwiftPM packages the project imports, directly and through its Kotlin dependencies, as declared.
+ * The SwiftPM packages the project itself imports, as declared.
  */
-private fun Project.importedSwiftPMDependencies(): Provider<Set<SwiftPMDependency>> {
+private fun Project.directlyImportedSwiftPMDependencies(): Provider<Set<SwiftPMDependency>> {
     if (kotlinPropertiesProvider.disableSwiftPMImport) return provider { emptySet() }
     val direct = locateOrRegisterSwiftPMDependenciesExtension().swiftPMDependencies
+    return provider { direct.toSet() }
+}
+
+/**
+ * The SwiftPM packages each Kotlin dependency imports, by dependency identifier.
+ */
+private fun Project.transitivelyImportedSwiftPMDependencies(): Provider<Map<String, Set<SwiftPMDependency>>> {
+    if (kotlinPropertiesProvider.disableSwiftPMImport) return provider { emptyMap() }
     return transitiveSwiftPMMetadataProvider().map { transitive ->
-        (direct + transitive.metadataByDependencyIdentifier.values.flatMap { it.dependencies }).toSet()
+        transitive.metadataByDependencyIdentifier
+            .filterValues { it.dependencies.isNotEmpty() }
+            .entries
+            .associate { (identifier, metadata) -> identifier.identifier to metadata.dependencies }
     }
 }

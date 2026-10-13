@@ -1039,6 +1039,7 @@ data class SwiftPackageDependency(
 
 @Serializable
 data class SwiftPackageDependencyRequirement(
+    val exact: List<String>? = null,
     val range: List<SwiftPackageVersionRange>? = null,
 )
 

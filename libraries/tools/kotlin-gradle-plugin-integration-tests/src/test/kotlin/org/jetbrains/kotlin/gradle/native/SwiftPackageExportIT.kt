@@ -9,6 +9,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.apple.SwiftPackageVersionRange
 import org.jetbrains.kotlin.gradle.apple.addSwiftPmGitTag
 import org.jetbrains.kotlin.gradle.apple.configureSwiftPmTestArgs
 import org.jetbrains.kotlin.gradle.apple.createLocalSwiftPackage
@@ -531,10 +532,10 @@ class SwiftPackageExportIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("The exported package asks for the version of one declaration and the products of both")
+    @DisplayName("Every Kotlin dependency declares the packages it imports in a package of its own")
     @GradleTest
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
-    fun testSwiftPMImportPackageVersionsOfTwoDependencies(
+    fun testSwiftPMImportPackagesOfTwoDependencies(
         gradleVersion: GradleVersion,
     ) {
         project("empty", gradleVersion) {
@@ -628,7 +629,35 @@ class SwiftPackageExportIT : KGPBaseTest() {
                     )
                 }
 
-                // `from: "1.0.0"` takes the newest release in range, 1.5.0, without `CalledByB`.
+                val exportedPackage = projectPath.resolve("package/Debug")
+                val manifest = describeSwiftPackage(exportedPackage)
+                // One subpackage per dependency, no direct declaration of Lib.
+                assertEquals(
+                    listOf(
+                        "_depa" to exportedPackage.resolve("subpackages/_depA").toRealPath(),
+                        "_depb" to exportedPackage.resolve("subpackages/_depB").toRealPath(),
+                    ),
+                    manifest.dependencies.map { it.identity to Path(checkNotNull(it.path)).toRealPath() },
+                )
+                assertEquals(
+                    listOf("_depA", "_depB"),
+                    manifest.targets.single { it.name == "Shared" }.productDependencies,
+                )
+
+                val depAPackage = describeSwiftPackage(exportedPackage.resolve("subpackages/_depA"))
+                val depADeclaration = depAPackage.dependencies.single()
+                assertEquals("lib", depADeclaration.identity)
+                assertEquals(lib.url, depADeclaration.url)
+                assertEquals(
+                    listOf(SwiftPackageVersionRange("1.0.0", "2.0.0")),
+                    checkNotNull(depADeclaration.requirement?.range),
+                )
+                assertEquals(listOf("CalledByA"), depAPackage.targets.single { it.name == "_depA" }.productDependencies)
+
+                val depBPackage = describeSwiftPackage(exportedPackage.resolve("subpackages/_depB"))
+                assertEquals(listOf("1.0.0"), checkNotNull(depBPackage.dependencies.single().requirement?.exact))
+                assertEquals(listOf("CalledByB"), depBPackage.targets.single { it.name == "_depB" }.productDependencies)
+
                 val consumer = projectPath.resolve("consumer")
                 consumer.resolve("Sources/Consumer").createDirectories()
                 consumer.resolve("Package.swift").writeText(
@@ -656,8 +685,8 @@ class SwiftPackageExportIT : KGPBaseTest() {
                     SwiftDestination.IOS_SIMULATOR,
                     extraArguments = listOf("--resolver-fingerprint-checking", "warn", "--cache-path", packageCache.path),
                 )
-                assertFalse(build.isSuccessful, "The consumer resolved a package without the product it depends on:\n$build")
-                assertEquals(listOf("CalledByB"), build.output.missingProducts())
+                assertEquals(emptyList(), build.output.missingProducts())
+                assertTrue(build.isSuccessful, "The consumer of the exported package failed to build:\n$build\n${build.output}")
             }
         }
     }

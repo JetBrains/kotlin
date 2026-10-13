@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.provider.Provider
@@ -150,6 +151,9 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
     @get:Input
     abstract val swiftPMDependencies: SetProperty<SwiftPMDependency>
 
+    @get:Input
+    abstract val transitiveSwiftPMDependencies: MapProperty<String, Set<SwiftPMDependency>>
+
     /**
      * Where the package is exported to, if it is: the local packages of [swiftPMDependencies] are referenced
      * relative to it, so the exported package stays valid when the project moves.
@@ -178,6 +182,10 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         set(packagePath.dir(SOURCES_DIRECTORY))
     }
 
+    @get:Internal
+    val subpackagesPath: Provider<Directory>
+        get() = packagePath.dir(SUBPACKAGES)
+
     private val swiftLibrary get() = swiftLibraryName.get()
     private val swiftApiModule get() = swiftApiModuleName.get()
     private val kotlinRuntimeModule get() = kotlinRuntime.getFile().name.split('_').joinToString(separator = "") { it.capitalizeAsciiOnly() }
@@ -189,7 +197,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         val swiftModules = targetModules.firstOrNull()?.modules ?: deserializeSwiftModules()
 
         // Gradle keeps what a previous run left in an output directory, such as the sources of a renamed module.
-        fileSystem.delete { it.delete(sourcesPath, includesPath) }
+        fileSystem.delete { it.delete(sourcesPath, includesPath, subpackagesPath) }
         createSPMSources(swiftModules, targetModules)
         createPackageManifest(swiftModules)
         createKotlinRuntimeTarget()
@@ -310,11 +318,34 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         val manifest = packagePath.getFile().resolve("Package.swift")
         val content = SPMManifestGenerator.generateManifest(
             swiftApiModule, swiftLibrary, kotlinRuntimeModule, modules,
-            listOfNotNull(syntheticPackageDependency()) + importedPackageDependencies(),
+            listOfNotNull(syntheticPackageDependency()) + importedPackageDependencies() + createSwiftPMImportSubpackages(),
             kotlinBinaryTargetName.orNull,
             platforms.get()
         )
         manifest.writeText(content)
+    }
+
+    private fun createSwiftPMImportSubpackages(): List<SwiftPackageDependency> {
+        val exportedPackageRoot = exportDirectoryPath.orNull?.let { File(it).normalizedAbsoluteFile() }
+        return transitiveSwiftPMDependencies.get().toSortedMap().map { (identifier, dependencies) ->
+            val subpackage = subpackagesPath.get().asFile.resolve(identifier)
+            subpackage.resolve("$SOURCES_DIRECTORY/$identifier").apply { createDirectory() }
+                .resolve("$identifier.swift").writeText("")
+            subpackage.resolve("Package.swift").writeText(
+                SPMManifestGenerator.generateImportedPackagesManifest(
+                    packageName = identifier,
+                    platforms = platforms.get(),
+                    packageDependencies = importedPackageDeclarations(
+                        swiftPMDependencies = dependencies,
+                        packageRoot = exportedPackageRoot?.resolve("$SUBPACKAGES/$identifier"),
+                    ),
+                )
+            )
+            SwiftPackageDependency(
+                packageDeclaration = ".package(path: \"$SUBPACKAGES/$identifier\")",
+                productDeclarations = listOf(".product(name: \"$identifier\", package: \"$identifier\")"),
+            )
+        }
     }
 
     private fun syntheticPackageDependency(): SwiftPackageDependency? {
@@ -330,22 +361,28 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
         )
     }
 
-    /**
-     * A package declared more than once, by the project and by its dependencies, is declared the first way with
-     * the products of every declaration.
-     */
-    private fun importedPackageDependencies(): List<SwiftPackageDependency> {
-        val umbrellaPlatforms = targetOutputs.get().map { it.target.get() }.toSet().toSwiftPMPlatforms()
-        val packageRoot = exportDirectoryPath.orNull?.let { File(it).normalizedAbsoluteFile() }
-        return swiftPMDependencies.get().groupBy { it.packageName }.toSortedMap().map { (packageName, declarations) ->
+    private fun importedPackageDependencies(): List<SwiftPackageDependency> = importedPackageDeclarations(
+        swiftPMDependencies = swiftPMDependencies.get(),
+        packageRoot = exportDirectoryPath.orNull?.let { File(it).normalizedAbsoluteFile() },
+    )
+
+    private fun importedPackageDeclarations(
+        swiftPMDependencies: Set<SwiftPMDependency>,
+        packageRoot: File?,
+    ): List<SwiftPackageDependency> {
+        val umbrellaPlatforms = umbrellaPlatforms()
+        return swiftPMDependencies.sortedBy { it.packageName }.map { dependency ->
             SwiftPackageDependency(
-                packageDeclaration = ".package(${declarations.first().packageArguments(packageRoot).joinToString(", ")})",
-                productDeclarations = declarations.flatMap { it.products }.distinctBy { it.name }.map { product ->
-                    ".product(${product.productArguments(packageName, null, umbrellaPlatforms).joinToString(", ")})"
+                packageDeclaration = ".package(${dependency.packageArguments(packageRoot).joinToString(", ")})",
+                productDeclarations = dependency.products.map { product ->
+                    ".product(${product.productArguments(dependency.packageName, null, umbrellaPlatforms).joinToString(", ")})"
                 },
             )
         }
     }
+
+    private fun umbrellaPlatforms(): Set<SwiftPMDependency.Platform> =
+        targetOutputs.get().map { it.target.get() }.toSet().toSwiftPMPlatforms()
 
     private fun appendToOtherIncludes(name: String, path: File) {
         if (!collectIncludes.get()) return
@@ -358,6 +395,7 @@ internal abstract class GenerateSPMPackageFromSwiftExport @Inject constructor(
 
     companion object {
         const val SOURCES_DIRECTORY = "Sources"
+        const val SUBPACKAGES = "subpackages"
     }
 }
 
@@ -426,6 +464,57 @@ internal object SPMManifestGenerator {
                             }
                             emitTargetDefinitions(modules, kotlinRuntime, packageDependencies.flatMap { it.productDeclarations })
                             entry { emitTarget(kotlinRuntime, dependencies = listOfNotNull(kotlinBinaryTarget)) }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun generateImportedPackagesManifest(
+        packageName: String,
+        platforms: List<SwiftPackagePlatform>,
+        packageDependencies: List<SwiftPackageDependency>,
+    ): String = buildStringBlock {
+        line("// swift-tools-version: 5.9")
+        line()
+        line("import PackageDescription")
+        block("let package = Package(", ")") {
+            commaSeparatedEntries {
+                entry { line("name: \"$packageName\"") }
+                if (platforms.isNotEmpty()) {
+                    entry {
+                        block("platforms: [", "]") {
+                            emitListItems(platforms.map { ".${it.name}(\"${it.minimumVersion}\")" })
+                        }
+                    }
+                }
+                entry {
+                    block("products: [", "]") {
+                        block(".library(", ")") {
+                            commaSeparatedEntries {
+                                entry { line("name: \"$packageName\"") }
+                                entry { line("targets: [\"$packageName\"]") }
+                            }
+                        }
+                    }
+                }
+                if (packageDependencies.isNotEmpty()) {
+                    entry {
+                        block("dependencies: [", "]") {
+                            emitListItems(packageDependencies.map { it.packageDeclaration })
+                        }
+                    }
+                }
+                entry {
+                    block("targets: [", "]") {
+                        commaSeparatedEntries {
+                            entry {
+                                emitTarget(
+                                    packageName,
+                                    rawDependencies = packageDependencies.flatMap { it.productDeclarations },
+                                )
+                            }
                         }
                     }
                 }
