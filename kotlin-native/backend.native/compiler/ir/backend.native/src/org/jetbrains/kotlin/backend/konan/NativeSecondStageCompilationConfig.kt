@@ -683,7 +683,8 @@ class NativeSecondStageCompilationConfig(
      * so that dependency caches are emitted the same way as the final binary.
      */
     internal val inProcessObjEmission: Boolean
-        get() = configuration.inProcessObjEmission
+        // TODO: temporarily forced on to exercise in-process emission on CI. Revert to `configuration.inProcessObjEmission`.
+        get() = true
 
     private val implicitModuleName: String
         get() = cacheSupport.libraryToCache?.let {
