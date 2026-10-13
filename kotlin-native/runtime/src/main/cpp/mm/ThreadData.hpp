@@ -8,6 +8,8 @@
 
 #include <atomic>
 #include <cstdint>
+#include <optional>
+#include <pthread.h>
 #include <vector>
 
 #include "Common.h"
@@ -32,11 +34,25 @@ struct KotlinFrameAnchor {
     uint64_t* pc;
 
     KotlinFrameAnchor() = default;
-    KotlinFrameAnchor(uint64_t* fp, uint64_t* pc) : fp(fp), pc(pc) {}
+    KotlinFrameAnchor(uint64_t* fp, uint64_t* pc) : fp(fp), pc(pc) {
+        RuntimeCheck((uint64_t) fp % 16 == 0, "Frame pointer is not aligned on 16");
+    }
 
-    KotlinFrameAnchor next() {
+    // Reads the frame record this anchor points to and validates it before anything is built from it.
+    // `stackHigh` is the exclusive upper bound of the thread's stack. A frame record must lie above the
+    // current one, be 16-byte aligned and stay inside the stack; anything else means the chain is broken.
+    std::optional<KotlinFrameAnchor> next(const uint64_t* stackHigh) const {
         RuntimeAssert(fp != nullptr, "Current fp is null, cannot get next");
-        return KotlinFrameAnchor((uint64_t*)(*fp), (uint64_t*) (*(fp + 1)));
+        auto* nextFp = reinterpret_cast<uint64_t*>(fp[0]);
+        auto* nextPc = reinterpret_cast<uint64_t*>(fp[1]);
+
+        if (nextFp == nullptr) return KotlinFrameAnchor(nullptr, nextPc);
+
+        if (reinterpret_cast<uintptr_t>(nextFp) % 16 != 0) return std::nullopt;
+        if (nextFp <= fp) return std::nullopt;
+        if (stackHigh != nullptr && nextFp >= stackHigh) return std::nullopt;
+
+        return KotlinFrameAnchor(nextFp, nextPc);
     }
 };
 
@@ -60,7 +76,11 @@ public:
         gcScheduler_(GlobalData::Instance().gcScheduler(), *this),
         allocator_(GlobalData::Instance().allocator()),
         gc_(GlobalData::Instance().gc(), *this),
-        suspensionData_(ThreadState::kNative, *this) {}
+        suspensionData_(ThreadState::kNative, *this) {
+#if defined(__aarch64__)
+        captureStackBounds();
+#endif
+    }
 
     ~ThreadData() = default;
 
@@ -115,6 +135,11 @@ public:
         return frameAnchors_;
     }
 
+    // Bounds of this thread's stack: [stackLow, stackHigh). Null if they are unknown.
+    // Taken on the owning thread in the constructor, read by the GC thread.
+    uint64_t* stackLow() const noexcept { return stackLow_; }
+    uint64_t* stackHigh() const noexcept { return stackHigh_; }
+
     
     bool cameFromNative() {
         return cameFromNative_;
@@ -137,6 +162,31 @@ private:
     std::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;
 #if defined(__aarch64__)
+    // Must run on the thread that owns this `ThreadData`.
+    void captureStackBounds() noexcept {
+        pthread_t self = pthread_self();
+#if defined(__APPLE__)
+        // `pthread_get_stackaddr_np` returns the highest address of the stack.
+        auto high = reinterpret_cast<uintptr_t>(pthread_get_stackaddr_np(self));
+        size_t size = pthread_get_stacksize_np(self);
+        stackHigh_ = reinterpret_cast<uint64_t*>(high);
+        stackLow_ = reinterpret_cast<uint64_t*>(high - size);
+#else
+        pthread_attr_t attr;
+        if (pthread_getattr_np(self, &attr) == 0) {
+            void* low = nullptr;
+            size_t size = 0;
+            if (pthread_attr_getstack(&attr, &low, &size) == 0) {
+                stackLow_ = reinterpret_cast<uint64_t*>(low);
+                stackHigh_ = reinterpret_cast<uint64_t*>(reinterpret_cast<uintptr_t>(low) + size);
+            }
+            pthread_attr_destroy(&attr);
+        }
+#endif
+    }
+
+    uint64_t* stackLow_ = nullptr;
+    uint64_t* stackHigh_ = nullptr;
     std::vector<KotlinFrameAnchor> frameAnchors_;
     // True only while the thread runs the safepoint of a Native -> Runnable.
     bool cameFromNative_ = false;
