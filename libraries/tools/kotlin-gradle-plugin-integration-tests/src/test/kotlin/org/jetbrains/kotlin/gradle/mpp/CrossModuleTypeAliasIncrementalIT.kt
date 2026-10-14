@@ -41,11 +41,22 @@ class CrossModuleTypeAliasIncrementalIT : KGPBaseTest() {
         )
     }
 
+    // KT-90252
+    @GradleTest
+    @DisplayName("Enabling type alias expansion tracking recompiles alias consumers left stale while it was disabled (separate KMP compilation enabled)")
+    fun testEnablingTypeAliasExpansionRecompilesStaleAliasConsumers(gradleVersion: GradleVersion) {
+        doTestExpandedClassChangeRecompilesAliasConsumer(
+            gradleVersion, separateCompilation = true, expandTypeAliases = false, expectedOutput = "output: Any",
+            expandTypeAliasesInFollowUpBuild = true,
+        )
+    }
+
     private fun doTestExpandedClassChangeRecompilesAliasConsumer(
         gradleVersion: GradleVersion,
         separateCompilation: Boolean,
         expandTypeAliases: Boolean,
         expectedOutput: String,
+        expandTypeAliasesInFollowUpBuild: Boolean? = null,
     ) {
         val buildOptions = defaultBuildOptions
             .copy(separateCompilation = separateCompilation, expandTypeAliasesInClasspathSnapshots = expandTypeAliases)
@@ -144,6 +155,15 @@ class CrossModuleTypeAliasIncrementalIT : KGPBaseTest() {
             build(":app:jvmRun", "-DmainClass=MainKt") {
                 assertTasksExecuted(":lib:compileKotlinJvm", ":app:compileKotlinJvm")
                 assertOutputContains(expectedOutput)
+            }
+
+            if (expandTypeAliasesInFollowUpBuild != null) {
+                build(
+                    ":app:jvmRun", "-DmainClass=MainKt",
+                    buildOptions = buildOptions.copy(expandTypeAliasesInClasspathSnapshots = expandTypeAliasesInFollowUpBuild),
+                ) {
+                    assertOutputContains("output: Int")
+                }
             }
         }
     }
