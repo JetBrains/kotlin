@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.kotlinLibrary
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.ir.BackendNativeSymbols
+import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.util.sortDeclarationsInFunctionInterfaceFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?
@@ -50,8 +52,6 @@ data class LinkKlibsInput(
  * @property irModules The list of IR module fragments in the reverse topological order. This list only contains IR modules
  *   that are treated as "useful", i.e. each of them either was explicitly passed via CLI argument to the compiler or was loaded
  *   from the Kotlin/Native distribution implicitly and has at least one declaration that has been loaded/linked from it.
- *   When there are cached libraries, the order is computed from [org.jetbrains.kotlin.backend.konan.library.KlibDAG]
- *   rather than from the dependencies tracked by IR linker (see [sortAccordingToKlibDagIfCachesAreUsed]).
  */
 internal class LinkKlibsOutput(
         val irModules: List<IrModuleFragment>,
@@ -105,7 +105,7 @@ internal fun LinkKlibsContext.linkKlibs(
     config.configuration.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     // Also, sort modules in RTO according to their actual dependencies DAG.
-    val sortedUsefulModuleDependencies = usefulModuleDependencies.reverseTopoOrder(irLinker)
+    val sortedUsefulModuleDependencies = usefulModuleDependencies.reverseTopoSortUsingKlibDAG(config.klibDag)
 
     // IR linker deserializes files in the order they lie on the disk, which might be inconvenient,
     // so to make the pipeline more deterministic, the files are to be sorted.
@@ -125,7 +125,6 @@ internal fun LinkKlibsContext.linkKlibs(
 
     val irModulesForLinkKlibsOutput: List<IrModuleFragment> = sortedUsefulModuleDependencies.allDependencies
             .filter { it.name != FORWARD_DECLARATIONS_MODULE_NAME && it.descriptor !== moduleDescriptor }
-            .let { sortAccordingToKlibDagIfCachesAreUsed(it) }
 
     return if (libraryToCache == null) {
         val mainModule = IrModuleFragmentImpl(moduleDescriptor)
@@ -263,25 +262,28 @@ private fun IrModuleDependencies.filterOutUnusedPlatformLibraryModules(linker: K
     return copy(allDependencies = allDependencies - omittedModuleFragments)
 }
 
-private fun IrModuleDependencies.reverseTopoOrder(linker: KonanIrLinker): IrModuleDependencies {
-    return linker.moduleDependencyTracker.reverseTopoOrder(this)
-}
-
 /**
- * IR linker tracks the dependencies between modules only through the IR it actually deserializes. But for a cached library
- * only its header is deserialized, so some of the dependencies might be missed, and the order computed by [reverseTopoOrder]
- * might be wrong. So, if there are cached libraries, sort the modules according to [org.jetbrains.kotlin.backend.konan.library.KlibDAG],
- * which is computed without the involvement of IR linker.
+ * In general, the IR linker is capable to track the dependencies between modules through the deserialized IR. But for a cached library
+ * only the header is deserialized, so some of the dependencies might be missed, and the order computed by the IR linker might be wrong.
+ * To be safe and consistent, we have to sort the modules according to [KlibDAG], which is computed without the involvement of IR linker.
  */
-private fun LinkKlibsContext.sortAccordingToKlibDagIfCachesAreUsed(modules: List<IrModuleFragment>): List<IrModuleFragment> {
-    if (modules.none { config.cachedLibraries.isLibraryCached(it.kotlinLibrary!!) }) return modules
+private fun IrModuleDependencies.reverseTopoSortUsingKlibDAG(klibDag: KlibDAG): IrModuleDependencies {
+    val libraryToModule = newHashMapWithExpectedSize<KotlinLibrary, IrModuleFragment>(allDependencies.size)
+    val modulesWithoutLibraryInCliOrder = ArrayList<IrModuleFragment>(2)
 
-    val libraryToModule = modules.associateBy { it.kotlinLibrary!! }
-    return config.klibDag.librariesReverseTopoSorted.mapNotNull { libraryToModule[it] }.also { sortedModules ->
-        check(sortedModules.size == modules.size) {
-            "Some modules are missing in Klib DAG: ${(modules - sortedModules.toSet()).joinToString { it.name.asString() }}"
+    for (module in allDependencies) {
+        when (val library = module.kotlinLibrary) {
+            null -> modulesWithoutLibraryInCliOrder += module
+            else -> libraryToModule[library] = module
         }
     }
+
+    val sortedModules = ArrayList<IrModuleFragment>(allDependencies.size)
+
+    klibDag.librariesReverseTopoSorted.mapNotNullTo(sortedModules, libraryToModule::get)
+    sortedModules += modulesWithoutLibraryInCliOrder
+
+    return copy(allDependencies = sortedModules)
 }
 
 private fun IrModuleDependencies.sortFilesAndDeclarationsToKeepPipelineDeterministic() {
