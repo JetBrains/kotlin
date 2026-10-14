@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.CheckXcodeTargetsConfigurati
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.ConvertPbxprojToJsonTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
@@ -19,6 +20,7 @@ import kotlin.io.path.appendText
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Xcode project configuration checker task")
 @NativeGradlePluginTests
+@MustRunOnChangesInGradle
 class CheckXcodeTargetsConfigurationIT : KGPBaseTest() {
 
     private val convertPbxprojToJsonTask = ":${ConvertPbxprojToJsonTask.TASK_NAME}"
