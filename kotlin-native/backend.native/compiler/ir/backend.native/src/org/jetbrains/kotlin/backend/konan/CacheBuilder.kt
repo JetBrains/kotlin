@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
 import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
-import org.jetbrains.kotlin.backend.konan.library.KlibDAG
 import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.reportLog
@@ -58,12 +57,8 @@ class CacheBuilder(
             && (config.isFinalBinary || config.produce.isFullCache)
             && (autoCacheableFrom.isNotEmpty() || icEnabled)
 
-    // Note: The order of libraries is not important here.
-    private val klibDag: KlibDAG
-        get() = config.cacheSupport.klibDag
-
     // Note: It's not totally clear, but likely the libraries in `uniqueNameToLibrary` should be in the reverse topo-order.
-    private val uniqueNameToLibrary by lazy { klibDag.librariesReverseTopoSorted.associateBy { it.uniqueName } }
+    private val uniqueNameToLibrary by lazy { config.klibDag.librariesReverseTopoSorted.associateBy { it.uniqueName } }
     private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
@@ -132,7 +127,7 @@ class CacheBuilder(
     // contribute to the fingerprint: changes in the per-file cached dependencies are tracked by the dirty-file analysis,
     // and the distribution libraries only change together with the compiler fingerprint (they live in compiler's dist directory).
     private fun computeDependenciesFingerprint(library: KotlinLibrary): FingerprintHash {
-        val monolithicallyCachedDependencies = klibDag.getAllDependencies(library).filter {
+        val monolithicallyCachedDependencies = config.klibDag.getAllDependencies(library).filter {
             !it.isCachedPerFile && !it.isImplicitlyLoadedFromKotlinNativeDistribution && !it.isNativeStdlib
         }
         return CachedLibraries.computeDependenciesFingerprint(monolithicallyCachedDependencies, uniqueNameToHash)
@@ -172,7 +167,7 @@ class CacheBuilder(
         val lastRebuiltArchives = mutableListOf<Path>()
 
         // Note: The libraries should be in the reverse topo-order here!
-        klibDag.librariesReverseTopoSorted.forEach { library ->
+        config.klibDag.librariesReverseTopoSorted.forEach { library ->
             // For MinGW target avoid compiling caches for anything except stdlib.
             if (config.target == KonanTarget.MINGW_X64 && !library.isNativeStdlib) {
                 return@forEach
@@ -188,7 +183,7 @@ class CacheBuilder(
             } else {
                 if (cache == null) externalLibrariesToCache += library
             }
-            klibDag.getDirectDependencies(library).forEach { dependency ->
+            config.klibDag.getDirectDependencies(library).forEach { dependency ->
                 dependableLibraries.getOrPut(dependency) { mutableListOf() }.add(library)
             }
         }
@@ -386,7 +381,7 @@ class CacheBuilder(
     }
 
     private fun buildLibraryCache(library: KotlinLibrary, isExternal: Boolean, filesToCache: List<String>): List<Path> {
-        val dependencies = klibDag.getAllDependencies(library).toList()
+        val dependencies = config.klibDag.getAllDependencies(library).toList()
         val dependencyCaches = dependencies.map {
             cacheRootDirectories[it] ?: run {
                 configuration.reportLog("SKIPPING ${library.path} as some of the dependencies aren't cached")
@@ -407,7 +402,7 @@ class CacheBuilder(
         val libraryCacheDirectory = when {
             library.isImplicitlyLoadedFromKotlinNativeDistribution || library.isNativeStdlib -> config.systemCacheDirectory
             isExternal -> CachedLibraries.computeLibraryCacheDirectory(
-                    config.autoCacheDirectory, library, klibDag, uniqueNameToHash)
+                    config.autoCacheDirectory, library, config.klibDag, uniqueNameToHash)
             else -> config.incrementalCacheDirectory!!
         }
         val libraryCache = libraryCacheDirectory.resolve(
@@ -599,7 +594,7 @@ class CacheBuilder(
             }
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache
-            serializedKlibDag = klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
+            serializedKlibDag = config.klibDag.serialize() // Put the DAG of dependencies to compiler configuration to avoid re-computing it again.
         }
 
         recordRebuiltCacheFiles(library, makePerFileCache, filesToCache)

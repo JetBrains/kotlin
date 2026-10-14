@@ -277,7 +277,7 @@ private fun LinkKlibsContext.sortAccordingToKlibDagIfCachesAreUsed(modules: List
     if (modules.none { config.cachedLibraries.isLibraryCached(it.kotlinLibrary!!) }) return modules
 
     val libraryToModule = modules.associateBy { it.kotlinLibrary!! }
-    return config.cacheSupport.klibDag.librariesReverseTopoSorted.mapNotNull { libraryToModule[it] }.also { sortedModules ->
+    return config.klibDag.librariesReverseTopoSorted.mapNotNull { libraryToModule[it] }.also { sortedModules ->
         check(sortedModules.size == modules.size) {
             "Some modules are missing in Klib DAG: ${(modules - sortedModules.toSet()).joinToString { it.name.asString() }}"
         }

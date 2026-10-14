@@ -558,7 +558,7 @@ internal class CAdapterGenerator(
     private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
 
     private val libraryReverseTopoRank: Map<KotlinLibrary, Int> =
-            context.config.cacheSupport.klibDag.librariesReverseTopoSorted
+            context.config.klibDag.librariesReverseTopoSorted
                     .mapIndexed { index, library -> library to index }
                     .toMap()
 
