@@ -124,9 +124,9 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KaSymbolOrigin = when (ori
     FirDeclarationOrigin.Library, FirDeclarationOrigin.BuiltIns, FirDeclarationOrigin.BuiltInsFallback -> KaSymbolOrigin.LIBRARY
     is FirDeclarationOrigin.Java.Source -> KaSymbolOrigin.JAVA_SOURCE
     is FirDeclarationOrigin.Java.Library -> KaSymbolOrigin.JAVA_LIBRARY
-    is FirDeclarationOrigin.Java.Plugin -> KaSymbolOrigin.PLUGIN
+    is FirDeclarationOrigin.Java.Plugin -> KaSymbolOrigin.JAVA_PLUGIN
     FirDeclarationOrigin.SamConstructor -> KaSymbolOrigin.SAM_CONSTRUCTOR
-    is FirDeclarationOrigin.Enhancement.Plugin -> KaSymbolOrigin.PLUGIN
+    is FirDeclarationOrigin.Enhancement.Plugin -> KaSymbolOrigin.JAVA_PLUGIN
     is FirDeclarationOrigin.Enhancement, FirDeclarationOrigin.RenamedForOverride -> when (source?.kind) {
         is KtFakeSourceElementKind.EnumGeneratedDeclaration -> KaSymbolOrigin.SOURCE_MEMBER_GENERATED
         else -> javaOriginBasedOnSessionKind()

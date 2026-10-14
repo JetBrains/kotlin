@@ -1314,6 +1314,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin : ja
 	public static final field DELEGATED Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field INTERSECTION_OVERRIDE Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field JAVA_LIBRARY Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
+	public static final field JAVA_PLUGIN Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field JAVA_SOURCE Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field JAVA_SYNTHETIC_PROPERTY Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field JS_DYNAMIC Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
@@ -1327,6 +1328,7 @@ public final class org/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin : ja
 	public static final field SUBSTITUTION_OVERRIDE Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static final field TYPEALIASED_CONSTRUCTOR Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun isFromJava ()Z
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 	public static fun values ()[Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
 }
