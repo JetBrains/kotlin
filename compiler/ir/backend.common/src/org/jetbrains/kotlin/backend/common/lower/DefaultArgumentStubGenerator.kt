@@ -510,6 +510,6 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext, c
     }
 }
 
-private fun IrValueParameter.canHaveDefaultValue() =
+fun IrValueParameter.canHaveDefaultValue(): Boolean =
     kind != IrParameterKind.DispatchReceiver && kind != IrParameterKind.ExtensionReceiver &&
     origin != IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER && origin != IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
