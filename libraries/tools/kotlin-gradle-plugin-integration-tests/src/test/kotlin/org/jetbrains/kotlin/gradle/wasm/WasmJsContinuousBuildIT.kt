@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.MustRunOnChangesInGradle
 import org.junit.jupiter.api.Timeout
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
@@ -26,6 +27,7 @@ import kotlin.io.path.writeText
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
 
+@MustRunOnChangesInGradle
 class WasmJsContinuousBuildIT : AbstractWebContinuousBuildIT() {
 
     override val defaultBuildOptions: BuildOptions
