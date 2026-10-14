@@ -327,6 +327,12 @@ if (project.kotlinBuildProperties.isTeamcityBuild.get()) {
             dependsOn(tasksByGradleVersion)
         }
     }
+
+    tasks.register("kgpWasmTestsGroupedByGradleVersion") {
+        group = null
+        description = "KT-85475 Temporary task - registered to avoid breaking TC."
+        // The actual task will be registered in a later PR https://github.com/JetBrains/kotlin/pull/8916
+    }
 }
 
 if (!project.kotlinBuildProperties.hideExtraTestTasksInGradleIntegrationTests.get()) {
