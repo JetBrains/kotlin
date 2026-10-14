@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -263,6 +266,9 @@ private fun Project.registerSwiftExportRun(
         if (apiConfiguration != null) {
             task.apiConfiguration.set(provider { LazyResolvedConfigurationWithArtifacts(apiConfiguration) })
             task.apiConfigurationFiles.from(apiConfiguration)
+            // Dependency-graph resolution only (no artifacts), so this stays cheap and Configuration-Cache-safe
+            // even though, unlike exportConfiguration/apiConfiguration above, it's read eagerly as a task @Input.
+            task.apiDirectDependencyIdentities.set(apiConfiguration.directDependencyIdentities())
         }
         if (shouldResolvePublishedMetadata) {
             task.metadataConfiguration.set(provider {
@@ -295,6 +301,22 @@ private fun Project.registerSwiftExportRun(
 
         // Output
         task.parameters.outputDirectory.set(outputDirectory)
+    }
+}
+
+private fun Configuration.directDependencyIdentities(): Provider<List<String>> {
+    return incoming.resolutionResult.rootComponent.map { root ->
+        root.dependencies
+            .filterIsInstance<ResolvedDependencyResult>()
+            .filterNot { it.isConstraint }
+            .map {
+                when (val id = it.selected.id) {
+                    is ProjectComponentIdentifier -> "project|${id.projectPath}"
+                    is ModuleComponentIdentifier -> "module|${id.group}|${id.module}"
+                    else -> id.displayName
+                }
+            }
+            .sorted()
     }
 }
 
