@@ -338,7 +338,7 @@ internal object SPMManifestGenerator {
         kotlinBinaryTarget: String? = null,
         platforms: List<SwiftPackagePlatform> = emptyList(),
     ): String = buildStringBlock {
-        line("// swift-tools-version: 5.9")
+        line("// swift-tools-version: 6.1")
         line()
         line("import PackageDescription")
         block("let package = Package(", ")") {
@@ -379,6 +379,9 @@ internal object SPMManifestGenerator {
                         }
                     }
                 }
+                // Tools version 6 defaults to the Swift 6 language mode, and the generated sources don't pass its
+                // concurrency checks yet.
+                entry { line("swiftLanguageModes: [.v5]") }
             }
         }
     }
