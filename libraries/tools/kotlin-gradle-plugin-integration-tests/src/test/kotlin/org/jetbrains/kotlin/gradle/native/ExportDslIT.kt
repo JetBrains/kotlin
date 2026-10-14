@@ -680,6 +680,99 @@ class ExportDslIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-90141: Promoting a transitive dependency to a direct api dependency invalidates the Swift Export task")
+    @GradleTest
+    fun testPromotingTransitiveDependencyToDirectApiIsTrackedAsTaskInput(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        val directApiProperty = "directSubApi"
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                // Toggled between builds: the klib set the task sees is the same either way, only the direct edge changes.
+                val directSubApi = project.providers.gradleProperty(directApiProperty).isPresent
+                project.applyMultiplatform {
+                    iosArm64()
+                    sourceSets.commonMain {
+                        compileStubSourceWithSourceSetName()
+                        dependencies {
+                            api(project(":mid"))
+                            if (directSubApi) api(project(":sub"))
+                        }
+                    }
+                }
+                export.swift {
+                    moduleName.set("Shared")
+                    xcodeIntegration()
+                }
+            }
+
+            val sub = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain.get().compileSource(
+                            """
+                            package com.example.sub
+                            class One
+                            class TwoNeverReferenced
+                            """.trimIndent()
+                        )
+                    }
+                }
+            }
+            val mid = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        iosArm64()
+                        sourceSets.commonMain {
+                            compileSource(
+                                """
+                                package com.example.mid
+                                fun makeOne(): com.example.sub.One = com.example.sub.One()
+                                """.trimIndent()
+                            )
+                            dependencies {
+                                api(project(":sub"))
+                            }
+                        }
+                    }
+                }
+            }
+
+            include(sub, "sub")
+            include(mid, "mid")
+
+            val swiftApiFiles = {
+                projectPath.resolve("build/SwiftExport/iosArm64/files").toFile().walk()
+                    .filter { it.extension == "swift" }.map { it.toPath() }.toList()
+            }
+
+            build(
+                ":iosArm64SwiftExport",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertTasksExecuted(":iosArm64SwiftExport")
+                assertFalse(swiftApiFiles().any { "TwoNeverReferenced" in it.readText() })
+            }
+
+            build(
+                ":iosArm64SwiftExport",
+                "-P$directApiProperty",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertTasksExecuted(":iosArm64SwiftExport")
+                assertFilesCombinedContains(swiftApiFiles(), "class TwoNeverReferenced")
+            }
+        }
+    }
+
     private fun TestProject.isEmbedSwiftExportTaskRegistered(): Boolean = buildScriptReturn {
         project.tasks.findByName(EMBED_SWIFT_EXPORT_TASK_NAME) != null
     }.buildAndReturn()

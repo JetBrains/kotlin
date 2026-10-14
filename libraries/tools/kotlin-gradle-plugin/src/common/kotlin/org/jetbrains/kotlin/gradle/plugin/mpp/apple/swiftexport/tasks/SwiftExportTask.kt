@@ -116,6 +116,19 @@ internal abstract class SwiftExportTask @Inject constructor(
     abstract val apiConfigurationFiles: ConfigurableFileCollection
 
     /**
+     * Up-to-date tracking projection of [apiConfiguration]'s *direct* dependencies.
+     *
+     * Resolving [apiConfiguration]'s artifacts doesn't change when a transitive `api` dependency becomes direct - the
+     * resolved closure of files stays the same - but which modules are promoted to fully exported ones does. This
+     * property tracks the identities (project path or external `group:name`) of [apiConfiguration]'s direct dependencies,
+     * derived lazily from its resolution result (dependency-graph resolution only, not artifact resolution), as a stable,
+     * sorted list of strings - so the task re-runs whenever that set changes.
+     */
+    @get:Input
+    @get:Optional
+    abstract val apiDirectDependencyIdentities: ListProperty<String>
+
+    /**
      * Mirrors [exportConfiguration] but contains Swift Export metadata of dependencies inside [exportConfiguration].
      *
      * Held as Configuration-Cache-safe [LazyResolvedConfigurationWithArtifacts] rather than a precomputed module list
