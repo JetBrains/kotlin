@@ -3448,6 +3448,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
     }
 
     @Test
+    @TestMetadata("inlineClassOldSyntax.kt")
+    public void testInlineClassOldSyntax() {
+      run("inlineClassOldSyntax.kt");
+    }
+
+    @Test
     @TestMetadata("inlineClassPrivateProperty.kt")
     public void testInlineClassPrivateProperty() {
       run("inlineClassPrivateProperty.kt");
@@ -3477,6 +3483,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       run("inlineClassWithTypeParameter.kt");
     }
 
+    @Test
+    @TestMetadata("inlineValueClass.kt")
+    public void testInlineValueClass() {
+      run("inlineValueClass.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi")
     @TestDataPath("$PROJECT_ROOT")
@@ -3488,6 +3500,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       @Test
       public void testAllFilesPresentInJvmAbi() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/psi/psi-impl/testData/psi/inlineClasses/jvmAbi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineClassOldSyntax.kt")
+      public void testJvmAbiInlineClassOldSyntax() {
+        run("jvmAbiInlineClassOldSyntax.kt");
       }
 
       @Test
@@ -3512,6 +3530,12 @@ public class PsiParsingTestGenerated extends AbstractPsiParsingTest {
       @TestMetadata("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt")
       public void testJvmAbiInlineClassWithTypeParameterUnderlyingType() {
         run("jvmAbiInlineClassWithTypeParameterUnderlyingType.kt");
+      }
+
+      @Test
+      @TestMetadata("jvmAbiInlineValueClass.kt")
+      public void testJvmAbiInlineValueClass() {
+        run("jvmAbiInlineValueClass.kt");
       }
     }
   }
