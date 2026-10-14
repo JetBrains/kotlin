@@ -108,6 +108,25 @@ class KotlinPlaywrightTestFrameworkWiringTest {
     }
 
     @Test
+    fun `bundle task tracks all compiled js files as inputs`() {
+        val setup = buildBrowserTestProject {
+            chromium()
+        }
+        setup.mockJsTestLinkOutput()
+
+        val bundleTask = setup.webpackBundleTask
+        // compiled JS file of a dependency module, webpack bundles it together with the entry file
+        val dependencyJsFile = bundleTask.testsEntryFile.get().asFile.resolveSibling("dependency-module.js")
+        dependencyJsFile.writeText("function dependency() {}")
+
+        assertTrue(
+            dependencyJsFile in bundleTask.inputs.files.files,
+            "Expected all compiled JS files to be tracked as inputs of the bundle task, " +
+                    "actual inputs: ${bundleTask.inputs.files.files}"
+        )
+    }
+
+    @Test
     fun `playwright framework requires playwright-core npm dependency`() {
         val setup = buildBrowserTestProject {
             chromium()

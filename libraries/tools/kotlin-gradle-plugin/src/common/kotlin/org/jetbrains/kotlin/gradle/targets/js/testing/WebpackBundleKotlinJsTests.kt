@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.testing
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileTree
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -16,6 +17,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.ExperimentalNodeJsToolchainDsl
 import org.jetbrains.kotlin.gradle.dsl.toolchain.nodejs.NodeJsRequest
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -89,6 +91,20 @@ constructor(
     @get:InputFile
     @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val testsEntryFile: RegularFileProperty
+
+    /**
+     * All compiled JS files that webpack bundles together with [testsEntryFile].
+     *
+     * [testsEntryFile] alone is not enough for up-to-date checks: Kotlin code changes in this or in a dependency module
+     * are compiled into sibling JS files, leaving the entry file itself untouched (KT-89797).
+     */
+    @Suppress("unused")
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:InputFiles
+    internal val testsEntryDirectoryFiles: FileTree
+        get() = objects.fileTree().from(testsEntryFile.map { it.asFile.parentFile })
 
     @get:OutputDirectory
     abstract val outputBundleDir: DirectoryProperty
