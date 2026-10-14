@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
@@ -126,8 +124,6 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
 
     @TaskAction
     fun generate() {
-        val importMap = mutableMapOf<String, String>()
-
         val nodeModulesDir = nodeModulesDirectory.getFile()
 
         val modules = NpmProjectModules(
@@ -136,15 +132,14 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
             indexFileSuffixes = listOf(JS_SUFFIX, ".mjs")
         )
 
-        collectModuleNames(nodeModulesDir.toPath()).forEach { moduleName ->
-            val resolvedPath = modulePath(modules, moduleName)
-            importMap[moduleName] = resolvedPath
-        }
+        val importMap = KotlinWebImportMap(
+            imports = collectModuleNames(nodeModulesDir.toPath()).associateWith { moduleName ->
+                modulePath(modules, moduleName)
+            }
+        )
 
-        val result = mapOf("imports" to importMap)
-        val resultImportMapFile = importMapFile.getFile()
-        val text = json.encodeToString(result)
-        resultImportMapFile.writeText(text)
+        val text = importMap.toJson()
+        importMapFile.getFile().writeText(text)
 
         importMapLoaderFile.getFile().writeText(
             """
@@ -235,9 +230,6 @@ abstract class KotlinImportMapGenerateTask : DefaultTask() {
 
     companion object {
         const val NAME = "generateImportMap"
-
-        private val json = Json {
-            prettyPrint = true
-        }
     }
 }
+
