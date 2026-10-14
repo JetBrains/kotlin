@@ -71,9 +71,18 @@ fun DomainInfo.Companion.resolveDomainInfosOf(path: RepositoryPath): List<Domain
     val domains = mutableSetOf<DomainInfo>()
     val excludes = mutableSetOf<DomainInfo>()
 
+    val ignoreMatchers = ignores.map { ignoreRule ->
+        fileSystem.getPathMatcher("glob:$ignoreRule")
+    }
+
     var currentPath: RepositoryPath? = path
-    while(currentPath != null) {
+    while (currentPath != null) {
         val value = currentPath.value
+
+        /* The path is globally ignored, it does not belong to any domain */
+        if (ignoreMatchers.any { it.matches(value) }) {
+            return emptyList()
+        }
 
         allDomainInfos.minus(excludes).forEach { currentDomain ->
             var isInclude = false
@@ -104,7 +113,7 @@ fun DomainInfo.Companion.resolveDomainInfosOf(path: RepositoryPath): List<Domain
                 domains += currentDomain
             }
 
-            if(isExclude) {
+            if (isExclude) {
                 excludes += currentDomain
             }
         }

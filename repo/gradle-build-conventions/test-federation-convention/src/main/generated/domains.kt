@@ -175,3 +175,5 @@ val allDomainInfos: List<DomainInfo> by lazy {
         UnknownDomainInfo,
     )
 }
+
+val ignores = hashSetOf<String>("tests/mute-common.csv", "*.md", "docs", ".ai", ".claude", ".junie", "**/ReadMe.md", "**/README.md")
