@@ -5,18 +5,23 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.SuspiciousValueClassCheck
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.isValue
+import org.jetbrains.kotlin.fir.isEnabled
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker(MppCheckerKind.Common) {
+    @OptIn(SuspiciousValueClassCheck::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        if (declaration.isInline) {
+        if (declaration.isInline && !(declaration.isValue && LanguageFeature.ExplicitInlineValueClassesSyntax.isEnabled())) {
             reporter.reportOn(declaration.source, FirErrors.INLINE_CLASS_DEPRECATED)
         }
     }

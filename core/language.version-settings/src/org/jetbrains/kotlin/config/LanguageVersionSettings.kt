@@ -568,6 +568,8 @@ enum class LanguageFeature(
     IntrinsicConstEvaluation(sinceVersion = KOTLIN_2_5, issue = "KT-49303"),
     NormalizeNaNValuesInConstContext(sinceVersion = KOTLIN_2_5, issue = "KT-88081"),
 
+    ExplicitInlineValueClassesSyntax(sinceVersion = KOTLIN_2_5, issue = "KT-89772"),
+
     // 2.6
 
     ReportReificationProblemsInDnnAndFlexible(sinceVersion = KOTLIN_2_6, enabledInProgressiveMode = true, "KTLC-399"),

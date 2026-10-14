@@ -102,7 +102,7 @@ object ModifierCheckerCore {
                 trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(firstNode.psi, firstModifier, secondModifier))
                 trace.report(Errors.DEPRECATED_MODIFIER_PAIR.on(secondNode.psi, secondModifier, firstModifier))
             }
-            Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, Compatibility.INCOMPATIBLE -> {
+            Compatibility.COMPATIBLE_FOR_CLASSES_ONLY, Compatibility.INCOMPATIBLE, Compatibility.INLINE_VALUE_ALLOWED -> {
                 if (compatibility == Compatibility.COMPATIBLE_FOR_CLASSES_ONLY) {
                     if (owner is KtClassOrObject) return
                 }
