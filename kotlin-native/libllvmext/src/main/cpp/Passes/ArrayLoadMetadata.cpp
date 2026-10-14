@@ -12,8 +12,6 @@
 using namespace llvm;
 using namespace llvm::kotlin;
 
-namespace {
-
 // Matches Clang struct-path TBAA tags for ArrayHeader::count_:
 //   !tag  = !{!base, !fieldType, i64 <AccessOffset>}
 //   !base = !{"_ZTS11ArrayHeader", !typeInfoField, i64 0, !countField, i64 <CountFieldOffset>}
@@ -34,8 +32,6 @@ static bool isArrayHeaderCountTBAA(const MDNode *TBAA) {
     return false;
   return AccessOffset->getZExtValue() == CountFieldOffset->getZExtValue();
 }
-
-} // namespace
 
 PreservedAnalyses ArrayLoadMetadataPass::run(Function &F,
                                              FunctionAnalysisManager &AM) {
