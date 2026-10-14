@@ -304,6 +304,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleSymbolByFqNameTestGenerated ext
     }
 
     @Test
+    @TestMetadata("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt")
+    public void testJavaGetterImplementingKotlinProperty_MethodMode_Plugin() {
+      run("javaGetterImplementingKotlinProperty_MethodMode_Plugin.kt");
+    }
+
+    @Test
     @TestMetadata("myInterfaceSupertype.kt")
     public void testMyInterfaceSupertype() {
       run("myInterfaceSupertype.kt");
