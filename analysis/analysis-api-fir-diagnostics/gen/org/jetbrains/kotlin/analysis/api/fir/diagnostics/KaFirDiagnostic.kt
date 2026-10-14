@@ -9068,6 +9068,15 @@ public interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     @KaUnstableDiagnosticApi
     @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface AnnotationTargetsNonExistentAccessor : KaFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass: KClass<AnnotationTargetsNonExistentAccessor>
+            get() = AnnotationTargetsNonExistentAccessor::class
+
+        public val declarationName: String
+    }
+
+    @KaUnstableDiagnosticApi
+    @SubclassOptInRequired(KaImplementationDetail::class)
     public interface RuntimeAnnotationOnLambdaIsNotRetained : KaFirDiagnostic<KtAnnotationEntry> {
         override val diagnosticClass: KClass<RuntimeAnnotationOnLambdaIsNotRetained>
             get() = RuntimeAnnotationOnLambdaIsNotRetained::class
