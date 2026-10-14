@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfigur
 import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
 import org.jetbrains.kotlin.buildtools.internal.*
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.ENUM_WHEN_TRACKER
-import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.EXPECT_ACTUAL_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.FILE_MAPPING_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.IMPORT_TRACKER
 import org.jetbrains.kotlin.buildtools.internal.jps.JvmJpsManagedIncrementalCompilationConfigurationImpl.Companion.INLINE_CONST_TRACKER
@@ -91,7 +90,6 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.createCompilerS
         loggerAdapter,
         incrementalCompilationComponents = IncrementalCompilationComponentsAdapter(incrementalCompilationComponents),
         lookupTracker = lookupTracker,
-        expectActualTracker = this[EXPECT_ACTUAL_TRACKER]?.let(::ExpectActualTrackerAdapter),
         inlineConstTracker = this[INLINE_CONST_TRACKER]?.let(::InlineConstTrackerAdapter),
         enumWhenTracker = this[ENUM_WHEN_TRACKER]?.let(::EnumWhenTrackerAdapter),
         importTracker = this[IMPORT_TRACKER]?.let(::ImportTrackerAdapter),
@@ -128,9 +126,6 @@ internal fun JvmClientManagedIncrementalCompilationConfiguration.registerPlatfor
     }
     this[FILE_MAPPING_TRACKER]?.let { tracker ->
         serviceBuilder.register(ICFileMappingTracker::class.java, FileMappingTrackerAdapter(tracker))
-    }
-    this[EXPECT_ACTUAL_TRACKER]?.let { tracker ->
-        serviceBuilder.register(ExpectActualTracker::class.java, ExpectActualTrackerAdapter(tracker))
     }
     this[ENUM_WHEN_TRACKER]?.let { tracker ->
         serviceBuilder.register(EnumWhenTracker::class.java, EnumWhenTrackerAdapter(tracker))
@@ -181,8 +176,6 @@ internal class JvmJpsManagedIncrementalCompilationConfigurationImpl private cons
         val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
 
         val FILE_MAPPING_TRACKER: Option<CompilerFileMappingTracker?> = Option("FILE_MAPPING_TRACKER", null)
-
-        val EXPECT_ACTUAL_TRACKER: Option<CompilerExpectActualTracker?> = Option("EXPECT_ACTUAL_TRACKER", null)
 
         val ENUM_WHEN_TRACKER: Option<CompilerEnumWhenTracker?> = Option("ENUM_WHEN_TRACKER", null)
 
