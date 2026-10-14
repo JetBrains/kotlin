@@ -34,8 +34,8 @@ internal class KTypeSubstitutor(
         // Small optimization
         if (substitution.isEmpty()) return KTypeProjection(variance, type)
 
-        val lowerBound = (type as? AbstractKType)?.lowerBoundIfFlexible()
-        val upperBound = (type as? AbstractKType)?.upperBoundIfFlexible()
+        val lowerBound = (type as AbstractKType).lowerBoundIfFlexible()
+        val upperBound = type.upperBoundIfFlexible()
         if (lowerBound != null && upperBound != null) {
             val substitutedLower = substituteWithoutErasureRecursively(lowerBound, variance).lowerBoundIfFlexible()
             val substitutedUpper = substituteWithoutErasureRecursively(upperBound, variance).upperBoundIfFlexible()
@@ -44,7 +44,12 @@ internal class KTypeSubstitutor(
             return when {
                 substitutedUpperType != null && substitutedLowerType != null -> KTypeProjection(
                     substitutedLower.variance,
-                    createPlatformKType(substitutedLowerType, substitutedUpperType, isRawType = type.isRawType)
+                    createPlatformKType(
+                        substitutedLowerType, substitutedUpperType, type.isRawType,
+                        computeJavaType = if (type.isRawType)
+                            (substitutedLowerType.classifier as? KClass<*>)?.let { lazyOf(it.java) }
+                        else null,
+                    )
                 )
                 else -> KTypeProjection.STAR
             }
@@ -66,8 +71,8 @@ internal class KTypeSubstitutor(
             variance,
             when {
                 type.arguments.isEmpty() -> type
-                else -> classifier.createTypeImpl(
-                    type.arguments.map { argumentProjection ->
+                else -> {
+                    val arguments = type.arguments.map { argumentProjection ->
                         val argumentVariance = argumentProjection.variance
                         val argumentType = argumentProjection.type
                         when {
@@ -75,14 +80,27 @@ internal class KTypeSubstitutor(
                                 substituteWithoutErasureRecursively(argumentType, argumentVariance)
                             else -> KTypeProjection.STAR
                         }
-                    },
-                    type.isMarkedNullable,
-                    type.annotations,
-                    (type as? AbstractKType)?.mutableCollectionClass,
-                )
+                    }
+                    type.replaceTypeArguments(arguments)
+                }
             }
         )
         return result
+    }
+
+    private fun AbstractKType.replaceTypeArguments(newArguments: List<KTypeProjection>): AbstractKType = when (this) {
+        is SimpleKType -> SimpleKType(
+            classifier,
+            newArguments,
+            isMarkedNullable,
+            lazyAnnotations,
+            abbreviation?.let { substituteWithoutErasureRecursively(it, KVariance.INVARIANT).type },
+            isDefinitelyNotNullType,
+            isNothingType,
+            isSuspendFunctionType,
+            mutableCollectionClass,
+        )
+        else -> classifier!!.createTypeImpl(newArguments, isMarkedNullable, annotations, mutableCollectionClass)
     }
 
     // This method is needed for the K1-based implementation because we're not substituting types inside descriptors.
@@ -230,7 +248,11 @@ private fun KType.eraseToUpperBoundsAndMakeItRawRecursively(
             classifier ?: error("Error inside type '$seedTypeOfTheRecursionForDebug'. The current type '$type' is not denotable")
         val lower = classifier.createTypeImpl(arguments = newLowerBoundArguments, nullable = isMarkedNullable)
         val upper = classifier.createTypeImpl(arguments = List(parameters.size) { KTypeProjection.STAR }, nullable = true)
-        return createPlatformKType(lower, upper, isRawType = !replaceArgumentsWithStarProjections)
+        val isRawType = !replaceArgumentsWithStarProjections
+        return createPlatformKType(
+            lower, upper, isRawType,
+            computeJavaType = if (isRawType) (classifier as? KClass<*>)?.let { lazyOf(it.java) } else null,
+        )
     }
 }
 

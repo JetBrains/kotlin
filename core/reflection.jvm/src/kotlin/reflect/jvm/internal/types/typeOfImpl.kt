@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
@@ -23,6 +24,7 @@ internal fun createPlatformKType(
     lowerBound: KType,
     upperBound: KType,
     isRawType: Boolean,
+    computeJavaType: Lazy<Type>? = null,
 ): KType =
     if (useK1Implementation) {
         val lower = (lowerBound as DescriptorKType).type as SimpleType
@@ -33,6 +35,7 @@ internal fun createPlatformKType(
             lowerBound as AbstractKType,
             upperBound as AbstractKType,
             isRawType,
+            computeJavaType,
         )
     }
 
