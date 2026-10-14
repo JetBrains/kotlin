@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.config.cachedLibraryDependenciesFingerprint
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.library.newCompanionInitializationEnabled
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.bufferedWriter
@@ -31,7 +32,8 @@ import kotlin.io.path.writeLines
 import kotlin.random.Random
 
 private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
-    val runtimeFingerprint = if (config.libraryToCache!!.klib.isNativeStdlib) {
+    val library = config.libraryToCache!!.klib
+    val runtimeFingerprint = if (library.isNativeStdlib) {
         config.distribution.runtimeFingerprint(config.target)
     } else {
         null
@@ -43,6 +45,7 @@ private fun NativeGenerationState.generateCacheMetadata(): CacheMetadata {
             compilerFingerprint = config.distribution.compilerFingerprint,
             runtimeFingerprint = runtimeFingerprint,
             dependenciesFingerprint = config.configuration.cachedLibraryDependenciesFingerprint?.let { FingerprintHash.fromString(it) },
+            newCompanionInitialization = library.newCompanionInitializationEnabled,
     )
 }
 
