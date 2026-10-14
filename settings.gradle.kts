@@ -708,7 +708,9 @@ if (buildProperties.isSwiftImportEnabled.get()) {
     include(
         ":native:swift:kir",
         ":native:swift:kir:tree-generator",
+        ":native:swift:kir-light-classes",
         ":native:swift:kir-printer",
+        ":native:swift:kir-providers",
         ":native:swift:swift-import-standalone"
     )
 }
