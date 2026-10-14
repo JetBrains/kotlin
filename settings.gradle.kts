@@ -145,7 +145,10 @@ includeBuild("repo/gradle-build-conventions")
 
 // modules
 include(
-    ":benchmarks",
+    ":benchmarks:build-tools:incremental-compilation",
+    ":benchmarks:frontend:compilation",
+    ":benchmarks:frontend:misc",
+    ":benchmarks:jvm:reflection",
     ":compiler",
     ":compiler:util",
     ":compiler:config",
