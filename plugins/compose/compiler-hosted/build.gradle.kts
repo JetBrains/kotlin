@@ -144,11 +144,8 @@ javadocJar()
 
 projectTests {
     testTask(
-        javaLauncher = JdkMajorVersion.JDK_1_8,
         defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0),
         maxHeapSize = testMaxHeapSizeLarge,
-        // Use Parallel GC because this test runs on JDK 8.
-        garbageCollector = GarbageCollector.Parallel,
     ) {
         addClasspathProperty(runtimeJar.get().outputs.files, "compose.compiler.hosted.jar.path")
         addClasspathProperty(testJsRuntime, "compose.compiler.test.js.classpath")
