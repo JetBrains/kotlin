@@ -202,7 +202,7 @@ internal sealed class SirFunctionFromKtPropertySymbol : SirFunction(), SirFromKt
                     val contextParameterCount = contextParameters.size
                     val expectedParameters = (if (extensionReceiverParameter != null) 2 else 1) + contextParameterCount
                     require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
-                    buildCall(" = ${args.dropLast(contextParameterCount).last()}")
+                    buildCall(" = ${args.last()}")
                 }
             }
         }.orEmpty()

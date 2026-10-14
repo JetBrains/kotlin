@@ -158,8 +158,8 @@ extension edge_cases.SomeInterface where Self : edge_cases.__SomeInterface {
         _ context: (any edge_cases.Baz, any ExportedKotlinPackages.conflictingTypealiases.Foo),
         _ receiver: Swift.String
     ) -> Swift.Int32 {
-        let (_1, _2) = context
-        return SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__Swift_String_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self.__externalRCRef(), receiver, _1.__externalRCRef(), _2.__externalRCRef())
+        let (_0, _1) = context
+        return SomeInterface_somethingWithContext_get__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String__(self.__externalRCRef(), _0.__externalRCRef(), _1.__externalRCRef(), receiver)
     }
     public func `repeat`(
         _ receiver: Swift.String,
@@ -172,8 +172,8 @@ extension edge_cases.SomeInterface where Self : edge_cases.__SomeInterface {
         _ receiver: Swift.String,
         count: Swift.Int32
     ) -> [Swift.String] {
-        let (_2, _3) = context
-        return SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self.__externalRCRef(), receiver, count, _2.__externalRCRef(), _3.__externalRCRef()) as! Swift.Array<Swift.String>
+        let (_0, _1) = context
+        return SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32__(self.__externalRCRef(), _0.__externalRCRef(), _1.__externalRCRef(), receiver, count) as! Swift.Array<Swift.String>
     }
     public func setSomething(
         _ receiver: Swift.String,
@@ -186,8 +186,8 @@ extension edge_cases.SomeInterface where Self : edge_cases.__SomeInterface {
         _ receiver: Swift.String,
         value: Swift.Int32
     ) -> Swift.Void {
-        let (_2, _3) = context
-        return { SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo__(self.__externalRCRef(), receiver, value, _2.__externalRCRef(), _3.__externalRCRef()); return () }()
+        let (_0, _1) = context
+        return { SomeInterface_somethingWithContext_set__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32__(self.__externalRCRef(), _0.__externalRCRef(), _1.__externalRCRef(), receiver, value); return () }()
     }
 }
 extension edge_cases.SomeInterface {
@@ -298,10 +298,10 @@ package func InterfaceB_bar__reverse_swift(_ `self`: Swift.UnsafeMutableRawPoint
     return { _result; return true }()
 }
 
-@_cdecl("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift")
-package func SomeInterface_repeatWithContext__TypesOfArgumentsEC2__Swift_String_Swift_Int32_anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ count: Swift.Int32, _ _2: Swift.UnsafeMutableRawPointer, _ _3: Swift.UnsafeMutableRawPointer) -> Any {
+@_cdecl("SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift")
+package func SomeInterface_repeatWithContext__TypesOfArgumentsEC2__anyU20edge_cases_Baz_anyU20ExportedKotlinPackages_conflictingTypealiases_Foo_Swift_String_Swift_Int32____reverse_swift(_ `self`: Swift.UnsafeMutableRawPointer, _ _0: Swift.UnsafeMutableRawPointer, _ _1: Swift.UnsafeMutableRawPointer, _ receiver: Swift.String, _ count: Swift.Int32) -> Any {
     let _self = KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: `self`, conformsTo: edge_cases.SomeInterface.Type.self) as! any edge_cases.SomeInterface
-    let _result: Swift.Array<Swift.String> = _self.repeatWithContext((KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _2, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _3, conformsTo: ExportedKotlinPackages.conflictingTypealiases.Foo.Type.self) as! any ExportedKotlinPackages.conflictingTypealiases.Foo), receiver, count: count)
+    let _result: Swift.Array<Swift.String> = _self.repeatWithContext((KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _0, conformsTo: edge_cases.Baz.Type.self) as! any edge_cases.Baz, KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _1, conformsTo: ExportedKotlinPackages.conflictingTypealiases.Foo.Type.self) as! any ExportedKotlinPackages.conflictingTypealiases.Foo), receiver, count: count)
     return _result
 }
 
