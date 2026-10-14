@@ -78,6 +78,8 @@ assessed (keep "Changes made" very brief — a few words, not a sentence):
 
 Use `Annotated` / `Already annotated` / `Annotated (per-method)` etc. for Status.
 
+Print the table at the end of the run in Markdown format, so it can be included in the pull request description.
+
 ## Commit conventions
 
 - A separate commit should be created for every modified class. 
