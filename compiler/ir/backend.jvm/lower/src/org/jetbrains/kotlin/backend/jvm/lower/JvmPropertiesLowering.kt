@@ -215,7 +215,7 @@ internal class JvmPropertiesLowering(
                 isStatic = false, returnType = irBuiltIns.anyNType, visibility = DescriptorVisibilities.PRIVATE
             )
 
-        fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {
+        private fun JvmBackendContext.computeSyntheticMethodName(property: IrProperty, suffix: String): String {
             val baseName =
                 if (config.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
                     val getter = property.getter
