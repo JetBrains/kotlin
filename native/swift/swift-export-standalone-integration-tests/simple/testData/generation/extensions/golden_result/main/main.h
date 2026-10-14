@@ -63,11 +63,11 @@ NSString * foo_Foo_doubleReceiverExtFun__TypesOfArgumentsE__main_Bar__(void * se
 
 int32_t foo_Foo_doubleReceiverExtProp_get__TypesOfArgumentsE__main_Bar__(void * self, void * receiver);
 
-int32_t foo_contextExtFun__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool_main_Bar__(void * receiver, _Bool arg, void * bar);
+int32_t foo_contextExtFun__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Bool__(void * bar, void * receiver, _Bool arg);
 
-int32_t foo_contextProp_get__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_main_Bar__(void * receiver, void * bar);
+int32_t foo_contextProp_get__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo__(void * bar, void * receiver);
 
-_Bool foo_contextProp_set__TypesOfArgumentsEC1__anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32_main_Bar__(void * receiver, int32_t _, void * bar);
+_Bool foo_contextProp_set__TypesOfArgumentsEC1__main_Bar_anyU20ExportedKotlinPackages_foo_Foo_Swift_Int32__(void * bar, void * receiver, int32_t _);
 
 _Bool foo_nullableFun__TypesOfArgumentsE__Swift_Optional_anyU20ExportedKotlinPackages_foo_Foo___(void * _Nullable receiver);
 

@@ -154,7 +154,7 @@ internal open class SirFunctionFromKtSymbol(
         val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
             it.render(renderer, position = Variance.INVARIANT)
         } ?: ""
-        val actualArgs = argNames.drop(if (extensionReceiverParameter != null) 1 else 0).dropLast(contextParameters.size)
+        val actualArgs = argNames.drop(contextParameters.size + if (extensionReceiverParameter != null) 1 else 0)
         buildCall("$typesAsString(${actualArgs.joinToString()})")
     }
 

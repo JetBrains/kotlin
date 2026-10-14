@@ -293,11 +293,11 @@ public fun __root___experimentalProperty_set__TypesOfArguments__Swift_String__(n
     return true
 }
 
-@ExportedBridge("__root___fooA__TypesOfArgumentsC1__lib_ExperimentalLibClass_anyU20lib_InternalLibInterface__")
+@ExportedBridge("__root___fooA__TypesOfArgumentsC1__anyU20lib_InternalLibInterface_lib_ExperimentalLibClass__")
 @OptIn(ExperimentalLibApi::class, InternalLibApi::class)
-public fun __root___fooA__TypesOfArgumentsC1__lib_ExperimentalLibClass_anyU20lib_InternalLibInterface__(b: kotlin.native.internal.NativePtr, a: kotlin.native.internal.NativePtr): Boolean {
-    val __b = kotlin.native.internal.ref.dereferenceExternalRCRef(b) as ExperimentalLibClass
+public fun __root___fooA__TypesOfArgumentsC1__anyU20lib_InternalLibInterface_lib_ExperimentalLibClass__(a: kotlin.native.internal.NativePtr, b: kotlin.native.internal.NativePtr): Boolean {
     val __a = kotlin.native.internal.ref.dereferenceExternalRCRef(a) as InternalLibInterface
+    val __b = kotlin.native.internal.ref.dereferenceExternalRCRef(b) as ExperimentalLibClass
     context(__a) { fooA(__b) }
     return true
 }
