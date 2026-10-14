@@ -426,14 +426,17 @@ fun ProjectTestsExtension.nativeTestTask(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
-        jvmArgumentProviders.add(project.objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
-            this.customCompilerDependencies.from(customCompilerDependencies)
-            this.compilerPluginDependencies.from(compilerPluginDependencies)
-            this.customTestDependencies.from(customTestDependencies)
-            if (customCompilerDist != null) {
-                this.customCompilerDist.fileProvider(customCompilerDist.map { it.destinationDir })
-            }
-        })
+        // Test discovery does not need a native distribution, platform libraries, or compiled test KLIBs.
+        if (!dryRun.get()) {
+            jvmArgumentProviders.add(project.objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
+                this.customCompilerDependencies.from(customCompilerDependencies)
+                this.compilerPluginDependencies.from(compilerPluginDependencies)
+                this.customTestDependencies.from(customTestDependencies)
+                if (customCompilerDist != null) {
+                    this.customCompilerDist.fileProvider(customCompilerDist.map { it.destinationDir })
+                }
+            })
+        }
 
         val availableCpuCores: Int = if (allowParallelExecution) Runtime.getRuntime().availableProcessors() else 1
         if (!kotlinBuildProperties.isTeamcityBuild.get()

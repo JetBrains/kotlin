@@ -38,4 +38,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+projectTests {
+    testTask()
+}
+
 runtimeJar()

@@ -587,7 +587,7 @@ tasks {
     // === Build: CheckBuildTest (used only in `configurationCacheSmokeTests`) ===
     testLifecycleTask("miscCompilerTest", QualityGate.Master) {
         dependsOn(":compiler:test")
-        dependsOn(":compiler:tests-integration:test")
+        dependsOn(":compiler:tests-integration:test") // Aggregate
         dependsOn(":compiler:java-direct:test")
         dependsOn(":kotlin-compiler-embeddable:test")
         dependsOn(incrementalCompilationTest)

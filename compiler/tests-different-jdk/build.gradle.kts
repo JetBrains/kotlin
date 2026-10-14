@@ -27,6 +27,11 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+tasks.test {
+    // These suites need the target-specific launchers and flags supplied by codegenTestTask below.
+    enabled = false
+}
+
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/klib")

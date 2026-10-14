@@ -77,8 +77,9 @@ open class TestSystemPropertiesProvider @Inject constructor(
 
 projectTests {
     testTask(javaLauncher = JdkMajorVersion.JDK_21_0, maxHeapSize = testMaxHeapSizeTiny) {
-        dependsOn(":dist")
-        dependsOn(":compileAll")
+        if (!dryRun.get()) {
+            dependsOn(":dist", ":compileAll")
+        }
         workingDir = rootDir
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 

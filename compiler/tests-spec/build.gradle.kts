@@ -62,6 +62,8 @@ projectTests {
     testTask(taskName = "specConsistencyTests", skipInLocalBuild = false) {
         filter {
             includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
+            // Gradle does not count the skipped parameterized-test container as a matching test in dry runs.
+            isFailOnNoMatchingTests = !dryRun.get()
         }
     }
 

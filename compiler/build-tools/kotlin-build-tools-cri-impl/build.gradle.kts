@@ -2,6 +2,7 @@ plugins {
     id("common-configuration")
     kotlin("jvm")
     kotlin("plugin.serialization")
+    id("test-inputs-check")
 }
 
 dependencies {

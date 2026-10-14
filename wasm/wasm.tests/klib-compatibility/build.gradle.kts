@@ -64,6 +64,8 @@ fun Project.customCompilerTest(
     }
 
     return projectTests.jsTestTask(taskName, tag, enableGroupingTestEngine = enableGroupingTestEngine) {
+        // Leave room for deeply nested generated test names within the macOS path length limit.
+        reports.html.outputLocation.set(layout.buildDirectory.dir("reports/$taskName"))
         addClasspathProperty(customCompiler, "kotlin.internal.wasm.test.compat.customCompilerClasspath")
         addClasspathProperty(runtimeDependencies, "kotlin.internal.wasm.test.compat.runtimeDependencies")
         systemProperty("kotlin.internal.wasm.test.compat.customCompilerVersion", version.rawVersion)

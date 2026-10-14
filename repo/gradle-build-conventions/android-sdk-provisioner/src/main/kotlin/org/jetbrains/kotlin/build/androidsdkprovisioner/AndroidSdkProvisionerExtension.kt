@@ -49,7 +49,10 @@ abstract class AndroidSdkProvisionerExtension {
         val sdkProvider = project.provider { sdkConfiguration.singleFile }
         when (provisioningType.type) {
             ProvisionedFileType.FILE -> inputs.file(sdkProvider)
-            ProvisionedFileType.DIRECTORY -> inputs.files(sdkConfiguration)
+            ProvisionedFileType.DIRECTORY -> inputs.files(sdkConfiguration.asFileTree.matching {
+                // SDK-only consumers do not depend on the separately provisioned emulator images.
+                if (provisioningType == ProvisioningType.SDK) exclude("system-images/**")
+            })
         }
         return sdkProvider.map { it.canonicalPath }
     }

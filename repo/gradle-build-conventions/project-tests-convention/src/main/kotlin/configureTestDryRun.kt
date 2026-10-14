@@ -4,6 +4,7 @@
  */
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.withType
 
@@ -16,7 +17,21 @@ internal fun Project.configureTestDryRun() {
         .map(String::toBooleanStrict)
         .orElse(false)
 
-    tasks.withType<Test>().configureEach {
+    val testTasks = tasks.withType<AbstractTestTask>()
+    tasks.register("allTestTasks") {
+        group = "verification"
+        description = "Runs all test tasks in this project."
+        dependsOn(testTasks)
+    }
+
+    testTasks.configureEach {
+        if (this !is Test) {
+            // Non-JVM test tasks do not support Gradle's test discovery dry run.
+            // Skip their execution while still building their dependencies.
+            onlyIf("Test dry-run mode is disabled") { !testDryRun.get() }
+            return@configureEach
+        }
+
         dryRun.value(testDryRun)
         doFirst {
             if (dryRun.get() && forkEvery > 0) {

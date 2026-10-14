@@ -80,9 +80,10 @@ dependencies {
 }
 
 //region Kotlin stdlib sources, needed by tests that verify documentation generated for the standard library.
-val kotlinStdlibSourcesDir: File = file("$rootDir/libraries/stdlib")
+val kotlinStdlibSourcesDir = project(":kotlin-stdlib").isolated.projectDirectory
 tasks.withType<Test>().configureEach {
-    addDirectoryProperty(kotlinStdlibSourcesDir, "kotlinStdlibSourcesDir")
+    addAbsoluteDirectoryProperty(kotlinStdlibSourcesDir, "kotlinStdlibSourcesDir")
+    inputs.file(kotlinStdlibSourcesDir.file("jvm/builtins/Enum.kt")).withPathSensitivity(PathSensitivity.RELATIVE)
 }
 //endregion
 

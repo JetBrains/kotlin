@@ -13,6 +13,10 @@ dependencies {
     testImplementation(kotlinTest("junit5"))
 }
 
+projectTests {
+    testTask()
+}
+
 publish()
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler {

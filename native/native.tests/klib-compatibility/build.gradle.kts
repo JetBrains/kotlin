@@ -84,7 +84,7 @@ fun Project.customCompilerTest(
             // Cannot use exactly `DependencyDirectories.localKonanDir`, since it's wrong to declare whole `~/.konan/` as an output of `unarchiveCustomCompiler_` task
             // Should it be so, Gradle fails on implicit dependency: task `:kotlin-native:llvmInterop:genInteropStubs` uses files in `~/.konan/dependencies/llvm-19-aarch64*`
             // So, a subfolder within `~/.konan/` is needed for output of `unarchiveCustomCompiler_$version` task
-            into(DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases"))
+            into(DependencyDirectories.localKonanDir.resolve("kotlin-native-prebuilt-releases/$version"))
         }
     } else {
         tasks.named<Copy>(unarchiveTaskName)
@@ -95,6 +95,8 @@ fun Project.customCompilerTest(
         requirePlatformLibs = false,
         enableGroupingTestEngine = true,
     ) {
+        // Leave room for deeply nested generated test names within the macOS path length limit.
+        reports.html.outputLocation.set(rootProject.layout.buildDirectory.dir("reports/native-klib/$taskName"))
         val testTarget = providers.gradleProperty("kotlin.internal.native.test.target")
             .orElse(providers.gradleProperty("kn.target"))
             .map { KonanTarget.predefinedTargets[it] ?: error("Test target $it is not defined") }

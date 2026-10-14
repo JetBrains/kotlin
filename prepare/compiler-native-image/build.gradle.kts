@@ -95,7 +95,10 @@ projectTests {
         description = "Smoke test: compiles a hello-world with the native-image kotlinc " +
                 "and verifies it succeeds."
         include("**/NativeImageSmokeTest.class")
-        useNativeImageDist()
+
+        if (!dryRun.get()) {
+            useNativeImageDist()
+        }
     }
 
     nativeImageTestTask("generateReachabilityMetadataSmoke") {
@@ -117,7 +120,9 @@ projectTests {
             include("**/NativeImageDynamicLegacyPluginBoxTestGenerated.class")
             include("**/NativeImageScriptingTestGenerated.class")
         }
-        useNativeImageDist()
+        if (!dryRun.get()) {
+            useNativeImageDist()
+        }
         usePlugins()
         withJunit5ParallelExecution(4)
     }

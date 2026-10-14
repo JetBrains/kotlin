@@ -248,7 +248,9 @@ fun Test.applyKotlinNativeConfiguration() {
 
     // Install K/N into Maven Local for local test runs with enabled K/N
     if (project.kotlinBuildProperties.isKotlinNativeEnabled.get() && !project.kotlinBuildProperties.isTeamcityBuild.get()) {
-        dependsOn(":kotlin-native:install")
+        if (!dryRun.get()) {
+            dependsOn(":kotlin-native:install")
+        }
         // This is the version that K/N bundle is assumed to be published with
         systemProperties["kotlinNativeVersion"] = project.kotlinBuildProperties.defaultSnapshotVersion.orNull
     }

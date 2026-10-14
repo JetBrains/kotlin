@@ -21,6 +21,10 @@ dependencies {
 
 optInToUnsafeDuringIrConstructionAPI()
 
+projectTests {
+    testTask()
+}
+
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }

@@ -98,6 +98,7 @@ fun unzipSdkTask(
     sdkName: String, sdkVer: String, destinationSubdir: String, coordinatesSuffix: String,
     additionalConfig: Configuration? = null, dirLevelsToSkipOnUnzip: Int = 0, ext: String = "zip",
     prepareTask: TaskProvider<DefaultTask> = prepareSdk,
+    outputSubdir: String = ".",
     unzipFilter: CopySpec.() -> Unit = {},
     postProcess: (File) -> Unit = {}
 ): TaskProvider<Task> {
@@ -111,7 +112,7 @@ fun unzipSdkTask(
         dependsOn(cfg)
         inputs.files(cfg)
         val targetDir = project.layout.buildDirectory.dir("$sdkDestDirName/$destinationSubdir")
-        outputs.dirs(targetDir)
+        outputs.dir(targetDir.map { it.dir(outputSubdir) })
         val injected = project.objects.newInstance<Injected>()
         val fs = injected.fs
         val archiveOperations = injected.archiveOperations
@@ -303,7 +304,7 @@ androidBuildTools("36.0.0")
 
 // SDK artifacts are unpacked manually instead of using sdkmanager (recommended way),
 // so required package metadata (package.xml) is missing. Write the metadata manually.
-unzipSdkTask("emulator-$toolsOsDarwinArch", emulatorVersion, "", "") { emulatorDir ->
+unzipSdkTask("emulator-$toolsOsDarwinArch", emulatorVersion, "", "", outputSubdir = "emulator") { emulatorDir ->
     emulatorDir.resolve("emulator/package.xml").writeText(
         """
         |<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -396,7 +397,7 @@ unzipSdkTask("x86_64", "26", "system-images/android-26/default", "r01", prepareT
     )
 }
 unzipSdkTask("android_m2repository", "r44", "extras/android", "")
-unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin) { sdkDir ->
+unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin, outputSubdir = "platform-tools") { sdkDir ->
     val platformToolsDir = sdkDir.resolve("platform-tools")
     platformToolsDir.resolve("package.xml").writeText(
         LocalPackageMetadata.localPackageXml(
@@ -407,7 +408,7 @@ unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin) { sdkDir
         )
     )
 }
-unzipSdkTask("commandlinetools-$toolsOsShort", "${commandLineToolsVersion}_latest", "", "")
+unzipSdkTask("commandlinetools-$toolsOsShort", "${commandLineToolsVersion}_latest", "", "", outputSubdir = "cmdline-tools")
 
 val clean = tasks.register<Delete>("clean") {
     delete(layout.buildDirectory)
