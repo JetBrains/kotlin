@@ -42,6 +42,7 @@ class DeclarationWithValueAnnStatusTransformer(session: FirSession) : FirStatusT
         val fieldDefaults = lombokService.getFieldDefaults(containingClass)
         val visibility = when {
             status.visibility != JavaVisibilities.PackageVisibility -> null
+            status.isStatic -> null
             field.symbol.getCompilerRequiredAnnotationByClassId(LombokNames.PACKAGE_PRIVATE_ID) != null -> null
             fieldDefaults != null && fieldDefaults.level != AccessLevel.NONE -> fieldDefaults.level.toVisibility(field.symbol)
             session.lombokService.config.fieldDefaultPrivate -> Visibilities.Private

@@ -13,7 +13,7 @@ import kotlin.test.*
 
 fun box(): String {
     // Should be compilable (no invisible reference)
-    val counter: Int = One.StaticHolder.<!INVISIBLE_REFERENCE!>counter<!>
+    val counter: Int = One.StaticHolder.counter
     assertEquals(5, counter)
     return "OK"
 }
