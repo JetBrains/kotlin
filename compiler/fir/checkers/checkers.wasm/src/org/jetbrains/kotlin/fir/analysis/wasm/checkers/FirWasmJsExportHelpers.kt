@@ -26,4 +26,4 @@ fun isJsExportedDeclaration(declaration: FirDeclaration, session: FirSession): B
 
     val containerFile = session.firProvider.getFirCallableContainerFile(declaration.symbol)
     return containerFile != null && containerFile.hasAnnotation(WebCommonStandardClassIds.Annotations.JsExport, session)
-}
+} // In K/Wasm file is not allowed to have JsExport

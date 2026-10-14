@@ -21,10 +21,20 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.isEffectivelyExternal
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.reportIncompatibleAnnotations
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.WasmStandardClassIds
 import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    // The function is exported under the given name, so it is not a JavaScript export and its JavaScript name is not used.
+    // '@JsExport' has its own diagnostic.
+    private val incompatibleAnnotations = setOf(
+        WebCommonStandardClassIds.Annotations.JsName,
+        StandardClassIds.Annotations.jsExportIgnore,
+        StandardClassIds.Annotations.jsExportDefault,
+    )
+
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
@@ -40,6 +50,8 @@ object FirWasmExportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         if (declaration.annotations.hasAnnotation(WebCommonStandardClassIds.Annotations.JsExport, context.session)) {
             reporter.reportOn(declaration.source, FirWasmErrors.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION)
         }
+
+        reportIncompatibleAnnotations(declaration, incompatibleAnnotations, FirWasmErrors.INCOMPATIBLE_ANNOTATION_WITH_WASM_EXPORT)
 
         if (declaration is FirNamedFunction) {
             if (declaration.symbol.isEffectivelyExternal(context.session) || declaration.hasValidJsCodeBody()) {

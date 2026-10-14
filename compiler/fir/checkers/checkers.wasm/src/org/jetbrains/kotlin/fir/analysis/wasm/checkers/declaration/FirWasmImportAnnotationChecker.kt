@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.reportIncompatibleAnnotations
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -21,8 +22,18 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.WasmStandardClassIds
+import org.jetbrains.kotlin.name.WebCommonStandardClassIds
 
 object FirWasmImportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+    // The function is imported from the given Wasm module, so it is neither looked up in JavaScript
+    // nor implemented by the JavaScript code of '@JsFun'.
+    private val incompatibleAnnotations = setOf(
+        WebCommonStandardClassIds.Annotations.JsModule,
+        WebCommonStandardClassIds.Annotations.JsQualifier,
+        WebCommonStandardClassIds.Annotations.JsName,
+        WasmStandardClassIds.Annotations.JsFun,
+    )
+
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true
 
@@ -38,6 +49,8 @@ object FirWasmImportAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKin
         if (!declaration.symbol.isEffectivelyExternal(context.session)) {
             reporter.reportOn(annotation.source, FirWasmErrors.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION)
         }
+
+        reportIncompatibleAnnotations(declaration, incompatibleAnnotations, FirWasmErrors.INCOMPATIBLE_ANNOTATION_WITH_WASM_IMPORT)
 
         if (declaration is FirFunction) {
             checkWasmInteropSignature(declaration)

@@ -28,6 +28,7 @@ object FirWasmErrors : KtDiagnosticsContainer() {
     // Annotations
     val JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE: KtDiagnosticFactoryForDeprecation0 = KtDiagnosticFactoryForDeprecation0("JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE", ProhibitVarInJsModuleFile, SourceElementPositioningStrategies.VAL_OR_VAR_NODE, KtElement::class, getRendererFactory())
     val NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
+    val INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // Externals
     val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())
@@ -35,6 +36,7 @@ object FirWasmErrors : KtDiagnosticsContainer() {
 
     // JsFun
     val WRONG_JS_FUN_TARGET: KtDiagnosticFactory0 = KtDiagnosticFactory0("WRONG_JS_FUN_TARGET", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val INCOMPATIBLE_ANNOTATION_WITH_JS_FUN: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INCOMPATIBLE_ANNOTATION_WITH_JS_FUN", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     // JsCode
     val JSCODE_WRONG_CONTEXT: KtDiagnosticFactory0 = KtDiagnosticFactory0("JSCODE_WRONG_CONTEXT", ERROR, SourceElementPositioningStrategies.NAME_IDENTIFIER, KtElement::class, getRendererFactory())
@@ -45,8 +47,10 @@ object FirWasmErrors : KtDiagnosticsContainer() {
     val NESTED_WASM_EXPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_EXPORT_ON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_EXPORT_ON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val INCOMPATIBLE_ANNOTATION_WITH_WASM_EXPORT: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INCOMPATIBLE_ANNOTATION_WITH_WASM_EXPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val NESTED_WASM_IMPORT: KtDiagnosticFactory0 = KtDiagnosticFactory0("NESTED_WASM_IMPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val INCOMPATIBLE_ANNOTATION_WITH_WASM_IMPORT: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INCOMPATIBLE_ANNOTATION_WITH_WASM_IMPORT", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_IMPORT_EXPORT_VARARG_PARAMETER: KtDiagnosticFactory0 = KtDiagnosticFactory0("WASM_IMPORT_EXPORT_VARARG_PARAMETER", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
     val WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE", ERROR, SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT, KtElement::class, getRendererFactory())

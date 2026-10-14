@@ -5,23 +5,23 @@
 package declarationQualifier
 
 @JsModule("m")
-@JsQualifier("a.b")
+<!INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE!>@JsQualifier("a.b")<!>
 external fun foo(): Int
 
 @JsModule("m")
-@JsQualifier("a.b")
+<!INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE!>@JsQualifier("a.b")<!>
 external val bar: Int
 
 <!JS_MODULE_PROHIBITED_ON_VAR!>@JsModule("m")
-@JsQualifier("a.b")
+<!INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE!>@JsQualifier("a.b")<!>
 external var baz: Int<!>
 
 @JsModule("m")
-@JsQualifier("a.b")
+<!INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE!>@JsQualifier("a.b")<!>
 external class A
 
 @JsModule("m")
-@JsQualifier("a.b")
+<!INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE!>@JsQualifier("a.b")<!>
 external object O
 
 // FILE: fileQualifier.kt

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics.wasm
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.ASSOCIATED_OBJECT_INVALID_BINDING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXPORT_DECLARATION_WITH_CONTEXT_PARAMETERS
@@ -15,6 +16,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.EXTERNAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_INVALID_PARAMETER_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_UNSUPPORTED_FUNCTION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JSCODE_WRONG_CONTEXT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.INCOMPATIBLE_ANNOTATION_WITH_JS_FUN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.INCOMPATIBLE_ANNOTATION_WITH_WASM_EXPORT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.INCOMPATIBLE_ANNOTATION_WITH_WASM_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.JS_MODULE_PROHIBITED_ON_VAR_IN_MODULE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_FUN
@@ -74,6 +79,26 @@ object FirWasmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NESTED_WASM_EXPORT, "Only top-level functions can be exported with '@WasmExport'.")
         map.put(WASM_EXPORT_ON_EXTERNAL_DECLARATION, "Functions annotated with '@WasmExport' cannot be external.")
         map.put(JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION, "Cannot use '@WasmExport' and '@JsExport' for same function.")
+        map.put(
+            INCOMPATIBLE_ANNOTATION_WITH_JS_MODULE,
+            "''@{0}'' cannot be combined with ''@JsModule'', since a declaration with its own ''@JsModule'' is the module itself or its default export.",
+            CommonRenderers.STRING,
+        )
+        map.put(
+            INCOMPATIBLE_ANNOTATION_WITH_JS_FUN,
+            "''@{0}'' cannot be combined with ''@JsFun'', since the function is implemented by the JavaScript code of ''@JsFun''.",
+            CommonRenderers.STRING,
+        )
+        map.put(
+            INCOMPATIBLE_ANNOTATION_WITH_WASM_IMPORT,
+            "''@{0}'' cannot be combined with ''@WasmImport'', since the function is imported from the Wasm module of ''@WasmImport''.",
+            CommonRenderers.STRING,
+        )
+        map.put(
+            INCOMPATIBLE_ANNOTATION_WITH_WASM_EXPORT,
+            "''@{0}'' cannot be combined with ''@WasmExport'', since the function is exported under the name of ''@WasmExport''.",
+            CommonRenderers.STRING,
+        )
         map.put(NESTED_WASM_IMPORT, "Only top-level functions can be imported with '@WasmImport'.")
         map.put(WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION, "Functions annotated with '@WasmImport' must be external.")
         map.put(
