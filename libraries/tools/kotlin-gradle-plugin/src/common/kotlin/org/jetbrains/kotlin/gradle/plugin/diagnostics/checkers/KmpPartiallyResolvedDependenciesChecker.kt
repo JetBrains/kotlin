@@ -229,10 +229,10 @@ internal fun partiallyUnresolvedPlatformDependencies(
 
         val visitedDependencies = mutableSetOf<ComponentSelector>()
         directUnresolvedDependencies.forEach { unresolvedDependency ->
-            val kmpIdentifier = unresolvedDependency.attempted
+            val kmpIdentifier = unresolvedDependency.requested
             if (visitedDependencies.add(kmpIdentifier)) {
                 unresolvedDependenciesMap.getOrPut(
-                    unresolvedDependency.attempted,
+                    kmpIdentifier,
                 ) { UnresolvedKmpDependency() }.unresolvedComponents.add(
                     UnresolvedKmpDependency.UnresolvedComponent(
                         targetName = platformCompilation.targetName,
