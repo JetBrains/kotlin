@@ -126,7 +126,7 @@ class SwiftExportManifestGeneratorTest {
     }
 
     private fun platformsManifestGold() = """
-        // swift-tools-version: 5.9
+        // swift-tools-version: 6.1
 
         import PackageDescription
         let package = Package(
@@ -161,7 +161,8 @@ class SwiftExportManifestGeneratorTest {
                     name: "KotlinRuntime",
                     dependencies: ["SharedKotlin"]
                 )
-            ]
+            ],
+            swiftLanguageModes: [.v5]
         )
     """.trimIndent() + "\n"
 
@@ -237,7 +238,7 @@ class SwiftExportManifestGeneratorTest {
     )
 
     private fun complicatedManifestGold() = """
-        // swift-tools-version: 5.9
+        // swift-tools-version: 6.1
 
         import PackageDescription
         let package = Package(
@@ -282,12 +283,13 @@ class SwiftExportManifestGeneratorTest {
                 .target(
                     name: "KotlinRuntime"
                 )
-            ]
+            ],
+            swiftLanguageModes: [.v5]
         )
     """.trimIndent() + "\n"
 
     private fun emptyManifestGold() = """
-        // swift-tools-version: 5.9
+        // swift-tools-version: 6.1
 
         import PackageDescription
         let package = Package(
@@ -302,12 +304,13 @@ class SwiftExportManifestGeneratorTest {
                 .target(
                     name: "KotlinRuntime"
                 )
-            ]
+            ],
+            swiftLanguageModes: [.v5]
         )
     """.trimIndent() + "\n"
 
     private fun singleModuleManifestGold() = """
-        // swift-tools-version: 5.9
+        // swift-tools-version: 6.1
 
         import PackageDescription
         let package = Package(
@@ -326,12 +329,13 @@ class SwiftExportManifestGeneratorTest {
                 .target(
                     name: "KotlinRuntime"
                 )
-            ]
+            ],
+            swiftLanguageModes: [.v5]
         )
     """.trimIndent() + "\n"
 
     private fun cinteropDependencyManifestGold() = """
-        // swift-tools-version: 5.9
+        // swift-tools-version: 6.1
 
         import PackageDescription
         let package = Package(
@@ -360,12 +364,13 @@ class SwiftExportManifestGeneratorTest {
                 .target(
                     name: "KotlinRuntime"
                 )
-            ]
+            ],
+            swiftLanguageModes: [.v5]
         )
     """.trimIndent() + "\n"
 
     private fun sharedLibraryManifestGold() = """
-        // swift-tools-version: 5.9
+        // swift-tools-version: 6.1
 
         import PackageDescription
         let package = Package(
@@ -391,7 +396,8 @@ class SwiftExportManifestGeneratorTest {
                 .target(
                     name: "KotlinRuntime"
                 )
-            ]
+            ],
+            swiftLanguageModes: [.v5]
         )
     """.trimIndent() + "\n"
 }
