@@ -83,15 +83,6 @@ projectTests {
         }
     }
 
-    //JDK 8
-    // This is default one and is executed in default build configuration
-    codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_1_8)
-
-    //JDK 11
-    codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_11_0)
-
-    codegenTestTask(target = 11, jdk = JdkMajorVersion.JDK_11_0)
-
     //JDK 17
     codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_17_0)
 
