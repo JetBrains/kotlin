@@ -20,34 +20,21 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val compilationWarmupsParam = providers.gradleProperty("compilationWarmups").orNull
-val compilationIterationsParam = providers.gradleProperty("compilationIterations").orNull
-val compilationIncludeParam = providers.gradleProperty("compilationInclude").orNull
-val compilationSizeParam = providers.gradleProperty("compilationSize").orNull
-
 benchmark {
     configurations {
-        // The plugin pre-registers `main`, which would give a `testBenchmark` task that runs every
-        // benchmark in the module under JMH settings that do not suit them.
-        // Drop it and register each suite explicitly, so every benchmark belongs to exactly one
-        // task and neither suite needs to exclude the other.
-        remove(getByName("main"))
-
-        register("compilation") {
-            compilationIncludeParam?.let { include(it) }
+        named("main") {
+            providers.gradleProperty("include").orNull?.let { include(it) }
 
             iterationTime = 1 // Required param
             iterationTimeUnit = "sec" // Required param
 
-            warmups = compilationWarmupsParam?.toInt() ?: 5 // `5` is currently default in JMH
-            iterations = compilationIterationsParam?.toInt() ?: 5 // `5` is currently default in JMH
+            warmups = providers.gradleProperty("warmups").orNull?.toInt() ?: 5 // `5` is currently default in JMH
+            iterations = providers.gradleProperty("iterations").orNull?.toInt() ?: 5 // `5` is currently default in JMH
 
-            if (compilationSizeParam != null) {
-                // Use size from annotation arguments if the param isn't specified.
-                // `size` is the name of the benchmarks' own `@Param` property, so it stays as it is.
-                // CAUTION: large size might cause long execution time
-                param("size", compilationSizeParam.toInt())
-            }
+            // Use size from annotation arguments if the param isn't specified.
+            // `size` is the name of the benchmarks' own `@Param` property, so it stays as it is.
+            // CAUTION: large size might cause long execution time
+            providers.gradleProperty("size").orNull?.let { param("size", it.toInt()) }
         }
     }
     targets {
