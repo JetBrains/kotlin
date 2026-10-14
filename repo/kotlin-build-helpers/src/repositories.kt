@@ -337,6 +337,24 @@ fun RepositoryHandler.d8Distributions() {
     }
 }
 
+fun RepositoryHandler.swcDistributions() {
+    exclusiveContent {
+        forRepository {
+            ivy {
+                name = "Swc Distributions"
+                setUrl("https://cache-redirector.jetbrains.com/github.com/swc-project/swc/releases/download")
+                patternLayout {
+                    artifact("v[revision]/[artifact]-[classifier]")
+                }
+                metadataSources { artifact() }
+            }
+        }
+        filter {
+            includeModule("com.github.swc-project", "swc")
+        }
+    }
+}
+
 fun RepositoryHandler.wasmtimeDistributions() {
     exclusiveContent {
         forRepository {
