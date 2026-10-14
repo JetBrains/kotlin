@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
+import kotlin.io.path.createParentDirectories
 import kotlin.io.path.moveTo
+import kotlin.io.path.writeText
 import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -186,6 +188,81 @@ class JsBrowserTestsIT : KGPBaseTest() {
             build("wasmJsTest") {
                 assertTasksNoSource(":wasmJsTestBundleAsEsm")
                 assertTasksNoSource(":wasmJsTest")
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-89797: Browser test bundles are rebuilt when main code changes")
+    fun `browser test bundles are not up-to-date after main code changes`(gradleVersion: GradleVersion) {
+        project(
+            "empty",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    js {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
+                            }
+                        }
+                    }
+
+                    wasmJs {
+                        browser {
+                            @OptIn(ExperimentalJsTestDsl::class)
+                            test {
+                                it.chromium()
+                            }
+                        }
+                    }
+
+                    sourceSets.commonTest.dependencies {
+                        implementation(kotlin("test"))
+                    }
+                }
+            }
+
+            val mainSource = kotlinSourcesDir("webMain").resolve("Main.kt").createParentDirectories()
+            mainSource.writeText("fun answer(): Int = 42")
+            kotlinSourcesDir("commonTest").resolve("MainTest.kt").createParentDirectories().writeText(
+                """
+                import kotlin.test.*
+
+                class MainTest {
+                    @Test
+                    fun answerTest() {
+                        assertEquals(42, answer())
+                    }
+                }
+                """.trimIndent()
+            )
+
+            val bundleTasks = arrayOf(
+                ":compileTestDevelopmentExecutableKotlinJs",
+                ":prepareWebpackBundleForKotlinJsTests",
+                ":wasmJsTestBundleAsEsm",
+            )
+
+            build(*bundleTasks) {
+                assertTasksExecuted(*bundleTasks)
+            }
+
+            build(*bundleTasks) {
+                assertTasksUpToDate(*bundleTasks)
+            }
+
+            mainSource.writeText("fun answer(): Int = 24")
+
+            build(*bundleTasks) {
+                assertTasksExecuted(*bundleTasks)
             }
         }
     }
