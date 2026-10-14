@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 description = "Kotlin Library (KLIB) metadata manipulation library"
 
 plugins {
@@ -27,6 +29,17 @@ dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-metadata"))
 
+    implementation(project(":core:compiler.common"))
+    implementation(project(":core:names"))
+    implementation(project(":core:deserialization"))
+    implementation(project(":core:deserialization.common"))
+    implementation(project(":compiler:serialization.common"))
+    implementation(project(":compiler:serialization"))
+    implementation(project(":kotlin-util-klib-metadata"))
+    implementation(project(":kotlin-util-klib"))
+    implementation(project(":kotlin-util-io"))
+    implementation(protobufLite())
+
     embedded(project(":kotlin-metadata"))
     embedded(project(":core:compiler.common"))
     embedded(project(":core:names"))
@@ -42,8 +55,39 @@ dependencies {
     testImplementation(kotlinTest("junit5"))
 }
 
+val relocatedJar = tasks.register<ShadowJar>("relocatedJar") {
+    archiveClassifier.set("shadow")
+    configurations.add(project.configurations["embedded"])
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(mainSourceSet.output)
+    exclude("**/*.proto")
+    relocate("org.jetbrains.kotlin", "kotlin.metadata.internal")
+}
+
 if (deployVersion != null) {
     publish()
+    (components.findByName("kotlinLibrary") as? AdhocComponentWithVariants)?.withVariantsFromConfiguration(configurations.getByName("runtimeElements")) {
+        skip()
+    }
+    val runtimeJar = tasks.register<Jar>("runtimeJar") {
+        dependsOn(relocatedJar)
+        from {
+            zipTree(relocatedJar.get().outputs.files.singleFile)
+        }
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+    tasks.named("assemble").configure { dependsOn(runtimeJar) }
+    configurations.named("publishedRuntime") {
+        setExtendsFrom(emptyList())
+        outgoing.artifacts.clear()
+        project.addArtifact(this.name, runtimeJar, runtimeJar)
+    }
+    configurations.named("publishedCompile") {
+        setExtendsFrom(emptyList())
+        outgoing.artifacts.clear()
+        project.addArtifact(this.name, runtimeJar, runtimeJar)
+    }
     dependencies {
         "publishedCompile"(kotlinStdlib())
     }
@@ -51,12 +95,6 @@ if (deployVersion != null) {
 
 tasks.test {
     useJUnitPlatform()
-}
-
-runtimeJarWithRelocation {
-    from(mainSourceSet.output)
-    exclude("**/*.proto")
-    relocate("org.jetbrains.kotlin", "kotlin.metadata.internal")
 }
 
 sourcesJar()

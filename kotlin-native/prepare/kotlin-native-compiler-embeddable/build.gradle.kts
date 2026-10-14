@@ -46,11 +46,6 @@ val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {
     configurations.add(kotlinNativeEmbeddedClasspath)
     exclude("com/sun/jna/**")
     mergeServiceFiles()
-    // Shadow uses by default 'DuplicatesStrategy.EXCLUDE' which prevents duplicate service files from being processed,
-    // see https://gradleup.com/shadow/configuration/merging/#handling-duplicates-strategy
-    filesMatching("META-INF/services/**") {
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    }
 }
 
 val runtimeJar = runtimeJar(compiler)
