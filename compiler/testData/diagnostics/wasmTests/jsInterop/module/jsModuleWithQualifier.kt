@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 // FILE: declarationQualifier.kt
 package declarationQualifier
@@ -28,14 +29,17 @@ external object O
 @file:JsQualifier("q")
 package fileQualifier
 
-@JsModule("m")
-external fun foo(): Int
+<!JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER!>@JsModule("m")
+external fun foo(): Int<!>
 
-<!JS_MODULE_PROHIBITED_ON_VAR!>@JsModule("m")
+<!JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER!>@JsModule("m")
+external val bar: Int<!>
+
+<!JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER, JS_MODULE_PROHIBITED_ON_VAR!>@JsModule("m")
 external var baz: Int<!>
 
 @JsModule("m")
-external class A
+external class <!JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER!>A<!>
 
 @JsModule("m")
-external object O
+external <!JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER!>object O<!>

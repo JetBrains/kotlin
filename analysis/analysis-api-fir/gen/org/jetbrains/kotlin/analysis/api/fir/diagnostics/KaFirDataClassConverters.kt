@@ -2972,6 +2972,12 @@ private fun KaDiagnosticConverterBuilder.addConversions63() {
             token,
         )
     }
+    add(FirWebCommonErrors.JS_MODULE_PROHIBITED_IN_FILE_WITH_JS_QUALIFIER) { firDiagnostic ->
+        JsModuleProhibitedInFileWithJsQualifierImpl(
+            firDiagnostic as KtDiagnosticWithSource,
+            token,
+        )
+    }
     add(FirErrors.INAPPLICABLE_OPERATOR_MODIFIER) { firDiagnostic ->
         InapplicableOperatorModifierImpl(
             firDiagnostic.a,
