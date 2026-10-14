@@ -32,6 +32,7 @@ fun builder(c: suspend () -> Unit) {
 }
 
 fun box(): String {
+    StateMachineChecker.reset()
     var res = "FAIL"
     builder {
         res = inlineMe()
