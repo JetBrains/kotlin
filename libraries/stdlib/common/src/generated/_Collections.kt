@@ -71,6 +71,8 @@ public inline operator fun <T> List<T>.component5(): T {
 
 /**
  * Returns `true` if [element] is found in the collection.
+ * 
+ * @sample samples.collections.Collections.Elements.contains
  */
 public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(element: T): Boolean {
     if (this is Collection)
